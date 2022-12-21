@@ -158,6 +158,8 @@
 		37EEA2A827BC7E610070E222 /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
 		37EEA2AB27BC81890070E222 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 37EEA2AA27BC81890070E222 /* Introspect */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
+		5504F77A295396A900D838B1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5504F779295396A900D838B1 /* LaunchScreen.storyboard */; };
+		558B33FA29539AEF00709654 /* TVLaunchImage2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 558B33F929539AEE00709654 /* TVLaunchImage2x.png */; };
 		B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B302F31521713B17000322B9 /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B3054371272026E800F5257D /* PVPSPControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3054370272026E800F5257D /* PVPSPControllerViewController.swift */; };
@@ -1084,7 +1086,9 @@
 		37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleGamesView.swift; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
+		5504F779295396A900D838B1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5525388625574D48004B00B6 /* PVTGBDual.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		558B33F929539AEE00709654 /* TVLaunchImage2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TVLaunchImage2x.png; sourceTree = "<group>"; };
 		B30172C9274A34FA00B0E695 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305436D2720237400F5257D /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2358,6 +2362,7 @@
 		1AD481B51BA350A400FDA50A /* ProvenanceTV */ = {
 			isa = PBXGroup;
 			children = (
+				5504F779295396A900D838B1 /* LaunchScreen.storyboard */,
 				B35D667D21814EAB0005A992 /* Story Boards */,
 				BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */,
 				EF474BA9279E63B700578663 /* TVAlertController.swift */,
@@ -2366,6 +2371,7 @@
 				1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */,
 				B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */,
 				1AD481C21BA350A400FDA50A /* TVAssets.xcassets */,
+				558B33F929539AEE00709654 /* TVLaunchImage2x.png */,
 				1AD481B61BA350A400FDA50A /* Supporting Files */,
 			);
 			path = ProvenanceTV;
@@ -3885,7 +3891,9 @@
 				B3F43DD02168075200CDD40A /* Settings.bundle in Resources */,
 				B3296EC326CABFB00088AC32 /* Settings.storyboard in Resources */,
 				B36703672896314200F75595 /* MasterShader.fsh in Resources */,
+				5504F77A295396A900D838B1 /* LaunchScreen.storyboard in Resources */,
 				B367035D2896314200F75595 /* AAScale2x.fsh in Resources */,
+				558B33FA29539AEF00709654 /* TVLaunchImage2x.png in Resources */,
 				B36703772896314300F75595 /* OmniScaleLegacy.fsh in Resources */,
 				B367036F2896314200F75595 /* OmniScale.fsh in Resources */,
 			);
