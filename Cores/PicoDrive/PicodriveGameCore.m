@@ -506,7 +506,8 @@ static void writeSaveFile(const char* path, int type)
 
 - (CGSize)aspectSize
 {
-    return CGSizeMake(320, 240);
+    float ratio =  32.0 / 35.0;
+    return CGSizeMake( ((320.0 / 224.0) * ratio), 1.0);
 }
 
 - (GLenum)pixelFormat
