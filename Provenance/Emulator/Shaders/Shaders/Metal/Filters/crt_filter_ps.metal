@@ -128,7 +128,8 @@ float3 getShadowMaskRGB( constant CRT_Data& cbData, float2 uv )
 INLINE
 float3 sampleRGB( texture2d<float> EmulatedImage, sampler Sampler, constant CRT_Data& cbData, float2 uv, float2 warpedUV )
 {
-    float3 inputSample = ToLinear( EmulatedImage.sample(Sampler, UV_TO_INPUTCOORD( warpedUV, cbData )).rgb );
+    constexpr sampler SamplerF(address::clamp_to_zero, filter::linear);
+    float3 inputSample = ToLinear( EmulatedImage.sample(SamplerF, UV_TO_INPUTCOORD( warpedUV, cbData )).rgb );
     
     float3 scanlineMultiplier = float3( 1.0 );
 #if USE_SCANLINES
