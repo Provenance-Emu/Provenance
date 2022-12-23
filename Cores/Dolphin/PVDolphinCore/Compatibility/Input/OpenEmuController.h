@@ -4,6 +4,7 @@ typedef struct
     int value;
 } keymap;
 
+/*
 typedef struct
 {
     keymap gc_pad_keymap[22] = {
@@ -31,13 +32,13 @@ typedef struct
         {PVGCDigitalR, 0},
     };
 } gc_pad;
-
+*/
 
 void setGameCubeButton(int pad_num, int button , int value);
 void setGameCubeAxis(int pad_num, int button , float value);
 void init_Callback();
 
-static gc_pad GameCubePads[4];
+//static gc_pad GameCubePads[4];
 
 typedef struct
 {

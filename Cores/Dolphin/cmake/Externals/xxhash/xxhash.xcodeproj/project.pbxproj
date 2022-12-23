@@ -58,9 +58,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		1348E3873B454C3FA82AD4A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeFiles/xxhash.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = F1E3CAAA6B014F2996F445CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeFiles/xxhash.dir/Info.plist */; };
-		96E54193247C415EBDA4DA5C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = C8C4DE89E21D4F5BAE6E96CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/CMakeLists.txt */; };
-		EE1C692AC6A84EE2866EA4DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/xxhash.c */ = {isa = PBXBuildFile; fileRef = 280FA271410445B8BC10DF32 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/xxhash.c */; };
+		1348E3873B454C3FA82AD4A5 /* ../cmake/Externals/xxhash/CMakeFiles/xxhash.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = F1E3CAAA6B014F2996F445CB /* ../cmake/Externals/xxhash/CMakeFiles/xxhash.dir/Info.plist */; };
+		96E54193247C415EBDA4DA5C /* ../dolphin-ios/Externals/xxhash/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = C8C4DE89E21D4F5BAE6E96CD /* ../dolphin-ios/Externals/xxhash/CMakeLists.txt */; };
+		EE1C692AC6A84EE2866EA4DD /* ../dolphin-ios/Externals/xxhash/xxhash.c */ = {isa = PBXBuildFile; fileRef = 280FA271410445B8BC10DF32 /* ../dolphin-ios/Externals/xxhash/xxhash.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -133,11 +133,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		280FA271410445B8BC10DF32 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = xxhash.c; sourceTree = SOURCE_ROOT; };
+		280FA271410445B8BC10DF32 /* ../dolphin-ios/Externals/xxhash/xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = xxhash.c; sourceTree = SOURCE_ROOT; };
 		A7A3A6CC328F4682BBDDDB95 /* xxhash */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libxxhash.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C8C4DE89E21D4F5BAE6E96CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		CE1136F36E4C4747B4BDCB08 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		F1E3CAAA6B014F2996F445CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeFiles/xxhash.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeFiles/xxhash.dir/Info.plist; sourceTree = "<absolute>"; };
+		C8C4DE89E21D4F5BAE6E96CD /* ../dolphin-ios/Externals/xxhash/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		CE1136F36E4C4747B4BDCB08 /* ../dolphin-ios/Externals/xxhash/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F1E3CAAA6B014F2996F445CB /* ../cmake/Externals/xxhash/CMakeFiles/xxhash.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/xxhash/CMakeFiles/xxhash.dir/Info.plist; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,7 +154,7 @@
 		451BB39858BE49B7B15BBDF7 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				280FA271410445B8BC10DF32 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/xxhash.c */,
+				280FA271410445B8BC10DF32 /* ../dolphin-ios/Externals/xxhash/xxhash.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -180,7 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				B799B36BE88B46C3BFF1F406 /* CMake Rules */,
-				CE1136F36E4C4747B4BDCB08 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/CMakeLists.txt */,
+				CE1136F36E4C4747B4BDCB08 /* ../dolphin-ios/Externals/xxhash/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -198,7 +198,7 @@
 			children = (
 				451BB39858BE49B7B15BBDF7 /* Source Files */,
 				A38696161C734F0B9C0D2EEA /* Resources */,
-				C8C4DE89E21D4F5BAE6E96CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/CMakeLists.txt */,
+				C8C4DE89E21D4F5BAE6E96CD /* ../dolphin-ios/Externals/xxhash/CMakeLists.txt */,
 			);
 			name = xxhash;
 			sourceTree = "<group>";
@@ -206,7 +206,7 @@
 		A38696161C734F0B9C0D2EEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F1E3CAAA6B014F2996F445CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeFiles/xxhash.dir/Info.plist */,
+				F1E3CAAA6B014F2996F445CB /* ../cmake/Externals/xxhash/CMakeFiles/xxhash.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -259,7 +259,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = 478F5A2FC80E4BE7876FFF3C;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash";
+			projectDirPath = "../dolphin-ios";
 			projectRoot = "";
 			targets = (
 				27752D87E92A4D2AAF4559FB /* ALL_BUILD */,
@@ -300,19 +300,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -328,24 +328,24 @@ fi
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeFiles/ALL_BUILD			);
+../cmake/Externals/xxhash/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
+  cd ../cmake/Externals/xxhash
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
+  cd ../cmake/Externals/xxhash
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
+  cd ../cmake/Externals/xxhash
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
+  cd ../cmake/Externals/xxhash
   echo Build\\ all\\ projects
 fi
 ";
@@ -394,19 +394,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
+  cd ../cmake/Externals/xxhash
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
+  cd ../cmake/Externals/xxhash
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
+  cd ../cmake/Externals/xxhash
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
+  cd ../cmake/Externals/xxhash
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -437,25 +437,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeFiles/ZERO_CHECK			);
+../cmake/Externals/xxhash/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/xxhash
+  make -f ../cmake/Externals/xxhash/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/xxhash
+  make -f ../cmake/Externals/xxhash/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/xxhash
+  make -f ../cmake/Externals/xxhash/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/xxhash
+  make -f ../cmake/Externals/xxhash/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -467,7 +467,7 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE1C692AC6A84EE2866EA4DD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash/xxhash.c */,
+				EE1C692AC6A84EE2866EA4DD /* ../dolphin-ios/Externals/xxhash/xxhash.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -545,7 +545,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -553,7 +553,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/enet/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/xxhash","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -562,7 +562,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = xxhash;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/xxhash.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -638,7 +638,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = RelWithDebInfo;
 		};
@@ -647,7 +647,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -655,7 +655,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/enet/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/xxhash","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -664,7 +664,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = xxhash;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/xxhash.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -759,7 +759,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = Release;
 		};
@@ -852,7 +852,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = MinSizeRel;
 		};
@@ -861,7 +861,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -869,7 +869,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/enet/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/xxhash","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -878,7 +878,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = xxhash;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/xxhash.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -897,7 +897,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = Debug;
 		};
@@ -925,7 +925,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/xxhash/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -933,7 +933,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/enet/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/xxhash","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/xxhash","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -942,7 +942,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = xxhash;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/xxhash.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
