@@ -58,10 +58,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		AE3529FFEF7847B8969A6A8F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/ioapi.c */ = {isa = PBXBuildFile; fileRef = 3822031971204F969B982C38 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/ioapi.c */; };
-		C12DA8A94BA544E09444752D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeFiles/minizip.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = D992C0A3E38F46E8B53D2DFF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeFiles/minizip.dir/Info.plist */; };
-		E341ED962B8B4772B52AC194 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 7AA66C99A4CC475FAFC0E1B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/CMakeLists.txt */; };
-		FC06697359FB436FAAA03415 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/unzip.c */ = {isa = PBXBuildFile; fileRef = C67190677B67410F83213A01 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/unzip.c */; };
+		AE3529FFEF7847B8969A6A8F /* ../dolphin-ios/Externals/minizip/ioapi.c */ = {isa = PBXBuildFile; fileRef = 3822031971204F969B982C38 /* ../dolphin-ios/Externals/minizip/ioapi.c */; };
+		C12DA8A94BA544E09444752D /* ../cmake/Externals/minizip/CMakeFiles/minizip.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = D992C0A3E38F46E8B53D2DFF /* ../cmake/Externals/minizip/CMakeFiles/minizip.dir/Info.plist */; };
+		E341ED962B8B4772B52AC194 /* ../dolphin-ios/Externals/minizip/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 7AA66C99A4CC475FAFC0E1B5 /* ../dolphin-ios/Externals/minizip/CMakeLists.txt */; };
+		FC06697359FB436FAAA03415 /* ../dolphin-ios/Externals/minizip/unzip.c */ = {isa = PBXBuildFile; fileRef = C67190677B67410F83213A01 /* ../dolphin-ios/Externals/minizip/unzip.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -134,12 +134,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3822031971204F969B982C38 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/ioapi.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ioapi.c; path = ioapi.c; sourceTree = SOURCE_ROOT; };
+		3822031971204F969B982C38 /* ../dolphin-ios/Externals/minizip/ioapi.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ioapi.c; path = ioapi.c; sourceTree = SOURCE_ROOT; };
 		43BB88E50B714A2DA2F95865 /* minizip */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libminizip.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		7AA66C99A4CC475FAFC0E1B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		C67190677B67410F83213A01 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/unzip.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = unzip.c; path = unzip.c; sourceTree = SOURCE_ROOT; };
-		D992C0A3E38F46E8B53D2DFF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeFiles/minizip.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeFiles/minizip.dir/Info.plist; sourceTree = "<absolute>"; };
-		EF44A38CC8CE45D08B58B7AD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		7AA66C99A4CC475FAFC0E1B5 /* ../dolphin-ios/Externals/minizip/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		C67190677B67410F83213A01 /* ../dolphin-ios/Externals/minizip/unzip.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = unzip.c; path = unzip.c; sourceTree = SOURCE_ROOT; };
+		D992C0A3E38F46E8B53D2DFF /* ../cmake/Externals/minizip/CMakeFiles/minizip.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/minizip/CMakeFiles/minizip.dir/Info.plist; sourceTree = "<absolute>"; };
+		EF44A38CC8CE45D08B58B7AD /* ../dolphin-ios/Externals/minizip/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,7 +156,7 @@
 		025F6C741FB14943B4CD6A71 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D992C0A3E38F46E8B53D2DFF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeFiles/minizip.dir/Info.plist */,
+				D992C0A3E38F46E8B53D2DFF /* ../cmake/Externals/minizip/CMakeFiles/minizip.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -172,7 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				0A52D62DB04747688A5586CC /* CMake Rules */,
-				EF44A38CC8CE45D08B58B7AD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/CMakeLists.txt */,
+				EF44A38CC8CE45D08B58B7AD /* ../dolphin-ios/Externals/minizip/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -180,8 +180,8 @@
 		4D50D3CC66E04CC2A4AD0A4D /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				3822031971204F969B982C38 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/ioapi.c */,
-				C67190677B67410F83213A01 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/unzip.c */,
+				3822031971204F969B982C38 /* ../dolphin-ios/Externals/minizip/ioapi.c */,
+				C67190677B67410F83213A01 /* ../dolphin-ios/Externals/minizip/unzip.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -191,7 +191,7 @@
 			children = (
 				4D50D3CC66E04CC2A4AD0A4D /* Source Files */,
 				025F6C741FB14943B4CD6A71 /* Resources */,
-				7AA66C99A4CC475FAFC0E1B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/CMakeLists.txt */,
+				7AA66C99A4CC475FAFC0E1B5 /* ../dolphin-ios/Externals/minizip/CMakeLists.txt */,
 			);
 			name = minizip;
 			sourceTree = "<group>";
@@ -262,7 +262,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = FC63F1F4FB6E4C78BF656024;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip";
+			projectDirPath = "../dolphin-ios";
 			projectRoot = "";
 			targets = (
 				27752D87E92A4D2AAF4559FB /* ALL_BUILD */,
@@ -285,24 +285,24 @@
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeFiles/ALL_BUILD			);
+../cmake/Externals/minizip/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
+  cd ../cmake/Externals/minizip
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
+  cd ../cmake/Externals/minizip
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
+  cd ../cmake/Externals/minizip
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
+  cd ../cmake/Externals/minizip
   echo Build\\ all\\ projects
 fi
 ";
@@ -336,19 +336,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -397,19 +397,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
+  cd ../cmake/Externals/minizip
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
+  cd ../cmake/Externals/minizip
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
+  cd ../cmake/Externals/minizip
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
+  cd ../cmake/Externals/minizip
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -440,25 +440,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeFiles/ZERO_CHECK			);
+../cmake/Externals/minizip/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/minizip
+  make -f ../cmake/Externals/minizip/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/minizip
+  make -f ../cmake/Externals/minizip/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/minizip
+  make -f ../cmake/Externals/minizip/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/minizip
+  make -f ../cmake/Externals/minizip/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -470,8 +470,8 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AE3529FFEF7847B8969A6A8F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/ioapi.c */,
-				FC06697359FB436FAAA03415 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/unzip.c */,
+				AE3529FFEF7847B8969A6A8F /* ../dolphin-ios/Externals/minizip/ioapi.c */,
+				FC06697359FB436FAAA03415 /* ../dolphin-ios/Externals/minizip/unzip.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -568,7 +568,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -576,7 +576,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,NOUNCRYPT,__USE_FILE_OFFSET64,__USE_LARGEFILE64,_LARGEFILE64_SOURCE,"'_FILE_OFFSET_BIT=64'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/enet/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/.","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/minizip/.","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -585,7 +585,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/minizip.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -634,7 +634,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -642,7 +642,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,NOUNCRYPT,__USE_FILE_OFFSET64,__USE_LARGEFILE64,_LARGEFILE64_SOURCE,"'_FILE_OFFSET_BIT=64'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/enet/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/.","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/minizip/.","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -651,7 +651,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/minizip.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -727,7 +727,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = Debug;
 		};
@@ -755,7 +755,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -763,7 +763,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,NOUNCRYPT,__USE_FILE_OFFSET64,__USE_LARGEFILE64,_LARGEFILE64_SOURCE,"'_FILE_OFFSET_BIT=64'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/enet/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/.","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/minizip/.","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -772,7 +772,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/minizip.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -791,7 +791,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = MinSizeRel;
 		};
@@ -846,7 +846,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = Release;
 		};
@@ -901,7 +901,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = RelWithDebInfo;
 		};
@@ -948,7 +948,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/minizip/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -956,7 +956,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,NOUNCRYPT,__USE_FILE_OFFSET64,__USE_LARGEFILE64,_LARGEFILE64_SOURCE,"'_FILE_OFFSET_BIT=64'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/enet/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/.","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/minizip/.","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -965,7 +965,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/minizip.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};

@@ -176,6 +176,10 @@ import Foundation
     @objc(PVGCDigitalR)
     case digitalR
 	case count
+    case cUp
+    case cDown
+    case cLeft
+    case cRight
 }
 
 // FIXME: analog stick (x,y), memory pack, rumble pack
@@ -192,26 +196,81 @@ import Foundation
 
 @objc public enum PVWiiMoteButton: Int {
     // D-Pad
-    case dPadUp
-    case dPadDown
-    case dPadLeft
-    case dPadRight
-    // C buttons
-    case cUp
-    case cDown
-    case cLeft
-    case cRight
-    case a
-    case b
-    // Shoulder buttons
-    case l
-    case r
-    case z
-    case start
-    case analogUp
-    case analogDown
-    case analogLeft
-    case analogRight
+    case wiiDPadUp
+    case wiiDPadDown
+    case wiiDPadLeft
+    case wiiDPadRight
+    // wiimote buttons
+    case wiiA
+    case wiiB
+    case wiiMinus
+    case wiiPlus
+    case wiiHome
+    case wiiOne
+    case wiiTwo
+    // wiimote motion
+    case wiiIrUp
+    case wiiIrDown
+    case wiiIrLeft
+    case wiiIrRight
+    case wiiIrForward
+    case wiiIrBackward
+    case wiiIrHide
+    case wiiSwingUp
+    case wiiSwingDown
+    case wiiSwingLeft
+    case wiiSwingRight
+    case wiiTiltForward
+    case wiiTiltBackward
+    case wiiTiltLeft
+    case wiiTiltRight
+    case wiiTiltModifier
+    case wiiShakeX
+    case wiiShakeY
+    case wiiShakeZ
+    // nunchuk
+    case nunchunkC
+    case nunchunkZ
+    case nunchunkStickUp
+    case nunchunkStickDown
+    case nunchunkStickLeft
+    case nunchunkStickRight
+    case nunchunkSwingUp
+    case nunchunkSwingDown
+    case nunchunkSwingLeft
+    case nunchunkSwingRight
+    case nunchunkTiltForward
+    case nunchunkTiltBackward
+    case nunchunkTiltLeft
+    case nunchunkTiltRight
+    case nunchunkTiltModifier
+    case nunchunkShakeX
+    case nunchunkShakeY
+    case nunchunkShakeZ
+    // classic
+    case classicA
+    case classicB
+    case classicX
+    case classicY
+    case classicMinus
+    case classicPlus
+    case classicHome
+    case classicZL
+    case classicZR
+    case classicDpadUp
+    case classicDpadDown
+    case classicDpadLeft
+    case classicDpadRight
+    case classicStickLeftUp
+    case classicStickLeftDown
+    case classicStickLeftLeft
+    case classicStickLeftRight
+    case classicStickRightUp
+    case classicStickRightDown
+    case classicStickRightLeft
+    case classicStickRightRight
+    case classicTriggerL
+    case classicTriggerR
     case count
 }
 
