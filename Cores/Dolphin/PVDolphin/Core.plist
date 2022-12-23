@@ -9,6 +9,7 @@
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.gamecube</string>
+		<string>com.provenance.wii</string>
 	</array>
 	<key>PVProjectName</key>
 	<string>Dolphin</string>

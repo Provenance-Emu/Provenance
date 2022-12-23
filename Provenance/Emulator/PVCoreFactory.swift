@@ -206,12 +206,18 @@ public final class PVCoreFactory: NSObject {
             } else {
                 fatalError("Core doesn't implement PVN64SystemResponderClient")
             }
-		case .GameCube:
-			if let core = core as? PVGameCubeSystemResponderClient {
+	case .GameCube:
+	    if let core = core as? PVGameCubeSystemResponderClient {
 				return PVGameCubeControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
-			} else {
+    	   } else {
 				fatalError("Core doesn't implement PVN64SystemResponderClient")
-			}
+	   }
+ 	case .Wii:
+            if let core = core as? PVWiiSystemResponderClient {
+                                return PVWiiControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+           } else {
+                                fatalError("Core doesn't implement PVWiiSystemResponderClient")
+           } 
         case ._3DO:
             if let core = core as? PV3DOSystemResponderClient {
                 return PV3DOControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
@@ -270,7 +276,7 @@ public final class PVCoreFactory: NSObject {
             ELOG("No known system named: \(system.name) id: \(system.identifier)")
             assertionFailure("No known system named: \(system.name) id: \(system.identifier)")
             return nil
-        case .AtariST, .C64, .Macintosh, .Wii:
+        case .AtariST, .C64, .Macintosh:
             ELOG("No known system named: \(system.name) id: \(system.identifier)")
             assertionFailure("No known system named: \(system.name) id: \(system.identifier)")
             return nil

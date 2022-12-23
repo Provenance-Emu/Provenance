@@ -58,11 +58,11 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		1CF3F174A2A64B4E97EE74B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugiconfig.hpp */ = {isa = PBXBuildFile; fileRef = A0B61D1EA6914554A0173851 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugiconfig.hpp */; };
-		22433EFA23E0431BA0EFF5A2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 4044CA4284444294AAC3FC6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/CMakeLists.txt */; };
-		3A433D8F9F03419F8338475A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugixml.cpp */ = {isa = PBXBuildFile; fileRef = B0092B7E55A2450DBBF32C23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugixml.cpp */; };
-		635A1A153952447EBE576330 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugixml.hpp */ = {isa = PBXBuildFile; fileRef = 419D18630F274BB7BD621BD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugixml.hpp */; };
-		B3EB06020F2348399A1C4662 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeFiles/pugixml.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 4D675EB30CAB469486AAE0BC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeFiles/pugixml.dir/Info.plist */; };
+		1CF3F174A2A64B4E97EE74B9 /* ../dolphin-ios/Externals/pugixml/pugiconfig.hpp */ = {isa = PBXBuildFile; fileRef = A0B61D1EA6914554A0173851 /* ../dolphin-ios/Externals/pugixml/pugiconfig.hpp */; };
+		22433EFA23E0431BA0EFF5A2 /* ../dolphin-ios/Externals/pugixml/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 4044CA4284444294AAC3FC6F /* ../dolphin-ios/Externals/pugixml/CMakeLists.txt */; };
+		3A433D8F9F03419F8338475A /* ../dolphin-ios/Externals/pugixml/pugixml.cpp */ = {isa = PBXBuildFile; fileRef = B0092B7E55A2450DBBF32C23 /* ../dolphin-ios/Externals/pugixml/pugixml.cpp */; };
+		635A1A153952447EBE576330 /* ../dolphin-ios/Externals/pugixml/pugixml.hpp */ = {isa = PBXBuildFile; fileRef = 419D18630F274BB7BD621BD5 /* ../dolphin-ios/Externals/pugixml/pugixml.hpp */; };
+		B3EB06020F2348399A1C4662 /* ../cmake/Externals/pugixml/CMakeFiles/pugixml.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 4D675EB30CAB469486AAE0BC /* ../cmake/Externals/pugixml/CMakeFiles/pugixml.dir/Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -136,12 +136,12 @@
 
 /* Begin PBXFileReference section */
 		31F591AA3DDE4924ADAB499C /* pugixml */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libpugixml.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4044CA4284444294AAC3FC6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		419D18630F274BB7BD621BD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugixml.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = pugixml.hpp; path = pugixml.hpp; sourceTree = SOURCE_ROOT; };
-		4D675EB30CAB469486AAE0BC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeFiles/pugixml.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeFiles/pugixml.dir/Info.plist; sourceTree = "<absolute>"; };
-		A0B61D1EA6914554A0173851 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugiconfig.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = pugiconfig.hpp; path = pugiconfig.hpp; sourceTree = SOURCE_ROOT; };
-		B0092B7E55A2450DBBF32C23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugixml.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = pugixml.cpp; path = pugixml.cpp; sourceTree = SOURCE_ROOT; };
-		D2259A9BDEC04D86BEFCD277 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		4044CA4284444294AAC3FC6F /* ../dolphin-ios/Externals/pugixml/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		419D18630F274BB7BD621BD5 /* ../dolphin-ios/Externals/pugixml/pugixml.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = pugixml.hpp; path = pugixml.hpp; sourceTree = SOURCE_ROOT; };
+		4D675EB30CAB469486AAE0BC /* ../cmake/Externals/pugixml/CMakeFiles/pugixml.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/pugixml/CMakeFiles/pugixml.dir/Info.plist; sourceTree = "<absolute>"; };
+		A0B61D1EA6914554A0173851 /* ../dolphin-ios/Externals/pugixml/pugiconfig.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = pugiconfig.hpp; path = pugiconfig.hpp; sourceTree = SOURCE_ROOT; };
+		B0092B7E55A2450DBBF32C23 /* ../dolphin-ios/Externals/pugixml/pugixml.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = pugixml.cpp; path = pugixml.cpp; sourceTree = SOURCE_ROOT; };
+		D2259A9BDEC04D86BEFCD277 /* ../dolphin-ios/Externals/pugixml/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,7 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				61BC525410544D4590ABE638 /* CMake Rules */,
-				D2259A9BDEC04D86BEFCD277 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/CMakeLists.txt */,
+				D2259A9BDEC04D86BEFCD277 /* ../dolphin-ios/Externals/pugixml/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -184,7 +184,7 @@
 		74254D4015144FE89FB71001 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				4D675EB30CAB469486AAE0BC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeFiles/pugixml.dir/Info.plist */,
+				4D675EB30CAB469486AAE0BC /* ../cmake/Externals/pugixml/CMakeFiles/pugixml.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -207,8 +207,8 @@
 		CC988156F3824D048B387B95 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				A0B61D1EA6914554A0173851 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugiconfig.hpp */,
-				419D18630F274BB7BD621BD5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugixml.hpp */,
+				A0B61D1EA6914554A0173851 /* ../dolphin-ios/Externals/pugixml/pugiconfig.hpp */,
+				419D18630F274BB7BD621BD5 /* ../dolphin-ios/Externals/pugixml/pugixml.hpp */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -216,7 +216,7 @@
 		D5D89A7491D94DC68F0061C5 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				B0092B7E55A2450DBBF32C23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugixml.cpp */,
+				B0092B7E55A2450DBBF32C23 /* ../dolphin-ios/Externals/pugixml/pugixml.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -227,7 +227,7 @@
 				CC988156F3824D048B387B95 /* Header Files */,
 				D5D89A7491D94DC68F0061C5 /* Source Files */,
 				74254D4015144FE89FB71001 /* Resources */,
-				4044CA4284444294AAC3FC6F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/CMakeLists.txt */,
+				4044CA4284444294AAC3FC6F /* ../dolphin-ios/Externals/pugixml/CMakeLists.txt */,
 			);
 			name = pugixml;
 			sourceTree = "<group>";
@@ -273,7 +273,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = 154D480E19884027BD2653CC;
-			projectDirPath = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml";
+			projectDirPath = "../dolphin-ios";
 			projectRoot = "";
 			targets = (
 				27752D87E92A4D2AAF4559FB /* ALL_BUILD */,
@@ -296,24 +296,24 @@
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeFiles/ALL_BUILD			);
+../cmake/Externals/pugixml/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
+  cd ../cmake/Externals/pugixml
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
+  cd ../cmake/Externals/pugixml
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
+  cd ../cmake/Externals/pugixml
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
+  cd ../cmake/Externals/pugixml
   echo Build\\ all\\ projects
 fi
 ";
@@ -347,19 +347,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -408,19 +408,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
+  cd ../cmake/Externals/pugixml
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
+  cd ../cmake/Externals/pugixml
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
+  cd ../cmake/Externals/pugixml
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
+  cd ../cmake/Externals/pugixml
   /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -451,25 +451,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeFiles/ZERO_CHECK			);
+../cmake/Externals/pugixml/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/pugixml
+  make -f ../cmake/Externals/pugixml/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/pugixml
+  make -f ../cmake/Externals/pugixml/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/pugixml
+  make -f ../cmake/Externals/pugixml/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Externals/pugixml
+  make -f ../cmake/Externals/pugixml/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -481,7 +481,7 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A433D8F9F03419F8338475A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/pugixml.cpp */,
+				3A433D8F9F03419F8338475A /* ../dolphin-ios/Externals/pugixml/pugixml.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,7 +529,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = Debug;
 		};
@@ -546,7 +546,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = MinSizeRel;
 		};
@@ -601,7 +601,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = Release;
 		};
@@ -610,7 +610,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -618,7 +618,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/.","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/pugixml/.","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -627,7 +627,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = pugixml;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/pugixml.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -657,7 +657,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -665,7 +665,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/.","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/pugixml/.","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -674,7 +674,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = pugixml;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/pugixml.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -799,7 +799,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -807,7 +807,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/.","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/pugixml/.","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -816,7 +816,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = pugixml;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/pugixml.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -903,7 +903,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/Externals/pugixml/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -911,7 +911,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Source/Core","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/pugixml/.","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/pugixml/.","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -920,7 +920,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = pugixml;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build/pugixml.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -996,7 +996,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/build;
+				BUILD_DIR = dolphin-build;
 			};
 			name = RelWithDebInfo;
 		};
