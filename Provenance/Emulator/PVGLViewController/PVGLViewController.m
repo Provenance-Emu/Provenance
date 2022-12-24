@@ -687,6 +687,8 @@ PV_OBJC_DIRECT_MEMBERS
 
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect
 {
+    if (self.emulatorCore.skipEmulationLoop)
+        return;
     __block CGRect screenRect;
     __block const void* videoBuffer;
     __block GLenum videoBufferPixelFormat;

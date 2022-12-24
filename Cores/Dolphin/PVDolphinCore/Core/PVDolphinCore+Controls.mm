@@ -332,7 +332,7 @@ s8 joyx[4], joyy[4];
 			controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				if (self.isWii)
 					[self gamepadEventOnPad:player
-						 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1
+						 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2
 						 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)
 					];
 				else
@@ -340,39 +340,39 @@ s8 joyx[4], joyy[4];
 			};
 			controller.extendedGamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_A action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 				else
 					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_B action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
 			controller.extendedGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_MINUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 				else
 					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_X action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
 			controller.extendedGamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				if (self.isWii)
-				   [self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_PLUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+				   [self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_B action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			   else
 				   [self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_Y action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
 			controller.extendedGamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::NUNCHUK_BUTTON_C action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_PLUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 				else
 					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::CLASSIC_BUTTON_ZL action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
 			controller.extendedGamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::NUNCHUK_BUTTON_Z action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_MINUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 				else
 					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::CLASSIC_BUTTON_ZR action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
 			controller.extendedGamepad.leftTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-				[self gamepadEventOnPad:player button:ButtonManager::ButtonType::CLASSIC_TRIGGER_L action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+				[self gamepadEventOnPad:player button:ButtonManager::ButtonType::NUNCHUK_BUTTON_C action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
 			controller.extendedGamepad.rightTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-				[self gamepadEventOnPad:player button:ButtonManager::ButtonType::CLASSIC_TRIGGER_R action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+				[self gamepadEventOnPad:player button:ButtonManager::ButtonType::NUNCHUK_BUTTON_Z action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
 			controller.extendedGamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				if (self.isWii)
@@ -408,42 +408,45 @@ s8 joyx[4], joyy[4];
 		}
 		else if (controller.gamepad != nil)
 		{
-			controller.gamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-				else
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_A action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.gamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-				else
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_B action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.gamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_MINUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-				else
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_X action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.gamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_PLUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-				else
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_Y action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.gamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::NUNCHUK_BUTTON_C action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-				else
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::CLASSIC_BUTTON_ZL action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.gamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::NUNCHUK_BUTTON_Z action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-				else
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::CLASSIC_BUTTON_ZR action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
+            controller.gamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                if (self.isWii)
+                    [self gamepadEventOnPad:player
+                         button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2
+                         action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)
+                    ];
+                else
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_A action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.gamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                if (self.isWii)
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_A action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                else
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_B action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.gamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                if (self.isWii)
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                else
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_X action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.gamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                if (self.isWii)
+                   [self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_B action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+               else
+                   [self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_Y action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.gamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                if (self.isWii)
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_PLUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                else
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::CLASSIC_BUTTON_ZL action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.gamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                if (self.isWii)
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_MINUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                else
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::CLASSIC_BUTTON_ZR action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
 			controller.gamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				if (self.isWii)
 					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
@@ -472,19 +475,21 @@ s8 joyx[4], joyy[4];
 		}
 		else if (controller.microGamepad != nil)
 		{
-			controller.gamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-				//[self gamepadEventOnPad:player button:ButtonManager::ButtonType::CLASSIC_BUTTON_A action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-				else
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_A action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.microGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-				if (self.isWii)
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_MINUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-				else
-					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_X action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
+            controller.microGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                if (self.isWii)
+                    [self gamepadEventOnPad:player
+                         button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2
+                         action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)
+                    ];
+                else
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_A action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.microGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                if (self.isWii)
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                else
+                    [self gamepadEventOnPad:player button:ButtonManager::ButtonType::BUTTON_X action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
 			controller.microGamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
 				if (self.isWii)
 					[self gamepadEventOnPad:player button:ButtonManager::ButtonType::WIIMOTE_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
