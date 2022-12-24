@@ -78,7 +78,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
             window.rootViewController = sideNav
         } else {
-            let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
+            let storyboard = UIStoryboard.init(name: .Provenance, bundle: Bundle.pvapp)
             let vc = storyboard.instantiateInitialViewController()
 
             window.rootViewController = vc

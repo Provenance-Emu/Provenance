@@ -165,7 +165,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     }
 
     @objc func showCheatsMenu() {
-        guard let cheatsNavController = UIStoryboard(name: "Cheats", bundle: nil).instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
+        guard let cheatsNavController = UIStoryboard(name: .Cheats, bundle: .pvapp).instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
             return
         }
 

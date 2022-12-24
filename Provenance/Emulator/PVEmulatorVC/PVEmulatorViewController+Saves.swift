@@ -269,7 +269,7 @@ extension PVEmulatorViewController {
     }
 
     @objc func showSaveStateMenu() {
-        guard let saveStatesNavController = UIStoryboard(name: "SaveStates", bundle: nil).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
+        guard let saveStatesNavController = UIStoryboard(name: .SaveStates, bundle: .pvapp).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
             return
         }
 

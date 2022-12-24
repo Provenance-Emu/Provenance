@@ -610,7 +610,7 @@ final class PVSettingsViewController: QuickTableViewController {
             let alert = UIAlertController(title: "Unable to start web server!",
                                           message: "Your device needs to be connected to a WiFi network to continue!",
                                           preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) { () -> Void in }
         }
@@ -623,7 +623,7 @@ final class PVSettingsViewController: QuickTableViewController {
             let alert = UIAlertController(title: "Unable to start web server!",
                                           message: "Check your network connection or settings and free up ports: 80, 81.",
                                           preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) { () -> Void in }
         }
@@ -639,12 +639,12 @@ Attempt to reload the artwork and title information for your entire library. Thi
 You will need to completely relaunch the App to start the library rebuild process.
 """,
                                       preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Yes",
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: "Yes"),
                                       style: .default,
                                       handler: { (_: UIAlertAction) -> Void in
             NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
         }))
-        alert.addAction(UIAlertAction(title: "No",
+        alert.addAction(UIAlertAction(title: NSLocalizedString("No", comment: "No"),
                                       style: .cancel,
                                       handler: nil))
         present(alert, animated: true) { () -> Void in }
@@ -655,12 +655,12 @@ You will need to completely relaunch the App to start the library rebuild proces
         let alert = UIAlertController(title: NSLocalizedString("Empty Image Cache?", comment: ""),
                                       message: "Empty the image cache to free up disk space. Images will be redownloaded on demand.",
                                       preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""),
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: "Yes"),
                                       style: .default,
                                       handler: { (_: UIAlertAction) -> Void in
             try? PVMediaCache.empty()
         }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("No", comment: ""),
+        alert.addAction(UIAlertAction(title: NSLocalizedString("No", comment: "No"),
                                       style: .cancel,
                                       handler: nil))
         present(alert, animated: true) { () -> Void in }
@@ -673,7 +673,7 @@ You will need to completely relaunch the App to start the library rebuild proces
 
     func logsActions() {
         // Log Viewer
-        let logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: nil)
+        let logViewController = PVLogViewController(nibName: "PVLogViewController", bundle: .pvapp)
         logViewController.hideDoneButton()
         navigationController?.pushViewController(logViewController, animated: true)
         logViewController.hideDoneButton()

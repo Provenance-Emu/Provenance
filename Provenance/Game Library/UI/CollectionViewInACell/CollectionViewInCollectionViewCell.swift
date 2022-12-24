@@ -254,9 +254,9 @@ private extension PVGameLibraryCollectionViewCell {
     static func registerCell(in collectionView: UICollectionView, identifier: String) {
         // TODO: Use nib for cell once we drop iOS 8 and can use layouts
         #if os(iOS)
-            collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: identifier)
+        collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell", bundle: .pvapp), forCellWithReuseIdentifier: identifier)
         #else
-            collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: identifier)
+            collectionView.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: .pvapp), forCellWithReuseIdentifier: identifier)
         #endif
     }
 }
@@ -285,9 +285,9 @@ extension PVSaveState: SubCellItem {
     }
     static func registerCell(in collectionView: UICollectionView) {
         #if os(tvOS)
-            collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: Self.identifier)
+            collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell~tvOS", bundle: .pvapp), forCellWithReuseIdentifier: Self.identifier)
         #else
-            collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: nil), forCellWithReuseIdentifier: Self.identifier)
+            collectionView.register(UINib(nibName: "PVSaveStateCollectionViewCell", bundle: .pvapp), forCellWithReuseIdentifier: Self.identifier)
         #endif
     }
 }

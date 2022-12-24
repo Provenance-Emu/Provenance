@@ -55,7 +55,7 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
         super.viewDidLoad()
         collectionView?.delegate = nil
         collectionView?.dataSource = nil
-        collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: nil), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
+        collectionView?.register(UINib(nibName: "PVGameLibraryCollectionViewCell~tvOS", bundle: .pvapp), forCellWithReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier)
         collectionView?.backgroundColor = .black
         collectionView?.contentInset = .init(top: 10, left:  90, bottom: 50, right: 90)
         collectionView.alwaysBounceVertical = true

@@ -61,7 +61,7 @@
 		11A8A9E72496A3E500C1C6B4 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		11AFB2B72487C120000A3922 /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
 		11BB0A2325AF7DFF004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
-		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; platformFilters = (ios, maccatalyst, macos, ); };
+		1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		1A2B0E8C1AD187F4005FB77C /* testdata.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1A2B0E8A1AD187F4005FB77C /* testdata.txt */; };
 		1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
@@ -137,13 +137,7 @@
 		B30CC7BE294F284D005E367C /* PVTVSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */; };
 		B30CC7BF294F285A005E367C /* PVSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */; };
 		B30CC7C0294F2935005E367C /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B30CC7CB294F3E9B005E367C /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
-		B30CC7CC294F3E9C005E367C /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
-		B30CC7CD294F3E9C005E367C /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; platformFilters = (tvos, ); };
-		B30CC7CE294F3E9C005E367C /* Settings~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings~tvOS.storyboard */; platformFilters = (tvos, ); };
-		B30CC7CF294F3EEA005E367C /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; platformFilters = (tvos, ); };
-		B30CC7D0294F3EEA005E367C /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; platformFilters = (tvos, ); };
-		B30CC7D1294F3EFD005E367C /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
+		B30CC7D1294F3EFD005E367C /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B311B1C227A52F1700D1DE41 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C127A52F1700D1DE41 /* UIKit.framework */; };
 		B311B1C427A52F2000D1DE41 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
@@ -181,16 +175,10 @@
 		B3271BDD276B8B660031AECC /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; platformFilters = (ios, maccatalyst, macos, ); };
 		B32746BE219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */; };
 		B3290499270D1F95002707AC /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; };
-		B3296EAA26CABE880088AC32 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EAC26CABE880088AC32 /* Provenance.storyboard */; platformFilters = (ios, maccatalyst, ); };
-		B3296EAF26CABEA80088AC32 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB126CABEA80088AC32 /* SaveStates.storyboard */; platformFilters = (ios, maccatalyst, ); };
-		B3296EB226CABEE00088AC32 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB426CABEE00088AC32 /* Settings.storyboard */; platformFilters = (ios, maccatalyst, ); };
-		B3296EB526CABF250088AC32 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB726CABF250088AC32 /* Cheats.storyboard */; platformFilters = (ios, maccatalyst, ); };
-		B3296EBE26CABF9F0088AC32 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; };
+		B3296EBE26CABF9F0088AC32 /* Provenance~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance~tvOS.storyboard */; };
 		B3296EC326CABFB00088AC32 /* Settings~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings~tvOS.storyboard */; };
-		B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; };
-		B3296ECF26CABFDE0088AC32 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; };
-		B3296EDE26CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
-		B3296EE226CAC2B10088AC32 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE426CAC2B10088AC32 /* Default.xib */; platformFilters = (ios, maccatalyst, ); };
+		B3296EC826CABFCA0088AC32 /* SaveStates~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates~tvOS.storyboard */; };
+		B3296ECF26CABFDE0088AC32 /* Cheats~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats~tvOS.storyboard */; };
 		B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -470,10 +458,7 @@
 		B355E0422920AC1E00E4C858 /* WidgetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0412920AC1E00E4C858 /* WidgetExtension.swift */; };
 		B355E0452920AC2000E4C858 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B355E0442920AC2000E4C858 /* Assets.xcassets */; };
 		B355E0472920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */; };
-		B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B357A43727092254002C7C0F /* AppCenterAnalytics */; };
-		B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B357A43927092254002C7C0F /* AppCenterCrashes */; };
 		B3589E32219E8C5B001C5E12 /* LogViewable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B383F3BE219BBD8700DB6926 /* LogViewable.swift */; };
-		B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		B35D26FB20337D1C00F17D58 /* GameLaunchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */; };
 		B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
 		B35E6C22207ED7050040709A /* AppearanceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C18207ED7030040709A /* AppearanceScope.swift */; };
@@ -560,9 +545,7 @@
 		B387676D20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
 		B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
 		B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; };
-		B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
-		B390B0EA276B2DB20018E065 /* AltKit in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B390B0E9276B2DB20018E065 /* AltKit */; };
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B3976928285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
 		B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
@@ -624,12 +607,28 @@
 		B3B104D4218F2EF400210C39 /* PVWonderSwanControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37212187F568009D9244 /* PVWonderSwanControllerViewController.swift */; };
 		B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
 		B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
+		B3B208912950280500AE4052 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
+		B3B208922950281D00AE4052 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
+		B3B2089329502A2500AE4052 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
+		B3B2089429502B9700AE4052 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
+		B3B208952950307900AE4052 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
+		B3B2089A29503A2800AE4052 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE426CAC2B10088AC32 /* Default.xib */; platformFilters = (ios, maccatalyst, ); };
 		B3C8A6C02878238C0037A946 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270FB727DCB62C00E83180 /* libz.dylib */; };
 		B3C8A6C52878238C0037A946 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
 		B3C8A6CE2878238C0037A946 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
 		B3C8A6D02878238C0037A946 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		B3C8A6D52878238C0037A946 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		B3CCD2BB21DAA8D30031C42C /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
+		B3CD8BF12950200F00BFB3CC /* lineTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE5287EA0CE0054C1B5 /* lineTron.metal */; };
+		B3CD8BF22950200F00BFB3CC /* MetalViewShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BEA287EA0CE0054C1B5 /* MetalViewShaders.metal */; };
+		B3CD8BF32950200F00BFB3CC /* crt_filter_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE1287EA0CE0054C1B5 /* crt_filter_ps.metal */; };
+		B3CD8BF42950200F00BFB3CC /* megaTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE3287EA0CE0054C1B5 /* megaTron.metal */; };
+		B3CD8BF52950200F00BFB3CC /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
+		B3CD8BF62950200F00BFB3CC /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE7287EA0CE0054C1B5 /* MameShaders.metal */; };
+		B3CD8BF72950200F00BFB3CC /* simpleCRT.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE4287EA0CE0054C1B5 /* simpleCRT.metal */; };
+		B3CD8BF82950200F00BFB3CC /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BEC287EA0CE0054C1B5 /* fullscreen_vs.metal */; };
+		B3CD8BF92950200F00BFB3CC /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE2287EA0CE0054C1B5 /* ulTron.metal */; };
+		B3CD8BFA295022AC00BFB3CC /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; platformFilters = (tvos, ); };
 		B3CE94B7293446AC0053B891 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B3CE94B6293446AC0053B891 /* Introspect */; };
 		B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
 		B3D180A728964E07001207AF /* CoresRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C8A6A428781E810037A946 /* CoresRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -643,9 +642,8 @@
 		B3DEEF922942F92C00A6957C /* PVBliss.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; platformFilters = (ios, tvos, ); };
 		B3DEEF932942F92C00A6957C /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
-		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
-		B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; platformFilters = (ios, maccatalyst, ); };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EEED8A2920B006008E2603 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
 		B3EEED8D2920B00A008E2603 /* ControllerDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED8C2920B00A008E2603 /* ControllerDriver.cpp */; };
@@ -753,6 +751,21 @@
 		B3FAC9B6292B4785005E8B11 /* PVStella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; };
 		B3FAC9B7292B4786005E8B11 /* PVStella.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B3FB9678276DD7F600F7EDEE /* SteamController */; settings = {ATTRIBUTES = (Weak, ); }; };
+		B3FEC0092950009B0097D613 /* Provenance~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance~tvOS.storyboard */; platformFilters = (tvos, ); };
+		B3FEC00A2950009B0097D613 /* Cheats~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats~tvOS.storyboard */; platformFilters = (tvos, ); };
+		B3FEC00B2950009B0097D613 /* Settings~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings~tvOS.storyboard */; platformFilters = (tvos, ); };
+		B3FEC00C2950009B0097D613 /* SaveStates~tvOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates~tvOS.storyboard */; platformFilters = (tvos, ); };
+		B3FEC00E295003EE0097D613 /* PVApp+Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FEC00D295003EE0097D613 /* PVApp+Bundle.swift */; };
+		B3FEC00F295011300097D613 /* EmulatorActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */; platformFilters = (ios, maccatalyst, watchos, ); };
+		B3FEC0102950113A0097D613 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, watchos, ); };
+		B3FEC012295011470097D613 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, watchos, ); };
+		B3FEC0132950114F0097D613 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; platformFilters = (tvos, ); };
+		B3FEC014295011530097D613 /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; platformFilters = (ios, maccatalyst, watchos, ); };
+		B3FEC01629501ACA0097D613 /* EAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FEC01529501A810097D613 /* EAGLView.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3FEC01729501BFA0097D613 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EAC26CABE880088AC32 /* Provenance.storyboard */; platformFilters = (ios, maccatalyst, watchos, ); };
+		B3FEC01829501BFA0097D613 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB126CABEA80088AC32 /* SaveStates.storyboard */; platformFilters = (ios, maccatalyst, watchos, ); };
+		B3FEC01929501BFA0097D613 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB426CABEE00088AC32 /* Settings.storyboard */; platformFilters = (ios, maccatalyst, watchos, ); };
+		B3FEC01B29501C070097D613 /* Cheats~iOS.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB726CABF250088AC32 /* Cheats~iOS.storyboard */; platformFilters = (ios, maccatalyst, watchos, ); };
 		BE9FDCBD1C210B9F0046DF0E /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */; };
 		BE9FDCC91C210C470046DF0E /* PVRecentGame+TopShelf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */; };
 		C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
@@ -823,6 +836,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
+		};
+		B3B208962950313F00AE4052 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B383225D26ED9C530029D12F;
+			remoteInfo = "Check Git Submodules";
+		};
+		B3B208982950314900AE4052 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B29D3F2156177100903290;
+			remoteInfo = "Create Version files";
 		};
 		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1169,45 +1196,17 @@
 		B311B01C27A52B9C00D1DE41 /* PVUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B311B1C127A52F1700D1DE41 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B311B1D227A53E7200D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
 		B311B1D327A53E7400D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Strings.strings; sourceTree = "<group>"; };
 		B311B1D427A53E7500D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B311B1D527A53E7600D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B311B1D827A53E7900D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/Default.xib; sourceTree = "<group>"; };
-		B311B1DC27A53E7E00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B1DD27A53E7F00D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ru; path = ru.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B311B1DE27A53E8000D1DE41 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ru; path = ../ru.lproj/Info.plist; sourceTree = "<group>"; };
-		B311B1DF27A53F9C00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
 		B311B1E027A53F9D00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Strings.strings; sourceTree = "<group>"; };
 		B311B1E127A53F9E00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B311B1E227A53F9E00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B311B1E327A53F9F00D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B1E527A53FA000D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/Default.xib; sourceTree = "<group>"; };
-		B311B1E927A53FA300D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B1EA27A53FA400D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = ja; path = ja.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B311B1EB27A53FA400D1DE41 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = ja; path = ../ja.lproj/Info.plist; sourceTree = "<group>"; };
-		B311B1EC27A53FC300D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = nl; path = nl.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
 		B311B1ED27A53FC400D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Strings.strings; sourceTree = "<group>"; };
 		B311B1EE27A53FC500D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B311B1EF27A53FC500D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B311B1F027A53FC600D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B1F227A53FC700D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = nl; path = nl.lproj/Default.xib; sourceTree = "<group>"; };
-		B311B1F627A53FCA00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B1F727A53FCB00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = nl; path = nl.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B311B1F827A53FCB00D1DE41 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = nl; path = ../nl.lproj/Info.plist; sourceTree = "<group>"; };
-		B311B1F927A53FEF00D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
 		B311B1FA27A53FEF00D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Strings.strings; sourceTree = "<group>"; };
 		B311B1FB27A53FF000D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B311B1FC27A53FF100D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B311B1FD27A53FF100D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B1FF27A53FF300D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/Default.xib; sourceTree = "<group>"; };
-		B311B20327A53FF500D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B311B20427A53FF600D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = it; path = it.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B311B20527A53FF700D1DE41 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = it; path = ../it.lproj/Info.plist; sourceTree = "<group>"; };
 		B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPS2ControllerViewController.swift; sourceTree = "<group>"; };
 		B313544926E4C3B90047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B313544C26E4C3BE0047F338 /* PVPlay.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPlay.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3136FA429207E1000163043 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "pt-BR"; path = "pt-BR.lproj/Default.xib"; sourceTree = "<group>"; };
 		B3164B76288E25F500E1CBCF /* PVSupervisionControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSupervisionControllerViewController.swift; sourceTree = "<group>"; };
 		B316B4D12192652000693472 /* PVReicast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVReicast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4D62192659900693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1276,21 +1275,15 @@
 		B3296EAE26CABE950088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Provenance.strings"; sourceTree = "<group>"; };
 		B3296EB026CABEA80088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
 		B3296EB326CABEE00088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Settings.storyboard; sourceTree = "<group>"; };
-		B3296EB626CABF250088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Cheats.storyboard; sourceTree = "<group>"; };
 		B3296EB926CABF300088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Settings.strings"; sourceTree = "<group>"; };
-		B3296EBB26CABF340088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Cheats.strings"; sourceTree = "<group>"; };
+		B3296EBB26CABF340088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Cheats~iOS.strings"; sourceTree = "<group>"; };
 		B3296EBD26CABF6D0088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SaveStates.strings"; sourceTree = "<group>"; };
-		B3296EBF26CABF9F0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B3296EC226CABFA70088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Provenance.strings"; sourceTree = "<group>"; };
+		B3296EBF26CABF9F0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = "en.lproj/Provenance~tvOS.storyboard"; sourceTree = "<group>"; };
+		B3296EC226CABFA70088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Provenance~tvOS.strings"; sourceTree = "<group>"; };
 		B3296EC426CABFB00088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = "en.lproj/Settings~tvOS.storyboard"; sourceTree = "<group>"; };
 		B3296EC726CABFB90088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
-		B3296ED026CABFDE0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B3296EDC26CAC2220088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B3296EDD26CAC2320088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = "zh-Hans"; path = "zh-Hans.lproj/Cheats.storyboard"; sourceTree = "<group>"; };
-		B3296EDF26CAC27C0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
-		B3296EE126CAC2800088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/PVGameLibraryCollectionViewCell.xib"; sourceTree = "<group>"; };
-		B3296EE326CAC2B10088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/Default.xib; sourceTree = "<group>"; };
-		B3296EE526CAC2CA0088AC32 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh-Hans"; path = "zh-Hans.lproj/Default.xib"; sourceTree = "<group>"; };
+		B3296ED026CABFDE0088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = "en.lproj/Cheats~tvOS.storyboard"; sourceTree = "<group>"; };
+		B3296EDC26CAC2220088AC32 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = "en.lproj/SaveStates~tvOS.storyboard"; sourceTree = "<group>"; };
 		B3296EE926CAC3ED0088AC32 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Strings.strings; sourceTree = "<group>"; };
 		B3296EEB26CAC3F00088AC32 /* zh-Hans */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Strings.strings"; sourceTree = "<group>"; };
 		B32D8F811EA7FDBE00175FBF /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
@@ -1440,17 +1433,17 @@
 		B373BD45294FE5CF00E7D845 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = "it.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
 		B373BD46294FE5E200E7D845 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = "ja.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
 		B373BD48294FE60900E7D845 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
-		B373BD49294FE62700E7D845 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B373BD49294FE62700E7D845 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/Provenance~tvOS.strings"; sourceTree = "<group>"; };
 		B373BD4A294FE63A00E7D845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
-		B373BD4B294FE65600E7D845 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Provenance.strings; sourceTree = "<group>"; };
-		B373BD4C294FE67000E7D845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B373BD4D294FE68200E7D845 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B373BD4E294FE6B200E7D845 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Provenance.strings; sourceTree = "<group>"; };
-		B373BD4F294FE6F600E7D845 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B373BD50294FE70E00E7D845 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Cheats.strings; sourceTree = "<group>"; };
+		B373BD4B294FE65600E7D845 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = "it.lproj/Provenance~tvOS.strings"; sourceTree = "<group>"; };
+		B373BD4C294FE67000E7D845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Cheats~iOS.strings"; sourceTree = "<group>"; };
+		B373BD4D294FE68200E7D845 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = "es.lproj/Cheats~iOS.strings"; sourceTree = "<group>"; };
+		B373BD4E294FE6B200E7D845 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = "ja.lproj/Provenance~tvOS.strings"; sourceTree = "<group>"; };
+		B373BD4F294FE6F600E7D845 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = "ja.lproj/Cheats~iOS.strings"; sourceTree = "<group>"; };
+		B373BD50294FE70E00E7D845 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = "it.lproj/Cheats~iOS.strings"; sourceTree = "<group>"; };
 		B373BD51294FE73D00E7D845 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = "es.lproj/Settings~tvOS.strings"; sourceTree = "<group>"; };
-		B373BD52294FE77A00E7D845 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Cheats.strings; sourceTree = "<group>"; };
-		B373BD53294FE7AE00E7D845 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SaveStates.strings"; sourceTree = "<group>"; };
+		B373BD52294FE77A00E7D845 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/Cheats~iOS.strings"; sourceTree = "<group>"; };
+		B373BD53294FE7AE00E7D845 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/SaveStates~tvOS.strings"; sourceTree = "<group>"; };
 		B378224921D329EC0077E86F /* SettingsRowSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSwitch.swift; sourceTree = "<group>"; };
 		B378224D21D32A360077E86F /* SegueNavigationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueNavigationRow.swift; sourceTree = "<group>"; };
 		B378225321D32AD60077E86F /* SliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderCell.swift; sourceTree = "<group>"; };
@@ -1567,6 +1560,19 @@
 		B3AF701B21916E38000FA7F9 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3AF705921916F2F000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3AF70652191733D000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
+		B3B2088A295024B600AE4052 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Default.strings"; sourceTree = "<group>"; };
+		B3B2088B295024CF00AE4052 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Default.strings; sourceTree = "<group>"; };
+		B3B2088C2950254200AE4052 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Default.strings; sourceTree = "<group>"; };
+		B3B2088D2950255C00AE4052 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Default.strings; sourceTree = "<group>"; };
+		B3B2088E2950256C00AE4052 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Default.strings"; sourceTree = "<group>"; };
+		B3B2088F2950258600AE4052 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Default.strings; sourceTree = "<group>"; };
+		B3B20890295025BD00AE4052 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Default.strings; sourceTree = "<group>"; };
+		B3B2089B29503BCA00AE4052 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Default.xib; sourceTree = "<group>"; };
+		B3B2089C29503BF000AE4052 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Default.strings; sourceTree = "<group>"; };
+		B3B2089D2950491400AE4052 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
+		B3B2089E2950495700AE4052 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/PVGameLibraryCollectionViewCell.strings; sourceTree = "<group>"; };
+		B3B2089F29504C2B00AE4052 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "Base.lproj/Cheats~iOS.storyboard"; sourceTree = "<group>"; };
+		B3B208A029504C5A00AE4052 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = "en.lproj/Cheats~iOS.strings"; sourceTree = "<group>"; };
 		B3B3B8911DECF8BC00602746 /* PVMupen64Plus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64Plus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8941DECF8C200602746 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8971DECF8C700602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1602,14 +1608,8 @@
 		B3CB85C11E9BFB16009155A6 /* PVPokeMini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPokeMini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+Saves.swift"; sourceTree = "<group>"; };
 		B3CE7FFF2873FB7600B6BB5A /* PVVecXGL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecXGL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3CEC5A52794CD8B004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
 		B3CEC5A62794CD8C004A7CC1 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Strings.strings; sourceTree = "<group>"; };
 		B3CEC5A72794CD8D004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B3CEC5A82794CD8E004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Provenance.storyboard; sourceTree = "<group>"; };
-		B3CEC5AB2794CD90004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/Default.xib; sourceTree = "<group>"; };
-		B3CEC5AF2794CD93004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/SaveStates.storyboard; sourceTree = "<group>"; };
-		B3CEC5B02794CD94004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = es; path = es.lproj/Cheats.storyboard; sourceTree = "<group>"; };
-		B3CEC5B12794CD94004A7CC1 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = es; path = ../es.lproj/Info.plist; sourceTree = "<group>"; };
 		B3D1800828963AD3001207AF /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D1800D28963E80001207AF /* PVBliss-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVBliss-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D180892896437C001207AF /* PVBliss-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVBliss-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1681,14 +1681,42 @@
 		B3F64ED7205CD21F00C273C7 /* PVControllerSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVControllerSelectionViewController.swift; sourceTree = "<group>"; };
 		B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVConflictViewController.swift; sourceTree = "<group>"; };
 		B3FEBFE5294FE8D90097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Settings.strings; sourceTree = "<group>"; };
-		B3FEBFE6294FE8FE0097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Provenance.strings; sourceTree = "<group>"; };
-		B3FEBFE7294FE92C0097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B3FEBFE6294FE8FE0097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Provenance~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEBFE7294FE92C0097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = "es.lproj/Provenance~tvOS.strings"; sourceTree = "<group>"; };
 		B3FEBFE8294FE9900097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Settings.strings; sourceTree = "<group>"; };
 		B3FEBFE9294FE9A70097D613 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Settings.strings; sourceTree = "<group>"; };
 		B3FEBFEA294FE9EF0097D613 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Settings.strings; sourceTree = "<group>"; };
 		B3FEBFEB294FEA1A0097D613 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Settings.strings; sourceTree = "<group>"; };
 		B3FEBFEC294FF08E0097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/SaveStates.strings; sourceTree = "<group>"; };
 		B3FEBFED294FF1300097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SaveStates.strings; sourceTree = "<group>"; };
+		B3FEBFEE294FF1940097D613 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/SaveStates.strings; sourceTree = "<group>"; };
+		B3FEBFEF294FF1A10097D613 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/SaveStates.strings; sourceTree = "<group>"; };
+		B3FEBFF0294FF20B0097D613 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/SaveStates.strings; sourceTree = "<group>"; };
+		B3FEBFF1294FF23C0097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B3FEBFF2294FF2490097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B3FEBFF3294FF2570097D613 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B3FEBFF4294FF2650097D613 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B3FEBFF5294FF2750097D613 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Provenance.strings; sourceTree = "<group>"; };
+		B3FEBFF6294FF2D20097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/SaveStates~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEBFF7294FF2DB0097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = "es.lproj/SaveStates~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEBFF8294FF2E60097D613 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = "ja.lproj/SaveStates~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEBFF9294FF2F30097D613 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = "it.lproj/SaveStates~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEBFFA294FF3030097D613 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/SaveStates~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEBFFB294FF3190097D613 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Cheats~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEBFFC294FF3270097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Cheats~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEBFFD294FF3340097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = "es.lproj/Cheats~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEBFFE294FF3490097D613 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = "ja.lproj/Cheats~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEBFFF294FF3540097D613 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = "it.lproj/Cheats~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEC000294FF3660097D613 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = "nl.lproj/Cheats~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEC002294FF3740097D613 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Cheats~tvOS.strings"; sourceTree = "<group>"; };
+		B3FEC003294FF91D0097D613 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PVGameLibraryCollectionViewCell.strings; sourceTree = "<group>"; };
+		B3FEC004294FF9470097D613 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/PVGameLibraryCollectionViewCell.strings; sourceTree = "<group>"; };
+		B3FEC005294FF9B80097D613 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/PVGameLibraryCollectionViewCell.strings"; sourceTree = "<group>"; };
+		B3FEC006294FF9CC0097D613 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/PVGameLibraryCollectionViewCell.strings; sourceTree = "<group>"; };
+		B3FEC007294FF9E90097D613 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PVGameLibraryCollectionViewCell.strings; sourceTree = "<group>"; };
+		B3FEC008294FFAC10097D613 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/PVGameLibraryCollectionViewCell.strings; sourceTree = "<group>"; };
+		B3FEC00D295003EE0097D613 /* PVApp+Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVApp+Bundle.swift"; sourceTree = "<group>"; };
+		B3FEC01529501A810097D613 /* EAGLView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EAGLView.h; sourceTree = "<group>"; };
 		B3FF641C2873EAEB00829C14 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FF642F2873EC8000829C14 /* PVPotator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPotator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TopShelf.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1716,7 +1744,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */,
 				B3AEDE20293F34250050BDB6 /* PVReicast.framework in Frameworks */,
 				B3FAC92D292B450C005E8B11 /* PVGB.framework in Frameworks */,
 				B3FAC927292B4501005E8B11 /* PVEP128Emu.framework in Frameworks */,
@@ -1739,7 +1766,6 @@
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
 				B3AEDE22293F34370050BDB6 /* PVCrabEmu.framework in Frameworks */,
 				1AD4BC6F1BFD38D6007D6C7C /* AVFoundation.framework in Frameworks */,
-				B357A43827092254002C7C0F /* AppCenterAnalytics in Frameworks */,
 				B3FAC941292B4593005E8B11 /* PVMupen64Plus.framework in Frameworks */,
 				1A4869DD17C8D60C0019F6D2 /* CFNetwork.framework in Frameworks */,
 				B3FAC947292B459B005E8B11 /* PVMupen64PlusVideoRice.framework in Frameworks */,
@@ -1774,7 +1800,6 @@
 				B3271BDB276B8B2E0031AECC /* OpenGL.framework in Frameworks */,
 				B37CE7C8293F29AD0010B746 /* PVFreeDO.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
-				B390B0EA276B2DB20018E065 /* AltKit in Frameworks */,
 				B3AEDE28293F34B30050BDB6 /* PVPicoDrive.framework in Frameworks */,
 				37EEA2AB27BC81890070E222 /* Introspect in Frameworks */,
 				B3FAC935292B451E005E8B11 /* PVGME.framework in Frameworks */,
@@ -1997,7 +2022,7 @@
 				B3296EE426CAC2B10088AC32 /* Default.xib */,
 				B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */,
 				B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */,
-				B3296EB726CABF250088AC32 /* Cheats.storyboard */,
+				B3296EB726CABF250088AC32 /* Cheats~iOS.storyboard */,
 			);
 			path = "User Interface";
 			sourceTree = "<group>";
@@ -2707,6 +2732,8 @@
 			isa = PBXGroup;
 			children = (
 				B33F50F1294F19D6003AFCB2 /* PVApp.h */,
+				B3FEC00D295003EE0097D613 /* PVApp+Bundle.swift */,
+				B3FEC01529501A810097D613 /* EAGLView.h */,
 			);
 			path = PVApp;
 			sourceTree = "<group>";
@@ -2969,10 +2996,10 @@
 		B35D667D21814EAB0005A992 /* Story Boards */ = {
 			isa = PBXGroup;
 			children = (
-				B3296EC026CABF9F0088AC32 /* Provenance.storyboard */,
+				B3296EC026CABF9F0088AC32 /* Provenance~tvOS.storyboard */,
 				B3296EC526CABFB00088AC32 /* Settings~tvOS.storyboard */,
-				B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */,
-				B3296ED126CABFDE0088AC32 /* Cheats.storyboard */,
+				B3296ECA26CABFCA0088AC32 /* SaveStates~tvOS.storyboard */,
+				B3296ED126CABFDE0088AC32 /* Cheats~tvOS.storyboard */,
 			);
 			path = "Story Boards";
 			sourceTree = "<group>";
@@ -3348,6 +3375,7 @@
 				B33F51CE294F1EA8003AFCB2 /* MBProgressHUD.h in Headers */,
 				B33F51CC294F1E90003AFCB2 /* PVAltKitService.h in Headers */,
 				B33F51CB294F1E80003AFCB2 /* PVWebServer.h in Headers */,
+				B3FEC01629501ACA0097D613 /* EAGLView.h in Headers */,
 				B33F50F2294F19D6003AFCB2 /* PVApp.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3392,9 +3420,6 @@
 			);
 			name = Provenance;
 			packageProductDependencies = (
-				B357A43727092254002C7C0F /* AppCenterAnalytics */,
-				B357A43927092254002C7C0F /* AppCenterCrashes */,
-				B390B0E9276B2DB20018E065 /* AltKit */,
 				B3FB9678276DD7F600F7EDEE /* SteamController */,
 				37EEA2AA27BC81890070E222 /* Introspect */,
 			);
@@ -3533,6 +3558,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3B208992950314900AE4052 /* PBXTargetDependency */,
+				B3B208972950313F00AE4052 /* PBXTargetDependency */,
 			);
 			name = PVApp;
 			packageProductDependencies = (
@@ -3942,43 +3969,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				B30CC7D1294F3EFD005E367C /* TVAssets.xcassets in Resources */,
+				B3B2089A29503A2800AE4052 /* Default.xib in Resources */,
 				1A3D40A217B2DCE4004DFFFC /* InfoPlist.strings in Resources */,
 				B3296EE826CAC3ED0088AC32 /* Strings.strings in Resources */,
 				B36703682896314200F75595 /* HQ2x.fsh in Resources */,
-				B30CC7CF294F3EEA005E367C /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */,
 				B367035C2896314200F75595 /* AAScale2x.fsh in Resources */,
 				B367036A2896314200F75595 /* LCD.fsh in Resources */,
-				B3296EB226CABEE00088AC32 /* Settings.storyboard in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
 				B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */,
 				B36703702896314200F75595 /* Bilinear.fsh in Resources */,
 				B367035E2896314200F75595 /* AAOmniScaleLegacy.fsh in Resources */,
-				B3E6DAE120B7C2F800454DD4 /* PVLogViewController.xib in Resources */,
 				B367036E2896314200F75595 /* OmniScale.fsh in Resources */,
 				B36703662896314200F75595 /* MasterShader.fsh in Resources */,
 				B36703722896314200F75595 /* AAScale4x.fsh in Resources */,
-				B3296EE226CAC2B10088AC32 /* Default.xib in Resources */,
-				B30CC7CC294F3E9C005E367C /* SaveStates.storyboard in Resources */,
-				B3296EAF26CABEA80088AC32 /* SaveStates.storyboard in Resources */,
 				B36703642896314200F75595 /* SmoothBilinear.fsh in Resources */,
-				B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */,
 				1F8D52481D91993000C29F90 /* licenses.html in Resources */,
 				B367035A2896314200F75595 /* NearestNeighbor.fsh in Resources */,
-				B3296EAA26CABE880088AC32 /* Provenance.storyboard in Resources */,
 				B367036C2896314200F75595 /* CRT.fsh in Resources */,
-				B3592CE52070B9DE00533593 /* PVSaveStateCollectionViewCell.xib in Resources */,
-				B3296EB526CABF250088AC32 /* Cheats.storyboard in Resources */,
-				B3296EDE26CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib in Resources */,
 				B36703602896314200F75595 /* MonoLCD.fsh in Resources */,
 				B36703622896314200F75595 /* Scale2x.fsh in Resources */,
 				B36703742896314300F75595 /* Scale4x.fsh in Resources */,
-				B30CC7CD294F3E9C005E367C /* Cheats.storyboard in Resources */,
-				B30CC7D0294F3EEA005E367C /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */,
-				B30CC7CB294F3E9B005E367C /* Provenance.storyboard in Resources */,
 				B36703762896314300F75595 /* OmniScaleLegacy.fsh in Resources */,
 				B307830628924D69007E7A2D /* GLES in Resources */,
-				B30CC7CE294F3E9C005E367C /* Settings~tvOS.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3997,14 +4010,14 @@
 				B3F64ECA205CBD1200C273C7 /* licenses.html in Resources */,
 				B367036D2896314200F75595 /* CRT.fsh in Resources */,
 				B367035F2896314200F75595 /* AAOmniScaleLegacy.fsh in Resources */,
-				B3296ECF26CABFDE0088AC32 /* Cheats.storyboard in Resources */,
-				B3296EBE26CABF9F0088AC32 /* Provenance.storyboard in Resources */,
+				B3296ECF26CABFDE0088AC32 /* Cheats~tvOS.storyboard in Resources */,
+				B3296EBE26CABF9F0088AC32 /* Provenance~tvOS.storyboard in Resources */,
 				B36703712896314200F75595 /* Bilinear.fsh in Resources */,
 				B36703692896314200F75595 /* HQ2x.fsh in Resources */,
 				B36703612896314200F75595 /* MonoLCD.fsh in Resources */,
 				B3CEC5B22794D8DD004A7CC1 /* Strings.strings in Resources */,
 				B36703732896314300F75595 /* AAScale4x.fsh in Resources */,
-				B3296EC826CABFCA0088AC32 /* SaveStates.storyboard in Resources */,
+				B3296EC826CABFCA0088AC32 /* SaveStates~tvOS.storyboard in Resources */,
 				1AD481C31BA350A400FDA50A /* TVAssets.xcassets in Resources */,
 				1AD482361BA35A2D00FDA50A /* Assets.xcassets in Resources */,
 				B367036B2896314200F75595 /* LCD.fsh in Resources */,
@@ -4060,6 +4073,25 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3B2089429502B9700AE4052 /* TVAssets.xcassets in Resources */,
+				B3B2089329502A2500AE4052 /* licenses.html in Resources */,
+				B3CD8BFA295022AC00BFB3CC /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */,
+				B3FEC01B29501C070097D613 /* Cheats~iOS.storyboard in Resources */,
+				B3FEC00F295011300097D613 /* EmulatorActionCell.xib in Resources */,
+				B3FEC0092950009B0097D613 /* Provenance~tvOS.storyboard in Resources */,
+				B3FEC014295011530097D613 /* PVLogViewController.xib in Resources */,
+				B3FEC01729501BFA0097D613 /* Provenance.storyboard in Resources */,
+				B3FEC00A2950009B0097D613 /* Cheats~tvOS.storyboard in Resources */,
+				B3FEC00C2950009B0097D613 /* SaveStates~tvOS.storyboard in Resources */,
+				B3B208952950307900AE4052 /* GLES in Resources */,
+				B3FEC01829501BFA0097D613 /* SaveStates.storyboard in Resources */,
+				B3FEC012295011470097D613 /* PVSaveStateCollectionViewCell.xib in Resources */,
+				B3B208922950281D00AE4052 /* Strings.strings in Resources */,
+				B3FEC0102950113A0097D613 /* PVGameLibraryCollectionViewCell.xib in Resources */,
+				B3FEC00B2950009B0097D613 /* Settings~tvOS.storyboard in Resources */,
+				B3FEC01929501BFA0097D613 /* Settings.storyboard in Resources */,
+				B3B208912950280500AE4052 /* Assets.xcassets in Resources */,
+				B3FEC0132950114F0097D613 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4570,6 +4602,7 @@
 				B33F510B294F1A1E003AFCB2 /* PVCoresTableViewContorller.swift in Sources */,
 				B33F510E294F1A1E003AFCB2 /* UICollectionView+Rx.swift in Sources */,
 				B33F5165294F1A1E003AFCB2 /* RealmBindObserver.swift in Sources */,
+				B3CD8BF32950200F00BFB3CC /* crt_filter_ps.metal in Sources */,
 				B33F515F294F1A1E003AFCB2 /* PVCheatsViewController.swift in Sources */,
 				B33F51B6294F1A1F003AFCB2 /* ConsoleGamesView.swift in Sources */,
 				B33F51A9294F1A1F003AFCB2 /* PVGBControllerViewController.swift in Sources */,
@@ -4582,6 +4615,7 @@
 				B33F5100294F1A1E003AFCB2 /* PublishedPipeline.swift in Sources */,
 				B33F5194294F1A1F003AFCB2 /* PVGameLibrarySectionFooterView.swift in Sources */,
 				B33F516E294F1A1E003AFCB2 /* PVButtonGroupOverlayView.swift in Sources */,
+				B3CD8BF72950200F00BFB3CC /* simpleCRT.metal in Sources */,
 				B33F5130294F1A1E003AFCB2 /* GCDWebServerDataRequest.m in Sources */,
 				B33F51A5294F1A1F003AFCB2 /* GCDWebServerConnection.m in Sources */,
 				B33F517B294F1A1E003AFCB2 /* PVLynxControllerViewController.swift in Sources */,
@@ -4627,6 +4661,7 @@
 				B33F51B0294F1A1F003AFCB2 /* PVSaveStateInfoViewController.swift in Sources */,
 				B33F5102294F1A1E003AFCB2 /* PVControllerSelectionViewController.swift in Sources */,
 				B33F5125294F1A1E003AFCB2 /* SystemsSettingsTableViewController.swift in Sources */,
+				B3CD8BF92950200F00BFB3CC /* ulTron.metal in Sources */,
 				B33F515A294F1A1E003AFCB2 /* GameContextMenu.swift in Sources */,
 				B33F5119294F1A1E003AFCB2 /* UISearchController+Rx.swift in Sources */,
 				B33F51A6294F1A1F003AFCB2 /* Reactive+RxRealmDataSources.swift in Sources */,
@@ -4660,6 +4695,7 @@
 				B33F50FC294F1A1E003AFCB2 /* PVAtariJaguarControllerViewController.swift in Sources */,
 				B33F517E294F1A1E003AFCB2 /* PVEmulatorViewController+Controllers.swift in Sources */,
 				B33F51AF294F1A1F003AFCB2 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
+				B3FEC00E295003EE0097D613 /* PVApp+Bundle.swift in Sources */,
 				B33F5134294F1A1E003AFCB2 /* PVGameLibraryViewController.swift in Sources */,
 				B33F5139294F1A1E003AFCB2 /* PVAppDelegate+VolumeButton.swift in Sources */,
 				B33F51A1294F1A1F003AFCB2 /* PVGameLibraryCollectionFlowLayout.swift in Sources */,
@@ -4679,6 +4715,7 @@
 				B33F5176294F1A1E003AFCB2 /* PVEmulatorViewController+PauseMenu.swift in Sources */,
 				B33F5128294F1A1E003AFCB2 /* Sections.swift in Sources */,
 				B33F5140294F1A1E003AFCB2 /* PVGPUViewController.m in Sources */,
+				B3CD8BF82950200F00BFB3CC /* fullscreen_vs.metal in Sources */,
 				B33F5166294F1A1E003AFCB2 /* ConsolesWrapperView.swift in Sources */,
 				B30CC7BF294F285A005E367C /* PVSearchViewController.swift in Sources */,
 				B33F515D294F1A1E003AFCB2 /* Extensions.swift in Sources */,
@@ -4701,6 +4738,7 @@
 				B33F5198294F1A1F003AFCB2 /* AppearanceScope.swift in Sources */,
 				B33F518A294F1A1F003AFCB2 /* PVMSXControllerViewController.swift in Sources */,
 				B33F5174294F1A1E003AFCB2 /* PVRootViewController+DelegateMethods.swift in Sources */,
+				B3CD8BF42950200F00BFB3CC /* megaTron.metal in Sources */,
 				B33F512C294F1A1E003AFCB2 /* PVAtari2600ControllerViewController.swift in Sources */,
 				B33F5162294F1A1E003AFCB2 /* RowCompatible.swift in Sources */,
 				B33F5152294F1A1E003AFCB2 /* UIViewController+Alerts.swift in Sources */,
@@ -4710,9 +4748,11 @@
 				B33F518F294F1A1F003AFCB2 /* ConflictsController.swift in Sources */,
 				B33F5121294F1A1E003AFCB2 /* Version.swift in Sources */,
 				B33F5157294F1A1E003AFCB2 /* JSDPad.swift in Sources */,
+				B3CD8BF62950200F00BFB3CC /* MameShaders.metal in Sources */,
 				B33F516B294F1A1E003AFCB2 /* PVSupervisionControllerViewController.swift in Sources */,
 				B33F5122294F1A1E003AFCB2 /* TVAlertController.swift in Sources */,
 				B33F514D294F1A1E003AFCB2 /* UIViewController+SideNavigationController.swift in Sources */,
+				B3CD8BF22950200F00BFB3CC /* MetalViewShaders.metal in Sources */,
 				B33F5189294F1A1F003AFCB2 /* ViewControllerResolver.swift in Sources */,
 				B33F5199294F1A1F003AFCB2 /* GCDWebUploader.m in Sources */,
 				B33F51A8294F1A1F003AFCB2 /* UIColor+Hex.swift in Sources */,
@@ -4743,7 +4783,9 @@
 				B33F511C294F1A1E003AFCB2 /* PVEmulatorViewController+Saves.swift in Sources */,
 				B33F5158294F1A1E003AFCB2 /* PVGBAControllerViewController.swift in Sources */,
 				B33F5147294F1A1E003AFCB2 /* SystemOverviewViewModel.swift in Sources */,
+				B3CD8BF52950200F00BFB3CC /* blit_ps.metal in Sources */,
 				B33F511F294F1A1E003AFCB2 /* ApplicationMonitor.swift in Sources */,
+				B3CD8BF12950200F00BFB3CC /* lineTron.metal in Sources */,
 				B33F5190294F1A1F003AFCB2 /* PVCheatsInfoViewController.swift in Sources */,
 				B33F5108294F1A1E003AFCB2 /* PVCoreFactory.swift in Sources */,
 				B33F519E294F1A1F003AFCB2 /* SideNavigationController+NestedTypes.swift in Sources */,
@@ -4885,7 +4927,7 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
-				tvos,
+				maccatalyst,
 			);
 			target = B3E21D6A203211BE009939D3 /* Spotlight */;
 			targetProxy = B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */;
@@ -4899,6 +4941,16 @@
 			isa = PBXTargetDependency;
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B383226526ED9F0C0029D12F /* PBXContainerItemProxy */;
+		};
+		B3B208972950313F00AE4052 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
+			targetProxy = B3B208962950313F00AE4052 /* PBXContainerItemProxy */;
+		};
+		B3B208992950314900AE4052 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B29D3F2156177100903290 /* Create Version files */;
+			targetProxy = B3B208982950314900AE4052 /* PBXContainerItemProxy */;
 		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4952,11 +5004,11 @@
 			children = (
 				B3296EAB26CABE880088AC32 /* en */,
 				B3296EAE26CABE950088AC32 /* zh-Hans */,
-				B3CEC5A82794CD8E004A7CC1 /* es */,
-				B311B1D527A53E7600D1DE41 /* ru */,
-				B311B1E227A53F9E00D1DE41 /* ja */,
-				B311B1EF27A53FC500D1DE41 /* nl */,
-				B311B1FC27A53FF100D1DE41 /* it */,
+				B3FEBFF1294FF23C0097D613 /* es */,
+				B3FEBFF2294FF2490097D613 /* ru */,
+				B3FEBFF3294FF2570097D613 /* ja */,
+				B3FEBFF4294FF2650097D613 /* it */,
+				B3FEBFF5294FF2750097D613 /* nl */,
 			);
 			name = Provenance.storyboard;
 			sourceTree = "<group>";
@@ -4966,11 +5018,11 @@
 			children = (
 				B3296EB026CABEA80088AC32 /* en */,
 				B3296EBD26CABF6D0088AC32 /* zh-Hans */,
-				B311B1E327A53F9F00D1DE41 /* ja */,
-				B311B1F027A53FC600D1DE41 /* nl */,
-				B311B1FD27A53FF100D1DE41 /* it */,
 				B3FEBFEC294FF08E0097D613 /* es */,
 				B3FEBFED294FF1300097D613 /* ru */,
+				B3FEBFEE294FF1940097D613 /* ja */,
+				B3FEBFEF294FF1A10097D613 /* it */,
+				B3FEBFF0294FF20B0097D613 /* nl */,
 			);
 			name = SaveStates.storyboard;
 			sourceTree = "<group>";
@@ -4989,21 +5041,22 @@
 			name = Settings.storyboard;
 			sourceTree = "<group>";
 		};
-		B3296EB726CABF250088AC32 /* Cheats.storyboard */ = {
+		B3296EB726CABF250088AC32 /* Cheats~iOS.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B3296EB626CABF250088AC32 /* en */,
 				B3296EBB26CABF340088AC32 /* zh-Hans */,
 				B373BD4C294FE67000E7D845 /* ru */,
 				B373BD4D294FE68200E7D845 /* es */,
 				B373BD4F294FE6F600E7D845 /* ja */,
 				B373BD50294FE70E00E7D845 /* it */,
 				B373BD52294FE77A00E7D845 /* nl */,
+				B3B2089F29504C2B00AE4052 /* Base */,
+				B3B208A029504C5A00AE4052 /* en */,
 			);
-			name = Cheats.storyboard;
+			name = "Cheats~iOS.storyboard";
 			sourceTree = "<group>";
 		};
-		B3296EC026CABF9F0088AC32 /* Provenance.storyboard */ = {
+		B3296EC026CABF9F0088AC32 /* Provenance~tvOS.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				B3296EBF26CABF9F0088AC32 /* en */,
@@ -5014,7 +5067,7 @@
 				B3FEBFE6294FE8FE0097D613 /* ru */,
 				B3FEBFE7294FE92C0097D613 /* es */,
 			);
-			name = Provenance.storyboard;
+			name = "Provenance~tvOS.storyboard";
 			sourceTree = "<group>";
 		};
 		B3296EC526CABFB00088AC32 /* Settings~tvOS.storyboard */ = {
@@ -5032,44 +5085,46 @@
 			name = "Settings~tvOS.storyboard";
 			sourceTree = "<group>";
 		};
-		B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */ = {
+		B3296ECA26CABFCA0088AC32 /* SaveStates~tvOS.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				B3296EDC26CAC2220088AC32 /* en */,
-				B3CEC5AF2794CD93004A7CC1 /* es */,
-				B311B1DC27A53E7E00D1DE41 /* ru */,
-				B311B1E927A53FA300D1DE41 /* ja */,
-				B311B1F627A53FCA00D1DE41 /* nl */,
-				B311B20327A53FF500D1DE41 /* it */,
 				B373BD53294FE7AE00E7D845 /* zh-Hans */,
+				B3FEBFF6294FF2D20097D613 /* ru */,
+				B3FEBFF7294FF2DB0097D613 /* es */,
+				B3FEBFF8294FF2E60097D613 /* ja */,
+				B3FEBFF9294FF2F30097D613 /* it */,
+				B3FEBFFA294FF3030097D613 /* nl */,
 			);
-			name = SaveStates.storyboard;
+			name = "SaveStates~tvOS.storyboard";
 			sourceTree = "<group>";
 		};
-		B3296ED126CABFDE0088AC32 /* Cheats.storyboard */ = {
+		B3296ED126CABFDE0088AC32 /* Cheats~tvOS.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				B3296ED026CABFDE0088AC32 /* en */,
-				B3296EDD26CAC2320088AC32 /* zh-Hans */,
-				B3CEC5B02794CD94004A7CC1 /* es */,
-				B311B1DD27A53E7F00D1DE41 /* ru */,
-				B311B1EA27A53FA400D1DE41 /* ja */,
-				B311B1F727A53FCB00D1DE41 /* nl */,
-				B311B20427A53FF600D1DE41 /* it */,
+				B3FEBFFB294FF3190097D613 /* zh-Hans */,
+				B3FEBFFC294FF3270097D613 /* ru */,
+				B3FEBFFD294FF3340097D613 /* es */,
+				B3FEBFFE294FF3490097D613 /* ja */,
+				B3FEBFFF294FF3540097D613 /* it */,
+				B3FEC000294FF3660097D613 /* nl */,
+				B3FEC002294FF3740097D613 /* pt-BR */,
 			);
-			name = Cheats.storyboard;
+			name = "Cheats~tvOS.storyboard";
 			sourceTree = "<group>";
 		};
 		B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B3296EDF26CAC27C0088AC32 /* en */,
-				B3296EE126CAC2800088AC32 /* zh-Hans */,
-				B3CEC5A52794CD8B004A7CC1 /* es */,
-				B311B1D227A53E7200D1DE41 /* ru */,
-				B311B1DF27A53F9C00D1DE41 /* ja */,
-				B311B1EC27A53FC300D1DE41 /* nl */,
-				B311B1F927A53FEF00D1DE41 /* it */,
+				B3FEC003294FF91D0097D613 /* ru */,
+				B3FEC004294FF9470097D613 /* ja */,
+				B3FEC005294FF9B80097D613 /* zh-Hans */,
+				B3FEC006294FF9CC0097D613 /* nl */,
+				B3FEC007294FF9E90097D613 /* es */,
+				B3FEC008294FFAC10097D613 /* it */,
+				B3B2089D2950491400AE4052 /* Base */,
+				B3B2089E2950495700AE4052 /* en */,
 			);
 			name = PVGameLibraryCollectionViewCell.xib;
 			sourceTree = "<group>";
@@ -5077,14 +5132,15 @@
 		B3296EE426CAC2B10088AC32 /* Default.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B3296EE326CAC2B10088AC32 /* en */,
-				B3296EE526CAC2CA0088AC32 /* zh-Hans */,
-				B3CEC5AB2794CD90004A7CC1 /* es */,
-				B311B1D827A53E7900D1DE41 /* ru */,
-				B311B1E527A53FA000D1DE41 /* ja */,
-				B311B1F227A53FC700D1DE41 /* nl */,
-				B311B1FF27A53FF300D1DE41 /* it */,
-				B3136FA429207E1000163043 /* pt-BR */,
+				B3B2088A295024B600AE4052 /* zh-Hans */,
+				B3B2088B295024CF00AE4052 /* nl */,
+				B3B2088C2950254200AE4052 /* it */,
+				B3B2088D2950255C00AE4052 /* ja */,
+				B3B2088E2950256C00AE4052 /* pt-BR */,
+				B3B2088F2950258600AE4052 /* ru */,
+				B3B20890295025BD00AE4052 /* es */,
+				B3B2089B29503BCA00AE4052 /* Base */,
+				B3B2089C29503BF000AE4052 /* en */,
 			);
 			name = Default.xib;
 			sourceTree = "<group>";
@@ -5116,11 +5172,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				B37D31C9274A57F000D635E0 /* en */,
-				B3CEC5B12794CD94004A7CC1 /* es */,
-				B311B1DE27A53E8000D1DE41 /* ru */,
-				B311B1EB27A53FA400D1DE41 /* ja */,
-				B311B1F827A53FCB00D1DE41 /* nl */,
-				B311B20527A53FF700D1DE41 /* it */,
 			);
 			name = Info.plist;
 			sourceTree = "<group>";
@@ -5274,8 +5325,9 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletvos*]" = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletvos*]" = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME[sdk=appletvos*]" = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
@@ -5314,7 +5366,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -5337,8 +5389,9 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletvos*]" = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletvos*]" = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME[sdk=appletvos*]" = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
@@ -5379,7 +5432,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -7281,8 +7334,9 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletvos*]" = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletvos*]" = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME[sdk=appletvos*]" = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
@@ -7323,7 +7377,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -8682,21 +8736,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
 			productName = AppCenterCrashes;
-		};
-		B357A43727092254002C7C0F /* AppCenterAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
-			productName = AppCenterAnalytics;
-		};
-		B357A43927092254002C7C0F /* AppCenterCrashes */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
-			productName = AppCenterCrashes;
-		};
-		B390B0E9276B2DB20018E065 /* AltKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */;
-			productName = AltKit;
 		};
 		B3CE94B6293446AC0053B891 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;

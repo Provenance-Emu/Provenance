@@ -166,8 +166,8 @@ final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewCont
             return nil
         }
 
-        let storyboard = UIStoryboard(name: "Provenance", bundle: nil)
-        let nextViewController = storyboard.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+        let storyBoard = UIStoryboard(name: .Provenance, bundle: .pvapp)
+        let nextViewController = storyboard!.instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
 
         let nextGame = games[nextGameIndex]
         nextViewController.game = nextGame

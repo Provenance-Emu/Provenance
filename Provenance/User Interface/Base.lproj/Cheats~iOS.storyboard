@@ -29,7 +29,7 @@
         <!--Cheats Info View Controller-->
         <scene sceneID="TfH-Fv-YA7">
             <objects>
-                <viewController storyboardIdentifier="cheatCodeInfo" useStoryboardIdentifierAsRestorationIdentifier="YES" id="1e4-wT-nvI" customClass="PVCheatsInfoViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="cheatCodeInfo" useStoryboardIdentifierAsRestorationIdentifier="YES" id="1e4-wT-nvI" customClass="PVCheatsInfoViewController" customModule="PVApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="uqd-BT-f9W">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -136,13 +136,13 @@
         <!--Cheats View Controller-->
         <scene sceneID="BHJ-7W-kMI">
             <objects>
-                <tableViewController id="TuT-Dl-Q5F" customClass="PVCheatsViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="TuT-Dl-Q5F" customClass="PVCheatsViewController" customModule="PVApp" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="60" sectionFooterHeight="60" id="ZkW-hX-8bn">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cheatCodeCell" rowHeight="80" id="Dwr-Xo-MI0" customClass="PVCheatsTableViewCell" customModule="Provenance" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cheatCodeCell" rowHeight="80" id="Dwr-Xo-MI0" customClass="PVCheatsTableViewCell" customModule="PVApp" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="50" width="414" height="80"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" tableViewCell="Dwr-Xo-MI0" id="JFN-bR-f5m" customClass="PVCheatsTableViewCell">
