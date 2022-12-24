@@ -227,8 +227,13 @@ void UpdateWiiPointer();
 	SConfig::GetInstance().bFastmem = self.fastMemory;
 
 	// Anti Aliasing
-	Config::SetBase(Config::GFX_MSAA, self.msaa);
-	Config::SetBase(Config::GFX_SSAA, self.ssaa);
+    if (self.gsPreference == 0) {
+        Config::SetBase(Config::GFX_MSAA, self.msaa);
+        Config::SetBase(Config::GFX_SSAA, self.ssaa);
+    } else {
+        Config::SetBase(Config::GFX_MSAA, 1);
+        Config::SetBase(Config::GFX_SSAA, false);
+    }
 
 	// Cheats
 	SConfig::GetInstance().bEnableCheats = true;
@@ -326,6 +331,7 @@ void UpdateWiiPointer();
 			Common::SleepCurrentThread(100);
 		}
 		_isInitialized = true;
+        [self refreshScreenSize];
 		while (_isInitialized)
 		{
 			guard.unlock();
@@ -338,16 +344,12 @@ void UpdateWiiPointer();
 }
 
 - (void)startEmulation {
+    // Skip Emulation Loop since the core has its own loop
+    self.skipEmulationLoop = true;
 	[self setupEmulation];
 	[self setOptionValues];
 	[self setupView];
-	//shouldStop=true;
 	[super startEmulation];
-	// Runs Much Faster / More stable with this lock on, but also locks the input widgets
-	// We're not using the loop on this core, so it's worth looking into in the future
-	//[self.emulationLoopThreadLock lock];
-
-
 	//		[self.renderDelegate willRenderFrameOnAlternateThread];
 	//		dol_host->SetPresentationFBO((int)[[self.renderDelegate presentationFramebuffer] integerValue]);
 	//if(dol_host->LoadFileAtPath())
@@ -423,6 +425,9 @@ void UpdateWiiPointer();
 													  core: self];
 		m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
 		m_view=cgsh_view_controller.view;
+        m_view.contentMode = UIViewContentModeScaleToFill;
+        [gl_view_controller addChildViewController:cgsh_view_controller];
+        [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
 	} else if(self.gsPreference == 1) {
 		DolphinOGLViewController *cgsh_view_controller=[[DolphinOGLViewController alloc]
 													  initWithResFactor:self.resFactor
@@ -432,19 +437,25 @@ void UpdateWiiPointer();
 		m_gl_layer=(CAEAGLLayer *)cgsh_view_controller.view.layer;
 		m_view=cgsh_view_controller.view;
 		m_view.contentMode = UIViewContentModeScaleToFill;
+        [gl_view_controller addChildViewController:cgsh_view_controller];
+        [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
 	}
 	if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
+        self.renderDelegate.mtlview.autoresizesSubviews=true;
+        self.renderDelegate.mtlview.clipsToBounds=true;
 		[self.renderDelegate.mtlview addSubview:m_view];
 		[m_view.topAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.topAnchor constant:0].active = true;
 		[m_view.leadingAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.leadingAnchor constant:0].active = true;
 		[m_view.trailingAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.trailingAnchor constant:0].active = true;
 		[m_view.bottomAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.bottomAnchor constant:0].active = true;
 	} else {
+        gl_view_controller.view.autoresizesSubviews=true;
+        gl_view_controller.view.clipsToBounds=true;
 		[gl_view_controller.view addSubview:m_view];
-		[m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
-		[m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
-		[m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
-		[m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
+		[m_view.topAnchor constraintEqualToAnchor:gl_view_controller.parentViewController.view.topAnchor constant:0].active = true;
+		[m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.parentViewController.view.leadingAnchor constant:0].active = true;
+		[m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.parentViewController.view.trailingAnchor constant:0].active = true;
+		[m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.parentViewController.view.bottomAnchor constant:0].active = true;
 	}
 }
 @end
