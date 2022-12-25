@@ -177,7 +177,7 @@ PV_OBJC_DIRECT_MEMBERS
 
         // TODO: Need to benchmark this
 
-        self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
+        self.glContext.multiThreaded = PVSettingsModel.shared.videoOptions.multiThreadedGL;
 
         [EAGLContext setCurrentContext:self.glContext];
 #else
@@ -243,7 +243,7 @@ PV_OBJC_DIRECT_MEMBERS
         }
 
             // Enable multisampling
-        if(PVSettingsModel.shared.debugOptions.multiSampling) {
+        if(PVSettingsModel.shared.videoOptions.multiSampling) {
             //[view setSampleCount:4]; // Having the view multi-sampled doesn't make sense to me. We need to resolve the MSAA before presenting it
         }
     }

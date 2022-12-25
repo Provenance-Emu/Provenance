@@ -87,7 +87,7 @@ final class PVSettingsViewController: QuickTableViewController {
     func generateTableViewViewModels() {
         typealias TableRow = Row & RowStyle
 
-        // -- Section : App
+        // MARK: -- Section : App
         let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), viewController: self, segue: "pushSystemSettings")
 
         let systemMode = self.traitCollection.userInterfaceStyle == .dark ? "Dark" : "Light"
@@ -126,7 +126,7 @@ final class PVSettingsViewController: QuickTableViewController {
 
         let appSection = Section(title: NSLocalizedString("App", comment: "App"), rows: appRows)
 
-        // -- Core Options
+        // MARK: -- Core Options
         let realm = try! Realm()
         let cores: [NavigationRow] = realm.objects(PVCore.self).sorted(byKeyPath: "projectName").compactMap { pvcore in
             guard let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
@@ -143,7 +143,7 @@ final class PVSettingsViewController: QuickTableViewController {
 
         let coreOptionsSection = Section(title: NSLocalizedString("Core Options", comment: "Core Options"), rows: cores)
 
-        // -- Section : Saves
+        // MARK: -- Section : Saves
         let saveRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Auto Save", comment: "Auto Save"), key: \PVSettingsModel.autoSave),
             PVSettingsSwitchRow(text: NSLocalizedString("Timed Auto Saves", comment: "Timed Auto Saves"), key: \PVSettingsModel.timedAutoSaves),
@@ -153,7 +153,7 @@ final class PVSettingsViewController: QuickTableViewController {
 
         let savesSection = Section(title: NSLocalizedString("Saves", comment: "Saves"), rows: saveRows)
 
-        // -- Section : Audio/Video
+        // MARK: -- Section : Audio/Video
         var avRows = [TableRow]()
 
         #if os(iOS)
@@ -161,6 +161,12 @@ final class PVSettingsViewController: QuickTableViewController {
             avRows.append(PVSettingsSliderRow(text: NSLocalizedString("Volume", comment: "Volume"), detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
         #endif
         avRows.append(contentsOf: [
+            PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
+                                detailText: .subtitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
+                                key: \PVSettingsModel.videoOptions.multiThreadedGL),
+            PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
+                                detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
+                                key: \PVSettingsModel.videoOptions.multiSampling),
             PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled),
             PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled),
             PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled),
@@ -179,7 +185,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                                key: \PVSettingsModel.metalFilter,
                                                options: shaders)
 
-        // -- Section : Controler
+        // MARK -- Section : Controler
 
         var controllerRows = [TableRow]()
 
@@ -190,7 +196,10 @@ final class PVSettingsViewController: QuickTableViewController {
                 PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), key: \PVSettingsModel.buttonTints),
                 PVSettingsSwitchRow(text: NSLocalizedString("All-Right Shoulders", comment: "All-Right Shoulders"), detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
                 PVSettingsSwitchRow(text: NSLocalizedString("Haptic Feedback", comment: "Haptic Feedback"), key: \PVSettingsModel.buttonVibration),
-                PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine."), key: \PVSettingsModel.use8BitdoM30)
+                PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine."), key: \PVSettingsModel.use8BitdoM30),
+                PVSettingsSwitchRow(text: NSLocalizedString("Missing Buttons Always On-Screen", comment: "Missing Buttons Always On-Screen"),
+                                    detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
+                                    key: \PVSettingsModel.missingButtonsAlwaysOn)
             ]
 
         )
@@ -282,31 +291,19 @@ final class PVSettingsViewController: QuickTableViewController {
 
         let betaRows: [TableRow] = [
 			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
-								detailText: .subtitle("Use experimental Metal backend instead of OpenGL"),
+								detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
 								key: \PVSettingsModel.debugOptions.useMetal),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("Missing Buttons Always On-Screen", comment: "Missing Buttons Always On-Screen"),
-                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
-                                key: \PVSettingsModel.missingButtonsAlwaysOn),
 
             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
-                                detailText: .subtitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
-                                key: \PVSettingsModel.debugOptions.multiThreadedGL),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
-                                detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
-                                key: \PVSettingsModel.debugOptions.multiSampling),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
                                 detailText: .subtitle("Cores that are in development"),
                                 key: \PVSettingsModel.debugOptions.unsupportedCores),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
-                                detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet."),
+                                detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet. iOS 14.0+ recommended."),
                                 key: \PVSettingsModel.debugOptions.useSwiftUI) { cell, row in
 //                                    let swiftUIDetailText: DetailText
 //                                    if #available(iOS 14, tvOS 14, *) {
@@ -326,7 +323,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                 },
 
             PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
-								detailText: .subtitle("Allow user to move on screen controller buttons."),
+								detailText: .subtitle("Allow user to move on screen controller buttons. Tap with 2-fingers 4 times to toggle."),
 								key: \PVSettingsModel.debugOptions.movableButtons),
 
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
@@ -338,23 +335,14 @@ final class PVSettingsViewController: QuickTableViewController {
         ]
         #else // tvOS
          let betaRows: [TableRow] = [
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"),
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
                                 key: \PVSettingsModel.debugOptions.useMetal),
             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
-                                detailText: .subtitle("Use tvOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
-                                key: \PVSettingsModel.debugOptions.multiThreadedGL),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
-                                detailText: .subtitle("Use tvOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
-                                key: \PVSettingsModel.debugOptions.multiSampling),
-
             PVSettingsSwitchRow(text: NSLocalizedString("Use SwiftUI", comment: "Use SwiftUI"),
                                detailText: .subtitle("Don't use unless you enjoy empty windows."),
-                               key: \PVSettingsModel.debugOptions.multiSampling),
+                               key: \PVSettingsModel.videoOptions.multiSampling),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Use Themes", comment: "Use Themes"),
                                detailText: .subtitle("Use iOS themes on tvOS"),

@@ -213,7 +213,7 @@ PV_OBJC_DIRECT_MEMBERS
 
         // TODO: Need to benchmark this
 
-    self.glContext.multiThreaded = PVSettingsModel.shared.debugOptions.multiThreadedGL;
+    self.glContext.multiThreaded = PVSettingsModel.shared.videoOptions.multiThreadedGL;
 
     [EAGLContext setCurrentContext:self.glContext];
 
@@ -289,7 +289,7 @@ PV_OBJC_DIRECT_MEMBERS
         }
 
             // Enable multisampling
-        if(PVSettingsModel.shared.debugOptions.multiSampling) {
+        if(PVSettingsModel.shared.videoOptions.multiSampling) {
 #if USE_METAL
             [view setSampleCount:4];
 #else
