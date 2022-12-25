@@ -141,7 +141,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         gpuViewController.view?.removeFromSuperview()
         gpuViewController.removeFromParent()
         #if os(iOS)
-            PVControllerManager.shared.controllers().forEach { $0.controllerPausedHandler = nil }
+            PVControllerManager.shared.controllers().forEach { $0.clearPauseHandler() }
         #endif
         updatePlayedDuration()
         destroyAutosaveTimer()
