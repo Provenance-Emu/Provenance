@@ -48,22 +48,22 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         CheatLoadState.isFirstLoad=isFirstLoad
     }
 
-    func setCheatState(code: String, type: String, codeType: String, enabled: Bool, completion: @escaping CheatsCompletion) {
+    func setCheatState(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool, completion: @escaping CheatsCompletion) {
         if let gameWithCheat = core as? GameWithCheat {
             // convert space to +
-            var regex = try! NSRegularExpression(pattern: "[^a-fA-F0-9-:+]+|[G-Z\\s]+", options: NSRegularExpression.Options.caseInsensitive)
+            var regex = try! NSRegularExpression(pattern: "[^a-zA-Z0-9-:+]+|[\\s]+", options: NSRegularExpression.Options.caseInsensitive)
             var range = NSRange(location: 0, length: code.count)
-            var modString = regex.stringByReplacingMatches(in: code, options: [], range: range, withTemplate: "+")
-            // clean + at front and back of code
-            regex = try! NSRegularExpression(pattern: "^[+]+|:|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
-            range = NSRange(location: 0, length: modString.count)
-            modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
+            var modString = regex.stringByReplacingMatches(in: code.uppercased(), options: [], range: range, withTemplate: "+")
             // clean +++
-            regex = try! NSRegularExpression(pattern: "[+]+", options: NSRegularExpression.Options.caseInsensitive)
+            regex = try! NSRegularExpression(pattern: "[+]+|[\\s]+", options: NSRegularExpression.Options.caseInsensitive)
             range = NSRange(location: 0, length: modString.count)
             modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "+")
+            // clean + at front and back of code
+            regex = try! NSRegularExpression(pattern: "^[+]+|[+]+$", options: NSRegularExpression.Options.caseInsensitive)
+            range = NSRange(location: 0, length: modString.count)
+            modString = regex.stringByReplacingMatches(in: modString, options: [], range: range, withTemplate: "")
             NSLog("Formatted CheatCode \(modString)")
-            if (gameWithCheat.setCheat(code: modString, type:type, codeType: codeType, enabled:enabled)) {
+            if (gameWithCheat.setCheat(code: modString, type:type, codeType: codeType, cheatIndex: cheatIndex, enabled:enabled)) {
                 DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
                 let realm = try! Realm()
                 guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: self.core.coreIdentifier) else {
@@ -121,18 +121,20 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         code: String,
         type: String,
         codeType: String,
+        cheatIndex: UInt8,
         enabled: Bool,
         completion: @escaping CheatsCompletion) {
         setCheatState(
             code: code,
             type: type,
             codeType: codeType,
+            cheatIndex: cheatIndex,
             enabled: enabled,
             completion: completion
         )
     }
 
-    func cheatsViewControllerUpdateState(_: Any, cheat: PVCheats,
+    func cheatsViewControllerUpdateState(_: Any, cheat: PVCheats, cheatIndex: UInt8,
         completion: @escaping CheatsCompletion) {
         if let gameWithCheat = core as? GameWithCheat {
             var cheatType = cheat.type ?? ""
@@ -142,7 +144,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                 cheatType = types[0]
                 codeType = types[1]
             }
-            if gameWithCheat.setCheat(code: cheat.code, type:cheatType, codeType: codeType, enabled:cheat.enabled) {
+            if gameWithCheat.setCheat(code: cheat.code, type:cheatType, codeType: codeType, cheatIndex: cheatIndex, enabled:cheat.enabled) {
                 ILOG("Succeeded applying cheat: \(cheat.code ?? "null") \(cheat.type ?? "null") \(cheat.enabled)")
                 completion(.success)
             } else {
@@ -192,13 +194,12 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
 }
 
 @objc extension PVEmulatorCore {
-    /* This is now an optional function */
     @objc public func setCheat(
         code: String,
         type: String,
         enabled: Bool
     ) -> Bool {
-        return true
+        return false
     }
     @objc public func supportsCheatCode() -> Bool
     {
@@ -213,8 +214,9 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         code: String,
         type: String,
         codeType: String,
+        cheatIndex: UInt8,
         enabled: Bool
     ) -> Bool {
-        return self.setCheat(code: code, type: type, enabled: enabled)
+        return self.setCheat(code:code, type:type, enabled:enabled)
     }
 }

@@ -117,11 +117,14 @@ __attribute__((visibility("default")))
 
 -(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc;
 -(void)changeDisplayMode;
+-(const void *)getGame;
 
-# pragma CheatCodeSupport
-- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError**)error;
+@end
+
+@interface MednafenGameCore (Cheats)
+- (NSArray *)getCheatCodeTypes;
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
 - (BOOL)getCheatSupport;
-
 @end
 
 @interface MednafenGameCore (Controls)

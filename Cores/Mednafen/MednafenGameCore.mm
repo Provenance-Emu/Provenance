@@ -71,9 +71,6 @@
 static Mednafen::MDFNGI *game;
 static Mednafen::MDFN_Surface *backBufferSurf;
 static Mednafen::MDFN_Surface *frontBufferSurf;
-NSMutableDictionary *cheatList;
-
-
 
 namespace MDFN_IEN_VB
 {
@@ -95,6 +92,11 @@ int mednafenCurrentDisplayMode = 1;
 static __weak MednafenGameCore *_current;
 
 @implementation MednafenGameCore
+
+-(const void *)getGame
+{
+    return (const void *)game;
+}
 
 -(uint32_t*) getInputBuffer:(int)bufferId
 {
@@ -466,7 +468,6 @@ static void mednafen_init(MednafenGameCore* current)
         SSMap[PVSaturnButtonR]     = 12;
     }
     
-    cheatList = [[NSMutableDictionary alloc] init];
     [self parseOptions];
     
     return self;
@@ -1352,166 +1353,6 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
         }
     }
 }
-
-
-#pragma mark - CheatCodes
-
-- (BOOL)getCheatSupport
-{
-    if (self.systemType == MednaSystemPSX ||
-        self.systemType == MednaSystemSNES) {
-        return true;
-    }
-    return false;
-}
-
-#warning "Clean this crap up"
-// TODO: Cleanup this redundant code used multiple places, search for "id key in cheatList"
-- (BOOL)setPSXCheatCodes
-{
-    @synchronized(self) {
-        // Apply enabled cheats found in dictionary
-        // int cheatIdx=0;
-        
-        BOOL cheatListSuccessfull = YES;
-        NSMutableArray *failedCheats = [NSMutableArray new];
-        
-        for (id key in cheatList)
-        {
-            if ([[cheatList valueForKey:key] isEqual:@YES])
-            {
-                NSMutableArray *multipleCodes = [[NSMutableArray alloc] init];
-                NSString *singleCode=[key stringByReplacingOccurrencesOfString:@":" withString:@""];
-                singleCode=[singleCode stringByReplacingOccurrencesOfString:@"+" withString:@""];
-                singleCode=[singleCode stringByReplacingOccurrencesOfString:@"-" withString:@""];
-                
-                int len=0;
-                
-                while( (len+12)<=[singleCode length]) {
-                    [multipleCodes addObject:[singleCode substringWithRange:NSMakeRange(len,12)]];
-                    len+=12;
-                }
-                
-                NSLog(@"Multiple Codes %@", multipleCodes);
-                for (NSString *singleCode in multipleCodes) {
-                    if (singleCode!= nil && singleCode.length > 0) {
-                        NSLog(@"Applying Code %@",singleCode);
-                        const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@"+" withString:@""] UTF8String];
-                        Mednafen::MemoryPatch patch=Mednafen::MemoryPatch();
-                        @try {
-                            if (sizeof(game->CheatInfo.CheatFormatInfo) > 0) {
-                                game->CheatInfo.CheatFormatInfo[0].DecodeCheat(cheatCode, &patch);
-                                // enabled
-                                patch.status=true;
-                                Mednafen::MDFNI_AddCheat(patch);
-                                /*
-                                 Mednafen::MDFNI_SetCheat(cheatIdx, patch);
-                                 Mednafen::MDFNI_ToggleCheat(cheatIdx);
-                                 cheatIdx+=1;
-                                 */
-                            }
-                        }
-                        @catch (NSException *exception) {
-                            cheatListSuccessfull = NO;
-                            [failedCheats addObject:singleCode];
-                            //                            [cheatList removeObjectForKey:singleCode];
-                            ELOG(@"Game Code Error %@", exception.reason);
-                        }
-                    }
-                }
-            }
-        }
-        [cheatList removeObjectsForKeys:failedCheats];
-        
-        return cheatListSuccessfull;
-    }
-}
-
-
-- (BOOL)setSNESCheatCodes
-{
-    @synchronized(self) {
-        
-        BOOL cheatListSuccessfull = YES;
-        NSMutableArray *failedCheats = [NSMutableArray new];
-        for (id key in cheatList)
-        {
-            if ([[cheatList valueForKey:key] isEqual:@YES])
-            {
-                NSMutableArray *multipleCodes = [[NSMutableArray alloc] init];
-                multipleCodes = [key componentsSeparatedByString:@"+"];
-                
-                ILOG(@"Multiple Codes %@", multipleCodes);
-                
-                for (NSString *singleCode in multipleCodes) {
-                    if (singleCode!= nil && singleCode.length > 0) {
-                        ILOG(@"Applying Code %@",singleCode);
-                        const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
-                        Mednafen::MemoryPatch patch=Mednafen::MemoryPatch();
-                        @try {
-                            if (sizeof(game->CheatInfo.CheatFormatInfo) > 1) {
-                                if ([singleCode containsString:@"-"]) {
-                                    // Game Genie
-                                    game->CheatInfo.CheatFormatInfo[0].DecodeCheat(cheatCode, &patch);
-                                } else {
-                                    // PAR
-                                    game->CheatInfo.CheatFormatInfo[1].DecodeCheat(cheatCode, &patch);
-                                }
-                                // enabled
-                                patch.status=true;
-                                Mednafen::MDFNI_AddCheat(patch);
-                            }
-                        }
-                        @catch (NSException *exception) {
-                            cheatListSuccessfull = NO;
-                            [failedCheats addObject:singleCode];
-                            //                            [cheatList removeObjectForKey:singleCode];
-                            ELOG(@"Game Code Error %@", exception.reason);
-                        }
-                    }
-                }
-            }
-        }
-        [cheatList removeObjectsForKeys:failedCheats];
-        return cheatListSuccessfull;
-    }
-}
-
-- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled  error:(NSError**)error
-{
-    @synchronized(self) {
-        
-        BOOL cheatListSuccessfull = NO;
-        
-        if (!(self.getCheatSupport)) {
-            return false;
-        }
-        if (enabled)
-            cheatList[code] = @YES;
-        else
-            [cheatList removeObjectForKey:code];
-        NSLog(@"Applying Cheat Code %@ %@ %@", code, type, cheatList);
-        
-        Mednafen::MDFN_FlushGameCheats(1);
-        
-        switch (self.systemType) {
-            case MednaSystemPSX:
-                cheatListSuccessfull = self.setPSXCheatCodes;
-                break;
-            case MednaSystemSNES:
-                cheatListSuccessfull = self.setSNESCheatCodes;
-                break;
-            default:
-                cheatListSuccessfull = NO;
-                break;
-        }
-        
-        Mednafen::MDFNMP_ApplyPeriodicCheats();
-        // if no error til this point, return true
-        return cheatListSuccessfull;
-    }
-}
-
 @end
 
 // -- Sanity checks

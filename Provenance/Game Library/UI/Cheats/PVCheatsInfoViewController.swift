@@ -65,9 +65,9 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
 
     // MARK: - UITextField Delegates
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        // For mobile numer validation
+        // Allow all letters to support encrypted cheat codes
         if textField == codeTextField {
-            let allowedCharacters = CharacterSet(charactersIn:"-0123456789ABCDEFabcdef ")
+            let allowedCharacters = CharacterSet(charactersIn:"-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ")
             let characterSet = CharacterSet(charactersIn: string)
             return allowedCharacters.isSuperset(of: characterSet)
         }
@@ -146,6 +146,8 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
     }
 
     func play() {
+        let table:UITableView = delegate!.view as! UITableView
+        let cheatIndex:UInt8 = UInt8(table.numberOfRows(inSection:0))
         if typeText.text == "" {
             typeText.text="Cheat Code"
         }
@@ -153,6 +155,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         delegate?.saveCheatCode(code: codeText.text!,
             type: typeText.text!,
             codeType: codeTypeText,
+            cheatIndex: cheatIndex,
             enabled: true)
         // go back to the previous view controller
         _ = self.navigationController?.popViewController(animated: true)
@@ -164,6 +167,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
                 code: fieldValue,
                 type: typeText.text!,
                 codeType: codeTypeText,
+                cheatIndex: cheatIndex,
                 enabled: true)
         }
         // go back to the previous view controller

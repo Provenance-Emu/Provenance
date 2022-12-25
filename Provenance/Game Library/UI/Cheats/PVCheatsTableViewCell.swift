@@ -33,11 +33,13 @@ final class PVCheatsTableViewCell: UITableViewCell {
     }
 
     func toggle(enabled:Bool) {
+        let table:UITableView = self.superview as! UITableView;
+        let cheatIndex:UInt8  = UInt8(table.indexPath(for: self)!.row);
         let realm = try! Realm()
         realm.beginWrite()
         cheat.enabled = enabled
         try! realm.commitWrite()
-        delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
+        delegate?.cheatsViewControllerUpdateState(self, cheat: cheat, cheatIndex: cheatIndex) { result
             in
             switch result {
             case .success:
@@ -46,8 +48,6 @@ final class PVCheatsTableViewCell: UITableViewCell {
                 let reason = (error as NSError).localizedFailureReason ?? ""
                 NSLog("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
             }
-
         }
     }
-
 }

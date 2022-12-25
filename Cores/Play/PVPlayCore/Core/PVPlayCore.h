@@ -43,8 +43,11 @@
 
 -(void)pollControllers;
 -(void)executeFrameSkippingFrame:(BOOL)skip;
--(BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)type setEnabled:(BOOL)enabled error:(NSError**)error;
 
+@end
+
+@interface PVPlayCore (Cheats)
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
 @end
 
 extern __weak PVPlayCore *_current;
