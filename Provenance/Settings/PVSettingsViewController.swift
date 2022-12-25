@@ -205,8 +205,8 @@ final class PVSettingsViewController: QuickTableViewController {
         )
         #endif
         controllerRows.append(contentsOf: [
-            SegueNavigationRow(text: NSLocalizedString("Controllers", comment: "Controllers"), detailText: .subtitle("Assign players"), viewController: self, segue: "controllersSegue"),
-            SegueNavigationRow(text: NSLocalizedString("iCade Controller", comment: "iCade Controller"), detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
+            SegueNavigationRow(text: NSLocalizedString("Controllers", comment: "Controllers"), detailText: .subtitle("Assign players"), icon:.sfSymbol("gamecontroller"), viewController: self, segue: "controllersSegue"),
+            SegueNavigationRow(text: NSLocalizedString("iCade Controller", comment: "iCade Controller"), detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), icon:.sfSymbol("keyboard"), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
                 cell.detailTextLabel?.text = PVSettingsModel.shared.myiCadeControllerSetting.description
             })
         ])
@@ -360,8 +360,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let discordRow = NavigationRow(
             text: NSLocalizedString("Discord", comment: ""),
             detailText: .value2("Join our Discord server for help and community chat."),
-            icon: nil,
-            customization: nil,
+            icon: .named("discord"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { _ in
                 if let url = URL(string: "https://discord.gg/4TK7PU5") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -371,8 +374,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let twitterRow = NavigationRow(
             text: NSLocalizedString("Twitter", comment: ""),
             detailText: .value2("Follow us on Twitter for release and other announcements."),
-            icon: nil,
-            customization: nil,
+            icon: .named("twitter"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { _ in
                 if let url = URL(string: "https://twitter.com/provenanceapp") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -382,8 +388,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let githubRow = NavigationRow(
             text: NSLocalizedString("GitHub", comment: ""),
             detailText: .value2("Check out GitHub for code, reporting bugs and contributing."),
-            icon: nil,
-            customization: nil,
+            icon: .named("github"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { _ in
                 if let url = URL(string: "https://github.com/Provenance-Emu/Provenance") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -393,8 +402,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let patreonRow = NavigationRow(
             text: NSLocalizedString("Patreon", comment: ""),
             detailText: .value2("Support us on Patreaon and receive special features and early access builds."),
-            icon: nil,
-            customization: nil,
+            icon: .named("patreon"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { _ in
                 if let url = URL(string: "https://provenance-emu.com/patreon") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -404,8 +416,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let youTubeRow = NavigationRow(
             text: NSLocalizedString("YouTube!", comment: ""),
             detailText: .value2("Help tutorial videos and new feature previews."),
-            icon: nil,
-            customization: nil,
+            icon: .named("youtube"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { _ in
                 if let url = URL(string: "https://www.youtube.com/channel/UCKeN6unYKdayfgLWulXgB1w") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -415,8 +430,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let blogRow = NavigationRow(
             text: NSLocalizedString("Blog", comment: ""),
             detailText: .value2("Release annoucements and full changelogs and screenshots posted to our blog."),
-            icon: nil,
-            customization: nil,
+            icon: .sfSymbol("square.and.pencil"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { [weak self] _ in
                 if let url = URL(string: "https://provenance-emu.com/blog/") {
 #if canImport(SafariServices)
@@ -431,8 +449,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let faqRow = NavigationRow(
             text: NSLocalizedString("FAQ", comment: ""),
             detailText: .value2("Frequently asked questions."),
-            icon: nil,
-            customization: nil,
+            icon: .sfSymbol("questionmark.folder.fill"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { [weak self] _ in
                 if let url = URL(string: "https://wiki.provenance-emu.com/faqs") {
 #if canImport(SafariServices)
@@ -447,8 +468,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let wikiRow = NavigationRow(
             text: NSLocalizedString("Wiki", comment: ""),
             detailText: .value2("Full usage documentation, tips and tricks on our Wiki."),
-            icon: nil,
-            customization: nil,
+            icon: .sfSymbol("books.vertical.fill"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { [weak self] _ in
                 if let url = URL(string: "https://wiki.provenance-emu.com/") {
 #if canImport(SafariServices)
