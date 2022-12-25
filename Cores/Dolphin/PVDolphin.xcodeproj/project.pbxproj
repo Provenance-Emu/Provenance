@@ -21,10 +21,8 @@
 		93480AFD2953810E00C61651 /* libmain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE92949E94400CC8234 /* libmain.a */; };
 		93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93599B4C2955FD520049DAC8 /* QuartzCore.framework */; };
 		93C33A952952192200CC86C5 /* libcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACB2949E94400CC8234 /* libcore.a */; };
-		93C33AC129527E5F00CC86C5 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 93C33AC029527E5F00CC86C5 /* libc++.tbd */; };
 		93C791F02954BF4B001212D2 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316ECDB26E5C6920077FE46 /* MoltenVK.xcframework */; };
 		93C792162954BF65001212D2 /* MoltenVK.xcframework in Resources */ = {isa = PBXBuildFile; fileRef = B316ECDB26E5C6920077FE46 /* MoltenVK.xcframework */; };
-		93D6CDA72950A9C300F3E7B7 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB452949F41D00CC8234 /* libbz2.tbd */; };
 		B301797F207C909E0051B93D /* libdolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdolphin.a */; };
 		B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDolphinCore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVDolphinCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDolphinCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -37,8 +35,8 @@
 		B3135BA726E4CD5A0047F338 /* PVDolphinCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDolphinCore+Video.mm */; };
 		B3135BA926E4CD600047F338 /* PVDolphinCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDolphinCore+Audio.mm */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
-		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
+		B34A8EF6295848010000D110 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB452949F41D00CC8234 /* libbz2.tbd */; };
+		B34A8EF7295848360000D110 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
@@ -348,6 +346,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7FD26A8923E048C185776846;
 			remoteInfo = lzma;
+		};
+		B34A8EF829584A700000D110 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0424D5B451D54E0A9CBB3EF1;
+			remoteInfo = xxhash;
 		};
 		B3AAFA8C2949E94400CC8234 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -15523,7 +15528,9 @@
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */,
 				B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */,
+				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
 				B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */,
+				B34A8EF6295848010000D110 /* libbz2.tbd in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
@@ -15531,10 +15538,6 @@
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libdolphin.a in Frameworks */,
-				93D6CDA72950A9C300F3E7B7 /* libbz2.tbd in Frameworks */,
-				93C33AC129527E5F00CC86C5 /* libc++.tbd in Frameworks */,
-				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				93C791F02954BF4B001212D2 /* MoltenVK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -39241,6 +39244,8 @@
 			);
 			dependencies = (
 				933CC5E82951C0480070CF1D /* PBXTargetDependency */,
+				930899402950713700E145C8 /* PBXTargetDependency */,
+				B3AAFB432949F3A400CC8234 /* PBXTargetDependency */,
 				933CC5E62951C0380070CF1D /* PBXTargetDependency */,
 				9308999729508AED00E145C8 /* PBXTargetDependency */,
 				9308999929508AED00E145C8 /* PBXTargetDependency */,
@@ -39262,7 +39267,6 @@
 				930899BB29508AED00E145C8 /* PBXTargetDependency */,
 				930899BD29508AED00E145C8 /* PBXTargetDependency */,
 				930899BF29508AED00E145C8 /* PBXTargetDependency */,
-				930899402950713700E145C8 /* PBXTargetDependency */,
 				930899C329508AED00E145C8 /* PBXTargetDependency */,
 				930899C529508AED00E145C8 /* PBXTargetDependency */,
 				930899C729508AED00E145C8 /* PBXTargetDependency */,
@@ -39274,7 +39278,6 @@
 				930899D329508AED00E145C8 /* PBXTargetDependency */,
 				930899D529508AED00E145C8 /* PBXTargetDependency */,
 				930899D729508AED00E145C8 /* PBXTargetDependency */,
-				B3AAFB432949F3A400CC8234 /* PBXTargetDependency */,
 				9308999329508AD400E145C8 /* PBXTargetDependency */,
 				9308999529508AD400E145C8 /* PBXTargetDependency */,
 			);
@@ -39295,6 +39298,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B34A8EF929584A700000D110 /* PBXTargetDependency */,
 				930899D929508B0400E145C8 /* PBXTargetDependency */,
 			);
 			name = PVDolphin;
@@ -39310,7 +39314,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1420;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B30178D2207C901D0051B93D = {
@@ -40059,6 +40063,11 @@
 			name = lzma;
 			targetProxy = 933CC5E72951C0480070CF1D /* PBXContainerItemProxy */;
 		};
+		B34A8EF929584A700000D110 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = xxhash;
+			targetProxy = B34A8EF829584A700000D110 /* PBXContainerItemProxy */;
+		};
 		B3AAFB432949F3A400CC8234 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = zstd;
@@ -40331,6 +40340,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -40358,6 +40368,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -40384,6 +40395,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -40416,6 +40428,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -40461,6 +40474,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -40507,6 +40521,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -40533,6 +40548,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -40565,6 +40581,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -40611,6 +40628,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -40643,6 +40661,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -40673,6 +40692,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
@@ -40689,6 +40709,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -40735,6 +40756,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
