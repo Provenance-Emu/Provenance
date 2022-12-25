@@ -4455,10 +4455,16 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${SRCROOT}/../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib",
+				"${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h",
+				"${SRCROOT}/PVPlayCore/Core/Loader.cpp ",
 			);
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${SRCROOT}/lib/libMoltenVK_Play.dylib",
+				"${SRCROOT}/Play-/deps/Framework/src/vulkan/Loader.cpp",
+				"${SRCROOT}/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
