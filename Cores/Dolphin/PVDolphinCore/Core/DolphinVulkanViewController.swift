@@ -70,6 +70,18 @@ import os
 
 	required init(coder: NSCoder) {
 		let dev: MTLDevice = MTLCreateSystemDefaultDevice()!
+        // Check if the GPU is at least the A9
+        let featureSet: MTLFeatureSet
+    #if os(tvOS)
+        featureSet = .tvOS_GPUFamily2_v2
+    #else
+        featureSet = .iOS_GPUFamily3_v2
+    #endif
+        guard dev.supportsFeatureSet(featureSet) else {
+            assertionFailure("GPU doesn't support required MTL feature set.")
+            fatalError("GPU doesn't support required MTL feature set.")
+        }
+
 		let commandQueue = dev.makeCommandQueue()!
 		self.context = CIContext.init(mtlCommandQueue: commandQueue, options: [.cacheIntermediates: false])
 		self.commandQueue = commandQueue
@@ -81,6 +93,17 @@ import os
 
 	init(gameScreenSize: CGSize, resolutionFactor: Int8) {
 		let dev: MTLDevice = MTLCreateSystemDefaultDevice()!
+        // Check if the GPU is at least the A9
+        let featureSet: MTLFeatureSet
+    #if os(tvOS)
+        featureSet = .tvOS_GPUFamily2_v2
+    #else
+        featureSet = .iOS_GPUFamily3_v2
+    #endif
+        guard dev.supportsFeatureSet(featureSet) else {
+            assertionFailure("GPU doesn't support required MTL feature set.")
+            fatalError("GPU doesn't support required MTL feature set.")
+        }
 		self.gameScreenSize = gameScreenSize
 		self.resolutionFactor = resolutionFactor
 		self.commandQueue = dev.makeCommandQueue()!
