@@ -41,7 +41,7 @@
 
 @property (nonatomic, assign) int8_t gsPreference;
 
--(void)pollControllers;
+-(void)setupControllers;
 -(void)executeFrameSkippingFrame:(BOOL)skip;
 
 @end

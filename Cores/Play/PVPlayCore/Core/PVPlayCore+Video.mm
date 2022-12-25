@@ -54,7 +54,9 @@ void MakeCurrentThreadRealTime();
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
+    // The Play! handles the loop (Set GS Handler constructor to false, will manually step)
     //dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+    /*
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         MakeCurrentThreadRealTime();
@@ -69,6 +71,7 @@ void MakeCurrentThreadRealTime();
         if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL)
             gsHandler->ProcessSingleFrame();
     }
+    */
 }
 
 - (void)executeFrame {
@@ -78,7 +81,7 @@ void MakeCurrentThreadRealTime();
 # pragma mark - Properties
 
 - (CGSize)bufferSize {
-    return CGSizeMake(self.videoWidth * self.resFactor, self.videoHeight * self.resFactor);
+    return CGSizeMake(0,0);
 }
 
 - (CGRect)screenRect {

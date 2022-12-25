@@ -148,7 +148,7 @@ private:
         videoBitDepth = 32; // ignored
         videoDepthBitDepth = 0; // TODO
         self.videoWidth = 640;
-        self.videoHeight = 480;
+        self.videoHeight = 448;
         self.resFactor = 1; // 2x
 //        [self setFramerateMultiplier: 1];
 //        [self setGameSpeed:GameSpeedFast];
@@ -158,7 +158,6 @@ private:
         _callbackQueue = dispatch_queue_create("org.provenance-emu.play.CallbackHandlerQueue", queueAttributes);
         _ps2VM = new CPS2VM();
     }
-    
     _current = self;
     return self;
 }
@@ -197,12 +196,9 @@ private:
     [self parseOptions];
     // Set OpenGL or Vulkan
     CAppConfig::GetInstance().SetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER, (self.gsPreference));
-    
 //    CAppConfig::GetInstance().SetPreferenceBoolean(PREF_CGSHANDLER_WIDESCREEN, resizeOutputToWidescreen.isOn);
     CAppConfig::GetInstance().SetPreferenceBoolean(PREF_CGSH_OPENGL_FORCEBILINEARTEXTURES, self.bilinearFiltering);
-
 //    CAppConfig::GetInstance().SetPreferenceBoolean(PREFERENCE_AUDIO_ENABLEOUTPUT, enableAudioOutput.isOn);
-
     CAppConfig::GetInstance().SetPreferenceBoolean(PREFERENCE_ALTSTORE_JIT_ENABLED, true);
 }
 
@@ -223,8 +219,10 @@ private:
 //}
 - (void)startEmulation
 {
+    self.skipEmulationLoop=true;
     [self setupEmulation];
     [self startVM];
+    [self setupControllers];
     [super startEmulation];
 }
 
@@ -447,22 +445,14 @@ private:
     auto screenBounds = [[UIScreen mainScreen] bounds];
     if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_VULKAN)
     {
-        /*
-         // TODO: Fix this hack to find the MTKView, and detect first if in metal mode
-         MTKView *glk_view = (MTKView *)self.renderDelegate.mtlview;
-         m_view = glk_view;
-         m_view.frame = screenBounds;
-         m_metal_layer=m_view.layer;
-         glk_view.enableSetNeedsDisplay = NO;
-         */
         CGSH_MTLViewController *cgsh_view_controller=[[CGSH_MTLViewController alloc]
                                                       initWithResFactor:self.resFactor
                                                       videoWidth: self.videoWidth
                                                       videoHeight: self.videoHeight];
         m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
         // Attach Controller to somewhere rendering won't interfere frame buffers
-        [view_controller.parentViewController addChildViewController:cgsh_view_controller];
-        [cgsh_view_controller didMoveToParentViewController:view_controller.parentViewController];
+        [gl_view_controller addChildViewController:cgsh_view_controller];
+        [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
         // Add View
         m_view=cgsh_view_controller.view;
         [gl_view_controller.view addSubview:m_view];
@@ -471,16 +461,32 @@ private:
         [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
         [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
     } else if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL) {
+        CAEAGLLayer *layer=(CAEAGLLayer *)gl_view_controller.view.layer;
         GLKViewController *cgsh_view_controller = [[GLKViewController alloc]
                                                 initWithNibName:nil
                                                 bundle:nil];
         m_gl_layer=(CAEAGLLayer *)cgsh_view_controller.view.layer;
         // Attach Controller to somewhere rendering won't interfere frame buffers
-        [view_controller.parentViewController addChildViewController:cgsh_view_controller];
-        [cgsh_view_controller didMoveToParentViewController:view_controller.parentViewController];
+        [gl_view_controller addChildViewController:cgsh_view_controller];
+        [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
         // Add View
         m_view=cgsh_view_controller.view;
         [gl_view_controller.view addSubview:m_view];
+        // Settings
+        cgsh_view_controller.view.contentScaleFactor = CGFloat(self.resFactor / [UIScreen mainScreen].scale);
+        m_gl_layer.contentsScale = 1;
+        gl_view_controller.view.autoresizesSubviews = true;
+        gl_view_controller.view.clipsToBounds = true;
+        m_view.frame = CGRectMake(0, 0,
+                                   CGFloat(self.videoWidth * self.resFactor),
+                                   CGFloat(self.videoHeight * self.resFactor));
+        m_view.translatesAutoresizingMaskIntoConstraints = false;
+        m_view.contentMode = UIViewContentModeScaleToFill;
+        m_view.translatesAutoresizingMaskIntoConstraints = false;
+        [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
+        [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
+        [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
+        [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
     }
 }
 @end
