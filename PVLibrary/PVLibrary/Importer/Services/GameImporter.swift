@@ -1292,8 +1292,9 @@ extension GameImporter {
         let filenameSansExtension = path.deletingPathExtension().lastPathComponent
         let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
         let destinationDir = (system.identifier as NSString)
-        let partialPath: String = destinationDir.appendingPathComponent("\(filenameSansExtension)/\(filename)")
-
+//        let partialPath: String = destinationDir.appendingPathComponent("\(filenameSansExtension)/\(filename)")
+        let partialPath: String = destinationDir.appendingPathComponent(filename)
+        
         let file = PVFile(withURL: path)
 
         let game = PVGame(withFile: file, system: system)
@@ -1676,8 +1677,10 @@ extension GameImporter {
             }
         }
 
-        let filenameSansExtension = filePath.deletingPathExtension().lastPathComponent
-        let destination = subfolderPath.appendingPathComponent("\(filenameSansExtension)/").appendingPathComponent(filePath.lastPathComponent)
+//        let filenameSansExtension = filePath.deletingPathExtension().lastPathComponent
+//        let destination = subfolderPath.appendingPathComponent("\(filenameSansExtension)/\(filePath.lastPathComponent)")
+        let destination = subfolderPath.appendingPathComponent(filePath.lastPathComponent)
+
         DLOG("'destination' == <\(destination.path)>")
         // Try to move the file to it's home
         do {
