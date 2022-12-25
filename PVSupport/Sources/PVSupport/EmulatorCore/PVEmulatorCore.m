@@ -76,6 +76,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         _isFrontBufferReady      = NO;
         _gameSpeed               = GameSpeedNormal;
         _isDoubleBufferedCached = [self isDoubleBuffered];
+        _skipEmulationLoop       = NO;
 	}
 	
 	return self;
@@ -121,11 +122,15 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 			self.isRunning  = YES;
 			shouldStop = NO;
             self.gameSpeed = GameSpeedNormal;
-			MAKEWEAK(self);
-			[NSThread detachNewThreadWithBlock:^{
-				MAKESTRONG(self);
-				[strongself emulationLoopThread];
-			}];
+            if (!_skipEmulationLoop) {
+                MAKEWEAK(self);
+                [NSThread detachNewThreadWithBlock:^{
+                    MAKESTRONG(self);
+                    [strongself emulationLoopThread];
+                }];
+            } else {
+                [self setIsFrontBufferReady:YES];
+            }
 		}
 	}
 }

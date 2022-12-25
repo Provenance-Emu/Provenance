@@ -710,7 +710,8 @@ PV_OBJC_DIRECT_MEMBERS
  @discussion Called on the delegate when it is asked to render into the view
  */
 - (void)drawInMTKView:(nonnull MTKView *)view {
-
+    if (self.emulatorCore.skipEmulationLoop)
+        return;
     MAKEWEAK(self);
 
     void (^renderBlock)(void) = ^()

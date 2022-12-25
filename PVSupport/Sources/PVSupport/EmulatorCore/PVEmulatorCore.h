@@ -99,7 +99,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, readonly) BOOL supportsRumble;
 
 @property (atomic, assign) BOOL shouldResyncTime;
-
+@property (nonatomic, assign) BOOL skipEmulationLoop;
 typedef NS_ENUM(NSInteger, GameSpeed) {
 	GameSpeedSlow = 0,
 	GameSpeedNormal,
