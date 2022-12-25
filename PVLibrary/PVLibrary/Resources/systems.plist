@@ -321,21 +321,21 @@
 				<string>{60,42}</string>
 			</dict>
 			<dict>
-                                <key>PVControlType</key>
-                                <string>PVLeftShoulderButton2</string>
-                                <key>PVControlTitle</key>
-                                <string>L</string>
-                                <key>PVControlSize</key>
-                                <string>{60,42}</string>
-                        </dict>
-                        <dict>
-                                <key>PVControlType</key>
-                                <string>PVRightShoulderButton2</string>
-                                <key>PVControlTitle</key>
-                                <string>R</string>
-                                <key>PVControlSize</key>
-                                <string>{60,42}</string>
-                        </dict>
+				<key>PVControlType</key>
+				<string>PVLeftShoulderButton2</string>
+				<key>PVControlTitle</key>
+				<string>L</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVRightShoulderButton2</string>
+				<key>PVControlTitle</key>
+				<string>R</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
 		</array>
 	</dict>
 	<dict>
