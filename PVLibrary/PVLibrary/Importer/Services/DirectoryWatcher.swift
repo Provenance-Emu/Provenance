@@ -189,7 +189,7 @@ public final class DirectoryWatcher: NSObject {
                 }
             } else {
                 if extractionCompleteHandler != nil {
-                    DispatchQueue.main.async(execute: { () -> Void in
+                    DirectoryWatcher.handlerQueue.async(execute: { () -> Void in
                         self.extractionCompleteHandler?([path])
                     })
                 }
@@ -199,13 +199,18 @@ public final class DirectoryWatcher: NSObject {
 
         Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(DirectoryWatcher.checkFileProgress(_:)), userInfo: ["path": path, "filesize": currentFilesize, "wasZeroBefore": (currentFilesize == 0)], repeats: false)
     }
+    
+    static var handlerQueue: DispatchQueue {
+        // DispatchQueue.global(qos: .background)
+        DispatchQueue.main
+    }
 
     public func extractArchive(at filePath: URL) {
         if filePath.path.contains("MACOSX") {
             return
         }
 
-        DispatchQueue.main.async(execute: { [weak self]() -> Void in
+        DirectoryWatcher.handlerQueue.async(execute: { [weak self]() -> Void in
             self?.extractionStartedHandler?(filePath)
         })
 
@@ -228,7 +233,7 @@ public final class DirectoryWatcher: NSObject {
                 }
 
                 if self.extractionUpdatedHandler != nil {
-                    DispatchQueue.main.async { [weak self] in
+                    DirectoryWatcher.handlerQueue.async { [weak self] in
                         self?.extractionUpdatedHandler?(filePath, entryNumber, total, Float(total) / Float(entryNumber))
                     }
                 }
@@ -237,7 +242,7 @@ public final class DirectoryWatcher: NSObject {
                 if succeeded {
                     if self.extractionCompleteHandler != nil {
                         let unzippedItems = self.unzippedFiles
-                        DispatchQueue.main.async {
+                        DirectoryWatcher.handlerQueue.async {
                             self.extractionCompleteHandler?(unzippedItems)
                         }
                     }
@@ -248,7 +253,7 @@ public final class DirectoryWatcher: NSObject {
                     }
                 } else if let error = error {
                     ELOG("Unable to unzip file: \(filePath) because: \(error.localizedDescription)")
-                    DispatchQueue.main.async(execute: { () -> Void in
+                    DirectoryWatcher.handlerQueue.async(execute: { () -> Void in
                         self.extractionCompleteHandler?(nil)
                         NotificationCenter.default.post(name: NSNotification.Name.PVArchiveInflationFailed, object: self)
                     })
@@ -305,7 +310,7 @@ public final class DirectoryWatcher: NSObject {
 
     // Delay start so we have a moment to move files and stuff
     fileprivate func delayedStartMonitoring() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
+        DirectoryWatcher.handlerQueue.asyncAfter(deadline: .now() + 2, execute: {
             self.startMonitoring()
         })
     }
@@ -321,7 +326,7 @@ extension DirectoryWatcher: LzmaSDKObjCReaderDelegate {
         if progress >= 1 {
             if extractionCompleteHandler != nil {
                 let unzippedItems = unzippedFiles
-                DispatchQueue.main.async(execute: {[weak self] () -> Void in
+                DirectoryWatcher.handlerQueue.async(execute: {[weak self] () -> Void in
                     self?.extractionCompleteHandler?(unzippedItems)
                 })
             }
@@ -336,8 +341,8 @@ extension DirectoryWatcher: LzmaSDKObjCReaderDelegate {
             delayedStartMonitoring()
         } else {
             if extractionUpdatedHandler != nil {
-                DispatchQueue.main.async(execute: {[weak self]() -> Void in
-                    let entryNumber = Int(floor(Float(reader.itemsCount) * progress))
+                let entryNumber = Int(floor(Float(reader.itemsCount) * progress))
+                DirectoryWatcher.handlerQueue.async(execute: {[weak self]() -> Void in
                     self?.extractionUpdatedHandler?(fileURL, entryNumber, Int(reader.itemsCount), progress)
                 })
             }
