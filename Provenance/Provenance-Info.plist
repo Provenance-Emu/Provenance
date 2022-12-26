@@ -332,6 +332,7 @@
 					<string>z80</string>
 					<string>tzx</string>
 					<string>chd</string>
+					<string>rvz</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>
@@ -425,6 +426,7 @@
 					<string>tzx</string>
 					<string>rar</string>
 					<string>chd</string>
+					<string>rvz</string>
 				</array>
 			</dict>
 			<key>UTTypeConformsTo</key>
@@ -487,6 +489,7 @@
 					<string>z80</string>
 					<string>tzx</string>
 					<string>chd</string>
+					<string>rvz</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>

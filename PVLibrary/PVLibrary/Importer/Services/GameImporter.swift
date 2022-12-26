@@ -165,7 +165,15 @@ public final class GameImporter {
         initialized.enter()
 
 		let fm = FileManager.default
-		try? fm.createDirectory(at: conflictPath, withIntermediateDirectories: true, attributes: nil)
+        if !FileManager.default.fileExists(atPath: conflictPath.path, isDirectory: nil) {
+            ILOG("Path <\(conflictPath)> doesn't exist. Creating.")
+            do {
+                try fm.createDirectory(at: conflictPath, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                ELOG("Error making conflicts dir <\(conflictPath)>")
+                assertionFailure("Error making conflicts dir <\(conflictPath)>")
+            }
+        }
 
         initSystemPlists()
         let systems = PVSystem.all
@@ -318,8 +326,14 @@ public final class GameImporter {
         solutions.forEach { filePath, system in
             let subfolder = system.romsDirectory
 
-            if !FileManager.default.fileExists(atPath: subfolder.path) {
-                try? FileManager.default.createDirectory(at: subfolder, withIntermediateDirectories: true, attributes: nil)
+            if !FileManager.default.fileExists(atPath: subfolder.path, isDirectory: nil) {
+                ILOG("Path <\(subfolder.path)> doesn't exist. Creating.")
+                do {
+                    try FileManager.default.createDirectory(at: subfolder, withIntermediateDirectories: true, attributes: nil)
+                } catch {
+                    ELOG("Error making conflicts dir <\(subfolder.path)>")
+                    assertionFailure("Error making conflicts dir <\(subfolder.path)>")
+                }
             }
 
             let sourceFilename: String = filePath.lastPathComponent
@@ -1000,8 +1014,14 @@ public extension GameImporter {
 
                 if let gameDescription = chosenResult["gameDescription"] as? String, !gameDescription.isEmpty, overwrite || game.gameDescription == nil {
                     let options = [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html]
-                    let htmlDecodedGameDescription = try! NSMutableAttributedString(data: gameDescription.data(using: .isoLatin1)!, options: options, documentAttributes: nil)
-                    game.gameDescription = htmlDecodedGameDescription.string.replacingOccurrences(of: "(\\.|\\!|\\?)([A-Z][A-Za-z\\s]{2,})", with: "$1\n\n$2", options: .regularExpression)
+                    if let data = gameDescription.data(using: .isoLatin1) {
+                        do {
+                            let htmlDecodedGameDescription = try NSMutableAttributedString(data: data, options: options, documentAttributes: nil)
+                            game.gameDescription = htmlDecodedGameDescription.string.replacingOccurrences(of: "(\\.|\\!|\\?)([A-Z][A-Za-z\\s]{2,})", with: "$1\n\n$2", options: .regularExpression)
+                        } catch {
+                            ELOG("\(error.localizedDescription)")
+                        }
+                    }
                 }
 
                 if let boxBackURL = chosenResult["boxBackURL"] as? String, !boxBackURL.isEmpty, overwrite || game.boxBackArtworkURL == nil {
@@ -1232,13 +1252,15 @@ extension GameImporter {
         }
 
         // Create the subfolder path if need be
-        do {
-            try FileManager.default.createDirectory(at: subfolderPath, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            ELOG("Unable to create \(subfolderPath) - \(error.localizedDescription)")
-            return nil
+        if !FileManager.default.fileExists(atPath: subfolderPath.path, isDirectory: nil) {
+            do {
+                ILOG("Path <\(subfolderPath)> doesn't exist. Creating.")
+                try FileManager.default.createDirectory(at: subfolderPath, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                ELOG("Unable to create \(subfolderPath) - \(error.localizedDescription)")
+                return nil
+            }
         }
-
         let newDirectory = subfolderPath
         let newCDFilePath = newDirectory.appendingPathComponent(candidateFile.filePath.lastPathComponent)
 
@@ -1273,10 +1295,12 @@ extension GameImporter {
         let database = RomDatabase.sharedInstance
 
         let filename = path.lastPathComponent
-        let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: path.deletingPathExtension().lastPathComponent)
+        let filenameSansExtension = path.deletingPathExtension().lastPathComponent
+        let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
         let destinationDir = (system.identifier as NSString)
+//        let partialPath: String = destinationDir.appendingPathComponent("\(filenameSansExtension)/\(filename)")
         let partialPath: String = destinationDir.appendingPathComponent(filename)
-
+        
         let file = PVFile(withURL: path)
 
         let game = PVGame(withFile: file, system: system)
@@ -1456,14 +1480,14 @@ extension GameImporter {
             let destinationPath = biosEntry.expectedPath
             let biosDirectory = biosEntry.system.biosDirectory
 
-            do {
-                if !fm.fileExists(atPath: biosDirectory.path) {
+            if !fm.fileExists(atPath: biosDirectory.path) {
+                do {
                     try fm.createDirectory(at: biosEntry.system.biosDirectory, withIntermediateDirectories: true, attributes: nil)
                     ILOG("Created BIOS directory \(biosDirectory)")
+                } catch {
+                    ELOG("Unable to create BIOS directory \(biosDirectory), \(error.localizedDescription)")
+                    return nil
                 }
-            } catch {
-                ELOG("Unable to create BIOS directory \(biosDirectory), \(error.localizedDescription)")
-                return nil
             }
 
             do {
@@ -1659,7 +1683,10 @@ extension GameImporter {
             }
         }
 
+//        let filenameSansExtension = filePath.deletingPathExtension().lastPathComponent
+//        let destination = subfolderPath.appendingPathComponent("\(filenameSansExtension)/\(filePath.lastPathComponent)")
         let destination = subfolderPath.appendingPathComponent(filePath.lastPathComponent)
+
         DLOG("'destination' == <\(destination.path)>")
         // Try to move the file to it's home
         do {
@@ -1766,7 +1793,10 @@ extension GameImporter {
                 let toPath = toDirectory.appendingPathComponent(file.lastPathComponent, isDirectory: false)
 
                 do {
-                    try FileManager.default.createDirectory(at: toDirectory, withIntermediateDirectories: true, attributes: nil)
+                    if !FileManager.default.fileExists(atPath: toDirectory.path, isDirectory: nil) {
+                        ILOG("Path <\(toDirectory)> doesn't exist. Creating.")
+                        try FileManager.default.createDirectory(at: toDirectory, withIntermediateDirectories: true, attributes: nil)
+                    }
                     try FileManager.default.moveItem(at: file, to: toPath)
                     DLOG("Moved file from \(file) to \(toPath.path)")
                     filesMovedToPaths.append(toPath)

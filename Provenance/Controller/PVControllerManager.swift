@@ -456,7 +456,7 @@ final class PVControllerManager: NSObject {
                     let changed_state = current_state.symmetricDifference(state)
                     let changed_state_pressed = changed_state.intersection(state)
 
-                    let topVC = UIApplication.shared.keyWindow?.topViewController
+                    let topVC = UIApplication.shared.windows.first { $0.isKeyWindow }?.topViewController
 
                     // send button press(s) to the top bannana
                     if let top = topVC as? ControllerButtonPress {

@@ -18,10 +18,12 @@ protocol PVCheatsViewControllerDelegate: AnyObject {
         code: String,
         type: String,
         codeType: String,
+        cheatIndex: UInt8,
         enabled: Bool,
         completion: @escaping CheatsCompletion)
     func cheatsViewControllerUpdateState(_:Any,
          cheat: PVCheats,
+         cheatIndex: UInt8,
          completion: @escaping CheatsCompletion)
     func cheatsViewController(_ cheatsViewController: PVCheatsViewController, load state: PVCheats)
     func getCheatTypes() -> NSArray
@@ -53,10 +55,11 @@ final class PVCheatsViewController: UITableViewController {
             guard let self = self else { return }
             if let coreID = self.coreID {
                 let filter: String = "core.identifier == \"" + coreID + "\""
-                self.allCheats = self.cheats.filter(filter).sorted(byKeyPath: "date", ascending: false)
+                self.allCheats = self.cheats.filter(filter).sorted(byKeyPath: "date", ascending: true)
             } else {
-                self.allCheats = self.cheats.sorted(byKeyPath: "date", ascending: false)
+                self.allCheats = self.cheats.sorted(byKeyPath: "date", ascending: true)
             }
+            var cheatIndex:UInt8=0;
             for cheat in self.allCheats! {
                 DLOG("Cheat Found \(String(describing: cheat.code)) \(String(describing: cheat.type))")
                 // start disabled to prevent bad cheat code from crashing the game all the time
@@ -66,7 +69,7 @@ final class PVCheatsViewController: UITableViewController {
                     cheat.enabled = false
                     try! realm.commitWrite()
                 }
-                self.delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
+                self.delegate?.cheatsViewControllerUpdateState(self, cheat: cheat, cheatIndex: cheatIndex) { result
                     in
                     switch result {
                     case .success:
@@ -76,6 +79,7 @@ final class PVCheatsViewController: UITableViewController {
                         ELOG("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
                     }
                 }
+                cheatIndex+=1
             }
             let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(self.longPressRecognized(_:)))
             self.tableView.dataSource = self
@@ -152,9 +156,9 @@ final class PVCheatsViewController: UITableViewController {
         delegate?.cheatsViewControllerDone(self)
     }
 
-    func saveCheatCode(code: String, type: String, codeType: String, enabled: Bool) {
+    func saveCheatCode(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) {
         ILOG("SaveCheatCode \(code) \(type)")
-        delegate?.cheatsViewControllerCreateNewState(self, code: code, type: type, codeType: codeType, enabled: enabled) {
+        delegate?.cheatsViewControllerCreateNewState(self, code: code, type: type, codeType: codeType, cheatIndex: cheatIndex, enabled: enabled) {
             result in
                 switch result {
                 case .success:
@@ -180,9 +184,8 @@ final class PVCheatsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "cheatCodeCell", for: indexPath) as! PVCheatsTableViewCell
 		cell.delegate=delegate
-
 		guard let cheat:PVCheats = allCheats?[indexPath.row] else {
-			ELOG("Nil allCheaets")
+			ELOG("Nil allCheats")
 			return cell
 		}
         var cheatType = cheat.type ?? ""
@@ -199,7 +202,6 @@ final class PVCheatsViewController: UITableViewController {
 		cell.enabledText.text=cheat.enabled ? "Enabled" : "Disabled"
 #endif
 		cell.cheat=cheat
-
 		return cell
 	}
 
@@ -210,7 +212,7 @@ final class PVCheatsViewController: UITableViewController {
     #if os(tvOS)
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		guard let allCheats = allCheats else {
-			ELOG("NIl allcheats")
+			ELOG("Nil allcheats")
 			return
 		}
         let cheat:PVCheats = allCheats[indexPath.row]
@@ -219,7 +221,7 @@ final class PVCheatsViewController: UITableViewController {
         realm.beginWrite()
         cheat.enabled = !(cheat.enabled)
         try! realm.commitWrite()
-        delegate?.cheatsViewControllerUpdateState(self, cheat: cheat) { result
+        delegate?.cheatsViewControllerUpdateState(self, cheat: cheat, cheatIndex:UInt8(indexPath.row)) { result
             in
             switch result {
             case .success:
@@ -232,7 +234,6 @@ final class PVCheatsViewController: UITableViewController {
                 let reason = (error as NSError).localizedFailureReason ?? ""
                 ELOG("Error Updating CheatCode: \(error.localizedDescription) \(reason)")
             }
-
         }
         self.tableView.reloadData()
         self.tableView.layoutIfNeeded()

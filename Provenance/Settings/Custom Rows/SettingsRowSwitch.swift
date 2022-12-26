@@ -11,11 +11,11 @@ import Foundation
 final class PVSettingsSwitchRow: SwitchRow<PVSwitchCell> {
     let keyPath: ReferenceWritableKeyPath<PVSettingsModel, Bool>
 
-    required init(text: String, detailText: DetailText? = nil, key: ReferenceWritableKeyPath<PVSettingsModel, Bool>, customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil) {
+    required init(text: String, detailText: DetailText? = nil, key: ReferenceWritableKeyPath<PVSettingsModel, Bool>, icon: Icon? = nil, customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil) {
         keyPath = key
         let value = PVSettingsModel.shared[keyPath: key]
 
-        super.init(text: text, detailText: detailText, switchValue: value, customization: customization, action: { row in
+        super.init(text: text, detailText: detailText, switchValue: value, icon: icon, customization: customization, action: { row in
             if let row = row as? SwitchRowCompatible {
                 PVSettingsModel.shared[keyPath: key] = row.switchValue
             }

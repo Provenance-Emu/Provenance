@@ -80,6 +80,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         _isFrontBufferReady      = NO;
         _gameSpeed               = GameSpeedNormal;
         _isDoubleBufferedCached = [self isDoubleBuffered];
+        _skipEmulationLoop       = NO;
 	}
 	
 	return self;
@@ -157,6 +158,18 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
             _gameCoreThread.qualityOfService = NSQualityOfServiceUserInteractive;
 
             [_gameCoreThread start];
+
+            /*
+            if (!_skipEmulationLoop) {
+                MAKEWEAK(self);
+                [NSThread detachNewThreadWithBlock:^{
+                    MAKESTRONG(self);
+                    [strongself emulationLoopThread];
+                }];
+            } else {
+                [self setIsFrontBufferReady:YES];
+            }
+             */
         }
     }
 }
@@ -262,7 +275,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     [self setIsFrontBufferReady:NO];
     [self.frontBufferCondition signal];
     [self didStopEmulation];
-    
+
 //    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
 //    [self.emulationLoopThreadLock unlock];
 }

@@ -1,0 +1,81 @@
+
+/* Class = "UILabel"; text = "Publish Date"; ObjectID = "1Sk-Zm-XR8"; */
+"1Sk-Zm-XR8.text" = "Publish Date";
+
+/* Class = "UILabel"; text = "Developer"; ObjectID = "3Ug-6s-efq"; */
+"3Ug-6s-efq.text" = "Developer";
+
+/* Class = "UILabel"; text = "Developer"; ObjectID = "5Xz-P5-wov"; */
+"5Xz-P5-wov.text" = "Developer";
+
+/* Class = "UILabel"; text = "Region"; ObjectID = "8SD-dj-o48"; */
+"8SD-dj-o48.text" = "Region";
+
+/* Class = "UILabel"; text = "Publish Date"; ObjectID = "95T-Xl-orU"; */
+"95T-Xl-orU.text" = "Publish Date";
+
+/* Class = "UILabel"; text = "Game library empty"; ObjectID = "DrX-UD-xpk"; */
+"DrX-UD-xpk.text" = "Game library empty";
+
+/* Class = "UILabel"; text = "System"; ObjectID = "EzF-F0-wzg"; */
+"EzF-F0-wzg.text" = "System";
+
+/* Class = "UILabel"; text = "Genres"; ObjectID = "F5Q-Nc-sDN"; */
+"F5Q-Nc-sDN.text" = "Genres";
+
+/* Class = "UITextView"; text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."; ObjectID = "F6k-po-NkI"; */
+"F6k-po-NkI.text" = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.";
+
+/* Class = "UILabel"; text = "Genres"; ObjectID = "FM5-s4-tzw"; */
+"FM5-s4-tzw.text" = "Genres";
+
+/* Class = "UILabel"; text = "Region"; ObjectID = "Kqr-B4-YsT"; */
+"Kqr-B4-YsT.text" = "Region";
+
+/* Class = "UILabel"; text = "Name"; ObjectID = "Nkv-Tf-Jkr"; */
+"Nkv-Tf-Jkr.text" = "Name";
+
+/* Class = "UILabel"; text = "Filename"; ObjectID = "Oqp-nZ-hfK"; */
+"Oqp-nZ-hfK.text" = "Filename";
+
+/* Class = "UIButton"; normalTitle = "Import ROMs"; ObjectID = "StB-ig-807"; */
+"StB-ig-807.normalTitle" = "Import ROMs";
+
+/* Class = "UILabel"; text = "Name"; ObjectID = "VpU-YI-9QR"; */
+"VpU-YI-9QR.text" = "Name";
+
+/* Class = "UILabel"; text = "Time Spent"; ObjectID = "eW7-VN-IH4"; */
+"eW7-VN-IH4.text" = "Time Spent";
+
+/* Class = "UILabel"; text = "Name"; ObjectID = "egp-7q-f7P"; */
+"egp-7q-f7P.text" = "Name";
+
+/* Class = "UILabel"; text = "Filename"; ObjectID = "hSt-dn-pVN"; */
+"hSt-dn-pVN.text" = "Filename";
+
+/* Class = "UILabel"; accessibilityLabel = "Name"; ObjectID = "j5n-4O-y4I"; */
+"j5n-4O-y4I.accessibilityLabel" = "Name";
+
+/* Class = "UILabel"; text = "Name"; ObjectID = "j5n-4O-y4I"; */
+"j5n-4O-y4I.text" = "Name";
+
+/* Class = "UILabel"; text = "Plays"; ObjectID = "ky4-nS-Phe"; */
+"ky4-nS-Phe.text" = "Plays";
+
+/* Class = "UILabel"; text = "Time Spent"; ObjectID = "laP-Xb-xEl"; */
+"laP-Xb-xEl.text" = "Time Spent";
+
+/* Class = "UILabel"; text = "System"; ObjectID = "rFV-O1-rfi"; */
+"rFV-O1-rfi.text" = "System";
+
+/* Class = "UILabel"; text = "Plays"; ObjectID = "rVR-VQ-Jh4"; */
+"rVR-VQ-Jh4.text" = "Plays";
+
+/* Class = "UIImageView"; accessibilityHint = "The box art for this game"; ObjectID = "sD7-l1-Ret"; */
+"sD7-l1-Ret.accessibilityHint" = "The box art for this game";
+
+/* Class = "UIImageView"; accessibilityLabel = "Game Artwork"; ObjectID = "sD7-l1-Ret"; */
+"sD7-l1-Ret.accessibilityLabel" = "Game Artwork";
+
+/* Class = "UIBarButtonItem"; title = "⚠"; ObjectID = "uuP-n9-A2Y"; */
+"uuP-n9-A2Y.title" = "⚠";

@@ -70,6 +70,145 @@ s8 joyx[4], joyy[4];
 }
 
 #pragma mark - Control
+-(void)setupControllers {
+    for (NSInteger player = 0; player < 4; player++)
+    {
+        GCController *controller = nil;
+        if (self.controller1 && player == 0)
+        {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && player == 1)
+        {
+            controller = self.controller2;
+        }
+        else if (self.controller3 && player == 2)
+        {
+            controller = self.controller3;
+        }
+        else if (self.controller4 && player == 3)
+        {
+            controller = self.controller4;
+        }
+        if (controller.extendedGamepad != nil)
+        {
+            controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::CROSS, pressed);
+            };
+            controller.extendedGamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::CIRCLE, pressed);
+            };
+            controller.extendedGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::SQUARE, pressed);
+            };
+            controller.extendedGamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::TRIANGLE, pressed);
+            };
+            controller.extendedGamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::L1, pressed);
+            };
+            controller.extendedGamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::R1, pressed);
+            };
+            controller.extendedGamepad.leftTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::L2, pressed);
+            };
+            controller.extendedGamepad.rightTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::R2, pressed);
+            };
+            controller.extendedGamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_UP, pressed);
+            };
+            controller.extendedGamepad.dpad.left.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_LEFT, pressed);
+            };
+            controller.extendedGamepad.dpad.right.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_RIGHT, pressed);
+            };
+            controller.extendedGamepad.dpad.down.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_DOWN, pressed);
+            };
+            controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::SELECT, pressed);
+            };
+            controller.extendedGamepad.buttonMenu.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::START, pressed);
+            };
+            controller.extendedGamepad.leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput* xAxis, float value) {
+                padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_LEFT_X, value);
+            };
+            controller.extendedGamepad.leftThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput* yAxis, float value) {
+                padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_LEFT_Y, -value);
+            };
+            controller.extendedGamepad.rightThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput* xAxis, float value) {
+                padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_RIGHT_X, value);
+            };
+            controller.extendedGamepad.rightThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput* yAxis, float value) {
+                padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_RIGHT_Y, -value);
+            };
+            controller.extendedGamepad.leftThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::L3, pressed);
+            };
+            controller.extendedGamepad.rightThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::R3, pressed);
+            };
+        }
+        else if (controller.gamepad != nil)
+        {
+            controller.gamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::CROSS, pressed);
+            };
+            controller.gamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::CIRCLE, pressed);
+            };
+            controller.gamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::SQUARE, pressed);
+            };
+            controller.gamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::TRIANGLE, pressed);
+            };
+            controller.gamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::L1, pressed);
+            };
+            controller.gamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::R1, pressed);
+            };
+            controller.gamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_UP, pressed);
+            };
+            controller.gamepad.dpad.left.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_LEFT, pressed);
+            };
+            controller.gamepad.dpad.right.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_RIGHT, pressed);
+            };
+            controller.gamepad.dpad.down.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_DOWN, pressed);
+            };
+        }
+        else if (controller.microGamepad != nil)
+        {
+            controller.microGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::CROSS, pressed);
+            };
+            controller.microGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::SQUARE, pressed);
+            };
+            controller.microGamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_UP, pressed);
+            };
+            controller.microGamepad.dpad.left.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_LEFT, pressed);
+            };
+            controller.microGamepad.dpad.right.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_RIGHT, pressed);
+            };
+            controller.microGamepad.dpad.down.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                padHandler->SetButtonState(PS2::CControllerInfo::DPAD_DOWN, pressed);
+            };
+        }
+    }
+}
 
 - (void)pollControllers {
     for (NSInteger playerIndex = 0; playerIndex < 4; playerIndex++)

@@ -21,7 +21,7 @@ public func PVMaxRecentsCount() -> Int {
         #if EXTENSION
             return 9
         #else
-            return UIApplication.shared.keyWindow?.traitCollection.userInterfaceIdiom == .phone ? 6 : 9
+    return UIApplication.shared.windows.first { $0.isKeyWindow }?.traitCollection.userInterfaceIdiom == .phone ? 6 : 9
         #endif
     #endif
 }

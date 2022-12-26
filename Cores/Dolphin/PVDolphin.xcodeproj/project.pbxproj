@@ -3,10 +3,26 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9308994B2950752400E145C8 /* libminizip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF12949E94400CC8234 /* libminizip.a */; };
+		930899DA29508B7100E145C8 /* libcpp-optparse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACD2949E94400CC8234 /* libcpp-optparse.a */; };
+		930899DB29508B7100E145C8 /* libed25519.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD32949E94400CC8234 /* libed25519.a */; };
+		930899E029508B7100E145C8 /* libpugixml.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF52949E94400CC8234 /* libpugixml.a */; };
+		93089A0C295093EB00E145C8 /* libfmtd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD72949E94400CC8234 /* libfmtd.a */; };
+		933CC5E42951BF680070CF1D /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5E12951BB8A0070CF1D /* libpng.a */; };
+		933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5FE2951FB9F0070CF1D /* GLKit.framework */; platformFilters = (ios, tvos, watchos, ); };
+		933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */; };
+		933CC6032952034E0070CF1D /* PVDolphinCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC6022952034E0070CF1D /* PVDolphinCore.swift */; };
+		933CFC26295335B600217F45 /* libvideovulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB072949E94400CC8234 /* libvideovulkan.a */; };
+		933CFC362953605600217F45 /* DolphinOGLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CFC352953605600217F45 /* DolphinOGLViewController.swift */; };
+		93480AFD2953810E00C61651 /* libmain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE92949E94400CC8234 /* libmain.a */; };
+		93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93599B4C2955FD520049DAC8 /* QuartzCore.framework */; };
+		93C33A952952192200CC86C5 /* libcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACB2949E94400CC8234 /* libcore.a */; };
+		93C791F02954BF4B001212D2 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316ECDB26E5C6920077FE46 /* MoltenVK.xcframework */; };
+		93C792162954BF65001212D2 /* MoltenVK.xcframework in Resources */ = {isa = PBXBuildFile; fileRef = B316ECDB26E5C6920077FE46 /* MoltenVK.xcframework */; };
 		B301797F207C909E0051B93D /* libdolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdolphin.a */; };
 		B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDolphinCore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVDolphinCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDolphinCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -15,31 +31,785 @@
 		B3135B9F26E4CC330047F338 /* PVDolphinCore+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVDolphinCore+Saves.h */; };
 		B3135BA026E4CC330047F338 /* PVDolphinCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E96218B809200557ACE /* PVDolphinCore+Controls.h */; };
 		B3135BA126E4CC620047F338 /* PVDolphin.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVDolphin.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3135BA526E4CD500047F338 /* PVDolphinCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVDolphinCore+Saves.m */; };
-		B3135BA726E4CD5A0047F338 /* PVDolphinCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDolphinCore+Video.m */; };
-		B3135BA926E4CD600047F338 /* PVDolphinCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDolphinCore+Audio.m */; };
-		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
+		B3135BA526E4CD500047F338 /* PVDolphinCore+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVDolphinCore+Saves.mm */; };
+		B3135BA726E4CD5A0047F338 /* PVDolphinCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDolphinCore+Video.mm */; };
+		B3135BA926E4CD600047F338 /* PVDolphinCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDolphinCore+Audio.mm */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
-		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
+		B34A8EF6295848010000D110 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB452949F41D00CC8234 /* libbz2.tbd */; };
+		B34A8EF7295848360000D110 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
+		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */; };
-		B3A320492720A06D00F338F6 /* DolHost.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A320472720A06C00F338F6 /* DolHost.h */; };
-		B3A3204B2720A06D00F338F6 /* DolHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3A320482720A06D00F338F6 /* DolHost.mm */; };
+		B3AAFB222949EA6900CC8234 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAC92949E94400CC8234 /* libcommon.a */; };
+		B3AAFB232949EA9E00CC8234 /* libvideocommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAFF2949E94400CC8234 /* libvideocommon.a */; };
+		B3AAFB242949EB8100CC8234 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACF2949E94400CC8234 /* libcurl.a */; };
+		B3AAFB252949EB8100CC8234 /* libenet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD52949E94400CC8234 /* libenet.a */; };
+		B3AAFB272949EB8100CC8234 /* libiconv.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFADF2949E94400CC8234 /* libiconv.a */; };
+		B3AAFB282949EB8100CC8234 /* libmbedcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAEB2949E94400CC8234 /* libmbedcrypto.a */; };
+		B3AAFB292949EB8100CC8234 /* libmbedtls.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAED2949E94400CC8234 /* libmbedtls.a */; };
+		B3AAFB2A2949EB8100CC8234 /* libmbedx509.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAEF2949E94400CC8234 /* libmbedx509.a */; };
+		B3AAFB2E2949EBAE00CC8234 /* libaudiocommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAC72949E94400CC8234 /* libaudiocommon.a */; };
+		B3AAFB2F2949EBD000CC8234 /* libvideonull.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB012949E94400CC8234 /* libvideonull.a */; };
+		B3AAFB302949EBD000CC8234 /* libvideoogl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB032949E94400CC8234 /* libvideoogl.a */; };
+		B3AAFB312949EBD000CC8234 /* libvideosoftware.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB052949E94400CC8234 /* libvideosoftware.a */; };
+		B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB322949F26800CC8234 /* CoreGraphics.framework */; };
+		B3AAFB342949F28700CC8234 /* libSoundTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFABF2949E94400CC8234 /* libSoundTouch.a */; };
+		B3AAFB352949F2B300CC8234 /* libinputcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE32949E94400CC8234 /* libinputcommon.a */; };
+		B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB362949F2D500CC8234 /* CoreHaptics.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB382949F2DC00CC8234 /* GameController.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		B3AAFB3B2949F30E00CC8234 /* libdiscio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD12949E94400CC8234 /* libdiscio.a */; };
+		B3AAFB3C2949F31300CC8234 /* libimgui.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE12949E94400CC8234 /* libimgui.a */; };
+		B3AAFB3D2949F32700CC8234 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE52949E94400CC8234 /* liblzma.a */; };
+		B3AAFB3E2949F34400CC8234 /* libsfml-network.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF72949E94400CC8234 /* libsfml-network.a */; };
+		B3AAFB3F2949F35900CC8234 /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB092949E94400CC8234 /* libxxhash.a */; };
+		B3AAFB412949F38F00CC8234 /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB0B2949E94400CC8234 /* libzstd.a */; };
+		B3AAFB462949F41D00CC8234 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB442949F41C00CC8234 /* libz.tbd */; };
+		B3AAFB472949F41D00CC8234 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB452949F41D00CC8234 /* libbz2.tbd */; };
+		B3AAFB482949F45B00CC8234 /* libuicommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAFB2949E94400CC8234 /* libuicommon.a */; };
+		B3AAFB492949F52E00CC8234 /* libsfml-system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF92949E94400CC8234 /* libsfml-system.a */; };
+		B3AAFB4B2949F58100CC8234 /* libFreeSurround.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAB12949E94400CC8234 /* libFreeSurround.a */; };
+		B3AAFB4C2949F59800CC8234 /* libglslang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD92949E94400CC8234 /* libglslang.a */; };
+		B3AAFB4D2949F5BB00CC8234 /* liblzo2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE72949E94400CC8234 /* liblzo2.a */; };
+		B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB502949F72800CC8234 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
+		B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB522949F73C00CC8234 /* MetalKit.framework */; };
+		B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB532949F73C00CC8234 /* Metal.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		9308993F2950713700E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6D06739B76F94BA58C0C241A;
+			remoteInfo = minizip;
+		};
+		93089941295071C200E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = AD9FB006DD914823A5E1C675;
+			remoteInfo = fmt;
+		};
+		9308999229508AD400E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 95D817F4A2E64387A8B63962;
+			remoteInfo = FreeSurround;
+		};
+		9308999429508AD400E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F759DF1A3D34CF0817A5056;
+			remoteInfo = SoundTouch;
+		};
+		9308999629508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5F9E26EB6412457CAAEF2862;
+			remoteInfo = audiocommon;
+		};
+		9308999829508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 28C8EC9CC6C448748C0AEAF8;
+			remoteInfo = common;
+		};
+		9308999A29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D9135B9C9BB8460684E1A3BD;
+			remoteInfo = core;
+		};
+		9308999C29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = C23503A6E1A84878BB8365ED;
+			remoteInfo = "cpp-optparse";
+		};
+		9308999E29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6BE1452B379441EA91E622A5;
+			remoteInfo = curl;
+		};
+		930899A029508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = C0FE329640A24E14BC42E1E8;
+			remoteInfo = discio;
+		};
+		930899A229508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CDB2A7A006C940A898BA1105;
+			remoteInfo = ed25519;
+		};
+		930899A429508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9A4601325D2A49C79EBA05DE;
+			remoteInfo = enet;
+		};
+		930899A629508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 904647FC2D314066B9F04905;
+			remoteInfo = glslang;
+		};
+		930899A829508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E7F9B2035B1D49008E68966E;
+			remoteInfo = gtest;
+		};
+		930899AA29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9848868307C1400D9AC40CAB;
+			remoteInfo = gtest_main;
+		};
+		930899AC29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 184651C4B0C14DA499C7E6C3;
+			remoteInfo = iconv;
+		};
+		930899AE29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 003B3E18F5BF47DFAC75E727;
+			remoteInfo = imgui;
+		};
+		930899B029508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 13CAEFFAB77941B88165274F;
+			remoteInfo = inputcommon;
+		};
+		930899B629508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D752928893D4BFD95D25A85;
+			remoteInfo = lzo2;
+		};
+		930899B829508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5AC9F7A7A0B8445FA5779EA8;
+			remoteInfo = main;
+		};
+		930899BA29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A9FADB726A3F4823AF69920A;
+			remoteInfo = mbedcrypto;
+		};
+		930899BC29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7ADE35EC9B4B4D95B62A8E7D;
+			remoteInfo = mbedtls;
+		};
+		930899BE29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 74710D29352D45F688AF1321;
+			remoteInfo = mbedx509;
+		};
+		930899C229508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3F467100F3C2470595B4E136;
+			remoteInfo = pugixml;
+		};
+		930899C429508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7237D86AFCAF47B3AACCD36F;
+			remoteInfo = "sfml-network";
+		};
+		930899C629508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 91B2192A5C894AA39B800CD1;
+			remoteInfo = "sfml-system";
+		};
+		930899C829508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 836B2739FBBA47768EBAF7A1;
+			remoteInfo = uicommon;
+		};
+		930899CA29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D5AE0652CBF341B6A584AB4D;
+			remoteInfo = unittests_stubhost;
+		};
+		930899CC29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6504457CD76E42D5B7609C78;
+			remoteInfo = videocommon;
+		};
+		930899CE29508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = C79A01DDDBE745E19D67FCEB;
+			remoteInfo = videonull;
+		};
+		930899D029508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = C12C69F6EF204E95994F1155;
+			remoteInfo = videoogl;
+		};
+		930899D229508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 72D3780A30FB4E26A293E913;
+			remoteInfo = videosoftware;
+		};
+		930899D429508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 2E6BA310C533454797D03C14;
+			remoteInfo = videovulkan;
+		};
+		930899D629508AED00E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0424D5B451D54E0A9CBB3EF1;
+			remoteInfo = xxhash;
+		};
+		930899D829508B0400E145C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B30178D2207C901D0051B93D;
+			remoteInfo = dolphin;
+		};
+		933CC5E02951BB8A0070CF1D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D76AB5BBBFBE4D7A8840EEC0;
+			remoteInfo = png;
+		};
+		933CC5E52951C0380070CF1D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 12EF7DC7FA03454FA4C38BBF;
+			remoteInfo = png;
+		};
+		933CC5E72951C0480070CF1D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7FD26A8923E048C185776846;
+			remoteInfo = lzma;
+		};
+		B34A8EF829584A700000D110 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0424D5B451D54E0A9CBB3EF1;
+			remoteInfo = xxhash;
+		};
+		B3AAFA8C2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E449D1CC998F479899984D08;
+			remoteInfo = BitFieldTest;
+		};
+		B3AAFA8E2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2F61ACB12F2544F38B36AC74;
+			remoteInfo = BitSetTest;
+		};
+		B3AAFA902949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C968170A7D39415ABF53325A;
+			remoteInfo = BitUtilsTest;
+		};
+		B3AAFA922949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D09B294247B347C69B6056C5;
+			remoteInfo = BlockingLoopTest;
+		};
+		B3AAFA942949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 999E6F71031540A294ED10AD;
+			remoteInfo = BusyLoopTest;
+		};
+		B3AAFA962949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0DA33A3C1ADC4DD9B03532F8;
+			remoteInfo = CommonFuncsTest;
+		};
+		B3AAFA982949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EFB9D51FA9034A38B9F73B9C;
+			remoteInfo = CoreTimingTest;
+		};
+		B3AAFA9A2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1111BB4F63D94D658F81B740;
+			remoteInfo = CryptoEcTest;
+		};
+		B3AAFA9C2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 46F7DA2E87E043B4B24A077B;
+			remoteInfo = DSPAcceleratorTest;
+		};
+		B3AAFA9E2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E20B2AE1290D4797851DCB20;
+			remoteInfo = DSPAssemblyTest;
+		};
+		B3AAFAA02949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8BFB82AF96E24C7DB24BA1C8;
+			remoteInfo = ESFormatsTest;
+		};
+		B3AAFAA22949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 97AE98159ED84948A87D92A1;
+			remoteInfo = EnumFormatterTest;
+		};
+		B3AAFAA42949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F9460EB91E2645F6A1A9E9B2;
+			remoteInfo = EventTest;
+		};
+		B3AAFAA62949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3667081458CB4BD7847EBA70;
+			remoteInfo = FileSystemTest;
+		};
+		B3AAFAA82949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 578F8EFC108849F694A63F5C;
+			remoteInfo = FileUtilTest;
+		};
+		B3AAFAAA2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 063D3264BEF047229A08D3E6;
+			remoteInfo = FixedSizeQueueTest;
+		};
+		B3AAFAAC2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 336D9CECBBD34B888198360F;
+			remoteInfo = FlagTest;
+		};
+		B3AAFAAE2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1A9893033830441097A65CEC;
+			remoteInfo = FloatUtilsTest;
+		};
+		B3AAFAB02949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4BB39C731E2447D7AC8FDEFE;
+			remoteInfo = FreeSurround;
+		};
+		B3AAFAB22949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EA05D19C36424210AD696CBE;
+			remoteInfo = MMIOTest;
+		};
+		B3AAFAB42949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 279038446885432B9A0334B1;
+			remoteInfo = MathUtilTest;
+		};
+		B3AAFAB62949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1FECF898B33D476CB3DA2737;
+			remoteInfo = NandPathsTest;
+		};
+		B3AAFAB82949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 37976FF96B4E45E0AE6F8A49;
+			remoteInfo = PageFaultTest;
+		};
+		B3AAFABA2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A4C49CB45DCC4B1C9EED5D0E;
+			remoteInfo = PowerPCTest;
+		};
+		B3AAFABC2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5D3922F1953C443683235594;
+			remoteInfo = SPSCQueueTest;
+		};
+		B3AAFABE2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E6922D69AF9748DE8DA73888;
+			remoteInfo = SoundTouch;
+		};
+		B3AAFAC02949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 572513C0DD194608AF410050;
+			remoteInfo = StringUtilTest;
+		};
+		B3AAFAC22949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D4E1696AE2FC404FB96E7B55;
+			remoteInfo = SwapTest;
+		};
+		B3AAFAC42949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9EAE6985868B4F619D463534;
+			remoteInfo = VertexLoaderTest;
+		};
+		B3AAFAC62949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0482791101EB4C2E8E78B035;
+			remoteInfo = audiocommon;
+		};
+		B3AAFAC82949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C53581E14CFA46648750E93E;
+			remoteInfo = common;
+		};
+		B3AAFACA2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 908272F7C3FE46B8A54FDAF7;
+			remoteInfo = core;
+		};
+		B3AAFACC2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 781C6645E0EC44189CDA84E9;
+			remoteInfo = "cpp-optparse";
+		};
+		B3AAFACE2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1E099526FB60469D94F9CEEB;
+			remoteInfo = curl;
+		};
+		B3AAFAD02949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C96A88B66B224568B85AA8F1;
+			remoteInfo = discio;
+		};
+		B3AAFAD22949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 60148ABB2AC84726AB6F6057;
+			remoteInfo = ed25519;
+		};
+		B3AAFAD42949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7D7B0C0AF46B475987D8F64B;
+			remoteInfo = enet;
+		};
+		B3AAFAD62949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5C7F8AB6547A434E9F507C85;
+			remoteInfo = fmt;
+		};
+		B3AAFAD82949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F77FAE0C5F644A1EA39FB1B5;
+			remoteInfo = glslang;
+		};
+		B3AAFADA2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F048386A2EC14FD7B66CF4F7;
+			remoteInfo = gtest;
+		};
+		B3AAFADC2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D914D761583404D958B0FB4;
+			remoteInfo = gtest_main;
+		};
+		B3AAFADE2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 86EE3D8613FC4CAD83D4A941;
+			remoteInfo = iconv;
+		};
+		B3AAFAE02949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 69D4BC48429A4BF596D6D6F2;
+			remoteInfo = imgui;
+		};
+		B3AAFAE22949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EA597B0199244FFFBB593558;
+			remoteInfo = inputcommon;
+		};
+		B3AAFAE42949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C5F5CEF8B1E74286A3CDB0F5;
+			remoteInfo = lzma;
+		};
+		B3AAFAE62949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4E16BF7839604CD28D860CA0;
+			remoteInfo = lzo2;
+		};
+		B3AAFAE82949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A753FAF343514E72A57C8CAE;
+			remoteInfo = main;
+		};
+		B3AAFAEA2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5BE6CD372F734166BD73FD08;
+			remoteInfo = mbedcrypto;
+		};
+		B3AAFAEC2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4448DCDFD7F24E5E9EDD8C80;
+			remoteInfo = mbedtls;
+		};
+		B3AAFAEE2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2FE754E401494068B9E5141B;
+			remoteInfo = mbedx509;
+		};
+		B3AAFAF02949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BF10C35576674D80B38E6E8B;
+			remoteInfo = minizip;
+		};
+		B3AAFAF42949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6A0600FDF41E4DF7A107FEB5;
+			remoteInfo = pugixml;
+		};
+		B3AAFAF62949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3821A0E007B94E4A89461F7C;
+			remoteInfo = "sfml-network";
+		};
+		B3AAFAF82949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 75D69E11DC84452491D86064;
+			remoteInfo = "sfml-system";
+		};
+		B3AAFAFA2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4E053277294D4CFEA6805B33;
+			remoteInfo = uicommon;
+		};
+		B3AAFAFC2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 31D9BCE2831E4CBCB574B4EF;
+			remoteInfo = unittests_stubhost;
+		};
+		B3AAFAFE2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2D3D002B5F544AC891A4519;
+			remoteInfo = videocommon;
+		};
+		B3AAFB002949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BBA93B04E79145BB925A183D;
+			remoteInfo = videonull;
+		};
+		B3AAFB022949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3799155848014E629EC0AE98;
+			remoteInfo = videoogl;
+		};
+		B3AAFB042949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CE6C8AEC36B94254A93DA885;
+			remoteInfo = videosoftware;
+		};
+		B3AAFB062949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A7C22FB154D84F80BC8C3DBA;
+			remoteInfo = videovulkan;
+		};
+		B3AAFB082949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9D0FF7F1A8024CEFAE0F4C86;
+			remoteInfo = xxhash;
+		};
+		B3AAFB0A2949E94400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E40AF06B711646088153CFB4;
+			remoteInfo = zstd;
+		};
+		B3AAFB422949F3A400CC8234 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 49318C94EA5D453AA16C3407;
+			remoteInfo = zstd;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
+			dstPath = "$(SRCROOT)";
+			dstSubfolderSpec = 0;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -47,8 +817,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		930D481D2954B18400D83090 /* Sys */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sys; path = "dolphin-ios/Data/Sys"; sourceTree = "<group>"; };
+		933CC5FE2951FB9F0070CF1D /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DolphinVulkanViewController.swift; sourceTree = "<group>"; };
+		933CC6022952034E0070CF1D /* PVDolphinCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDolphinCore.swift; sourceTree = "<group>"; };
+		933CFC352953605600217F45 /* DolphinOGLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DolphinOGLViewController.swift; sourceTree = "<group>"; };
+		93599B4C2955FD520049DAC8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		93C33AC029527E5F00CC86C5 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		B30178D3207C901D0051B93D /* libdolphin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdolphin.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B316BAD426E5C66D0077FE46 /* gameini-ratings-from-wiki.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "gameini-ratings-from-wiki.sh"; sourceTree = "<group>"; };
 		B316BAD526E5C66D0077FE46 /* check-includes.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "check-includes.py"; sourceTree = "<group>"; };
 		B316BAD626E5C66D0077FE46 /* CleanFiles.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = CleanFiles.py; sourceTree = "<group>"; };
@@ -2256,6 +3032,7 @@
 		B316C44726E5C6730077FE46 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Main.strings; sourceTree = "<group>"; };
 		B316C44826E5C6730077FE46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B316C44926E5C6730077FE46 /* DolphiniOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DolphiniOS-Bridging-Header.h"; sourceTree = "<group>"; };
+		B316C44A26E5C6730077FE46 /* DolphiniOS.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = DolphiniOS.xcworkspace; sourceTree = "<group>"; };
 		B316C44E26E5C6730077FE46 /* AboutViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AboutViewController.m; sourceTree = "<group>"; };
 		B316C44F26E5C6730077FE46 /* SettingsTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SettingsTableViewController.h; sourceTree = "<group>"; };
 		B316C45026E5C6730077FE46 /* SettingsTableViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SettingsTableViewController.mm; sourceTree = "<group>"; };
@@ -14656,18 +15433,17 @@
 		B316F86126E5C6BC0077FE46 /* dolphin-emu-nogui.6 */ = {isa = PBXFileReference; lastKnownFileType = text; path = "dolphin-emu-nogui.6"; sourceTree = "<group>"; };
 		B316F86226E5C6BC0077FE46 /* license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
 		B316F86326E5C6BC0077FE46 /* CMakeSettings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CMakeSettings.json; sourceTree = "<group>"; };
-		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447E96218B809200557ACE /* PVDolphinCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVDolphinCore+Controls.h"; sourceTree = "<group>"; };
 		B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVDolphinCore+Controls.mm"; sourceTree = "<group>"; };
 		B3447EA0218B881000557ACE /* PVDolphin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDolphin.mm; sourceTree = "<group>"; };
 		B3447EA9218BC59D00557ACE /* PVDolphinCore+Saves.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVDolphinCore+Saves.h"; sourceTree = "<group>"; };
-		B3447EAA218BC59D00557ACE /* PVDolphinCore+Saves.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVDolphinCore+Saves.m"; sourceTree = "<group>"; };
+		B3447EAA218BC59D00557ACE /* PVDolphinCore+Saves.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVDolphinCore+Saves.mm"; sourceTree = "<group>"; };
 		B3447EAD218BC5C500557ACE /* PVDolphinCore+Video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVDolphinCore+Video.h"; sourceTree = "<group>"; };
-		B3447EAE218BC5C500557ACE /* PVDolphinCore+Video.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVDolphinCore+Video.m"; sourceTree = "<group>"; };
+		B3447EAE218BC5C500557ACE /* PVDolphinCore+Video.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVDolphinCore+Video.mm"; sourceTree = "<group>"; };
 		B3447EB1218BC69700557ACE /* PVDolphinCore+Audio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVDolphinCore+Audio.h"; sourceTree = "<group>"; };
-		B3447EB2218BC69700557ACE /* PVDolphinCore+Audio.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVDolphinCore+Audio.m"; sourceTree = "<group>"; };
+		B3447EB2218BC69700557ACE /* PVDolphinCore+Audio.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVDolphinCore+Audio.mm"; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B35E6BEF207CD2610040709A /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		B35E6BF1207CD2670040709A /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -14676,7 +15452,15 @@
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B3A320472720A06C00F338F6 /* DolHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DolHost.h; sourceTree = "<group>"; };
 		B3A320482720A06D00F338F6 /* DolHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DolHost.mm; sourceTree = "<group>"; };
-		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "dolphin-emu.xcodeproj"; path = "cmake/dolphin-emu.xcodeproj"; sourceTree = "<group>"; };
+		B3AAFB322949F26800CC8234 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B3AAFB362949F2D500CC8234 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
+		B3AAFB382949F2DC00CC8234 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/iOSSupport/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
+		B3AAFB442949F41C00CC8234 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		B3AAFB452949F41D00CC8234 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
+		B3AAFB502949F72800CC8234 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		B3AAFB522949F73C00CC8234 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
+		B3AAFB532949F73C00CC8234 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		B3C7621020783162009950E4 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVDolphin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDolphin.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -14693,6 +15477,42 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93480AFD2953810E00C61651 /* libmain.a in Frameworks */,
+				933CFC26295335B600217F45 /* libvideovulkan.a in Frameworks */,
+				93C33A952952192200CC86C5 /* libcore.a in Frameworks */,
+				93089A0C295093EB00E145C8 /* libfmtd.a in Frameworks */,
+				933CC5E42951BF680070CF1D /* libpng.a in Frameworks */,
+				9308994B2950752400E145C8 /* libminizip.a in Frameworks */,
+				B3AAFB2E2949EBAE00CC8234 /* libaudiocommon.a in Frameworks */,
+				B3AAFB222949EA6900CC8234 /* libcommon.a in Frameworks */,
+				930899DA29508B7100E145C8 /* libcpp-optparse.a in Frameworks */,
+				B3AAFB242949EB8100CC8234 /* libcurl.a in Frameworks */,
+				B3AAFB3B2949F30E00CC8234 /* libdiscio.a in Frameworks */,
+				930899DB29508B7100E145C8 /* libed25519.a in Frameworks */,
+				B3AAFB252949EB8100CC8234 /* libenet.a in Frameworks */,
+				B3AAFB4B2949F58100CC8234 /* libFreeSurround.a in Frameworks */,
+				B3AAFB4C2949F59800CC8234 /* libglslang.a in Frameworks */,
+				B3AAFB272949EB8100CC8234 /* libiconv.a in Frameworks */,
+				B3AAFB3C2949F31300CC8234 /* libimgui.a in Frameworks */,
+				B3AAFB352949F2B300CC8234 /* libinputcommon.a in Frameworks */,
+				B3AAFB3D2949F32700CC8234 /* liblzma.a in Frameworks */,
+				B3AAFB4D2949F5BB00CC8234 /* liblzo2.a in Frameworks */,
+				B3AAFB282949EB8100CC8234 /* libmbedcrypto.a in Frameworks */,
+				B3AAFB292949EB8100CC8234 /* libmbedtls.a in Frameworks */,
+				B3AAFB2A2949EB8100CC8234 /* libmbedx509.a in Frameworks */,
+				930899E029508B7100E145C8 /* libpugixml.a in Frameworks */,
+				B3AAFB3E2949F34400CC8234 /* libsfml-network.a in Frameworks */,
+				B3AAFB492949F52E00CC8234 /* libsfml-system.a in Frameworks */,
+				B3AAFB342949F28700CC8234 /* libSoundTouch.a in Frameworks */,
+				B3AAFB482949F45B00CC8234 /* libuicommon.a in Frameworks */,
+				B3AAFB232949EA9E00CC8234 /* libvideocommon.a in Frameworks */,
+				B3AAFB2F2949EBD000CC8234 /* libvideonull.a in Frameworks */,
+				B3AAFB302949EBD000CC8234 /* libvideoogl.a in Frameworks */,
+				B3AAFB312949EBD000CC8234 /* libvideosoftware.a in Frameworks */,
+				B3AAFB3F2949F35900CC8234 /* libxxhash.a in Frameworks */,
+				B3AAFB412949F38F00CC8234 /* libzstd.a in Frameworks */,
+				B3AAFB472949F41D00CC8234 /* libbz2.tbd in Frameworks */,
+				B3AAFB462949F41D00CC8234 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -14700,17 +15520,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
-				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
-				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
-				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
-				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libdolphin.a in Frameworks */,
-				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
+				933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */,
+				93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */,
+				B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
+				B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */,
+				B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */,
+				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
+				B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */,
+				B34A8EF6295848010000D110 /* libbz2.tbd in Frameworks */,
+				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
+				B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */,
+				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
+				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
+				B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */,
+				B301797F207C909E0051B93D /* libdolphin.a in Frameworks */,
+				93C791F02954BF4B001212D2 /* MoltenVK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17735,6 +18563,7 @@
 			children = (
 				B316C2AC26E5C6720077FE46 /* DolphinATV */,
 				B316C2BB26E5C6720077FE46 /* DolphiniOS */,
+				B316C44A26E5C6730077FE46 /* DolphiniOS.xcworkspace */,
 				B316C44B26E5C6730077FE46 /* Common */,
 				B316C4AC26E5C6740077FE46 /* Podfile */,
 				B316C4AD26E5C6740077FE46 /* .bartycrouch.toml */,
@@ -38224,23 +39053,98 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				933CFC352953605600217F45 /* DolphinOGLViewController.swift */,
+				933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */,
+				933CC6022952034E0070CF1D /* PVDolphinCore.swift */,
 				B3C76223207833DE009950E4 /* PVDolphinCore.h */,
 				B3C76224207833DE009950E4 /* PVDolphinCore.mm */,
 				B3447EB1218BC69700557ACE /* PVDolphinCore+Audio.h */,
-				B3447EB2218BC69700557ACE /* PVDolphinCore+Audio.m */,
+				B3447EB2218BC69700557ACE /* PVDolphinCore+Audio.mm */,
 				B3447EAD218BC5C500557ACE /* PVDolphinCore+Video.h */,
-				B3447EAE218BC5C500557ACE /* PVDolphinCore+Video.m */,
+				B3447EAE218BC5C500557ACE /* PVDolphinCore+Video.mm */,
 				B3447EA9218BC59D00557ACE /* PVDolphinCore+Saves.h */,
-				B3447EAA218BC59D00557ACE /* PVDolphinCore+Saves.m */,
+				B3447EAA218BC59D00557ACE /* PVDolphinCore+Saves.mm */,
 				B3447E96218B809200557ACE /* PVDolphinCore+Controls.h */,
 				B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */,
 			);
 			path = Core;
 			sourceTree = "<group>";
 		};
+		B3AAFA442949E94300CC8234 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B3AAFA8D2949E94400CC8234 /* BitFieldTest */,
+				B3AAFA8F2949E94400CC8234 /* BitSetTest */,
+				B3AAFA912949E94400CC8234 /* BitUtilsTest */,
+				B3AAFA932949E94400CC8234 /* BlockingLoopTest */,
+				B3AAFA952949E94400CC8234 /* BusyLoopTest */,
+				B3AAFA972949E94400CC8234 /* CommonFuncsTest */,
+				B3AAFA992949E94400CC8234 /* CoreTimingTest */,
+				B3AAFA9B2949E94400CC8234 /* CryptoEcTest */,
+				B3AAFA9D2949E94400CC8234 /* DSPAcceleratorTest */,
+				B3AAFA9F2949E94400CC8234 /* DSPAssemblyTest */,
+				B3AAFAA12949E94400CC8234 /* ESFormatsTest */,
+				B3AAFAA32949E94400CC8234 /* EnumFormatterTest */,
+				B3AAFAA52949E94400CC8234 /* EventTest */,
+				B3AAFAA72949E94400CC8234 /* FileSystemTest */,
+				B3AAFAA92949E94400CC8234 /* FileUtilTest */,
+				B3AAFAAB2949E94400CC8234 /* FixedSizeQueueTest */,
+				B3AAFAAD2949E94400CC8234 /* FlagTest */,
+				B3AAFAAF2949E94400CC8234 /* FloatUtilsTest */,
+				B3AAFAB12949E94400CC8234 /* libFreeSurround.a */,
+				B3AAFAB32949E94400CC8234 /* MMIOTest */,
+				B3AAFAB52949E94400CC8234 /* MathUtilTest */,
+				B3AAFAB72949E94400CC8234 /* NandPathsTest */,
+				B3AAFAB92949E94400CC8234 /* PageFaultTest */,
+				B3AAFABB2949E94400CC8234 /* PowerPCTest */,
+				B3AAFABD2949E94400CC8234 /* SPSCQueueTest */,
+				B3AAFABF2949E94400CC8234 /* libSoundTouch.a */,
+				B3AAFAC12949E94400CC8234 /* StringUtilTest */,
+				B3AAFAC32949E94400CC8234 /* SwapTest */,
+				B3AAFAC52949E94400CC8234 /* VertexLoaderTest */,
+				B3AAFAC72949E94400CC8234 /* libaudiocommon.a */,
+				B3AAFAC92949E94400CC8234 /* libcommon.a */,
+				B3AAFACB2949E94400CC8234 /* libcore.a */,
+				B3AAFACD2949E94400CC8234 /* libcpp-optparse.a */,
+				B3AAFACF2949E94400CC8234 /* libcurl.a */,
+				B3AAFAD12949E94400CC8234 /* libdiscio.a */,
+				B3AAFAD32949E94400CC8234 /* libed25519.a */,
+				B3AAFAD52949E94400CC8234 /* libenet.a */,
+				B3AAFAD72949E94400CC8234 /* libfmtd.a */,
+				B3AAFAD92949E94400CC8234 /* libglslang.a */,
+				B3AAFADB2949E94400CC8234 /* libgtestd.a */,
+				B3AAFADD2949E94400CC8234 /* libgtest_maind.a */,
+				B3AAFADF2949E94400CC8234 /* libiconv.a */,
+				B3AAFAE12949E94400CC8234 /* libimgui.a */,
+				B3AAFAE32949E94400CC8234 /* libinputcommon.a */,
+				B3AAFAE52949E94400CC8234 /* liblzma.a */,
+				B3AAFAE72949E94400CC8234 /* liblzo2.a */,
+				B3AAFAE92949E94400CC8234 /* libmain.a */,
+				B3AAFAEB2949E94400CC8234 /* libmbedcrypto.a */,
+				B3AAFAED2949E94400CC8234 /* libmbedtls.a */,
+				B3AAFAEF2949E94400CC8234 /* libmbedx509.a */,
+				B3AAFAF12949E94400CC8234 /* libminizip.a */,
+				933CC5E12951BB8A0070CF1D /* libpng.a */,
+				B3AAFAF52949E94400CC8234 /* libpugixml.a */,
+				B3AAFAF72949E94400CC8234 /* libsfml-network.a */,
+				B3AAFAF92949E94400CC8234 /* libsfml-system.a */,
+				B3AAFAFB2949E94400CC8234 /* libuicommon.a */,
+				B3AAFAFD2949E94400CC8234 /* libunittests_stubhost.a */,
+				B3AAFAFF2949E94400CC8234 /* libvideocommon.a */,
+				B3AAFB012949E94400CC8234 /* libvideonull.a */,
+				B3AAFB032949E94400CC8234 /* libvideoogl.a */,
+				B3AAFB052949E94400CC8234 /* libvideosoftware.a */,
+				B3AAFB072949E94400CC8234 /* libvideovulkan.a */,
+				B3AAFB092949E94400CC8234 /* libxxhash.a */,
+				B3AAFB0B2949E94400CC8234 /* libzstd.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				B316BACF26E5C66D0077FE46 /* dolphin-ios */,
 				B3C762202078327B009950E4 /* PVDolphinCore */,
@@ -38272,10 +39176,20 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B3135BAA26E4CDC50047F338 /* QuartzCore.framework */,
+				93599B4C2955FD520049DAC8 /* QuartzCore.framework */,
+				930D481D2954B18400D83090 /* Sys */,
+				93C33AC029527E5F00CC86C5 /* libc++.tbd */,
+				933CC5FE2951FB9F0070CF1D /* GLKit.framework */,
+				B3AAFB532949F73C00CC8234 /* Metal.framework */,
+				B3AAFB522949F73C00CC8234 /* MetalKit.framework */,
+				B3AAFB502949F72800CC8234 /* UIKit.framework */,
+				B3AAFB452949F41D00CC8234 /* libbz2.tbd */,
+				B3AAFB442949F41C00CC8234 /* libz.tbd */,
+				B3AAFB382949F2DC00CC8234 /* GameController.framework */,
+				B3AAFB362949F2D500CC8234 /* CoreHaptics.framework */,
+				B3AAFB322949F26800CC8234 /* CoreGraphics.framework */,
 				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
 				B35E6BEF207CD2610040709A /* AudioUnit.framework */,
-				B324C31B2191964F009F4EDC /* AVFoundation.framework */,
 				B35E6BF8207D00D00040709A /* AVFoundation.framework */,
 				B35E6BF4207CD2740040709A /* CoreAudio.framework */,
 				B35E6BF3207CD2730040709A /* CoreAudioKit.framework */,
@@ -38283,7 +39197,6 @@
 				B339468820783F41008DBAB4 /* libpthread.tbd */,
 				B339468A20783F48008DBAB4 /* libz.tbd */,
 				B3C7621C20783243009950E4 /* OpenGLES.framework */,
-				B3B104B8218F281B00210C39 /* PVSupport.framework */,
 				B3C7622120783297009950E4 /* PVSupport.framework */,
 			);
 			name = Frameworks;
@@ -38310,7 +39223,6 @@
 				B3135B9D26E4CC330047F338 /* PVDolphinCore+Audio.h in Headers */,
 				B3135BA026E4CC330047F338 /* PVDolphinCore+Controls.h in Headers */,
 				B3135B9C26E4CC290047F338 /* PVDolphinCore.h in Headers */,
-				B3A320492720A06D00F338F6 /* DolHost.h in Headers */,
 				B3135B9F26E4CC330047F338 /* PVDolphinCore+Saves.h in Headers */,
 				B3135BA126E4CC620047F338 /* PVDolphin.h in Headers */,
 				B3135B9E26E4CC330047F338 /* PVDolphinCore+Video.h in Headers */,
@@ -38331,6 +39243,43 @@
 			buildRules = (
 			);
 			dependencies = (
+				933CC5E82951C0480070CF1D /* PBXTargetDependency */,
+				930899402950713700E145C8 /* PBXTargetDependency */,
+				B3AAFB432949F3A400CC8234 /* PBXTargetDependency */,
+				933CC5E62951C0380070CF1D /* PBXTargetDependency */,
+				9308999729508AED00E145C8 /* PBXTargetDependency */,
+				9308999929508AED00E145C8 /* PBXTargetDependency */,
+				9308999B29508AED00E145C8 /* PBXTargetDependency */,
+				9308999D29508AED00E145C8 /* PBXTargetDependency */,
+				9308999F29508AED00E145C8 /* PBXTargetDependency */,
+				930899A129508AED00E145C8 /* PBXTargetDependency */,
+				930899A329508AED00E145C8 /* PBXTargetDependency */,
+				930899A529508AED00E145C8 /* PBXTargetDependency */,
+				93089942295071C200E145C8 /* PBXTargetDependency */,
+				930899A729508AED00E145C8 /* PBXTargetDependency */,
+				930899A929508AED00E145C8 /* PBXTargetDependency */,
+				930899AB29508AED00E145C8 /* PBXTargetDependency */,
+				930899AD29508AED00E145C8 /* PBXTargetDependency */,
+				930899AF29508AED00E145C8 /* PBXTargetDependency */,
+				930899B129508AED00E145C8 /* PBXTargetDependency */,
+				930899B729508AED00E145C8 /* PBXTargetDependency */,
+				930899B929508AED00E145C8 /* PBXTargetDependency */,
+				930899BB29508AED00E145C8 /* PBXTargetDependency */,
+				930899BD29508AED00E145C8 /* PBXTargetDependency */,
+				930899BF29508AED00E145C8 /* PBXTargetDependency */,
+				930899C329508AED00E145C8 /* PBXTargetDependency */,
+				930899C529508AED00E145C8 /* PBXTargetDependency */,
+				930899C729508AED00E145C8 /* PBXTargetDependency */,
+				930899C929508AED00E145C8 /* PBXTargetDependency */,
+				930899CB29508AED00E145C8 /* PBXTargetDependency */,
+				930899CD29508AED00E145C8 /* PBXTargetDependency */,
+				930899CF29508AED00E145C8 /* PBXTargetDependency */,
+				930899D129508AED00E145C8 /* PBXTargetDependency */,
+				930899D329508AED00E145C8 /* PBXTargetDependency */,
+				930899D529508AED00E145C8 /* PBXTargetDependency */,
+				930899D729508AED00E145C8 /* PBXTargetDependency */,
+				9308999329508AD400E145C8 /* PBXTargetDependency */,
+				9308999529508AD400E145C8 /* PBXTargetDependency */,
 			);
 			name = dolphin;
 			productName = reicast;
@@ -38349,6 +39298,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				B34A8EF929584A700000D110 /* PBXTargetDependency */,
+				930899D929508B0400E145C8 /* PBXTargetDependency */,
 			);
 			name = PVDolphin;
 			productName = PVReicast;
@@ -38363,7 +39314,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1420;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					B30178D2207C901D0051B93D = {
@@ -38376,7 +39327,7 @@
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVDolphin" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -38397,6 +39348,12 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B3AAFA442949E94300CC8234 /* Products */;
+					ProjectRef = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVDolphin */,
@@ -38405,11 +39362,490 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		933CC5E12951BB8A0070CF1D /* libpng.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libpng.a;
+			remoteRef = 933CC5E02951BB8A0070CF1D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFA8D2949E94400CC8234 /* BitFieldTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = BitFieldTest;
+			path = BitFieldTest.app;
+			remoteRef = B3AAFA8C2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFA8F2949E94400CC8234 /* BitSetTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = BitSetTest;
+			path = BitSetTest.app;
+			remoteRef = B3AAFA8E2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFA912949E94400CC8234 /* BitUtilsTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = BitUtilsTest;
+			path = BitUtilsTest.app;
+			remoteRef = B3AAFA902949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFA932949E94400CC8234 /* BlockingLoopTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = BlockingLoopTest;
+			path = BlockingLoopTest.app;
+			remoteRef = B3AAFA922949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFA952949E94400CC8234 /* BusyLoopTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = BusyLoopTest;
+			path = BusyLoopTest.app;
+			remoteRef = B3AAFA942949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFA972949E94400CC8234 /* CommonFuncsTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = CommonFuncsTest;
+			path = CommonFuncsTest.app;
+			remoteRef = B3AAFA962949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFA992949E94400CC8234 /* CoreTimingTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = CoreTimingTest;
+			path = CoreTimingTest.app;
+			remoteRef = B3AAFA982949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFA9B2949E94400CC8234 /* CryptoEcTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = CryptoEcTest;
+			path = CryptoEcTest.app;
+			remoteRef = B3AAFA9A2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFA9D2949E94400CC8234 /* DSPAcceleratorTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = DSPAcceleratorTest;
+			path = DSPAcceleratorTest.app;
+			remoteRef = B3AAFA9C2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFA9F2949E94400CC8234 /* DSPAssemblyTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = DSPAssemblyTest;
+			path = DSPAssemblyTest.app;
+			remoteRef = B3AAFA9E2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAA12949E94400CC8234 /* ESFormatsTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = ESFormatsTest;
+			path = ESFormatsTest.app;
+			remoteRef = B3AAFAA02949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAA32949E94400CC8234 /* EnumFormatterTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = EnumFormatterTest;
+			path = EnumFormatterTest.app;
+			remoteRef = B3AAFAA22949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAA52949E94400CC8234 /* EventTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = EventTest;
+			path = EventTest.app;
+			remoteRef = B3AAFAA42949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAA72949E94400CC8234 /* FileSystemTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = FileSystemTest;
+			path = FileSystemTest.app;
+			remoteRef = B3AAFAA62949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAA92949E94400CC8234 /* FileUtilTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = FileUtilTest;
+			path = FileUtilTest.app;
+			remoteRef = B3AAFAA82949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAAB2949E94400CC8234 /* FixedSizeQueueTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = FixedSizeQueueTest;
+			path = FixedSizeQueueTest.app;
+			remoteRef = B3AAFAAA2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAAD2949E94400CC8234 /* FlagTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = FlagTest;
+			path = FlagTest.app;
+			remoteRef = B3AAFAAC2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAAF2949E94400CC8234 /* FloatUtilsTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = FloatUtilsTest;
+			path = FloatUtilsTest.app;
+			remoteRef = B3AAFAAE2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAB12949E94400CC8234 /* libFreeSurround.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFreeSurround.a;
+			remoteRef = B3AAFAB02949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAB32949E94400CC8234 /* MMIOTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = MMIOTest;
+			path = MMIOTest.app;
+			remoteRef = B3AAFAB22949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAB52949E94400CC8234 /* MathUtilTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = MathUtilTest;
+			path = MathUtilTest.app;
+			remoteRef = B3AAFAB42949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAB72949E94400CC8234 /* NandPathsTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = NandPathsTest;
+			path = NandPathsTest.app;
+			remoteRef = B3AAFAB62949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAB92949E94400CC8234 /* PageFaultTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = PageFaultTest;
+			path = PageFaultTest.app;
+			remoteRef = B3AAFAB82949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFABB2949E94400CC8234 /* PowerPCTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = PowerPCTest;
+			path = PowerPCTest.app;
+			remoteRef = B3AAFABA2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFABD2949E94400CC8234 /* SPSCQueueTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = SPSCQueueTest;
+			path = SPSCQueueTest.app;
+			remoteRef = B3AAFABC2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFABF2949E94400CC8234 /* libSoundTouch.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSoundTouch.a;
+			remoteRef = B3AAFABE2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAC12949E94400CC8234 /* StringUtilTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = StringUtilTest;
+			path = StringUtilTest.app;
+			remoteRef = B3AAFAC02949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAC32949E94400CC8234 /* SwapTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = SwapTest;
+			path = SwapTest.app;
+			remoteRef = B3AAFAC22949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAC52949E94400CC8234 /* VertexLoaderTest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = VertexLoaderTest;
+			path = VertexLoaderTest.app;
+			remoteRef = B3AAFAC42949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAC72949E94400CC8234 /* libaudiocommon.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libaudiocommon.a;
+			remoteRef = B3AAFAC62949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAC92949E94400CC8234 /* libcommon.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libcommon.a;
+			remoteRef = B3AAFAC82949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFACB2949E94400CC8234 /* libcore.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libcore.a;
+			remoteRef = B3AAFACA2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFACD2949E94400CC8234 /* libcpp-optparse.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libcpp-optparse.a";
+			remoteRef = B3AAFACC2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFACF2949E94400CC8234 /* libcurl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libcurl.a;
+			remoteRef = B3AAFACE2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAD12949E94400CC8234 /* libdiscio.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libdiscio.a;
+			remoteRef = B3AAFAD02949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAD32949E94400CC8234 /* libed25519.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libed25519.a;
+			remoteRef = B3AAFAD22949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAD52949E94400CC8234 /* libenet.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libenet.a;
+			remoteRef = B3AAFAD42949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAD72949E94400CC8234 /* libfmtd.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libfmtd.a;
+			remoteRef = B3AAFAD62949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAD92949E94400CC8234 /* libglslang.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libglslang.a;
+			remoteRef = B3AAFAD82949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFADB2949E94400CC8234 /* libgtestd.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libgtestd.a;
+			remoteRef = B3AAFADA2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFADD2949E94400CC8234 /* libgtest_maind.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libgtest_maind.a;
+			remoteRef = B3AAFADC2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFADF2949E94400CC8234 /* libiconv.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libiconv.a;
+			remoteRef = B3AAFADE2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAE12949E94400CC8234 /* libimgui.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libimgui.a;
+			remoteRef = B3AAFAE02949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAE32949E94400CC8234 /* libinputcommon.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libinputcommon.a;
+			remoteRef = B3AAFAE22949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAE52949E94400CC8234 /* liblzma.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblzma.a;
+			remoteRef = B3AAFAE42949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAE72949E94400CC8234 /* liblzo2.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblzo2.a;
+			remoteRef = B3AAFAE62949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAE92949E94400CC8234 /* libmain.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libmain.a;
+			remoteRef = B3AAFAE82949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAEB2949E94400CC8234 /* libmbedcrypto.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libmbedcrypto.a;
+			remoteRef = B3AAFAEA2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAED2949E94400CC8234 /* libmbedtls.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libmbedtls.a;
+			remoteRef = B3AAFAEC2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAEF2949E94400CC8234 /* libmbedx509.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libmbedx509.a;
+			remoteRef = B3AAFAEE2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAF12949E94400CC8234 /* libminizip.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libminizip.a;
+			remoteRef = B3AAFAF02949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAF52949E94400CC8234 /* libpugixml.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libpugixml.a;
+			remoteRef = B3AAFAF42949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAF72949E94400CC8234 /* libsfml-network.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libsfml-network.a";
+			remoteRef = B3AAFAF62949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAF92949E94400CC8234 /* libsfml-system.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libsfml-system.a";
+			remoteRef = B3AAFAF82949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAFB2949E94400CC8234 /* libuicommon.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libuicommon.a;
+			remoteRef = B3AAFAFA2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAFD2949E94400CC8234 /* libunittests_stubhost.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libunittests_stubhost.a;
+			remoteRef = B3AAFAFC2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFAFF2949E94400CC8234 /* libvideocommon.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvideocommon.a;
+			remoteRef = B3AAFAFE2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFB012949E94400CC8234 /* libvideonull.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvideonull.a;
+			remoteRef = B3AAFB002949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFB032949E94400CC8234 /* libvideoogl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvideoogl.a;
+			remoteRef = B3AAFB022949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFB052949E94400CC8234 /* libvideosoftware.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvideosoftware.a;
+			remoteRef = B3AAFB042949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFB072949E94400CC8234 /* libvideovulkan.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvideovulkan.a;
+			remoteRef = B3AAFB062949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFB092949E94400CC8234 /* libxxhash.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libxxhash.a;
+			remoteRef = B3AAFB082949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3AAFB0B2949E94400CC8234 /* libzstd.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libzstd.a;
+			remoteRef = B3AAFB0A2949E94400CC8234 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXResourcesBuildPhase section */
 		B3C7620E20783162009950E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93C792162954BF65001212D2 /* MoltenVK.xcframework in Resources */,
 				B33350262078619C0036A448 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -38428,16 +39864,216 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3135BA726E4CD5A0047F338 /* PVDolphinCore+Video.m in Sources */,
-				B3A3204B2720A06D00F338F6 /* DolHost.mm in Sources */,
-				B3135BA526E4CD500047F338 /* PVDolphinCore+Saves.m in Sources */,
+				933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */,
+				B3135BA726E4CD5A0047F338 /* PVDolphinCore+Video.mm in Sources */,
+				B3135BA526E4CD500047F338 /* PVDolphinCore+Saves.mm in Sources */,
+				933CFC362953605600217F45 /* DolphinOGLViewController.swift in Sources */,
 				B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */,
+				933CC6032952034E0070CF1D /* PVDolphinCore.swift in Sources */,
 				B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */,
-				B3135BA926E4CD600047F338 /* PVDolphinCore+Audio.m in Sources */,
+				B3135BA926E4CD600047F338 /* PVDolphinCore+Audio.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		930899402950713700E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = minizip;
+			targetProxy = 9308993F2950713700E145C8 /* PBXContainerItemProxy */;
+		};
+		93089942295071C200E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = fmt;
+			targetProxy = 93089941295071C200E145C8 /* PBXContainerItemProxy */;
+		};
+		9308999329508AD400E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = FreeSurround;
+			targetProxy = 9308999229508AD400E145C8 /* PBXContainerItemProxy */;
+		};
+		9308999529508AD400E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SoundTouch;
+			targetProxy = 9308999429508AD400E145C8 /* PBXContainerItemProxy */;
+		};
+		9308999729508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = audiocommon;
+			targetProxy = 9308999629508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		9308999929508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = common;
+			targetProxy = 9308999829508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		9308999B29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = core;
+			targetProxy = 9308999A29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		9308999D29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "cpp-optparse";
+			targetProxy = 9308999C29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		9308999F29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = curl;
+			targetProxy = 9308999E29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899A129508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = discio;
+			targetProxy = 930899A029508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899A329508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ed25519;
+			targetProxy = 930899A229508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899A529508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = enet;
+			targetProxy = 930899A429508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899A729508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = glslang;
+			targetProxy = 930899A629508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899A929508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = gtest;
+			targetProxy = 930899A829508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899AB29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = gtest_main;
+			targetProxy = 930899AA29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899AD29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = iconv;
+			targetProxy = 930899AC29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899AF29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = imgui;
+			targetProxy = 930899AE29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899B129508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = inputcommon;
+			targetProxy = 930899B029508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899B729508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = lzo2;
+			targetProxy = 930899B629508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899B929508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = main;
+			targetProxy = 930899B829508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899BB29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = mbedcrypto;
+			targetProxy = 930899BA29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899BD29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = mbedtls;
+			targetProxy = 930899BC29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899BF29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = mbedx509;
+			targetProxy = 930899BE29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899C329508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = pugixml;
+			targetProxy = 930899C229508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899C529508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "sfml-network";
+			targetProxy = 930899C429508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899C729508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "sfml-system";
+			targetProxy = 930899C629508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899C929508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = uicommon;
+			targetProxy = 930899C829508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899CB29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = unittests_stubhost;
+			targetProxy = 930899CA29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899CD29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = videocommon;
+			targetProxy = 930899CC29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899CF29508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = videonull;
+			targetProxy = 930899CE29508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899D129508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = videoogl;
+			targetProxy = 930899D029508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899D329508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = videosoftware;
+			targetProxy = 930899D229508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899D529508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = videovulkan;
+			targetProxy = 930899D429508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899D729508AED00E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = xxhash;
+			targetProxy = 930899D629508AED00E145C8 /* PBXContainerItemProxy */;
+		};
+		930899D929508B0400E145C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B30178D2207C901D0051B93D /* dolphin */;
+			targetProxy = 930899D829508B0400E145C8 /* PBXContainerItemProxy */;
+		};
+		933CC5E62951C0380070CF1D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = png;
+			targetProxy = 933CC5E52951C0380070CF1D /* PBXContainerItemProxy */;
+		};
+		933CC5E82951C0480070CF1D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = lzma;
+			targetProxy = 933CC5E72951C0480070CF1D /* PBXContainerItemProxy */;
+		};
+		B34A8EF929584A700000D110 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = xxhash;
+			targetProxy = B34A8EF829584A700000D110 /* PBXContainerItemProxy */;
+		};
+		B3AAFB432949F3A400CC8234 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = zstd;
+			targetProxy = B3AAFB422949F3A400CC8234 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		B316C2BC26E5C6720077FE46 /* LaunchScreen.strings */ = {
@@ -38701,8 +40337,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -38711,13 +40350,14 @@
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -38725,8 +40365,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -38735,13 +40378,14 @@
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -38749,10 +40393,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -38782,12 +40428,13 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					RELEASE,
@@ -38807,24 +40454,12 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-DTARGET_NO_NIXPROF",
-				);
-				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				OTHER_CFLAGS = "$(inherited)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -38836,8 +40471,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -38847,9 +40484,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/Core/Core/IOS\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/fmt/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/soundtouch\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/mbedtls/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/Vulkan/Include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -38859,13 +40499,18 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dolphin-ios/Externals/MoltenVK",
+				);
+				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVDolphin";
 				PRODUCT_NAME = PVDolphin;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Archive;
 		};
@@ -38873,8 +40518,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -38883,13 +40531,14 @@
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Archive;
 		};
@@ -38897,10 +40546,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -38930,13 +40581,14 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -38959,8 +40611,11 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DTARGET_NO_NIXPROF";
-				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -38971,10 +40626,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -39004,12 +40661,13 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					RELEASE,
@@ -39030,24 +40688,13 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-DTARGET_NO_NIXPROF",
-				);
-				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 11.0;
+				OTHER_CFLAGS = "$(inherited)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -39059,8 +40706,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -39070,9 +40719,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/Core/Core/IOS\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/fmt/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/soundtouch\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/mbedtls/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/Vulkan/Include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -39082,13 +40734,18 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dolphin-ios/Externals/MoltenVK",
+				);
+				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVDolphin";
 				PRODUCT_NAME = PVDolphin;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Debug;
 		};
@@ -39096,8 +40753,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -39107,9 +40766,12 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/Core/Core/IOS\"",
+					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/fmt/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/soundtouch\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/mbedtls/include\"",
+					"\"$(SRCROOT)/dolphin-ios/Externals/Vulkan/Include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -39119,13 +40781,19 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/dolphin-ios/Externals/MoltenVK",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVDolphin";
 				PRODUCT_NAME = PVDolphin;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Release;
 		};

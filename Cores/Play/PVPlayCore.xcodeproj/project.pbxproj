@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -40,8 +40,10 @@
 		9360C5A2294CB5E8000322B9 /* str_funcs.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57D294CB5E6000322B9 /* str_funcs.c */; };
 		9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57E294CB5E6000322B9 /* number_theory.c */; };
 		9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57F294CB5E6000322B9 /* memory_manager.c */; };
-		9360C5A7294CB607000322B9 /* PVPlayCore+Cheats.h in Headers */ = {isa = PBXBuildFile; fileRef = 9360C5A5294CB605000322B9 /* PVPlayCore+Cheats.h */; };
 		9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */; };
+		936FDBC02957F9D70073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; };
+		936FDBC12957F9D70073628A /* libMoltenVK_Play.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		936FDBCA295808D20073628A /* libMoltenVK_Play.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B194A29490A840024133A /* CGSH_MTLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939B194929490A820024133A /* CGSH_MTLViewController.swift */; };
@@ -466,6 +468,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		936FDBC22957F9D70073628A /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				936FDBC12957F9D70073628A /* libMoltenVK_Play.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -497,8 +510,9 @@
 		9360C57D294CB5E6000322B9 /* str_funcs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = str_funcs.c; sourceTree = "<group>"; };
 		9360C57E294CB5E6000322B9 /* number_theory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = number_theory.c; sourceTree = "<group>"; };
 		9360C57F294CB5E6000322B9 /* memory_manager.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = memory_manager.c; sourceTree = "<group>"; };
-		9360C5A5294CB605000322B9 /* PVPlayCore+Cheats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVPlayCore+Cheats.h"; sourceTree = "<group>"; };
 		9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPlayCore+Cheats.mm"; sourceTree = "<group>"; };
+		936FDBA72957F9080073628A /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = ../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib; sourceTree = "<group>"; };
+		936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Play.dylib; path = lib/libMoltenVK_Play.dylib; sourceTree = "<group>"; };
 		939B190D2948A59C0024133A /* GSH_VulkanPlatformDefs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GSH_VulkanPlatformDefs.h; sourceTree = "<group>"; };
 		939B19422948B05F0024133A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		939B194929490A820024133A /* CGSH_MTLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CGSH_MTLViewController.swift; sourceTree = "<group>"; };
@@ -1767,6 +1781,7 @@
 				B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
+				936FDBC02957F9D70073628A /* libMoltenVK_Play.dylib in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B3A6209529478A9B00ED28E3 /* MetalKit.framework in Frameworks */,
@@ -3958,8 +3973,6 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				9360C5A5294CB605000322B9 /* PVPlayCore+Cheats.h */,
-				9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */,
 				9360C56D294CB5E6000322B9 /* libbig_int */,
 				939B194929490A820024133A /* CGSH_MTLViewController.swift */,
 				93F5FBF32945D1B600493D4F /* PVPlayCore.swift */,
@@ -3977,6 +3990,7 @@
 				B3447EAA218BC59D00557ACE /* PVPlayCore+Saves.mm */,
 				B3447E96218B809200557ACE /* PVPlayCore+Controls.h */,
 				B3447E97218B809300557ACE /* PVPlayCore+Controls.mm */,
+				9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */,
 				939B190D2948A59C0024133A /* GSH_VulkanPlatformDefs.h */,
 			);
 			path = Core;
@@ -4029,6 +4043,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */,
+				936FDBA72957F9080073628A /* libMoltenVK.dylib */,
 				B34A60972947A7080070ED25 /* libsqlite3.tbd */,
 				939B19422948B05F0024133A /* libsqlite3.tbd */,
 				B3A6209429478A9B00ED28E3 /* MetalKit.framework */,
@@ -4078,7 +4094,6 @@
 				9310345B29436AC3002D218C /* CGSH_Provenance_OGL.h in Headers */,
 				B3A6208E2947895B00ED28E3 /* CGSH_VulkaniOS.h in Headers */,
 				B3135B9E26E4CC330047F338 /* PVPlayCore+Video.h in Headers */,
-				9360C5A7294CB607000322B9 /* PVPlayCore+Cheats.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4129,6 +4144,7 @@
 				B3C7620C20783162009950E4 /* Frameworks */,
 				B3C7620D20783162009950E4 /* Headers */,
 				B3C7620E20783162009950E4 /* Resources */,
+				936FDBC22957F9D70073628A /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -4165,7 +4181,7 @@
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVPlayCore" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -4423,6 +4439,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				936FDBCA295808D20073628A /* libMoltenVK_Play.dylib in Resources */,
 				B33350262078619C0036A448 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4438,14 +4455,20 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${SRCROOT}/../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib",
+				"${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h",
+				"${SRCROOT}/PVPlayCore/Core/Loader.cpp ",
 			);
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${SRCROOT}/lib/libMoltenVK_Play.dylib",
+				"${SRCROOT}/Play-/deps/Framework/src/vulkan/Loader.cpp",
+				"${SRCROOT}/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncp ${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h ${SRCROOT}/Play-/Source/gs/GSH_Vulkan/\n\n\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncp ${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h ${SRCROOT}/Play-/Source/gs/GSH_Vulkan/\ncp ${SRCROOT}/PVPlayCore/Core/Loader.cpp ${SRCROOT}/Play-/deps/Framework/src/vulkan/Loader.cpp\n\ncp ${SRCROOT}/../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib ${SRCROOT}/lib/libMoltenVK_Play.dylib\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -4812,6 +4835,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/lib",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvplay";
 				PRODUCT_NAME = PVPlay;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -4968,6 +4995,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					NDEBUG,
@@ -5030,6 +5058,10 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/lib",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvplay";
 				PRODUCT_NAME = PVPlay;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -5080,6 +5112,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvplay";
 				PRODUCT_NAME = PVPlay;

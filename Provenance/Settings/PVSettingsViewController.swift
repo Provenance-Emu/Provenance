@@ -87,7 +87,7 @@ final class PVSettingsViewController: QuickTableViewController {
     func generateTableViewViewModels() {
         typealias TableRow = Row & RowStyle
 
-        // -- Section : App
+        // MARK: -- Section : App
         let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), viewController: self, segue: "pushSystemSettings")
 
         let systemMode = self.traitCollection.userInterfaceStyle == .dark ? "Dark" : "Light"
@@ -120,13 +120,13 @@ final class PVSettingsViewController: QuickTableViewController {
         #if os(tvOS)
             let appRows: [TableRow] = [systemsRow]
         #else
-            let autolockRow = PVSettingsSwitchRow(text: NSLocalizedString("Disable Auto Lock", comment: "Disable Auto Lock"), detailText: .subtitle("This also disables the screensaver."), key: \PVSettingsModel.disableAutoLock)
+            let autolockRow = PVSettingsSwitchRow(text: NSLocalizedString("Disable Auto Lock", comment: "Disable Auto Lock"), detailText: .subtitle("This also disables the screensaver."), key: \PVSettingsModel.disableAutoLock, icon: .sfSymbol("powersleep"))
             let appRows: [TableRow] = [autolockRow, systemsRow, themeRow]
         #endif
 
         let appSection = Section(title: NSLocalizedString("App", comment: "App"), rows: appRows)
 
-        // -- Core Options
+        // MARK: -- Core Options
         let realm = try! Realm()
         let cores: [NavigationRow] = realm.objects(PVCore.self).sorted(byKeyPath: "projectName").compactMap { pvcore in
             guard let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
@@ -143,24 +143,30 @@ final class PVSettingsViewController: QuickTableViewController {
 
         let coreOptionsSection = Section(title: NSLocalizedString("Core Options", comment: "Core Options"), rows: cores)
 
-        // -- Section : Saves
+        // MARK: -- Section : Saves
         let saveRows: [TableRow] = [
-            PVSettingsSwitchRow(text: NSLocalizedString("Auto Save", comment: "Auto Save"), key: \PVSettingsModel.autoSave),
-            PVSettingsSwitchRow(text: NSLocalizedString("Timed Auto Saves", comment: "Timed Auto Saves"), key: \PVSettingsModel.timedAutoSaves),
-            PVSettingsSwitchRow(text: NSLocalizedString("Auto Load Saves", comment: "Auto Load Saves"), key: \PVSettingsModel.autoLoadSaves),
-            PVSettingsSwitchRow(text: NSLocalizedString("Ask to Load Saves", comment: "Ask to Load Saves"), key: \PVSettingsModel.askToAutoLoad)
+            PVSettingsSwitchRow(text: NSLocalizedString("Auto Save", comment: "Auto Save"), key: \PVSettingsModel.autoSave, icon: .sfSymbol("autostartstop")),
+            PVSettingsSwitchRow(text: NSLocalizedString("Timed Auto Saves", comment: "Timed Auto Saves"), key: \PVSettingsModel.timedAutoSaves, icon: .sfSymbol("clock.badge")),
+            PVSettingsSwitchRow(text: NSLocalizedString("Auto Load Saves", comment: "Auto Load Saves"), key: \PVSettingsModel.autoLoadSaves, icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark")),
+            PVSettingsSwitchRow(text: NSLocalizedString("Ask to Load Saves", comment: "Ask to Load Saves"), key: \PVSettingsModel.askToAutoLoad, icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
         ]
 
         let savesSection = Section(title: NSLocalizedString("Saves", comment: "Saves"), rows: saveRows)
 
-        // -- Section : Audio/Video
+        // MARK: -- Section : Audio/Video
         var avRows = [TableRow]()
 
         #if os(iOS)
-            avRows.append(contentsOf: [PVSettingsSwitchRow(text: NSLocalizedString("Volume HUD", comment: "Volume HUD"), key: \PVSettingsModel.volumeHUD)])
-            avRows.append(PVSettingsSliderRow(text: NSLocalizedString("Volume", comment: "Volume"), detailText: nil, valueLimits: (min: 0.0, max: 1.0), key: \PVSettingsModel.volume))
+            avRows.append(contentsOf: [PVSettingsSwitchRow(text: NSLocalizedString("Volume HUD", comment: "Volume HUD"), key: \PVSettingsModel.volumeHUD, icon: .sfSymbol("speaker.square"))])
+        avRows.append(PVSettingsSliderRow(text: NSLocalizedString("Volume", comment: "Volume"), detailText: nil, valueLimits: (min: 0.0, max: 1.0), valueImages: (.sfSymbol("speaker.wave.1"), .sfSymbol("speaker.wave.3")), key: \PVSettingsModel.volume))
         #endif
         avRows.append(contentsOf: [
+            PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
+                                detailText: .subtitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
+                                key: \PVSettingsModel.videoOptions.multiThreadedGL, icon: .sfSymbol("rectangle.split.3x3")),
+            PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
+                                detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
+                                key: \PVSettingsModel.videoOptions.multiSampling, icon: .sfSymbol("4k.tv")),
             PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled),
             PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled),
             PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled),
@@ -179,25 +185,28 @@ final class PVSettingsViewController: QuickTableViewController {
                                                key: \PVSettingsModel.metalFilter,
                                                options: shaders)
 
-        // -- Section : Controler
+        // MARK -- Section : Controler
 
         var controllerRows = [TableRow]()
 
         #if os(iOS)
-            controllerRows.append(PVSettingsSliderRow(text: NSLocalizedString("Opacity", comment: "Opacity"), detailText: nil, valueLimits: (min: 0.5, max: 1.0), key: \PVSettingsModel.controllerOpacity))
+        controllerRows.append(PVSettingsSliderRow(text: NSLocalizedString("Opacity", comment: "Opacity"), detailText: nil, valueLimits: (min: 0.5, max: 1.0), valueImages: (.sfSymbol("sun.min"), .sfSymbol("sun.max")), key: \PVSettingsModel.controllerOpacity))
 
             controllerRows.append(contentsOf: [
                 PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), key: \PVSettingsModel.buttonTints),
-                PVSettingsSwitchRow(text: NSLocalizedString("All-Right Shoulders", comment: "All-Right Shoulders"), detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders),
-                PVSettingsSwitchRow(text: NSLocalizedString("Haptic Feedback", comment: "Haptic Feedback"), key: \PVSettingsModel.buttonVibration),
-                PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine."), key: \PVSettingsModel.use8BitdoM30)
+                PVSettingsSwitchRow(text: NSLocalizedString("All-Right Shoulders", comment: "All-Right Shoulders"), detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders, icon: .sfSymbol("l.joystick.tilt.right")),
+                PVSettingsSwitchRow(text: NSLocalizedString("Haptic Feedback", comment: "Haptic Feedback"), key: \PVSettingsModel.buttonVibration, icon: .sfSymbol("hand.point.up.braille")),
+                PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine."), key: \PVSettingsModel.use8BitdoM30),
+                PVSettingsSwitchRow(text: NSLocalizedString("Missing Buttons Always On-Screen", comment: "Missing Buttons Always On-Screen"),
+                                    detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
+                                    key: \PVSettingsModel.missingButtonsAlwaysOn)
             ]
 
         )
         #endif
         controllerRows.append(contentsOf: [
-            SegueNavigationRow(text: NSLocalizedString("Controllers", comment: "Controllers"), detailText: .subtitle("Assign players"), viewController: self, segue: "controllersSegue"),
-            SegueNavigationRow(text: NSLocalizedString("iCade Controller", comment: "iCade Controller"), detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
+            SegueNavigationRow(text: NSLocalizedString("Controllers", comment: "Controllers"), detailText: .subtitle("Assign players"), icon:.sfSymbol("gamecontroller"), viewController: self, segue: "controllersSegue"),
+            SegueNavigationRow(text: NSLocalizedString("iCade Controller", comment: "iCade Controller"), detailText: .subtitle(PVSettingsModel.shared.myiCadeControllerSetting.description), icon:.sfSymbol("keyboard"), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
                 cell.detailTextLabel?.text = PVSettingsModel.shared.myiCadeControllerSetting.description
             })
         ])
@@ -215,7 +224,7 @@ final class PVSettingsViewController: QuickTableViewController {
             NavigationRow(
                 text: NSLocalizedString("Launch Web Server", comment: "Launch Web Server"),
                 detailText: .subtitle("Import/Export ROMs, saves, cover art…"),
-                icon: nil,
+                icon: .sfSymbol("xserve"),
                 customization: nil,
                 action: { [weak self] _ in
                     self?.launchWebServerAction()
@@ -228,6 +237,7 @@ final class PVSettingsViewController: QuickTableViewController {
                 text: "Web Server Always-On",
                 detailText: .subtitle(""),
                 key: \PVSettingsModel.webDavAlwaysOn,
+                icon: .sfSymbol("lightswitch.on"),
                 customization: { cell, _ in
                     DispatchQueue.main.async {
                         if PVSettingsModel.shared.webDavAlwaysOn {
@@ -249,7 +259,7 @@ final class PVSettingsViewController: QuickTableViewController {
             NavigationRow(
                 text: NSLocalizedString("Refresh Game Library", comment: ""),
                 detailText: .subtitle("Re-import ROMs ⚠️ Slow"),
-                icon: nil,
+                icon: .sfSymbol("arrow.uturn.forward"),
                 customization: nil,
                 action: { [weak self] _ in
                     self?.refreshGameLibraryAction()
@@ -258,7 +268,7 @@ final class PVSettingsViewController: QuickTableViewController {
             NavigationRow(
                 text: NSLocalizedString("Empty Image Cache", comment: "Empty Image Cache"),
                 detailText: .subtitle("Re-download covers"),
-                icon: nil,
+                icon: .sfSymbol("trash"),
                 customization: nil,
                 action: { [weak self] _ in
                     self?.emptyImageCacheAction()
@@ -282,32 +292,20 @@ final class PVSettingsViewController: QuickTableViewController {
 
         let betaRows: [TableRow] = [
 			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
-								detailText: .subtitle("Use experimental Metal backend instead of OpenGL"),
-								key: \PVSettingsModel.debugOptions.useMetal),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("Missing Buttons Always On-Screen", comment: "Missing Buttons Always On-Screen"),
-                                detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
-                                key: \PVSettingsModel.missingButtonsAlwaysOn),
+								detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
+                                key: \PVSettingsModel.debugOptions.useMetal, icon: .sfSymbol("apple")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
-                                key: \PVSettingsModel.debugOptions.iCloudSync),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
-                                detailText: .subtitle("Use iOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
-                                key: \PVSettingsModel.debugOptions.multiThreadedGL),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
-                                detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
-                                key: \PVSettingsModel.debugOptions.multiSampling),
+                                key: \PVSettingsModel.debugOptions.iCloudSync, icon: .sfSymbol("icloud")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
                                 detailText: .subtitle("Cores that are in development"),
-                                key: \PVSettingsModel.debugOptions.unsupportedCores),
+                                key: \PVSettingsModel.debugOptions.unsupportedCores, icon: .sfSymbol("testtube.2")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
-                                detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet."),
-                                key: \PVSettingsModel.debugOptions.useSwiftUI) { cell, row in
+                                detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet. iOS 14.0+ recommended."),
+                                key: \PVSettingsModel.debugOptions.useSwiftUI, icon: .sfSymbol("swift")) { cell, row in
 //                                    let swiftUIDetailText: DetailText
 //                                    if #available(iOS 14, tvOS 14, *) {
 //                                        row.
@@ -326,39 +324,30 @@ final class PVSettingsViewController: QuickTableViewController {
                                 },
 
             PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
-								detailText: .subtitle("Allow user to move on screen controller buttons."),
-								key: \PVSettingsModel.debugOptions.movableButtons),
+								detailText: .subtitle("Allow user to move on screen controller buttons. Tap with 2-fingers 4 times to toggle."),
+								key: \PVSettingsModel.debugOptions.movableButtons, icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
-                                key: \PVSettingsModel.debugOptions.onscreenJoypad),
+                                key: \PVSettingsModel.debugOptions.onscreenJoypad, icon: .sfSymbol("l.joystick.tilt.left.fill")),
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad with keyboard", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)"),
-                                key: \PVSettingsModel.debugOptions.onscreenJoypadWithKeyboard)
+                                key: \PVSettingsModel.debugOptions.onscreenJoypadWithKeyboard, icon: .sfSymbol("keyboard.badge.eye"))
         ]
         #else // tvOS
          let betaRows: [TableRow] = [
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL"),
-                                key: \PVSettingsModel.debugOptions.useMetal),
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
+                                key: \PVSettingsModel.debugOptions.useMetal, icon: .sfSymbol("testtube.2")),
             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
-                                key: \PVSettingsModel.debugOptions.iCloudSync),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
-                                detailText: .subtitle("Use tvOS's EAGLContext multiThreaded. May improve or slow down GL performance."),
-                                key: \PVSettingsModel.debugOptions.multiThreadedGL),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
-                                detailText: .subtitle("Use tvOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
-                                key: \PVSettingsModel.debugOptions.multiSampling),
-
+                                key: \PVSettingsModel.debugOptions.iCloudSync, icon: .sfSymbol("icloud")),
             PVSettingsSwitchRow(text: NSLocalizedString("Use SwiftUI", comment: "Use SwiftUI"),
                                detailText: .subtitle("Don't use unless you enjoy empty windows."),
-                               key: \PVSettingsModel.debugOptions.multiSampling),
+                               key: \PVSettingsModel.videoOptions.multiSampling, icon: .sfSymbol("swift")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Use Themes", comment: "Use Themes"),
                                detailText: .subtitle("Use iOS themes on tvOS"),
-                               key: \PVSettingsModel.debugOptions.tvOSThemes)
+                               key: \PVSettingsModel.debugOptions.tvOSThemes, icon: .sfSymbol("tshirt"))
                 ]
         #endif
 
@@ -372,8 +361,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let discordRow = NavigationRow(
             text: NSLocalizedString("Discord", comment: ""),
             detailText: .value2("Join our Discord server for help and community chat."),
-            icon: nil,
-            customization: nil,
+            icon: .named("discord"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { _ in
                 if let url = URL(string: "https://discord.gg/4TK7PU5") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -383,8 +375,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let twitterRow = NavigationRow(
             text: NSLocalizedString("Twitter", comment: ""),
             detailText: .value2("Follow us on Twitter for release and other announcements."),
-            icon: nil,
-            customization: nil,
+            icon: .named("twitter"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { _ in
                 if let url = URL(string: "https://twitter.com/provenanceapp") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -394,8 +389,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let githubRow = NavigationRow(
             text: NSLocalizedString("GitHub", comment: ""),
             detailText: .value2("Check out GitHub for code, reporting bugs and contributing."),
-            icon: nil,
-            customization: nil,
+            icon: .named("github"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { _ in
                 if let url = URL(string: "https://github.com/Provenance-Emu/Provenance") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -405,8 +403,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let patreonRow = NavigationRow(
             text: NSLocalizedString("Patreon", comment: ""),
             detailText: .value2("Support us on Patreaon and receive special features and early access builds."),
-            icon: nil,
-            customization: nil,
+            icon: .named("patreon"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { _ in
                 if let url = URL(string: "https://provenance-emu.com/patreon") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -416,8 +417,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let youTubeRow = NavigationRow(
             text: NSLocalizedString("YouTube!", comment: ""),
             detailText: .value2("Help tutorial videos and new feature previews."),
-            icon: nil,
-            customization: nil,
+            icon: .named("youtube"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { _ in
                 if let url = URL(string: "https://www.youtube.com/channel/UCKeN6unYKdayfgLWulXgB1w") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -427,8 +431,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let blogRow = NavigationRow(
             text: NSLocalizedString("Blog", comment: ""),
             detailText: .value2("Release annoucements and full changelogs and screenshots posted to our blog."),
-            icon: nil,
-            customization: nil,
+            icon: .sfSymbol("square.and.pencil"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { [weak self] _ in
                 if let url = URL(string: "https://provenance-emu.com/blog/") {
 #if canImport(SafariServices)
@@ -443,8 +450,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let faqRow = NavigationRow(
             text: NSLocalizedString("FAQ", comment: ""),
             detailText: .value2("Frequently asked questions."),
-            icon: nil,
-            customization: nil,
+            icon: .sfSymbol("questionmark.folder.fill"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { [weak self] _ in
                 if let url = URL(string: "https://wiki.provenance-emu.com/faqs") {
 #if canImport(SafariServices)
@@ -459,8 +469,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let wikiRow = NavigationRow(
             text: NSLocalizedString("Wiki", comment: ""),
             detailText: .value2("Full usage documentation, tips and tricks on our Wiki."),
-            icon: nil,
-            customization: nil,
+            icon: .sfSymbol("books.vertical.fill"),
+            customization: { cell, row in
+                guard let detailTextLabel = cell.detailTextLabel else {  return }
+                detailTextLabel.numberOfLines = 0
+            },
             action: { [weak self] _ in
                 if let url = URL(string: "https://wiki.provenance-emu.com/") {
 #if canImport(SafariServices)

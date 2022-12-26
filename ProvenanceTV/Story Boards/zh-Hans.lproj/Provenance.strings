@@ -1,21 +1,21 @@
 
 /* Class = "UILabel"; text = "Filename"; ObjectID = "3RZ-ZU-cbW"; */
-"3RZ-ZU-cbW.text" = "Filename";
+"3RZ-ZU-cbW.text" = "文件名";
 
 /* Class = "UITextView"; text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."; ObjectID = "3n5-3M-e7G"; */
 "3n5-3M-e7G.text" = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.";
 
 /* Class = "UILabel"; text = "Name"; ObjectID = "44K-kK-tzz"; */
-"44K-kK-tzz.text" = "Name";
+"44K-kK-tzz.text" = "名称";
 
 /* Class = "UILabel"; text = "Region"; ObjectID = "6zZ-eP-Qko"; */
-"6zZ-eP-Qko.text" = "Region";
+"6zZ-eP-Qko.text" = "发行区域";
 
 /* Class = "UILabel"; text = "Time Spent"; ObjectID = "AXk-NM-79f"; */
-"AXk-NM-79f.text" = "Time Spent";
+"AXk-NM-79f.text" = "耗时";
 
 /* Class = "UILabel"; text = "Title"; ObjectID = "D2e-Wn-qWZ"; */
-"D2e-Wn-qWZ.text" = "Title";
+"D2e-Wn-qWZ.text" = "标题";
 
 /* Class = "UILabel"; text = "USA"; ObjectID = "Hpb-Rc-ffI"; */
 "Hpb-Rc-ffI.text" = "USA";
@@ -39,19 +39,19 @@
 "Qe5-iT-hkp.text" = "Plays";
 
 /* Class = "UILabel"; text = "Genres"; ObjectID = "SqZ-1K-rnE"; */
-"SqZ-1K-rnE.text" = "Genres";
+"SqZ-1K-rnE.text" = "类型";
 
 /* Class = "UILabel"; text = "Developer"; ObjectID = "a9B-hX-wKc"; */
-"a9B-hX-wKc.text" = "Developer";
+"a9B-hX-wKc.text" = "开发者";
 
 /* Class = "UILabel"; text = "None"; ObjectID = "cyf-rY-JwD"; */
 "cyf-rY-JwD.text" = "None";
 
 /* Class = "UILabel"; text = "Title"; ObjectID = "dFB-G1-4da"; */
-"dFB-G1-4da.text" = "Title";
+"dFB-G1-4da.text" = "标题";
 
 /* Class = "UILabel"; text = "System"; ObjectID = "ghP-r1-YtO"; */
-"ghP-r1-YtO.text" = "System";
+"ghP-r1-YtO.text" = "系统";
 
 /* Class = "UILabel"; text = "May 5, 1984"; ObjectID = "hLa-ri-Ljy"; */
 "hLa-ri-Ljy.text" = "May 5, 1984";
@@ -63,7 +63,7 @@
 "lLs-zv-OPp.title" = "Item";
 
 /* Class = "UILabel"; text = "Publish Date"; ObjectID = "smT-TK-CSw"; */
-"smT-TK-CSw.text" = "Publish Date";
+"smT-TK-CSw.text" = "发布日期";
 
 /* Class = "UILabel"; text = "0"; ObjectID = "yOt-tY-FGg"; */
 "yOt-tY-FGg.text" = "0";

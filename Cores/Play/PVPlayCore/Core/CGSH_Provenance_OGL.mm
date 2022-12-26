@@ -9,7 +9,7 @@ CGSH_Provenance_OGL::CGSH_Provenance_OGL(
 	int width,
 	int height,
 	int res_factor
-) : CGSH_OpenGL(false),
+) : CGSH_OpenGL(true),
 	m_layer(layer),
 	m_width(width),
 	m_height(height),
