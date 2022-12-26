@@ -380,12 +380,13 @@ private:
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
-    if (flag) {
-        _ps2VM->Pause();
-    } else {
-        _ps2VM->Resume();
+    if (_ps2VM) {
+        if (flag) {
+            _ps2VM->Pause();
+        } else {
+            _ps2VM->Resume();
+        }
     }
-    
     [super setPauseEmulation:flag];
 }
 
@@ -394,8 +395,6 @@ private:
     [super stopEmulation];
     if (_ps2VM) {
         _ps2VM->Pause();
-        if(self.gsPreference == PREFERENCE_VALUE_VIDEO_GS_HANDLER_OPENGL)
-            gsHandler->Release();
         _ps2VM->DestroyGSHandler();
         _ps2VM->DestroyPadHandler();
         _ps2VM->DestroySoundHandler();
