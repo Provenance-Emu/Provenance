@@ -103,6 +103,9 @@
          location = "container:"
          name = "Broken">
          <FileRef
+            location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
+         </FileRef>
+         <FileRef
             location = "group:Cores/blueMSX/PVblueMSX.xcodeproj">
          </FileRef>
          <FileRef
@@ -133,9 +136,6 @@
             location = "group:Cores/Yabause/PVYabause.xcodeproj">
          </FileRef>
       </Group>
-      <FileRef
-         location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
-      </FileRef>
       <FileRef
          location = "group:Cores/Desmume2015/PVDesmume2015.xcodeproj">
       </FileRef>
