@@ -145,3 +145,36 @@ extension PVDolphinCore: CoreOptional {
 		self.cpuOClock = NSNumber(value: cpuClock).int8Value
 	}
 }
+
+extension PVDolphinCore: GameWithCheat {
+    @objc public func setCheat(
+        code: String,
+        type: String,
+        codeType: String,
+        cheatIndex: UInt8,
+        enabled: Bool
+    ) -> Bool
+    {
+        do {
+            NSLog("Calling setCheat %@ %@ %@", code, type, codeType)
+            try self.setCheat(code, setType: type, setCodeType: codeType, setIndex: cheatIndex, setEnabled: enabled)
+            return true
+        } catch let error {
+            NSLog("Error setCheat \(error)")
+            return false
+        }
+    }
+
+    public func supportsCheatCode() -> Bool
+    {
+        return true
+    }
+
+    public func cheatCodeTypes() -> NSArray {
+        return [
+            "Gecko",
+            "Pro Action Replay",
+        ];
+    }
+}
+

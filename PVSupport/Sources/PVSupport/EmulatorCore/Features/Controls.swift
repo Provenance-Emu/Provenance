@@ -271,6 +271,8 @@ import Foundation
     case classicStickRightRight
     case classicTriggerL
     case classicTriggerR
+    case start
+    case select
     case count
 }
 

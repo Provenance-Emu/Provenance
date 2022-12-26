@@ -58,5 +58,7 @@
 - (void) setupControllers;
 - (void) pollControllers;
 - (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;
+- (void) gamepadEventIrRecenter:(int)action;
+- (BOOL) setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
 @end
 extern __weak PVDolphinCore *_current;
