@@ -21,7 +21,7 @@ public final class PViCadeReader: NSObject, iCadeEventDelegate {
     public static var shared: PViCadeReader = PViCadeReader()
 
     public func listen(to window: UIWindow?) {
-        let keyWindow: UIWindow? = window ?? UIApplication.shared.keyWindow
+        let keyWindow: UIWindow? = window ?? UIApplication.shared.windows.first { $0.isKeyWindow }
         if keyWindow != internalReader.window {
             internalReader.removeFromSuperview()
             keyWindow?.addSubview(internalReader)

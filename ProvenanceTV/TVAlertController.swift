@@ -154,7 +154,7 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
         textField.font = font
         textField.borderStyle = .roundedRect
         let h = font.lineHeight * 1.5
-        let w = (UIApplication.shared.keyWindow?.bounds.width ?? UIScreen.main.bounds.width)  * 0.50
+        let w = (UIApplication.shared.windows.first { $0.isKeyWindow }?.bounds.width ?? UIScreen.main.bounds.width)  * 0.50
         textField.addConstraint(NSLayoutConstraint(item:textField, attribute:.height, relatedBy:.equal, toItem:nil, attribute:.notAnAttribute, multiplier:1.0, constant:h))
         textField.addConstraint(NSLayoutConstraint(item:textField, attribute:.width, relatedBy:.greaterThanOrEqual, toItem:nil, attribute:.notAnAttribute, multiplier:1.0, constant:w))
         textFields = textFields ?? []
@@ -178,7 +178,7 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
         #endif
 
         // *maybe* convert into a two-collumn stack
-        let traits = UIApplication.shared.keyWindow?.traitCollection
+        let traits = UIApplication.shared.windows.first { $0.isKeyWindow }?.traitCollection
         if actions.count >= 8 && textFields == nil &&
             (traits?.verticalSizeClass == .compact || traits?.horizontalSizeClass == .regular) {
             doubleStack()
@@ -236,7 +236,7 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
     override var popoverPresentationController: UIPopoverPresentationController? {
 
         // if caller is asking for a ppc, they must want a popup!
-        guard let tc = UIApplication.shared.keyWindow?.traitCollection else {
+        guard let tc = UIApplication.shared.windows.first { $0.isKeyWindow }?.traitCollection else {
             ELOG("Nil train collection")
             return nil
         }
@@ -262,8 +262,8 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
     }
 
     private var maxTextWidth: CGFloat {
-        let width = UIApplication.shared.keyWindow?.bounds.width ?? UIScreen.main.bounds.width
-        let tc = UIApplication.shared.keyWindow?.traitCollection
+        let width = UIApplication.shared.windows.first { $0.isKeyWindow }?.bounds.width ?? UIScreen.main.bounds.width
+        let tc = UIApplication.shared.windows.first { $0.isKeyWindow }?.traitCollection
 
         if tc?.horizontalSizeClass == .compact {
             return width * 0.80

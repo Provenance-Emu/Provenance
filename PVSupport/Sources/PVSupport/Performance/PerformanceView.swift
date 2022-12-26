@@ -311,7 +311,7 @@ private extension PerformanceView {
         }
 
         var topInset: CGFloat = 0.0
-        if #available(iOS 11.0, *), let safeAreaTop = window.rootViewController?.view.safeAreaInsets.top {
+        if let safeAreaTop = window.rootViewController?.view.safeAreaInsets.top {
             if safeAreaTop > 0.0 {
                 if safeAreaTop > Constants.defaultStatusBarHeight {
                     topInset = safeAreaTop - Constants.safeAreaInsetDifference
