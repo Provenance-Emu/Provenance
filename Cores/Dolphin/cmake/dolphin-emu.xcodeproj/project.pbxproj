@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -15875,7 +15875,7 @@
 				LastUpgradeCheck = 1420;
 			};
 			buildConfigurationList = 54438C325A8C488BBD593BCB /* Build configuration list for PBXProject "dolphin-emu" */;
-			compatibilityVersion = "Xcode 3.2";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
