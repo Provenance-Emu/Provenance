@@ -46,6 +46,7 @@ public protocol OEGameCoreHelperRunStateDelegate: AnyObject {
 
 @objc public protocol CoreFeatures {
     var cheats: GameWithCheat? { get }
+    var diskSwappable: DiscSwappable? { get }
 }
 
 /// A protocol that defines the behaviour required to control an emulator core.
@@ -139,4 +140,6 @@ public protocol OEGameCoreHelper: AnyObject, CustomStringConvertible {
     }
     
     var cheats: GameWithCheat? { source as? GameWithCheat }
+    var diskSwappable: DiscSwappable? { source as? DiscSwappable }
 }
+
