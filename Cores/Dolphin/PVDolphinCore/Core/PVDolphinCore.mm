@@ -80,6 +80,11 @@
 #include "VideoBackends/Vulkan/VideoBackend.h"
 #include "VideoBackends/Vulkan/VulkanContext.h"
 
+#include "Core/GeckoCode.h"
+#include "Core/GeckoCodeConfig.h"
+#include "Core/ActionReplay.h"
+#include "Core/ARDecrypt.h"
+
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
 
@@ -91,6 +96,7 @@ Common::Flag s_running{true};
 Common::Flag s_shutdown_requested{false};
 Common::Flag s_tried_graceful_shutdown{false};
 Common::Event s_update_main_frame_event;
+std::string user_dir;
 std::mutex s_host_identity_lock;
 bool s_have_wm_user_stop = false;
 bool s_game_metadata_is_valid = false;
@@ -186,7 +192,8 @@ void UpdateWiiPointer();
 /* Config at dolphin-ios/Source/Core/Core/Config */
 - (void)setOptionValues {
 	[self parseOptions];
-	// Resolution upscaling
+
+    // Resolution upscaling
 	Config::SetBase(Config::GFX_EFB_SCALE, self.resFactor);
 	Config::SetBase(Config::GFX_MAX_EFB_SCALE, 16);
 
@@ -236,7 +243,7 @@ void UpdateWiiPointer();
     }
 
 	// Cheats
-	SConfig::GetInstance().bEnableCheats = true;
+    SConfig::GetInstance().bEnableCheats = true;
 
 	// CPU Overclock
 	Config::SetBase(Config::MAIN_CPU_THREAD, true);
@@ -295,10 +302,19 @@ void UpdateWiiPointer();
 
 #pragma mark - Running
 - (void)setupEmulation {
-	std::string user_dir = std::string([[self.batterySavesPath stringByAppendingPathComponent:@"/saves/"] UTF8String]);
-	Common::RegisterMsgAlertHandler(&MsgAlert);
-	UICommon::SetUserDirectory(user_dir);
-	UICommon::CreateDirectories();
+    NSString* saveDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"/saves/"];
+	user_dir = std::string([saveDirectory UTF8String]);
+    Common::RegisterMsgAlertHandler(&MsgAlert);
+    UICommon::SetUserDirectory(user_dir);
+    UICommon::CreateDirectories();
+    // Copy gecko code handler from resource bundle
+    NSFileManager *fmngr = [[NSFileManager alloc] init];
+    NSString *filePath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Sys/codehandler.bin" ofType:nil];
+    NSError *error;
+    if(![fmngr copyItemAtPath:filePath toPath:[saveDirectory stringByAppendingPathComponent:@"codehandler.bin"] error:&error]) {
+        NSLog(@"Error copying the gecko handler: %@", [error description]);
+    }
+    // Init with files
 	UICommon::Init();
 	ELOG(@"User Directory set to '%s'\n", user_dir.c_str());
 }
@@ -331,8 +347,7 @@ void UpdateWiiPointer();
 			Common::SleepCurrentThread(100);
 		}
 		_isInitialized = true;
-        [self refreshScreenSize];
-		while (_isInitialized)
+        while (_isInitialized)
 		{
 			guard.unlock();
 			s_update_main_frame_event.Wait();
@@ -409,8 +424,8 @@ void UpdateWiiPointer();
 }
 
 - (void)refreshScreenSize {
-	if (Core::IsRunningAndStarted() && g_renderer)
-		g_renderer->ResizeSurface();
+    if (Core::IsRunningAndStarted() && g_renderer)
+        g_renderer->ResizeSurface();
 }
 
 - (void)setupView {
@@ -452,10 +467,10 @@ void UpdateWiiPointer();
         gl_view_controller.view.autoresizesSubviews=true;
         gl_view_controller.view.clipsToBounds=true;
 		[gl_view_controller.view addSubview:m_view];
-		[m_view.topAnchor constraintEqualToAnchor:gl_view_controller.parentViewController.view.topAnchor constant:0].active = true;
-		[m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.parentViewController.view.leadingAnchor constant:0].active = true;
-		[m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.parentViewController.view.trailingAnchor constant:0].active = true;
-		[m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.parentViewController.view.bottomAnchor constant:0].active = true;
+		[m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
+		[m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
+		[m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
+		[m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
 	}
 }
 @end
@@ -557,4 +572,7 @@ bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgTyp
 void UpdateWiiPointer()
 {
 	ELOG(@"Update Wii Pointer\n");
+    if (Core::IsRunningAndStarted() && g_renderer) {
+        g_renderer->ResizeSurface();
+    }
 }

@@ -20,6 +20,10 @@
 		933CFC362953605600217F45 /* DolphinOGLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CFC352953605600217F45 /* DolphinOGLViewController.swift */; };
 		93480AFD2953810E00C61651 /* libmain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE92949E94400CC8234 /* libmain.a */; };
 		93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93599B4C2955FD520049DAC8 /* QuartzCore.framework */; };
+		9366AC80295976D000162286 /* PVDolphinCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC5E295976D000162286 /* PVDolphinCore+Cheats.mm */; };
+		9366AC832959C6D900162286 /* Cheats_GeckoCode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC812959C6D800162286 /* Cheats_GeckoCode.mm */; };
+		9366AC842959C6D900162286 /* Cheats_ActionReplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC822959C6D900162286 /* Cheats_ActionReplay.mm */; };
+		9366AC862959CD4A00162286 /* Sys in Resources */ = {isa = PBXBuildFile; fileRef = 9366AC852959CD4A00162286 /* Sys */; };
 		93C33A952952192200CC86C5 /* libcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACB2949E94400CC8234 /* libcore.a */; };
 		93C791F02954BF4B001212D2 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316ECDB26E5C6920077FE46 /* MoltenVK.xcframework */; };
 		93C792162954BF65001212D2 /* MoltenVK.xcframework in Resources */ = {isa = PBXBuildFile; fileRef = B316ECDB26E5C6920077FE46 /* MoltenVK.xcframework */; };
@@ -823,6 +827,10 @@
 		933CC6022952034E0070CF1D /* PVDolphinCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDolphinCore.swift; sourceTree = "<group>"; };
 		933CFC352953605600217F45 /* DolphinOGLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DolphinOGLViewController.swift; sourceTree = "<group>"; };
 		93599B4C2955FD520049DAC8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		9366AC5E295976D000162286 /* PVDolphinCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVDolphinCore+Cheats.mm"; sourceTree = "<group>"; };
+		9366AC812959C6D800162286 /* Cheats_GeckoCode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Cheats_GeckoCode.mm; sourceTree = "<group>"; };
+		9366AC822959C6D900162286 /* Cheats_ActionReplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Cheats_ActionReplay.mm; sourceTree = "<group>"; };
+		9366AC852959CD4A00162286 /* Sys */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sys; path = "dolphin-ios/Data/Sys"; sourceTree = "<group>"; };
 		93C33AC029527E5F00CC86C5 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		B30178D3207C901D0051B93D /* libdolphin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdolphin.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316BAD426E5C66D0077FE46 /* gameini-ratings-from-wiki.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "gameini-ratings-from-wiki.sh"; sourceTree = "<group>"; };
@@ -39053,6 +39061,8 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				9366AC822959C6D900162286 /* Cheats_ActionReplay.mm */,
+				9366AC812959C6D800162286 /* Cheats_GeckoCode.mm */,
 				933CFC352953605600217F45 /* DolphinOGLViewController.swift */,
 				933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */,
 				933CC6022952034E0070CF1D /* PVDolphinCore.swift */,
@@ -39066,6 +39076,7 @@
 				B3447EAA218BC59D00557ACE /* PVDolphinCore+Saves.mm */,
 				B3447E96218B809200557ACE /* PVDolphinCore+Controls.h */,
 				B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */,
+				9366AC5E295976D000162286 /* PVDolphinCore+Cheats.mm */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -39144,6 +39155,7 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				9366AC852959CD4A00162286 /* Sys */,
 				B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				B316BACF26E5C66D0077FE46 /* dolphin-ios */,
@@ -39845,6 +39857,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9366AC862959CD4A00162286 /* Sys in Resources */,
 				93C792162954BF65001212D2 /* MoltenVK.xcframework in Resources */,
 				B33350262078619C0036A448 /* Core.plist in Resources */,
 			);
@@ -39864,12 +39877,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9366AC842959C6D900162286 /* Cheats_ActionReplay.mm in Sources */,
 				933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */,
 				B3135BA726E4CD5A0047F338 /* PVDolphinCore+Video.mm in Sources */,
 				B3135BA526E4CD500047F338 /* PVDolphinCore+Saves.mm in Sources */,
 				933CFC362953605600217F45 /* DolphinOGLViewController.swift in Sources */,
+				9366AC832959C6D900162286 /* Cheats_GeckoCode.mm in Sources */,
 				B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */,
 				933CC6032952034E0070CF1D /* PVDolphinCore.swift in Sources */,
+				9366AC80295976D000162286 /* PVDolphinCore+Cheats.mm in Sources */,
 				B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */,
 				B3135BA926E4CD600047F338 /* PVDolphinCore+Audio.mm in Sources */,
 			);

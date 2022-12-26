@@ -36,13 +36,17 @@ final class PVWiiControllerViewController: PVControllerViewController<PVWiiSyste
 				button.buttonTag = .wiiOne
 			} else if text == "2" || text == "2" {
 				button.buttonTag = .wiiTwo
+			} else if text == "C" || text == "C" {
+				button.buttonTag = .nunchunkC
+			} else if text == "Z" || text == "Z" {
+				button.buttonTag = .nunchunkZ
 			}
 		}
 
-		leftShoulderButton?.buttonTag = .nunchunkC
-		rightShoulderButton?.buttonTag = .nunchunkZ
-		selectButton?.buttonTag = .wiiHome
-		startButton?.buttonTag = .wiiHome
+		leftShoulderButton?.buttonTag = .wiiPlus
+		rightShoulderButton?.buttonTag = .wiiMinus
+		selectButton?.buttonTag = .select
+		startButton?.buttonTag = .start
 	}
 
 	override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
