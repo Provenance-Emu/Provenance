@@ -20,6 +20,9 @@
          location = "container:"
          name = "Broken">
          <FileRef
+            location = "group:Cores/O2EM/PVO2EM.xcodeproj">
+         </FileRef>
+         <FileRef
             location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
          </FileRef>
          <FileRef
@@ -61,9 +64,6 @@
       </FileRef>
       <FileRef
          location = "group:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/O2EM/PVO2EM.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Play/PVPlayCore.xcodeproj">
