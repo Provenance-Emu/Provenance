@@ -124,7 +124,7 @@ final class MTLGameRenderer: GameRenderer {
     private func glToRPixelFormat(pixelFormat: GLenum, pixelType: GLenum) -> OEMTLPixelFormat? {
         switch Int32(pixelFormat) {
         case GL_BGRA:
-#if os(macOS)
+#if os(macOS) || targetEnvironment(simulator)
             if Int32(pixelType) == GL_UNSIGNED_INT_8_8_8_8_REV {
                 return .bgra8Unorm
             }

@@ -204,20 +204,20 @@ void gl_swap() {
 }
 
 
-void* libPvr_GetRenderTarget() {
+void* libPvr_GetRenderTarget(void) {
     return 0;
 }
 
-void* libPvr_GetRenderSurface() {
+void* libPvr_GetRenderSurface(void) {
     return 0;
 
 }
 
-bool gl_init(void*, void*) {
+bool gl_init(void * _a, void * _b) {
     return true;
 }
 
-bool gles_init()
+bool gles_init(void)
 {
 
     if (!gl_init((void*)libPvr_GetRenderTarget(),

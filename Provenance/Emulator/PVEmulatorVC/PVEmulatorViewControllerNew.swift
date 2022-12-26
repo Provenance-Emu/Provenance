@@ -390,9 +390,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         #if os(iOS)
             setNeedsUpdateOfHomeIndicatorAutoHidden()
-
-            // Ignore Smart Invert
-            view.ignoresInvertColors = true
         #endif
 
         if PVSettingsModel.shared.timedAutoSaves {
@@ -451,16 +448,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
     #endif
 
-    #if os(iOS)
-        var safeAreaInsets: UIEdgeInsets {
-            if #available(iOS 11.0, tvOS 11.0, *) {
-                return view.safeAreaInsets
-            } else {
-                return UIEdgeInsets.zero
-            }
-        }
-    #endif
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         #if os(iOS)
@@ -474,7 +461,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 let height: CGFloat = 42
                 let width: CGFloat = 42
                 menuButton.imageView?.contentMode = .center
-                let frame = CGRect(x: safeAreaInsets.left + 10, y: safeAreaInsets.top + 5, width: width, height: height)
+                let frame = CGRect(x: view.safeAreaInsets.left + 10, y: view.safeAreaInsets.top + 5, width: width, height: height)
                 menuButton.frame = frame
             }
         }
@@ -489,7 +476,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         return documentsDirectoryPath
     }
 
-    #if os(iOS)
+    #if os(iOS) && !targetEnvironment(macCatalyst)
         override var prefersStatusBarHidden: Bool {
             return true
         }
@@ -625,10 +612,18 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     #endif
     @objc func showSpeedMenu(_ sender:AnyObject?) {
         let actionSheet = UIAlertController(title: "Game Speed", message: nil, preferredStyle: .actionSheet)
+#if targetEnvironment(macCatalyst) || os(macOS)
+        if let menuButton = menuButton, sender === menuButton {
+            actionSheet.popoverPresentationController?.sourceView = menuButton
+            actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
+        }
+#else
         if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton, sender === menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
         }
+#endif
+
         let speeds = ["Slow (20%)", "Normal (100%)", "Fast (500%)"]
         speeds.enumerated().forEach { idx, title in
             let action = UIAlertAction(title: title, style: .default, handler: { (_: UIAlertAction) -> Void in

@@ -89,7 +89,7 @@
 		052A9C23293009E700EF619C /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
 		052A9C24293009E700EF619C /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E71B63D7CD0065FA39 /* GCDWebServerRequest.m */; };
 		052A9C25293009E700EF619C /* RowCompatible.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C01276B470B00D85327 /* RowCompatible.swift */; };
-		052A9C26293009E700EF619C /* UILabel+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6C125BF20B0826900DC045B /* UILabel+Theming.swift */; };
+		052A9C26293009E700EF619C /* (null) in Sources */ = {isa = PBXBuildFile; };
 		052A9C27293009E700EF619C /* PVAtari2600ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */; };
 		052A9C28293009E700EF619C /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		052A9C29293009E700EF619C /* PVAppDelegate+VolumeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */; };
@@ -108,7 +108,7 @@
 		052A9C37293009E700EF619C /* megaTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE3287EA0CE0054C1B5 /* megaTron.metal */; };
 		052A9C38293009E700EF619C /* Configurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFD276B470B00D85327 /* Configurable.swift */; };
 		052A9C39293009E700EF619C /* PVCheatsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710832585912C00258602 /* PVCheatsHeaderView.swift */; };
-		052A9C3A293009E700EF619C /* UIAlertController+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11A7205C52B800A6E845 /* UIAlertController+Theming.swift */; };
+		052A9C3A293009E700EF619C /* (null) in Sources */ = {isa = PBXBuildFile; };
 		052A9C3B293009E700EF619C /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFE276B470B00D85327 /* Reusable.swift */; };
 		052A9C3C293009E700EF619C /* GCDWebServerURLEncodedFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F21B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m */; };
 		052A9C3D293009E700EF619C /* UICollectionView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */; };
@@ -177,7 +177,7 @@
 		052A9C7E293009E700EF619C /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
 		052A9C7F293009E700EF619C /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
 		052A9C80293009E700EF619C /* Reactive+RxRealmDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AB218EC1AC0015C690 /* Reactive+RxRealmDataSources.swift */; };
-		052A9C81293009E700EF619C /* UIView+Theming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AA205C7F7B00A6E845 /* UIView+Theming.swift */; };
+		052A9C81293009E700EF619C /* (null) in Sources */ = {isa = PBXBuildFile; };
 		052A9C82293009E700EF619C /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
 		052A9C83293009E700EF619C /* DetailText.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0D276B470B00D85327 /* DetailText.swift */; };
 		052A9C84293009E700EF619C /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
@@ -290,7 +290,7 @@
 		052A9D0E293009E700EF619C /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		052A9D0F293009E700EF619C /* Bilinear.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703562896314200F75595 /* Bilinear.fsh */; };
 		052A9D10293009E700EF619C /* AAOmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034D2896314000F75595 /* AAOmniScaleLegacy.fsh */; };
-		052A9D11293009E700EF619C /* PVLogViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E6DAE020B7C2F800454DD4 /* PVLogViewController.xib */; platformFilters = (ios, maccatalyst, ); };
+		052A9D11293009E700EF619C /* (null) in Resources */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, ); };
 		052A9D12293009E700EF619C /* OmniScale.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703552896314200F75595 /* OmniScale.fsh */; };
 		052A9D13293009E700EF619C /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703512896314100F75595 /* MasterShader.fsh */; };
 		052A9D14293009E700EF619C /* AAScale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703572896314200F75595 /* AAScale4x.fsh */; };
@@ -323,6 +323,7 @@
 		0576988A2937E7F300F7E122 /* PVRuntime.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 057698882937E7F300F7E122 /* PVRuntime.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0576988C2937E83200F7E122 /* OpenEmuShaders.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0576988B2937E83200F7E122 /* OpenEmuShaders.framework */; };
 		0576988D2937E83200F7E122 /* OpenEmuShaders.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0576988B2937E83200F7E122 /* OpenEmuShaders.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		05FC84FB295A4604003DED0C /* PVWiiControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93599B4A2955F2850049DAC8 /* PVWiiControllerViewController.swift */; };
 		111962BE249FDCD2006EAA16 /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B3172492A93F00636C8A /* CoreServices.framework */; };
 		1180B305248EB8C300636C8A /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
 		1180B307248FF8AC00636C8A /* UICollectionView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */; };
@@ -4434,7 +4435,7 @@
 				052A9D0E293009E700EF619C /* Settings.bundle in Resources */,
 				052A9D0F293009E700EF619C /* Bilinear.fsh in Resources */,
 				052A9D10293009E700EF619C /* AAOmniScaleLegacy.fsh in Resources */,
-				052A9D11293009E700EF619C /* PVLogViewController.xib in Resources */,
+				052A9D11293009E700EF619C /* (null) in Resources */,
 				052A9D12293009E700EF619C /* OmniScale.fsh in Resources */,
 				052A9D13293009E700EF619C /* MasterShader.fsh in Resources */,
 				052A9D14293009E700EF619C /* AAScale4x.fsh in Resources */,
@@ -4895,7 +4896,7 @@
 				052A9C23293009E700EF619C /* PVConflictViewController.swift in Sources */,
 				052A9C24293009E700EF619C /* GCDWebServerRequest.m in Sources */,
 				052A9C25293009E700EF619C /* RowCompatible.swift in Sources */,
-				052A9C26293009E700EF619C /* UILabel+Theming.swift in Sources */,
+				052A9C26293009E700EF619C /* (null) in Sources */,
 				052A9C27293009E700EF619C /* PVAtari2600ControllerViewController.swift in Sources */,
 				052A9C28293009E700EF619C /* PVSaveStateInfoViewController.swift in Sources */,
 				052A9C29293009E700EF619C /* PVAppDelegate+VolumeButton.swift in Sources */,
@@ -4914,8 +4915,9 @@
 				052A9C37293009E700EF619C /* megaTron.metal in Sources */,
 				052A9C38293009E700EF619C /* Configurable.swift in Sources */,
 				052A9C39293009E700EF619C /* PVCheatsHeaderView.swift in Sources */,
-				052A9C3A293009E700EF619C /* UIAlertController+Theming.swift in Sources */,
+				052A9C3A293009E700EF619C /* (null) in Sources */,
 				052A9C3B293009E700EF619C /* Reusable.swift in Sources */,
+				05FC84FB295A4604003DED0C /* PVWiiControllerViewController.swift in Sources */,
 				052A9C3C293009E700EF619C /* GCDWebServerURLEncodedFormRequest.m in Sources */,
 				052A9C3D293009E700EF619C /* UICollectionView+Rx.swift in Sources */,
 				052A9C3E293009E700EF619C /* PVGameLibraryViewController+PeekPop.swift in Sources */,
@@ -4984,7 +4986,7 @@
 				052A9C7E293009E700EF619C /* WebServerActivatorController.swift in Sources */,
 				052A9C7F293009E700EF619C /* AppearanceStyleHelpers.swift in Sources */,
 				052A9C80293009E700EF619C /* Reactive+RxRealmDataSources.swift in Sources */,
-				052A9C81293009E700EF619C /* UIView+Theming.swift in Sources */,
+				052A9C81293009E700EF619C /* (null) in Sources */,
 				052A9C82293009E700EF619C /* GCDWebServerConnection.m in Sources */,
 				052A9C83293009E700EF619C /* DetailText.swift in Sources */,
 				052A9C84293009E700EF619C /* PVWebServer.m in Sources */,

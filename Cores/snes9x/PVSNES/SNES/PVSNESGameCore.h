@@ -15,7 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PVSNESGameCore : OEGameCore<PVSNESSystemResponderClient>
 
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled;
+# pragma CheatCodeSupport
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
+
 @end
 
 NS_ASSUME_NONNULL_END

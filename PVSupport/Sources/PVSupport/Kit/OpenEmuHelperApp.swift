@@ -54,7 +54,7 @@ extension OSLog {
     
     // OE stuff
     var _gameController: OEGameCoreController!
-    var _gameAudio: GameAudio!
+    var _gameAudio: GameAudioProtocol!
     
     // initial shader and parameters
     var _shader: URL?
@@ -101,7 +101,14 @@ extension OSLog {
     
     private func setupGameCoreAudioAndVideo() {
         // 1. Audio
-        _gameAudio = GameAudio(withCore: gameCore)
+        if #available(macOS 11.0, iOS 14.0, *) {
+            os_log(.info, log: .helper, "Using GameAudio2 driver")
+            _gameAudio = GameAudio2(withCore: gameCore)
+        } else {
+            os_log(.info, log: .helper, "Using GameAudio driver")
+            _gameAudio = GameAudio(withCore: gameCore)
+        }
+
         _gameAudio.volume = 1.0
         
         // 2. Video
@@ -261,6 +268,7 @@ extension OSLog {
         gameCore.delegate       = self
         gameCore.renderDelegate = self
         gameCore.audioDelegate  = self
+        gameCore.controllerDelegate = self
         
         gameCore.systemIdentifier   = info.systemIdentifier
         gameCore.systemRegion       = info.systemRegion
@@ -326,6 +334,12 @@ extension OSLog {
     let _features: CoreFeaturesImpl
     
     public weak var runStateDelegate: OEGameCoreHelperRunStateDelegate?
+
+    @exclusivity(unchecked)
+    public var controller1: GCController?
+    public var controller2: GCController?
+    public var controller3: GCController?
+    public var controller4: GCController?
 }
 
 // MARK: - OEGameCoreHelper methods
@@ -335,10 +349,6 @@ extension OpenEmuHelperApp: OEGameCoreHelper {
     public var renderFPS: Double { 0 }
     public var frameInterval: Double { gameCore.frameInterval }
     
-    public var controller1: GCController? { get { nil } set { } }
-    public var controller2: GCController? { get { nil } set { } }
-    public var controller3: GCController? { get { nil } set { } }
-    public var controller4: GCController? { get { nil } set { } }
     
     public var romName: String? {
         get { _romName }

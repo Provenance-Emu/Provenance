@@ -645,6 +645,7 @@ static __weak PVSNESGameCore *_current;
 
 - (void)executeFrame
 {
+    [self updateControllers];
     IPPU.RenderThisFrame = true;
     _soundBufferCurrent = _soundBuffer;
     S9xMainLoop();
@@ -903,41 +904,86 @@ static NSString *SNESEmulatorKeys[] = { @"Up", @"Down", @"Left", @"Right", @"A",
 
 #pragma mark - Cheats
 
-- (void)setCheat:(NSString *)code setType:(NSString *)type setEnabled:(BOOL)enabled
-{
-    // Sanitize
-    code = [code stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
-
-    // Remove any spaces
-    code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
-
-    if (enabled)
-        _cheatList[code] = @YES;
-    else
-        [_cheatList removeObjectForKey:code];
-    
-    S9xDeleteCheats();
-    
-    NSArray<NSString *> *multipleCodes = [NSArray array];
-    
-    // Apply enabled cheats found in dictionary
-    for (NSString *key in _cheatList)
-    {
-        if ([_cheatList[key] boolValue])
-        {
-            // Handle multi-line cheats
-            multipleCodes = [key componentsSeparatedByString:@"+"];
-            for (NSString *singleCode in multipleCodes) {
-                // Sanitize for PAR codes that might contain colons
-                const char *cheatCode = [singleCode stringByReplacingOccurrencesOfString:@":" withString:@""].UTF8String;
-
-                S9xAddCheatGroup("OpenEmu", cheatCode);
-                S9xEnableCheatGroup(Cheat.g.size () - 1);
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled  error:(NSError**)error {
+    NSArray *multipleCodes = [code componentsSeparatedByString:@"+"];
+    if (enabled && [codeType isEqualToString:@"Raw Code"]) {
+        if (multipleCodes.count < 2)
+            return false;
+        for (int i=0; i+1 < multipleCodes.count; i+=2) {
+            uint32 mem = (uint32)strtol([multipleCodes[i] UTF8String], NULL, 16);
+            uint8 value = (uint8)strtol([multipleCodes[i+1] UTF8String], NULL, 16);
+            ELOG(@"Received: %d %d\n", mem, value);
+            if (![self applyRawCheat:mem setValue: value]) {
+                ELOG(@"Code %x %x failed", mem, value);
+                return false;
+            }
+            ELOG(@"Code %x %x applied successfully", mem, value);
+        }
+    } else if (enabled) {
+        for (NSString *singleCode in multipleCodes) {
+            const char *cheatCode = [[singleCode stringByReplacingOccurrencesOfString:@":" withString:@""] UTF8String];
+            if (singleCode != nil && singleCode.length > 0) {
+                if (![self applyCheat:cheatCode setCodeType: codeType]) {
+                    ELOG(@"Code %s failed", cheatCode);
+                    return false;
+                }
+                ELOG(@"Code %s applied successfully", cheatCode);
             }
         }
     }
+    return true;
+}
 
-    S9xCheatsEnable();
+- (BOOL)applyCheat:(const char*)code setCodeType:(NSString *)codeType {
+    SCheat c;
+    unsigned int byte = 0;
+    unsigned int cond_byte = 0;
+    c.enabled     = false;
+    c.conditional = false;
+    ELOG(@"Applying Cheat Code %s\n", code);
+    if ([codeType isEqualToString:@"Game Genie"]) {
+        if (!S9xGameGenieToRaw(code, c.address, c.byte))
+            c.enabled = true;
+        ELOG(@"GameGenie Code Decrypted: %s %d %d\n", code, c.address, c.byte);
+    } else if ([codeType isEqualToString:@"Pro Action Replay" ]) {
+        if (!S9xProActionReplayToRaw(code, c.address, c.byte))
+            c.enabled = true;
+        ELOG(@"PAR Code Decrypted: %s %d %d\n", code, c.address, c.byte);
+    } else if ([codeType isEqualToString:@"Gold Finger" ]) {
+        bool8 sram;
+        uint8 bytes[3];
+        uint8 byte;
+        if (!S9xGoldFingerToRaw(code, c.address, sram, byte, bytes)) {
+            c.byte=bytes[0];
+            c.saved_byte=bytes[0];
+            c.cond_byte=bytes[0];
+            c.conditional=false;
+            c.enabled = true;
+            ELOG(@"Bytes %d %d %d\n", bytes[0], bytes[1], bytes[2]);
+        } else {
+            ELOG(@"Invalid Code: %s\n", code);
+        }
+        ELOG(@"Goldfinger Code Decrypted: %s %d %d\n", code, c.address, c.byte);
+    }
+    if (c.enabled) {
+        // Call Structure of S9xUpdateCheatInMemory
+        void S9xUpdateCheatInMemory(SCheat *c);
+        // Update the Cheat in Memory
+        S9xUpdateCheatInMemory(&c);
+    }
+    return c.enabled;
+}
+
+- (BOOL)applyRawCheat:(uint32)mem setValue:(uint8)value {
+    mem = mem & 0xFFFFFFF;
+    SCheat c;
+    c.address = mem;
+    c.byte = value;
+    c.enabled     = true;
+    c.conditional = false;
+    void S9xUpdateCheatInMemory(SCheat *c);
+    S9xUpdateCheatInMemory(&c);
+    return true;
 }
 
 @end
