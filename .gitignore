@@ -47,6 +47,7 @@ report.xml
 Cores/PPSSPP/cmake/lib/
 /CodeSigning.xcconfig
 *.xcarchive
+Cores/Dolphin/cmake/**/*-iphoneos
 Cores/Play/cmake/build/
 Cores/Play/cmake/**/Release-*
 Cores/Play/cmake/**/Debug-*

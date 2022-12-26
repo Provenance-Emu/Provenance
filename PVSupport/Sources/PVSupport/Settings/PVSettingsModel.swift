@@ -256,8 +256,15 @@ extension MirroredSettings {
         @objc public dynamic var onscreenJoypadWithKeyboard = true
         #endif
     }
+    
+    @objc public class VideoOptions: NSObject {
+        @objc public dynamic var multiThreadedGL = true
+        @objc public dynamic var multiSampling = true
+    }
 
     public dynamic var debugOptions = DebugOptions()
+    
+    public dynamic var videoOptions = VideoOptions()
 
     public dynamic var autoSave = true
     public dynamic var timedAutoSaves = true

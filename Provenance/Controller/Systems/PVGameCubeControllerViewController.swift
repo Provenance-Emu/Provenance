@@ -8,9 +8,9 @@
 import PVSupport
 
 private extension JSButton {
-    var buttonTag: PVGameCubeButton {
+    var buttonTag: PVGCButton {
         get {
-            return PVGameCubeButton(rawValue: tag)!
+            return PVGCButton(rawValue: tag)!
         }
         set {
             tag = newValue.rawValue
@@ -36,6 +36,10 @@ final class PVGameCubeControllerViewController: PVControllerViewController<PVGam
                 button.buttonTag = .a
             } else if button.titleLabel?.text == "B" {
                 button.buttonTag = .b
+            } else if button.titleLabel?.text == "X" {
+                button.buttonTag = .x
+            } else if button.titleLabel?.text == "Y" {
+                button.buttonTag = .y
             } else if button.titleLabel?.text == "C▲" {
                 button.buttonTag = .cUp
             } else if button.titleLabel?.text == "C▼" {
@@ -47,38 +51,40 @@ final class PVGameCubeControllerViewController: PVControllerViewController<PVGam
             }
         }
 
-        leftShoulderButton?.buttonTag = .l
-        rightShoulderButton?.buttonTag = .r
+        leftShoulderButton2?.buttonTag = .l
+        rightShoulderButton2?.buttonTag = .r
+        leftShoulderButton?.buttonTag = .x
+        rightShoulderButton?.buttonTag = .y
         zTriggerButton?.buttonTag = .z
         startButton?.buttonTag = .start
     }
 
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
-        emulatorCore.didMoveJoystick(.analogUp, withValue: 0, forPlayer: 0)
-        emulatorCore.didMoveJoystick(.analogLeft, withValue: 0, forPlayer: 0)
-        emulatorCore.didMoveJoystick(.analogRight, withValue: 0, forPlayer: 0)
-        emulatorCore.didMoveJoystick(.analogDown, withValue: 0, forPlayer: 0)
+        emulatorCore.didRelease(.up, forPlayer: 0)
+        emulatorCore.didRelease(.down, forPlayer: 0)
+        emulatorCore.didRelease(.left, forPlayer: 0)
+        emulatorCore.didRelease(.right, forPlayer: 0)
         switch direction {
         case .upLeft:
-            emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
-            emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
+            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
         case .up:
-            emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
+            emulatorCore.didPush(.up, forPlayer: 0)
         case .upRight:
-            emulatorCore.didMoveJoystick(.analogUp, withValue: 1, forPlayer: 0)
-            emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
+            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
         case .left:
-            emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
         case .right:
-            emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
         case .downLeft:
-            emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
-            emulatorCore.didMoveJoystick(.analogLeft, withValue: 1, forPlayer: 0)
+            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.left, forPlayer: 0)
         case .down:
-            emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
+            emulatorCore.didPush(.down, forPlayer: 0)
         case .downRight:
-            emulatorCore.didMoveJoystick(.analogDown, withValue: 1, forPlayer: 0)
-            emulatorCore.didMoveJoystick(.analogRight, withValue: 1, forPlayer: 0)
+            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(.right, forPlayer: 0)
         default:
             break
         }
@@ -86,32 +92,31 @@ final class PVGameCubeControllerViewController: PVControllerViewController<PVGam
     }
 
     override func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection) {
-        switch direction {
-        case .upLeft:
-            emulatorCore.didRelease(.analogUp, forPlayer: 0)
-            emulatorCore.didRelease(.analogLeft, forPlayer: 0)
-        case .up:
-            emulatorCore.didRelease(.analogUp, forPlayer: 0)
-        case .upRight:
-            emulatorCore.didRelease(.analogUp, forPlayer: 0)
-            emulatorCore.didRelease(.analogRight, forPlayer: 0)
-        case .left:
-            emulatorCore.didRelease(.analogLeft, forPlayer: 0)
-        case .none:
-            break
-        case .right:
-            emulatorCore.didRelease(.analogRight, forPlayer: 0)
-        case .downLeft:
-            emulatorCore.didRelease(.analogDown, forPlayer: 0)
-            emulatorCore.didRelease(.analogLeft, forPlayer: 0)
-        case .down:
-            emulatorCore.didRelease(.analogDown, forPlayer: 0)
-        case .downRight:
-            emulatorCore.didRelease(.analogDown, forPlayer: 0)
-            emulatorCore.didRelease(.analogRight, forPlayer: 0)
-        }
-        super.dPad(dPad, didRelease: direction)
-    }
+         switch direction {
+         case .upLeft:
+             emulatorCore.didRelease(.up, forPlayer: 0)
+             emulatorCore.didRelease(.left, forPlayer: 0)
+         case .up:
+             emulatorCore.didRelease(.up, forPlayer: 0)
+         case .upRight:
+             emulatorCore.didRelease(.up, forPlayer: 0)
+             emulatorCore.didRelease(.right, forPlayer: 0)
+         case .left:
+             emulatorCore.didRelease(.left, forPlayer: 0)
+         case .none:
+             break
+         case .right:
+             emulatorCore.didRelease(.right, forPlayer: 0)
+         case .downLeft:
+             emulatorCore.didRelease(.down, forPlayer: 0)
+             emulatorCore.didRelease(.left, forPlayer: 0)
+         case .down:
+             emulatorCore.didRelease(.down, forPlayer: 0)
+         case .downRight:
+             emulatorCore.didRelease(.down, forPlayer: 0)
+             emulatorCore.didRelease(.right, forPlayer: 0)
+         }
+     }
 
     override func buttonPressed(_ button: JSButton) {
         emulatorCore.didPush(button.buttonTag, forPlayer: 0)

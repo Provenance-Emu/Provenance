@@ -254,7 +254,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 				label.adjustsFontSizeToFitWidth = true
 				label.translatesAutoresizingMaskIntoConstraints = false
 				label.contentMode = .center
-				label.numberOfLines = 2
+				label.numberOfLines = 0
                 #if !os(tvOS)
                 let size = UIFont.labelFontSize * 2
                 #else
@@ -262,34 +262,32 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 #endif
 				label.font = UIFont.italicSystemFont(ofSize: size)
 				label.text = "Drag buttons to Move.\nTap 2 fingers 4 times to close."
-				label.textColor = UIColor.white
+				label.textColor = UIColor.darkText
 				moveLabel = label
 
 					// Build the view heirachry
 				vibrancyView.contentView.addSubview(label)
 				blurView.contentView.addSubview(vibrancyView)
 
-					// Layout constraints
-				if #available(iOS 9.0, *) {
-					NSLayoutConstraint.activate([
-						vibrancyView.heightAnchor.constraint(equalTo: blurView.contentView.heightAnchor),
-						vibrancyView.widthAnchor.constraint(equalTo: blurView.contentView.widthAnchor),
-						vibrancyView.centerXAnchor.constraint(equalTo: blurView.contentView.centerXAnchor),
-						vibrancyView.centerYAnchor.constraint(equalTo: blurView.contentView.centerYAnchor)
-					])
+                // Layout constraints
+                NSLayoutConstraint.activate([
+                    vibrancyView.heightAnchor.constraint(equalTo: blurView.contentView.heightAnchor),
+                    vibrancyView.widthAnchor.constraint(equalTo: blurView.contentView.widthAnchor),
+                    vibrancyView.centerXAnchor.constraint(equalTo: blurView.contentView.centerXAnchor),
+                    vibrancyView.centerYAnchor.constraint(equalTo: blurView.contentView.centerYAnchor)
+                ])
 
-					NSLayoutConstraint.activate([
-						label.centerXAnchor.constraint(equalTo: vibrancyView.contentView.centerXAnchor),
-						label.centerYAnchor.constraint(equalTo: vibrancyView.contentView.centerYAnchor)
-					])
-				}
+                NSLayoutConstraint.activate([
+                    label.centerXAnchor.constraint(equalTo: vibrancyView.contentView.centerXAnchor),
+                    label.centerYAnchor.constraint(equalTo: vibrancyView.contentView.centerYAnchor),
+                    label.heightAnchor.constraint(equalTo: vibrancyView.contentView.heightAnchor),
+                    label.widthAnchor.constraint(equalTo: vibrancyView.contentView.widthAnchor),
+                ])
 
-				if #available(iOS 9.0, *) {
-					NSLayoutConstraint.activate([
-						vibrancyView.centerXAnchor.constraint(equalTo: label.centerXAnchor),
-						vibrancyView.centerYAnchor.constraint(equalTo: label.centerYAnchor)
-					])
-				}
+                NSLayoutConstraint.activate([
+                    vibrancyView.centerXAnchor.constraint(equalTo: label.centerXAnchor),
+                    vibrancyView.centerYAnchor.constraint(equalTo: label.centerYAnchor)
+                ])
 
 				self.blurView = blurView
 				view.insertSubview(blurView, at: 0)

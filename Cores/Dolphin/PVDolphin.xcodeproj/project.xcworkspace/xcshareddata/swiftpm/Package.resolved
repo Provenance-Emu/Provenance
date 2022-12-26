@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "altkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rileytestut/AltKit.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "2fd376df1c79ec06a5c80cc8933da027f65b3148"
+      }
+    }
+  ],
+  "version" : 2
+}

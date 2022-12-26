@@ -196,6 +196,129 @@
 		<true/>
 		<key>PVPortable</key>
 		<false/>
+		<key>PVBIOSNames</key>
+		<array>
+			<dict>
+				<key>Description</key>
+				<string>DVD 20020823</string>
+				<key>MD5</key>
+				<string>c03f6bbaf644eb9b3ee261dbe199eb42</string>
+				<key>Name</key>
+				<string>gc-dvd-20020823.bin</string>
+				<key>Size</key>
+				<integer>2097152</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>DVD 20020402</string>
+				<key>MD5</key>
+				<string>413154dd0e2c824c9b18b807fd03ec4e</string>
+				<key>Name</key>
+				<string>gc-dvd-20020402.bin</string>
+				<key>Size</key>
+				<integer>2097152</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>DVD 20010831</string>
+				<key>MD5</key>
+				<string>b953eb1a8fc9922b3f7051c1cdc451f1</string>
+				<key>Name</key>
+				<string>gc-dvd-20010831.bin</string>
+				<key>Size</key>
+				<integer>2097152</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>DVD 20010608</string>
+				<key>MD5</key>
+				<string>561532ad496f644897952d2cef5bb431</string>
+				<key>Name</key>
+				<string>gc-dvd-20010608.bin</string>
+				<key>Size</key>
+				<integer>2097152</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>NTSC 12 IPL.bin</string>
+				<key>MD5</key>
+				<string>b17148254a5799684c7d783206504926</string>
+				<key>Name</key>
+				<string>gc-ntsc-12.bin</string>
+				<key>Size</key>
+				<integer>2097152</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>NTSC 11 IPL.bin</string>
+				<key>MD5</key>
+				<string>019e39822a9ca3029124f74dd4d55ac4</string>
+				<key>Name</key>
+				<string>gc-ntsc-11.bin</string>
+				<key>Size</key>
+				<integer>2097152</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>NTSC 10 IPL.bin</string>
+				<key>MD5</key>
+				<string> fc924a7c879b661abc37cec4f018fdf3</string>
+				<key>Name</key>
+				<string>gc-ntsc-10.bin</string>
+				<key>Size</key>
+				<integer>2097152</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>PAL 10 IPL.bin</string>
+				<key>MD5</key>
+				<string>0cdda509e2da83c85bfe423dd87346cc</string>
+				<key>Name</key>
+				<string>gc-pal-10.bin</string>
+				<key>Size</key>
+				<integer>2097152</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>PAL 11 IPL.bin</string>
+				<key>MD5</key>
+				<string>339848a0b7c2124cf155276c1e79cbd0</string>
+				<key>Name</key>
+				<string>gc-pal-11.bin</string>
+				<key>Size</key>
+				<integer>2097152</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Description</key>
+				<string>PAL 12 IPL.bin</string>
+				<key>MD5</key>
+				<string>db92574caab77a7ec99d4605fd6f2450</string>
+				<key>Name</key>
+				<string>gc-pal-12.bin</string>
+				<key>Size</key>
+				<integer>2097152</integer>
+				<key>Optional</key>
+				<true/>
+			</dict>
+		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>elf</string>
@@ -300,7 +423,7 @@
 				<key>PVControlType</key>
 				<string>PVLeftShoulderButton</string>
 				<key>PVControlTitle</key>
-				<string>L</string>
+				<string>X</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -308,7 +431,7 @@
 				<key>PVControlType</key>
 				<string>PVRightShoulderButton</string>
 				<key>PVControlTitle</key>
-				<string>R</string>
+				<string>Y</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -317,6 +440,22 @@
 				<string>PVZTriggerButton</string>
 				<key>PVControlTitle</key>
 				<string>Z</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVLeftShoulderButton2</string>
+				<key>PVControlTitle</key>
+				<string>L</string>
+				<key>PVControlSize</key>
+				<string>{60,42}</string>
+			</dict>
+			<dict>
+				<key>PVControlType</key>
+				<string>PVRightShoulderButton2</string>
+				<key>PVControlTitle</key>
+				<string>R</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -371,7 +510,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>A</string>
+						<string>2</string>
 						<key>PVControlFrame</key>
 						<string>{{60,172},{60,60}}</string>
 						<key>PVControlTint</key>
@@ -381,7 +520,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>B</string>
+						<string>1</string>
 						<key>PVControlFrame</key>
 						<string>{{4,116},{60,60}}</string>
 						<key>PVControlTint</key>
@@ -391,7 +530,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>C▲</string>
+						<string>C</string>
 						<key>PVControlFrame</key>
 						<string>{{116,4},{60,60}}</string>
 						<key>PVControlTint</key>
@@ -401,7 +540,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>C▼</string>
+						<string>A</string>
 						<key>PVControlFrame</key>
 						<string>{{116,116},{60,60}}</string>
 						<key>PVControlTint</key>
@@ -411,7 +550,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>C◀</string>
+						<string>B</string>
 						<key>PVControlFrame</key>
 						<string>{{60,60},{60,60}}</string>
 						<key>PVControlTint</key>
@@ -421,7 +560,7 @@
 						<key>PVControlType</key>
 						<string>PVButton</string>
 						<key>PVControlTitle</key>
-						<string>C▶</string>
+						<string>Z</string>
 						<key>PVControlFrame</key>
 						<string>{{172,60},{60,60}}</string>
 						<key>PVControlTint</key>
@@ -449,7 +588,7 @@
 				<key>PVControlType</key>
 				<string>PVLeftShoulderButton</string>
 				<key>PVControlTitle</key>
-				<string>L</string>
+				<string>+</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>
@@ -457,15 +596,7 @@
 				<key>PVControlType</key>
 				<string>PVRightShoulderButton</string>
 				<key>PVControlTitle</key>
-				<string>R</string>
-				<key>PVControlSize</key>
-				<string>{60,42}</string>
-			</dict>
-			<dict>
-				<key>PVControlType</key>
-				<string>PVZTriggerButton</string>
-				<key>PVControlTitle</key>
-				<string>Z</string>
+				<string>-</string>
 				<key>PVControlSize</key>
 				<string>{60,42}</string>
 			</dict>

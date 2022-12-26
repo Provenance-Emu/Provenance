@@ -1,0 +1,1566 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		27752D87E92A4D2AAF4559FB /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9B4DD96501EF45CDB92496CB /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				F054E381C01DC39BF828ED06 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				A63FA2363C9C4D078443A66A /* PBXTargetDependency */,
+				5B2097E6B2D64349A70EAD0E /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		37035854F5494840A21D2316 /* package */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = A5852C27EE2F496495B2EB00 /* Build configuration list for PBXAggregateTarget "package" */;
+			buildPhases = (
+				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				CA435C24E7D840B5B7CB12DD /* PBXTargetDependency */,
+			);
+			name = package;
+			productName = package;
+		};
+		A7904E74C7BB45968F4D5EC8 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C0AFE62F90114FCE97AE8199 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				305B4220E6364DCFBEA094CA /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = AAC5A9D33B0B48EDBD3F25A8 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				1FE0147565DADA1EB02E2E0E /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		037B54B92FFA46CC866F57CE /* ../dolphin-ios/Externals/liblzma/common/stream_decoder.c */ = {isa = PBXBuildFile; fileRef = D997D069BE8B452EBB745704 /* ../dolphin-ios/Externals/liblzma/common/stream_decoder.c */; };
+		07DC207EEF5A401F8B01A632 /* ../dolphin-ios/Externals/liblzma/common/auto_decoder.c */ = {isa = PBXBuildFile; fileRef = 77408434E5AB42E29C99671E /* ../dolphin-ios/Externals/liblzma/common/auto_decoder.c */; };
+		08063A01D2C84242A271A83D /* ../dolphin-ios/Externals/liblzma/common/outqueue.c */ = {isa = PBXBuildFile; fileRef = 0A51DED6C2C2474098611070 /* ../dolphin-ios/Externals/liblzma/common/outqueue.c */; };
+		0819E8BAEE7F4223B43AFD71 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_mf.c */ = {isa = PBXBuildFile; fileRef = 6BB9B155D6F4463CAB9BA438 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_mf.c */; };
+		0A30469F681A46D4BC768FB2 /* ../dolphin-ios/Externals/liblzma/delta/delta_common.c */ = {isa = PBXBuildFile; fileRef = 97A2D16A337F44E8BA6114EA /* ../dolphin-ios/Externals/liblzma/delta/delta_common.c */; };
+		0CF3F1B0EC6040A7AE4738AB /* ../dolphin-ios/Externals/liblzma/delta/delta_private.h */ = {isa = PBXBuildFile; fileRef = EFCFC1A6941144829367BC82 /* ../dolphin-ios/Externals/liblzma/delta/delta_private.h */; };
+		0F630BDB8C2A4DCFB334D3C8 /* ../dolphin-ios/Externals/liblzma/check/crc_macros.h */ = {isa = PBXBuildFile; fileRef = DE94902AA6C84BB1ABC7DEE1 /* ../dolphin-ios/Externals/liblzma/check/crc_macros.h */; };
+		1492BC5E0EA7488BA63062ED /* ../dolphin-ios/Externals/liblzma/delta/delta_decoder.c */ = {isa = PBXBuildFile; fileRef = A64E0F07294E4FD4B7C7BB0B /* ../dolphin-ios/Externals/liblzma/delta/delta_decoder.c */; };
+		14952AA2112B49BD98A5735E /* ../dolphin-ios/Externals/liblzma/common/easy_buffer_encoder.c */ = {isa = PBXBuildFile; fileRef = 31560FCC1B524CBDAAA0B862 /* ../dolphin-ios/Externals/liblzma/common/easy_buffer_encoder.c */; };
+		165DE43142C5456D836F5DA4 /* ../dolphin-ios/Externals/liblzma/check/crc32_table_le.h */ = {isa = PBXBuildFile; fileRef = BCCC83A8560A40C8AF0F67E0 /* ../dolphin-ios/Externals/liblzma/check/crc32_table_le.h */; };
+		19D4BABE77294749B5936B80 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_decoder.h */ = {isa = PBXBuildFile; fileRef = 444EE2F9797E4960AEA49E40 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_decoder.h */; };
+		1AA7BA58CB4F4F3CA0653AF8 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_physmem.h */ = {isa = PBXBuildFile; fileRef = F21273B8145F4A05B8046CE0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_physmem.h */; };
+		1AABF970386B4F35AFEC013B /* ../dolphin-ios/Externals/liblzma/common/filter_common.c */ = {isa = PBXBuildFile; fileRef = ACFC57E1EC3A48BCAA510EFD /* ../dolphin-ios/Externals/liblzma/common/filter_common.c */; };
+		1D994E4AE64E471F84D76A7B /* ../dolphin-ios/Externals/liblzma/common/alone_decoder.h */ = {isa = PBXBuildFile; fileRef = EFCB869F4F5F4CF9B4F64C77 /* ../dolphin-ios/Externals/liblzma/common/alone_decoder.h */; };
+		1DC7D11816CE4D76A6573B29 /* ../dolphin-ios/Externals/liblzma/common/stream_buffer_decoder.c */ = {isa = PBXBuildFile; fileRef = A4482E30185D4C9BB4F3536C /* ../dolphin-ios/Externals/liblzma/common/stream_buffer_decoder.c */; };
+		1F1B4BD2488B4CD88B258BD2 /* ../dolphin-ios/Externals/liblzma/simple/simple_encoder.c */ = {isa = PBXBuildFile; fileRef = 4FA648AEA2554AF1A8D68B89 /* ../dolphin-ios/Externals/liblzma/simple/simple_encoder.c */; };
+		2231D7CCFACE4CEE86334F79 /* ../dolphin-ios/Externals/liblzma/simple/simple_decoder.c */ = {isa = PBXBuildFile; fileRef = 65038DD861F64CB99CA0410E /* ../dolphin-ios/Externals/liblzma/simple/simple_decoder.c */; };
+		23D8A2F06AB5420A9D2CCFA5 /* ../dolphin-ios/Externals/liblzma/common/index.h */ = {isa = PBXBuildFile; fileRef = 43A69394F46C4E1FAF36C18B /* ../dolphin-ios/Externals/liblzma/common/index.h */; };
+		24903B3A844D4E098672B5B0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_cpucores.c */ = {isa = PBXBuildFile; fileRef = 12EAAD61C7634BA48D12BE49 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_cpucores.c */; };
+		265508BF7A034D78AFF963E4 /* ../dolphin-ios/Externals/liblzma/common/filter_decoder.c */ = {isa = PBXBuildFile; fileRef = 3147DDD421F642459D697C9D /* ../dolphin-ios/Externals/liblzma/common/filter_decoder.c */; };
+		2899F43D53414324B21B4447 /* ../dolphin-ios/Externals/liblzma/common/easy_preset.c */ = {isa = PBXBuildFile; fileRef = 327927D0D043432BB935F89F /* ../dolphin-ios/Externals/liblzma/common/easy_preset.c */; };
+		31E04916DC7949C4B5BE5B95 /* ../dolphin-ios/Externals/liblzma/common/index_hash.c */ = {isa = PBXBuildFile; fileRef = 09EABC4EED5E4170ACD953F3 /* ../dolphin-ios/Externals/liblzma/common/index_hash.c */; };
+		339305BD149846DE99BA4423 /* ../dolphin-ios/Externals/liblzma/api/lzma.h */ = {isa = PBXBuildFile; fileRef = 6719C53066FE4C3D8228B9A0 /* ../dolphin-ios/Externals/liblzma/api/lzma.h */; };
+		3483736490E44D6B85411C51 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_progname.h */ = {isa = PBXBuildFile; fileRef = 7B6AE7B19BCD4EDE9C2D7FD0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_progname.h */; };
+		36AA96BC0F4344038FE414D8 /* ../dolphin-ios/Externals/liblzma/common/stream_encoder.c */ = {isa = PBXBuildFile; fileRef = 8D1BB66B305C46E2BBE0D3F1 /* ../dolphin-ios/Externals/liblzma/common/stream_encoder.c */; };
+		3715D93BAEB04096AD1CA98D /* ../dolphin-ios/Externals/liblzma/rangecoder/price.h */ = {isa = PBXBuildFile; fileRef = 822ADDD3A7524038A9BC19E9 /* ../dolphin-ios/Externals/liblzma/rangecoder/price.h */; };
+		3E840ECB9F2F49799BED04D5 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder.c */ = {isa = PBXBuildFile; fileRef = 62C92D38716E4030B235072B /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder.c */; };
+		3EA2F137E9984A639859463C /* ../dolphin-ios/Externals/liblzma/check/crc64_table_be.h */ = {isa = PBXBuildFile; fileRef = 1FEC03D62C174B56B1B05C9D /* ../dolphin-ios/Externals/liblzma/check/crc64_table_be.h */; };
+		40F34FEDFB0941899448E2F4 /* ../dolphin-ios/Externals/liblzma/check/check.c */ = {isa = PBXBuildFile; fileRef = C739390CA2F341EFA6C91977 /* ../dolphin-ios/Externals/liblzma/check/check.c */; };
+		43CEC6BF18C94C34A9243070 /* ../dolphin-ios/Externals/liblzma/common/stream_decoder.h */ = {isa = PBXBuildFile; fileRef = E3191272C01D44719BEFE559 /* ../dolphin-ios/Externals/liblzma/common/stream_decoder.h */; };
+		46045CA6CEA6472DB718FC42 /* ../dolphin-ios/Externals/liblzma/simple/simple_private.h */ = {isa = PBXBuildFile; fileRef = 53CCD7E555074E87AE6AC744 /* ../dolphin-ios/Externals/liblzma/simple/simple_private.h */; };
+		484619D661DB48CDBDF076AE /* ../dolphin-ios/Externals/liblzma/common/outqueue.h */ = {isa = PBXBuildFile; fileRef = EEAE4F51AF054D9A9138EAE3 /* ../dolphin-ios/Externals/liblzma/common/outqueue.h */; };
+		486B4950B8C3498599154406 /* ../dolphin-ios/Externals/liblzma/delta/delta_decoder.h */ = {isa = PBXBuildFile; fileRef = 716DF10707454D02934C2937 /* ../dolphin-ios/Externals/liblzma/delta/delta_decoder.h */; };
+		4A06A036249044E1A06B58E6 /* ../dolphin-ios/Externals/liblzma/delta/delta_encoder.c */ = {isa = PBXBuildFile; fileRef = 19249D9232C944D4BB1E5DB9 /* ../dolphin-ios/Externals/liblzma/delta/delta_encoder.c */; };
+		4C11F47915C04CF8AE82189D /* ../dolphin-ios/Externals/liblzma/common/block_header_encoder.c */ = {isa = PBXBuildFile; fileRef = 0C7FFEFC68014AB9BAABC57E /* ../dolphin-ios/Externals/liblzma/common/block_header_encoder.c */; };
+		4CACA3C74AF6450EAA35AA67 /* ../dolphin-ios/Externals/liblzma/check/crc64_table_le.h */ = {isa = PBXBuildFile; fileRef = 0FC07E7528544FFAB1B231C4 /* ../dolphin-ios/Externals/liblzma/check/crc64_table_le.h */; };
+		4D8F20F7E8F94EF8861CB263 /* ../dolphin-ios/Externals/liblzma/api/lzma/stream_flags.h */ = {isa = PBXBuildFile; fileRef = 3AC946BF97B147639B865AE4 /* ../dolphin-ios/Externals/liblzma/api/lzma/stream_flags.h */; };
+		51311477D9EA4ECE81F35221 /* ../dolphin-ios/Externals/liblzma/check/sha256.c */ = {isa = PBXBuildFile; fileRef = 57256DA1006744B1B31F25EE /* ../dolphin-ios/Externals/liblzma/check/sha256.c */; };
+		51902B70166544C8BF420C8B /* ../dolphin-ios/Externals/liblzma/api/lzma/filter.h */ = {isa = PBXBuildFile; fileRef = 9C64FE610108426387320C7D /* ../dolphin-ios/Externals/liblzma/api/lzma/filter.h */; };
+		53E009FAFB4846DE9D5BAEAD /* ../dolphin-ios/Externals/liblzma/common/filter_decoder.h */ = {isa = PBXBuildFile; fileRef = E74B488F75D04B0C89ED2083 /* ../dolphin-ios/Externals/liblzma/common/filter_decoder.h */; };
+		54D76E1A5FA5433C903C4FA5 /* ../dolphin-ios/Externals/liblzma/common/easy_encoder_memusage.c */ = {isa = PBXBuildFile; fileRef = 52228B5B6A6949DBB77CF256 /* ../dolphin-ios/Externals/liblzma/common/easy_encoder_memusage.c */; };
+		578788BBAB7A42F6A2CAD84C /* ../dolphin-ios/Externals/liblzma/tuklib/mythread.h */ = {isa = PBXBuildFile; fileRef = 6874A232CAC44C738FA1F946 /* ../dolphin-ios/Externals/liblzma/tuklib/mythread.h */; };
+		59A3C0A93D13473DAEC1F047 /* ../dolphin-ios/Externals/liblzma/common/vli_encoder.c */ = {isa = PBXBuildFile; fileRef = 0C604A85ACF44D5C91D13A93 /* ../dolphin-ios/Externals/liblzma/common/vli_encoder.c */; };
+		5BEC78AFEF7941ADA62499D1 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_decoder.h */ = {isa = PBXBuildFile; fileRef = A6DED7AB004448888432BEF8 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_decoder.h */; };
+		5C46083190FF445A932E84B1 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr_fw.c */ = {isa = PBXBuildFile; fileRef = 0F6DD790CF0148FCBFDE0F2D /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr_fw.c */; };
+		5CFBA2062F6A42129420972A /* ../dolphin-ios/Externals/liblzma/common/block_buffer_decoder.c */ = {isa = PBXBuildFile; fileRef = D175A057DC50471F886EF8D6 /* ../dolphin-ios/Externals/liblzma/common/block_buffer_decoder.c */; };
+		5D0154B574004E43A26F74D2 /* ../dolphin-ios/Externals/liblzma/api/lzma/hardware.h */ = {isa = PBXBuildFile; fileRef = D724B1E8604B4B55B2CA9249 /* ../dolphin-ios/Externals/liblzma/api/lzma/hardware.h */; };
+		63096C7B2C0D4E22B0D3C7F0 /* ../dolphin-ios/Externals/liblzma/common/common.h */ = {isa = PBXBuildFile; fileRef = C8CF163B1D2F426FAF25C3F6 /* ../dolphin-ios/Externals/liblzma/common/common.h */; };
+		6705584FF5AB45FD947FA001 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_integer.h */ = {isa = PBXBuildFile; fileRef = 2499D1B2F66743A78BCC04B0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_integer.h */; };
+		68EA417E45674EBA90DBD4F1 /* ../dolphin-ios/Externals/liblzma/simple/simple_decoder.h */ = {isa = PBXBuildFile; fileRef = A364C24EA3B3435EB65A8997 /* ../dolphin-ios/Externals/liblzma/simple/simple_decoder.h */; };
+		695D57C808C0446E903A1493 /* ../dolphin-ios/Externals/liblzma/common/block_encoder.h */ = {isa = PBXBuildFile; fileRef = 9231B4D6945444BB9F4EE6DF /* ../dolphin-ios/Externals/liblzma/common/block_encoder.h */; };
+		73EA6EEC98FF4D9D96A8EF66 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_optimum_fast.c */ = {isa = PBXBuildFile; fileRef = AE8D7B9E3F794A4084E2530C /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_optimum_fast.c */; };
+		74311FDA769F4578B56374E8 /* ../dolphin-ios/Externals/liblzma/check/crc64_table.c */ = {isa = PBXBuildFile; fileRef = 7768B0E0959142D4A162B90E /* ../dolphin-ios/Externals/liblzma/check/crc64_table.c */; };
+		76C2382EDC5F422CB1B9A6FC /* ../dolphin-ios/Externals/liblzma/common/block_header_decoder.c */ = {isa = PBXBuildFile; fileRef = A7F9BE74DA884C06B0C96ACD /* ../dolphin-ios/Externals/liblzma/common/block_header_decoder.c */; };
+		77E826872C9A4EB79645255E /* ../dolphin-ios/Externals/liblzma/lzma/lzma_common.h */ = {isa = PBXBuildFile; fileRef = 1BB25F30F61C46F197DADAB1 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_common.h */; };
+		7834605971F7410FA72EAD18 /* ../dolphin-ios/Externals/liblzma/common/block_util.c */ = {isa = PBXBuildFile; fileRef = 4D9E1D90AC7E4EA2972DACCA /* ../dolphin-ios/Externals/liblzma/common/block_util.c */; };
+		7929320B75B44F52A3E00321 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_encoder.h */ = {isa = PBXBuildFile; fileRef = 2CBCEC6C1C704A1BACB5E2E3 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_encoder.h */; };
+		797FA60BA783401385984F78 /* ../dolphin-ios/Externals/liblzma/lzma/fastpos.h */ = {isa = PBXBuildFile; fileRef = 63E7F7BF753F478097AA8785 /* ../dolphin-ios/Externals/liblzma/lzma/fastpos.h */; };
+		7C86770842F84D2DA338BB5F /* ../dolphin-ios/Externals/liblzma/api/lzma/delta.h */ = {isa = PBXBuildFile; fileRef = 0D3CA89F4FC14FB785078090 /* ../dolphin-ios/Externals/liblzma/api/lzma/delta.h */; };
+		7E1B9691167E47D79941F8B7 /* ../dolphin-ios/Externals/liblzma/lz/lz_decoder.c */ = {isa = PBXBuildFile; fileRef = D528F164BD2F4BDD837E69DE /* ../dolphin-ios/Externals/liblzma/lz/lz_decoder.c */; };
+		7F571391032649DBB104A3BC /* ../dolphin-ios/Externals/liblzma/api/lzma/container.h */ = {isa = PBXBuildFile; fileRef = AE731E65427C42EF91417C21 /* ../dolphin-ios/Externals/liblzma/api/lzma/container.h */; };
+		7F7950AF43394BAFA01AB5A4 /* ../dolphin-ios/Externals/liblzma/api/lzma/vli.h */ = {isa = PBXBuildFile; fileRef = F16816EEF72C4138861BC2F8 /* ../dolphin-ios/Externals/liblzma/api/lzma/vli.h */; };
+		8304645D7C74409B8C2A5B04 /* ../dolphin-ios/Externals/liblzma/common/filter_encoder.c */ = {isa = PBXBuildFile; fileRef = CE007841944A4801813CE300 /* ../dolphin-ios/Externals/liblzma/common/filter_encoder.c */; };
+		83D79C8E485E44A0B0B28B6A /* ../dolphin-ios/Externals/liblzma/check/crc32_table.c */ = {isa = PBXBuildFile; fileRef = 0A69E14E91B846BBA59D0334 /* ../dolphin-ios/Externals/liblzma/check/crc32_table.c */; };
+		8476AB3FCA0040B9841562F3 /* ../dolphin-ios/Externals/liblzma/common/filter_flags_encoder.c */ = {isa = PBXBuildFile; fileRef = F188060505674DA4AD259B8C /* ../dolphin-ios/Externals/liblzma/common/filter_flags_encoder.c */; };
+		881D4E55611E49EB8AF341E8 /* ../dolphin-ios/Externals/liblzma/check/crc32_table_be.h */ = {isa = PBXBuildFile; fileRef = 770EEBD54472458591B5965E /* ../dolphin-ios/Externals/liblzma/check/crc32_table_be.h */; };
+		88ED66C74EE7404197BCBEC4 /* ../dolphin-ios/Externals/liblzma/common/block_buffer_encoder.h */ = {isa = PBXBuildFile; fileRef = CAFB36D6C09446CD80DE6F1E /* ../dolphin-ios/Externals/liblzma/common/block_buffer_encoder.h */; };
+		8CEBE429B792433A89CE48F0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr_width.c */ = {isa = PBXBuildFile; fileRef = 26043098337E457A926A2FE8 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr_width.c */; };
+		8DB85F936D064AC193B90957 /* ../dolphin-ios/Externals/liblzma/check/crc64_fast.c */ = {isa = PBXBuildFile; fileRef = 2CAB7154F6B14D19B143FA80 /* ../dolphin-ios/Externals/liblzma/check/crc64_fast.c */; };
+		8E27002AE092423281DDA5E2 /* ../dolphin-ios/Externals/liblzma/delta/delta_encoder.h */ = {isa = PBXBuildFile; fileRef = 017551347A964927BE4E8B28 /* ../dolphin-ios/Externals/liblzma/delta/delta_encoder.h */; };
+		8E993865857D4C69A35BAF58 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_progname.c */ = {isa = PBXBuildFile; fileRef = 4A1978D80852413BBEBBDEAD /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_progname.c */; };
+		900FB367C3964503A0872704 /* ../dolphin-ios/Externals/liblzma/lz/lz_decoder.h */ = {isa = PBXBuildFile; fileRef = 8761F1EA897F4837957BBE5A /* ../dolphin-ios/Externals/liblzma/lz/lz_decoder.h */; };
+		965B97B2CA29475282725510 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_presets.c */ = {isa = PBXBuildFile; fileRef = 98F030C4D2BD4CF593D9674F /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_presets.c */; };
+		99708DCDEB424BFEA7B3E2E6 /* ../dolphin-ios/Externals/liblzma/simple/simple_coder.h */ = {isa = PBXBuildFile; fileRef = 5BB635E6FB2047A3A45B6D20 /* ../dolphin-ios/Externals/liblzma/simple/simple_coder.h */; };
+		9985717A8DF340EAB7CEF60A /* ../dolphin-ios/Externals/liblzma/common/filter_flags_decoder.c */ = {isa = PBXBuildFile; fileRef = 26E17101593D47FA851CD3AB /* ../dolphin-ios/Externals/liblzma/common/filter_flags_decoder.c */; };
+		99DCB485D66048DDBA3199C2 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_cpucores.h */ = {isa = PBXBuildFile; fileRef = 9DFD0009CA9E49DE9608F89C /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_cpucores.h */; };
+		9BED097C7A3047A9B47DF70E /* ../dolphin-ios/Externals/liblzma/rangecoder/price_table.c */ = {isa = PBXBuildFile; fileRef = 121ACD2E754A4E4A93EF4D97 /* ../dolphin-ios/Externals/liblzma/rangecoder/price_table.c */; };
+		9DF2E086A95F40DCB5A5D156 /* ../dolphin-ios/Externals/liblzma/common/stream_encoder_mt.c */ = {isa = PBXBuildFile; fileRef = 2775F6D8D04045F0A667B2CE /* ../dolphin-ios/Externals/liblzma/common/stream_encoder_mt.c */; };
+		A1462B44D7CB4103B2BD060B /* ../dolphin-ios/Externals/liblzma/common/index_encoder.h */ = {isa = PBXBuildFile; fileRef = 6FDB2C0846004BC1A71309DD /* ../dolphin-ios/Externals/liblzma/common/index_encoder.h */; };
+		A1ABFA10420742E690C91E5F /* ../dolphin-ios/Externals/liblzma/common/alone_encoder.c */ = {isa = PBXBuildFile; fileRef = D012922B9D414239ADCF6BC2 /* ../dolphin-ios/Externals/liblzma/common/alone_encoder.c */; };
+		A1BBF2B6F9AA470D9F965A36 /* ../dolphin-ios/Externals/liblzma/api/lzma/block.h */ = {isa = PBXBuildFile; fileRef = 3EAF1E026E1B40E89DEB279F /* ../dolphin-ios/Externals/liblzma/api/lzma/block.h */; };
+		A233D35E7DE14E5280954F0F /* ../dolphin-ios/Externals/liblzma/common/filter_common.h */ = {isa = PBXBuildFile; fileRef = D9669B5AB1064421A8BF114C /* ../dolphin-ios/Externals/liblzma/common/filter_common.h */; };
+		A39AA3FBABC44DBDB1D2BA18 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_exit.c */ = {isa = PBXBuildFile; fileRef = 847A723898294E8DBF970204 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_exit.c */; };
+		A62FFCDC5248496EB522F2BA /* ../dolphin-ios/Externals/liblzma/lzma/fastpos_table.c */ = {isa = PBXBuildFile; fileRef = EEE3199546FB4746BB9304E4 /* ../dolphin-ios/Externals/liblzma/lzma/fastpos_table.c */; };
+		A67E6574ABEB44CE93AA9F92 /* ../dolphin-ios/Externals/liblzma/common/common.c */ = {isa = PBXBuildFile; fileRef = 224339A316524CF5AACC13BC /* ../dolphin-ios/Externals/liblzma/common/common.c */; };
+		A6A90C3B35334BCFB7346302 /* ../dolphin-ios/Externals/liblzma/common/filter_buffer_decoder.c */ = {isa = PBXBuildFile; fileRef = 50341D6373254150915C24F5 /* ../dolphin-ios/Externals/liblzma/common/filter_buffer_decoder.c */; };
+		A76748BE9401471A966CCC51 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_open_stdxxx.c */ = {isa = PBXBuildFile; fileRef = BD6E190E095E447D91B0A733 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_open_stdxxx.c */; };
+		A83C92579574461D9F401EB8 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_decoder.h */ = {isa = PBXBuildFile; fileRef = DC74928BEA484FDFA8AAA3C6 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_decoder.h */; };
+		A8A11D4C0D7F4D57AF4005EF /* ../dolphin-ios/Externals/liblzma/common/easy_encoder.c */ = {isa = PBXBuildFile; fileRef = C44549C048B04E56AC9A65CD /* ../dolphin-ios/Externals/liblzma/common/easy_encoder.c */; };
+		A8C3DE23B8674C83A4AB7A1D /* ../dolphin-ios/Externals/liblzma/api/lzma/version.h */ = {isa = PBXBuildFile; fileRef = E8D5C32432CE43E2873517CD /* ../dolphin-ios/Externals/liblzma/api/lzma/version.h */; };
+		A91653D500DA431A9BA70CF4 /* ../dolphin-ios/Externals/liblzma/common/easy_decoder_memusage.c */ = {isa = PBXBuildFile; fileRef = 5005E79B91E54444956221D3 /* ../dolphin-ios/Externals/liblzma/common/easy_decoder_memusage.c */; };
+		A92828B3A4C5421E92CAD68B /* ../dolphin-ios/Externals/liblzma/common/stream_buffer_encoder.c */ = {isa = PBXBuildFile; fileRef = 5AEAC4B92A254544BE6E1D27 /* ../dolphin-ios/Externals/liblzma/common/stream_buffer_encoder.c */; };
+		AA920E52B0CE492B962BCF80 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder.c */ = {isa = PBXBuildFile; fileRef = B87363B9E7AE414F8F511A96 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder.c */; };
+		AB2E58EF8A3E461AA50172EA /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_physmem.c */ = {isa = PBXBuildFile; fileRef = 8682FD508087407CB93C88DB /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_physmem.c */; };
+		AD4AD45677844B5190E4CBFD /* ../dolphin-ios/Externals/liblzma/api/lzma/index.h */ = {isa = PBXBuildFile; fileRef = 3DD174853EE541AB8FCC368A /* ../dolphin-ios/Externals/liblzma/api/lzma/index.h */; };
+		AD62F8DF982E4A9A8188BB3A /* ../dolphin-ios/Externals/liblzma/common/vli_decoder.c */ = {isa = PBXBuildFile; fileRef = ADBAF66D54C14AA79F76A8CB /* ../dolphin-ios/Externals/liblzma/common/vli_decoder.c */; };
+		B04774BC1B864835875EA3D7 /* ../dolphin-ios/Externals/liblzma/simple/simple_coder.c */ = {isa = PBXBuildFile; fileRef = 184110A60AFC4FAEAC37D855 /* ../dolphin-ios/Externals/liblzma/simple/simple_coder.c */; };
+		B10F4E83933247709F1E6260 /* ../dolphin-ios/Externals/liblzma/api/lzma/index_hash.h */ = {isa = PBXBuildFile; fileRef = 40C2602FC6744A1A800F8863 /* ../dolphin-ios/Externals/liblzma/api/lzma/index_hash.h */; };
+		B1CB944565F845F6BB4BD05D /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_exit.h */ = {isa = PBXBuildFile; fileRef = 443E9CECC3DD4E2B9AA24968 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_exit.h */; };
+		B8F07605394E446AA7EB5AAD /* ../dolphin-ios/Externals/liblzma/common/index_encoder.c */ = {isa = PBXBuildFile; fileRef = A22EF1EF33A344F6B8417450 /* ../dolphin-ios/Externals/liblzma/common/index_encoder.c */; };
+		BB2FD013AE16482B80707249 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_encoder.h */ = {isa = PBXBuildFile; fileRef = 8BF023A8B48F4AF89D3B20B0 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_encoder.h */; };
+		BCDC2B32DE6643579F3C75BA /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_decoder.c */ = {isa = PBXBuildFile; fileRef = 5F80FBA67A2D47FF92F9B9AF /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_decoder.c */; };
+		BE3A8E8E426542D380C1D3C2 /* ../dolphin-ios/Externals/liblzma/common/block_buffer_encoder.c */ = {isa = PBXBuildFile; fileRef = EB4DF484FB58435E8BAEC487 /* ../dolphin-ios/Externals/liblzma/common/block_buffer_encoder.c */; };
+		C16985B0BD5D408DA8D26573 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_encoder.c */ = {isa = PBXBuildFile; fileRef = B666660379CC42F894021723 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_encoder.c */; };
+		C18CAB1DAAB04E07A4EC8D20 /* ../dolphin-ios/Externals/liblzma/common/block_decoder.c */ = {isa = PBXBuildFile; fileRef = 4BAC6A39354442789FDB54A8 /* ../dolphin-ios/Externals/liblzma/common/block_decoder.c */; };
+		C32B8EDF5D77458E9028F43D /* ../dolphin-ios/Externals/liblzma/common/stream_flags_decoder.c */ = {isa = PBXBuildFile; fileRef = 69359B0F7C154DBCBDD7C120 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_decoder.c */; };
+		C334A37DF0DD4F7B84026255 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_decoder.c */ = {isa = PBXBuildFile; fileRef = 3D75B723A45F4C8EA5910D8D /* ../dolphin-ios/Externals/liblzma/lzma/lzma_decoder.c */; };
+		C431C63A88074620B0FAF9E2 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_common.h */ = {isa = PBXBuildFile; fileRef = D544E9BE5CA24418AD76C997 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_common.h */; };
+		C7B9290E026940DD9823B225 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder.h */ = {isa = PBXBuildFile; fileRef = 6DEB7A170EF24022AA93688D /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder.h */; };
+		CA4B8D9035C74A1580814E18 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder.h */ = {isa = PBXBuildFile; fileRef = 9E70571936514E6CB2929891 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder.h */; };
+		CDB12DBDA7284C7A9315EB43 /* ../dolphin-ios/Externals/liblzma/common/index.c */ = {isa = PBXBuildFile; fileRef = 72DD062AD59D4D6CB5BF4ECC /* ../dolphin-ios/Externals/liblzma/common/index.c */; };
+		D001D469D6AB4B9FADECC421 /* ../dolphin-ios/Externals/liblzma/common/easy_preset.h */ = {isa = PBXBuildFile; fileRef = 40A23B669C384F478C375721 /* ../dolphin-ios/Externals/liblzma/common/easy_preset.h */; };
+		D2452A302CAB4E08BD103B89 /* ../dolphin-ios/Externals/liblzma/common/block_encoder.c */ = {isa = PBXBuildFile; fileRef = A15FF8C065C147DE91E1E2D2 /* ../dolphin-ios/Externals/liblzma/common/block_encoder.c */; };
+		D24EE69998FD4A0FBE27187C /* ../dolphin-ios/Externals/liblzma/api/lzma/check.h */ = {isa = PBXBuildFile; fileRef = B6A4B80322414D64B1851AEF /* ../dolphin-ios/Externals/liblzma/api/lzma/check.h */; };
+		D6C3B9444AAD4A7DAFF30E61 /* ../dolphin-ios/Externals/liblzma/common/vli_size.c */ = {isa = PBXBuildFile; fileRef = 493D551D5BEC48C99CA5E543 /* ../dolphin-ios/Externals/liblzma/common/vli_size.c */; };
+		D8ACD0A043BB41D8B291CF39 /* ../dolphin-ios/Externals/liblzma/common/memcmplen.h */ = {isa = PBXBuildFile; fileRef = 1A33B9D7A0FA4A50B639F357 /* ../dolphin-ios/Externals/liblzma/common/memcmplen.h */; };
+		D8BE764FEF94428194408049 /* ../dolphin-ios/Externals/liblzma/common/alone_decoder.c */ = {isa = PBXBuildFile; fileRef = 6BCD41C29A6840F893459C46 /* ../dolphin-ios/Externals/liblzma/common/alone_decoder.c */; };
+		DA68839FC77E4FE99875E94C /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr.h */ = {isa = PBXBuildFile; fileRef = 20FC98D082D745338C7A09C6 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr.h */; };
+		DBD159786FD94B5E967687F9 /* ../dolphin-ios/Externals/liblzma/api/lzma/lzma12.h */ = {isa = PBXBuildFile; fileRef = B85081240E274E64A9E75B3A /* ../dolphin-ios/Externals/liblzma/api/lzma/lzma12.h */; };
+		DC295483B1454F30A3932699 /* ../dolphin-ios/Externals/liblzma/delta/delta_common.h */ = {isa = PBXBuildFile; fileRef = 94E2A85B11264609A721C364 /* ../dolphin-ios/Externals/liblzma/delta/delta_common.h */; };
+		DCEF3A08B6454465B3EB4C98 /* ../dolphin-ios/Externals/liblzma/common/hardware_cputhreads.c */ = {isa = PBXBuildFile; fileRef = CD4966600AA64B45A7C8C51A /* ../dolphin-ios/Externals/liblzma/common/hardware_cputhreads.c */; };
+		DD7F8A9333B1486A9E47EEDF /* ../dolphin-ios/Externals/liblzma/rangecoder/range_common.h */ = {isa = PBXBuildFile; fileRef = 7EA8754494244433B1768EC5 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_common.h */; };
+		DE041FD5E60A43B9B81D66C8 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_private.h */ = {isa = PBXBuildFile; fileRef = 0E9EBEAB7C4D4E87BDB09C9A /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_private.h */; };
+		DF69D28243E242339B3A427C /* ../dolphin-ios/Externals/liblzma/check/crc32_fast.c */ = {isa = PBXBuildFile; fileRef = C4590FE58FA9488ABF188CB1 /* ../dolphin-ios/Externals/liblzma/check/crc32_fast.c */; };
+		E165D1D5C0BD43B8B06ADF89 /* ../dolphin-ios/Externals/liblzma/tuklib/sysdefs.h */ = {isa = PBXBuildFile; fileRef = 4512EAC50E974BAEBDA08C13 /* ../dolphin-ios/Externals/liblzma/tuklib/sysdefs.h */; };
+		E178CF146E234C7F974BDED8 /* ../dolphin-ios/Externals/liblzma/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = ABBBBD0542214B639EE1D946 /* ../dolphin-ios/Externals/liblzma/CMakeLists.txt */; };
+		E3B7F2D7B8F54505A94F7434 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_common.h */ = {isa = PBXBuildFile; fileRef = A16B9E00F4754065A55D8F24 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_common.h */; };
+		E44274DD657144B8A1790F55 /* ../dolphin-ios/Externals/liblzma/common/index_decoder.c */ = {isa = PBXBuildFile; fileRef = 6FE6A8F4C62340C9B7F5708B /* ../dolphin-ios/Externals/liblzma/common/index_decoder.c */; };
+		E503620BB57A4571B73F46A4 /* ../dolphin-ios/Externals/liblzma/common/hardware_physmem.c */ = {isa = PBXBuildFile; fileRef = C5B4708FE42B4F8EB8D4BC58 /* ../dolphin-ios/Externals/liblzma/common/hardware_physmem.c */; };
+		E86B2A0578B84F5FAA5D9629 /* ../cmake/Externals/liblzma/CMakeFiles/lzma.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 19B1E2B1F47D4B81A25E4BCB /* ../cmake/Externals/liblzma/CMakeFiles/lzma.dir/Info.plist */; };
+		E95BB573C0AB4E02849B1CDB /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_open_stdxxx.h */ = {isa = PBXBuildFile; fileRef = F8FF0B2C221748E0AA8AF11E /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_open_stdxxx.h */; };
+		EA301CE022B2407D9E8C0E31 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_common.c */ = {isa = PBXBuildFile; fileRef = 5DE243CCC6004CD5B8E4AB94 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_common.c */; };
+		ED37BB9F66F0449094847869 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_hash_table.h */ = {isa = PBXBuildFile; fileRef = 31EB153C08FE42FDAFEB2A7E /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_hash_table.h */; };
+		F1761BBA185F46B3BC0681F6 /* ../dolphin-ios/Externals/liblzma/common/filter_encoder.h */ = {isa = PBXBuildFile; fileRef = D0C7D27B64DE480AB9176EE6 /* ../dolphin-ios/Externals/liblzma/common/filter_encoder.h */; };
+		F17940EE250147518B934E05 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_hash.h */ = {isa = PBXBuildFile; fileRef = 2E0CADC984A74AF9A391B3F0 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_hash.h */; };
+		F3495C7A8D8C41CCAF71DB06 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_encoder.c */ = {isa = PBXBuildFile; fileRef = 3E27524C3455495C8D9DB12D /* ../dolphin-ios/Externals/liblzma/common/stream_flags_encoder.c */; };
+		F4B6EC2E4099409AB91688AD /* ../dolphin-ios/Externals/liblzma/check/check.h */ = {isa = PBXBuildFile; fileRef = F051887213DA42D583AE2849 /* ../dolphin-ios/Externals/liblzma/check/check.h */; };
+		F741246530234659A4323BA2 /* ../dolphin-ios/Externals/liblzma/api/lzma/base.h */ = {isa = PBXBuildFile; fileRef = 5FE416E5DC804FD397956431 /* ../dolphin-ios/Externals/liblzma/api/lzma/base.h */; };
+		F8E02FB577494C138EAD7E48 /* ../dolphin-ios/Externals/liblzma/api/lzma/bcj.h */ = {isa = PBXBuildFile; fileRef = EDF9F24C71544189BCFCD420 /* ../dolphin-ios/Externals/liblzma/api/lzma/bcj.h */; };
+		FA8D602414EB43F7813DFE21 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_config.h */ = {isa = PBXBuildFile; fileRef = 72C8DC31EB5747C8B576798C /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_config.h */; };
+		FB15F6DF08414B078FB018F1 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_optimum_normal.c */ = {isa = PBXBuildFile; fileRef = 72B6109CD8724790B8E0065D /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_optimum_normal.c */; };
+		FBAED1E7B87F481FAF7CF6C7 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_gettext.h */ = {isa = PBXBuildFile; fileRef = C3AE3405B8C74ED4B4C70D36 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_gettext.h */; };
+		FBB32A777DF047E9995E3D92 /* ../dolphin-ios/Externals/liblzma/common/filter_buffer_encoder.c */ = {isa = PBXBuildFile; fileRef = BB49BA1A204A44B6BA744F38 /* ../dolphin-ios/Externals/liblzma/common/filter_buffer_encoder.c */; };
+		FDE6176E0C10441F8613A824 /* ../dolphin-ios/Externals/liblzma/common/block_decoder.h */ = {isa = PBXBuildFile; fileRef = 1267D6062D6D49EFAB4E2DFD /* ../dolphin-ios/Externals/liblzma/common/block_decoder.h */; };
+		FF6C840ED2F64978B79AF6AF /* ../dolphin-ios/Externals/liblzma/simple/simple_encoder.h */ = {isa = PBXBuildFile; fileRef = 6B17F3CE94E0441E9CF62D37 /* ../dolphin-ios/Externals/liblzma/simple/simple_encoder.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		3E5EB0B0D1A94907900F9422 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		65A27207F8E8489DA969E798 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		C0DCB6F423F14436B7B913FD /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		C305AEA2E06D4F33A193E1C7 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		1D2FB9426AB14895A99CA656 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C2D79E9FB61447E89E9E955 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7FD26A8923E048C185776846;
+			remoteInfo = lzma;
+		};
+		AEB830629B1445BAA18C3D4D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C2D79E9FB61447E89E9E955 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 27752D87E92A4D2AAF4559FB;
+			remoteInfo = ALL_BUILD;
+		};
+		F92B8128F84B411C9120B1ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C2D79E9FB61447E89E9E955 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0BDA0649EAD45849C6A8AD3;
+			remoteInfo = ZERO_CHECK;
+		};
+		FDE1C79A2C9C4D7E9AF89120 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C2D79E9FB61447E89E9E955 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D0BDA0649EAD45849C6A8AD3;
+			remoteInfo = ZERO_CHECK;
+		};
+		FF84BE2366D14C68B80DC603 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3C2D79E9FB61447E89E9E955 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 27752D87E92A4D2AAF4559FB;
+			remoteInfo = ALL_BUILD;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		017551347A964927BE4E8B28 /* ../dolphin-ios/Externals/liblzma/delta/delta_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = delta_encoder.h; path = delta/delta_encoder.h; sourceTree = SOURCE_ROOT; };
+		09EABC4EED5E4170ACD953F3 /* ../dolphin-ios/Externals/liblzma/common/index_hash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = index_hash.c; path = common/index_hash.c; sourceTree = SOURCE_ROOT; };
+		0A51DED6C2C2474098611070 /* ../dolphin-ios/Externals/liblzma/common/outqueue.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = outqueue.c; path = common/outqueue.c; sourceTree = SOURCE_ROOT; };
+		0A69E14E91B846BBA59D0334 /* ../dolphin-ios/Externals/liblzma/check/crc32_table.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = crc32_table.c; path = check/crc32_table.c; sourceTree = SOURCE_ROOT; };
+		0C604A85ACF44D5C91D13A93 /* ../dolphin-ios/Externals/liblzma/common/vli_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vli_encoder.c; path = common/vli_encoder.c; sourceTree = SOURCE_ROOT; };
+		0C7FFEFC68014AB9BAABC57E /* ../dolphin-ios/Externals/liblzma/common/block_header_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = block_header_encoder.c; path = common/block_header_encoder.c; sourceTree = SOURCE_ROOT; };
+		0D3CA89F4FC14FB785078090 /* ../dolphin-ios/Externals/liblzma/api/lzma/delta.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = delta.h; path = api/lzma/delta.h; sourceTree = SOURCE_ROOT; };
+		0E9EBEAB7C4D4E87BDB09C9A /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_private.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lzma_encoder_private.h; path = lzma/lzma_encoder_private.h; sourceTree = SOURCE_ROOT; };
+		0F6DD790CF0148FCBFDE0F2D /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr_fw.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = tuklib_mbstr_fw.c; path = tuklib/tuklib_mbstr_fw.c; sourceTree = SOURCE_ROOT; };
+		0FC07E7528544FFAB1B231C4 /* ../dolphin-ios/Externals/liblzma/check/crc64_table_le.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crc64_table_le.h; path = check/crc64_table_le.h; sourceTree = SOURCE_ROOT; };
+		121ACD2E754A4E4A93EF4D97 /* ../dolphin-ios/Externals/liblzma/rangecoder/price_table.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = price_table.c; path = rangecoder/price_table.c; sourceTree = SOURCE_ROOT; };
+		1267D6062D6D49EFAB4E2DFD /* ../dolphin-ios/Externals/liblzma/common/block_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = block_decoder.h; path = common/block_decoder.h; sourceTree = SOURCE_ROOT; };
+		12EAAD61C7634BA48D12BE49 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_cpucores.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = tuklib_cpucores.c; path = tuklib/tuklib_cpucores.c; sourceTree = SOURCE_ROOT; };
+		184110A60AFC4FAEAC37D855 /* ../dolphin-ios/Externals/liblzma/simple/simple_coder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = simple_coder.c; path = simple/simple_coder.c; sourceTree = SOURCE_ROOT; };
+		19249D9232C944D4BB1E5DB9 /* ../dolphin-ios/Externals/liblzma/delta/delta_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = delta_encoder.c; path = delta/delta_encoder.c; sourceTree = SOURCE_ROOT; };
+		19B1E2B1F47D4B81A25E4BCB /* ../cmake/Externals/liblzma/CMakeFiles/lzma.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/liblzma/CMakeFiles/lzma.dir/Info.plist; sourceTree = "<absolute>"; };
+		1A33B9D7A0FA4A50B639F357 /* ../dolphin-ios/Externals/liblzma/common/memcmplen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = memcmplen.h; path = common/memcmplen.h; sourceTree = SOURCE_ROOT; };
+		1BB25F30F61C46F197DADAB1 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lzma_common.h; path = lzma/lzma_common.h; sourceTree = SOURCE_ROOT; };
+		1FEC03D62C174B56B1B05C9D /* ../dolphin-ios/Externals/liblzma/check/crc64_table_be.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crc64_table_be.h; path = check/crc64_table_be.h; sourceTree = SOURCE_ROOT; };
+		20FC98D082D745338C7A09C6 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_mbstr.h; path = tuklib/tuklib_mbstr.h; sourceTree = SOURCE_ROOT; };
+		224339A316524CF5AACC13BC /* ../dolphin-ios/Externals/liblzma/common/common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = common.c; path = common/common.c; sourceTree = SOURCE_ROOT; };
+		2499D1B2F66743A78BCC04B0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_integer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_integer.h; path = tuklib/tuklib_integer.h; sourceTree = SOURCE_ROOT; };
+		26043098337E457A926A2FE8 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr_width.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = tuklib_mbstr_width.c; path = tuklib/tuklib_mbstr_width.c; sourceTree = SOURCE_ROOT; };
+		26E17101593D47FA851CD3AB /* ../dolphin-ios/Externals/liblzma/common/filter_flags_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = filter_flags_decoder.c; path = common/filter_flags_decoder.c; sourceTree = SOURCE_ROOT; };
+		2775F6D8D04045F0A667B2CE /* ../dolphin-ios/Externals/liblzma/common/stream_encoder_mt.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = stream_encoder_mt.c; path = common/stream_encoder_mt.c; sourceTree = SOURCE_ROOT; };
+		2CAB7154F6B14D19B143FA80 /* ../dolphin-ios/Externals/liblzma/check/crc64_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = crc64_fast.c; path = check/crc64_fast.c; sourceTree = SOURCE_ROOT; };
+		2CBCEC6C1C704A1BACB5E2E3 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lzma2_encoder.h; path = lzma/lzma2_encoder.h; sourceTree = SOURCE_ROOT; };
+		2E0CADC984A74AF9A391B3F0 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_hash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lz_encoder_hash.h; path = lz/lz_encoder_hash.h; sourceTree = SOURCE_ROOT; };
+		3147DDD421F642459D697C9D /* ../dolphin-ios/Externals/liblzma/common/filter_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = filter_decoder.c; path = common/filter_decoder.c; sourceTree = SOURCE_ROOT; };
+		31560FCC1B524CBDAAA0B862 /* ../dolphin-ios/Externals/liblzma/common/easy_buffer_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = easy_buffer_encoder.c; path = common/easy_buffer_encoder.c; sourceTree = SOURCE_ROOT; };
+		31EB153C08FE42FDAFEB2A7E /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_hash_table.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lz_encoder_hash_table.h; path = lz/lz_encoder_hash_table.h; sourceTree = SOURCE_ROOT; };
+		327927D0D043432BB935F89F /* ../dolphin-ios/Externals/liblzma/common/easy_preset.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = easy_preset.c; path = common/easy_preset.c; sourceTree = SOURCE_ROOT; };
+		3AC946BF97B147639B865AE4 /* ../dolphin-ios/Externals/liblzma/api/lzma/stream_flags.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stream_flags.h; path = api/lzma/stream_flags.h; sourceTree = SOURCE_ROOT; };
+		3D75B723A45F4C8EA5910D8D /* ../dolphin-ios/Externals/liblzma/lzma/lzma_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lzma_decoder.c; path = lzma/lzma_decoder.c; sourceTree = SOURCE_ROOT; };
+		3DD174853EE541AB8FCC368A /* ../dolphin-ios/Externals/liblzma/api/lzma/index.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = index.h; path = api/lzma/index.h; sourceTree = SOURCE_ROOT; };
+		3E27524C3455495C8D9DB12D /* ../dolphin-ios/Externals/liblzma/common/stream_flags_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = stream_flags_encoder.c; path = common/stream_flags_encoder.c; sourceTree = SOURCE_ROOT; };
+		3EAF1E026E1B40E89DEB279F /* ../dolphin-ios/Externals/liblzma/api/lzma/block.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = block.h; path = api/lzma/block.h; sourceTree = SOURCE_ROOT; };
+		40A23B669C384F478C375721 /* ../dolphin-ios/Externals/liblzma/common/easy_preset.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = easy_preset.h; path = common/easy_preset.h; sourceTree = SOURCE_ROOT; };
+		40C2602FC6744A1A800F8863 /* ../dolphin-ios/Externals/liblzma/api/lzma/index_hash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = index_hash.h; path = api/lzma/index_hash.h; sourceTree = SOURCE_ROOT; };
+		43A69394F46C4E1FAF36C18B /* ../dolphin-ios/Externals/liblzma/common/index.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = index.h; path = common/index.h; sourceTree = SOURCE_ROOT; };
+		443E9CECC3DD4E2B9AA24968 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_exit.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_exit.h; path = tuklib/tuklib_exit.h; sourceTree = SOURCE_ROOT; };
+		444EE2F9797E4960AEA49E40 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lzma2_decoder.h; path = lzma/lzma2_decoder.h; sourceTree = SOURCE_ROOT; };
+		4512EAC50E974BAEBDA08C13 /* ../dolphin-ios/Externals/liblzma/tuklib/sysdefs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sysdefs.h; path = tuklib/sysdefs.h; sourceTree = SOURCE_ROOT; };
+		493D551D5BEC48C99CA5E543 /* ../dolphin-ios/Externals/liblzma/common/vli_size.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vli_size.c; path = common/vli_size.c; sourceTree = SOURCE_ROOT; };
+		4A1978D80852413BBEBBDEAD /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_progname.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = tuklib_progname.c; path = tuklib/tuklib_progname.c; sourceTree = SOURCE_ROOT; };
+		4BAC6A39354442789FDB54A8 /* ../dolphin-ios/Externals/liblzma/common/block_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = block_decoder.c; path = common/block_decoder.c; sourceTree = SOURCE_ROOT; };
+		4D9E1D90AC7E4EA2972DACCA /* ../dolphin-ios/Externals/liblzma/common/block_util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = block_util.c; path = common/block_util.c; sourceTree = SOURCE_ROOT; };
+		4FA648AEA2554AF1A8D68B89 /* ../dolphin-ios/Externals/liblzma/simple/simple_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = simple_encoder.c; path = simple/simple_encoder.c; sourceTree = SOURCE_ROOT; };
+		5005E79B91E54444956221D3 /* ../dolphin-ios/Externals/liblzma/common/easy_decoder_memusage.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = easy_decoder_memusage.c; path = common/easy_decoder_memusage.c; sourceTree = SOURCE_ROOT; };
+		50341D6373254150915C24F5 /* ../dolphin-ios/Externals/liblzma/common/filter_buffer_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = filter_buffer_decoder.c; path = common/filter_buffer_decoder.c; sourceTree = SOURCE_ROOT; };
+		52228B5B6A6949DBB77CF256 /* ../dolphin-ios/Externals/liblzma/common/easy_encoder_memusage.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = easy_encoder_memusage.c; path = common/easy_encoder_memusage.c; sourceTree = SOURCE_ROOT; };
+		53CCD7E555074E87AE6AC744 /* ../dolphin-ios/Externals/liblzma/simple/simple_private.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = simple_private.h; path = simple/simple_private.h; sourceTree = SOURCE_ROOT; };
+		57256DA1006744B1B31F25EE /* ../dolphin-ios/Externals/liblzma/check/sha256.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sha256.c; path = check/sha256.c; sourceTree = SOURCE_ROOT; };
+		5AEAC4B92A254544BE6E1D27 /* ../dolphin-ios/Externals/liblzma/common/stream_buffer_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = stream_buffer_encoder.c; path = common/stream_buffer_encoder.c; sourceTree = SOURCE_ROOT; };
+		5BB635E6FB2047A3A45B6D20 /* ../dolphin-ios/Externals/liblzma/simple/simple_coder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = simple_coder.h; path = simple/simple_coder.h; sourceTree = SOURCE_ROOT; };
+		5DE243CCC6004CD5B8E4AB94 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = stream_flags_common.c; path = common/stream_flags_common.c; sourceTree = SOURCE_ROOT; };
+		5F80FBA67A2D47FF92F9B9AF /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lzma2_decoder.c; path = lzma/lzma2_decoder.c; sourceTree = SOURCE_ROOT; };
+		5FE416E5DC804FD397956431 /* ../dolphin-ios/Externals/liblzma/api/lzma/base.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = base.h; path = api/lzma/base.h; sourceTree = SOURCE_ROOT; };
+		62C92D38716E4030B235072B /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lzma_encoder.c; path = lzma/lzma_encoder.c; sourceTree = SOURCE_ROOT; };
+		63E7F7BF753F478097AA8785 /* ../dolphin-ios/Externals/liblzma/lzma/fastpos.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fastpos.h; path = lzma/fastpos.h; sourceTree = SOURCE_ROOT; };
+		65038DD861F64CB99CA0410E /* ../dolphin-ios/Externals/liblzma/simple/simple_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = simple_decoder.c; path = simple/simple_decoder.c; sourceTree = SOURCE_ROOT; };
+		6719C53066FE4C3D8228B9A0 /* ../dolphin-ios/Externals/liblzma/api/lzma.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lzma.h; path = api/lzma.h; sourceTree = SOURCE_ROOT; };
+		6874A232CAC44C738FA1F946 /* ../dolphin-ios/Externals/liblzma/tuklib/mythread.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mythread.h; path = tuklib/mythread.h; sourceTree = SOURCE_ROOT; };
+		69359B0F7C154DBCBDD7C120 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = stream_flags_decoder.c; path = common/stream_flags_decoder.c; sourceTree = SOURCE_ROOT; };
+		6B17F3CE94E0441E9CF62D37 /* ../dolphin-ios/Externals/liblzma/simple/simple_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = simple_encoder.h; path = simple/simple_encoder.h; sourceTree = SOURCE_ROOT; };
+		6BB9B155D6F4463CAB9BA438 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_mf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lz_encoder_mf.c; path = lz/lz_encoder_mf.c; sourceTree = SOURCE_ROOT; };
+		6BCD41C29A6840F893459C46 /* ../dolphin-ios/Externals/liblzma/common/alone_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = alone_decoder.c; path = common/alone_decoder.c; sourceTree = SOURCE_ROOT; };
+		6DEB7A170EF24022AA93688D /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lzma_encoder.h; path = lzma/lzma_encoder.h; sourceTree = SOURCE_ROOT; };
+		6FDB2C0846004BC1A71309DD /* ../dolphin-ios/Externals/liblzma/common/index_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = index_encoder.h; path = common/index_encoder.h; sourceTree = SOURCE_ROOT; };
+		6FE6A8F4C62340C9B7F5708B /* ../dolphin-ios/Externals/liblzma/common/index_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = index_decoder.c; path = common/index_decoder.c; sourceTree = SOURCE_ROOT; };
+		716DF10707454D02934C2937 /* ../dolphin-ios/Externals/liblzma/delta/delta_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = delta_decoder.h; path = delta/delta_decoder.h; sourceTree = SOURCE_ROOT; };
+		72B6109CD8724790B8E0065D /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_optimum_normal.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lzma_encoder_optimum_normal.c; path = lzma/lzma_encoder_optimum_normal.c; sourceTree = SOURCE_ROOT; };
+		72C8DC31EB5747C8B576798C /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_config.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_config.h; path = tuklib/tuklib_config.h; sourceTree = SOURCE_ROOT; };
+		72DD062AD59D4D6CB5BF4ECC /* ../dolphin-ios/Externals/liblzma/common/index.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = index.c; path = common/index.c; sourceTree = SOURCE_ROOT; };
+		770EEBD54472458591B5965E /* ../dolphin-ios/Externals/liblzma/check/crc32_table_be.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crc32_table_be.h; path = check/crc32_table_be.h; sourceTree = SOURCE_ROOT; };
+		77408434E5AB42E29C99671E /* ../dolphin-ios/Externals/liblzma/common/auto_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = auto_decoder.c; path = common/auto_decoder.c; sourceTree = SOURCE_ROOT; };
+		7768B0E0959142D4A162B90E /* ../dolphin-ios/Externals/liblzma/check/crc64_table.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = crc64_table.c; path = check/crc64_table.c; sourceTree = SOURCE_ROOT; };
+		7B6AE7B19BCD4EDE9C2D7FD0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_progname.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_progname.h; path = tuklib/tuklib_progname.h; sourceTree = SOURCE_ROOT; };
+		7EA8754494244433B1768EC5 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = range_common.h; path = rangecoder/range_common.h; sourceTree = SOURCE_ROOT; };
+		822ADDD3A7524038A9BC19E9 /* ../dolphin-ios/Externals/liblzma/rangecoder/price.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = price.h; path = rangecoder/price.h; sourceTree = SOURCE_ROOT; };
+		847A723898294E8DBF970204 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_exit.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = tuklib_exit.c; path = tuklib/tuklib_exit.c; sourceTree = SOURCE_ROOT; };
+		8682FD508087407CB93C88DB /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_physmem.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = tuklib_physmem.c; path = tuklib/tuklib_physmem.c; sourceTree = SOURCE_ROOT; };
+		8761F1EA897F4837957BBE5A /* ../dolphin-ios/Externals/liblzma/lz/lz_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lz_decoder.h; path = lz/lz_decoder.h; sourceTree = SOURCE_ROOT; };
+		8BF023A8B48F4AF89D3B20B0 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = range_encoder.h; path = rangecoder/range_encoder.h; sourceTree = SOURCE_ROOT; };
+		8D1BB66B305C46E2BBE0D3F1 /* ../dolphin-ios/Externals/liblzma/common/stream_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = stream_encoder.c; path = common/stream_encoder.c; sourceTree = SOURCE_ROOT; };
+		9231B4D6945444BB9F4EE6DF /* ../dolphin-ios/Externals/liblzma/common/block_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = block_encoder.h; path = common/block_encoder.h; sourceTree = SOURCE_ROOT; };
+		94E2A85B11264609A721C364 /* ../dolphin-ios/Externals/liblzma/delta/delta_common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = delta_common.h; path = delta/delta_common.h; sourceTree = SOURCE_ROOT; };
+		97A2D16A337F44E8BA6114EA /* ../dolphin-ios/Externals/liblzma/delta/delta_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = delta_common.c; path = delta/delta_common.c; sourceTree = SOURCE_ROOT; };
+		98F030C4D2BD4CF593D9674F /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_presets.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lzma_encoder_presets.c; path = lzma/lzma_encoder_presets.c; sourceTree = SOURCE_ROOT; };
+		9C64FE610108426387320C7D /* ../dolphin-ios/Externals/liblzma/api/lzma/filter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = filter.h; path = api/lzma/filter.h; sourceTree = SOURCE_ROOT; };
+		9DFD0009CA9E49DE9608F89C /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_cpucores.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_cpucores.h; path = tuklib/tuklib_cpucores.h; sourceTree = SOURCE_ROOT; };
+		9E70571936514E6CB2929891 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lz_encoder.h; path = lz/lz_encoder.h; sourceTree = SOURCE_ROOT; };
+		A15FF8C065C147DE91E1E2D2 /* ../dolphin-ios/Externals/liblzma/common/block_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = block_encoder.c; path = common/block_encoder.c; sourceTree = SOURCE_ROOT; };
+		A16B9E00F4754065A55D8F24 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stream_flags_common.h; path = common/stream_flags_common.h; sourceTree = SOURCE_ROOT; };
+		A22EF1EF33A344F6B8417450 /* ../dolphin-ios/Externals/liblzma/common/index_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = index_encoder.c; path = common/index_encoder.c; sourceTree = SOURCE_ROOT; };
+		A364C24EA3B3435EB65A8997 /* ../dolphin-ios/Externals/liblzma/simple/simple_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = simple_decoder.h; path = simple/simple_decoder.h; sourceTree = SOURCE_ROOT; };
+		A4482E30185D4C9BB4F3536C /* ../dolphin-ios/Externals/liblzma/common/stream_buffer_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = stream_buffer_decoder.c; path = common/stream_buffer_decoder.c; sourceTree = SOURCE_ROOT; };
+		A64E0F07294E4FD4B7C7BB0B /* ../dolphin-ios/Externals/liblzma/delta/delta_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = delta_decoder.c; path = delta/delta_decoder.c; sourceTree = SOURCE_ROOT; };
+		A6DED7AB004448888432BEF8 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lzma_decoder.h; path = lzma/lzma_decoder.h; sourceTree = SOURCE_ROOT; };
+		A7F9BE74DA884C06B0C96ACD /* ../dolphin-ios/Externals/liblzma/common/block_header_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = block_header_decoder.c; path = common/block_header_decoder.c; sourceTree = SOURCE_ROOT; };
+		ABBBBD0542214B639EE1D946 /* ../dolphin-ios/Externals/liblzma/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		ACFC57E1EC3A48BCAA510EFD /* ../dolphin-ios/Externals/liblzma/common/filter_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = filter_common.c; path = common/filter_common.c; sourceTree = SOURCE_ROOT; };
+		ADBAF66D54C14AA79F76A8CB /* ../dolphin-ios/Externals/liblzma/common/vli_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vli_decoder.c; path = common/vli_decoder.c; sourceTree = SOURCE_ROOT; };
+		AE731E65427C42EF91417C21 /* ../dolphin-ios/Externals/liblzma/api/lzma/container.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = container.h; path = api/lzma/container.h; sourceTree = SOURCE_ROOT; };
+		AE8D7B9E3F794A4084E2530C /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_optimum_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lzma_encoder_optimum_fast.c; path = lzma/lzma_encoder_optimum_fast.c; sourceTree = SOURCE_ROOT; };
+		B666660379CC42F894021723 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lzma2_encoder.c; path = lzma/lzma2_encoder.c; sourceTree = SOURCE_ROOT; };
+		B6A4B80322414D64B1851AEF /* ../dolphin-ios/Externals/liblzma/api/lzma/check.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = check.h; path = api/lzma/check.h; sourceTree = SOURCE_ROOT; };
+		B85081240E274E64A9E75B3A /* ../dolphin-ios/Externals/liblzma/api/lzma/lzma12.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = lzma12.h; path = api/lzma/lzma12.h; sourceTree = SOURCE_ROOT; };
+		B87363B9E7AE414F8F511A96 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lz_encoder.c; path = lz/lz_encoder.c; sourceTree = SOURCE_ROOT; };
+		BB49BA1A204A44B6BA744F38 /* ../dolphin-ios/Externals/liblzma/common/filter_buffer_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = filter_buffer_encoder.c; path = common/filter_buffer_encoder.c; sourceTree = SOURCE_ROOT; };
+		BCCC83A8560A40C8AF0F67E0 /* ../dolphin-ios/Externals/liblzma/check/crc32_table_le.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crc32_table_le.h; path = check/crc32_table_le.h; sourceTree = SOURCE_ROOT; };
+		BD6E190E095E447D91B0A733 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_open_stdxxx.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = tuklib_open_stdxxx.c; path = tuklib/tuklib_open_stdxxx.c; sourceTree = SOURCE_ROOT; };
+		C3AE3405B8C74ED4B4C70D36 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_gettext.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_gettext.h; path = tuklib/tuklib_gettext.h; sourceTree = SOURCE_ROOT; };
+		C44549C048B04E56AC9A65CD /* ../dolphin-ios/Externals/liblzma/common/easy_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = easy_encoder.c; path = common/easy_encoder.c; sourceTree = SOURCE_ROOT; };
+		C4590FE58FA9488ABF188CB1 /* ../dolphin-ios/Externals/liblzma/check/crc32_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = crc32_fast.c; path = check/crc32_fast.c; sourceTree = SOURCE_ROOT; };
+		C5B4708FE42B4F8EB8D4BC58 /* ../dolphin-ios/Externals/liblzma/common/hardware_physmem.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hardware_physmem.c; path = common/hardware_physmem.c; sourceTree = SOURCE_ROOT; };
+		C739390CA2F341EFA6C91977 /* ../dolphin-ios/Externals/liblzma/check/check.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = check.c; path = check/check.c; sourceTree = SOURCE_ROOT; };
+		C7B6E97C97134FA7AAFF1234 /* ../dolphin-ios/Externals/liblzma/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		C8CF163B1D2F426FAF25C3F6 /* ../dolphin-ios/Externals/liblzma/common/common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = common.h; path = common/common.h; sourceTree = SOURCE_ROOT; };
+		CAFB36D6C09446CD80DE6F1E /* ../dolphin-ios/Externals/liblzma/common/block_buffer_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = block_buffer_encoder.h; path = common/block_buffer_encoder.h; sourceTree = SOURCE_ROOT; };
+		CD4966600AA64B45A7C8C51A /* ../dolphin-ios/Externals/liblzma/common/hardware_cputhreads.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hardware_cputhreads.c; path = common/hardware_cputhreads.c; sourceTree = SOURCE_ROOT; };
+		CE007841944A4801813CE300 /* ../dolphin-ios/Externals/liblzma/common/filter_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = filter_encoder.c; path = common/filter_encoder.c; sourceTree = SOURCE_ROOT; };
+		D012922B9D414239ADCF6BC2 /* ../dolphin-ios/Externals/liblzma/common/alone_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = alone_encoder.c; path = common/alone_encoder.c; sourceTree = SOURCE_ROOT; };
+		D0C7D27B64DE480AB9176EE6 /* ../dolphin-ios/Externals/liblzma/common/filter_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = filter_encoder.h; path = common/filter_encoder.h; sourceTree = SOURCE_ROOT; };
+		D175A057DC50471F886EF8D6 /* ../dolphin-ios/Externals/liblzma/common/block_buffer_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = block_buffer_decoder.c; path = common/block_buffer_decoder.c; sourceTree = SOURCE_ROOT; };
+		D528F164BD2F4BDD837E69DE /* ../dolphin-ios/Externals/liblzma/lz/lz_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lz_decoder.c; path = lz/lz_decoder.c; sourceTree = SOURCE_ROOT; };
+		D544E9BE5CA24418AD76C997 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_common.h; path = tuklib/tuklib_common.h; sourceTree = SOURCE_ROOT; };
+		D724B1E8604B4B55B2CA9249 /* ../dolphin-ios/Externals/liblzma/api/lzma/hardware.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = hardware.h; path = api/lzma/hardware.h; sourceTree = SOURCE_ROOT; };
+		D9669B5AB1064421A8BF114C /* ../dolphin-ios/Externals/liblzma/common/filter_common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = filter_common.h; path = common/filter_common.h; sourceTree = SOURCE_ROOT; };
+		D997D069BE8B452EBB745704 /* ../dolphin-ios/Externals/liblzma/common/stream_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = stream_decoder.c; path = common/stream_decoder.c; sourceTree = SOURCE_ROOT; };
+		DC74928BEA484FDFA8AAA3C6 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = range_decoder.h; path = rangecoder/range_decoder.h; sourceTree = SOURCE_ROOT; };
+		DE94902AA6C84BB1ABC7DEE1 /* ../dolphin-ios/Externals/liblzma/check/crc_macros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crc_macros.h; path = check/crc_macros.h; sourceTree = SOURCE_ROOT; };
+		E3191272C01D44719BEFE559 /* ../dolphin-ios/Externals/liblzma/common/stream_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stream_decoder.h; path = common/stream_decoder.h; sourceTree = SOURCE_ROOT; };
+		E74B488F75D04B0C89ED2083 /* ../dolphin-ios/Externals/liblzma/common/filter_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = filter_decoder.h; path = common/filter_decoder.h; sourceTree = SOURCE_ROOT; };
+		E8D5C32432CE43E2873517CD /* ../dolphin-ios/Externals/liblzma/api/lzma/version.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = version.h; path = api/lzma/version.h; sourceTree = SOURCE_ROOT; };
+		EB4DF484FB58435E8BAEC487 /* ../dolphin-ios/Externals/liblzma/common/block_buffer_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = block_buffer_encoder.c; path = common/block_buffer_encoder.c; sourceTree = SOURCE_ROOT; };
+		EDF9F24C71544189BCFCD420 /* ../dolphin-ios/Externals/liblzma/api/lzma/bcj.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bcj.h; path = api/lzma/bcj.h; sourceTree = SOURCE_ROOT; };
+		EEAE4F51AF054D9A9138EAE3 /* ../dolphin-ios/Externals/liblzma/common/outqueue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = outqueue.h; path = common/outqueue.h; sourceTree = SOURCE_ROOT; };
+		EEE3199546FB4746BB9304E4 /* ../dolphin-ios/Externals/liblzma/lzma/fastpos_table.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fastpos_table.c; path = lzma/fastpos_table.c; sourceTree = SOURCE_ROOT; };
+		EFCB869F4F5F4CF9B4F64C77 /* ../dolphin-ios/Externals/liblzma/common/alone_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = alone_decoder.h; path = common/alone_decoder.h; sourceTree = SOURCE_ROOT; };
+		EFCFC1A6941144829367BC82 /* ../dolphin-ios/Externals/liblzma/delta/delta_private.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = delta_private.h; path = delta/delta_private.h; sourceTree = SOURCE_ROOT; };
+		F051887213DA42D583AE2849 /* ../dolphin-ios/Externals/liblzma/check/check.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = check.h; path = check/check.h; sourceTree = SOURCE_ROOT; };
+		F16816EEF72C4138861BC2F8 /* ../dolphin-ios/Externals/liblzma/api/lzma/vli.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = vli.h; path = api/lzma/vli.h; sourceTree = SOURCE_ROOT; };
+		F188060505674DA4AD259B8C /* ../dolphin-ios/Externals/liblzma/common/filter_flags_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = filter_flags_encoder.c; path = common/filter_flags_encoder.c; sourceTree = SOURCE_ROOT; };
+		F21273B8145F4A05B8046CE0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_physmem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_physmem.h; path = tuklib/tuklib_physmem.h; sourceTree = SOURCE_ROOT; };
+		F8FF0B2C221748E0AA8AF11E /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_open_stdxxx.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_open_stdxxx.h; path = tuklib/tuklib_open_stdxxx.h; sourceTree = SOURCE_ROOT; };
+		FC6CA15942C04547A92C28FC /* lzma */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblzma.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E290F3E8BBBA46A5BEF0D139 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		00D1AB0964FA456DA6B1A25A /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				C739390CA2F341EFA6C91977 /* ../dolphin-ios/Externals/liblzma/check/check.c */,
+				C4590FE58FA9488ABF188CB1 /* ../dolphin-ios/Externals/liblzma/check/crc32_fast.c */,
+				0A69E14E91B846BBA59D0334 /* ../dolphin-ios/Externals/liblzma/check/crc32_table.c */,
+				2CAB7154F6B14D19B143FA80 /* ../dolphin-ios/Externals/liblzma/check/crc64_fast.c */,
+				7768B0E0959142D4A162B90E /* ../dolphin-ios/Externals/liblzma/check/crc64_table.c */,
+				57256DA1006744B1B31F25EE /* ../dolphin-ios/Externals/liblzma/check/sha256.c */,
+				6BCD41C29A6840F893459C46 /* ../dolphin-ios/Externals/liblzma/common/alone_decoder.c */,
+				D012922B9D414239ADCF6BC2 /* ../dolphin-ios/Externals/liblzma/common/alone_encoder.c */,
+				77408434E5AB42E29C99671E /* ../dolphin-ios/Externals/liblzma/common/auto_decoder.c */,
+				D175A057DC50471F886EF8D6 /* ../dolphin-ios/Externals/liblzma/common/block_buffer_decoder.c */,
+				EB4DF484FB58435E8BAEC487 /* ../dolphin-ios/Externals/liblzma/common/block_buffer_encoder.c */,
+				4BAC6A39354442789FDB54A8 /* ../dolphin-ios/Externals/liblzma/common/block_decoder.c */,
+				A15FF8C065C147DE91E1E2D2 /* ../dolphin-ios/Externals/liblzma/common/block_encoder.c */,
+				A7F9BE74DA884C06B0C96ACD /* ../dolphin-ios/Externals/liblzma/common/block_header_decoder.c */,
+				0C7FFEFC68014AB9BAABC57E /* ../dolphin-ios/Externals/liblzma/common/block_header_encoder.c */,
+				4D9E1D90AC7E4EA2972DACCA /* ../dolphin-ios/Externals/liblzma/common/block_util.c */,
+				224339A316524CF5AACC13BC /* ../dolphin-ios/Externals/liblzma/common/common.c */,
+				31560FCC1B524CBDAAA0B862 /* ../dolphin-ios/Externals/liblzma/common/easy_buffer_encoder.c */,
+				5005E79B91E54444956221D3 /* ../dolphin-ios/Externals/liblzma/common/easy_decoder_memusage.c */,
+				C44549C048B04E56AC9A65CD /* ../dolphin-ios/Externals/liblzma/common/easy_encoder.c */,
+				52228B5B6A6949DBB77CF256 /* ../dolphin-ios/Externals/liblzma/common/easy_encoder_memusage.c */,
+				327927D0D043432BB935F89F /* ../dolphin-ios/Externals/liblzma/common/easy_preset.c */,
+				50341D6373254150915C24F5 /* ../dolphin-ios/Externals/liblzma/common/filter_buffer_decoder.c */,
+				BB49BA1A204A44B6BA744F38 /* ../dolphin-ios/Externals/liblzma/common/filter_buffer_encoder.c */,
+				ACFC57E1EC3A48BCAA510EFD /* ../dolphin-ios/Externals/liblzma/common/filter_common.c */,
+				3147DDD421F642459D697C9D /* ../dolphin-ios/Externals/liblzma/common/filter_decoder.c */,
+				CE007841944A4801813CE300 /* ../dolphin-ios/Externals/liblzma/common/filter_encoder.c */,
+				26E17101593D47FA851CD3AB /* ../dolphin-ios/Externals/liblzma/common/filter_flags_decoder.c */,
+				F188060505674DA4AD259B8C /* ../dolphin-ios/Externals/liblzma/common/filter_flags_encoder.c */,
+				CD4966600AA64B45A7C8C51A /* ../dolphin-ios/Externals/liblzma/common/hardware_cputhreads.c */,
+				C5B4708FE42B4F8EB8D4BC58 /* ../dolphin-ios/Externals/liblzma/common/hardware_physmem.c */,
+				72DD062AD59D4D6CB5BF4ECC /* ../dolphin-ios/Externals/liblzma/common/index.c */,
+				6FE6A8F4C62340C9B7F5708B /* ../dolphin-ios/Externals/liblzma/common/index_decoder.c */,
+				A22EF1EF33A344F6B8417450 /* ../dolphin-ios/Externals/liblzma/common/index_encoder.c */,
+				09EABC4EED5E4170ACD953F3 /* ../dolphin-ios/Externals/liblzma/common/index_hash.c */,
+				0A51DED6C2C2474098611070 /* ../dolphin-ios/Externals/liblzma/common/outqueue.c */,
+				A4482E30185D4C9BB4F3536C /* ../dolphin-ios/Externals/liblzma/common/stream_buffer_decoder.c */,
+				5AEAC4B92A254544BE6E1D27 /* ../dolphin-ios/Externals/liblzma/common/stream_buffer_encoder.c */,
+				D997D069BE8B452EBB745704 /* ../dolphin-ios/Externals/liblzma/common/stream_decoder.c */,
+				8D1BB66B305C46E2BBE0D3F1 /* ../dolphin-ios/Externals/liblzma/common/stream_encoder.c */,
+				2775F6D8D04045F0A667B2CE /* ../dolphin-ios/Externals/liblzma/common/stream_encoder_mt.c */,
+				5DE243CCC6004CD5B8E4AB94 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_common.c */,
+				69359B0F7C154DBCBDD7C120 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_decoder.c */,
+				3E27524C3455495C8D9DB12D /* ../dolphin-ios/Externals/liblzma/common/stream_flags_encoder.c */,
+				ADBAF66D54C14AA79F76A8CB /* ../dolphin-ios/Externals/liblzma/common/vli_decoder.c */,
+				0C604A85ACF44D5C91D13A93 /* ../dolphin-ios/Externals/liblzma/common/vli_encoder.c */,
+				493D551D5BEC48C99CA5E543 /* ../dolphin-ios/Externals/liblzma/common/vli_size.c */,
+				97A2D16A337F44E8BA6114EA /* ../dolphin-ios/Externals/liblzma/delta/delta_common.c */,
+				A64E0F07294E4FD4B7C7BB0B /* ../dolphin-ios/Externals/liblzma/delta/delta_decoder.c */,
+				19249D9232C944D4BB1E5DB9 /* ../dolphin-ios/Externals/liblzma/delta/delta_encoder.c */,
+				D528F164BD2F4BDD837E69DE /* ../dolphin-ios/Externals/liblzma/lz/lz_decoder.c */,
+				B87363B9E7AE414F8F511A96 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder.c */,
+				6BB9B155D6F4463CAB9BA438 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_mf.c */,
+				EEE3199546FB4746BB9304E4 /* ../dolphin-ios/Externals/liblzma/lzma/fastpos_table.c */,
+				5F80FBA67A2D47FF92F9B9AF /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_decoder.c */,
+				B666660379CC42F894021723 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_encoder.c */,
+				3D75B723A45F4C8EA5910D8D /* ../dolphin-ios/Externals/liblzma/lzma/lzma_decoder.c */,
+				62C92D38716E4030B235072B /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder.c */,
+				AE8D7B9E3F794A4084E2530C /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_optimum_fast.c */,
+				72B6109CD8724790B8E0065D /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_optimum_normal.c */,
+				98F030C4D2BD4CF593D9674F /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_presets.c */,
+				121ACD2E754A4E4A93EF4D97 /* ../dolphin-ios/Externals/liblzma/rangecoder/price_table.c */,
+				184110A60AFC4FAEAC37D855 /* ../dolphin-ios/Externals/liblzma/simple/simple_coder.c */,
+				65038DD861F64CB99CA0410E /* ../dolphin-ios/Externals/liblzma/simple/simple_decoder.c */,
+				4FA648AEA2554AF1A8D68B89 /* ../dolphin-ios/Externals/liblzma/simple/simple_encoder.c */,
+				12EAAD61C7634BA48D12BE49 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_cpucores.c */,
+				847A723898294E8DBF970204 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_exit.c */,
+				0F6DD790CF0148FCBFDE0F2D /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr_fw.c */,
+				26043098337E457A926A2FE8 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr_width.c */,
+				BD6E190E095E447D91B0A733 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_open_stdxxx.c */,
+				8682FD508087407CB93C88DB /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_physmem.c */,
+				4A1978D80852413BBEBBDEAD /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_progname.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		094E1D784649400685C54990 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				6719C53066FE4C3D8228B9A0 /* ../dolphin-ios/Externals/liblzma/api/lzma.h */,
+				5FE416E5DC804FD397956431 /* ../dolphin-ios/Externals/liblzma/api/lzma/base.h */,
+				EDF9F24C71544189BCFCD420 /* ../dolphin-ios/Externals/liblzma/api/lzma/bcj.h */,
+				3EAF1E026E1B40E89DEB279F /* ../dolphin-ios/Externals/liblzma/api/lzma/block.h */,
+				B6A4B80322414D64B1851AEF /* ../dolphin-ios/Externals/liblzma/api/lzma/check.h */,
+				AE731E65427C42EF91417C21 /* ../dolphin-ios/Externals/liblzma/api/lzma/container.h */,
+				0D3CA89F4FC14FB785078090 /* ../dolphin-ios/Externals/liblzma/api/lzma/delta.h */,
+				9C64FE610108426387320C7D /* ../dolphin-ios/Externals/liblzma/api/lzma/filter.h */,
+				D724B1E8604B4B55B2CA9249 /* ../dolphin-ios/Externals/liblzma/api/lzma/hardware.h */,
+				3DD174853EE541AB8FCC368A /* ../dolphin-ios/Externals/liblzma/api/lzma/index.h */,
+				40C2602FC6744A1A800F8863 /* ../dolphin-ios/Externals/liblzma/api/lzma/index_hash.h */,
+				B85081240E274E64A9E75B3A /* ../dolphin-ios/Externals/liblzma/api/lzma/lzma12.h */,
+				3AC946BF97B147639B865AE4 /* ../dolphin-ios/Externals/liblzma/api/lzma/stream_flags.h */,
+				E8D5C32432CE43E2873517CD /* ../dolphin-ios/Externals/liblzma/api/lzma/version.h */,
+				F16816EEF72C4138861BC2F8 /* ../dolphin-ios/Externals/liblzma/api/lzma/vli.h */,
+				F051887213DA42D583AE2849 /* ../dolphin-ios/Externals/liblzma/check/check.h */,
+				770EEBD54472458591B5965E /* ../dolphin-ios/Externals/liblzma/check/crc32_table_be.h */,
+				BCCC83A8560A40C8AF0F67E0 /* ../dolphin-ios/Externals/liblzma/check/crc32_table_le.h */,
+				1FEC03D62C174B56B1B05C9D /* ../dolphin-ios/Externals/liblzma/check/crc64_table_be.h */,
+				0FC07E7528544FFAB1B231C4 /* ../dolphin-ios/Externals/liblzma/check/crc64_table_le.h */,
+				DE94902AA6C84BB1ABC7DEE1 /* ../dolphin-ios/Externals/liblzma/check/crc_macros.h */,
+				EFCB869F4F5F4CF9B4F64C77 /* ../dolphin-ios/Externals/liblzma/common/alone_decoder.h */,
+				CAFB36D6C09446CD80DE6F1E /* ../dolphin-ios/Externals/liblzma/common/block_buffer_encoder.h */,
+				1267D6062D6D49EFAB4E2DFD /* ../dolphin-ios/Externals/liblzma/common/block_decoder.h */,
+				9231B4D6945444BB9F4EE6DF /* ../dolphin-ios/Externals/liblzma/common/block_encoder.h */,
+				C8CF163B1D2F426FAF25C3F6 /* ../dolphin-ios/Externals/liblzma/common/common.h */,
+				40A23B669C384F478C375721 /* ../dolphin-ios/Externals/liblzma/common/easy_preset.h */,
+				D9669B5AB1064421A8BF114C /* ../dolphin-ios/Externals/liblzma/common/filter_common.h */,
+				E74B488F75D04B0C89ED2083 /* ../dolphin-ios/Externals/liblzma/common/filter_decoder.h */,
+				D0C7D27B64DE480AB9176EE6 /* ../dolphin-ios/Externals/liblzma/common/filter_encoder.h */,
+				43A69394F46C4E1FAF36C18B /* ../dolphin-ios/Externals/liblzma/common/index.h */,
+				6FDB2C0846004BC1A71309DD /* ../dolphin-ios/Externals/liblzma/common/index_encoder.h */,
+				1A33B9D7A0FA4A50B639F357 /* ../dolphin-ios/Externals/liblzma/common/memcmplen.h */,
+				EEAE4F51AF054D9A9138EAE3 /* ../dolphin-ios/Externals/liblzma/common/outqueue.h */,
+				E3191272C01D44719BEFE559 /* ../dolphin-ios/Externals/liblzma/common/stream_decoder.h */,
+				A16B9E00F4754065A55D8F24 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_common.h */,
+				94E2A85B11264609A721C364 /* ../dolphin-ios/Externals/liblzma/delta/delta_common.h */,
+				716DF10707454D02934C2937 /* ../dolphin-ios/Externals/liblzma/delta/delta_decoder.h */,
+				017551347A964927BE4E8B28 /* ../dolphin-ios/Externals/liblzma/delta/delta_encoder.h */,
+				EFCFC1A6941144829367BC82 /* ../dolphin-ios/Externals/liblzma/delta/delta_private.h */,
+				8761F1EA897F4837957BBE5A /* ../dolphin-ios/Externals/liblzma/lz/lz_decoder.h */,
+				9E70571936514E6CB2929891 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder.h */,
+				2E0CADC984A74AF9A391B3F0 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_hash.h */,
+				31EB153C08FE42FDAFEB2A7E /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_hash_table.h */,
+				63E7F7BF753F478097AA8785 /* ../dolphin-ios/Externals/liblzma/lzma/fastpos.h */,
+				444EE2F9797E4960AEA49E40 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_decoder.h */,
+				2CBCEC6C1C704A1BACB5E2E3 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_encoder.h */,
+				1BB25F30F61C46F197DADAB1 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_common.h */,
+				A6DED7AB004448888432BEF8 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_decoder.h */,
+				6DEB7A170EF24022AA93688D /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder.h */,
+				0E9EBEAB7C4D4E87BDB09C9A /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_private.h */,
+				822ADDD3A7524038A9BC19E9 /* ../dolphin-ios/Externals/liblzma/rangecoder/price.h */,
+				7EA8754494244433B1768EC5 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_common.h */,
+				DC74928BEA484FDFA8AAA3C6 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_decoder.h */,
+				8BF023A8B48F4AF89D3B20B0 /* ../dolphin-ios/Externals/liblzma/rangecoder/range_encoder.h */,
+				5BB635E6FB2047A3A45B6D20 /* ../dolphin-ios/Externals/liblzma/simple/simple_coder.h */,
+				A364C24EA3B3435EB65A8997 /* ../dolphin-ios/Externals/liblzma/simple/simple_decoder.h */,
+				6B17F3CE94E0441E9CF62D37 /* ../dolphin-ios/Externals/liblzma/simple/simple_encoder.h */,
+				53CCD7E555074E87AE6AC744 /* ../dolphin-ios/Externals/liblzma/simple/simple_private.h */,
+				6874A232CAC44C738FA1F946 /* ../dolphin-ios/Externals/liblzma/tuklib/mythread.h */,
+				4512EAC50E974BAEBDA08C13 /* ../dolphin-ios/Externals/liblzma/tuklib/sysdefs.h */,
+				D544E9BE5CA24418AD76C997 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_common.h */,
+				72C8DC31EB5747C8B576798C /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_config.h */,
+				9DFD0009CA9E49DE9608F89C /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_cpucores.h */,
+				443E9CECC3DD4E2B9AA24968 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_exit.h */,
+				C3AE3405B8C74ED4B4C70D36 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_gettext.h */,
+				2499D1B2F66743A78BCC04B0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_integer.h */,
+				20FC98D082D745338C7A09C6 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr.h */,
+				F8FF0B2C221748E0AA8AF11E /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_open_stdxxx.h */,
+				F21273B8145F4A05B8046CE0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_physmem.h */,
+				7B6AE7B19BCD4EDE9C2D7FD0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_progname.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		1593D3B01AF1436FA3C7A1F9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2C97A3FC1A764BEE9FF74785 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FC6CA15942C04547A92C28FC /* lzma */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		58976E7E51BD448DB4D2E711 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				617271C577F04819A0762C8D /* CMake Rules */,
+				C7B6E97C97134FA7AAFF1234 /* ../dolphin-ios/Externals/liblzma/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		617271C577F04819A0762C8D /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		7922D42939EB4AEF8735BA14 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				19B1E2B1F47D4B81A25E4BCB /* ../cmake/Externals/liblzma/CMakeFiles/lzma.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		8EAC66B4327E4ECD9220E9BE = {
+			isa = PBXGroup;
+			children = (
+				F02CA2811A0645F7BA906E54 /* lzma */,
+				58976E7E51BD448DB4D2E711 /* ALL_BUILD */,
+				2C97A3FC1A764BEE9FF74785 /* Products */,
+				1593D3B01AF1436FA3C7A1F9 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		F02CA2811A0645F7BA906E54 /* lzma */ = {
+			isa = PBXGroup;
+			children = (
+				00D1AB0964FA456DA6B1A25A /* Source Files */,
+				094E1D784649400685C54990 /* Header Files */,
+				7922D42939EB4AEF8735BA14 /* Resources */,
+				ABBBBD0542214B639EE1D946 /* ../dolphin-ios/Externals/liblzma/CMakeLists.txt */,
+			);
+			name = lzma;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7FD26A8923E048C185776846 /* lzma */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CA1EFA2524814353AC7B5DBA /* Build configuration list for PBXNativeTarget "lzma" */;
+			buildPhases = (
+				521CF39F3A854F17A20443B9 /* Sources */,
+				E290F3E8BBBA46A5BEF0D139 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				93C1F45FEC1E46458E88A6EB /* PBXTargetDependency */,
+			);
+			name = lzma;
+			productName = lzma;
+			productReference = FC6CA15942C04547A92C28FC /* lzma */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3C2D79E9FB61447E89E9E955 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1420;
+			};
+			buildConfigurationList = BDE691A26BDE4431A37D99CD /* Build configuration list for PBXProject "lzma" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				C0DCB6F423F14436B7B913FD /* Debug */,
+				65A27207F8E8489DA969E798 /* Release */,
+				C305AEA2E06D4F33A193E1C7 /* MinSizeRel */,
+				3E5EB0B0D1A94907900F9422 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 8EAC66B4327E4ECD9220E9BE;
+			projectDirPath = "../dolphin-ios";
+			projectRoot = "";
+			targets = (
+				27752D87E92A4D2AAF4559FB /* ALL_BUILD */,
+				D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */,
+				A7904E74C7BB45968F4D5EC8 /* install */,
+				7FD26A8923E048C185776846 /* lzma */,
+				37035854F5494840A21D2316 /* package */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1FE0147565DADA1EB02E2E0E /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+../cmake/Externals/liblzma/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Externals/liblzma
+  make -f ../cmake/Externals/liblzma/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Externals/liblzma
+  make -f ../cmake/Externals/liblzma/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Externals/liblzma
+  make -f ../cmake/Externals/liblzma/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Externals/liblzma
+  make -f ../cmake/Externals/liblzma/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		661D9C604B3B91332E7543CC = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		87AF4882E018677E2624B544 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Externals/liblzma
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Externals/liblzma
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Externals/liblzma
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Externals/liblzma
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		9B50530E35CC49C82C2FACCF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		F054E381C01DC39BF828ED06 /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+../cmake/Externals/liblzma/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Externals/liblzma
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Externals/liblzma
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Externals/liblzma
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Externals/liblzma
+  echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		521CF39F3A854F17A20443B9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				40F34FEDFB0941899448E2F4 /* ../dolphin-ios/Externals/liblzma/check/check.c */,
+				DF69D28243E242339B3A427C /* ../dolphin-ios/Externals/liblzma/check/crc32_fast.c */,
+				83D79C8E485E44A0B0B28B6A /* ../dolphin-ios/Externals/liblzma/check/crc32_table.c */,
+				8DB85F936D064AC193B90957 /* ../dolphin-ios/Externals/liblzma/check/crc64_fast.c */,
+				74311FDA769F4578B56374E8 /* ../dolphin-ios/Externals/liblzma/check/crc64_table.c */,
+				51311477D9EA4ECE81F35221 /* ../dolphin-ios/Externals/liblzma/check/sha256.c */,
+				D8BE764FEF94428194408049 /* ../dolphin-ios/Externals/liblzma/common/alone_decoder.c */,
+				A1ABFA10420742E690C91E5F /* ../dolphin-ios/Externals/liblzma/common/alone_encoder.c */,
+				07DC207EEF5A401F8B01A632 /* ../dolphin-ios/Externals/liblzma/common/auto_decoder.c */,
+				5CFBA2062F6A42129420972A /* ../dolphin-ios/Externals/liblzma/common/block_buffer_decoder.c */,
+				BE3A8E8E426542D380C1D3C2 /* ../dolphin-ios/Externals/liblzma/common/block_buffer_encoder.c */,
+				C18CAB1DAAB04E07A4EC8D20 /* ../dolphin-ios/Externals/liblzma/common/block_decoder.c */,
+				D2452A302CAB4E08BD103B89 /* ../dolphin-ios/Externals/liblzma/common/block_encoder.c */,
+				76C2382EDC5F422CB1B9A6FC /* ../dolphin-ios/Externals/liblzma/common/block_header_decoder.c */,
+				4C11F47915C04CF8AE82189D /* ../dolphin-ios/Externals/liblzma/common/block_header_encoder.c */,
+				7834605971F7410FA72EAD18 /* ../dolphin-ios/Externals/liblzma/common/block_util.c */,
+				A67E6574ABEB44CE93AA9F92 /* ../dolphin-ios/Externals/liblzma/common/common.c */,
+				14952AA2112B49BD98A5735E /* ../dolphin-ios/Externals/liblzma/common/easy_buffer_encoder.c */,
+				A91653D500DA431A9BA70CF4 /* ../dolphin-ios/Externals/liblzma/common/easy_decoder_memusage.c */,
+				A8A11D4C0D7F4D57AF4005EF /* ../dolphin-ios/Externals/liblzma/common/easy_encoder.c */,
+				54D76E1A5FA5433C903C4FA5 /* ../dolphin-ios/Externals/liblzma/common/easy_encoder_memusage.c */,
+				2899F43D53414324B21B4447 /* ../dolphin-ios/Externals/liblzma/common/easy_preset.c */,
+				A6A90C3B35334BCFB7346302 /* ../dolphin-ios/Externals/liblzma/common/filter_buffer_decoder.c */,
+				FBB32A777DF047E9995E3D92 /* ../dolphin-ios/Externals/liblzma/common/filter_buffer_encoder.c */,
+				1AABF970386B4F35AFEC013B /* ../dolphin-ios/Externals/liblzma/common/filter_common.c */,
+				265508BF7A034D78AFF963E4 /* ../dolphin-ios/Externals/liblzma/common/filter_decoder.c */,
+				8304645D7C74409B8C2A5B04 /* ../dolphin-ios/Externals/liblzma/common/filter_encoder.c */,
+				9985717A8DF340EAB7CEF60A /* ../dolphin-ios/Externals/liblzma/common/filter_flags_decoder.c */,
+				8476AB3FCA0040B9841562F3 /* ../dolphin-ios/Externals/liblzma/common/filter_flags_encoder.c */,
+				DCEF3A08B6454465B3EB4C98 /* ../dolphin-ios/Externals/liblzma/common/hardware_cputhreads.c */,
+				E503620BB57A4571B73F46A4 /* ../dolphin-ios/Externals/liblzma/common/hardware_physmem.c */,
+				CDB12DBDA7284C7A9315EB43 /* ../dolphin-ios/Externals/liblzma/common/index.c */,
+				E44274DD657144B8A1790F55 /* ../dolphin-ios/Externals/liblzma/common/index_decoder.c */,
+				B8F07605394E446AA7EB5AAD /* ../dolphin-ios/Externals/liblzma/common/index_encoder.c */,
+				31E04916DC7949C4B5BE5B95 /* ../dolphin-ios/Externals/liblzma/common/index_hash.c */,
+				08063A01D2C84242A271A83D /* ../dolphin-ios/Externals/liblzma/common/outqueue.c */,
+				1DC7D11816CE4D76A6573B29 /* ../dolphin-ios/Externals/liblzma/common/stream_buffer_decoder.c */,
+				A92828B3A4C5421E92CAD68B /* ../dolphin-ios/Externals/liblzma/common/stream_buffer_encoder.c */,
+				037B54B92FFA46CC866F57CE /* ../dolphin-ios/Externals/liblzma/common/stream_decoder.c */,
+				36AA96BC0F4344038FE414D8 /* ../dolphin-ios/Externals/liblzma/common/stream_encoder.c */,
+				9DF2E086A95F40DCB5A5D156 /* ../dolphin-ios/Externals/liblzma/common/stream_encoder_mt.c */,
+				EA301CE022B2407D9E8C0E31 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_common.c */,
+				C32B8EDF5D77458E9028F43D /* ../dolphin-ios/Externals/liblzma/common/stream_flags_decoder.c */,
+				F3495C7A8D8C41CCAF71DB06 /* ../dolphin-ios/Externals/liblzma/common/stream_flags_encoder.c */,
+				AD62F8DF982E4A9A8188BB3A /* ../dolphin-ios/Externals/liblzma/common/vli_decoder.c */,
+				59A3C0A93D13473DAEC1F047 /* ../dolphin-ios/Externals/liblzma/common/vli_encoder.c */,
+				D6C3B9444AAD4A7DAFF30E61 /* ../dolphin-ios/Externals/liblzma/common/vli_size.c */,
+				0A30469F681A46D4BC768FB2 /* ../dolphin-ios/Externals/liblzma/delta/delta_common.c */,
+				1492BC5E0EA7488BA63062ED /* ../dolphin-ios/Externals/liblzma/delta/delta_decoder.c */,
+				4A06A036249044E1A06B58E6 /* ../dolphin-ios/Externals/liblzma/delta/delta_encoder.c */,
+				7E1B9691167E47D79941F8B7 /* ../dolphin-ios/Externals/liblzma/lz/lz_decoder.c */,
+				AA920E52B0CE492B962BCF80 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder.c */,
+				0819E8BAEE7F4223B43AFD71 /* ../dolphin-ios/Externals/liblzma/lz/lz_encoder_mf.c */,
+				A62FFCDC5248496EB522F2BA /* ../dolphin-ios/Externals/liblzma/lzma/fastpos_table.c */,
+				BCDC2B32DE6643579F3C75BA /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_decoder.c */,
+				C16985B0BD5D408DA8D26573 /* ../dolphin-ios/Externals/liblzma/lzma/lzma2_encoder.c */,
+				C334A37DF0DD4F7B84026255 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_decoder.c */,
+				3E840ECB9F2F49799BED04D5 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder.c */,
+				73EA6EEC98FF4D9D96A8EF66 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_optimum_fast.c */,
+				FB15F6DF08414B078FB018F1 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_optimum_normal.c */,
+				965B97B2CA29475282725510 /* ../dolphin-ios/Externals/liblzma/lzma/lzma_encoder_presets.c */,
+				9BED097C7A3047A9B47DF70E /* ../dolphin-ios/Externals/liblzma/rangecoder/price_table.c */,
+				B04774BC1B864835875EA3D7 /* ../dolphin-ios/Externals/liblzma/simple/simple_coder.c */,
+				2231D7CCFACE4CEE86334F79 /* ../dolphin-ios/Externals/liblzma/simple/simple_decoder.c */,
+				1F1B4BD2488B4CD88B258BD2 /* ../dolphin-ios/Externals/liblzma/simple/simple_encoder.c */,
+				24903B3A844D4E098672B5B0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_cpucores.c */,
+				A39AA3FBABC44DBDB1D2BA18 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_exit.c */,
+				5C46083190FF445A932E84B1 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr_fw.c */,
+				8CEBE429B792433A89CE48F0 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_mbstr_width.c */,
+				A76748BE9401471A966CCC51 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_open_stdxxx.c */,
+				AB2E58EF8A3E461AA50172EA /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_physmem.c */,
+				8E993865857D4C69A35BAF58 /* ../dolphin-ios/Externals/liblzma/tuklib/tuklib_progname.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		305B4220E6364DCFBEA094CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 27752D87E92A4D2AAF4559FB /* ALL_BUILD */;
+			targetProxy = FF84BE2366D14C68B80DC603 /* PBXContainerItemProxy */;
+		};
+		5B2097E6B2D64349A70EAD0E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */;
+			targetProxy = F92B8128F84B411C9120B1ED /* PBXContainerItemProxy */;
+		};
+		93C1F45FEC1E46458E88A6EB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */;
+			targetProxy = FDE1C79A2C9C4D7E9AF89120 /* PBXContainerItemProxy */;
+		};
+		A63FA2363C9C4D078443A66A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7FD26A8923E048C185776846 /* lzma */;
+			targetProxy = 1D2FB9426AB14895A99CA656 /* PBXContainerItemProxy */;
+		};
+		CA435C24E7D840B5B7CB12DD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 27752D87E92A4D2AAF4559FB /* ALL_BUILD */;
+			targetProxy = AEB830629B1445BAA18C3D4D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		033F588E1C894F769C7480E5 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		154BD4C04C05475AA1C18DAC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		201B990AC57E4401BBA9ECC7 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = dolphin-build;
+			};
+			name = RelWithDebInfo;
+		};
+		2C00460590234D2481DD0BD7 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",LZMA_API_STATIC,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,HAVE_CONFIG_H,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/liblzma/api","../dolphin-ios/Externals/liblzma","../dolphin-ios/Externals/liblzma/check","../dolphin-ios/Externals/liblzma/common","../dolphin-ios/Externals/liblzma/delta","../dolphin-ios/Externals/liblzma/lz","../dolphin-ios/Externals/liblzma/lzma","../dolphin-ios/Externals/liblzma/rangecoder","../dolphin-ios/Externals/liblzma/simple","../dolphin-ios/Externals/liblzma/tuklib","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("    -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lzma;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		326309A988BA44BF959C398F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		4C52EF5F2D1747A3B0DA4BE2 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		4F6ED7CB0C51497D967447FA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		77A71745FA5B4F43B5830A87 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		7839CE7ED1EC43309C5596E2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		8696AC6C2ECC49C5ADA58CF1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		94668440A9C342869B351B5E /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		94C65E8F33544ECBA33AC38E /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = dolphin-build;
+			};
+			name = MinSizeRel;
+		};
+		960C2DE2B3884F1DBF4704BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",LZMA_API_STATIC,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,HAVE_CONFIG_H,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/liblzma/api","../dolphin-ios/Externals/liblzma","../dolphin-ios/Externals/liblzma/check","../dolphin-ios/Externals/liblzma/common","../dolphin-ios/Externals/liblzma/delta","../dolphin-ios/Externals/liblzma/lz","../dolphin-ios/Externals/liblzma/lzma","../dolphin-ios/Externals/liblzma/rangecoder","../dolphin-ios/Externals/liblzma/simple","../dolphin-ios/Externals/liblzma/tuklib","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("    -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lzma;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		A588581561F74080A459C221 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",LZMA_API_STATIC,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,HAVE_CONFIG_H,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/liblzma/api","../dolphin-ios/Externals/liblzma","../dolphin-ios/Externals/liblzma/check","../dolphin-ios/Externals/liblzma/common","../dolphin-ios/Externals/liblzma/delta","../dolphin-ios/Externals/liblzma/lz","../dolphin-ios/Externals/liblzma/lzma","../dolphin-ios/Externals/liblzma/rangecoder","../dolphin-ios/Externals/liblzma/simple","../dolphin-ios/Externals/liblzma/tuklib","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("   '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden'    ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lzma;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		B4A7B9577417493283DCE792 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		BBF104B5847F4199A3739BA8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		BE17738C2F374DEF8DBB2425 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		CC84408193BB4E288D2337BE /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",LZMA_API_STATIC,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,HAVE_CONFIG_H,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/liblzma/api","../dolphin-ios/Externals/liblzma","../dolphin-ios/Externals/liblzma/check","../dolphin-ios/Externals/liblzma/common","../dolphin-ios/Externals/liblzma/delta","../dolphin-ios/Externals/liblzma/lz","../dolphin-ios/Externals/liblzma/lzma","../dolphin-ios/Externals/liblzma/rangecoder","../dolphin-ios/Externals/liblzma/simple","../dolphin-ios/Externals/liblzma/tuklib","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("       -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lzma;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		D258F130CA0446F2BD912D47 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		DB894AA316FD40768947F818 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		ED81FFC10A0645A8B3F906E6 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		F29F77533C8E4CE78B397F50 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = dolphin-build;
+			};
+			name = Debug;
+		};
+		F35D965442894634A663CD36 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		F710197B5D7643FE847EE391 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = dolphin-build;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9B4DD96501EF45CDB92496CB /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8696AC6C2ECC49C5ADA58CF1 /* Debug */,
+				77A71745FA5B4F43B5830A87 /* Release */,
+				D258F130CA0446F2BD912D47 /* MinSizeRel */,
+				B4A7B9577417493283DCE792 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A5852C27EE2F496495B2EB00 /* Build configuration list for PBXAggregateTarget "package" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7839CE7ED1EC43309C5596E2 /* Debug */,
+				154BD4C04C05475AA1C18DAC /* Release */,
+				ED81FFC10A0645A8B3F906E6 /* MinSizeRel */,
+				BE17738C2F374DEF8DBB2425 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AAC5A9D33B0B48EDBD3F25A8 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				326309A988BA44BF959C398F /* Debug */,
+				DB894AA316FD40768947F818 /* Release */,
+				F35D965442894634A663CD36 /* MinSizeRel */,
+				4C52EF5F2D1747A3B0DA4BE2 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BDE691A26BDE4431A37D99CD /* Build configuration list for PBXProject "lzma" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F29F77533C8E4CE78B397F50 /* Debug */,
+				F710197B5D7643FE847EE391 /* Release */,
+				94C65E8F33544ECBA33AC38E /* MinSizeRel */,
+				201B990AC57E4401BBA9ECC7 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C0AFE62F90114FCE97AE8199 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BBF104B5847F4199A3739BA8 /* Debug */,
+				4F6ED7CB0C51497D967447FA /* Release */,
+				033F588E1C894F769C7480E5 /* MinSizeRel */,
+				94668440A9C342869B351B5E /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CA1EFA2524814353AC7B5DBA /* Build configuration list for PBXNativeTarget "lzma" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A588581561F74080A459C221 /* Debug */,
+				960C2DE2B3884F1DBF4704BD /* Release */,
+				2C00460590234D2481DD0BD7 /* MinSizeRel */,
+				CC84408193BB4E288D2337BE /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3C2D79E9FB61447E89E9E955 /* Project object */;
+}
