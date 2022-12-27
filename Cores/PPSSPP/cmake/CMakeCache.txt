@@ -73,6 +73,9 @@ CMAKE_ASM_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
 //Flags used by the ASM compiler during RELWITHDEBINFO builds.
 CMAKE_ASM_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
 
+//No help, variable specified on the command line.
+CMAKE_BUILD_TYPE:UNINITIALIZED=Release
+
 //Semicolon separated list of supported configuration types, only
 // supports Debug, Release, MinSizeRel, and RelWithDebInfo, anything
 // else will be ignored.
@@ -172,7 +175,7 @@ CMAKE_INSTALL_NAME_TOOL:FILEPATH=/usr/bin/install_name_tool
 CMAKE_INSTALL_OLDINCLUDEDIR:PATH=/usr/include
 
 //Install path prefix, prepended onto install directories.
-CMAKE_INSTALL_PREFIX:PATH=/usr/local
+CMAKE_INSTALL_PREFIX:PATH=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp
 
 //Run-time variable data (LOCALSTATEDIR/run)
 CMAKE_INSTALL_RUNSTATEDIR:PATH=
@@ -226,7 +229,7 @@ CMAKE_OSX_ARCHITECTURES:STRING=arm64
 
 //Minimum OS X version to target for deployment (at runtime); newer
 // APIs weak linked. Set to empty string for default value.
-CMAKE_OSX_DEPLOYMENT_TARGET:STRING=
+CMAKE_OSX_DEPLOYMENT_TARGET:STRING=13.0
 
 //Sysroot used for iOS support
 CMAKE_OSX_SYSROOT:PATH=/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk
@@ -311,14 +314,50 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 //Path to a program.
 CMAKE_STRIP:FILEPATH=/Applications/Xcode-14.2.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip
 
-//The CMake toolchain file
-CMAKE_TOOLCHAIN_FILE:FILEPATH=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/cmake/Toolchains/ios.cmake
+//No help, variable specified on the command line.
+CMAKE_SYSTEM_NAME:UNINITIALIZED=iOS
+
+//No help, variable specified on the command line.
+CMAKE_SYSTEM_VERSION:UNINITIALIZED=13.0
+
+//No help, variable specified on the command line.
+CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=../ppsspp/cmake/Toolchains/ios.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
 // during the make.  This is useful for debugging only. With Visual
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
+
+//No help, variable specified on the command line.
+CMAKE_XCODE_ATTRIBUTE_CLANG_ENABLE_MODULES:UNINITIALIZED=YES
+
+//No help, variable specified on the command line.
+CMAKE_XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_ARC:UNINITIALIZED=YES
+
+//No help, variable specified on the command line.
+CMAKE_XCODE_ATTRIBUTE_CLANG_ENABLE_OBJC_WEAK:UNINITIALIZED=YES
+
+//No help, variable specified on the command line.
+CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED:UNINITIALIZED=NO
+
+//No help, variable specified on the command line.
+CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY:UNINITIALIZED=
+
+//No help, variable specified on the command line.
+CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM:UNINITIALIZED=
+
+//No help, variable specified on the command line.
+CMAKE_XCODE_ATTRIBUTE_ENABLE_BITCODE:UNINITIALIZED=NO
+
+//No help, variable specified on the command line.
+CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET:UNINITIALIZED=13.0
+
+//No help, variable specified on the command line.
+CMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH:UNINITIALIZED=NO
+
+//No help, variable specified on the command line.
+CMAKE_XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY:UNINITIALIZED=1,2,3,4,6
 
 //Path to a library.
 COCOA_LIBRARY:FILEPATH=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/UIKit
@@ -1346,7 +1385,7 @@ ZLIB_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ZLIB_LIBRARY_RELEASE
 ZLIB_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
 //CMAKE_INSTALL_PREFIX during last run
-_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=/usr/local
+_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp
 //Stored Xcode object GUID
 armips_GUID_CMAKE:INTERNAL=F4C61EA4F92645EF9C98A69F
 //Stored Xcode object GUID

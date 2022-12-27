@@ -6,10 +6,8 @@
 		<key>PVManufacturer</key>
 		<string>Sony</string>
 		<key>PVSystemName</key>
-		<string>PSP</string>
+		<string>PlayStation Portable</string>
 		<key>PVSystemShortName</key>
-		<string>PSP</string>
-		<key>PVSystemShortNameAlt</key>
 		<string>PSP</string>
 		<key>PVReleaseYear</key>
 		<string>2004</string>
@@ -28,22 +26,9 @@
 		<key>PVPortable</key>
 		<true/>
 		<key>PVRequiresBIOS</key>
-		<true/>
+		<false/>
 		<key>PVScreenType</key>
 		<string>ColorLCD</string>
-		<key>PVBIOSNames</key>
-		<array>
-			<dict>
-				<key>Description</key>
-				<string>ppge_atlas.zim (PPSSPP Data ROM)</string>
-				<key>MD5</key>
-				<string>a93fc411c1ce7d001a2a812643c70085</string>
-				<key>Name</key>
-				<string>ppge_atlas.zim</string>
-				<key>Size</key>
-				<integer>666530</integer>
-			</dict>
-		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>pbp</string>

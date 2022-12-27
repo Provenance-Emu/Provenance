@@ -128,7 +128,8 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
         .MSX,
         .MSX2,
         .Odyssey2,
-
+	.Wii,
+	.PSP,
         .Supervision,
         .Vectrex,
         .ZXSpectrum
@@ -136,10 +137,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
 
     static public let unsupported: [SystemIdentifier] =
     [
-        .PS2,
-        .PS3,
-        .PSP,
-        .Wii
+        .PS3
     ]
     // MARK: Assistance accessors for properties
 
