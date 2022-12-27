@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVPPSSPP.framework"
-               BlueprintName = "PVPPSSPP"
+               BlueprintIdentifier = "B30178D2207C901D0051B93D"
+               BuildableName = "libpsp.a"
+               BlueprintName = "psp"
                ReferencedContainer = "container:PVPPSSPP.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3C7620F20783162009950E4"
-            BuildableName = "PVPPSSPP.framework"
-            BlueprintName = "PVPPSSPP"
+            BlueprintIdentifier = "B30178D2207C901D0051B93D"
+            BuildableName = "libpsp.a"
+            BlueprintName = "psp"
             ReferencedContainer = "container:PVPPSSPP.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
