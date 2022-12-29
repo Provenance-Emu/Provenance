@@ -196,7 +196,7 @@
 	PSP_CoreParameter().startBreak      = false;
 	PSP_CoreParameter().enableSound     = true;
 	PSP_CoreParameter().printfEmuLog    = true;
-	PSP_CoreParameter().headLess        = true;
+    PSP_CoreParameter().headLess        = true;
 	PSP_CoreParameter().renderWidth  = self.videoWidth * self.resFactor;
 	PSP_CoreParameter().renderHeight = self.videoHeight * self.resFactor;
 	PSP_CoreParameter().renderScaleFactor = self.resFactor;
@@ -408,18 +408,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 BOOL SupportsTaptic()
 {
-	// we're on an iOS version that cannot instantiate UISelectionFeedbackGenerator, so no.
-	if(!NSClassFromString(@"UISelectionFeedbackGenerator")) {
-		return NO;
-	}
-
-	// http://www.mikitamanko.com/blog/2017/01/29/haptic-feedback-with-uifeedbackgenerator/
-	// use private API against UIDevice to determine the haptic stepping
-	// 2 - iPhone 7 or above, full taptic feedback
-	// 1 - iPhone 6S, limited taptic feedback
-	// 0 - iPhone 6 or below, no taptic feedback
-	NSNumber* val = (NSNumber*)[[UIDevice currentDevice] valueForKey:@"feedbackSupportLevel"];
-	return [val intValue] >= 2;
+    return NO;
 }
 
 void Vibrate(int mode) {
@@ -433,4 +422,3 @@ void Vibrate(int mode) {
 }
 @implementation CLLocationManager
 @end
-
