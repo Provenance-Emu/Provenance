@@ -11,7 +11,6 @@
 		930899DA29508B7100E145C8 /* libcpp-optparse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACD2949E94400CC8234 /* libcpp-optparse.a */; };
 		930899DB29508B7100E145C8 /* libed25519.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD32949E94400CC8234 /* libed25519.a */; };
 		930899E029508B7100E145C8 /* libpugixml.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF52949E94400CC8234 /* libpugixml.a */; };
-		93089A0C295093EB00E145C8 /* libfmtd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD72949E94400CC8234 /* libfmtd.a */; };
 		933CC5E42951BF680070CF1D /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5E12951BB8A0070CF1D /* libpng.a */; };
 		933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5FE2951FB9F0070CF1D /* GLKit.framework */; platformFilters = (ios, tvos, watchos, ); };
 		933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */; };
@@ -45,6 +44,7 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B39F67CC295D8B1F0048CEAD /* libfmtd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD72949E94400CC8234 /* libfmtd.a */; };
 		B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */; };
 		B3AAFB222949EA6900CC8234 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAC92949E94400CC8234 /* libcommon.a */; };
 		B3AAFB232949EA9E00CC8234 /* libvideocommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAFF2949E94400CC8234 /* libvideocommon.a */; };
@@ -15485,10 +15485,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B39F67CC295D8B1F0048CEAD /* libfmtd.a in Frameworks */,
 				93480AFD2953810E00C61651 /* libmain.a in Frameworks */,
 				933CFC26295335B600217F45 /* libvideovulkan.a in Frameworks */,
 				93C33A952952192200CC86C5 /* libcore.a in Frameworks */,
-				93089A0C295093EB00E145C8 /* libfmtd.a in Frameworks */,
 				933CC5E42951BF680070CF1D /* libpng.a in Frameworks */,
 				9308994B2950752400E145C8 /* libminizip.a in Frameworks */,
 				B3AAFB2E2949EBAE00CC8234 /* libaudiocommon.a in Frameworks */,
