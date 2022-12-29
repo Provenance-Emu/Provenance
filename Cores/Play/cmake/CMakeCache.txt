@@ -105,8 +105,11 @@ CMAKE_CXX_FLAGS_DEBUG:STRING=-g
 //Flags used by the CXX compiler during MINSIZEREL builds.
 CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
 
+//No help, variable specified on the command line.
+CMAKE_CXX_FLAGS_RELEAS:UNINITIALIZED=-Ofast -DNDEBUG
+
 //Flags used by the CXX compiler during RELEASE builds.
-CMAKE_CXX_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
+CMAKE_CXX_FLAGS_RELEASE:STRING=-Ofast -DNDEBUG
 
 //Flags used by the CXX compiler during RELWITHDEBINFO builds.
 CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
@@ -121,7 +124,7 @@ CMAKE_C_FLAGS_DEBUG:STRING=-g
 CMAKE_C_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG
 
 //Flags used by the C compiler during RELEASE builds.
-CMAKE_C_FLAGS_RELEASE:STRING=-O3 -DNDEBUG
+CMAKE_C_FLAGS_RELEASE:STRING=-Ofast -DNDEBUG
 
 //Flags used by the C compiler during RELWITHDEBINFO builds.
 CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=-O2 -g -DNDEBUG
@@ -1142,7 +1145,7 @@ FIND_PACKAGE_MESSAGE_DETAILS_SQLite3:INTERNAL=[/Applications/Xcode-14.2.app/Cont
 //Details about finding Threads
 FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //Details about finding Vulkan
-FIND_PACKAGE_MESSAGE_DETAILS_Vulkan:INTERNAL=[/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/1.3.204.1][/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include][cfound components: glslc glslangValidator ][v1.3.217()]
+FIND_PACKAGE_MESSAGE_DETAILS_Vulkan:INTERNAL=[/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/1.3.204.1][/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include][cfound components: glslc glslangValidator ][v1.3.236()]
 //Details about finding ZLIB
 FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd][/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include][v1.2.11()]
 //Stored Xcode object GUID

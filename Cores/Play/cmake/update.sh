@@ -23,6 +23,19 @@ ln -s ../../../../MoltenVK/MoltenVK ../Play-/Source/MoltenVK
 # This sets mobile to true...
 cp ../PVPlayCore/Core/GSH_VulkanPlatformDefs.h ../Play-/Source/gs/GSH_Vulkan/
 echo "VULKAN_SDK="${VULKAN_SDK}
-cmake ../Play- -G Xcode -DCMAKE_TOOLCHAIN_FILE=../Play-/deps/Dependencies/cmake-ios/ios.cmake -DTARGET_IOS=ON -DFRAMEWORK_VULKAN_LIBS=${FRAMEWORK_VULKAN_LIBS} -DUSE_GSH_VULKAN=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="${VULKAN_SDK}" -DVulkan_INCLUDE_DIR=${Vulkan_INCLUDE_DIR} -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="iPhone Developer" -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM="XXXXXXXXXX" -DCMAKE_XCODE_ATTRIBUTE_PROVISIONING_PROFILE_SPECIFIER="iOS Team Provisioning Profile: *"
+cmake ../Play- -G Xcode \
+-DCMAKE_TOOLCHAIN_FILE=../Play-/deps/Dependencies/cmake-ios/ios.cmake \
+-DTARGET_IOS=ON \
+-DFRAMEWORK_VULKAN_LIBS=${FRAMEWORK_VULKAN_LIBS} \
+-DUSE_GSH_VULKAN=ON \
+-DCMAKE_BUILD_TYPE=Release \
+-DCMAKE_C_FLAGS_RELEASE="-Ofast -DNDEBUG" \
+-DCMAKE_CXX_FLAGS_RELEASE="-Ofast -DNDEBUG" \
+-DCMAKE_PREFIX_PATH="${VULKAN_SDK}" \
+-DVulkan_INCLUDE_DIR=${Vulkan_INCLUDE_DIR} \
+-DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="iPhone Developer" \
+-DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM="XXXXXXXXXX" \
+-DCMAKE_XCODE_ATTRIBUTE_PROVISIONING_PROFILE_SPECIFIER="iOS Team Provisioning Profile: *"
+
 # Path adjustements
 python3 xcode_absolute_path_to_relative.py
