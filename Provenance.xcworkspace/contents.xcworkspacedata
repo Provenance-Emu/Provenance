@@ -25,12 +25,6 @@
          <FileRef
             location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
          </FileRef>
-         <FileRef
-            location = "group:Cores/O2EM/PVO2EM.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
-         </FileRef>
       </Group>
       <FileRef
          location = "group:Cores/4DO/PV4DO.xcodeproj">
@@ -73,6 +67,9 @@
       </FileRef>
       <FileRef
          location = "group:Cores/PokeMini/PVPokeMini.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/ProSystem/PVProSystem.xcodeproj">
