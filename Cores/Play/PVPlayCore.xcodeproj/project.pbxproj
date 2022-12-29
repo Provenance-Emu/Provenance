@@ -4458,6 +4458,8 @@
 				"${SRCROOT}/../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib",
 				"${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h",
 				"${SRCROOT}/PVPlayCore/Core/Loader.cpp ",
+				"${SRCROOT}/../PPSSPP/ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib",
+				"${SRCROOT}/../PPSSPP/ppsspp/ext/vulkan",
 			);
 			outputFileListPaths = (
 			);
@@ -4465,10 +4467,11 @@
 				"${SRCROOT}/lib/libMoltenVK_Play.dylib",
 				"${SRCROOT}/Play-/deps/Framework/src/vulkan/Loader.cpp",
 				"${SRCROOT}/Play-/Source/gs/GSH_Vulkan/GSH_VulkanPlatformDefs.h",
+				"${SRCROOT}/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include/vulkan",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncp ${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h ${SRCROOT}/Play-/Source/gs/GSH_Vulkan/\ncp ${SRCROOT}/PVPlayCore/Core/Loader.cpp ${SRCROOT}/Play-/deps/Framework/src/vulkan/Loader.cpp\n\ncp ${SRCROOT}/../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib ${SRCROOT}/lib/libMoltenVK_Play.dylib\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncp ${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h ${SRCROOT}/Play-/Source/gs/GSH_Vulkan/\ncp ${SRCROOT}/PVPlayCore/Core/Loader.cpp ${SRCROOT}/Play-/deps/Framework/src/vulkan/Loader.cpp\n\ncp ${SRCROOT}/../PPSSPP/ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib ${SRCROOT}/lib/libMoltenVK_Play.dylib\ncp -pR ${SRCROOT}/../PPSSPP/ppsspp/ext/vulkan ${SRCROOT}/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include/\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -4685,6 +4688,7 @@
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../PPSSPP/ppsspp/ext/",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -4713,6 +4717,7 @@
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../PPSSPP/ppsspp/ext/",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -4865,6 +4870,7 @@
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../PPSSPP/ppsspp/ext/",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",

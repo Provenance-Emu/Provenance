@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C7620F20783162009950E4"
+               BlueprintIdentifier = "93E741E4295B67C70028EB94"
                BuildableName = "PVPPSSPP.framework"
                BlueprintName = "PVPPSSPP"
                ReferencedContainer = "container:PVPPSSPP.xcodeproj">
@@ -50,7 +50,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B3C7620F20783162009950E4"
+            BlueprintIdentifier = "93E741E4295B67C70028EB94"
             BuildableName = "PVPPSSPP.framework"
             BlueprintName = "PVPPSSPP"
             ReferencedContainer = "container:PVPPSSPP.xcodeproj">

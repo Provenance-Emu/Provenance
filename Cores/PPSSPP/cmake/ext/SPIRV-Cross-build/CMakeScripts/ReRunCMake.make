@@ -5,7 +5,7 @@ empty:=
 space:= $(empty) $(empty)
 spaceplus:= $(empty)\ $(empty)
 
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt))
 
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
-	/opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -H/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp -B/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake
+../cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
+	/usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -H../ppsspp -B../cmake
