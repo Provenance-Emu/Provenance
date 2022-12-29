@@ -148,3 +148,6 @@
 [submodule "Cores/TIC80/TIC-80"]
 	path = Cores/TIC80/TIC-80
 	url = https://github.com/Provenance-Emu/TIC-80.git
+[submodule "Dependencies/MoltenVK"]
+	path = Dependencies/MoltenVK
+	url = https://github.com/Provenance-Emu/MoltenVK.git
