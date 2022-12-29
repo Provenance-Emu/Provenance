@@ -91,7 +91,8 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T: SliderCell {
 
     /// The minimum value icon of the slider.
     public var icon: Icon? {
-        return valueImages.min
+        return nil
+//        return valueImages.min
     }
 
     /// The default accessory type is `.none`.

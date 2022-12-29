@@ -88,14 +88,14 @@ final class PVSettingsViewController: QuickTableViewController {
         typealias TableRow = Row & RowStyle
 
         // MARK: -- Section : App
-        let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), viewController: self, segue: "pushSystemSettings")
+        let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), icon: .sfSymbol("square.stack"), viewController: self, segue: "pushSystemSettings")
 
         let systemMode = self.traitCollection.userInterfaceStyle == .dark ? "Dark" : "Light"
         var theme = PVSettingsModel.shared.theme.description
         if PVSettingsModel.shared.theme == .auto {
             theme += " (\(systemMode))"
         }
-        let themeRow = NavigationRow(text: NSLocalizedString("Theme", comment: "Theme"), detailText: .value1(PVSettingsModel.shared.theme.description), action: { row in
+        let themeRow = NavigationRow(text: NSLocalizedString("Theme", comment: "Theme"), detailText: .value1(PVSettingsModel.shared.theme.description), icon: .sfSymbol("paintbrush"), action: { row in
             let alert = UIAlertController(title: "Theme", message: "", preferredStyle: .actionSheet)
             ThemeOptions.themes.forEach { mode in
                 let modeLabel = mode == .auto ? mode.description + " (\(systemMode))" : mode.description
@@ -158,7 +158,11 @@ final class PVSettingsViewController: QuickTableViewController {
 
         #if os(iOS)
             avRows.append(contentsOf: [PVSettingsSwitchRow(text: NSLocalizedString("Volume HUD", comment: "Volume HUD"), key: \PVSettingsModel.volumeHUD, icon: .sfSymbol("speaker.square"))])
-        avRows.append(PVSettingsSliderRow(text: NSLocalizedString("Volume", comment: "Volume"), detailText: nil, valueLimits: (min: 0.0, max: 1.0), valueImages: (.sfSymbol("speaker.wave.1"), .sfSymbol("speaker.wave.3")), key: \PVSettingsModel.volume))
+        avRows.append(PVSettingsSliderRow(text: NSLocalizedString("Volume", comment: "Volume"),
+                                          detailText: nil,
+                                          valueLimits: (min: 0.0, max: 1.0),
+                                          valueImages: (.sfSymbol("speaker.wave.1"), .sfSymbol("speaker.wave.3")),
+                                          key: \PVSettingsModel.volume))
         #endif
         avRows.append(contentsOf: [
             PVSettingsSwitchRow(text: NSLocalizedString("Multi-threaded GL", comment: "Multi-threaded GL"),
@@ -167,12 +171,12 @@ final class PVSettingsViewController: QuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
                                 detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
                                 key: \PVSettingsModel.videoOptions.multiSampling, icon: .sfSymbol("4k.tv")),
-            PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled),
-            PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled),
-            PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled),
-            PVSettingsSwitchRow(text: NSLocalizedString("LCD Filter", comment: "LCD Filter"), detailText:.subtitle("Use CRT filter on LCD (mobile) screens. LCD filter coming."), key: \PVSettingsModel.lcdFilterEnabled),
-            PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing),
-            PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount)
+            PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled, icon: .sfSymbol("square.split.bottomrightquarter")),
+            PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled, icon: .sfSymbol("lock.square")),
+            PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled, icon: .sfSymbol("sparkles.tv")),
+            PVSettingsSwitchRow(text: NSLocalizedString("LCD Filter", comment: "LCD Filter"), detailText:.subtitle("Use CRT filter on LCD (mobile) screens. LCD filter coming."), key: \PVSettingsModel.lcdFilterEnabled, icon: .sfSymbol("square.grid.3x3")),
+            PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing, icon: .sfSymbol("checkerboard.rectangle")),
+            PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount, icon: .sfSymbol("speedometer"))
         ])
 
         let avSection = Section(title: NSLocalizedString("Video Options", comment: "Video Options"), rows: avRows)
@@ -193,13 +197,14 @@ final class PVSettingsViewController: QuickTableViewController {
         controllerRows.append(PVSettingsSliderRow(text: NSLocalizedString("Opacity", comment: "Opacity"), detailText: nil, valueLimits: (min: 0.5, max: 1.0), valueImages: (.sfSymbol("sun.min"), .sfSymbol("sun.max")), key: \PVSettingsModel.controllerOpacity))
 
             controllerRows.append(contentsOf: [
-                PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), key: \PVSettingsModel.buttonTints),
+                PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), key: \PVSettingsModel.buttonTints, icon: .sfSymbol("paintpalette")),
                 PVSettingsSwitchRow(text: NSLocalizedString("All-Right Shoulders", comment: "All-Right Shoulders"), detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders, icon: .sfSymbol("l.joystick.tilt.right")),
                 PVSettingsSwitchRow(text: NSLocalizedString("Haptic Feedback", comment: "Haptic Feedback"), key: \PVSettingsModel.buttonVibration, icon: .sfSymbol("hand.point.up.braille")),
-                PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine."), key: \PVSettingsModel.use8BitdoM30),
+                PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine."), key: \PVSettingsModel.use8BitdoM30, icon: .sfSymbol("arrow.triangle.swap")),
                 PVSettingsSwitchRow(text: NSLocalizedString("Missing Buttons Always On-Screen", comment: "Missing Buttons Always On-Screen"),
                                     detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
-                                    key: \PVSettingsModel.missingButtonsAlwaysOn)
+                                    key: \PVSettingsModel.missingButtonsAlwaysOn,
+                                    icon: .sfSymbol("l.rectangle.roundedbottom"))
             ]
 
         )
@@ -277,12 +282,14 @@ final class PVSettingsViewController: QuickTableViewController {
             NavigationRow(
                 text: NSLocalizedString("Manage Conflicts", comment: ""),
                 detailText: .subtitle(numberOfConflicts > 0 ? "Manually resolve conflicted imports: \(numberOfConflicts) detected" : "None detected"),
-                icon: nil,
+                icon: .sfSymbol("bandage"),
                 action: numberOfConflicts > 0 ? { [weak self] _ in self?.manageConflictsAction() } : nil
             ),
             SegueNavigationRow(text: NSLocalizedString("Appearance", comment: "Appearance"),
                                detailText: .subtitle("Visual options for Game Library"),
-                               viewController: self, segue: "appearanceSegue")
+                               icon: .sfSymbol("eye"),
+                               viewController: self,
+                               segue: "appearanceSegue")
         ]
 
         let librarySection2 = Section(title: nil, rows: library2Rows)
@@ -293,7 +300,7 @@ final class PVSettingsViewController: QuickTableViewController {
         let betaRows: [TableRow] = [
 			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
 								detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
-                                key: \PVSettingsModel.debugOptions.useMetal, icon: .sfSymbol("apple")),
+                                key: \PVSettingsModel.debugOptions.useMetal, icon: .named("m.square.fill")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
@@ -566,8 +573,18 @@ final class PVSettingsViewController: QuickTableViewController {
 
         // Extra Info Section
         let extraInfoRows: [TableRow] = [
-            SegueNavigationRow(text: NSLocalizedString("Cores", comment: "Cores"), detailText: .subtitle("Emulator cores provided by these projects"), viewController: self, segue: "coresSegue", customization: nil),
-            SegueNavigationRow(text: NSLocalizedString("Licenses", comment: "Licenses"), detailText: .none, viewController: self, segue: "licensesSegue", customization: nil)
+            SegueNavigationRow(text: NSLocalizedString("Cores", comment: "Cores"),
+                               detailText: .subtitle("Emulator cores provided by these projects"),
+                               icon: .sfSymbol("person.3.sequence"),
+                               viewController: self,
+                               segue: "coresSegue",
+                               customization: nil),
+            SegueNavigationRow(text: NSLocalizedString("Licenses", comment: "Licenses"),
+                               detailText: .none,
+                               icon: .sfSymbol("mail.stack.fill"),
+                               viewController: self,
+                               segue: "licensesSegue",
+                               customization: nil)
         ]
 
         let extraInfoSection = Section(title: NSLocalizedString("3rd Party & Legal", comment: ""), rows: extraInfoRows)
