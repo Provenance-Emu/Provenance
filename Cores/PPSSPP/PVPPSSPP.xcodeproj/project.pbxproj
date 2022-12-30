@@ -24,13 +24,14 @@
 		93928447295DFFA900F2AD12 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93928433295DFFA900F2AD12 /* CoreMedia.framework */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		93AEC060295E7FEB00F9381C /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AEC04C295E7FEB00F9381C /* GLKit.framework */; platformFilters = (ios, macos, tvos, ); };
+		93C33C38295F84EF008DFADD /* MemArenaDarwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C33C24295F84EF008DFADD /* MemArenaDarwin.cpp */; };
 		93E74163295B344F0028EB94 /* libarmips.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740EE295B2FD20028EB94 /* libarmips.a */; platformFilters = (ios, maccatalyst, ); };
 		93E74164295B344F0028EB94 /* libcityhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740F0295B2FD20028EB94 /* libcityhash.a */; platformFilters = (ios, maccatalyst, ); };
 		93E74165295B344F0028EB94 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740DC295B2FD20028EB94 /* libCommon.a */; platformFilters = (ios, maccatalyst, ); };
 		93E74166295B344F0028EB94 /* libCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740DE295B2FD20028EB94 /* libCore.a */; platformFilters = (ios, maccatalyst, ); };
 		93E74167295B344F0028EB94 /* libgason.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740F8295B2FD20028EB94 /* libgason.a */; platformFilters = (ios, maccatalyst, ); };
 		93E74168295B344F0028EB94 /* libGenericCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740E0295B2FD20028EB94 /* libGenericCodeGen.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74169295B344F0028EB94 /* libglslang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740FA295B2FD20028EB94 /* libglslang.a */; platformFilters = (ios, maccatalyst, ); };
+		93E74169295B344F0028EB94 /* libglslang-ppsspp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740FA295B2FD20028EB94 /* libglslang-ppsspp.a */; platformFilters = (ios, maccatalyst, ); };
 		93E7416A295B344F0028EB94 /* libHLSL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740E2295B2FD20028EB94 /* libHLSL.a */; platformFilters = (ios, maccatalyst, ); };
 		93E7416B295B344F0028EB94 /* libkirk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740FC295B2FD20028EB94 /* libkirk.a */; platformFilters = (ios, maccatalyst, ); };
 		93E7416C295B344F0028EB94 /* liblibzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740FE295B2FD20028EB94 /* liblibzip.a */; platformFilters = (ios, maccatalyst, ); };
@@ -51,14 +52,14 @@
 		93E7417B295B344F0028EB94 /* libudis86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E7411C295B2FD20028EB94 /* libudis86.a */; platformFilters = (ios, maccatalyst, ); };
 		93E7417C295B344F0028EB94 /* libvma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E7411E295B2FD20028EB94 /* libvma.a */; platformFilters = (ios, maccatalyst, ); };
 		93E7417D295B344F0028EB94 /* libxbrz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74120295B2FD20028EB94 /* libxbrz.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7417E295B344F0028EB94 /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74122295B2FD20028EB94 /* libxxhash.a */; platformFilters = (ios, maccatalyst, ); };
+		93E7417E295B344F0028EB94 /* libxxhash-ppsspp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74122295B2FD20028EB94 /* libxxhash-ppsspp.a */; platformFilters = (ios, maccatalyst, ); };
 		93E74186295B35080028EB94 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74180295B35060028EB94 /* libavdevice.a */; };
 		93E74187295B35080028EB94 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74181295B35060028EB94 /* libavutil.a */; };
 		93E74188295B35080028EB94 /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74182295B35070028EB94 /* libswresample.a */; };
 		93E74189295B35080028EB94 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74183295B35070028EB94 /* libswscale.a */; };
 		93E7418A295B35080028EB94 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74184295B35070028EB94 /* libavcodec.a */; };
 		93E7418B295B35080028EB94 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74185295B35070028EB94 /* libavformat.a */; };
-		93E74191295B37970028EB94 /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74102295B2FD20028EB94 /* libzstd.a */; platformFilters = (ios, maccatalyst, ); };
+		93E74191295B37970028EB94 /* libzstd-ppsspp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74102295B2FD20028EB94 /* libzstd-ppsspp.a */; platformFilters = (ios, maccatalyst, ); };
 		93E741E8295B67C70028EB94 /* PVPPSSPPCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPPSSPPCore+Cheats.mm */; };
 		93E741E9295B67C70028EB94 /* PVPPSSPPCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVPPSSPPCore+Controls.mm */; };
 		93E741EA295B67C70028EB94 /* PPSSPPVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E74126295B31460028EB94 /* PPSSPPVulkanViewController.swift */; };
@@ -606,6 +607,7 @@
 		93928433295DFFA900F2AD12 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
 		939B19422948B05F0024133A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		93AEC04C295E7FEB00F9381C /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.1.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
+		93C33C24295F84EF008DFADD /* MemArenaDarwin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemArenaDarwin.cpp; sourceTree = "<group>"; };
 		93E74125295B31460028EB94 /* PPSSPPOGLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSSPPOGLViewController.swift; sourceTree = "<group>"; };
 		93E74126295B31460028EB94 /* PPSSPPVulkanViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSSPPVulkanViewController.swift; sourceTree = "<group>"; };
 		93E74180295B35060028EB94 /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = ppsspp/ffmpeg/ios/universal/lib/libavdevice.a; sourceTree = "<group>"; };
@@ -699,7 +701,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93E74191295B37970028EB94 /* libzstd.a in Frameworks */,
+				93E74191295B37970028EB94 /* libzstd-ppsspp.a in Frameworks */,
 				93E7416C295B344F0028EB94 /* liblibzip.a in Frameworks */,
 				93E74186295B35080028EB94 /* libavdevice.a in Frameworks */,
 				93E74187295B35080028EB94 /* libavutil.a in Frameworks */,
@@ -713,7 +715,7 @@
 				93E74166295B344F0028EB94 /* libCore.a in Frameworks */,
 				93E74167295B344F0028EB94 /* libgason.a in Frameworks */,
 				93E74168295B344F0028EB94 /* libGenericCodeGen.a in Frameworks */,
-				93E74169295B344F0028EB94 /* libglslang.a in Frameworks */,
+				93E74169295B344F0028EB94 /* libglslang-ppsspp.a in Frameworks */,
 				93E7416A295B344F0028EB94 /* libHLSL.a in Frameworks */,
 				93E7416B295B344F0028EB94 /* libkirk.a in Frameworks */,
 				93E7416D295B344F0028EB94 /* libMachineIndependent.a in Frameworks */,
@@ -733,7 +735,7 @@
 				93E7417B295B344F0028EB94 /* libudis86.a in Frameworks */,
 				93E7417C295B344F0028EB94 /* libvma.a in Frameworks */,
 				93E7417D295B344F0028EB94 /* libxbrz.a in Frameworks */,
-				93E7417E295B344F0028EB94 /* libxxhash.a in Frameworks */,
+				93E7417E295B344F0028EB94 /* libxxhash-ppsspp.a in Frameworks */,
 				939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -759,11 +761,11 @@
 				93E740F4295B2FD20028EB94 /* fullbench */,
 				93E740F6295B2FD20028EB94 /* fuzzer */,
 				93E740F8295B2FD20028EB94 /* libgason.a */,
-				93E740FA295B2FD20028EB94 /* libglslang.a */,
+				93E740FA295B2FD20028EB94 /* libglslang-ppsspp.a */,
 				93E740FC295B2FD20028EB94 /* libkirk.a */,
 				93E740FE295B2FD20028EB94 /* liblibzip.a */,
 				93E74100295B2FD20028EB94 /* libzstd.dylib */,
-				93E74102295B2FD20028EB94 /* libzstd.a */,
+				93E74102295B2FD20028EB94 /* libzstd-ppsspp.a */,
 				93E74104295B2FD20028EB94 /* libminiupnpc.a */,
 				93E74106295B2FD20028EB94 /* libnative.a */,
 				93E74108295B2FD20028EB94 /* paramgrill */,
@@ -779,7 +781,7 @@
 				93E7411C295B2FD20028EB94 /* libudis86.a */,
 				93E7411E295B2FD20028EB94 /* libvma.a */,
 				93E74120295B2FD20028EB94 /* libxbrz.a */,
-				93E74122295B2FD20028EB94 /* libxxhash.a */,
+				93E74122295B2FD20028EB94 /* libxxhash-ppsspp.a */,
 				93E74124295B2FD20028EB94 /* zstreamtest */,
 			);
 			name = Products;
@@ -788,6 +790,7 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				93C33C24295F84EF008DFADD /* MemArenaDarwin.cpp */,
 				93E7427A295C53890028EB94 /* OGLGraphicsContext.h */,
 				93E7427C295C55C80028EB94 /* VulkanGraphicsContext.h */,
 				93E74125295B31460028EB94 /* PPSSPPOGLViewController.swift */,
@@ -1136,10 +1139,10 @@
 			remoteRef = 93E740F7295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E740FA295B2FD20028EB94 /* libglslang.a */ = {
+		93E740FA295B2FD20028EB94 /* libglslang-ppsspp.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libglslang.a;
+			path = "libglslang-ppsspp.a";
 			remoteRef = 93E740F9295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1165,10 +1168,10 @@
 			remoteRef = 93E740FF295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E74102295B2FD20028EB94 /* libzstd.a */ = {
+		93E74102295B2FD20028EB94 /* libzstd-ppsspp.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libzstd.a;
+			path = "libzstd-ppsspp.a";
 			remoteRef = 93E74101295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1278,10 +1281,10 @@
 			remoteRef = 93E7411F295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E74122295B2FD20028EB94 /* libxxhash.a */ = {
+		93E74122295B2FD20028EB94 /* libxxhash-ppsspp.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libxxhash.a;
+			path = "libxxhash-ppsspp.a";
 			remoteRef = 93E74121295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1344,6 +1347,7 @@
 				93E741EE295B67C70028EB94 /* PVPPSSPPCore+Saves.mm in Sources */,
 				93E741F0295B67C70028EB94 /* PVPPSSPP.mm in Sources */,
 				93E741F1295B67C70028EB94 /* PVPPSSPPCore.mm in Sources */,
+				93C33C38295F84EF008DFADD /* MemArenaDarwin.cpp in Sources */,
 				93E741F2295B67C70028EB94 /* PVPPSSPPCore+Audio.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

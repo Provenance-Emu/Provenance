@@ -85,27 +85,47 @@ NSString *autoLoadStatefileName;
 	return YES;
 }
 #pragma mark - Methods
+
+bool isComplete;
+bool success;
+- (bool) saveComplete:(void (^)(BOOL, NSError *))block {
+    while (!isComplete) {
+        sleep_ms(100);
+    }
+    block(success, nil);
+}
+
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
-	bool success=false;
-	SaveState::Save(Path([fileName fileSystemRepresentation]), 0, 0);
-	SaveState::Process();
-	success=true;
-	return success;
+	SaveState::Save(Path([fileName fileSystemRepresentation]), 0, [] (SaveState::Status status, const std::string &message, void *userdata) mutable {
+        PVPPSSPPCore* core = (__bridge PVPPSSPPCore*)userdata;
+        success=status != SaveState::Status::FAILURE;
+        isComplete=true;
+    }, (__bridge void *)self);
+    while (!isComplete) {
+        sleep_ms(100);
+    }
+    return success;
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
-	bool success=false;
-	SaveState::Save(Path([fileName fileSystemRepresentation]), 0, [&block, &success] (SaveState::Status status, const std::string &message, void *data) mutable {
-		success = (status != SaveState::Status::FAILURE);
-		block(success, nil);
-	});
-	SaveState::Process();
+    success=false;
+    isComplete=false;
+    SaveState::Save(Path([fileName fileSystemRepresentation]), 0, [&block] (SaveState::Status status, const std::string &message, void *userdata) mutable {
+        PVPPSSPPCore* core = (__bridge PVPPSSPPCore*)userdata;
+        success=status != SaveState::Status::FAILURE;
+        isComplete=true;
+    }, (__bridge void *)self);
+    if (isPaused && self.isEmulationPaused) {
+        ELOG(@"Processing Save (Should only happen when paused)\n");
+        SaveState::Process();
+    }
+    [self saveComplete:block];
 }
 
 - (BOOL)loadStateFromFileAtPath:(NSString *)fileName {
 	bool success=false;
 	if(_isInitialized) {
-		SaveState::Load(Path([fileName fileSystemRepresentation]), 0, 0);
+		SaveState::Load(Path([fileName fileSystemRepresentation]), 0, 0, (__bridge void*)self);
 		success=true;
 	}
 	return success;
@@ -114,7 +134,7 @@ NSString *autoLoadStatefileName;
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
 	bool success=false;
 	if(_isInitialized && GetUIState() == UISTATE_INGAME) {
-		SaveState::Load(Path([fileName fileSystemRepresentation]), 0, 0);
+		SaveState::Load(Path([fileName fileSystemRepresentation]), 0, 0, (__bridge void*)self);
 		success=true;
 	}
 }

@@ -14,6 +14,7 @@
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 
+#define MASKED_PSP_MEMORY 1
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
@@ -35,6 +36,7 @@
 	int8_t tfOption;
 	int8_t tutypeOption;
 	int8_t msaa;
+    BOOL stretchOption;
 	BOOL fastMemory;
 	float sampleRate;
 	BOOL isNTSC;
@@ -57,10 +59,10 @@
 @property (nonatomic, assign) int8_t tuOption;
 @property (nonatomic, assign) int8_t tutypeOption;
 @property (nonatomic, assign) int8_t tfOption;
+@property (nonatomic, assign) bool stretchOption;
 @property (nonatomic, assign) int8_t msaa;
 @property (nonatomic, assign) bool fastMemory;
 @property (nonatomic, assign) bool isPaused;
-@property (nonatomic, assign) bool isStopping;
 - (void) runVM;
 - (void) stopVM:(bool)deinitViews;
 - (void) setupVideo;

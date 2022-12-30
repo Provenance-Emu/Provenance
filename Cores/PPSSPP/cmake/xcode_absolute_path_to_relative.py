@@ -60,7 +60,7 @@ replacements.append([CONFIG_BUILD_DIR_PATH_TO_FIND,CONFIG_BUILD_DIR_PATH_TO_REPL
 #replacements.append([BUILD_CONFIG_TO_FIND,BUILD_CONFIG_TO_REPLACE_WITH])
 
 # Extensions of files to process
-extensions = ['.pbxproj', '.xcscheme', '.log', '.txt', '.cmake', '.make', '.tcl' ] #.h .hxx
+extensions = ['.pbxproj', '.xcscheme', '.log', '.txt', '.cmake', '.make', '.tcl', '.h', '.hxx' ]
 print(f'Reading Directory: {DIRECTORY_TO_READ}')
 print(f'$(SRCROOT) to find/replace:', replacements)
 print(f'Extensions to find:', extensions)

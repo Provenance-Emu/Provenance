@@ -515,7 +515,6 @@
 		627D9FD4F4A14EF2A7CB8FF2 /* ArmRegCacheFPU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D18E74292D449939B2A076E /* ArmRegCacheFPU.cpp */; };
 		628639DEAB9D414B9134419F /* PrxDecrypter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 17B162D9D03D45C8AEFFDA7D /* PrxDecrypter.cpp */; };
 		62E4E9E4748F44E68248A03C /* Expression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AAEA62938C3493385EEF6F1 /* Expression.cpp */; };
-		63630028312D4863BB41CC54 /* MemArenaAndroid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 239A76C81EBD4BAEBB9D4238 /* MemArenaAndroid.cpp */; };
 		64409A7503DE457499825348 /* sceKernelMsgPipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15AF479E948F4CBAA87DE0A8 /* sceKernelMsgPipe.cpp */; };
 		6445F40A4F9844FD84763AC6 /* PSPNpSigninDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C6F3C4023A14509ADD32AF3 /* PSPNpSigninDialog.cpp */; };
 		649C97419A20493396DD9DE9 /* zstd_decompress.c in Sources */ = {isa = PBXBuildFile; fileRef = 88B4FFE0F1A1487CB092A8D7 /* zstd_decompress.c */; };
@@ -841,18 +840,15 @@
 		C627252BF20946F08FD410F8 /* draw_text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F2D17C2195A2429EB3D62FB1 /* draw_text.cpp */; };
 		C62C0E6AC50E40AA9D9037FF /* datagen.c in Sources */ = {isa = PBXBuildFile; fileRef = 08C9087026484477A05FFA7A /* datagen.c */; };
 		C6309336EE424B5F956AA973 /* WebServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CAA30E92564CC5AC67C6BF /* WebServer.cpp */; };
-		C67CFEC8C8E647F08CB7981D /* MemArenaWin32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6369C089693421C816335C5 /* MemArenaWin32.cpp */; };
 		C6BE8FE29FD64EF6AC92BDE1 /* upnpcommands.c in Sources */ = {isa = PBXBuildFile; fileRef = E7CCC13F96CD4CE8993AEC02 /* upnpcommands.c */; };
 		C7569E6B770245368277CC56 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 8B0F629ACFCC4C688BE14DE1 /* xxhash.c */; };
 		C78842DCE4884A8BB470D1BD /* zstd_compress_literals.c in Sources */ = {isa = PBXBuildFile; fileRef = EBC69CA2D642482C96466655 /* zstd_compress_literals.c */; };
 		C7BF53B53C7A40AF9CB1B15A /* PSPGamedataInstallDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C57319F9A2741308BBA791C /* PSPGamedataInstallDialog.cpp */; };
 		C82F3BDCE9874C2DAFDBED8F /* sceUsb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A10FE9730B4DF3808C0E8B /* sceUsb.cpp */; };
 		C844BE3FDE8B4451977AA745 /* CArmInstruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56C8EF62DD11446AA9E359CF /* CArmInstruction.cpp */; };
-		C899623F0A704032B729B7B7 /* MemArenaPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7ABC5C4E039471495084DF8 /* MemArenaPosix.cpp */; };
 		C8CCF50AD484404994F817E9 /* pngrtran.c in Sources */ = {isa = PBXBuildFile; fileRef = ECDEB406B0D048B2BB00426E /* pngrtran.c */; };
 		C8CEBFA2AABB4C979A259F7A /* Pp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 909DADF21C5C41D8BAF6EBDB /* Pp.cpp */; };
 		C910DF7D329E49E693F3DA86 /* sceDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D8D02349D3A04B8B9D694D3F /* sceDisplay.cpp */; };
-		C9218C4D4FF64693B0A705A3 /* MemArenaDarwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 523202359A0440E1A829906D /* MemArenaDarwin.cpp */; };
 		C9A1B5D5BD574E0AA3239644 /* proAdhocServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 70F3EBA247CD4B05B3F724E9 /* proAdhocServer.cpp */; };
 		C9B4085A8D9F401BA0059F6F /* TiltEventProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5E3CA057BA094CE9B57640D2 /* TiltEventProcessor.cpp */; };
 		CA40D4324FED4416B16D4E38 /* IRCompLoadStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DCB6CAA3408E4BECB67CDA35 /* IRCompLoadStore.cpp */; };
@@ -9052,10 +9048,6 @@
 				8F1C07C27B084F848635DB9E /* matrix4x4.cpp in Sources */,
 				0C9705AC9BC84FB2B385C251 /* vec3.cpp in Sources */,
 				7F955AAC51B84DCDA17F68F8 /* math_util.cpp in Sources */,
-				63630028312D4863BB41CC54 /* MemArenaAndroid.cpp in Sources */,
-				C9218C4D4FF64693B0A705A3 /* MemArenaDarwin.cpp in Sources */,
-				C899623F0A704032B729B7B7 /* MemArenaPosix.cpp in Sources */,
-				C67CFEC8C8E647F08CB7981D /* MemArenaWin32.cpp in Sources */,
 				781C3CA0275548E8AA690B4E /* MemoryUtil.cpp in Sources */,
 				585D328A7C3945D9922AAF0D /* MipsCPUDetect.cpp in Sources */,
 				D9939CDDA3C945509E6F8D02 /* MipsEmitter.cpp in Sources */,
