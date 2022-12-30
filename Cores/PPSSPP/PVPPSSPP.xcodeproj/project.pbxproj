@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		93928447295DFFA900F2AD12 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93928433295DFFA900F2AD12 /* CoreMedia.framework */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
+		93AEC060295E7FEB00F9381C /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AEC04C295E7FEB00F9381C /* GLKit.framework */; platformFilters = (ios, macos, tvos, ); };
 		93E74163295B344F0028EB94 /* libarmips.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740EE295B2FD20028EB94 /* libarmips.a */; platformFilters = (ios, maccatalyst, ); };
 		93E74164295B344F0028EB94 /* libcityhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740F0295B2FD20028EB94 /* libcityhash.a */; platformFilters = (ios, maccatalyst, ); };
 		93E74165295B344F0028EB94 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740DC295B2FD20028EB94 /* libCommon.a */; platformFilters = (ios, maccatalyst, ); };
@@ -604,6 +605,7 @@
 		936FDBA72957F9080073628A /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = ../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib; sourceTree = "<group>"; };
 		93928433295DFFA900F2AD12 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
 		939B19422948B05F0024133A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
+		93AEC04C295E7FEB00F9381C /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.1.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
 		93E74125295B31460028EB94 /* PPSSPPOGLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSSPPOGLViewController.swift; sourceTree = "<group>"; };
 		93E74126295B31460028EB94 /* PPSSPPVulkanViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSSPPVulkanViewController.swift; sourceTree = "<group>"; };
 		93E74180295B35060028EB94 /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = ppsspp/ffmpeg/ios/universal/lib/libavdevice.a; sourceTree = "<group>"; };
@@ -673,6 +675,7 @@
 				93E741F4295B67C70028EB94 /* libMoltenVK_PPSSPP.dylib in Frameworks */,
 				93E741F5295B67C70028EB94 /* libz.1.2.11.tbd in Frameworks */,
 				93E741F6295B67C70028EB94 /* CoreAudio.framework in Frameworks */,
+				93AEC060295E7FEB00F9381C /* GLKit.framework in Frameworks */,
 				93E741F7295B67C70028EB94 /* libsqlite3.tbd in Frameworks */,
 				93E741F8295B67C70028EB94 /* CoreGraphics.framework in Frameworks */,
 				93F28DC3295E264700E4D464 /* MediaPlayer.framework in Frameworks */,
@@ -841,6 +844,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				93AEC04C295E7FEB00F9381C /* GLKit.framework */,
 				93F28DC2295E264600E4D464 /* MediaPlayer.framework */,
 				93928433295DFFA900F2AD12 /* CoreMedia.framework */,
 				93E741E0295B5B240028EB94 /* libMoltenVK_PPSSPP.dylib */,

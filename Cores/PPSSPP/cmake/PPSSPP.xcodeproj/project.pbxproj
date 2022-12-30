@@ -148,7 +148,6 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = B0C346C5FEA24D4F8A8CFE11 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
-				FA86B9A195CB4C59BAC8816C /* Generate CMakeFiles/ZERO_CHECK */,
 			);
 			dependencies = (
 			);
@@ -303,7 +302,6 @@
 		27A7E96AF97F463B92028068 /* DevScreens.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FE31C2DBB3C424A89EBB887 /* DevScreens.cpp */; };
 		283966F0B9B943E89CC92D06 /* upnperrors.c in Sources */ = {isa = PBXBuildFile; fileRef = 889372C94B5141259948BBCB /* upnperrors.c */; };
 		283DA5DC608749B59FA88E66 /* zip_open.c in Sources */ = {isa = PBXBuildFile; fileRef = E1138250174246DF94D4EC20 /* zip_open.c */; };
-		28809201D8DE46339E0B7374 /* SmartKeyboardMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CC4C7A0AB3144A8F97650A1C /* SmartKeyboardMap.cpp */; };
 		291A06CF164D45418F2CB0F7 /* TouchControlLayoutScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF714DA8D0C942CEB5D05CA5 /* TouchControlLayoutScreen.cpp */; };
 		2977E40BD4F74397A07AC8F8 /* zip_file_set_external_attributes.c in Sources */ = {isa = PBXBuildFile; fileRef = F1014F5A6EC94E359573F936 /* zip_file_set_external_attributes.c */; };
 		298E9839CD3A41B8A0A00BA8 /* threading.c in Sources */ = {isa = PBXBuildFile; fileRef = 86159DC2C5A24BF38603E84A /* threading.c */; };
@@ -342,7 +340,6 @@
 		317F78DDC22340ABA5DF9486 /* FileSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68CFD6C974DB4E8296D69C36 /* FileSystem.cpp */; };
 		3195944FB3E04107BCC2EF81 /* DiscordIntegration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1AC74B56E034789A25A17BC /* DiscordIntegration.cpp */; };
 		3199A00C66DC45A18E45EB16 /* CAssemblerCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B2EDB0C6E02A4AEB880D1F33 /* CAssemblerCommand.cpp */; };
-		31F053F0838B4F59B3FF1789 /* SubtleVolume.mm in Sources */ = {isa = PBXBuildFile; fileRef = 63D4CD0CD7A64C6D87CB7BCD /* SubtleVolume.mm */; };
 		3274C8A8C1BA43D7845177A6 /* MipsElfRelocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A61CA9ED4E7741A2917347D8 /* MipsElfRelocator.cpp */; };
 		3285A0510F0344B3A9E1258D /* ArmRegCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F46496E8EE0D4D41907630AE /* ArmRegCache.cpp */; };
 		344FE056685F4550867B3B90 /* DirectivesParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8D3AF90EF62D4830947691A1 /* DirectivesParser.cpp */; };
@@ -399,7 +396,6 @@
 		41504715E8A34746A2F070E8 /* StereoResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 220C4BF8BF6F4C00975C3C6B /* StereoResampler.cpp */; };
 		41C1DCEBA264466995FF0E65 /* IRCompBranch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AD663964ACF48A390B477E4 /* IRCompBranch.cpp */; };
 		41FAA7DBAE5641DA86D95387 /* InitializeDll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C1901C668A14437C808D0B3D /* InitializeDll.cpp */; };
-		421B4692A3154C02837C6357 /* DisplayManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = C16A7BE6B406437D9C71BCA7 /* DisplayManager.mm */; };
 		425D8F17C1844A93868A7160 /* snappy-sinksource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A4B175855614FBCAD1405C6 /* snappy-sinksource.cpp */; };
 		426777D8B0D8412290760DA5 /* zstd_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 38FA0C07F1E0419CA81852C0 /* zstd_common.c */; };
 		43022AB02DA844F180DB52EA /* PSPLoaders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF944CF07C81414EA4731DB5 /* PSPLoaders.cpp */; };
@@ -470,7 +466,6 @@
 		54AE4EA192A44044851CAAAC /* zip_set_file_comment.c in Sources */ = {isa = PBXBuildFile; fileRef = 8ABDFAA22CBB4AB696338022 /* zip_set_file_comment.c */; };
 		5541E46A5A2F4627AA1CF0DF /* zip_algorithm_deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 6F396B7EC8FC49C9849B641B /* zip_algorithm_deflate.c */; };
 		55B1E75831FD46C7A48C2ADF /* zip_source_get_file_attributes.c in Sources */ = {isa = PBXBuildFile; fileRef = 22FD786D153D49748134E36F /* zip_source_get_file_attributes.c */; };
-		55D5E5B90C6F46D98C5B9D9B /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BDFBC5CE9FD41C58DD1DA6A /* main.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		56367FDF19B24B13BBD1FC87 /* zip_source_tell_write.c in Sources */ = {isa = PBXBuildFile; fileRef = 16B31EB381424180A389B824 /* zip_source_tell_write.c */; };
 		563D32F0DC2548F8A627A9E6 /* ParamSFO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 85E07ABB40864515AF7F92C5 /* ParamSFO.cpp */; };
 		56EEBFE096614B1CB423C1C0 /* PSPMsgDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A367D628217C40E19908C442 /* PSPMsgDialog.cpp */; };
@@ -538,7 +533,6 @@
 		69BE000BB94945B8B3674918 /* InReadableOrder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A804EA473D3469BA0012D8D /* InReadableOrder.cpp */; };
 		69D1A32E75B641C89FC20FEF /* zip_fread.c in Sources */ = {isa = PBXBuildFile; fileRef = E40864DD677A4DE2B201CC0B /* zip_fread.c */; };
 		69D500BE439E45958FC8BDAB /* ControlMapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3279A05052974CD79D0CDF2C /* ControlMapper.cpp */; };
-		6A2C5A5DEDC74487BF48A1CE /* LocationHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 187C8EABF0BC40E1BE06CDA7 /* LocationHelper.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		6A5D751DF5E74DEFB68CC32D /* hlslScanContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00CDC2948EAF4F41AED0D72E /* hlslScanContext.cpp */; };
 		6A7BA87E39F34DFBA09087E8 /* zip_close.c in Sources */ = {isa = PBXBuildFile; fileRef = 598DD8C5BA524DF5BC0A64F7 /* zip_close.c */; };
 		6BCE29BCC2A04E11A3B0E528 /* Tokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B8F52F3094594228A6D18E33 /* Tokenizer.cpp */; };
@@ -565,7 +559,6 @@
 		712615E3EBB441389829126E /* DisArm64.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50FB2A04260A4B0DB17975C7 /* DisArm64.cpp */; };
 		71285C043AFB457F806B45DF /* GLSLProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 228ADDEBDB1C446C8728E899 /* GLSLProgram.cpp */; };
 		718E3DCEE21143AF87F9B104 /* DrawBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3D9EAEC7DA5F4B5CB564366C /* DrawBuffer.cpp */; };
-		719E38B649614A99BB0C9425 /* PPSSPPUIApplication.mm in Sources */ = {isa = PBXBuildFile; fileRef = B0EEBE1912D947629B245E00 /* PPSSPPUIApplication.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		71D6E5C44F5A490898A274DC /* TouchControlVisibilityScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D6CD187B72F24E70B637797D /* TouchControlVisibilityScreen.cpp */; };
 		72157A30366A42E5AEB9617B /* zip_source_remove.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B6490A03D246DEA8B6895F /* zip_source_remove.c */; };
 		7253CEE397314981A0D1248C /* Versions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 336E2187F18F4FBEB09EE2BC /* Versions.cpp */; };
@@ -670,7 +663,6 @@
 		8D4EE73E884640C28AB32C17 /* ElfFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE91E1469871499B8F96092A /* ElfFile.cpp */; };
 		8D570717C6574B588D12CA04 /* zip_source_open.c in Sources */ = {isa = PBXBuildFile; fileRef = 88725ADBFAD2481FA78E4E5D /* zip_source_open.c */; };
 		8D96ACC8ECE140D6B4D0166A /* InstallZipScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D2D7E141CB1B458AB210F00C /* InstallZipScreen.cpp */; };
-		8DB6C4B6BDDB47B0A242B71D /* CameraHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6FD7AB7D6DD34AE6BF299BCC /* CameraHelper.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		8DBB141C6266435C918DD28F /* VulkanLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A3E6B44F2EA4C1390C35998 /* VulkanLoader.cpp */; };
 		8DCE46BB56E14C1689E9ED34 /* ZIMSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6025A0AC3165465E8BCB9BAD /* ZIMSave.cpp */; };
 		8E1C5B292A734F2895799C65 /* MipsMacros.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EC3DADAE3BF413193693220 /* MipsMacros.cpp */; };
@@ -785,7 +777,6 @@
 		AEE81B3491A442D2B11A20F3 /* MIPSAnalyst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E5DA0789AC14965922C1F8D /* MIPSAnalyst.cpp */; };
 		AF0420258F9645009C9F93E8 /* zstreamtest.c in Sources */ = {isa = PBXBuildFile; fileRef = EE1A94245A3E4A41856EE45D /* zstreamtest.c */; };
 		AF3489E0F6E344B5ADE7A465 /* ColorConv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71BF03D8217A4BCB89D562F4 /* ColorConv.cpp */; };
-		AFB6696D2770434D87D82A75 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1F84BB29BD8B4D6E8C6A96B9 /* AppDelegate.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		B08B334D7CEC41419DE47E47 /* Utf8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59C31065267B4FF0A75D10C5 /* Utf8.cpp */; };
 		B094532E497848BF8AD16672 /* TouchControlLayoutScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6B955D93D02428FB972A3FC /* TouchControlLayoutScreen.cpp */; };
 		B1237B1D1D2F4316B2CCDD89 /* FramebufferManagerGLES.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6835329050434E5E946D62D9 /* FramebufferManagerGLES.cpp */; };
@@ -895,7 +886,6 @@
 		D4E9E03C1B3B434F862CF6FA /* ReportScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E7DAC5371504BE6B13D7553 /* ReportScreen.cpp */; };
 		D5293E9C521444AA95AA19B7 /* zip_source_begin_write.c in Sources */ = {isa = PBXBuildFile; fileRef = ED9A10D7197848F78D4165A4 /* zip_source_begin_write.c */; };
 		D53378DE0FA940A099CCB6C2 /* zip_add.c in Sources */ = {isa = PBXBuildFile; fileRef = B4F453F25B7E4592A44B83CB /* zip_add.c */; };
-		D5722FF0DE214B668916F46D /* iCadeReaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7BF3B34FA9864794BAEEFEE6 /* iCadeReaderView.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		D5F6A06C19EC4BBDA515323C /* SpvPostProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D4EEDADA41F24D318865B7C6 /* SpvPostProcess.cpp */; };
 		D6134BFBF47D441B8404C87D /* zip_progress.c in Sources */ = {isa = PBXBuildFile; fileRef = 784C0CEA3AEF44B4B6F4D1EB /* zip_progress.c */; };
 		D7DC4B535A654B468AB9638F /* minissdpc.c in Sources */ = {isa = PBXBuildFile; fileRef = E1CBE4C11879402EAFC61C55 /* minissdpc.c */; };
@@ -1012,7 +1002,6 @@
 		F81B40011CF44608A7B634FF /* JitCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6947FC6B6840498986221195 /* JitCommon.cpp */; };
 		F842FB44436D4012A2F793F4 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A37A369023E438DB9EFD078 /* Log.cpp */; };
 		F85E65DDAC004694B6F2BDCF /* ShaderWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 602860F24FDE4B5D893988EF /* ShaderWriter.cpp */; };
-		F89997BE3B2B4C06B26B9B89 /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 772FB54BE17B4BA794847971 /* ViewController.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		F8ABFFD2D5234F0E98A42721 /* zip_file_get_offset.c in Sources */ = {isa = PBXBuildFile; fileRef = E6B08A03CE394DE4AFEEB69C /* zip_file_get_offset.c */; };
 		F8AF8B33F36B4C02ADAAEC4E /* draw_text_qt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0AAC2CB96F648EABD85332B /* draw_text_qt.cpp */; };
 		F8B016C32C1E46C18757F70A /* zip_file_add.c in Sources */ = {isa = PBXBuildFile; fileRef = D0332DBF9F1B4BFAA7C5FF44 /* zip_file_add.c */; };
@@ -8949,23 +8938,6 @@
 			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake/ext/glslang\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME -D Experimental\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake/ext/glslang\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME -D Experimental\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake/ext/glslang\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME -D Experimental\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake/ext/glslang\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME -D Experimental\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		FA86B9A195CB4C59BAC8816C /* Generate CMakeFiles/ZERO_CHECK */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ZERO_CHECK";
-			outputPaths = (
-				../cmake/CMakeFiles/ZERO_CHECK,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake\n  make -f ../cmake/CMakeScripts/ReRunCMake.make\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake\n  make -f ../cmake/CMakeScripts/ReRunCMake.make\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake\n  make -f ../cmake/CMakeScripts/ReRunCMake.make\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake\n  make -f ../cmake/CMakeScripts/ReRunCMake.make\nfi\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -9254,17 +9226,7 @@
 				042B25A63C8A48D4954ADDDB /* TestRunner.cpp in Sources */,
 				45EE05585F924BA09D57FF7A /* jpgd.cpp in Sources */,
 				2E42C82DC045469D8220C658 /* jpge.cpp in Sources */,
-				AFB6696D2770434D87D82A75 /* AppDelegate.mm in Sources */,
-				8DB6C4B6BDDB47B0A242B71D /* CameraHelper.mm in Sources */,
-				421B4692A3154C02837C6357 /* DisplayManager.mm in Sources */,
-				6A2C5A5DEDC74487BF48A1CE /* LocationHelper.mm in Sources */,
-				719E38B649614A99BB0C9425 /* PPSSPPUIApplication.mm in Sources */,
-				28809201D8DE46339E0B7374 /* SmartKeyboardMap.cpp in Sources */,
-				31F053F0838B4F59B3FF1789 /* SubtleVolume.mm in Sources */,
-				F89997BE3B2B4C06B26B9B89 /* ViewController.mm in Sources */,
-				D5722FF0DE214B668916F46D /* iCadeReaderView.m in Sources */,
 				1B986330DE424D1DBAC71608 /* iOSCoreAudio.mm in Sources */,
-				55D5E5B90C6F46D98C5B9D9B /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
