@@ -121,7 +121,7 @@ static bool threadStopped = false;
 	 if ([screen respondsToSelector:@selector(nativeScale)]) {
 		 scale = screen.nativeScale;
 	 }
-	 CGSize size = screen.applicationFrame.size;
+	 CGSize size = m_view.frame.size;
 	 if (size.height > size.width) {
 		 float h = size.height;
          if (IS_IPAD())
@@ -131,7 +131,7 @@ static bool threadStopped = false;
 	 }
 	 if (screen == [UIScreen mainScreen]) {
 		 g_dpi = (IS_IPAD() ? 200.0f : 150.0f) * scale;
-	 } else {
+     } else {
 		 float diagonal = sqrt(size.height * size.height + size.width * size.width);
 		 g_dpi = diagonal * scale * 0.1f;
 	 }
@@ -145,7 +145,7 @@ static bool threadStopped = false;
 	 dp_yres = pixel_yres * g_dpi_scale_y;
 	 pixel_in_dps_x = (float)pixel_xres / (float)dp_xres;
 	 pixel_in_dps_y = (float)pixel_yres / (float)dp_yres;
-	 [m_view setContentScaleFactor:self.gsPreference];
+	 [m_view setContentScaleFactor:self.gsPreference * scale];
 	 // PSP native resize
 	 PSP_CoreParameter().pixelWidth = pixel_xres;
 	 PSP_CoreParameter().pixelHeight = pixel_yres;
@@ -205,6 +205,9 @@ static bool threadStopped = false;
 		[gl_view_controller.view addSubview:m_view];
     }
     if (IS_IPAD()) {
+        auto bounds=[[UIScreen mainScreen] bounds];
+        [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.widthAnchor].active=true;
+        [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;
         [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
         [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
         [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
@@ -235,27 +238,21 @@ static bool threadStopped = false;
 	if (self.gsPreference == 0) {
 		// GPUCORE_GLES or GPUCORE_VULKAN
 		PSP_CoreParameter().gpuCore         = GPUCORE_GLES;
-		GLKView *glk_view=(GLKView*)m_view;
-		glk_view.frame = [[UIScreen mainScreen] bounds];
-		glk_view.multipleTouchEnabled = YES;
-		[glk_view setHidden:false];
 		graphicsContext = new OGLGraphicsContext();
+        bindDefaultFBO();
 	}
 	graphicsContext->GetDrawContext()->SetErrorCallback([](const char *shortDesc, const char *details, void *userdata) {
 	   ELOG(@"Error %s\n", details);
 		   host->NotifyUserMessage(details, 5.0, 0xFFFFFFFF, "error_callback");
 	   }, nullptr);
 	graphicsContext->ThreadStart();
-	bindDefaultFBO();
 	dp_xscale = (float)dp_xres / (float)pixel_xres;
 	dp_yscale = (float)dp_yres / (float)pixel_yres;
 	PSP_CoreParameter().graphicsContext = graphicsContext;
 }
 
-
 - (void)runVM {
 	threadEnabled=true;
-	isPaused=false;
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 		NativeInitGraphics(graphicsContext);
 		_isInitialized=true;
@@ -296,8 +293,10 @@ static bool threadStopped = false;
 		graphicsContext = nullptr;
 		PSP_CoreParameter().graphicsContext = nullptr;
 	}
-	host->ShutdownGraphics();
-	LogManager::Shutdown();
+    host->ShutdownGraphics();
+    System_SendMessage("finish", "");
+    net::Shutdown();
+    LogManager::Shutdown();
 	if (deinitViews) {
 		[m_view removeFromSuperview];
 		[m_view_controller dismissViewControllerAnimated:NO completion:nil];

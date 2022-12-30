@@ -42,8 +42,8 @@ import os
 	@objc public override func viewDidLayoutSubviews() {
 		if core != nil {
 			NSLog("View Size Changed\n");
-			core.refreshScreenSize();
-		}
+            core.refreshScreenSize();
+        }
 	}
 
 }

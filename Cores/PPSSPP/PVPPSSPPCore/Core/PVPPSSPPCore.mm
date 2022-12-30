@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 4/6/18.
 //  Copyright © 2021 Provenance. All rights reserved.
 //
-
 #import "PVPPSSPPCore.h"
 #import "PVPPSSPPCore+Controls.h"
 #import "PVPPSSPPCore+Audio.h"
@@ -32,6 +31,7 @@
 
 #import <AudioToolbox/AudioToolbox.h>
 
+#include "Common/Common.h"
 #include "Common/MemoryUtil.h"
 #include "Common/Profiler/Profiler.h"
 #include "Common/CPUDetect.h"
@@ -108,16 +108,14 @@
 			_videoWidth  = 640;
 			_videoHeight = 480;
 		}
+        isPaused = true;
 		sampleRate = 44100;
 		isNTSC = YES;
 		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
 		_callbackQueue = dispatch_queue_create("org.provenance-emu.PPSSPP.CallbackHandlerQueue", queueAttributes);
 		[self parseOptions];
 	}
-	if (_current != nil)
-		self=_current;
-	else
-		_current = self;
+	_current = self;
 	return self;
 }
 
@@ -145,10 +143,8 @@
 	return YES;
 }
 
-
 #pragma mark - Running
 - (void)setupEmulation {
-	g_threadManager.Init(cpu_info.num_cores, cpu_info.logical_cpu_count);
 	int argc = 2;
 	const char* argv[] = { "" ,[_romPath UTF8String], NULL };
 	NSString* saveDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"/saves/"];
@@ -163,6 +159,13 @@
 	g_Config.internalDataDirectory = Path([saveDirectory UTF8String]);
 	g_Config.memStickDirectory = g_Config.internalDataDirectory;
 	g_Config.defaultCurrentDirectory = g_Config.internalDataDirectory;
+	std::string error_string;
+	while (!PSP_InitUpdate(&error_string))
+		sleep_ms(10);
+	if (!PSP_IsInited()){
+		ELOG(@"PSP Init Error %s", error_string.c_str());
+		return;
+	}
 }
 
 /* Config */
@@ -178,6 +181,7 @@
 	g_Config.iTexFiltering = self.tfOption;
 	g_Config.bFastMemory = self.fastMemory;
 	g_Config.iGPUBackend = self.gsPreference;
+	g_Config.bDisplayStretch = self.stretchOption;
 
 	// Internal Options
 	g_Config.bEnableCheats = true;
@@ -189,27 +193,30 @@
 	g_Config.bIgnoreBadMemAccess = true;
 	g_Config.iScreenRotation = ROTATION_LOCKED_HORIZONTAL;
 	g_Config.iInternalScreenRotation = ROTATION_LOCKED_HORIZONTAL;
+	g_Config.bSeparateSASThread = true;
+	g_Config.bPauseOnLostFocus = true;
+	g_Config.bCacheFullIsoInRam = false;
+	g_Config.bPreloadFunctions = true;
 
 	// Core Options
 	PSP_CoreParameter().fileToStart     = Path(std::string([_romPath UTF8String]));
 	PSP_CoreParameter().mountIso.clear();
-	PSP_CoreParameter().startBreak      = false;
+	PSP_CoreParameter().startBreak      = true;
 	PSP_CoreParameter().enableSound     = true;
 	PSP_CoreParameter().printfEmuLog    = true;
-    PSP_CoreParameter().headLess        = true;
+	PSP_CoreParameter().headLess        = false;
 	PSP_CoreParameter().renderWidth  = self.videoWidth * self.resFactor;
 	PSP_CoreParameter().renderHeight = self.videoHeight * self.resFactor;
 	PSP_CoreParameter().renderScaleFactor = self.resFactor;
 	PSP_CoreParameter().pixelWidth   = self.videoWidth * self.resFactor;
 	PSP_CoreParameter().pixelHeight  = self.videoHeight * self.resFactor;
-	PSP_CoreParameter().cpuCore  =   CPUCore::INTERPRETER;
+	PSP_CoreParameter().cpuCore  =     (CPUCore)self.cpuType;
 	if (self.gsPreference == 0)
 		PSP_CoreParameter().gpuCore  =   GPUCORE_GLES;
 	[self refreshScreenSize];
 }
 
 - (void)startVM:(UIView *)view {
-	g_threadManager.Init(cpu_info.num_cores, cpu_info.logical_cpu_count);
 	ELOG(@"Starting VM (Initialization State %d)\n", _isInitialized);
 	[self setupVideo];
 	[self setOptionValues];
@@ -221,32 +228,38 @@
 }
 
 - (void)startEmulation {
+	g_threadManager.Init(cpu_info.num_cores, cpu_info.logical_cpu_count);
 	[self startGame];
 	[super startEmulation];
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
-	self.isPaused=flag;
-	[super setPauseEmulation:flag];
+    // Here we actually pause from 2nd time on
+    ELOG(@"We are right now Paused: %d %d -> %d\n", isPaused, self.isEmulationPaused, flag);
+    [super setPauseEmulation:flag];
+    if (flag == isPaused) return;
+    if (flag != isPaused || flag != self.isEmulationPaused) {
+        Core_EnableStepping(flag, "ui.lost_focus", 0);
+        isPaused=flag;
+	}
 }
 
 - (void)stopEmulation {
-	self->shouldStop = true;
-	[super stopEmulation];
-	NativeSetRestarting();
 	_isInitialized = false;
+	self->shouldStop = true;
 	[self stopGame:true];
+	[super stopEmulation];
+	g_threadManager.Teardown();
+	Memory::MemoryMap_Shutdown(0);
 }
 
 - (void)startGame {
-	Core_UpdateState(CORE_POWERUP);
+	g_threadManager.Init(cpu_info.num_cores, cpu_info.logical_cpu_count);
 	self.skipEmulationLoop = true;
 	[self setupView];
 }
 
 - (void)stopGame:(bool)deinitViews {
-	Core_UpdateState(CORE_POWERDOWN);
-	Audio_Shutdown();
 	[self stopVM:deinitViews];
 }
 
@@ -408,7 +421,7 @@ FOUNDATION_EXTERN void AudioServicesPlaySystemSoundWithVibration(unsigned long, 
 
 BOOL SupportsTaptic()
 {
-    return NO;
+	return NO;
 }
 
 void Vibrate(int mode) {

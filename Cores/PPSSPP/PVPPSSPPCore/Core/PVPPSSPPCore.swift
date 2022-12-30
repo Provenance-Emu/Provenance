@@ -120,13 +120,22 @@ extension PVPPSSPPCore: CoreOptional {
 		let coreOptions: [CoreOption] = [
 			resolutionOption, gsOption, textureAnisotropicOption,
 			textureUpscaleTypeOption, textureUpscaleOption, textureFilterOption,
-			msaaOption, fastMemoryOption, cpuOption]
+			msaaOption, fastMemoryOption, cpuOption,
+            stretchDisplayOption]
 		let coreGroup:CoreOption = .group(.init(title: "PPSSPP! Core",
 												description: "Global options for PPSSPP!"),
 										  subOptions: coreOptions)
 		options.append(contentsOf: [coreGroup])
 		return options
 	}
+
+    static var stretchDisplayOption: CoreOption = {
+        .bool(.init(
+            title: "Stretch Display Size",
+            description: nil,
+            requiresRestart: true),
+        defaultValue: false)
+    }()
 }
 
 @objc public extension PVPPSSPPCore {
@@ -157,6 +166,9 @@ extension PVPPSSPPCore: CoreOptional {
 	@objc var fastMemoryOption: Bool{
 		PVPPSSPPCore.valueForOption(PVPPSSPPCore.fastMemoryOption).asBool
 	}
+    @objc var stretch: Bool{
+        PVPPSSPPCore.valueForOption(PVPPSSPPCore.stretchDisplayOption).asBool
+    }
 	func parseOptions() {
 		self.gsPreference = NSNumber(value: gs).int8Value
 		self.resFactor = NSNumber(value: resolution).int8Value
@@ -167,6 +179,7 @@ extension PVPPSSPPCore: CoreOptional {
 		self.tfOption = NSNumber(value:tf).int8Value
 		self.msaa = NSNumber(value: msaaOption).int8Value
 		self.fastMemory = fastMemoryOption
+        self.stretchOption = stretch
 	}
 }
 
