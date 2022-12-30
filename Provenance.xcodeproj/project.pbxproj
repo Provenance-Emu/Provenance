@@ -318,6 +318,8 @@
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
 		B3475E66293CB6F300725A82 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3475E65293CB6F200725A82 /* PVDesmume2015.framework */; };
 		B3475E67293CB6F300725A82 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3475E65293CB6F200725A82 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B34CFF5D295F2BE90014C8AF /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; };
+		B34CFF5E295F2BE90014C8AF /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B3532B2B21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
@@ -972,6 +974,7 @@
 				B3FAC92E292B450D005E8B11 /* PVGB.framework in Embed Frameworks */,
 				B3FAC94C292B45A1005E8B11 /* PVPokeMini.framework in Embed Frameworks */,
 				B3FAC936292B451F005E8B11 /* PVGME.framework in Embed Frameworks */,
+				B34CFF5E295F2BE90014C8AF /* PVFlycast.framework in Embed Frameworks */,
 				B3FAC944292B4596005E8B11 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B36B853829599AA800FDEA29 /* PVSnesticle.framework in Embed Frameworks */,
 				B3FAC956292B45B7005E8B11 /* PVTGBDual.framework in Embed Frameworks */,
@@ -1878,6 +1881,7 @@
 				B36B853729599AA800FDEA29 /* PVSnesticle.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
 				B3AF701321916C3A000FA7F9 /* PVLibrary.framework in Frameworks */,
+				B34CFF5D295F2BE90014C8AF /* PVFlycast.framework in Frameworks */,
 				B3FAC939292B4588005E8B11 /* PVMednafen.framework in Frameworks */,
 				B37CE66F293F23F70010B746 /* PVfMSX.framework in Frameworks */,
 				1A47C94417BC1BC400C27644 /* AudioToolbox.framework in Frameworks */,

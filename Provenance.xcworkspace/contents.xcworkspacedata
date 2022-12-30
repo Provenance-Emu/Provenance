@@ -112,9 +112,6 @@
             location = "group:Cores/FinalBurnNeo/PVFBNeo.xcodeproj">
          </FileRef>
          <FileRef
-            location = "group:Cores/Flycast/PVFlycast.xcodeproj">
-         </FileRef>
-         <FileRef
             location = "group:Cores/fuse/PVFuse.xcodeproj">
          </FileRef>
          <FileRef
@@ -147,6 +144,9 @@
       </FileRef>
       <FileRef
          location = "group:Cores/FreeIntv/PVFreeIntv.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Flycast/PVFlycast.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Gearcoleco/PVGearcoleco.xcodeproj">

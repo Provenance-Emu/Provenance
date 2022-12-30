@@ -18,7 +18,7 @@
 #include "types.h"
 #include "profiler/profiler.h"
 #include "cfg/cfg.h"
-#include "rend/rend.h"
+//#include "rend/rend.h"
 #include "rend/TexCache.h"
 #include "hw/maple/maple_devs.h"
 #include "hw/maple/maple_if.h"
@@ -38,8 +38,9 @@
 #include <sys/param.h>
 #include <sys/mman.h>
 #include <sys/time.h>
-#include "hw/sh4/dyna/blockmanager.h"
+//#include "hw/sh4/dyna/blockmanager.h"
 #include <unistd.h>
+#import <sys/types.h>
 
 void move_pthread_to_realtime_scheduling_class(pthread_t pthread)
 {
@@ -72,37 +73,37 @@ void MakeCurrentThreadRealTime()
 
 #pragma mark Debugging calls
 
-int msgboxf(const wchar* text,unsigned int type,...)
-{
-    va_list args;
-
-    wchar temp[2048];
-    va_start(args, type);
-    vsprintf(temp, text, args);
-    va_end(args);
-
-        //printf(NULL,temp,VER_SHORTNAME,type | MB_TASKMODAL);
-    NSLog(@"%s", temp);
-    return 0;
-}
-
-int darw_printf(const wchar* text,...) {
-    va_list args;
-
-    wchar temp[2048];
-    va_start(args, text);
-    vsprintf(temp, text, args);
-    va_end(args);
-
-    NSLog(@"%s", temp);
-
-    return 0;
-}
+//int msgboxf(const wchar* text,unsigned int type,...)
+//{
+////    va_list args;
+////
+////    wchar temp[2048];
+////    va_start(args, type);
+////    vsprintf(temp, text, args);
+////    va_end(args);
+////
+////        //printf(NULL,temp,VER_SHORTNAME,type | MB_TASKMODAL);
+////    NSLog(@"%s", temp);
+//    return 0;
+//}
+//
+//int darw_printf(const wchar* text,...) {
+////    va_list args;
+////
+////    wchar temp[2048];
+////    va_start(args, text);
+////    vsprintf(temp, text, args);
+////    va_end(args);
+////
+////    NSLog(@"%s", temp);
+//
+//    return 0;
+//}
 
 #pragma mark C Lifecycle calls
 void os_DoEvents() {
     GET_CURRENT_OR_RETURN();
-    [current videoInterrupt];
+//    [current videoInterrupt];
         ////
         ////    is_dupe = false;
         //    [current updateControllers];
@@ -127,7 +128,7 @@ void os_CreateWindow() {
 }
 
 void os_SetupInput() {
-    mcfg_CreateDevicesFromConfig();
+//    mcfg_CreateDevicesFromConfig();
 }
 
 void UpdateInputState(u32 port) {
@@ -163,3 +164,4 @@ void gl_swap() {
     GET_CURRENT_OR_RETURN();
     [current swapBuffers];
 }
+
