@@ -2644,7 +2644,7 @@
 		541289AF354049EEBB2BB784 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = ext/glslang/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		54186A28284D452BBBBA7DB3 /* Screenshot.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Screenshot.cpp; path = Core/Screenshot.cpp; sourceTree = SOURCE_ROOT; };
 		544A624D42D44937A7918372 /* zip_file_replace.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zip_file_replace.c; path = ext/libzip/zip_file_replace.c; sourceTree = SOURCE_ROOT; };
-		54506A196D8B4F04A0EC9031 /* libzstd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzstd.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		54506A196D8B4F04A0EC9031 /* libzstd-ppsspp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libzstd-ppsspp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		54860A7674434CFFBC5149F1 /* debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = ext/zstd/lib/common/debug.c; sourceTree = SOURCE_ROOT; };
 		549CCF71DFC64C128EC7067D /* MemMapHelpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MemMapHelpers.h; path = Core/MemMapHelpers.h; sourceTree = SOURCE_ROOT; };
 		54B1835E3414430BB0CD9C06 /* syn.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = syn.c; path = ext/udis86/syn.c; sourceTree = SOURCE_ROOT; };
@@ -2942,7 +2942,7 @@
 		7BDC82B3AF774F8EAA1325DF /* spirv_hlsl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_hlsl.cpp; path = "ext/SPIRV-Cross/spirv_hlsl.cpp"; sourceTree = SOURCE_ROOT; };
 		7BF3B34FA9864794BAEEFEE6 /* iCadeReaderView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = iCadeReaderView.m; path = ios/iCade/iCadeReaderView.m; sourceTree = SOURCE_ROOT; };
 		7C1C260CF56545E8BCFAA3DA /* Playback.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Playback.h; path = GPU/Debugger/Playback.h; sourceTree = SOURCE_ROOT; };
-		7C48EBC4BFDA4F3883EEF7C6 /* libglslang.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libglslang.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C48EBC4BFDA4F3883EEF7C6 /* libglslang-ppsspp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libglslang-ppsspp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C4DA1D0DC9D452B8719C0B4 /* PpTokens.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = PpTokens.h; path = ext/glslang/glslang/MachineIndependent/preprocessor/PpTokens.h; sourceTree = SOURCE_ROOT; };
 		7C6F3C4023A14509ADD32AF3 /* PSPNpSigninDialog.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PSPNpSigninDialog.cpp; path = Core/Dialog/PSPNpSigninDialog.cpp; sourceTree = SOURCE_ROOT; };
 		7C8D8366535A425CADAFD8F6 /* th_TH.ini */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = th_TH.ini; path = assets/lang/th_TH.ini; sourceTree = SOURCE_ROOT; };
@@ -2965,7 +2965,7 @@
 		7EE7FAF4573C4D4B8E972C5B /* sceCcc.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = sceCcc.cpp; path = Core/HLE/sceCcc.cpp; sourceTree = SOURCE_ROOT; };
 		7EEE60DFB7844E558CDCBDE4 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/CMakeFiles/kirk.dir/Info.plist; sourceTree = "<absolute>"; };
 		7F150917C4BD4B34ABB2083B /* GameInfoCache.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GameInfoCache.cpp; path = UI/GameInfoCache.cpp; sourceTree = SOURCE_ROOT; };
-		7F1CC63266D0481482B0E4ED /* libxxhash.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libxxhash.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F1CC63266D0481482B0E4ED /* libxxhash-ppsspp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libxxhash-ppsspp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F1F0CBD4E514603B8D44BD9 /* PathBrowser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PathBrowser.cpp; path = Common/File/PathBrowser.cpp; sourceTree = SOURCE_ROOT; };
 		7F2D544B28E940E1A0A2C42F /* libspirv-cross-msl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-msl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F30194DBB1D423CAEFD51E5 /* GLFeatures.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GLFeatures.cpp; path = Common/GPU/OpenGL/GLFeatures.cpp; sourceTree = SOURCE_ROOT; };
@@ -4967,11 +4967,11 @@
 				7598DA0B1E0C469E829D5D4F /* fullbench */,
 				F9B5B0AD3F084850ACBC39DC /* fuzzer */,
 				E1DA9ED10C084B08A24EB8BA /* libgason.a */,
-				7C48EBC4BFDA4F3883EEF7C6 /* libglslang.a */,
+				7C48EBC4BFDA4F3883EEF7C6 /* libglslang-ppsspp.a */,
 				9F1F8B9394844750B3F17B5F /* libkirk.a */,
 				14DEB9641B6340CB9551BFF1 /* liblibzip.a */,
 				45B4FC988FBD4DFCBE53B344 /* libzstd.dylib */,
-				54506A196D8B4F04A0EC9031 /* libzstd.a */,
+				54506A196D8B4F04A0EC9031 /* libzstd-ppsspp.a */,
 				5DF2483F6C5A4AA689C2B020 /* libminiupnpc.a */,
 				30328EFDE20D42FDAB0B458D /* libnative.a */,
 				902AD8F638454768B4A065C0 /* paramgrill */,
@@ -4987,7 +4987,7 @@
 				ED84071CBEC641EE968F5009 /* libudis86.a */,
 				60D28F1C6420409EA7ECE720 /* libvma.a */,
 				A7F176D4C63446FAAAC28A8D /* libxbrz.a */,
-				7F1CC63266D0481482B0E4ED /* libxxhash.a */,
+				7F1CC63266D0481482B0E4ED /* libxxhash-ppsspp.a */,
 				CA15E3294A4744639B38732C /* zstreamtest */,
 			);
 			name = Products;
@@ -8108,7 +8108,7 @@
 			);
 			name = libzstd_static;
 			productName = libzstd_static;
-			productReference = 54506A196D8B4F04A0EC9031 /* libzstd.a */;
+			productReference = 54506A196D8B4F04A0EC9031 /* libzstd-ppsspp.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		3F3E0595B7064E42BA4A800C /* libzip */ = {
@@ -8215,7 +8215,7 @@
 			);
 			name = glslang;
 			productName = glslang;
-			productReference = 7C48EBC4BFDA4F3883EEF7C6 /* libglslang.a */;
+			productReference = 7C48EBC4BFDA4F3883EEF7C6 /* libglslang-ppsspp.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		6E8C1D94EBAD4417AECF217D /* vma */ = {
@@ -8249,7 +8249,7 @@
 			);
 			name = xxhash;
 			productName = xxhash;
-			productReference = 7F1CC63266D0481482B0E4ED /* libxxhash.a */;
+			productReference = 7F1CC63266D0481482B0E4ED /* libxxhash-ppsspp.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		7630E4A548634CCEAB05ED4C /* spirv-cross-cpp */ = {
@@ -10944,7 +10944,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = "zstd-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -11108,7 +11108,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = "xxhash-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -11391,7 +11391,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = "zstd-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -13027,7 +13027,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = "zstd-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -13318,7 +13318,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = "xxhash-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -15497,7 +15497,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = "glslang-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -15723,7 +15723,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = "xxhash-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -15813,7 +15813,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = "zstd-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -19228,7 +19228,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = "glslang-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -21043,7 +21043,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = "glslang-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -21804,7 +21804,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = "xxhash-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -22307,7 +22307,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = "glslang-ppsspp";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";

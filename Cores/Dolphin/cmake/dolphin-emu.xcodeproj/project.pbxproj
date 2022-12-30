@@ -9151,7 +9151,7 @@
 		9CAD7C952CDD4CECA8DEADCE /* State.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = State.h; path = Source/Core/Core/State.h; sourceTree = SOURCE_ROOT; };
 		9CB17795E1F4437F9E4EEE1D /* Tilt.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Tilt.cpp; path = Source/Core/InputCommon/ControllerEmu/ControlGroup/Tilt.cpp; sourceTree = SOURCE_ROOT; };
 		9CC42DEC7CA542EA9BD9AA01 /* DolphinDevice.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DolphinDevice.cpp; path = Source/Core/Core/IOS/DolphinDevice.cpp; sourceTree = SOURCE_ROOT; };
-		9D0FF7F1A8024CEFAE0F4C86 /* libxxhash.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libxxhash.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D0FF7F1A8024CEFAE0F4C86 /* libxxhash-dolphin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libxxhash-dolphin.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D18C2FEB35F43608E9C7362 /* Intermediate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Intermediate.cpp; path = Externals/glslang/glslang/MachineIndependent/Intermediate.cpp; sourceTree = SOURCE_ROOT; };
 		9D5E9261C4074079958F4BCB /* md5.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = md5.c; path = Externals/curl/lib/md5.c; sourceTree = SOURCE_ROOT; };
 		9D66BD3104954DC9A390895D /* lzma_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lzma_decoder.c; path = Externals/liblzma/lzma/lzma_decoder.c; sourceTree = SOURCE_ROOT; };
@@ -9452,7 +9452,7 @@
 		C58086ABFB7D41D7B9038D30 /* zstd_errors.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_errors.h; path = Externals/zstd/lib/common/zstd_errors.h; sourceTree = SOURCE_ROOT; };
 		C5AE84A8E8F9400BA8419ADB /* CPMemory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CPMemory.h; path = Source/Core/VideoCommon/CPMemory.h; sourceTree = SOURCE_ROOT; };
 		C5C7522E196B4F1A836D3B2B /* Views.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Views.cpp; path = Source/Core/Core/IOS/ES/Views.cpp; sourceTree = SOURCE_ROOT; };
-		C5F5CEF8B1E74286A3CDB0F5 /* liblzma.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblzma.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C5F5CEF8B1E74286A3CDB0F5 /* liblzma-dolphin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "liblzma-dolphin.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5FA148C44094A40B7D62A7B /* sc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sc.c; path = Externals/ed25519/sc.c; sourceTree = SOURCE_ROOT; };
 		C601BA77A5C746E598EE4847 /* VertexLoader_TextCoord.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = VertexLoader_TextCoord.cpp; path = Source/Core/VideoCommon/VertexLoader_TextCoord.cpp; sourceTree = SOURCE_ROOT; };
 		C6170032B552426EADA7FF31 /* tuklib_mbstr.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tuklib_mbstr.h; path = Externals/liblzma/tuklib/tuklib_mbstr.h; sourceTree = SOURCE_ROOT; };
@@ -9584,7 +9584,7 @@
 		D739F34AC4CB413BA1E50315 /* RenderState.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = RenderState.h; path = Source/Core/VideoCommon/RenderState.h; sourceTree = SOURCE_ROOT; };
 		D754BC824C3B4391AFB92F51 /* NullRender.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NullRender.h; path = Source/Core/VideoBackends/Null/NullRender.h; sourceTree = SOURCE_ROOT; };
 		D758E6D4499244EEB8250030 /* Scan.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Scan.cpp; path = Externals/glslang/glslang/MachineIndependent/Scan.cpp; sourceTree = SOURCE_ROOT; };
-		D76AB5BBBFBE4D7A8840EEC0 /* libpng.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libpng.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D76AB5BBBFBE4D7A8840EEC0 /* libpng-dolphin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libpng-dolphin.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D78439FE59DD4B5A8BE22DC1 /* USB_KBD.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = USB_KBD.cpp; path = Source/Core/Core/IOS/USB/USB_KBD.cpp; sourceTree = SOURCE_ROOT; };
 		D7887893BE154BF896E4668B /* alone_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = alone_decoder.c; path = Externals/liblzma/common/alone_decoder.c; sourceTree = SOURCE_ROOT; };
 		D7D87CBB2931456F8676B707 /* check.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = check.h; path = Externals/liblzma/check/check.h; sourceTree = SOURCE_ROOT; };
@@ -9675,7 +9675,7 @@
 		E3BD6C89342E4C90AB21F8E4 /* TaTaCon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TaTaCon.h; path = Source/Core/Core/HW/WiimoteEmu/Extension/TaTaCon.h; sourceTree = SOURCE_ROOT; };
 		E3CA9D6631FE430E8C542B72 /* ConvertSingleDouble.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ConvertSingleDouble.cpp; path = Source/UnitTests/Core/PowerPC/JitArm64/ConvertSingleDouble.cpp; sourceTree = SOURCE_ROOT; };
 		E4091FDD35254931833DFC3A /* win32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = win32.c; path = Externals/enet/win32.c; sourceTree = SOURCE_ROOT; };
-		E40AF06B711646088153CFB4 /* libzstd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzstd.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E40AF06B711646088153CFB4 /* libzstd-dolphin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libzstd-dolphin.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E41329AD2D14463398EEDA0E /* JitArm64_Integer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = JitArm64_Integer.cpp; path = Source/Core/Core/PowerPC/JitArm64/JitArm64_Integer.cpp; sourceTree = SOURCE_ROOT; };
 		E4379D3965AB4D65832FE3CE /* DSPSymbols.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DSPSymbols.cpp; path = Source/Core/Core/HW/DSPLLE/DSPSymbols.cpp; sourceTree = SOURCE_ROOT; };
 		E449D1CC998F479899984D08 /* BitFieldTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = BitFieldTest; path = BitFieldTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -9809,7 +9809,7 @@
 		F749CCF467C845FD87570917 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = Source/UnitTests/Common/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		F775241430F54F19A2DA64FC /* PostProcessing.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PostProcessing.cpp; path = Source/Core/VideoCommon/PostProcessing.cpp; sourceTree = SOURCE_ROOT; };
 		F77BDDD36A934603B0CC13FA /* Tilt.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Tilt.h; path = Source/Core/InputCommon/ControllerEmu/ControlGroup/Tilt.h; sourceTree = SOURCE_ROOT; };
-		F77FAE0C5F644A1EA39FB1B5 /* libglslang.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libglslang.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F77FAE0C5F644A1EA39FB1B5 /* libglslang-dolphin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libglslang-dolphin.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F78CA6D1E830444F80F4C1CE /* netrc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = netrc.c; path = Externals/curl/lib/netrc.c; sourceTree = SOURCE_ROOT; };
 		F790405AA1EA4339BD0CFC06 /* PPCTables.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PPCTables.cpp; path = Source/Core/Core/PowerPC/PPCTables.cpp; sourceTree = SOURCE_ROOT; };
 		F7966ED9A12F4881858D2B1D /* crc32_table.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = crc32_table.c; path = Externals/liblzma/check/crc32_table.c; sourceTree = SOURCE_ROOT; };
@@ -11961,20 +11961,20 @@
 				60148ABB2AC84726AB6F6057 /* libed25519.a */,
 				7D7B0C0AF46B475987D8F64B /* libenet.a */,
 				5C7F8AB6547A434E9F507C85 /* libfmtd.a */,
-				F77FAE0C5F644A1EA39FB1B5 /* libglslang.a */,
+				F77FAE0C5F644A1EA39FB1B5 /* libglslang-dolphin.a */,
 				F048386A2EC14FD7B66CF4F7 /* libgtestd.a */,
 				8D914D761583404D958B0FB4 /* libgtest_maind.a */,
 				86EE3D8613FC4CAD83D4A941 /* libiconv.a */,
 				69D4BC48429A4BF596D6D6F2 /* libimgui.a */,
 				EA597B0199244FFFBB593558 /* libinputcommon.a */,
-				C5F5CEF8B1E74286A3CDB0F5 /* liblzma.a */,
+				C5F5CEF8B1E74286A3CDB0F5 /* liblzma-dolphin.a */,
 				4E16BF7839604CD28D860CA0 /* liblzo2.a */,
 				A753FAF343514E72A57C8CAE /* libmain.a */,
 				5BE6CD372F734166BD73FD08 /* libmbedcrypto.a */,
 				4448DCDFD7F24E5E9EDD8C80 /* libmbedtls.a */,
 				2FE754E401494068B9E5141B /* libmbedx509.a */,
 				BF10C35576674D80B38E6E8B /* libminizip.a */,
-				D76AB5BBBFBE4D7A8840EEC0 /* libpng.a */,
+				D76AB5BBBFBE4D7A8840EEC0 /* libpng-dolphin.a */,
 				6A0600FDF41E4DF7A107FEB5 /* libpugixml.a */,
 				3821A0E007B94E4A89461F7C /* libsfml-network.a */,
 				75D69E11DC84452491D86064 /* libsfml-system.a */,
@@ -11985,8 +11985,8 @@
 				3799155848014E629EC0AE98 /* libvideoogl.a */,
 				CE6C8AEC36B94254A93DA885 /* libvideosoftware.a */,
 				A7C22FB154D84F80BC8C3DBA /* libvideovulkan.a */,
-				9D0FF7F1A8024CEFAE0F4C86 /* libxxhash.a */,
-				E40AF06B711646088153CFB4 /* libzstd.a */,
+				9D0FF7F1A8024CEFAE0F4C86 /* libxxhash-dolphin.a */,
+				E40AF06B711646088153CFB4 /* libzstd-dolphin.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -13942,7 +13942,7 @@
 			);
 			name = xxhash;
 			productName = xxhash;
-			productReference = 9D0FF7F1A8024CEFAE0F4C86 /* libxxhash.a */;
+			productReference = 9D0FF7F1A8024CEFAE0F4C86 /* libxxhash-dolphin.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		0FA5CC57AF0241ABB656898E /* EnumFormatterTest */ = {
@@ -14004,7 +14004,7 @@
 			);
 			name = png;
 			productName = png;
-			productReference = D76AB5BBBFBE4D7A8840EEC0 /* libpng.a */;
+			productReference = D76AB5BBBFBE4D7A8840EEC0 /* libpng-dolphin.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		13CAEFFAB77941B88165274F /* inputcommon */ = {
@@ -14435,7 +14435,7 @@
 			);
 			name = zstd;
 			productName = zstd;
-			productReference = E40AF06B711646088153CFB4 /* libzstd.a */;
+			productReference = E40AF06B711646088153CFB4 /* libzstd-dolphin.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		509C6D23665E494BB33F47C5 /* PowerPCTest */ = {
@@ -14842,7 +14842,7 @@
 			);
 			name = lzma;
 			productName = lzma;
-			productReference = C5F5CEF8B1E74286A3CDB0F5 /* liblzma.a */;
+			productReference = C5F5CEF8B1E74286A3CDB0F5 /* liblzma-dolphin.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		836B2739FBBA47768EBAF7A1 /* uicommon */ = {
@@ -14932,7 +14932,7 @@
 			);
 			name = glslang;
 			productName = glslang;
-			productReference = F77FAE0C5F644A1EA39FB1B5 /* libglslang.a */;
+			productReference = F77FAE0C5F644A1EA39FB1B5 /* libglslang-dolphin.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		91B2192A5C894AA39B800CD1 /* sfml-system */ = {
@@ -22593,7 +22593,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = "glslang-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -26274,7 +26274,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = "xxhash-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -26337,7 +26337,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = "glslang-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -26554,7 +26554,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = lzma;
+				PRODUCT_NAME = "lzma-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -26907,7 +26907,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = "zstd-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -28839,7 +28839,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -29948,7 +29948,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = "zstd-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -30613,7 +30613,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -32258,7 +32258,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = lzma;
+				PRODUCT_NAME = "lzma-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -33134,7 +33134,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = "zstd-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -34383,7 +34383,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = "xxhash-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -36154,7 +36154,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -38344,7 +38344,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = "xxhash-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -38758,7 +38758,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = "zstd-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -39106,7 +39106,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = "xxhash-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -40839,7 +40839,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = lzma;
+				PRODUCT_NAME = "lzma-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -43521,7 +43521,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = png;
+				PRODUCT_NAME = "png-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -44416,7 +44416,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = "glslang-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -45156,7 +45156,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = "glslang-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -48194,7 +48194,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = lzma;
+				PRODUCT_NAME = "lzma-dolphin";
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
