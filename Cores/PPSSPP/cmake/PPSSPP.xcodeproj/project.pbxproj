@@ -8901,7 +8901,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\n";
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake\n  cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake\n  cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake\n  cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake\n  cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		AD0580B01C18899927F4CC60 /* Generate CMakeFiles/ALL_BUILD */ = {
