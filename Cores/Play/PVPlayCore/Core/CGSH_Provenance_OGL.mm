@@ -75,8 +75,18 @@ void CGSH_Provenance_OGL::CreateFramebuffer()
 	m_presentFramebuffer = m_defaultFramebuffer;
 }
 
+
+void MakeCurrentThreadRealTime();
+
 void CGSH_Provenance_OGL::PresentBackbuffer()
 {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        MakeCurrentThreadRealTime();
+        [[NSThread currentThread] setName:@"Play.GLES"];
+        [[NSThread currentThread] setQualityOfService:NSQualityOfServiceUserInteractive];
+    });
+    
 	glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
 	[m_context presentRenderbuffer:GL_RENDERBUFFER];
 }

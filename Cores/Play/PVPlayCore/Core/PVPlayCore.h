@@ -18,7 +18,7 @@
 
 @interface PVPlayCore : PVEmulatorCore <PVPS2SystemResponderClient>
 {
-	uint8_t padData[4][PVDreamcastButtonCount];
+	uint8_t padData[4][PVPS2ButtonCount];
 	int8_t xAxis[4];
 	int8_t yAxis[4];
     int videoDepthBitDepth; // eh
@@ -33,6 +33,7 @@
 	BOOL isNTSC;
 @public
     dispatch_queue_t _callbackQueue;
+    dispatch_queue_t _audioQueue;
 }
 
 @property (nonatomic, assign) int videoWidth;

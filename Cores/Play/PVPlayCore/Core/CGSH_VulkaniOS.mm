@@ -37,6 +37,13 @@ void CGSH_VulkaniOS::InitializeImpl()
 	}
 }
 
+void MakeCurrentThreadRealTime();
 void CGSH_VulkaniOS::PresentBackbuffer()
 {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        MakeCurrentThreadRealTime();
+        [[NSThread currentThread] setName:@"Play.Vulkan"];
+        [[NSThread currentThread] setQualityOfService:NSQualityOfServiceUserInteractive];
+    });
 }
