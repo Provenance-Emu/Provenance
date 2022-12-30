@@ -597,8 +597,6 @@
 		B3AE1F762073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; };
 		B3AEDE1C293F2FF10050BDB6 /* PVPlay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; platformFilters = (ios, tvos, ); };
 		B3AEDE1D293F2FF10050BDB6 /* PVPlay.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3AEDE20293F34250050BDB6 /* PVReicast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; platformFilters = (ios, tvos, ); };
-		B3AEDE21293F34260050BDB6 /* PVReicast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B316B4D12192652000693472 /* PVReicast.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AEDE22293F34370050BDB6 /* PVCrabEmu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305F103276B6BBD003AE510 /* PVCrabEmu.framework */; platformFilters = (ios, tvos, ); };
 		B3AEDE23293F34380050BDB6 /* PVCrabEmu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F103276B6BBD003AE510 /* PVCrabEmu.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3AEDE25293F34740050BDB6 /* PVProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE24293F34740050BDB6 /* PVProSystem.framework */; };
@@ -707,6 +705,8 @@
 		B3F94A4C27093794002A71EF /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B3F94A4E27093ABC002A71EF /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */; };
 		B3F94A5027093ABC002A71EF /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4F27093ABC002A71EF /* AppCenterCrashes */; };
+		B3F9F3B0295F511200DF8B8A /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; };
+		B3F9F3B1295F511200DF8B8A /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC921292B44F3005E8B11 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B3FAC922292B44F4005E8B11 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC927292B4501005E8B11 /* PVEP128Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D72878384A00585AD8 /* PVEP128Emu.framework */; };
@@ -931,6 +931,7 @@
 				B3FAC985292B475E005E8B11 /* PVAtari800.framework in Embed Frameworks */,
 				B3FAC99B292B476E005E8B11 /* PVLibRetro.framework in Embed Frameworks */,
 				B3FAC9AD292B477E005E8B11 /* PVOpera.framework in Embed Frameworks */,
+				B3F9F3B1295F511200DF8B8A /* PVFlycast.framework in Embed Frameworks */,
 				B3FAC9AB292B477D005E8B11 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3FAC9A5292B4778005E8B11 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3FAC999292B476C005E8B11 /* PVGME.framework in Embed Frameworks */,
@@ -982,7 +983,6 @@
 				B36B852E29599A3700FDEA29 /* PVMelonDS.framework in Embed Frameworks */,
 				B36B853629599A9700FDEA29 /* PVOpera.framework in Embed Frameworks */,
 				B37CE7C2293F287D0010B746 /* PVFreeIntv.framework in Embed Frameworks */,
-				B3AEDE21293F34260050BDB6 /* PVReicast.framework in Embed Frameworks */,
 				B37CE7C9293F29AD0010B746 /* PVFreeDO.framework in Embed Frameworks */,
 				B3FAC95A292B45C1005E8B11 /* PVVirtualJaguar.framework in Embed Frameworks */,
 				B3FAC954292B45AC005E8B11 /* PVStella.framework in Embed Frameworks */,
@@ -1839,7 +1839,6 @@
 				93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */,
 				93C792292954E947001212D2 /* MoltenVK.xcframework in Frameworks */,
 				B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */,
-				B3AEDE20293F34250050BDB6 /* PVReicast.framework in Frameworks */,
 				B3FAC92D292B450C005E8B11 /* PVGB.framework in Frameworks */,
 				B3FAC927292B4501005E8B11 /* PVEP128Emu.framework in Frameworks */,
 				B3271BDD276B8B660031AECC /* CoreTelephony.framework in Frameworks */,
@@ -1943,6 +1942,7 @@
 				B3AF701C21916E38000FA7F9 /* PVSupport.framework in Frameworks */,
 				B3F94A5027093ABC002A71EF /* AppCenterCrashes in Frameworks */,
 				B3F94A4E27093ABC002A71EF /* AppCenterAnalytics in Frameworks */,
+				B3F9F3B0295F511200DF8B8A /* PVFlycast.framework in Frameworks */,
 				B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */,
 				B3FAC992292B4767005E8B11 /* PVGBA.framework in Frameworks */,
 				B3AEDE2B293F34CA0050BDB6 /* PVPicoDrive.framework in Frameworks */,
