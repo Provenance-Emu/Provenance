@@ -494,7 +494,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 }
 
 - (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index {
-	if (ringBuffers[index] == nil) {
+	if (UNLIKELY(ringBuffers[index] == nil)) {
         ringBuffers[index] = [[OERingBuffer alloc] initWithLength:(uint32_t)[self audioBufferSizeForBuffer:index] * 16];
 	}
 	
