@@ -1,8 +1,8 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-MARKETING_VERSION = 2.2.0
-CURRENT_PROJECT_VERSION = 2801
+MARKETING_VERSION = 2.2.1
+CURRENT_PROJECT_VERSION = 2803
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1
 
