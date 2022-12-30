@@ -12,7 +12,6 @@ export FFMPEG_DIR=../cmake/ffmpeg/ios/universal/
 export LIBZIP_DIR=../ppsspp/ext/native/ext/libzip
 cmake \
     -DLIBRETRO=ON \
-    -DHEADLESS=ON \
     -DCMAKE_TOOLCHAIN_FILE=../ppsspp/cmake/Toolchains/ios.cmake \
     -DIOS_PLATFORM=OS \
     -DCMAKE_IOS_SDK_ROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk \

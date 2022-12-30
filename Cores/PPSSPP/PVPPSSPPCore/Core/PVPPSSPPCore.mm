@@ -422,3 +422,9 @@ void Vibrate(int mode) {
 }
 @implementation CLLocationManager
 @end
+std::vector<std::string> __cameraGetDeviceList() {
+}
+void OpenDirectory(const char *path) {
+}
+void LaunchBrowser(char const* url) {
+}
