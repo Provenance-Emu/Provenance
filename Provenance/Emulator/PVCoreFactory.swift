@@ -210,14 +210,14 @@ public final class PVCoreFactory: NSObject {
 	    if let core = core as? PVGameCubeSystemResponderClient {
 				return PVGameCubeControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
     	   } else {
-				fatalError("Core doesn't implement PVN64SystemResponderClient")
-	   }
- 	case .Wii:
+               fatalError("Core doesn't implement PVN64SystemResponderClient")
+           }
+        case .Wii:
             if let core = core as? PVWiiSystemResponderClient {
-                                return PVWiiControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
-           } else {
-                                fatalError("Core doesn't implement PVWiiSystemResponderClient")
-           } 
+                return PVWiiControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else {
+                fatalError("Core doesn't implement PVWiiSystemResponderClient")
+            }
         case ._3DO:
             if let core = core as? PV3DOSystemResponderClient {
                 return PV3DOControllerViewController(controlLayout: controllerLayout, system: system, responder: core)

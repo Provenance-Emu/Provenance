@@ -257,12 +257,12 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 				label.numberOfLines = 0
                 #if !os(tvOS)
                 let size = UIFont.labelFontSize * 2
+                label.textColor = UIColor.darkText
                 #else
                 let size: CGFloat = 28
                 #endif
 				label.font = UIFont.italicSystemFont(ofSize: size)
 				label.text = "Drag buttons to Move.\nTap 2 fingers 4 times to close."
-				label.textColor = UIColor.darkText
 				moveLabel = label
 
 					// Build the view heirachry
