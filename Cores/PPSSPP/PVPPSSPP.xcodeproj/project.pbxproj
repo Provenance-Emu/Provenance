@@ -21,7 +21,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		93928447295DFFA900F2AD12 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93928433295DFFA900F2AD12 /* CoreMedia.framework */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
+		93AEC060295E7FEB00F9381C /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AEC04C295E7FEB00F9381C /* GLKit.framework */; platformFilters = (ios, macos, tvos, ); };
 		93E74163295B344F0028EB94 /* libarmips.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740EE295B2FD20028EB94 /* libarmips.a */; platformFilters = (ios, maccatalyst, ); };
 		93E74164295B344F0028EB94 /* libcityhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740F0295B2FD20028EB94 /* libcityhash.a */; platformFilters = (ios, maccatalyst, ); };
 		93E74165295B344F0028EB94 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740DC295B2FD20028EB94 /* libCommon.a */; platformFilters = (ios, maccatalyst, ); };
@@ -94,6 +96,7 @@
 		93E74210295B67C70028EB94 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 93E741A0295B3E1E0028EB94 /* assets */; };
 		93E74243295B70280028EB94 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		93E7427B295C53890028EB94 /* OGLGraphicsContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 93E7427A295C53890028EB94 /* OGLGraphicsContext.h */; };
+		93F28DC3295E264700E4D464 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC2295E264600E4D464 /* MediaPlayer.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -367,203 +370,203 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = ECC5BCCC904342A49FD0B089;
+			remoteGlobalIDString = B3C96563044A43E5BFD3B734;
 			remoteInfo = Common;
 		};
 		93E7412B295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 18CBB3236238456E8B9D0956;
+			remoteGlobalIDString = D3112008053644F0A970B0DE;
 			remoteInfo = Core;
 		};
 		93E7412D295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 2FDE17D19DDC4497B3682CCB;
+			remoteGlobalIDString = 8AFE7149B25F464CAB2377F2;
 			remoteInfo = GenericCodeGen;
 		};
 		93E7412F295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6E9C1D40A218440A872225E4;
+			remoteGlobalIDString = 98A317B95C6643E88068A132;
 			remoteInfo = HLSL;
 		};
 		93E74131295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = D9D634B8A407451F9A1243A5;
+			remoteGlobalIDString = 549C873559D34DCFAFBDA43B;
 			remoteInfo = MachineIndependent;
 		};
 		93E74133295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A541943DC8BC469B9B244A45;
+			remoteGlobalIDString = E08166C30C8B4BD4A4277C83;
 			remoteInfo = OGLCompiler;
 		};
 		93E74135295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8FF46E7FE8CB4B3F95562ADF;
+			remoteGlobalIDString = 832420D4CCAD4C60BA53FDC4;
 			remoteInfo = OSDependent;
 		};
 		93E74137295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = DC53C890CC00483B9C987E30;
+			remoteGlobalIDString = 9398923F8A5F4E32837CF859;
 			remoteInfo = SPIRV;
 		};
 		93E74139295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 76F559DF3FA74B2BA80A5346;
+			remoteGlobalIDString = 2DB7197F72E043BA9418CD83;
 			remoteInfo = armips;
 		};
 		93E7413B295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 82E34134E50A4E3C88B44F30;
+			remoteGlobalIDString = 0DD906CBC8FF45BCB08FF54B;
 			remoteInfo = cityhash;
 		};
 		93E7413D295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = B52C23BD0C2C4EB89A7285C8;
+			remoteGlobalIDString = C6E8AFE049CF43ABBA3A58EE;
 			remoteInfo = gason;
 		};
 		93E7413F295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A18907327E334696BCF8D544;
+			remoteGlobalIDString = 611604303C3749B0AC027685;
 			remoteInfo = glslang;
 		};
 		93E74141295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 240BFE9AF7664D178ED161A9;
+			remoteGlobalIDString = 433081A91D0E469CA1A19BA8;
 			remoteInfo = kirk;
 		};
 		93E74143295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 70F94C24B37644B09DAB697F;
+			remoteGlobalIDString = 3F3E0595B7064E42BA4A800C;
 			remoteInfo = libzip;
 		};
 		93E74145295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 78E09D2D978D43FC9F9D2150;
+			remoteGlobalIDString = 3C8DE66F88734C78B99EB866;
 			remoteInfo = libzstd_static;
 		};
 		93E74147295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 56CF969B0D19421ABEDEBA6F;
+			remoteGlobalIDString = 19B25B0D9B2E4E62A5362130;
 			remoteInfo = miniupnpc;
 		};
 		93E74149295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 9B7DDDD791B9450DAE4E2803;
+			remoteGlobalIDString = 89A516AD70444ACDA04E69FC;
 			remoteInfo = native;
 		};
 		93E7414B295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A0137B27D1354A59B0C31301;
+			remoteGlobalIDString = 07DE9557E3BD4B6FA53002DE;
 			remoteInfo = png17;
 		};
 		93E7414D295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C81594BDF44B49E0BF4BE7B8;
+			remoteGlobalIDString = 5D6D1C1C121E4084BFC8E8B2;
 			remoteInfo = sfmt19937;
 		};
 		93E7414F295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E1F4B8D94E30492C86043A17;
+			remoteGlobalIDString = 21B8A05A270D454B86750CCC;
 			remoteInfo = snappy;
 		};
 		93E74151295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5361C4CBABA543EBB337106A;
+			remoteGlobalIDString = 271CF7DF5B3B402B873047D9;
 			remoteInfo = "spirv-cross-core";
 		};
 		93E74153295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A6DFF07426D748B48F5E4C80;
+			remoteGlobalIDString = 7630E4A548634CCEAB05ED4C;
 			remoteInfo = "spirv-cross-cpp";
 		};
 		93E74155295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 58B78B107F37401190008B4F;
+			remoteGlobalIDString = C2D9AC6A949E46078ED42D9C;
 			remoteInfo = "spirv-cross-glsl";
 		};
 		93E74157295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C524A419E7C34E36ADF9059A;
+			remoteGlobalIDString = BDDE12001F104E6487AE4EBA;
 			remoteInfo = "spirv-cross-hlsl";
 		};
 		93E74159295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = D3AA84F11C694A139F72BB4F;
+			remoteGlobalIDString = 3953A91AF4CC4ED1911EB33B;
 			remoteInfo = "spirv-cross-msl";
 		};
 		93E7415B295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 80515FF6E02E4446A4DBA14A;
+			remoteGlobalIDString = E83DD037D15B47B2BDE4C5DE;
 			remoteInfo = udis86;
 		};
 		93E7415D295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E86EACA17C554CD5A4F9141C;
+			remoteGlobalIDString = 6E8C1D94EBAD4417AECF217D;
 			remoteInfo = vma;
 		};
 		93E7415F295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 91ED0782951C4905817E1EDB;
+			remoteGlobalIDString = BE304ABD25794A5C86B3F7D7;
 			remoteInfo = xbrz;
 		};
 		93E74161295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 761A606DA917491C8A06E98A;
+			remoteGlobalIDString = 72B31B8DE79340099437C0FF;
 			remoteInfo = xxhash;
 		};
 		93E741E6295B67C70028EB94 /* PBXContainerItemProxy */ = {
@@ -600,7 +603,9 @@
 /* Begin PBXFileReference section */
 		9360C5A6294CB607000322B9 /* PVPPSSPPCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPPSSPPCore+Cheats.mm"; sourceTree = "<group>"; };
 		936FDBA72957F9080073628A /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = ../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib; sourceTree = "<group>"; };
+		93928433295DFFA900F2AD12 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
 		939B19422948B05F0024133A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
+		93AEC04C295E7FEB00F9381C /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.1.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
 		93E74125295B31460028EB94 /* PPSSPPOGLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSSPPOGLViewController.swift; sourceTree = "<group>"; };
 		93E74126295B31460028EB94 /* PPSSPPVulkanViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSSPPVulkanViewController.swift; sourceTree = "<group>"; };
 		93E74180295B35060028EB94 /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = ppsspp/ffmpeg/ios/universal/lib/libavdevice.a; sourceTree = "<group>"; };
@@ -620,6 +625,7 @@
 		93E74216295B67C70028EB94 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93E7427A295C53890028EB94 /* OGLGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLGraphicsContext.h; sourceTree = "<group>"; };
 		93E7427C295C55C80028EB94 /* VulkanGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VulkanGraphicsContext.h; sourceTree = "<group>"; };
+		93F28DC2295E264600E4D464 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/iOSSupport/System/Library/Frameworks/MediaPlayer.framework; sourceTree = DEVELOPER_DIR; };
 		93F5FBF32945D1B600493D4F /* PVPPSSPPCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPPSSPPCore.swift; sourceTree = "<group>"; };
 		B30178D3207C901D0051B93D /* libpsp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpsp.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PPSSPP.xcodeproj; path = cmake/PPSSPP.xcodeproj; sourceTree = "<group>"; };
@@ -665,11 +671,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93928447295DFFA900F2AD12 /* CoreMedia.framework in Frameworks */,
 				93E741F4295B67C70028EB94 /* libMoltenVK_PPSSPP.dylib in Frameworks */,
 				93E741F5295B67C70028EB94 /* libz.1.2.11.tbd in Frameworks */,
 				93E741F6295B67C70028EB94 /* CoreAudio.framework in Frameworks */,
+				93AEC060295E7FEB00F9381C /* GLKit.framework in Frameworks */,
 				93E741F7295B67C70028EB94 /* libsqlite3.tbd in Frameworks */,
 				93E741F8295B67C70028EB94 /* CoreGraphics.framework in Frameworks */,
+				93F28DC3295E264700E4D464 /* MediaPlayer.framework in Frameworks */,
 				93E741F9295B67C70028EB94 /* AVFoundation.framework in Frameworks */,
 				93E741FA295B67C70028EB94 /* CoreAudioKit.framework in Frameworks */,
 				93E741FB295B67C70028EB94 /* CoreAudio.framework in Frameworks */,
@@ -742,7 +751,7 @@
 				93E740E4295B2FD20028EB94 /* libMachineIndependent.a */,
 				93E740E6295B2FD20028EB94 /* libOGLCompiler.a */,
 				93E740E8295B2FD20028EB94 /* libOSDependent.a */,
-				93E740EA295B2FD20028EB94 /* PPSSPP.app */,
+				93E740EA295B2FD20028EB94 /* PPSSPP */,
 				93E740EC295B2FD20028EB94 /* libSPIRV.a */,
 				93E740EE295B2FD20028EB94 /* libarmips.a */,
 				93E740F0295B2FD20028EB94 /* libcityhash.a */,
@@ -835,6 +844,9 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				93AEC04C295E7FEB00F9381C /* GLKit.framework */,
+				93F28DC2295E264600E4D464 /* MediaPlayer.framework */,
+				93928433295DFFA900F2AD12 /* CoreMedia.framework */,
 				93E741E0295B5B240028EB94 /* libMoltenVK_PPSSPP.dylib */,
 				93E741DE295B5B0A0028EB94 /* libMoltenVK.dylib */,
 				93E74196295B386C0028EB94 /* libz.1.2.11.tbd */,
@@ -1064,9 +1076,10 @@
 			remoteRef = 93E740E7295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E740EA295B2FD20028EB94 /* PPSSPP.app */ = {
+		93E740EA295B2FD20028EB94 /* PPSSPP */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
+			fileType = "compiled.mach-o.executable";
+			name = PPSSPP;
 			path = PPSSPP.app;
 			remoteRef = 93E740E9295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -1545,6 +1558,7 @@
 					"\"$(SRCROOT)/ppsspp\"",
 					"\"$(SRCROOT)/ppsspp/ext/vulkan\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1594,6 +1608,7 @@
 					"\"$(SRCROOT)/ppsspp\"",
 					"\"$(SRCROOT)/ppsspp/ext/vulkan\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1642,6 +1657,7 @@
 					"\"$(SRCROOT)/ppsspp\"",
 					"\"$(SRCROOT)/ppsspp/ext/vulkan\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1680,6 +1696,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/ppsspp\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/ppsspp/ios/universal/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1711,6 +1728,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/ppsspp\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/ppsspp/ios/universal/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1785,6 +1803,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -1811,6 +1830,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/ppsspp\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/ppsspp/ios/universal/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1887,6 +1907,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1958,6 +1979,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

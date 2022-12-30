@@ -5,8 +5,8 @@ empty:=
 space:= $(empty) $(empty)
 spaceplus:= $(empty)\ $(empty)
 
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp/ext/armips/ext/filesystem/CMakeLists.txt))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeDependentOption.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../ppsspp/ext/armips/ext/filesystem/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/lib/python3.10/site-packages/cmake/data/share/cmake-3.25/Modules/CMakeDependentOption.cmake))
 
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
-	/opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -H/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/ppsspp -B/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake
+../cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
+	/usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -H../ppsspp -B../cmake

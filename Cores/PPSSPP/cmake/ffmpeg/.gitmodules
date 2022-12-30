@@ -1,0 +1,3 @@
+[submodule "gas-preprocessor"]
+	path = gas-preprocessor
+	url = https://github.com/FFmpeg/gas-preprocessor.git

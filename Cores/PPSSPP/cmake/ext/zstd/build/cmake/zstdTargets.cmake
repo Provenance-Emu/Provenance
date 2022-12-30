@@ -55,7 +55,7 @@ add_library(zstd::libzstd_static STATIC IMPORTED)
 # Import target "zstd::libzstd_shared" for configuration "Debug"
 set_property(TARGET zstd::libzstd_shared APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(zstd::libzstd_shared PROPERTIES
-  IMPORTED_LOCATION_DEBUG "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.1.5.3.dylib"
+  IMPORTED_LOCATION_DEBUG "../cmake/lib/Debug/libzstd.1.5.3.dylib"
   IMPORTED_SONAME_DEBUG "@rpath/libzstd.1.dylib"
   )
 
@@ -63,13 +63,13 @@ set_target_properties(zstd::libzstd_shared PROPERTIES
 set_property(TARGET zstd::libzstd_static APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(zstd::libzstd_static PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "ASM;C"
-  IMPORTED_LOCATION_DEBUG "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Debug/libzstd.a"
+  IMPORTED_LOCATION_DEBUG "../cmake/lib/Debug/libzstd.a"
   )
 
 # Import target "zstd::libzstd_shared" for configuration "Release"
 set_property(TARGET zstd::libzstd_shared APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(zstd::libzstd_shared PROPERTIES
-  IMPORTED_LOCATION_RELEASE "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.1.5.3.dylib"
+  IMPORTED_LOCATION_RELEASE "../cmake/lib/Release/libzstd.1.5.3.dylib"
   IMPORTED_SONAME_RELEASE "@rpath/libzstd.1.dylib"
   )
 
@@ -77,13 +77,13 @@ set_target_properties(zstd::libzstd_shared PROPERTIES
 set_property(TARGET zstd::libzstd_static APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(zstd::libzstd_static PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "ASM;C"
-  IMPORTED_LOCATION_RELEASE "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/Release/libzstd.a"
+  IMPORTED_LOCATION_RELEASE "../cmake/lib/Release/libzstd.a"
   )
 
 # Import target "zstd::libzstd_shared" for configuration "MinSizeRel"
 set_property(TARGET zstd::libzstd_shared APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
 set_target_properties(zstd::libzstd_shared PROPERTIES
-  IMPORTED_LOCATION_MINSIZEREL "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.1.5.3.dylib"
+  IMPORTED_LOCATION_MINSIZEREL "../cmake/lib/MinSizeRel/libzstd.1.5.3.dylib"
   IMPORTED_SONAME_MINSIZEREL "@rpath/libzstd.1.dylib"
   )
 
@@ -91,13 +91,13 @@ set_target_properties(zstd::libzstd_shared PROPERTIES
 set_property(TARGET zstd::libzstd_static APPEND PROPERTY IMPORTED_CONFIGURATIONS MINSIZEREL)
 set_target_properties(zstd::libzstd_static PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_MINSIZEREL "ASM;C"
-  IMPORTED_LOCATION_MINSIZEREL "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/MinSizeRel/libzstd.a"
+  IMPORTED_LOCATION_MINSIZEREL "../cmake/lib/MinSizeRel/libzstd.a"
   )
 
 # Import target "zstd::libzstd_shared" for configuration "RelWithDebInfo"
 set_property(TARGET zstd::libzstd_shared APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
 set_target_properties(zstd::libzstd_shared PROPERTIES
-  IMPORTED_LOCATION_RELWITHDEBINFO "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.1.5.3.dylib"
+  IMPORTED_LOCATION_RELWITHDEBINFO "../cmake/lib/RelWithDebInfo/libzstd.1.5.3.dylib"
   IMPORTED_SONAME_RELWITHDEBINFO "@rpath/libzstd.1.dylib"
   )
 
@@ -105,7 +105,7 @@ set_target_properties(zstd::libzstd_shared PROPERTIES
 set_property(TARGET zstd::libzstd_static APPEND PROPERTY IMPORTED_CONFIGURATIONS RELWITHDEBINFO)
 set_target_properties(zstd::libzstd_static PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELWITHDEBINFO "ASM;C"
-  IMPORTED_LOCATION_RELWITHDEBINFO "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PPSSPP/cmake/lib/RelWithDebInfo/libzstd.a"
+  IMPORTED_LOCATION_RELWITHDEBINFO "../cmake/lib/RelWithDebInfo/libzstd.a"
   )
 
 # This file does not depend on other imported targets which have
