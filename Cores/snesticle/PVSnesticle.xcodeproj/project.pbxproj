@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -34,6 +34,7 @@
 		B33FB2E8279BCEF50013AAD8 /* snio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FADE7279BCE900013AAD8 /* snio.cpp */; };
 		B33FB2E9279BCEF50013AAD8 /* snppurender8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FAE09279BCE900013AAD8 /* snppurender8.cpp */; };
 		B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5832106DEA000C45F09 /* PVSupport.framework */; };
+		B34CFF60295F2D4D0014C8AF /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34CFF5F295F2D4C0014C8AF /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3547B632058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
 		B365107E21782E95008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107D21782E95008FDB7B /* libz.tbd */; };
 		B3C39C092895292D00B8DCD5 /* rendersurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B33FB290279BCE930013AAD8 /* rendersurface.cpp */; };
@@ -42,8 +43,7 @@
 		B3C9D5361DEA83DE0068D057 /* PVSnesticle.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D5341DEA83DE0068D057 /* PVSnesticle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91317F75FAF0031B1C9 /* AudioToolbox.framework */; };
 		B3C9D54B1DEA84220068D057 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA91117F75FA80031B1C9 /* CoreGraphics.framework */; };
-		B3C9D54C1DEA842B0068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90F17F75FA10031B1C9 /* OpenGLES.framework */; platformFilter = ios; };
-		B3C9D54D1DEA84320068D057 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90D17F75F6E0031B1C9 /* UIKit.framework */; };
+		B3C9D54C1DEA842B0068D057 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA90F17F75FA10031B1C9 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA8E717F75F350031B1C9 /* Foundation.framework */; };
 		B3C9D5941DEA86B80068D057 /* PVSnesticleOESupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98F17F760390031B1C9 /* PVSnesticleOESupport.mm */; };
 		B3C9D5951DEA86B80068D057 /* PVSnesticleCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA91917F760390031B1C9 /* PVSnesticleCore.mm */; };
@@ -1277,6 +1277,7 @@
 		B33FB2CF279BCE930013AAD8 /* prof.obj */ = {isa = PBXFileReference; lastKnownFileType = file; path = prof.obj; sourceTree = "<group>"; };
 		B34AB5672106D60400C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB5832106DEA000C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34CFF5F295F2D4C0014C8AF /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3547B622058591000CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B365107D21782E95008FDB7B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B365107F21782E9E008FDB7B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -1306,10 +1307,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B365107E21782E95008FDB7B /* libz.tbd in Frameworks */,
+				B34CFF60295F2D4D0014C8AF /* OpenGL.framework in Frameworks */,
 				B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */,
 				B33FADB8279BCCDC0013AAD8 /* libsnesticle.a in Frameworks */,
 				B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */,
-				B3C9D54D1DEA84320068D057 /* UIKit.framework in Frameworks */,
 				B3C9D54C1DEA842B0068D057 /* OpenGLES.framework in Frameworks */,
 				B3C9D54B1DEA84220068D057 /* CoreGraphics.framework in Frameworks */,
 				B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */,
@@ -1346,6 +1347,7 @@
 		1ACEA8E617F75F350031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B34CFF5F295F2D4C0014C8AF /* OpenGL.framework */,
 				B365107D21782E95008FDB7B /* libz.tbd */,
 				B365107F21782E9E008FDB7B /* libz.tbd */,
 				B34AB5832106DEA000C45F09 /* PVSupport.framework */,
@@ -3502,10 +3504,10 @@
 				PRODUCT_NAME = PVSnesticle;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -3532,12 +3534,12 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
 		};
@@ -3563,11 +3565,11 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
 		};
@@ -3593,11 +3595,11 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Archive;
 		};
@@ -3637,11 +3639,11 @@
 				PRODUCT_NAME = PVSnesticle;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -3684,10 +3686,10 @@
 				PRODUCT_NAME = PVSnesticle;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
