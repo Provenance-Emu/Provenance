@@ -1539,6 +1539,20 @@
 		B36703572896314200F75595 /* AAScale4x.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = AAScale4x.fsh; sourceTree = "<group>"; };
 		B36703582896314200F75595 /* Scale4x.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Scale4x.fsh; sourceTree = "<group>"; };
 		B36703592896314200F75595 /* OmniScaleLegacy.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = OmniScaleLegacy.fsh; sourceTree = "<group>"; };
+		B36AE7EB295EFE0A00CC9D4F /* DOLJitManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOLJitManager.h; sourceTree = "<group>"; };
+		B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DOLJitManager.m; sourceTree = "<group>"; };
+		B36AE7EF295EFE3000CC9D4F /* CodeSignatureUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSignatureUtils.h; sourceTree = "<group>"; };
+		B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeSignatureUtils.m; sourceTree = "<group>"; };
+		B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebuggerUtils.m; sourceTree = "<group>"; };
+		B36AE7F4295EFE4300CC9D4F /* DebuggerUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerUtils.h; sourceTree = "<group>"; };
+		B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FastmemUtil.m; sourceTree = "<group>"; };
+		B36AE7F6295EFE4900CC9D4F /* JitAcquisitionUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JitAcquisitionUtils.h; sourceTree = "<group>"; };
+		B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalizerUtils.m; sourceTree = "<group>"; };
+		B36AE7F8295EFE5000CC9D4F /* FastmemUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastmemUtil.h; sourceTree = "<group>"; };
+		B36AE7F9295EFE5300CC9D4F /* LocalizerUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizerUtils.h; sourceTree = "<group>"; };
+		B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JitAcquisitionUtils.m; sourceTree = "<group>"; };
+		B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DOLCancellationToken.swift; sourceTree = "<group>"; };
+		B36AE802295EFE5F00CC9D4F /* StringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
 		B36B84D429598F6600FDEA29 /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36B84D529598F6600FDEA29 /* PVSnesticle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSnesticle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2399,6 +2413,7 @@
 				1A1237F417CA27B700CEC788 /* Emulator */,
 				1A48696917C8C0C60019F6D2 /* Game Library */,
 				378F49DB1B63D7CD0065FA39 /* http */,
+				B36AE7EA295EFE0A00CC9D4F /* JIT */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
 				B3532C3A21A9AC71006CDA0F /* Services */,
 				1A1237F317CA27AD00CEC788 /* Settings */,
@@ -3117,6 +3132,27 @@
 				B3296ED126CABFDE0088AC32 /* Cheats.storyboard */,
 			);
 			path = "Story Boards";
+			sourceTree = "<group>";
+		};
+		B36AE7EA295EFE0A00CC9D4F /* JIT */ = {
+			isa = PBXGroup;
+			children = (
+				B36AE7EF295EFE3000CC9D4F /* CodeSignatureUtils.h */,
+				B36AE7F4295EFE4300CC9D4F /* DebuggerUtils.h */,
+				B36AE7EB295EFE0A00CC9D4F /* DOLJitManager.h */,
+				B36AE7F8295EFE5000CC9D4F /* FastmemUtil.h */,
+				B36AE7F6295EFE4900CC9D4F /* JitAcquisitionUtils.h */,
+				B36AE7F9295EFE5300CC9D4F /* LocalizerUtils.h */,
+				B36AE802295EFE5F00CC9D4F /* StringUtils.h */,
+				B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */,
+				B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */,
+				B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */,
+				B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */,
+				B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */,
+				B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */,
+				B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */,
+			);
+			path = JIT;
 			sourceTree = "<group>";
 		};
 		B378224C21D32A080077E86F /* Custom Rows */ = {
