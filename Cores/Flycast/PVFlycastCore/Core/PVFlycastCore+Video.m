@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 11/1/18.
 //  Copyright © 2018 Provenance. All rights reserved.
 //
+#ifndef LIBRETRO
 
 #import "PVFlycastCore+Video.h"
 #import "PVFlycastCore.h"
@@ -86,3 +87,4 @@
     return GL_DEPTH_COMPONENT24;
 }
 @end
+#endif

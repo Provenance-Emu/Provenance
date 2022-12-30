@@ -892,25 +892,6 @@
 		B3980F6729239F3700A82429 /* testaddr_is_reserved.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = testaddr_is_reserved.c; sourceTree = "<group>"; };
 		B3980F6829239F3700A82429 /* mingw32make.bat */ = {isa = PBXFileReference; lastKnownFileType = text; path = mingw32make.bat; sourceTree = "<group>"; };
 		B3980F6929239F3700A82429 /* igd_desc_parse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = igd_desc_parse.c; sourceTree = "<group>"; };
-		B3980F6B29239F3700A82429 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
-		B3980F6C29239F3700A82429 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		B3980F6E29239F3700A82429 /* run_tests.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = run_tests.sh; sourceTree = "<group>"; };
-		B3980F7029239F3700A82429 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		B3980F7129239F3700A82429 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		B3980F7329239F3700A82429 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		B3980F7429239F3700A82429 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		B3980F7629239F3700A82429 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		B3980F7729239F3700A82429 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		B3980F7929239F3700A82429 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		B3980F7A29239F3700A82429 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		B3980F7C29239F3700A82429 /* volkConfig.cmake.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = volkConfig.cmake.in; sourceTree = "<group>"; };
-		B3980F7D29239F3700A82429 /* generate.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = generate.py; sourceTree = "<group>"; };
-		B3980F7E29239F3700A82429 /* volk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = volk.c; sourceTree = "<group>"; };
-		B3980F7F29239F3700A82429 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		B3980F8029239F3700A82429 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		B3980F8129239F3700A82429 /* volk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = volk.h; sourceTree = "<group>"; };
-		B3980F8229239F3700A82429 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .travis.yml; sourceTree = "<group>"; };
-		B3980F8429239F3700A82429 /* libchdr.patch */ = {isa = PBXFileReference; lastKnownFileType = text; path = libchdr.patch; sourceTree = "<group>"; };
 		B3980F8629239F3700A82429 /* gamesdk.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = gamesdk.cmake; sourceTree = "<group>"; };
 		B3980F8929239F3700A82429 /* LatencyTuner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LatencyTuner.h; sourceTree = "<group>"; };
 		B3980F8A29239F3700A82429 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
@@ -8515,6 +8496,7 @@
 		B3C76223207833DE009950E4 /* PVFlycastCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFlycastCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVFlycastCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVFlycastCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3F9F3A9295F4D7800DF8B8A /* PVFlycastCore+Options.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "PVFlycastCore+Options.swift"; path = "PVFlycastCore/Core/PVFlycastCore+Options.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -9137,12 +9119,10 @@
 				B3980EFB29239F3700A82429 /* miniupnpc */,
 				B3980E8F29239F3700A82429 /* nowide */,
 				B3980F8529239F3700A82429 /* oboe */,
-				B3980F8329239F3700A82429 /* patches */,
 				B398103229239F3700A82429 /* picotcp */,
 				B3981A6129239F3F00A82429 /* SDL */,
 				B39819DB29239F3F00A82429 /* stb */,
 				B3980EBA29239F3700A82429 /* vixl */,
-				B3980F6A29239F3700A82429 /* volk */,
 				B3980EF429239F3700A82429 /* xbrz */,
 				B39819DE29239F3F00A82429 /* xbyak */,
 				B39821F429239F4300A82429 /* xxHash */,
@@ -9496,87 +9476,6 @@
 				B3980F6529239F3700A82429 /* new_LiveBox_desc.values */,
 			);
 			path = testdesc;
-			sourceTree = "<group>";
-		};
-		B3980F6A29239F3700A82429 /* volk */ = {
-			isa = PBXGroup;
-			children = (
-				B3980F6B29239F3700A82429 /* LICENSE.md */,
-				B3980F6C29239F3700A82429 /* CMakeLists.txt */,
-				B3980F6D29239F3700A82429 /* test */,
-				B3980F7B29239F3700A82429 /* cmake */,
-				B3980F7D29239F3700A82429 /* generate.py */,
-				B3980F7E29239F3700A82429 /* volk.c */,
-				B3980F7F29239F3700A82429 /* README.md */,
-				B3980F8029239F3700A82429 /* .gitignore */,
-				B3980F8129239F3700A82429 /* volk.h */,
-				B3980F8229239F3700A82429 /* .travis.yml */,
-			);
-			path = volk;
-			sourceTree = "<group>";
-		};
-		B3980F6D29239F3700A82429 /* test */ = {
-			isa = PBXGroup;
-			children = (
-				B3980F6E29239F3700A82429 /* run_tests.sh */,
-				B3980F6F29239F3700A82429 /* cmake_using_source_directly */,
-				B3980F7229239F3700A82429 /* cmake_using_subdir_static */,
-				B3980F7529239F3700A82429 /* cmake_using_installed_headers */,
-				B3980F7829239F3700A82429 /* cmake_using_subdir_headers */,
-			);
-			path = test;
-			sourceTree = "<group>";
-		};
-		B3980F6F29239F3700A82429 /* cmake_using_source_directly */ = {
-			isa = PBXGroup;
-			children = (
-				B3980F7029239F3700A82429 /* CMakeLists.txt */,
-				B3980F7129239F3700A82429 /* main.c */,
-			);
-			path = cmake_using_source_directly;
-			sourceTree = "<group>";
-		};
-		B3980F7229239F3700A82429 /* cmake_using_subdir_static */ = {
-			isa = PBXGroup;
-			children = (
-				B3980F7329239F3700A82429 /* CMakeLists.txt */,
-				B3980F7429239F3700A82429 /* main.c */,
-			);
-			path = cmake_using_subdir_static;
-			sourceTree = "<group>";
-		};
-		B3980F7529239F3700A82429 /* cmake_using_installed_headers */ = {
-			isa = PBXGroup;
-			children = (
-				B3980F7629239F3700A82429 /* CMakeLists.txt */,
-				B3980F7729239F3700A82429 /* main.c */,
-			);
-			path = cmake_using_installed_headers;
-			sourceTree = "<group>";
-		};
-		B3980F7829239F3700A82429 /* cmake_using_subdir_headers */ = {
-			isa = PBXGroup;
-			children = (
-				B3980F7929239F3700A82429 /* CMakeLists.txt */,
-				B3980F7A29239F3700A82429 /* main.c */,
-			);
-			path = cmake_using_subdir_headers;
-			sourceTree = "<group>";
-		};
-		B3980F7B29239F3700A82429 /* cmake */ = {
-			isa = PBXGroup;
-			children = (
-				B3980F7C29239F3700A82429 /* volkConfig.cmake.in */,
-			);
-			path = cmake;
-			sourceTree = "<group>";
-		};
-		B3980F8329239F3700A82429 /* patches */ = {
-			isa = PBXGroup;
-			children = (
-				B3980F8429239F3700A82429 /* libchdr.patch */,
-			);
-			path = patches;
 			sourceTree = "<group>";
 		};
 		B3980F8529239F3700A82429 /* oboe */ = {
@@ -22629,6 +22528,7 @@
 			isa = PBXGroup;
 			children = (
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
+				B3F9F3A9295F4D7800DF8B8A /* PVFlycastCore+Options.swift */,
 				B3980D8329239F3600A82429 /* flycast */,
 				B3C762202078327B009950E4 /* PVFlycastCore */,
 				B3C7621220783162009950E4 /* PVFlycast */,
@@ -22783,6 +22683,7 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1420;
 					};
 				};
 			};
@@ -23399,6 +23300,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -23421,6 +23323,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Archive;
@@ -23695,6 +23598,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -23717,6 +23621,8 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Debug;
@@ -23725,6 +23631,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -23747,6 +23654,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;

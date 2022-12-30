@@ -276,6 +276,7 @@ static bool video_driver_cached_frame(void)
 - (void)runGLESRenderThread {
     @autoreleasepool
     {
+        [[NSThread currentThread] setName:@"runGLESRenderThread"];
         [self.renderDelegate startRenderingOnAlternateThread];
 //        BOOL success = gles_init();
 //        assert(success);
@@ -311,6 +312,7 @@ static bool video_driver_cached_frame(void)
 - (void)runGLESEmuThread {
     @autoreleasepool
     {
+        [[NSThread currentThread] setName:@"runGLESEmuThread"];
         [self libretroMain];
         // Core returns
 

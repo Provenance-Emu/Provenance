@@ -55,12 +55,15 @@ volatile bool has_init = false;
 #pragma mark - PVFlycastCore Begin
 
 @implementation PVFlycastCore {
+#ifndef LIBRETRO
 	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
 	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
     dispatch_semaphore_t coreWaitForExitSemaphore;
 
 	NSMutableDictionary *_callbackHandlers;
+#endif
 }
+#ifndef LIBRETRO
 
 - (instancetype)init {
 	if (self = [super init]) {
@@ -141,7 +144,7 @@ volatile bool has_init = false;
 
 	return YES;
 }
-
+#endif
 - (void)printSettings {
 //#define LIST_OF_VARIABLES \
 //X(dynarec.Enable) \

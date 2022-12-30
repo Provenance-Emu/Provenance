@@ -2686,6 +2686,8 @@
 			<string>chd</string>
 			<string>gdi</string>
 			<string>cdi</string>
+			<string>cue</string>
+			<string>elf</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>

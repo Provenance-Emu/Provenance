@@ -7,7 +7,7 @@
 //
 
 #import "PVFlycastCore+Audio.h"
-
+#ifndef LIBRETRO
 @implementation PVFlycastCore (Audio)
 
 - (NSTimeInterval)frameInterval {
@@ -23,3 +23,4 @@
 }
 
 @end
+#endif
