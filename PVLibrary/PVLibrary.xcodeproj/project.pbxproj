@@ -345,6 +345,7 @@
 		B3579D372106B4D700DDEBD6 /* NSData+Hashing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Hashing.m"; sourceTree = "<group>"; };
 		B364D4BE2870E80100B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D4C22870E81200B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B36AE7D9295ED64E00CC9D4F /* Service_TheGamesDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service_TheGamesDB.swift; sourceTree = "<group>"; };
 		B378226D21D409F20077E86F /* Extractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extractor.swift; sourceTree = "<group>"; };
 		B378227921D41E1C0077E86F /* SavePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePackage.swift; sourceTree = "<group>"; };
 		B378227C21D41E310077E86F /* GamePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePackage.swift; sourceTree = "<group>"; };
@@ -887,6 +888,7 @@
 		B3579D112106B11D00DDEBD6 /* PVLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				B36AE7D8295ED61600CC9D4F /* Metadata Lookup */,
 				B3579D322106B4D700DDEBD6 /* Importer */,
 				B378228221D41E5A0077E86F /* Serializer */,
 				B354E784219A76C80041F971 /* Domain */,
@@ -970,6 +972,14 @@
 				B30E7AEA26E480310051DC6A /* BehaviorRelay+RangeReplaceableCollection.swift */,
 			);
 			path = NSExtensions;
+			sourceTree = "<group>";
+		};
+		B36AE7D8295ED61600CC9D4F /* Metadata Lookup */ = {
+			isa = PBXGroup;
+			children = (
+				B36AE7D9295ED64E00CC9D4F /* Service_TheGamesDB.swift */,
+			);
+			path = "Metadata Lookup";
 			sourceTree = "<group>";
 		};
 		B378227721D41DEE0077E86F /* Models */ = {
