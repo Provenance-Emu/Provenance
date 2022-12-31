@@ -156,7 +156,7 @@ extension PVDolphinCore: GameWithCheat {
     ) -> Bool
     {
         do {
-            ILOG("Calling setCheat %@ %@ %@", code, type, codeType)
+            ILOG("Calling setCheat \(code) \(type) \(codeType)")
             try self.setCheat(code, setType: type, setCodeType: codeType, setIndex: cheatIndex, setEnabled: enabled)
             return true
         } catch let error {
