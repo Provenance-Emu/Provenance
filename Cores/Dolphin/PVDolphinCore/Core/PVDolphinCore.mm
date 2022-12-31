@@ -195,7 +195,7 @@ void UpdateWiiPointer();
 
     // Resolution upscaling
 	Config::SetBase(Config::GFX_EFB_SCALE, self.resFactor);
-	Config::SetBase(Config::GFX_MAX_EFB_SCALE, 16);
+	Config::SetBase(Config::GFX_MAX_EFB_SCALE, 8); // 16 but dolphini uses 8
 
 	// Graphics renderer
 	if (self.gsPreference == 0) {
@@ -336,11 +336,11 @@ void UpdateWiiPointer();
     }
     // Init with files
 	UICommon::Init();
-	ELOG(@"User Directory set to '%s'\n", user_dir.c_str());
+    ILOG(@"User Directory set to '%s'\n", user_dir.c_str());
 }
 
 - (void)startVM:(UIView *)view {
-	ELOG(@"Starting VM\n");
+    ILOG(@"Starting VM\n");
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		std::unique_lock<std::mutex> guard(s_host_identity_lock);
 		__block WindowSystemInfo wsi;
@@ -351,14 +351,14 @@ void UpdateWiiPointer();
 		});
 		wsi.render_surface_scale = [UIScreen mainScreen].scale;
 		VideoBackendBase::ActivateBackend(Config::Get(Config::MAIN_GFX_BACKEND));
-		ELOG(@"Using GFX backend: %s\n", Config::Get(Config::MAIN_GFX_BACKEND).c_str());
+		ILOG(@"Using GFX backend: %s\n", Config::Get(Config::MAIN_GFX_BACKEND).c_str());
 		std::string gamePath=std::string([_romPath UTF8String]);
 		std::vector<std::string> normalized_game_paths;
 		normalized_game_paths.push_back(gamePath);
 		[self setupControllers];
 		if (!BootManager::BootCore(BootParameters::GenerateFromFile(normalized_game_paths), wsi))
 		{
-			ELOG(@"Could not boot %s\n", [_romPath UTF8String]);
+            ILOG(@"Could not boot %s\n", [_romPath UTF8String]);
 			return;
 		}
 		AudioCommon::SetSoundStreamRunning(true);
@@ -374,7 +374,7 @@ void UpdateWiiPointer();
 			guard.lock();
 			Core::HostDispatchJobs();
 		}
-		ELOG(@"VM Started\n");
+        ILOG(@"VM Started\n");
 	});
 }
 
@@ -510,7 +510,7 @@ bool Host_UIBlocksControllerState()
 
 void Host_Message(HostMessageID id)
 {
-  ELOG(@"message id: %i\n", (int)id);
+    ILOG(@"message id: %i\n", (int)id);
   if (id == HostMessageID::WMUserJobDispatch)
 	  s_update_main_frame_event.Set();
   else if (id == HostMessageID::WMUserStop) {
@@ -518,7 +518,7 @@ void Host_Message(HostMessageID id)
 	if (Core::IsRunning())
 	  Core::QueueHostJob(&Core::Stop);
   } else if (id == HostMessageID::WMUserCreate)
-	ELOG(@"User Create Called\n", (int)id);
+      ILOG(@"User Create Called\n", (int)id);
 }
 
 void Host_UpdateTitle(const std::string& title)
@@ -531,13 +531,13 @@ void Host_UpdateDisasmDialog()
 
 void Host_UpdateMainFrame()
 {
-	ELOG(@"UpdateMainFrame called\n");
+    ILOG(@"UpdateMainFrame called\n");
 }
 
 
 void Host_RequestRenderWindowSize(int width, int height)
 {
-	ELOG(@"Requested Render Window Size %d %d\n",width,height);
+    ILOG(@"Requested Render Window Size %d %d\n",width,height);
 	UpdateWiiPointer();
 }
 
@@ -585,13 +585,13 @@ bool Host_RendererHasFullFocus()
 
 bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgType style)
 {
-	ELOG(@"Message %s %s\n", caption, text);
+    ILOG(@"Message %s %s\n", caption, text);
 	return true;
 }
 
 void UpdateWiiPointer()
 {
-	ELOG(@"Update Wii Pointer\n");
+    ILOG(@"Update Wii Pointer\n");
     if (Core::IsRunningAndStarted() && g_renderer) {
         g_renderer->ResizeSurface();
     }
