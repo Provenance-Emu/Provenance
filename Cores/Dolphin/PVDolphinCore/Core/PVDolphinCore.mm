@@ -205,7 +205,8 @@ void UpdateWiiPointer();
 		Config::SetBase(Config::MAIN_GFX_BACKEND, "OGL");
 		Config::SetBase(Config::MAIN_OSD_MESSAGES, false);
 	}
-
+    VideoBackendBase::PopulateBackendInfoFromUI();
+    
 	// CPU
 	if (self.cpuType == 0) {
 		SConfig::GetInstance().cpu_core = PowerPC::CPUCore::Interpreter;
@@ -225,8 +226,27 @@ void UpdateWiiPointer();
 	} else if (self.cpuType == 1) {
 		SConfig::GetInstance().cpu_core = PowerPC::CPUCore::CachedInterpreter;
 		SConfig::GetInstance().m_DSPEnableJIT = false;
-	}
-
+	} else if (self.cpuType == 1) {
+#if defined(__x86_64__)
+        SConfig::GetInstance().cpu_core = PowerPC::CPUCore::JIT64;
+#else
+        SConfig::GetInstance().cpu_core = PowerPC::CPUCore::JITARM64;
+#endif
+        SConfig::GetInstance().m_DSPEnableJIT = true;
+        SConfig::GetInstance().bJITOff = false;
+        SConfig::GetInstance().bJITLoadStoreOff=false;
+        SConfig::GetInstance().bJITLoadStoreFloatingOff=false;
+        SConfig::GetInstance().bJITLoadStorePairedOff=false;
+        SConfig::GetInstance().bJITFloatingPointOff=false;
+        SConfig::GetInstance().bJITIntegerOff=false;
+        SConfig::GetInstance().bJITPairedOff=false;
+        SConfig::GetInstance().bJITSystemRegistersOff=false;
+        SConfig::GetInstance().bJITBranchOff=false;
+        SConfig::GetInstance().bJITRegisterCacheOff=false;
+        Config::SetBase(Config::MAIN_JIT_FOLLOW_BRANCH, true);
+        Config::SetBase(Config::MAIN_DSP_JIT, true);
+    }
+    
 	// Filtering
 	Config::SetBase(Config::GFX_ENHANCE_FORCE_FILTERING, self.isBilinear);
 
