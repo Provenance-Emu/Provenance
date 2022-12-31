@@ -14,4 +14,5 @@
     #import "UIDevice+Hardware.h"
     #import "MBProgressHUD.h"
     #import "PVLogViewController.h"
+    #import "DOLJitManager.h"
 #endif

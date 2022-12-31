@@ -18,7 +18,7 @@ import UIKit
 
 @UIApplicationMain
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
-    var window: UIWindow?
+    internal var window: UIWindow?
     var shortcutItemGame: PVGame?
     var fileLogger: DDFileLogger = DDFileLogger()
     let disposeBag = DisposeBag()
@@ -26,6 +26,16 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     #if os(iOS) && !targetEnvironment(macCatalyst)
         var _logViewController: PVLogViewController?
     #endif
+    
+    #if os(iOS)
+    weak var jitScreenDelegate: JitScreenDelegate?
+    weak var jitWaitScreenVC: JitWaitScreenViewController?
+    var cancellation_token = DOLCancellationToken()
+    var is_presenting_alert = false
+    #endif
+    
+    weak var rootNavigationVC: UIViewController?
+    weak var gameLibraryViewController: PVGameLibraryViewController?
 
     func _initUITheme() {
         #if os(iOS)
@@ -66,6 +76,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 gameLibrary: gameLibrary,
                 gameImporter: gameImporter,
                 viewModel: viewModel)
+            self.rootNavigationVC = rootViewController
             let sideNav = SideNavigationController(mainViewController: UINavigationController(rootViewController: rootViewController))
             sideNav.leftSide(
                 viewController: SideMenuView.instantiate(gameLibrary: gameLibrary, viewModel: viewModel, delegate: rootViewController, rootDelegate: rootViewController),
@@ -82,6 +93,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             guard let rootNavigation = window.rootViewController as? UINavigationController else {
                 fatalError("No root nav controller")
             }
+            self.rootNavigationVC = rootNavigation
             guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
                 fatalError("No gameLibraryViewController")
             }
@@ -90,7 +102,18 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             gameLibraryViewController.updatesController = libraryUpdatesController
             gameLibraryViewController.gameImporter = gameImporter
             gameLibraryViewController.gameLibrary = gameLibrary
+            
+            self.gameLibraryViewController = gameLibraryViewController
         }
+        
+        #if os(iOS)
+        if PVSettingsModel.shared.debugOptions.autoJIT {
+            DOLJitManager.shared().attemptToAcquireJitOnStartup()
+        }
+        DispatchQueue.main.async { [unowned self] in
+            self.showJITWaitScreen()
+        }
+        #endif
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {

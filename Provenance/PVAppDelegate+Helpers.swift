@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVSupport
 
 // MARK: - Helpers
 extension PVAppDelegate {
@@ -63,4 +64,5 @@ extension PVAppDelegate {
             ELOG("registerDefaultsFromSettingsBundle: Could not find Settings.bundle")
         }
     }
+   
 }

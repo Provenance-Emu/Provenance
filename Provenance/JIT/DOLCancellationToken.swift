@@ -5,23 +5,18 @@
 import Foundation
 
 // Basically the same concept from C#.
-@objc class DOLCancellationToken : NSObject
-{
+@objc class DOLCancellationToken : NSObject {
   private var cancelled: Bool
   
-  override init()
-  {
+  override init() {
     cancelled = false
   }
   
-  @objc public func isCancelled() -> Bool
-  {
+  @objc public func isCancelled() -> Bool {
     return cancelled;
   }
   
-  @objc public func cancel()
-  {
+  @objc public func cancel() {
     cancelled = true;
   }
-  
 }

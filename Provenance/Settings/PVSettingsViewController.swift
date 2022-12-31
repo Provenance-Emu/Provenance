@@ -305,7 +305,11 @@ final class PVSettingsViewController: QuickTableViewController {
         let betaRows: [TableRow] = [
 			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
 								detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
-                                key: \PVSettingsModel.debugOptions.useMetal, icon: .named("m.square.fill")),
+                                key: \PVSettingsModel.debugOptions.useMetal, icon: .sfSymbol("m.square.fill")),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("Auto JIT", comment: "Auto JIT"),
+                                detailText: .subtitle("Attempt to automatically enable Just In Time OS support. Requires ZeroConf VPN to be active. See JITStreamer.com for more info."),
+                                key: \PVSettingsModel.debugOptions.autoJIT, icon: .sfSymbol("figure.run")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
@@ -373,7 +377,7 @@ final class PVSettingsViewController: QuickTableViewController {
         let discordRow = NavigationRow(
             text: NSLocalizedString("Discord", comment: ""),
             detailText: .value2("Join our Discord server for help and community chat."),
-            icon: .named("discord"),
+            icon: .named("Icons/discord"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0

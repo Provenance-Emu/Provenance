@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>ALTDeviceID</key>
-	<string></string>
+	<string>dummy</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

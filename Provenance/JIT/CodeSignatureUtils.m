@@ -13,6 +13,7 @@
 #import <mach-o/getsect.h>
 
 #import "DOLJitManager.h"
+#import "StringUtils.h"
 
 // partly adapted from iSH: app/AppGroup.m
 

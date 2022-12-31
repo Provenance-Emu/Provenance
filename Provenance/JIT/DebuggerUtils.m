@@ -9,6 +9,7 @@
 #import <unistd.h>
 
 #import "DOLJitManager.h"
+#import "StringUtils.h"
 
 #define CS_OPS_STATUS 0 /* OK */
 #define CS_DEBUGGED 0x10000000 /* process is or has been debugged */

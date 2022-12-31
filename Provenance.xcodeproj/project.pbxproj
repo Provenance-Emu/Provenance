@@ -165,6 +165,25 @@
 		93C792292954E947001212D2 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93C792242954E869001212D2 /* MoltenVK.xcframework */; };
 		93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; };
 		93F28DCA295E2F5100E4D464 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B300DEC1295FEA9B0049F2AB /* DOLJitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */; };
+		B300DEC2295FEA9D0049F2AB /* DOLJitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */; };
+		B300DEC3295FEC320049F2AB /* CodeSignatureUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */; };
+		B300DEC4295FEC340049F2AB /* CodeSignatureUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */; };
+		B300DECC295FECB50049F2AB /* DebuggerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */; };
+		B300DECD295FECB50049F2AB /* DebuggerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */; };
+		B300DECE295FECC30049F2AB /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */; };
+		B300DECF295FECC40049F2AB /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */; };
+		B300DED0295FECC70049F2AB /* JitAcquisitionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */; };
+		B300DED1295FECC70049F2AB /* JitAcquisitionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */; };
+		B300DED2295FECDC0049F2AB /* LocalizerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */; };
+		B300DED3295FECDC0049F2AB /* LocalizerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */; };
+		B300DED5295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */; };
+		B300DED6295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */; };
+		B300DED7295FEF450049F2AB /* JitWaitScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DEC6295FEC710049F2AB /* JitWaitScreenViewController.swift */; };
+		B300DED8295FEF5C0049F2AB /* JitWaitScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B300DEC7295FEC710049F2AB /* JitWaitScreen.xib */; };
+		B300DED9295FEFF40049F2AB /* JitFailedJailbreakScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B300DECA295FEC740049F2AB /* JitFailedJailbreakScreen.xib */; };
+		B300DEDA295FEFF40049F2AB /* JitFailedJailbreakScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DEC9295FEC740049F2AB /* JitFailedJailbreakScreenViewController.swift */; };
+		B300DEDB295FEFF40049F2AB /* JitScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */; };
 		B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B302F31521713B17000322B9 /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B3054371272026E800F5257D /* PVPSPControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3054370272026E800F5257D /* PVPSPControllerViewController.swift */; };
@@ -675,6 +694,9 @@
 		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
+		B3E61EFA295FF168003249F7 /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
+		B3E61EFB295FF16C003249F7 /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
+		B3E61EFC295FF197003249F7 /* JitScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */; };
 		B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
@@ -1201,6 +1223,12 @@
 		936FDBEA295855670073628A /* libMoltenVK_Play.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Play.dylib; path = Cores/Play/lib/libMoltenVK_Play.dylib; sourceTree = "<group>"; };
 		93C792242954E869001212D2 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
 		93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B300DEC6295FEC710049F2AB /* JitWaitScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitWaitScreenViewController.swift; sourceTree = "<group>"; };
+		B300DEC7295FEC710049F2AB /* JitWaitScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = JitWaitScreen.xib; sourceTree = "<group>"; };
+		B300DEC9295FEC740049F2AB /* JitFailedJailbreakScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitFailedJailbreakScreenViewController.swift; sourceTree = "<group>"; };
+		B300DECA295FEC740049F2AB /* JitFailedJailbreakScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = JitFailedJailbreakScreen.xib; sourceTree = "<group>"; };
+		B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitScreenDelegate.swift; sourceTree = "<group>"; };
+		B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+JIT.swift"; sourceTree = "<group>"; };
 		B30172C9274A34FA00B0E695 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305436D2720237400F5257D /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2407,6 +2435,7 @@
 			children = (
 				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
+				B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */,
 				B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */,
 				B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */,
 				B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */,
@@ -2782,6 +2811,24 @@
 			path = Consoles;
 			sourceTree = "<group>";
 		};
+		B300DEC5295FEC710049F2AB /* JitWaitScreen */ = {
+			isa = PBXGroup;
+			children = (
+				B300DEC6295FEC710049F2AB /* JitWaitScreenViewController.swift */,
+				B300DEC7295FEC710049F2AB /* JitWaitScreen.xib */,
+			);
+			path = JitWaitScreen;
+			sourceTree = "<group>";
+		};
+		B300DEC8295FEC740049F2AB /* JitFailedJailbreakScreen */ = {
+			isa = PBXGroup;
+			children = (
+				B300DEC9295FEC740049F2AB /* JitFailedJailbreakScreenViewController.swift */,
+				B300DECA295FEC740049F2AB /* JitFailedJailbreakScreen.xib */,
+			);
+			path = JitFailedJailbreakScreen;
+			sourceTree = "<group>";
+		};
 		B305EEFE276B4C71003AE510 /* WatchKit App */ = {
 			isa = PBXGroup;
 			children = (
@@ -3141,6 +3188,9 @@
 		B36AE7EA295EFE0A00CC9D4F /* JIT */ = {
 			isa = PBXGroup;
 			children = (
+				B300DEC8295FEC740049F2AB /* JitFailedJailbreakScreen */,
+				B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */,
+				B300DEC5295FEC710049F2AB /* JitWaitScreen */,
 				B36AE7EF295EFE3000CC9D4F /* CodeSignatureUtils.h */,
 				B36AE7F4295EFE4300CC9D4F /* DebuggerUtils.h */,
 				B36AE7EB295EFE0A00CC9D4F /* DOLJitManager.h */,
@@ -4093,6 +4143,7 @@
 				B367036E2896314200F75595 /* OmniScale.fsh in Resources */,
 				B36703662896314200F75595 /* MasterShader.fsh in Resources */,
 				B36703722896314200F75595 /* AAScale4x.fsh in Resources */,
+				B300DED9295FEFF40049F2AB /* JitFailedJailbreakScreen.xib in Resources */,
 				B3296EE226CAC2B10088AC32 /* Default.xib in Resources */,
 				B3296EAF26CABEA80088AC32 /* SaveStates.storyboard in Resources */,
 				B36703642896314200F75595 /* SmoothBilinear.fsh in Resources */,
@@ -4108,6 +4159,7 @@
 				B36703622896314200F75595 /* Scale2x.fsh in Resources */,
 				B36703742896314300F75595 /* Scale4x.fsh in Resources */,
 				B36703762896314300F75595 /* OmniScaleLegacy.fsh in Resources */,
+				B300DED8295FEF5C0049F2AB /* JitWaitScreen.xib in Resources */,
 				B307830628924D69007E7A2D /* GLES in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4460,15 +4512,18 @@
 				B3411C11276B470B00D85327 /* QuickTableViewController.swift in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
 				B3AB373C2187F569009D9244 /* PVLynxControllerViewController.swift in Sources */,
+				B300DED7295FEF450049F2AB /* JitWaitScreenViewController.swift in Sources */,
 				B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */,
 				B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */,
 				B3427C00287EA0CF0054C1B5 /* blit_ps.metal in Sources */,
 				37EEA2A827BC7E610070E222 /* ConsoleGamesView.swift in Sources */,
 				B3427BF6287EA0CF0054C1B5 /* ulTron.metal in Sources */,
+				B300DECE295FECC30049F2AB /* FastmemUtil.m in Sources */,
 				B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3AB37402187F569009D9244 /* PVSaturnControllerViewController.swift in Sources */,
 				B3D5E2B2218EC1AE0015C690 /* RxTableViewRealmDataSource.swift in Sources */,
 				37EEA2A327BC7E610070E222 /* ViewControllerResolver.swift in Sources */,
+				B300DEDA295FEFF40049F2AB /* JitFailedJailbreakScreenViewController.swift in Sources */,
 				B3AB37372187F569009D9244 /* PVPSXControllerViewController.swift in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.swift in Sources */,
 				B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */,
@@ -4491,6 +4546,7 @@
 				B3411C16276B470B00D85327 /* RowCompatible.swift in Sources */,
 				B3AB37332187F569009D9244 /* PVAtari2600ControllerViewController.swift in Sources */,
 				B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
+				B300DEC3295FEC320049F2AB /* CodeSignatureUtils.m in Sources */,
 				B39AF05F28754EB8004882FC /* PVAppDelegate+VolumeButton.swift in Sources */,
 				93599B4B2955F2850049DAC8 /* PVWiiControllerViewController.swift in Sources */,
 				B3411C1C276B470C00D85327 /* Icon.swift in Sources */,
@@ -4516,7 +4572,9 @@
 				B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */,
 				B3E6DADC20B7AD1500454DD4 /* PVLogViewController.m in Sources */,
 				37EEA2A027BC7E610070E222 /* Extensions.swift in Sources */,
+				B3E61EFA295FF168003249F7 /* DOLCancellationToken.swift in Sources */,
 				B382C649278E626D007E61FE /* PVGPUViewController.m in Sources */,
+				B300DEC1295FEA9B0049F2AB /* DOLJitManager.m in Sources */,
 				C665CD8421FEC68E00C834C6 /* GCControllerExtensions.swift in Sources */,
 				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
 				B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */,
@@ -4546,12 +4604,14 @@
 				B3AB37422187F569009D9244 /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
+				B300DED2295FECDC0049F2AB /* LocalizerUtils.m in Sources */,
 				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
 				37EEA2A427BC7E610070E222 /* SearchBar.swift in Sources */,
 				B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */,
 				B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */,
 				CF17114E2586A13100258602 /* PVCheatsTableViewCell.swift in Sources */,
 				B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */,
+				B300DED0295FECC70049F2AB /* JitAcquisitionUtils.m in Sources */,
 				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
 				1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3AB37382187F569009D9244 /* PVGBAControllerViewController.swift in Sources */,
@@ -4559,6 +4619,7 @@
 				B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */,
 				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
 				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
+				B300DED5295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */,
 				B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
 				B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */,
@@ -4569,6 +4630,7 @@
 				B38D02342884D03B008FBED8 /* SettingsOptionRow.swift in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
+				B300DEDB295FEFF40049F2AB /* JitScreenDelegate.swift in Sources */,
 				B3AB37442187F569009D9244 /* PVNESControllerViewController.swift in Sources */,
 				B3411C1F276B470C00D85327 /* Section.swift in Sources */,
 				B378225421D32AD60077E86F /* SliderCell.swift in Sources */,
@@ -4604,6 +4666,7 @@
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B3976927285A020800558958 /* PVDOSControllerViewController.swift in Sources */,
 				B3411C1E276B470C00D85327 /* Deprecated.swift in Sources */,
+				B300DECC295FECB50049F2AB /* DebuggerUtils.m in Sources */,
 				B3AB37412187F569009D9244 /* PVGenesisControllerViewController.swift in Sources */,
 				B3AB373E2187F569009D9244 /* PVAtari5200ControllerViewController.swift in Sources */,
 				37EEA2A227BC7E610070E222 /* GameItemView.swift in Sources */,
@@ -4660,12 +4723,14 @@
 				CF87D488258ADDD100838AF8 /* PVCheatsInfoViewController.swift in Sources */,
 				CF87D489258ADDD100838AF8 /* PVCheatsTableViewCell.swift in Sources */,
 				CF87D47E258ADDA500838AF8 /* PVEmulatorViewController+Cheats.swift in Sources */,
+				B300DEC2295FEA9D0049F2AB /* DOLJitManager.m in Sources */,
 				B3B104D1218F2EF400210C39 /* PVSaturnControllerViewController.swift in Sources */,
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */,
 				B3427BF5287EA0CF0054C1B5 /* crt_filter_ps.metal in Sources */,
 				B3D5E2C0218EC62E0015C690 /* Sections.swift in Sources */,
 				B3B104BF218F2EC000210C39 /* JSButton.swift in Sources */,
 				B382C638278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift in Sources */,
+				B300DED6295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */,
 				B306E0D02769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */,
 				B3411C2E276B472900D85327 /* TapActionRow.swift in Sources */,
 				B35E6C30207ED7050040709A /* AppearanceStyle.swift in Sources */,
@@ -4694,6 +4759,7 @@
 				B36207C0292661C300121B83 /* PVMetalViewController.m in Sources */,
 				B3B104BD218F2DE200210C39 /* PVCoreFactory.swift in Sources */,
 				B3427C01287EA0CF0054C1B5 /* blit_ps.metal in Sources */,
+				B300DEC4295FEC340049F2AB /* CodeSignatureUtils.m in Sources */,
 				B3411C26276B472900D85327 /* SwitchRow.swift in Sources */,
 				B3411C23276B472900D85327 /* Icon.swift in Sources */,
 				B369B0DE21A3C1C40064EDCA /* PVLogViewController.m in Sources */,
@@ -4805,14 +4871,19 @@
 				B387676D20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B361F63327C07B300080D368 /* ViewControllerResolver.swift in Sources */,
 				B361F63D27C07BB20080D368 /* Theme.swift in Sources */,
+				B300DECF295FECC40049F2AB /* FastmemUtil.m in Sources */,
 				B313544826E4C0F90047F338 /* PVPS2ControllerViewController.swift in Sources */,
+				B3E61EFB295FF16C003249F7 /* DOLCancellationToken.swift in Sources */,
 				B361F63827C07B390080D368 /* SideNavigationController.swift in Sources */,
 				B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */,
 				1180B30824924AEA00636C8A /* UICollectionView+Rx.swift in Sources */,
 				B343717B276B0B650014F87C /* PVColecoVisionControllerViewController.swift in Sources */,
 				B3437177276B0B650014F87C /* PVIntellivisionControllerViewController.swift in Sources */,
 				B3B104D3218F2EF400210C39 /* PVVBControllerViewController.swift in Sources */,
+				B300DED3295FECDC0049F2AB /* LocalizerUtils.m in Sources */,
 				11BB0A2325AF7DFF004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */,
+				B300DED1295FECC70049F2AB /* JitAcquisitionUtils.m in Sources */,
+				B3E61EFC295FF197003249F7 /* JitScreenDelegate.swift in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
 				B361F63127C07B2C0080D368 /* SideMenuView.swift in Sources */,
 				B3411C34276B472900D85327 /* Subtitle.swift in Sources */,
@@ -4832,6 +4903,7 @@
 				B355DF8C292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */,
 				B3411C30276B472900D85327 /* OptionRow.swift in Sources */,
 				1A2FB10D206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
+				B300DECD295FECB50049F2AB /* DebuggerUtils.m in Sources */,
 				B3164B78288E25F500E1CBCF /* PVSupervisionControllerViewController.swift in Sources */,
 				B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */,
 				B3427BF7287EA0CF0054C1B5 /* ulTron.metal in Sources */,
