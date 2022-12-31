@@ -88,7 +88,7 @@ final class PVSettingsViewController: QuickTableViewController {
         typealias TableRow = Row & RowStyle
 
         // MARK: -- Section : App
-        let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), icon: .sfSymbol("square.stack"), viewController: self, segue: "pushSystemSettings")
+        let systemsRow = SegueNavigationRow(text: NSLocalizedString("Systems", comment: "Systems"), detailText: .subtitle("Information on cores, their bioses, links and stats."), icon: .sfSymbol("square.stack"), viewController: self, segue: "pushSystemSettings")
 
         let systemMode = self.traitCollection.userInterfaceStyle == .dark ? "Dark" : "Light"
         var theme = PVSettingsModel.shared.theme.description
@@ -145,10 +145,15 @@ final class PVSettingsViewController: QuickTableViewController {
 
         // MARK: -- Section : Saves
         let saveRows: [TableRow] = [
-            PVSettingsSwitchRow(text: NSLocalizedString("Auto Save", comment: "Auto Save"), key: \PVSettingsModel.autoSave, icon: .sfSymbol("autostartstop")),
-            PVSettingsSwitchRow(text: NSLocalizedString("Timed Auto Saves", comment: "Timed Auto Saves"), key: \PVSettingsModel.timedAutoSaves, icon: .sfSymbol("clock.badge")),
-            PVSettingsSwitchRow(text: NSLocalizedString("Auto Load Saves", comment: "Auto Load Saves"), key: \PVSettingsModel.autoLoadSaves, icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark")),
-            PVSettingsSwitchRow(text: NSLocalizedString("Ask to Load Saves", comment: "Ask to Load Saves"), key: \PVSettingsModel.askToAutoLoad, icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
+            PVSettingsSwitchRow(text: NSLocalizedString("Auto Save", comment: "Auto Save"), detailText: .subtitle("Auto-save game state on close. Must be playing for 30 seconds more."), key: \PVSettingsModel.autoSave, icon: .sfSymbol("autostartstop")),
+            PVSettingsSwitchRow(text: NSLocalizedString("Timed Auto Saves", comment: "Timed Auto Saves"), detailText: .subtitle("Periodically create save states while you play."), key: \PVSettingsModel.timedAutoSaves, icon: .sfSymbol("clock.badge")),
+            PVSettingsSliderRow(text: NSLocalizedString("Auto-save Time", comment: "Auto-save Time"),
+                                              detailText: .subtitle("Number of minutes between timed auto saves."),
+                                              valueLimits: (min: 1.0, max: 30.0),
+                                              valueImages: (.sfSymbol("hare"), .sfSymbol("tortoise")),
+                                              key: \PVSettingsModel.timedAutoSaveInterval),
+            PVSettingsSwitchRow(text: NSLocalizedString("Auto Load Saves", comment: "Auto Load Saves"), detailText: .subtitle("Automatically load the last save of a game if one exists. Disables the load prompt."), key: \PVSettingsModel.autoLoadSaves, icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark")),
+            PVSettingsSwitchRow(text: NSLocalizedString("Ask to Load Saves", comment: "Ask to Load Saves"), detailText: .subtitle("Prompt to load last save if one exists. Off always boots from BIOS unless auto load saves is active."), key: \PVSettingsModel.askToAutoLoad, icon: .sfSymbol("autostartstop.trianglebadge.exclamationmark"))
         ]
 
         let savesSection = Section(title: NSLocalizedString("Saves", comment: "Saves"), rows: saveRows)
@@ -171,12 +176,12 @@ final class PVSettingsViewController: QuickTableViewController {
             PVSettingsSwitchRow(text: NSLocalizedString("4X Multisampling GL", comment: "4X Multisampling GL"),
                                 detailText: .subtitle("Use iOS's EAGLContext multisampling. Slower speed (slightly), smoother edges."),
                                 key: \PVSettingsModel.videoOptions.multiSampling, icon: .sfSymbol("4k.tv")),
-            PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), key: \PVSettingsModel.nativeScaleEnabled, icon: .sfSymbol("square.split.bottomrightquarter")),
-            PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), key: \PVSettingsModel.integerScaleEnabled, icon: .sfSymbol("lock.square")),
-            PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), key: \PVSettingsModel.crtFilterEnabled, icon: .sfSymbol("sparkles.tv")),
-            PVSettingsSwitchRow(text: NSLocalizedString("LCD Filter", comment: "LCD Filter"), detailText:.subtitle("Use CRT filter on LCD (mobile) screens. LCD filter coming."), key: \PVSettingsModel.lcdFilterEnabled, icon: .sfSymbol("square.grid.3x3")),
-            PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), key: \PVSettingsModel.imageSmoothing, icon: .sfSymbol("checkerboard.rectangle")),
-            PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), key: \PVSettingsModel.showFPSCount, icon: .sfSymbol("speedometer"))
+            PVSettingsSwitchRow(text: NSLocalizedString("Native Scale", comment: "Native Scale"), detailText: .subtitle("Scale up to fit native screen resolution."), key: \PVSettingsModel.nativeScaleEnabled, icon: .sfSymbol("square.split.bottomrightquarter")),
+            PVSettingsSwitchRow(text: NSLocalizedString("Integer Scaling", comment: "Integer Scaling"), detailText: .subtitle("Lock scaling to integer values. Sharper but may result in blank space depending on the original aspect ratio."), key: \PVSettingsModel.integerScaleEnabled, icon: .sfSymbol("lock.square")),
+            PVSettingsSwitchRow(text: NSLocalizedString("CRT Filter", comment: "CRT Filter"), detailText: .subtitle("Apply a fast FX filter in the style of old CRT TV with curvature, bloom and scanlines."), key: \PVSettingsModel.crtFilterEnabled, icon: .sfSymbol("sparkles.tv")),
+            PVSettingsSwitchRow(text: NSLocalizedString("LCD Filter", comment: "LCD Filter"), detailText: .subtitle("Use CRT filter on LCD (mobile) screens. LCD filter coming."), key: \PVSettingsModel.lcdFilterEnabled, icon: .sfSymbol("square.grid.3x3")),
+            PVSettingsSwitchRow(text: NSLocalizedString("Image Smoothing", comment: "Image Smoothing"), detailText: .subtitle("Apply native iOS global image anti-aliasing smoothing filter to all emus. This is "), key: \PVSettingsModel.imageSmoothing, icon: .sfSymbol("checkerboard.rectangle")),
+            PVSettingsSwitchRow(text: NSLocalizedString("FPS Counter", comment: "FPS Counter"), detailText: .subtitle("Performance overlay with FPS, CPU and Memory stats. Note: FPS may not be accurate for threaded and/or GLES/Vulkan native cores."), key: \PVSettingsModel.showFPSCount, icon: .sfSymbol("speedometer"))
         ])
 
         let avSection = Section(title: NSLocalizedString("Video Options", comment: "Video Options"), rows: avRows)
@@ -194,12 +199,12 @@ final class PVSettingsViewController: QuickTableViewController {
         var controllerRows = [TableRow]()
 
         #if os(iOS)
-        controllerRows.append(PVSettingsSliderRow(text: NSLocalizedString("Opacity", comment: "Opacity"), detailText: nil, valueLimits: (min: 0.5, max: 1.0), valueImages: (.sfSymbol("sun.min"), .sfSymbol("sun.max")), key: \PVSettingsModel.controllerOpacity))
+        controllerRows.append(PVSettingsSliderRow(text: NSLocalizedString("Opacity", comment: "Opacity"), detailText: .subtitle("Transparency amount of on-screen controls overlays."), valueLimits: (min: 0.5, max: 1.0), valueImages: (.sfSymbol("sun.min"), .sfSymbol("sun.max")), key: \PVSettingsModel.controllerOpacity))
 
             controllerRows.append(contentsOf: [
-                PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), key: \PVSettingsModel.buttonTints, icon: .sfSymbol("paintpalette")),
+                PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), detailText: .subtitle("Color the on-screen controls to be similiar to their original system controller colors where applicable."), key: \PVSettingsModel.buttonTints, icon: .sfSymbol("paintpalette")),
                 PVSettingsSwitchRow(text: NSLocalizedString("All-Right Shoulders", comment: "All-Right Shoulders"), detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders, icon: .sfSymbol("l.joystick.tilt.right")),
-                PVSettingsSwitchRow(text: NSLocalizedString("Haptic Feedback", comment: "Haptic Feedback"), key: \PVSettingsModel.buttonVibration, icon: .sfSymbol("hand.point.up.braille")),
+                PVSettingsSwitchRow(text: NSLocalizedString("Haptic Feedback", comment: "Haptic Feedback"), detailText: .subtitle("Vibrate on button push and force feedback on iPhone and controllers where applicable."), key: \PVSettingsModel.buttonVibration, icon: .sfSymbol("hand.point.up.braille")),
                 PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine."), key: \PVSettingsModel.use8BitdoM30, icon: .sfSymbol("arrow.triangle.swap")),
                 PVSettingsSwitchRow(text: NSLocalizedString("Missing Buttons Always On-Screen", comment: "Missing Buttons Always On-Screen"),
                                     detailText: .subtitle("Supports: SNES, SMS, SG, GG, SCD, PSX."),
@@ -580,7 +585,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                segue: "coresSegue",
                                customization: nil),
             SegueNavigationRow(text: NSLocalizedString("Licenses", comment: "Licenses"),
-                               detailText: .none,
+                               detailText: .subtitle("Open-source libraries Provenance uses and their respective licenses."),
                                icon: .sfSymbol("mail.stack.fill"),
                                viewController: self,
                                segue: "licensesSegue",
