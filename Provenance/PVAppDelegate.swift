@@ -200,7 +200,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #endif
 
         #if os(iOS) && !targetEnvironment(macCatalyst)
-            PVAltKitService.shared.start()
+//            PVAltKitService.shared.start()
             ApplicationMonitor.shared.start()
         #endif
 

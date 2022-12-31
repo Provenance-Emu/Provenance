@@ -142,14 +142,18 @@ extension PVAppDelegate {
 // MARK: - JIT Screen Delegate
 extension PVAppDelegate: JitScreenDelegate {
     func didFinishJitScreen(result: Bool, sender: Any) {
-        ILOG("JIT: Result: \(result)")
-        if let sender = sender as? UIViewController {
+        ILOG("JIT: Result: \(result) Sender: \(String(describing: sender))")
+        if let jitWaitScreenVC = jitWaitScreenVC {
+            VLOG("JIT: jitWaitScreenVC being dismissed")
+            jitWaitScreenVC.dismiss(animated: true)
+        } else if let sender = sender as? UIViewController {
             VLOG("JIT: sender as? UIViewController")
             sender.dismiss(animated: true)
         } else {
-            jitWaitScreenVC?.dismiss(animated: true)
+            DLOG("JIT: No vc to dismiss?")
 //            rootNavigationVC?.presentedViewController?.dismiss(animated: true)
         }
+        
         guard result else {
             return
         }

@@ -276,13 +276,27 @@ NSString* const DOLJitAltJitFailureNotification = @"org.provenance-emu.provenanc
         return;
     }
     // 69.69.0.1 or my ip?
-    NSString* url_string = [NSString stringWithFormat:@"http://69.69.143.155/attach/%ld/", (long)getpid()];
+    NSString* url_string = [NSString stringWithFormat:@"http://69.69.0.1/attach/%ld/", (long)getpid()];
+    ILOG(@"JIT: URL <%@>", url_string);
     
     NSMutableURLRequest* request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url_string]];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:[@"" dataUsingEncoding:NSUTF8StringEncoding]];
     
-    [[[NSURLSession sharedSession] dataTaskWithRequest:request] resume];
+    NSURLSessionDataTask *dataTask = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if(error != nil) {
+            ELOG(@"JIT: %@", error.localizedDescription);
+            return;
+        }
+        if(response) {
+            ILOG(@"JIT: Response: %@", response.debugDescription);
+        }
+        if(data && data.length > 0) {
+            NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            ILOG(@"JIT: %@", dataString);
+        }
+    }];
+    [dataTask resume];
 }
 
 - (DOLJitType)jitType {
