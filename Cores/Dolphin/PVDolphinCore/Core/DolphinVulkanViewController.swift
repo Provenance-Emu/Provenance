@@ -33,19 +33,19 @@ import os
 
 	}
 	required init?(coder: NSCoder) {
-		super.init(coder:coder);
+		super.init(coder:coder)
 	}
 
 	@objc public override func viewDidLoad() {
-		NSLog("View Did Load\n");
+		VLOG("View Did Load\n")
 		self.view=metalView;
-		NSLog("Starting VM\n");
-		core.startVM(self.view);
+        VLOG("Starting VM\n")
+		core.startVM(self.view)
 	}
 
 	@objc public override func viewDidLayoutSubviews() {
-		NSLog("View Size Changed\n");
-		core.refreshScreenSize();
+        VLOG("View Size Changed\n")
+		core.refreshScreenSize()
 	}
 }
 
@@ -114,7 +114,7 @@ import os
 		let videoBounds = CGRect( x: 0,
 							y: 0,
 							width: (CGFloat)(gameScreenSize.width * CGFloat(resolutionFactor)),
-							height: (CGFloat)(gameScreenSize.height * CGFloat(resolutionFactor)));
+							height: (CGFloat)(gameScreenSize.height * CGFloat(resolutionFactor)))
 		super.init(frame: videoBounds, device: dev)
 		self.device = dev
 		self.isPaused = true
