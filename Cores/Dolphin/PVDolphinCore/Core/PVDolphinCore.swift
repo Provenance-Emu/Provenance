@@ -37,6 +37,14 @@ extension PVDolphinCore: CoreOptional {
 			requiresRestart: true),
 		defaultValue: false)
 	}()
+    
+    static var enableCheatOption: CoreOption = {
+        .bool(.init(
+            title: "Enable Cheat Codes (Runs Slower)",
+            description: nil,
+            requiresRestart: true),
+        defaultValue: false)
+    }()
 
 	static var msaaOption: CoreOption = {
 		 .enumeration(.init(title: "Multi Surface Anti-Aliasing",
@@ -97,7 +105,7 @@ extension PVDolphinCore: CoreOptional {
 		let coreOptions: [CoreOption] = [
 			resolutionOption, gsOption, forceBilinearFilteringOption,
 			cpuOption, msaaOption, ssaaOption, cpuClockOption,
-			fastMemoryOption]
+			fastMemoryOption, enableCheatOption]
 		let coreGroup:CoreOption = .group(.init(title: "Dolphin! Core",
 												description: "Global options for Dolphin!"),
 										  subOptions: coreOptions)
@@ -122,6 +130,9 @@ extension PVDolphinCore: CoreOptional {
 	@objc var cpuClock: Int{
 		PVDolphinCore.valueForOption(PVDolphinCore.cpuClockOption).asInt ?? 0
 	}
+    @objc var enableCheatOption: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCore.enableCheatOption).asBool
+    }
 	@objc var msaaOption: Int{
 		PVDolphinCore.valueForOption(PVDolphinCore.msaaOption).asInt ?? 0
 	}
@@ -141,6 +152,7 @@ extension PVDolphinCore: CoreOptional {
 		if self.msaa < 2 {
 			self.ssaa=false
 		}
+        self.enableCheatCode = enableCheatOption
 		self.fastMemory = fastMemoryOption
 		self.cpuOClock = NSNumber(value: cpuClock).int8Value
 	}

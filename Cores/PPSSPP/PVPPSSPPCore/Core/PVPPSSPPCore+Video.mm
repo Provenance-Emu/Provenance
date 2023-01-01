@@ -46,7 +46,7 @@
 #include "Common/File/VFS/VFS.h"
 #include "Common/File/VFS/AssetReader.h"
 #include "Common/Data/Text/I18n.h"
-#include "Common/StringUtils.h""
+#include "Common/StringUtils.h"
 #include "Common/System/Display.h"
 #include "Common/System/NativeApp.h"
 #include "Common/System/System.h"
@@ -64,7 +64,7 @@
 #include "Common/GraphicsContext.h"
 
 #include "GPU/GPUState.h"
-#include "GPU/GPUInterface.h""
+#include "GPU/GPUInterface.h"
 
 #include "Core/Config.h"
 #include "Core/ConfigValues.h"
@@ -145,7 +145,7 @@ static bool threadStopped = false;
 	 dp_yres = pixel_yres * g_dpi_scale_y;
 	 pixel_in_dps_x = (float)pixel_xres / (float)dp_xres;
 	 pixel_in_dps_y = (float)pixel_yres / (float)dp_yres;
-	 [m_view setContentScaleFactor:self.gsPreference * scale];
+	 [m_view setContentScaleFactor:scale];
 	 // PSP native resize
 	 PSP_CoreParameter().pixelWidth = pixel_xres;
 	 PSP_CoreParameter().pixelHeight = pixel_yres;
@@ -217,7 +217,7 @@ static bool threadStopped = false;
         [m_view.widthAnchor constraintGreaterThanOrEqualToConstant:bounds.size.width].active=true;
         [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;;
         [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
-        [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.superview.leadingAnchor constant:0].active = true;
+        [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
         [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
         [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
     }

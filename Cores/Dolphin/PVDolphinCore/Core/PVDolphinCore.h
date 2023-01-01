@@ -38,6 +38,11 @@
 	BOOL isNTSC;
 	BOOL isBilinear;
 	BOOL isWii;
+    BOOL enableCheatCode;
+    UIView *m_view;
+    UIViewController *m_view_controller;
+    CAMetalLayer* m_metal_layer;
+    CAEAGLLayer *m_gl_layer;
 @public
 	dispatch_queue_t _callbackQueue;
 }
@@ -53,6 +58,7 @@
 @property (nonatomic, assign) int8_t msaa;
 @property (nonatomic, assign) bool ssaa;
 @property (nonatomic, assign) bool fastMemory;
+@property (nonatomic, assign) bool enableCheatCode;
 - (void) refreshScreenSize;
 - (void) startVM:(UIView *)view;
 - (void) setupControllers;
