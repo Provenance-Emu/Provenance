@@ -56,6 +56,7 @@
 # pragma mark - Controls
 @implementation PVLibRetroCore (Controls)
 - (void)pollControllers {
+#if TARGET_OS_WATCH
     // TODO: This should warn or something if not in subclass
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
         GCController *controller = nil;
@@ -161,6 +162,7 @@
         }
 #endif
     }
+#endif
 }
 
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player

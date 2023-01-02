@@ -7,6 +7,7 @@
 #if !TARGET_OS_TV
 @import AltKit;
 #endif
+@import PVLogging;
 
 #import <dlfcn.h>
 

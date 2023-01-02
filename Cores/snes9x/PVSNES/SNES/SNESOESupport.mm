@@ -26,7 +26,7 @@
  */
 
 #include <Foundation/Foundation.h>
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLogging.h>
 #include "snes9x.h"
 #include "memmap.h"
 #include "gfx.h"

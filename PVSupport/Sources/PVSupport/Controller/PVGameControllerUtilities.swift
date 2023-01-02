@@ -6,9 +6,9 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
+#if canImport(GameController)
 import Foundation
 @_exported import GameController
-import simd
 
 private let thumbstickSensitivty: Float = 0.2
 
@@ -101,3 +101,4 @@ public final class PVGameControllerUtilities : NSObject {
         return .init(forThumbstick: thumbstick)
     }
 }
+#endif

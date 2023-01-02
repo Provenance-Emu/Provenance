@@ -15,6 +15,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+#import <PVLogging/PVLogging.h>
 
 // MelonDS imports
 //#include "types.h"

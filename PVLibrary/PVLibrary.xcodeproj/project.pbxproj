@@ -69,6 +69,7 @@
 		B354E7CC219A7E620041F971 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
 		B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
 		B364D4BF2870E80100B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4BE2870E80100B93A4B /* PVLibRetro.framework */; };
+		B37345E32962D9EF00A8AEEC /* PVLogging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37345E22962D9EF00A8AEEC /* PVLogging.framework */; };
 		B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
 		B378227D21D41E310077E86F /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
 		B378228021D41E460077E86F /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227F21D41E460077E86F /* PackageResult.swift */; };
@@ -346,6 +347,7 @@
 		B364D4BE2870E80100B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D4C22870E81200B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36AE7D9295ED64E00CC9D4F /* Service_TheGamesDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service_TheGamesDB.swift; sourceTree = "<group>"; };
+		B37345E22962D9EF00A8AEEC /* PVLogging.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLogging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B378226D21D409F20077E86F /* Extractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extractor.swift; sourceTree = "<group>"; };
 		B378227921D41E1C0077E86F /* SavePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavePackage.swift; sourceTree = "<group>"; };
 		B378227C21D41E310077E86F /* GamePackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePackage.swift; sourceTree = "<group>"; };
@@ -702,6 +704,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B37345E32962D9EF00A8AEEC /* PVLogging.framework in Frameworks */,
 				B37B4DF027B2292F0068F8D1 /* Differentiator in Frameworks */,
 				B305EF9F276B50E2003AE510 /* SwiftUI.framework in Frameworks */,
 				B336B90F26B39BCF00960A81 /* SQLite in Frameworks */,
@@ -739,6 +742,7 @@
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B37345E22962D9EF00A8AEEC /* PVLogging.framework */,
 				B364D4C22870E81200B93A4B /* PVLibRetro.framework */,
 				B364D4BE2870E80100B93A4B /* PVLibRetro.framework */,
 				B305F083276B5229003AE510 /* PVSupport.framework */,

@@ -40,6 +40,10 @@ public final class PVBIOS: Object, BIOSFileProvider {
     }
 }
 
+extension PVBIOS: Identifiable {
+    public var id: String { expectedMD5 }
+}
+
 public extension PVBIOS {
     var expectedPath: URL {
         return system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false)

@@ -79,7 +79,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         window.overrideUserInterfaceStyle = darkTheme ? .dark : .light
         #endif
 
-        if #available(iOS 14, tvOS 14, macCatalyst 15.0, *),
+        if #available(iOS 15, tvOS 15, macCatalyst 15.0, *),
            PVSettingsModel.shared.debugOptions.useSwiftUI {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(

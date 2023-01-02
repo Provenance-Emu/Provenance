@@ -72,9 +72,10 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
  */
 @property (nonatomic, readonly, nullable) id presentationFramebuffer;
 
+#if !TARGET_OS_WATCH
 @optional
 @property (nonatomic, nullable, readonly) MTKView* mtlview;
-
+#endif
 @end
 
 @interface PVEmulatorCore : NSObject {
@@ -128,10 +129,12 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 @property (nonatomic, assign) GameSpeed gameSpeed;
 @property (nonatomic, readonly, getter=isSpeedModified) BOOL speedModified;
 
+#if !TARGET_OS_WATCH
 @property (nonatomic, strong, nullable) GCController *controller1;
 @property (nonatomic, strong, nullable) GCController *controller2;
 @property (nonatomic, strong, nullable) GCController *controller3;
 @property (nonatomic, strong, nullable) GCController *controller4;
+#endif
 
 @property (nonatomic, strong, readonly, nonnull) NSLock  *emulationLoopThreadLock;
 @property (nonatomic, strong, readonly, nonnull) NSCondition  *frontBufferCondition;

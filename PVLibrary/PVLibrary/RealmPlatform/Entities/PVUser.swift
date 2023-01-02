@@ -21,6 +21,10 @@ public final class PVUser: Object {
     public dynamic var lastSeen: Date = Date()
 }
 
+extension PVUser: Identifiable {
+    public var id: String { uuid }
+}
+
 // PVLibrary - Network
 public extension PVUser {
 //    var isOnline: Bool {

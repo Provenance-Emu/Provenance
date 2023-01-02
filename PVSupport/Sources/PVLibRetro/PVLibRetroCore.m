@@ -2545,7 +2545,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player
 {
     // TODO: This should warn or something if not in subclass
-
+#if !TARGET_OS_WATCH
     GCController *controller = nil;
 
     if (player == 0)
@@ -2680,8 +2680,8 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
                 break;
         }
     }
-#endif
-
+#endif // tvOS
+#endif // !watchOS
     return 0;
 }
 

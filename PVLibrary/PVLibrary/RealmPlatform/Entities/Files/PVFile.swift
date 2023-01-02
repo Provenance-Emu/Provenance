@@ -75,6 +75,10 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     }
 }
 
+extension PVFile: Identifiable {
+    public var id: String { partialPath }
+}
+
 public extension PVFile {
     internal(set) var relativeRoot: RelativeRoot {
         get {

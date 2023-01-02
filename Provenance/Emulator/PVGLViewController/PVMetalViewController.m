@@ -8,6 +8,8 @@
 
 #import "PVMetalViewController.h"
 @import PVSupport;
+@import PVLogging;
+
 #import "Provenance-Swift.h"
 #import <QuartzCore/QuartzCore.h>
 

@@ -10,7 +10,7 @@
 #import "NSObject+PVAbstractAdditions.h"
 #import "OERingBuffer.h"
 #import "RealTimeThread.h"
-#import "PVLogging.h"
+@import PVLogging;
 #import "DebugUtils.h"
 @import AVFoundation;
 

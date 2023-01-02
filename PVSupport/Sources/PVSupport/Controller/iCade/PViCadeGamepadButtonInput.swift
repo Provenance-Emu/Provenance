@@ -1,20 +1,12 @@
-//  Converted to Swift 4 by Swiftify v4.2.29618 - https://objectivec2swift.com/
 //
-//  PViCadeGamepadInputButton.h
+//  PViCadeGamepadInputButton.swift
 //  Provenance
 //
-//  Created by Josejulio Martínez on 19/06/15.
-//  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
+//  Created by Joseph Mattiello
+//  Copyright (c) 2022 Joseph Mattiello. All rights reserved.
 //
 
-//
-//  PViCadeGamepadInputButton.m
-//  Provenance
-//
-//  Created by Josejulio Martínez on 19/06/15.
-//  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
-//
-
+#if canImport(UIKit) && canImport(GameController)
 import GameController
 
 public final class PViCadeGamepadButtonInput: GCControllerButtonInput {
@@ -61,3 +53,4 @@ public final class PViCadeGamepadButtonInput: GCControllerButtonInput {
         }
     }
 }
+#endif

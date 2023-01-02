@@ -94,6 +94,7 @@
  */
 
 #if __has_include(<UIKit/UIKit.h>)
+@import PVLogging;
 #import "UIImage+ImageEffects.h"
 
 @import Accelerate;

@@ -6,7 +6,7 @@
 #import <PVSupport/PVSupport-Swift.h>
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVMednafen/PVMednafen-Swift.h>
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLogging.h>
 
 @implementation MednafenGameCore (Cheats)
 

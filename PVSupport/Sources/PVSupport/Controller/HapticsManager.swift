@@ -5,7 +5,7 @@ Abstract:
 The class that manages the app's haptics playback.
 */
 
-#if canImport(CoreHaptics)
+#if canImport(CoreHaptics) && canImport(GameController)
 import Foundation
 import GameController
 import CoreHaptics

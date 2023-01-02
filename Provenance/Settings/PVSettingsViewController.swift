@@ -322,7 +322,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                 key: \PVSettingsModel.debugOptions.unsupportedCores, icon: .sfSymbol("testtube.2")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
-                                detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet. iOS 14.0+ recommended."),
+                                detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet. iOS 15.0+ required."),
                                 key: \PVSettingsModel.debugOptions.useSwiftUI, icon: .sfSymbol("swift")) { cell, row in
 //                                    let swiftUIDetailText: DetailText
 //                                    if #available(iOS 14, tvOS 14, *) {

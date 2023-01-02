@@ -92,11 +92,13 @@ final class PVN64ControllerViewController2: PVControllerViewController<PVN64Syst
 		  print("Keyboard is connected")
 		}
 
+        #if !os(watchOS)
 		let isGamepadConnected = GCController.controllers().count > 0
 
 		if isGamepadConnected {
 		  print("Gamepad is connected")
 		}
+        #endif
 // TODO: Hookup / check keyboard
 //		if !isGamepadConnected {
 //		  print("There is no keyboard or gamepad so just create Virtual one")

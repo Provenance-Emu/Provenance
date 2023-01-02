@@ -83,7 +83,7 @@ static inline BOOL OEIntRectIsEmpty(OEIntRect rect)
 }
 
 static inline CGSize CGSizeFromOEIntSize(OEIntSize size)
-{
+{ 
     return CGSizeMake(size.width, size.height);
 }
 

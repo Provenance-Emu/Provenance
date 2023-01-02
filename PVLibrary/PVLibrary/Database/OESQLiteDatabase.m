@@ -27,6 +27,7 @@
 #import "OESQLiteDatabase.h"
 #import <sqlite3.h>
 @import PVSupport;
+@_exported import PVLogging
 
 NSString * const OESQLiteErrorDomain = @"OESQLiteErrorDomain";
 @interface OESQLiteDatabase ()

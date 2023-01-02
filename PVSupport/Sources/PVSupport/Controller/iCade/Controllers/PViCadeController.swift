@@ -6,8 +6,9 @@
 //  Created by Josejulio Martínez on 19/06/15.
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
 import GameController
+@_exported import PVLogging
 
 public class PViCadeController: GCController {
     internal private(set) var iCadeGamepad: PViCadeGamepad = PViCadeGamepad()

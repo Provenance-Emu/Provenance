@@ -7,7 +7,7 @@
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
 import GameController
 
 // TODO: Make a class for gamepad and another for joystick to support dpad and joystick as seperate inputs

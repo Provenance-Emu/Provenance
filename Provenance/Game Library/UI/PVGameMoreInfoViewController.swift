@@ -62,6 +62,33 @@ class LongPressLabel: UILabel {
      #endif
 }
 
+#if canImport(SwiftUI)
+import SwiftUI
+
+struct GameMoreInfoView: UIViewControllerRepresentable {
+    typealias UIViewControllerType = PVGameMoreInfoViewController
+    var game: PVGame
+    func makeUIViewController(context: Context) -> PVGameMoreInfoViewController {
+        guard let vc = create() else {
+            fatalError("gameMoreInfoVC missing from StoryBoard")
+        }
+
+        return vc
+    }
+     
+     func updateUIViewController(_ uiViewController: PVGameMoreInfoViewController, context: Context) {
+         // Updates the state of the specified view controller with new information from SwiftUI.
+     }
+    
+    func create() -> PVGameMoreInfoViewController? {
+        guard let moreInfoViewController = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "gameMoreInfoVC") as? PVGameMoreInfoViewController else { return nil }
+        moreInfoViewController.game = self.game
+        moreInfoViewController.showsPlayButton = false
+        return moreInfoViewController
+    }
+}
+#endif
+
 final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController, GameSharingViewController {
     var mustRefreshDataSource: Bool = false
 

@@ -1,7 +1,7 @@
 #import <PVPlay/PVPlay.h>
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLogging.h>
 #import "PS2VM.h"
 
 #include "PH_Generic.h"

@@ -19,11 +19,13 @@ public final class PVCore: Object {
     public dynamic var projectURL = ""
     public dynamic var projectVersion = ""
     public dynamic var disabled = false
+    public dynamic var requiresJIT = false
+    public dynamic var supportsJIT = false
 
     // Reverse links
     public var saveStates = LinkingObjects(fromType: PVSaveState.self, property: "core")
 
-    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool =  false) {
+    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool =  false, requiresJIT: Bool = false, supportsJIT: Bool = false) {
         self.init()
         self.identifier = identifier
         self.principleClass = principleClass
@@ -33,11 +35,17 @@ public final class PVCore: Object {
         projectURL = url
         projectVersion = version
         self.disabled = disabled
+        self.requiresJIT = requiresJIT
+        self.supportsJIT = supportsJIT
     }
 
     public override static func primaryKey() -> String? {
         return "identifier"
     }
+}
+
+extension PVCore: Identifiable {
+    public var id: String { identifier }
 }
 
 // MARK: - Conversions
@@ -64,9 +72,11 @@ internal extension Core {
         identifier = core.identifier
         principleClass = core.principleClass
         disabled = core.disabled
+        requiresJIT = core.requiresJIT
+        supportsJIT = core.supportsJIT
         // TODO: Supported systems
         let url = URL(string: core.projectURL) ?? URL(string: "https://provenance-emu.com")!
-		print("loadcore: \(core.projectName) class: \(core.principleClass) identifier: \(identifier) disable: \(disabled)")
+		DLOG("loadcore: \(core.projectName) class: \(core.principleClass) identifier: \(identifier) disable: \(disabled)")
         project = CoreProject(name: core.projectName, url: url, version: core.projectVersion)
     }
 }

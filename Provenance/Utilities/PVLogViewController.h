@@ -13,6 +13,7 @@
 #endif
 @import PVSupport;
 @import CocoaLumberjack;
+@_exported import PVLogging
 //#import <UIForLumberJack/UIForLumberJack.h>
 #define kSPUILoggerMessageMargin 10
 

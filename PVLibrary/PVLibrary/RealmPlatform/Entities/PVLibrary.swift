@@ -31,6 +31,10 @@ public final class PVLibrary: Object {
     public private(set) var games = List<PVGame>()
 }
 
+extension PVLibrary: Identifiable {
+    public var id: String { uuid }
+}
+
 // PVLibrary - Network
 public extension PVLibrary {
     var isOnline: Bool {
