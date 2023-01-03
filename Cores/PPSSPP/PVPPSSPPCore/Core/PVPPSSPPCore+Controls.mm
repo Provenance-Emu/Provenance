@@ -238,7 +238,7 @@ extern bool _isInitialized;
 }
 
 - (void)didMovePSPJoystickDirection:(PVPSPButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-	[self sendPSPButtonInput:(PVPSPButton)button isPressed:true withValue:value forPlayer:player];
+	[self sendPSPButtonInput:(PVPSPButton)button isPressed:value != 0 withValue:value forPlayer:player];
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
@@ -293,15 +293,19 @@ extern bool _isInitialized;
 			[self gamepadEventOnPad:player button:NKCODE_BUTTON_12 action:(pressed?1:0)];
 			break;
 		case(PVPSPButtonLeftAnalogLeft):
-			[self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_X value:CGFloat(value)];
+            value *= 3;
+			[self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_X value:CGFloat(-value)];
 			break;
 		case(PVPSPButtonLeftAnalogRight):
+            value *= 3;
 			[self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_X value:CGFloat(value)];
 			break;
 		case(PVPSPButtonLeftAnalogUp):
-			[self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_Y value:CGFloat(value)];
+            value *= 3;
+			[self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_Y value:CGFloat(-value)];
 			break;
 		case(PVPSPButtonLeftAnalogDown):
+            value *= 3;
 			[self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_Y value:CGFloat(value)];
 			break;
 		case(PVPSPButtonLeft):

@@ -201,7 +201,7 @@
 	// Core Options
 	PSP_CoreParameter().fileToStart     = Path(std::string([_romPath UTF8String]));
 	PSP_CoreParameter().mountIso.clear();
-	PSP_CoreParameter().startBreak      = true;
+    PSP_CoreParameter().startBreak      = false;
 	PSP_CoreParameter().enableSound     = true;
 	PSP_CoreParameter().printfEmuLog    = true;
 	PSP_CoreParameter().headLess        = false;
@@ -234,14 +234,13 @@
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
-    // Here we actually pause from 2nd time on
     ELOG(@"We are right now Paused: %d %d -> %d\n", isPaused, self.isEmulationPaused, flag);
-    [super setPauseEmulation:flag];
     if (flag == isPaused) return;
     if (flag != isPaused || flag != self.isEmulationPaused) {
         Core_EnableStepping(flag, "ui.lost_focus", 0);
         isPaused=flag;
 	}
+    [super setPauseEmulation:flag];
 }
 
 - (void)stopEmulation {

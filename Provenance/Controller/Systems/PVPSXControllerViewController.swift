@@ -47,6 +47,10 @@ final class PVPSXControllerViewController: PVControllerViewController<PVPSXSyste
         selectButton?.buttonTag = .select
         startButton?.buttonTag = .start
     }
+    
+    override func prelayoutSettings() {
+        alwaysRightAlign = true
+    }
 
     override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
         var up:CGFloat = value.y < 0.5 ? CGFloat(1 - (value.y * 2)) : 0.0
