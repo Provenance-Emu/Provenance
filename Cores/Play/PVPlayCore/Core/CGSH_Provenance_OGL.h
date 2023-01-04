@@ -3,7 +3,7 @@
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVEmulatorCore/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 #import "gs/GSH_OpenGL/GSH_OpenGL.h"
 

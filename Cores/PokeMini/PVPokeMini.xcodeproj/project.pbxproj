@@ -85,6 +85,7 @@
 		B3CB857E1E9BF153009155A6 /* freebios.c in Sources */ = {isa = PBXBuildFile; fileRef = 081A46191B95660100565444 /* freebios.c */; };
 		B3CB85B61E9BF19B009155A6 /* PVPokeMiniEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 081A45971B95604700565444 /* PVPokeMiniEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3CB85CA1E9C1BB0009155A6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CB85C91E9C1BB0009155A6 /* AudioToolbox.framework */; };
+		B3E548D3296653DD009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E548D2296653DD009BFDB9 /* PVEmulatorCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -177,6 +178,7 @@
 		B3CB85B41E9BF18D009155A6 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3CB85C91E9C1BB0009155A6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		B3CB85CB1E9C1BB9009155A6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		B3E548D2296653DD009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EA6C8E2926118D00010224 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -185,6 +187,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3E548D3296653DD009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B34AB5642106D5EB00C45F09 /* PVSupport.framework in Frameworks */,
 				B3CB85CA1E9C1BB0009155A6 /* AudioToolbox.framework in Frameworks */,
 			);
@@ -228,6 +231,7 @@
 		081A45F71B9563EF00565444 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E548D2296653DD009BFDB9 /* PVEmulatorCore.framework */,
 				B3EA6C8E2926118D00010224 /* PVSupport.framework */,
 				B3CB85CB1E9C1BB9009155A6 /* AudioToolbox.framework */,
 				B3CB85C91E9C1BB0009155A6 /* AudioToolbox.framework */,
@@ -705,7 +709,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
@@ -762,7 +766,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
@@ -810,7 +814,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";

@@ -27,7 +27,7 @@
 #import "ATR800GameCore.h"
 
 @import PVSupport;
-//#import <PVSupport/OERingBuffer.h>
+//#import <PVEmulatorCore/OERingBuffer.h>
 //#import <PVSupport/DebugUtils.h>
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -38,6 +38,8 @@
 @import OpenGL;
 @import GLUT;
 #endif
+
+@import PVLoggingObjC;
 
 // ataria800 project includes
 #include "afile.h"

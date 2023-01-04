@@ -41,8 +41,6 @@
 		9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57E294CB5E6000322B9 /* number_theory.c */; };
 		9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57F294CB5E6000322B9 /* memory_manager.c */; };
 		9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */; };
-		936FDBC02957F9D70073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; };
-		936FDBC12957F9D70073628A /* libMoltenVK_Play.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		936FDBCA295808D20073628A /* libMoltenVK_Play.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
@@ -104,6 +102,8 @@
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
+		B3E548DB29665416009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E548DA29665416009BFDB9 /* PVEmulatorCore.framework */; };
+		B3E548F229665422009BFDB9 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E548F129665422009BFDB9 /* MoltenVK.xcframework */; };
 		B3EB8B10293F653D00BCCBAE /* PVPlayCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVPlayCore+Controls.mm */; };
 /* End PBXBuildFile section */
 
@@ -468,17 +468,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		936FDBC22957F9D70073628A /* Embed Libraries */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				936FDBC12957F9D70073628A /* libMoltenVK_Play.dylib in Embed Libraries */,
-			);
-			name = "Embed Libraries";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1742,6 +1731,8 @@
 		B3C76223207833DE009950E4 /* PVPlayCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPlayCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVPlayCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVPlayCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3E548DA29665416009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E548F129665422009BFDB9 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "../Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1781,14 +1772,15 @@
 				B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
-				936FDBC02957F9D70073628A /* libMoltenVK_Play.dylib in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B3A6209529478A9B00ED28E3 /* MetalKit.framework in Frameworks */,
 				B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */,
+				B3E548F229665422009BFDB9 /* MoltenVK.xcframework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libplay.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
+				B3E548DB29665416009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3A6209129478A7600ED28E3 /* Metal.framework in Frameworks */,
@@ -4043,6 +4035,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E548F129665422009BFDB9 /* MoltenVK.xcframework */,
+				B3E548DA29665416009BFDB9 /* PVEmulatorCore.framework */,
 				936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */,
 				936FDBA72957F9080073628A /* libMoltenVK.dylib */,
 				B34A60972947A7080070ED25 /* libsqlite3.tbd */,
@@ -4144,7 +4138,6 @@
 				B3C7620C20783162009950E4 /* Frameworks */,
 				B3C7620D20783162009950E4 /* Headers */,
 				B3C7620E20783162009950E4 /* Resources */,
-				936FDBC22957F9D70073628A /* Embed Libraries */,
 			);
 			buildRules = (
 			);

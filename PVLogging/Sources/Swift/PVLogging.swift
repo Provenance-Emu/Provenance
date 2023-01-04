@@ -5,7 +5,8 @@
 //
 
 import Foundation
-import CocoaLumberjackSwift
+@_exported import CocoaLumberjack
+@_exported import CocoaLumberjackSwiftSupport
 import System
 
 let ISO_TIMEZONE_UTC_FORMAT: String = "Z"
@@ -175,7 +176,6 @@ public final class PVLogging: NSObject {
         let defaultCacheSizeDiskMB = defaultCacheSizeDisk / 1024 / 1024
         let usedCachedMemory = defaultCache.currentMemoryUsage / 1024 / 1024
         let usedDiskCache = defaultCache.currentDiskUsage / 1024 / 1024
-
-        DDLogInfo("URLCache: Memory: \(defaultCacheSizeMemoryMB)MB, Disk: \(defaultCacheSizeDiskMB)MB\nUsed Memory: \(usedCachedMemory)MB, Used Disk: \(usedDiskCache)MB")
+        ILOG("URLCache: Memory: \(defaultCacheSizeMemoryMB)MB, Disk: \(defaultCacheSizeDiskMB)MB\nUsed Memory: \(usedCachedMemory)MB, Used Disk: \(usedDiskCache)MB")
     }
 }

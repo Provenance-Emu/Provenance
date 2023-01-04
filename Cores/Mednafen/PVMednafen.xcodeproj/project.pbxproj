@@ -474,6 +474,7 @@
 		B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
 		B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
 		B3B8C3BF290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */; };
+		B3E548F929665455009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E548F829665455009BFDB9 /* PVEmulatorCore.framework */; };
 		B3FBDF01207FF13400E661D1 /* interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8F20736EE90097D86F /* interface.cpp */; };
 		B3FBDF02207FF19800E661D1 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9820736EE90097D86F /* generic.cpp */; };
 		B3FBDF03207FF19800E661D1 /* smemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9920736EE90097D86F /* smemory.cpp */; };
@@ -2905,6 +2906,7 @@
 		B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MednafenGameCore+Controls.mm"; sourceTree = "<group>"; };
 		B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiDisc.m; sourceTree = "<group>"; };
 		B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiTap.m; sourceTree = "<group>"; };
+		B3E548F829665455009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FBDEF8207FF0E300E661D1 /* libsnes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnes.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnes_faust.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C66D560A2626B12100CDECE9 /* Makefile.am.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = Makefile.am.inc; sourceTree = "<group>"; };
@@ -3115,6 +3117,7 @@
 				B33354A2207B1C0D0036A448 /* libsound.a in Frameworks */,
 				B3335488207B1B8E0036A448 /* libcdrom.a in Frameworks */,
 				B33352E2207B072C0036A448 /* libhwaudio.a in Frameworks */,
+				B3E548F929665455009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B33352E3207B072C0036A448 /* libhwcpu.a in Frameworks */,
 				B33352E4207B072C0036A448 /* libhwmisc.a in Frameworks */,
 				B33352E5207B072C0036A448 /* libhwvideo.a in Frameworks */,
@@ -3319,6 +3322,7 @@
 		B340E5E51E0889FB00AD0E8B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E548F829665455009BFDB9 /* PVEmulatorCore.framework */,
 				B314E30F21081E9200D0C27A /* PVSupport.framework */,
 				B340E5F41E088A4500AD0E8B /* Foundation.framework */,
 				B340E5F21E088A4000AD0E8B /* UIKit.framework */,
@@ -8243,7 +8247,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -10649,7 +10653,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -10709,7 +10713,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;

@@ -8,11 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "PVLibRetroGLESCore.h"
+@import PVLoggingObjC;
 
 #include "dynamic.h"
 #include "video_driver.h"
 
-#import <PVSupport/PVSupport-Swift.h>
+#import <PVSupport/PVSupport.h>
 #include "core.h"
 #include "runloop.h"
 

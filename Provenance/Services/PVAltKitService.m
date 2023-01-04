@@ -10,7 +10,7 @@
 #import "PVAltKitService.h"
 @import PVSupport;
 @import AltKit;
-@import PVLogging.PVLoggingObjC;
+@import PVLogging;
 
 @implementation PVAltKitService
 

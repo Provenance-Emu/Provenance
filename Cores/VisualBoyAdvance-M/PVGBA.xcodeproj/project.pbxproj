@@ -48,6 +48,7 @@
 		B3C9D4FD1DEA78550068D057 /* Gb_Apu_State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC451ABD0FEF004E778B /* Gb_Apu_State.cpp */; };
 		B3C9D5271DEA7C410068D057 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5261DEA7C410068D057 /* libz.tbd */; };
 		B3C9D52A1DEA7D040068D057 /* PVGBAEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9FBC371ABD0FE2004E778B /* PVGBAEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3E549012966546E009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E549002966546E009BFDB9 /* PVEmulatorCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -146,6 +147,7 @@
 		B3C9D4D31DEA780A0068D057 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D4D51DEA780E0068D057 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D5261DEA7C410068D057 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B3E549002966546E009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +155,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3E549012966546E009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B324C63921920DAC009F4EDC /* PVSupport.framework in Frameworks */,
 				B3C9D5271DEA7C410068D057 /* libz.tbd in Frameworks */,
 				B3C9D4DA1DEA782C0068D057 /* Foundation.framework in Frameworks */,
@@ -319,6 +322,7 @@
 		1A9FBE131ABD133E004E778B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E549002966546E009BFDB9 /* PVEmulatorCore.framework */,
 				B324C63B21920DCD009F4EDC /* PVSupport.framework */,
 				B324C63821920DAC009F4EDC /* PVSupport.framework */,
 				B3C9D5261DEA7C410068D057 /* libz.tbd */,

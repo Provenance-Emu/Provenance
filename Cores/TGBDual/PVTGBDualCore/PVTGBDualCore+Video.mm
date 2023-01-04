@@ -18,6 +18,7 @@
 #import <GLUT/GLUT.h>
 #endif
 
+#import <PVEmulatorCore/PVEmulatorCore.h>
 #include "libretro.h"
 
 #define TGBDUAL_PIXEL_TYPE       GL_UNSIGNED_SHORT_5_6_5

@@ -8,6 +8,7 @@
 
 #import "PVTGBDualCore+Controls.h"
 #include "libretro.h"
+#import <PVEmulatorCore/PVEmulatorCore.h>
 
 @implementation PVTGBDualCore (Controls)
 

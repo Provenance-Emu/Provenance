@@ -6,10 +6,11 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
+#import "PVLibRetroCore.h"
 #import <Foundation/Foundation.h>
-#import "PVLibretro.h"
 
-#import <PVSupport/PVSupport-Swift.h>
+#import <PVSupport/PVSupport.h>
+@import PVEmulatorCore;
 
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H

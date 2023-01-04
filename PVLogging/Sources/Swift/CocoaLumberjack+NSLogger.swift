@@ -8,7 +8,7 @@
 
 #if canImport(NSLogger)
 import Foundation
-import NSLogger
+@_exported import NSLogger
 @_exported import CocoaLumberjackSwift
 
 internal class JMLumberjackNSLogger: DDAbstractLogger {

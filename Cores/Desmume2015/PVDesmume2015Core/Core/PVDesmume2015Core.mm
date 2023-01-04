@@ -15,6 +15,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+#import <PVLoggingObjC.h>
 
 // Desmume2015 imports
 //#include "types.h"
@@ -390,7 +391,6 @@
 #pragma mark - Options
 - (void *)getVariable:(const char *)variable {
     ILOG(@"%s", variable);
-
 
     #define V(x) strcmp(variable, x) == 0
 

@@ -98,6 +98,7 @@
 		93E74243295B70280028EB94 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		93E7427B295C53890028EB94 /* OGLGraphicsContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 93E7427A295C53890028EB94 /* OGLGraphicsContext.h */; };
 		93F28DC3295E264700E4D464 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC2295E264600E4D464 /* MediaPlayer.framework */; };
+		B3E548BD296653CF009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E548BC296653CF009BFDB9 /* PVEmulatorCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -580,16 +581,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		93E74211295B67C70028EB94 /* Embed Libraries */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Libraries";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -665,6 +656,7 @@
 		B3C76223207833DE009950E4 /* PVPPSSPPCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPPSSPPCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVPPSSPPCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVPPSSPPCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3E548BC296653CF009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -678,6 +670,7 @@
 				93E741F6295B67C70028EB94 /* CoreAudio.framework in Frameworks */,
 				93AEC060295E7FEB00F9381C /* GLKit.framework in Frameworks */,
 				93E741F7295B67C70028EB94 /* libsqlite3.tbd in Frameworks */,
+				B3E548BD296653CF009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				93E741F8295B67C70028EB94 /* CoreGraphics.framework in Frameworks */,
 				93F28DC3295E264700E4D464 /* MediaPlayer.framework in Frameworks */,
 				93E741F9295B67C70028EB94 /* AVFoundation.framework in Frameworks */,
@@ -845,6 +838,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E548BC296653CF009BFDB9 /* PVEmulatorCore.framework */,
 				93AEC04C295E7FEB00F9381C /* GLKit.framework */,
 				93F28DC2295E264600E4D464 /* MediaPlayer.framework */,
 				93928433295DFFA900F2AD12 /* CoreMedia.framework */,
@@ -922,7 +916,6 @@
 				93E741F3295B67C70028EB94 /* Frameworks */,
 				93E74206295B67C70028EB94 /* Headers */,
 				93E7420E295B67C70028EB94 /* Resources */,
-				93E74211295B67C70028EB94 /* Embed Libraries */,
 			);
 			buildRules = (
 			);

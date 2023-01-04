@@ -1,0 +1,6 @@
+framework module PVLoggingObjC {
+    header "include/PVLoggingObjC.h"
+    requires objc
+    export *
+    module * { export * }
+}

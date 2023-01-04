@@ -1,0 +1,7 @@
+//framework module PVSupport {
+module PVSupport {
+    header "include/PVSupport/PVSupport.h"
+    requires objc
+    export *
+//    module * { export * }
+}

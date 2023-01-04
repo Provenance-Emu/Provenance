@@ -12,7 +12,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <PVSupport/PVSupport.h>
 #import <PVSupport/CARingBuffer.h>
-#import <PVSupport/OEGameAudio.h>
+#import <PVEmulatorCore/OEGameAudio.h>
 
 typedef struct MelonDSAUGraphPlayer {
     AudioStreamBasicDescription streamFormat;

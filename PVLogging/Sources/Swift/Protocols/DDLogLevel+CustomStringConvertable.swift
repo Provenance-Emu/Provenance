@@ -6,11 +6,10 @@
 //  Copyright © 2019 JM. All rights reserved.
 //
 
-#if canImport(NSLoggerLibObjC)
+#if canImport(NSLogger)
 import Foundation
-@_exported import CocoaLumberjackSwift
-
-import NSLogger
+@_exported import CocoaLumberjack
+@_exported import NSLoggerLibObjC
 
 extension DDLogLevel {
     var nsloggerLevel: NSLogger.Logger.Level {

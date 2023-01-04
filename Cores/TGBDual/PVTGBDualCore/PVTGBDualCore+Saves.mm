@@ -7,6 +7,7 @@
 //
 
 #import "PVTGBDualCore+Audio.h"
+#import <PVEmulatorCore/PVEmulatorCore.h>
 
 @implementation PVTGBDualCore (Saves)
 

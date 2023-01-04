@@ -23,15 +23,5 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
 #import <PVSupport/DebugUtils.h>
 #import <PVSupport/NSFileManager+OEHashingAdditions.h>
 #import <PVSupport/NSObject+PVAbstractAdditions.h>
-# pragma mark - Emulator Core
-#import <PVSupport/PVEmulatorCore.h>
-# pragma mark - Audio
-#import <PVSupport/TPCircularBuffer.h>
-#import <PVSupport/OERingBuffer.h>
-#import <PVSupport/OEGameAudio.h>
-#ifdef __cplusplus
-    #import <PVSupport/CARingBuffer.h>
-    #import <PVSupport/CAAudioTimeStamp.h>
-#endif
 # pragma mark - Video
 #import <PVSupport/OEGeometry.h>

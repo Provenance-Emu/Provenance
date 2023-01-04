@@ -7,7 +7,7 @@
 //
 
 #import "PVGCVRViewController.h"
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVEmulatorCore/PVEmulatorCore.h>
 #import "PVSettingsModel.h"
 #import <QuartzCore/QuartzCore.h>
 #import <PVMednafen/MednafenGameCore.h>

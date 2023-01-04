@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-
-#import <PVSupport/PVSupport.h>
-#import <PVSupport/PVSupport-Swift.h>
 #import <PVLibRetro/libretro.h>
+#import <PVSupport/PVSupport.h>
+#import <PVEmulatorCore/PVEmulatorCore.h>
+
 //#import <PVLibRetro/dynamic.h>
 
 //#pragma clang diagnostic push

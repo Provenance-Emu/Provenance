@@ -6,10 +6,17 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
+#import "PVLibRetroCore.h"
 #import <Foundation/Foundation.h>
-#import "PVLibretro.h"
 
-#import <PVSupport/PVSupport-Swift.h>
+#import <PVSupport/PVSupport.h>
+#import <PVEmulatorCore/PVEmulatorCore.h>
+@import PVLoggingObjC;
+@import CoreGraphics;
+@import GameController;
+@import ObjectiveC;
+@import MachO;
+@import PVSupport;
 
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H
@@ -38,7 +45,7 @@
 #include "gfx/video_context_driver.h"
 #include "gfx/scaler/scaler.h"
 //#include "gfx/video_frame.h"
-
+#include <rthreads/rthreads.h>
 #include <retro_assert.h>
 
 #include "cores/internal_cores.h"

@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport-Swift.h>
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVEmulatorCore/PVEmulatorCore.h>
 
 PVCORE_DIRECT_MEMBERS
 @interface PVStellaGameCore : PVEmulatorCore <PV2600SystemResponderClient>

@@ -7,7 +7,9 @@
 //
 
 #import "PVDesmume2015Core+Audio.h"
-
+@import PVLogging;
+@import PVLoggingObjC;
+@import CocoaLumberjack;
 @implementation PVDesmume2015Core (Audio)
 
 - (NSTimeInterval)frameInterval {

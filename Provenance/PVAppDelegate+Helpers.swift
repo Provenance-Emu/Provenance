@@ -8,6 +8,7 @@
 
 import Foundation
 import PVSupport
+import PVLogging
 
 // MARK: - Helpers
 extension PVAppDelegate {

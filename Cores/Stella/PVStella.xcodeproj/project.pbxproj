@@ -20,6 +20,7 @@
 		B3C96E871D62C203003F1E93 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494B1C70FD63008A4D89 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3C96E891D62C211003F1E93 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849491C70FD5E008A4D89 /* AudioToolbox.framework */; };
 		B3C96E8A1D62C21A003F1E93 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A849471C70FD53008A4D89 /* CoreGraphics.framework */; };
+		B3E548A92966536F009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E548A82966536F009BFDB9 /* PVEmulatorCore.framework */; };
 		B3E6BEB82894B37000CF98C7 /* CartDetector.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BE0C2894B2FB00CF98C7 /* CartDetector.cxx */; };
 		B3E6BEB92894B37000CF98C7 /* CartFA.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BE9D2894B2FC00CF98C7 /* CartFA.cxx */; };
 		B3E6BEBA2894B37000CF98C7 /* Bankswitch.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BE242894B2FB00CF98C7 /* Bankswitch.cxx */; };
@@ -356,6 +357,7 @@
 		B3C96E911D62C23C003F1E93 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		B3C96E931D62C245003F1E93 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B3D3AED42894B23500EEBA1E /* libstella.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libstella.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E548A82966536F009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E6B8B22894B2F200CF98C7 /* Copyright.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Copyright.txt; sourceTree = "<group>"; };
 		B3E6B8B32894B2F200CF98C7 /* Todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Todo.txt; sourceTree = "<group>"; };
 		B3E6B8B72894B2F200CF98C7 /* Sadistroids HSC NTSC.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; path = "Sadistroids HSC NTSC.bin"; sourceTree = "<group>"; };
@@ -1653,6 +1655,7 @@
 				B3C96E8A1D62C21A003F1E93 /* CoreGraphics.framework in Frameworks */,
 				B3C96E891D62C211003F1E93 /* AudioToolbox.framework in Frameworks */,
 				B3271BDF276B8C660031AECC /* OpenGL.framework in Frameworks */,
+				B3E548A92966536F009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B3E6BF292894B3F800CF98C7 /* libstella.a in Frameworks */,
 				B3C96E871D62C203003F1E93 /* OpenGLES.framework in Frameworks */,
 				B3C96E861D62C1FE003F1E93 /* Foundation.framework in Frameworks */,
@@ -1686,6 +1689,7 @@
 		089C1671FE841209C02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E548A82966536F009BFDB9 /* PVEmulatorCore.framework */,
 				B3E6BF6F2894BE4F00CF98C7 /* libz.tbd */,
 				B3271BDE276B8C660031AECC /* OpenGL.framework */,
 				B305EF93276B4E8C003AE510 /* PVSupport.framework */,
@@ -4476,8 +4480,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Stella";
 				PRODUCT_NAME = PVStella;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -4529,8 +4534,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Stella";
 				PRODUCT_NAME = PVStella;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -4577,8 +4583,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Stella";
 				PRODUCT_NAME = PVStella;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";

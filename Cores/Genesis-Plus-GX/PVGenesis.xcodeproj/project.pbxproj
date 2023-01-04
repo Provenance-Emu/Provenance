@@ -124,6 +124,7 @@
 		B3A9F4221DE7F5F2008450F5 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA85C17F752610031B1C9 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F4241DE7F606008450F5 /* PVGenesisEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA86717F752610031B1C9 /* PVGenesisEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3E432081DE6917700D3C91E /* PVGenesis.h in Headers */ = {isa = PBXBuildFile; fileRef = B3E432061DE6917700D3C91E /* PVGenesis.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3E548FD29665464009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E548FC29665463009BFDB9 /* PVEmulatorCore.framework */; };
 		C66E093B2586D34B00EA6170 /* scrc32.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09382586D34B00EA6170 /* scrc32.h */; };
 		C66E09452586D39E00EA6170 /* opll.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E093E2586D39D00EA6170 /* opll.h */; };
 		C66E09472586D39E00EA6170 /* psg.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E093F2586D39D00EA6170 /* psg.h */; };
@@ -832,6 +833,7 @@
 		B3E432041DE6917700D3C91E /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E432061DE6917700D3C91E /* PVGenesis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGenesis.h; sourceTree = "<group>"; };
 		B3E432071DE6917700D3C91E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3E548FC29665463009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C66E09372586D34B00EA6170 /* scrc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrc32.c; sourceTree = "<group>"; };
 		C66E09382586D34B00EA6170 /* scrc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrc32.h; sourceTree = "<group>"; };
 		C66E093D2586D39D00EA6170 /* psg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psg.c; sourceTree = "<group>"; };
@@ -868,6 +870,7 @@
 				B381A27629262E6600305322 /* libgenesisPlusGX-legacy.a in Frameworks */,
 				B324C63621920D6D009F4EDC /* PVSupport.framework in Frameworks */,
 				B3A9F4201DE7EB67008450F5 /* libz.tbd in Frameworks */,
+				B3E548FD29665464009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B373033E1DE7DB8800D0B366 /* Foundation.framework in Frameworks */,
 				B373033B1DE7DB7300D0B366 /* AudioToolbox.framework in Frameworks */,
 				B373033A1DE7DB6F00D0B366 /* CoreGraphics.framework in Frameworks */,
@@ -900,6 +903,7 @@
 		1ACEA6AE17F74D150031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E548FC29665463009BFDB9 /* PVEmulatorCore.framework */,
 				B324C63521920D6D009F4EDC /* PVSupport.framework */,
 				B324C63321920D5C009F4EDC /* PVSupport.framework */,
 				B3A9F41F1DE7EB67008450F5 /* libz.tbd */,

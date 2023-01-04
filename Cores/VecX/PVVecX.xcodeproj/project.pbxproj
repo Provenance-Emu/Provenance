@@ -31,6 +31,7 @@
 		B3D3E7692894E5310016EB85 /* e6809.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1CD2894D32A00CF98C7 /* e6809.c */; };
 		B3D3E76A2894E5310016EB85 /* e8910.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1A02894D32900CF98C7 /* e8910.c */; };
 		B3D3E76B2894E5310016EB85 /* vecx.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C19A2894D32900CF98C7 /* vecx.c */; };
+		B3E5486929665269009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5486829665269009BFDB9 /* PVEmulatorCore.framework */; };
 		B3EB8B22293F81D600BCCBAE /* skip.bin in Resources */ = {isa = PBXBuildFile; fileRef = B3E6C1C92894D32A00CF98C7 /* skip.bin */; };
 		B3EB8B23293F81D600BCCBAE /* fast.bin in Resources */ = {isa = PBXBuildFile; fileRef = B3E6C1CA2894D32A00CF98C7 /* fast.bin */; };
 		B3EB8B24293F81D600BCCBAE /* system.bin in Resources */ = {isa = PBXBuildFile; fileRef = B3E6C1C82894D32A00CF98C7 /* system.bin */; };
@@ -108,6 +109,7 @@
 		B3C76223207833DE009950E4 /* PVVecXCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVVecXCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVVecXCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVVecXCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3E5486829665269009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E6C19A2894D32900CF98C7 /* vecx.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vecx.c; sourceTree = "<group>"; };
 		B3E6C19B2894D32900CF98C7 /* libretro.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libretro.c; sourceTree = "<group>"; };
 		B3E6C19C2894D32900CF98C7 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 				B39768F82859E23200558958 /* libvecx-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
+				B3E5486929665269009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
@@ -250,6 +253,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E5486829665269009BFDB9 /* PVEmulatorCore.framework */,
 				B380C2682894EB37007B76FD /* OpenGL.framework */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,

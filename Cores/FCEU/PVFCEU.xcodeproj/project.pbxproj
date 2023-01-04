@@ -504,6 +504,7 @@
 		B3BCA7D427C098C10012118D /* 01-222.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BDEC1D6ECD7500742D04 /* 01-222.cpp */; };
 		B3BCA7D527C098C10012118D /* F-15.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BE531D6ECD7500742D04 /* F-15.cpp */; };
 		B3BCA7D627C098C10012118D /* 28.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BED8BDF31D6ECD7500742D04 /* 28.cpp */; };
+		B3E5490929665486009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5490829665486009BFDB9 /* PVEmulatorCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1679,6 +1680,7 @@
 		B3BCB54127C09C5B0012118D /* conv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = conv.c; sourceTree = "<group>"; };
 		B3BCB54227C09C5B0012118D /* rp2c04002.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rp2c04002.h; sourceTree = "<group>"; };
 		B3BCB54327C09C5B0012118D /* rp2c04001.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = rp2c04001.h; sourceTree = "<group>"; };
+		B3E5490829665486009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BED8BDEB1D6ECD7500742D04 /* __dummy_mapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = __dummy_mapper.cpp; sourceTree = "<group>"; };
 		BED8BDEC1D6ECD7500742D04 /* 01-222.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "01-222.cpp"; sourceTree = "<group>"; };
 		BED8BDED1D6ECD7500742D04 /* 3d-block.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "3d-block.cpp"; sourceTree = "<group>"; };
@@ -1893,6 +1895,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3E5490929665486009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */,
 				B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */,
 				B3341F7E27C1B2CF00E001C6 /* libfceux-netplay-server.a in Frameworks */,
@@ -2285,6 +2288,7 @@
 		1A3A79B41ABF1DB2002274A3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E5490829665486009BFDB9 /* PVEmulatorCore.framework */,
 				B391F2D827C16AC100730B53 /* OpenGL.framework */,
 				B391F2D627C1696A00730B53 /* liblzma.tbd */,
 				B391F2D227C1695700730B53 /* CoreFoundation.framework */,
@@ -4542,7 +4546,7 @@
 				PRODUCT_NAME = PVFCEU;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
@@ -4737,7 +4741,7 @@
 				PRODUCT_NAME = PVFCEU;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -4800,7 +4804,7 @@
 				PRODUCT_NAME = PVFCEU;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;

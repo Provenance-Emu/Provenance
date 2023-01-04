@@ -6,13 +6,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PVLoggingInternal.h"
+#import "PVLoggingObjC.h"
 @import CocoaLumberjack;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-void PVLog(NSUInteger level, NSUInteger flag, const char *file,
+OBJC_EXPORT void PVLog(NSUInteger level, NSUInteger flag, const char *file,
            const char *function, int line, NSString *_Nonnull format, ...) {
   BOOL async = YES;
   if (flag == PVLogFlagError) {

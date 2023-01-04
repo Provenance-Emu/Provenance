@@ -11,6 +11,8 @@
 #import "PVTGBDualCore+Controls.h"
 #import "PVTGBDualCore+Saves.h"
 #import "PVTGBDualCore+Video.h"
+#import <PVEmulatorCore/PVEmulatorCore.h>
+#import <PVLogging/PVLogging.h>
 
 #include "libretro.h"
 

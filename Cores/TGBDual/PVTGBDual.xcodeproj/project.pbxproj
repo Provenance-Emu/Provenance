@@ -49,6 +49,8 @@
 		B3D275BE26E9D5E000543CFE /* gbr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1490198621C8466700C35ECE /* gbr.cpp */; };
 		B3D275BF26E9D5E000543CFE /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149019A921C8466700C35ECE /* cpu.cpp */; };
 		B3D275C026E9D70900543CFE /* libtgbdual.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D275A126E9D5C100543CFE /* libtgbdual.a */; };
+		B3E548A529665362009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E548A429665362009BFDB9 /* PVEmulatorCore.framework */; };
+		B3E5498129665C93009BFDB9 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E5498029665C93009BFDB9 /* PVLogging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +71,16 @@
 			dstSubfolderSpec = 16;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3E5498329665C93009BFDB9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -138,6 +150,7 @@
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3D275A126E9D5C100543CFE /* libtgbdual.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtgbdual.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D275DB26E9D8A000543CFE /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E548A429665362009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +164,8 @@
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B3D275C026E9D70900543CFE /* libtgbdual.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
+				B3E5498129665C93009BFDB9 /* PVLogging in Frameworks */,
+				B3E548A529665362009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
@@ -313,6 +328,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E548A429665362009BFDB9 /* PVEmulatorCore.framework */,
 				B3A3976327E6B9C800D8F433 /* PVSupport.framework */,
 				B3271BE0276B8C730031AECC /* OpenGL.framework */,
 				B3411B47276B2F9C00D85327 /* PVLibrary.framework */,
@@ -386,6 +402,7 @@
 				B3C7620C20783162009950E4 /* Frameworks */,
 				B3C7620D20783162009950E4 /* Headers */,
 				B3C7620E20783162009950E4 /* Resources */,
+				B3E5498329665C93009BFDB9 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -393,6 +410,9 @@
 				B3D275C226E9D70900543CFE /* PBXTargetDependency */,
 			);
 			name = PVTGBDual;
+			packageProductDependencies = (
+				B3E5498029665C93009BFDB9 /* PVLogging */,
+			);
 			productName = PVTGBDual;
 			productReference = B3C7621020783162009950E4 /* PVTGBDual.framework */;
 			productType = "com.apple.product-type.framework";
@@ -950,6 +970,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3E5498029665C93009BFDB9 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

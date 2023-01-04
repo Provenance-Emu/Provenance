@@ -35,6 +35,7 @@
 		B3CA5B2626E9E3E100687B27 /* ProSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59A617A6189D0005D7EA /* ProSystem.cpp */; };
 		B3CA5B2726E9E3E100687B27 /* Bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598317A6189D0005D7EA /* Bios.cpp */; };
 		B3CA5B4A26E9E42400687B27 /* libprosystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA5B0A26E9E3D700687B27 /* libprosystem.a */; };
+		B3E548B9296653C4009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E548B8296653C4009BFDB9 /* PVEmulatorCore.framework */; };
 		B3FA5D431D6B84F400060D71 /* ProSystemGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -139,6 +140,7 @@
 		B372639C26EA03A600E95488 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3CA5B0226E9E38200687B27 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CA5B0A26E9E3D700687B27 /* libprosystem.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprosystem.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3E548B8296653C4009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProSystemGameCore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -151,6 +153,7 @@
 				B324C64921921577009F4EDC /* libz.tbd in Frameworks */,
 				B3CA5B4A26E9E42400687B27 /* libprosystem.a in Frameworks */,
 				B324C64321921519009F4EDC /* PVSupport.framework in Frameworks */,
+				B3E548B9296653C4009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,6 +307,7 @@
 		B324C64121921519009F4EDC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E548B8296653C4009BFDB9 /* PVEmulatorCore.framework */,
 				B36C7D5427AE227300715677 /* PVLibrary.framework */,
 				B3411B53276B2FE200D85327 /* PVSupport.framework */,
 				B3411B4F276B2FC000D85327 /* Foundation.framework */,
@@ -684,8 +688,9 @@
 				PRODUCT_NAME = PVProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
@@ -736,8 +741,9 @@
 				PRODUCT_NAME = PVProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -780,8 +786,9 @@
 				PRODUCT_NAME = PVProSystem;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;

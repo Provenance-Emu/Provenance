@@ -10,7 +10,7 @@
 @import PVSupport;
 #import <PVGenesis/PVGenesis-Swift.h>
 
-//#import <PVSupport/OERingBuffer.h>
+//#import <PVEmulatorCore/OERingBuffer.h>
 //#import <PVSupport/DebugUtils.h>
 //#import <PVLogging/PVLogging.h>
 #import <PVGenesis/libretro.h>

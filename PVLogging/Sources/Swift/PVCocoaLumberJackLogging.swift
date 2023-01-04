@@ -7,8 +7,7 @@
 //
 
 @_exported import CocoaLumberjack
-@_exported import CocoaLumberjackSwift
-@_exported import CocoaLumberjackSwiftLogBackend
+//@_exported import CocoaLumberjackSwiftLogBackend
 import Foundation
 
 @objc
@@ -51,6 +50,8 @@ public class PVCocoaLumberJackLogging: NSObject, PVLoggingEntity {
         DDLog.add(nsLogger, with: .debug)
         #endif
  #endif
+        
+//        LoggingSystem.bootstrapWithCocoaLumberjack() // Use CocoaLumberjack as swift-log backend
     }
 
     public var logFilePaths: [String]? {

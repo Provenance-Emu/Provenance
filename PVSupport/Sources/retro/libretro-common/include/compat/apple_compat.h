@@ -25,6 +25,7 @@
 
 #ifdef __APPLE__
 #include <AvailabilityMacros.h>
+#include <CoreFoundation/CoreFoundation.h>
 #endif
 
 #ifdef __OBJC__
@@ -77,7 +78,7 @@ NS_INLINE CF_RETURNS_RETAINED CFTypeRef CFBridgingRetainCompat(id X)
 #else
 
 #ifdef __OBJC__
-#include <objc/objc-runtime.h>
+//#include <objc/objc-runtime.h>
 #endif
 #endif
 

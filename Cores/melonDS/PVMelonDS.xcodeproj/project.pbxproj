@@ -107,6 +107,7 @@
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B364D4B72870E7D300B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4B62870E7D300B93A4B /* PVLibRetro.framework */; };
 		B39313802870FB9A00372EBB /* libMelonDS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libMelonDS.a */; };
+		B3AB7E5E29664C52005799D6 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AB7E5D29664C52005799D6 /* PVEmulatorCore.framework */; };
 		B3C7621520783162009950E4 /* PVMelonDS.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVMelonDS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
@@ -884,6 +885,7 @@
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B364D4B62870E7D300B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3AB7E5D29664C52005799D6 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVMelonDS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMelonDS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVMelonDS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMelonDS.h; sourceTree = "<group>"; };
@@ -917,6 +919,7 @@
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39313802870FB9A00372EBB /* libMelonDS.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
+				B3AB7E5E29664C52005799D6 /* PVEmulatorCore.framework in Frameworks */,
 				B364D4B72870E7D300B93A4B /* PVLibRetro.framework in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
@@ -2673,6 +2676,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3AB7E5D29664C52005799D6 /* PVEmulatorCore.framework */,
+				B3CB21962962EFE200A5C7BA /* PVLogging.framework */,
 				B3C8A68C28780AE30037A946 /* libpthread.tbd */,
 				B3C8A68E28780AEF0037A946 /* libpthread.tbd */,
 				B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */,

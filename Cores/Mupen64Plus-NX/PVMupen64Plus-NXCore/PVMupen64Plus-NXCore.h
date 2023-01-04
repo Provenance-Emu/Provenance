@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVEmulatorCore/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 #import <PVLibRetro/PVLibRetro.h>
 #import <PVLibRetro/PVLibRetroGLESCore.h>

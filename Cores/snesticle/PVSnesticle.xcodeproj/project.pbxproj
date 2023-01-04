@@ -48,6 +48,7 @@
 		B3C9D5941DEA86B80068D057 /* PVSnesticleOESupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA98F17F760390031B1C9 /* PVSnesticleOESupport.mm */; };
 		B3C9D5951DEA86B80068D057 /* PVSnesticleCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA91917F760390031B1C9 /* PVSnesticleCore.mm */; };
 		B3C9D5CE1DEA87930068D057 /* PVSnesticleCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA91817F760390031B1C9 /* PVSnesticleCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3E548AD2966537D009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E548AC2966537D009BFDB9 /* PVEmulatorCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1291,6 +1292,7 @@
 		B3C9D5581DEA849B0068D057 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3D2E3851D6E7E3D0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-iphonesimulator/PVSupport.framework"; sourceTree = "<group>"; };
 		B3D2E3871D6E7E4A0058544D /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../../../Library/Developer/Xcode/DerivedData/Provenance-cqyrqlnsqskspscgaptpbmkqmvze/Build/Products/Debug-appletvsimulator/PVSupport.framework"; sourceTree = "<group>"; };
+		B3E548AC2966537D009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF87D337258AB6CE00838AF8 /* PVSnesticleCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSnesticleCore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1312,6 +1314,7 @@
 				B33FADB8279BCCDC0013AAD8 /* libsnesticle.a in Frameworks */,
 				B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */,
 				B3C9D54C1DEA842B0068D057 /* OpenGLES.framework in Frameworks */,
+				B3E548AD2966537D009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B3C9D54B1DEA84220068D057 /* CoreGraphics.framework in Frameworks */,
 				B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */,
 			);
@@ -1347,6 +1350,7 @@
 		1ACEA8E617F75F350031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E548AC2966537D009BFDB9 /* PVEmulatorCore.framework */,
 				B34CFF5F295F2D4C0014C8AF /* OpenGL.framework */,
 				B365107D21782E95008FDB7B /* libz.tbd */,
 				B365107F21782E9E008FDB7B /* libz.tbd */,

@@ -1021,10 +1021,6 @@
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E5F8922962E60100184F29 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5F8912962E60100184F29 /* PVDesmume2015.framework */; };
 		B3E5F8932962E60100184F29 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5F8912962E60100184F29 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E5F8992962ED3600184F29 /* PVLogging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5F8982962ED3600184F29 /* PVLogging.framework */; };
-		B3E5F89A2962ED3600184F29 /* PVLogging.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5F8982962ED3600184F29 /* PVLogging.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3E5F89B2962ED4500184F29 /* PVLogging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5F8982962ED3600184F29 /* PVLogging.framework */; };
-		B3E5F89C2962ED4500184F29 /* PVLogging.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E5F8982962ED3600184F29 /* PVLogging.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E61EFA295FF168003249F7 /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
 		B3E61EFB295FF16C003249F7 /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
 		B3E61EFC295FF197003249F7 /* JitScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */; };
@@ -1369,7 +1365,6 @@
 				B3FAC944292B4596005E8B11 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B33155E82971D360008767C5 /* PVMupen64Plus-NX.framework in Embed Frameworks */,
 				B36B853829599AA800FDEA29 /* PVSnesticle.framework in Embed Frameworks */,
-				B3E5F89C2962ED4500184F29 /* PVLogging.framework in Embed Frameworks */,
 				B3FAC956292B45B7005E8B11 /* PVTGBDual.framework in Embed Frameworks */,
 				B3AEDE26293F34760050BDB6 /* PVProSystem.framework in Embed Frameworks */,
 				B36B852E29599A3700FDEA29 /* PVMelonDS.framework in Embed Frameworks */,
@@ -1461,7 +1456,6 @@
 				B3704C032961A9B8005F5492 /* PVMelonDS.framework in Embed Frameworks */,
 				B3704B7A29619079005F5492 /* libMoltenVK_Play.dylib in Embed Frameworks */,
 				B3704B8829619079005F5492 /* PVSupport.framework in Embed Frameworks */,
-				B3E5F89A2962ED3600184F29 /* PVLogging.framework in Embed Frameworks */,
 				B3E5F8932962E60100184F29 /* PVDesmume2015.framework in Embed Frameworks */,
 				B3704B8B29619079005F5492 /* PVLibrary.framework in Embed Frameworks */,
 				B3704B8D29619079005F5492 /* PVLibRetro.framework in Embed Frameworks */,
@@ -1792,7 +1786,6 @@
 		B32296E3287838AB00585AD8 /* PVVecXGL.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecXGL.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B322A98F2971670B00F0D876 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3231BEE28966661003CC116 /* PVOpera.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVOpera.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3239CF52965AAE000DEE419 /* PVLogging */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PVLogging; sourceTree = "<group>"; };
 		B324C2FC21919568009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B324C2FF2191958D009F4EDC /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B324C30121919596009F4EDC /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -2307,7 +2300,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3E5F89B2962ED4500184F29 /* PVLogging.framework in Frameworks */,
 				93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */,
 				B357A43A27092254002C7C0F /* AppCenterCrashes in Frameworks */,
 				B3FAC92D292B450C005E8B11 /* PVGB.framework in Frameworks */,
@@ -2571,7 +2563,6 @@
 				B3704B3B29619079005F5492 /* AudioToolbox.framework in Frameworks */,
 				B3704B3E29619079005F5492 /* PVSupport.framework in Frameworks */,
 				B3E5F8922962E60100184F29 /* PVDesmume2015.framework in Frameworks */,
-				B3E5F8992962ED3600184F29 /* PVLogging.framework in Frameworks */,
 				B3704B4029619079005F5492 /* UIKit.framework in Frameworks */,
 				B3704B4629619079005F5492 /* SteamController in Frameworks */,
 				B3704B4729619079005F5492 /* Metal.framework in Frameworks */,
@@ -3406,14 +3397,6 @@
 				B305EF13276B4C73003AE510 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		B3239CF42965AAE000DEE419 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				B3239CF52965AAE000DEE419 /* PVLogging */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 		B3270F8027DCB25100E83180 /* Cores */ = {

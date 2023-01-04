@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVSupport-Swift.h>
+//@import PVSupport;
 #import <PVLibRetro/libretro.h>
 #import <PVLibRetro/PVLibRetroCore.h>
 

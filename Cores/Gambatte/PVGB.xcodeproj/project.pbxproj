@@ -52,6 +52,7 @@
 		B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AABE0C31ABE378D00FF6AEF /* Foundation.framework */; };
 		B3C9D4AA1DEA730D0068D057 /* PVGBEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AABDFF81ABE373700FF6AEF /* PVGBEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3E4817720C7DE5C0061CF96 /* PVGBEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */; };
+		B3E549052966547C009BFDB9 /* PVEmulatorCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E549042966547C009BFDB9 /* PVEmulatorCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -207,6 +208,7 @@
 		B3C9D4A61DEA6E390068D057 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3C9D4A81DEA6E3E0068D057 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGBEmulatorCore.swift; sourceTree = "<group>"; };
+		B3E549042966547C009BFDB9 /* PVEmulatorCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmulatorCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EA6C9429261AF500010224 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
@@ -215,6 +217,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3E549052966547C009BFDB9 /* PVEmulatorCore.framework in Frameworks */,
 				B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */,
 				B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */,
 			);
@@ -503,6 +506,7 @@
 		1AABE0C71ABE37A400FF6AEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E549042966547C009BFDB9 /* PVEmulatorCore.framework */,
 				B3EA6C9429261AF500010224 /* OpenGL.framework */,
 				B324C63D21920E38009F4EDC /* PVSupport.framework */,
 				B3C9D4A61DEA6E390068D057 /* Foundation.framework */,
@@ -864,7 +868,7 @@
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
@@ -912,7 +916,7 @@
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -961,7 +965,7 @@
 				PRODUCT_NAME = PVGB;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;

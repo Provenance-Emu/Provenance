@@ -29,9 +29,9 @@
 
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/OERingBuffer.h>
+#import <PVEmulatorCore/OERingBuffer.h>
 #import <PVSupport/PVSupport-Swift.h>
-#import <PVSupport/PVEmulatorCore.h>
+#import <PVEmulatorCore/PVEmulatorCore.h>
 
 #import <mednafen/mempatcher.h>
 #import <PVMednafen/PVMednafen-Swift.h>

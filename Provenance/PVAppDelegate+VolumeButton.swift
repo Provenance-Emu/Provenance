@@ -12,7 +12,7 @@
  https://jjrscott.com/override-ios-volume-buttons/
  */
 
-@_exported import PVLogging
+@_exported import PVLoggingSwift
 import Foundation
 import UIKit
 
