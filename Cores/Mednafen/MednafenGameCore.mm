@@ -833,8 +833,10 @@ static void emulation_run(BOOL skipFrame) {
         //            }
         //        }
     }
-    else
-    {
+    else if (self.systemType == MednaSystemGBA) {
+        // gba sets all of these in 1 variable, so setting the one we use
+        game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
+    } else {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
 //        game->SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);

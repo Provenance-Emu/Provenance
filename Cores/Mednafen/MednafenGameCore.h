@@ -50,30 +50,23 @@ typedef NS_ENUM(NSInteger, MednaSystem) {
 };
 
 #pragma mark - Input maps
-static int GBAMap[PVGBAButtonCount];
-static int GBMap[PVGBButtonCount];
-static int SNESMap[PVSNESButtonCount];
-static int NESMap[PVNESButtonCount];
-static int PCEMap[PVPCEButtonCount];
-static int PCFXMap[PVPCFXButtonCount];
-
-// Map OE button order to Mednafen button order
-
+static int PCEMap[] = { 4, 6, 7, 5, 0, 1, 8, 9, 10, 11, 3, 2, 12};
+static int PCFXMap[] = { 8, 10, 11, 9, 0, 1, 2, 3, 4, 5, 7, 6, 12};
+static int SNESMap[] = { 4, 5, 6, 7, 8, 0, 9, 1, 10, 11, 3, 2 };
+static int GBMap[] = { 6, 7, 5, 4, 0, 1, 3, 2 };
+static int GBAMap[] = { 6, 7, 5, 4, 0, 1, 9, 8, 3, 2};
+// ↑, ↓, ←, →, A, B, Start, Select
+static int NESMap[] = { 4, 5, 6, 7, 0, 1, 3, 2 };
 // Pause, B, 1, 2, ↓, ↑, ←, →
 static const int LynxMap[] = { 6, 7, 4, 5, 0, 1, 3, 2 };
-
-// ↑, ↓, ←, →, A, B, Start, Select
-//const int NESMap[PVNESButtonCount] = { 4, 5, 6, 7, 0, 1, 3, 2};
 
 // Select, [Triangle], [X], Start, R1, R2, left stick u, left stick left,
 static const int PSXMap[]  = { 4, 6, 7, 5, 12, 13, 14, 15, 10, 8, 1, 11, 9, 2, 3, 0, 16, 24, 23, 22, 21, 20, 19, 18, 17 };
 static const int VBMap[]   = { 9, 8, 7, 6, 4, 13, 12, 5, 3, 2, 0, 1, 10, 11 };
 static const int WSMap[]   = { 0, 2, 3, 1, 4, 6, 7, 5, 9, 10, 8, 11 };
 static const int NeoMap[]  = { 0, 1, 2, 3, 4, 5, 6};
-
 // SS Sega Saturn
-static int SSMap[PVSaturnButtonCount]; //   = { 4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 15, 3, 11 };
-
+static int SSMap[] = { 4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 15, 3, 11 };
 // SMS, GG and MD unused as of now. Mednafen support is not maintained
 static const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 

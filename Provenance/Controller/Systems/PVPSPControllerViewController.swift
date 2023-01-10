@@ -20,9 +20,14 @@ private extension JSButton {
 
 final class PVPSPControllerViewController: PVControllerViewController<PVPSPSystemResponderClient> {
     override func layoutViews() {
-        leftAnalogButton?.buttonTag = .l3
         rightAnalogButton?.buttonTag = .r3
-
+        rightShoulderButton?.buttonTag = .r1
+        rightShoulderButton2?.buttonTag = .r2
+        leftShoulderButton2?.buttonTag = .l2
+        leftShoulderButton?.buttonTag = .l1
+        leftAnalogButton?.buttonTag = .l3
+        selectButton?.buttonTag = .select
+        startButton?.buttonTag = .start
         buttonGroup?.subviews.forEach {
             guard let button = $0 as? JSButton, let text = button.titleLabel.text else {
                 return
@@ -37,15 +42,40 @@ final class PVPSPControllerViewController: PVControllerViewController<PVPSPSyste
                 button.buttonTag = .triangle
             }
         }
-
-        leftShoulderButton?.buttonTag = .l1
-        rightShoulderButton?.buttonTag = .r1
-        leftShoulderButton2?.buttonTag = .l2
-        rightShoulderButton2?.buttonTag = .r2
-        selectButton?.buttonTag = .select
-        startButton?.buttonTag = .start
+    }
+    
+    override func prelayoutSettings() {
+        alwaysRightAlign = true
+        alwaysJoypadOverDpad = false
     }
 
+    override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
+        var up:CGFloat = value.y < 0.5 ? CGFloat(1 - (value.y * 2)) : 0.0
+        var down:CGFloat = value.y > 0.5 ? CGFloat((value.y - 0.5) * 2) : 0.0
+        var left:CGFloat = value.x < 0.5 ? CGFloat(1 - (value.x * 2)) : 0.0
+        var right:CGFloat = value.x > 0.5 ? CGFloat((value.x - 0.5) * 2) : 0.0
+
+        up = min(up, 1.0)
+        down = min(down, 1.0)
+        left = min(left, 1.0)
+        right = min(right, 1.0)
+
+        up = max(up, 0.0)
+        down = max(down, 0.0)
+        left = max(left, 0.0)
+        right = max(right, 0.0)
+
+        // print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
+        emulatorCore.didMoveJoystick(.leftAnalogUp, withValue: up, forPlayer: 0)
+        if down != 0 {
+            emulatorCore.didMoveJoystick(.leftAnalogDown, withValue: down, forPlayer: 0)
+        }
+        emulatorCore.didMoveJoystick(.leftAnalogLeft, withValue: left, forPlayer: 0)
+        if right != 0 {
+            emulatorCore.didMoveJoystick(.leftAnalogRight, withValue: right, forPlayer: 0)
+        }
+    }
+    
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)

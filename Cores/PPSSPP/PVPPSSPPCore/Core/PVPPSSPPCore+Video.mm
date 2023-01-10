@@ -256,8 +256,11 @@ static bool threadStopped = false;
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 		NativeInitGraphics(graphicsContext);
 		_isInitialized=true;
-		ELOG(@"Emulation thread starting\n");
-		UpdateUIState(UISTATE_INGAME);
+        UpdateUIState(UISTATE_INGAME);
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+            isPaused=false;
+        });
+        ELOG(@"Emulation thread starting\n");
 		while (threadEnabled) {
 			NativeUpdate();
 			NativeRender(graphicsContext);

@@ -194,6 +194,9 @@ extension PVEmulatorViewController {
         }
 
         // Create a function to use later
+        let loadOk = {
+        }
+
         let loadSave = {
             try! realm.write {
                 state.lastOpened = Date()
@@ -217,12 +220,13 @@ extension PVEmulatorViewController {
         }
 
         if core.projectVersion != state.createdWithCoreVersion {
+            loadSave()
             let message =
                 """
                 Save state created with version \(state.createdWithCoreVersion ?? "nil") but current \(core.projectName) core is version \(core.projectVersion).
                 Save file may not load. Create a new save state to avoid this warning in the future.
                 """
-            presentWarning(message, completion: loadSave)
+            presentWarning(message, completion: loadOk)
         } else {
             loadSave()
         }

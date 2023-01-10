@@ -75,9 +75,15 @@
 #include "Core/CwCheat.h"
 #include "Core/ELF/ParamSFO.h"
 #include "Core/SaveState.h"
+#define MAX_WAIT 1000
+#define WAIT_INTERVAL 100
 
 extern bool _isInitialized;
 NSString *autoLoadStatefileName;
+static bool isComplete;
+static bool success;
+static int waited=0;
+static bool processed;
 
 @implementation PVPPSSPPCore (Saves)
 #pragma mark - Properties
@@ -86,11 +92,9 @@ NSString *autoLoadStatefileName;
 }
 #pragma mark - Methods
 
-bool isComplete;
-bool success;
 - (bool) saveComplete:(void (^)(BOOL, NSError *))block {
-    while (!isComplete) {
-        sleep_ms(100);
+    while (!isComplete && processed) {
+        sleep_ms(WAIT_INTERVAL);
     }
     block(success, nil);
 }
@@ -101,8 +105,16 @@ bool success;
         success=status != SaveState::Status::FAILURE;
         isComplete=true;
     }, (__bridge void *)self);
-    while (!isComplete) {
-        sleep_ms(100);
+    processed=false;
+    if (isPaused) {
+        ELOG(@"Processing Save (Should only happen when paused)\n");
+        SaveState::Process();
+        processed=true;
+    } else {
+        success=true;
+    }
+    while (!isComplete && processed) {
+        sleep_ms(WAIT_INTERVAL);
     }
     return success;
 }
@@ -115,9 +127,13 @@ bool success;
         success=status != SaveState::Status::FAILURE;
         isComplete=true;
     }, (__bridge void *)self);
-    if (isPaused && self.isEmulationPaused) {
+    processed=false;
+    if (isPaused) {
         ELOG(@"Processing Save (Should only happen when paused)\n");
         SaveState::Process();
+        processed=true;
+    } else {
+        success=true;
     }
     [self saveComplete:block];
 }
@@ -137,5 +153,6 @@ bool success;
 		SaveState::Load(Path([fileName fileSystemRepresentation]), 0, 0, (__bridge void*)self);
 		success=true;
 	}
+    block(success, nil);
 }
 @end

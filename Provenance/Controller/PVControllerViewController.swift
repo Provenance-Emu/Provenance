@@ -184,6 +184,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	let alpha: CGFloat = CGFloat(PVSettingsModel.shared.controllerOpacity)
 
+    var alwaysRightAlign = false
+    var alwaysJoypadOverDpad = false
 #if os(iOS)
 	private var _feedbackGenerator: AnyObject?
 	var feedbackGenerator: UISelectionFeedbackGenerator? {
@@ -352,7 +354,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	}
 
 	var allButtons: [UIView] {
-		return [dPad, dPad2, joyPad, buttonGroup, leftShoulderButton, rightShoulderButton, leftShoulderButton2, rightShoulderButton2, zTriggerButton, startButton, selectButton, leftAnalogButton, rightAnalogButton].compactMap {$0}
+		return [dPad, dPad2, joyPad, buttonGroup, selectButton, startButton, leftShoulderButton, rightShoulderButton, leftShoulderButton2, rightShoulderButton2, zTriggerButton, leftAnalogButton, rightAnalogButton].compactMap {$0}
 	}
 	@objc func controllerDidDisconnect(_: Notification?) {
 #if os(iOS)
@@ -410,14 +412,18 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		super.viewDidLayoutSubviews()
         if inMoveMode { return }
 #if os(iOS)
+        prelayoutSettings()
 		setupTouchControls()
-		layoutViews()
+        layoutViews()
 		if PVSettingsModel.shared.volumeHUD {
 			layoutVolume()
 		}
 		updateHideTouchControls()
 #endif
 	}
+    
+    func prelayoutSettings() {
+    }
 
 #if os(iOS)
 	func layoutVolume() {
@@ -440,6 +446,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	@objc
 	func hideTouchControls(for controller: GCController) {
 		dPad?.isHidden = true
+        joyPad?.isHidden = true
 		buttonGroup?.isHidden = true
 		leftShoulderButton?.isHidden = true
 		rightShoulderButton?.isHidden = true
@@ -523,13 +530,17 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
                 adjustJoystick()
             } else if controlType == Keys.JoyPad, PVSettingsModel.shared.debugOptions.onscreenJoypad {
-                let xPadding: CGFloat = 0 // view.safeAreaInsets.left
+                var xPadding: CGFloat = 0 // view.safeAreaInsets.left
                 let bottomPadding: CGFloat = 16
                 let joyPadOriginY: CGFloat = min(controlOriginY - bottomPadding, view.frame.height - controlSize.height - bottomPadding)
                 var joyPadFrame = CGRect(x: xPadding, y: joyPadOriginY, width: controlSize.width, height: controlSize.height)
-
+                xPadding += 10
                 joyPadFrame.origin.y += joyPadFrame.height + bottomPadding
-
+                joyPadFrame.origin.x += xPadding
+                if dPad != nil {
+                    let bounds = dPad!.frame
+                    joyPadFrame.origin.x = bounds.origin.x + bounds.width / 2 - controlSize.width / 2
+                }
                 let joyPad: JSDPad = self.joyPad ?? JSDPad.JoyPad(frame: joyPadFrame)
                 if !joyPad.isCustomMoved {
                     joyPad.frame = joyPadFrame
@@ -769,7 +780,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 			leftShoulderFrame = CGRect(x: xPadding, y: view.frame.size.height - (controlSize.height * 2) - yPadding, width: controlSize.width, height: controlSize.height)
 		}
 
-		if PVSettingsModel.shared.allRightShoulders {
+		if PVSettingsModel.shared.allRightShoulders || alwaysRightAlign {
 			if zTriggerButton != nil {
 				leftShoulderFrame.origin.x = (zTriggerButton?.frame.origin.x)! - controlSize.width
 			} else if zTriggerButton == nil, rightShoulderButton != nil {
@@ -797,8 +808,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 			leftShoulderButton.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
 			view.addSubview(leftShoulderButton)
 		} else if leftShoulderButton2 == nil, let title = control.PVControlTitle, title == "L2" {
-			leftShoulderFrame.origin.y += 40
-			let leftShoulderButton2 = JSButton(frame: leftShoulderFrame)
+            leftShoulderFrame.origin.y += 40
+            let leftShoulderButton2 = JSButton(frame: leftShoulderFrame)
 			if let tintColor = control.PVControlTint {
 				leftShoulderButton2.tintColor = UIColor(hex: tintColor)
 			}
@@ -819,7 +830,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 			}
 
 			if let leftShoulderButton2 = leftShoulderButton2, !leftShoulderButton2.isCustomMoved {
-				leftShoulderFrame.origin.y += leftShoulderButton!.frame.size.height + 20
+				leftShoulderFrame.origin.y += leftShoulderButton!.frame.size.height
 				leftShoulderButton2.frame = leftShoulderFrame
 			}
 		}
@@ -837,13 +848,13 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
 			if dPad != nil, !(dPad?.isHidden)! {
 				selectFrame = CGRect(x: (dPad?.frame.origin.x)! + (dPad?.frame.size.width)! - (controlSize.width / 3), y: (buttonGroup?.frame.maxY)! - controlSize.height, width: controlSize.width, height: controlSize.height)
+            
 			} else if dPad != nil, (dPad?.isHidden)! {
 				selectFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
 				if gripControl {
 					selectFrame.origin.y = (UIScreen.main.bounds.height / 2)
 				}
 			}
-
 		} else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
 			let x: CGFloat = (view.frame.size.width / 2) - controlSize.width - (spacing / 2)
 			let y: CGFloat = (buttonGroup?.frame.maxY ?? 0) + spacing
@@ -854,10 +865,10 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 			selectFrame.origin.y -= (selectFrame.maxY - view.frame.size.height) + yPadding
 		}
 
-		if ["PSX", "PS1"].contains(system.shortName.uppercased()) {
+		if alwaysRightAlign {
 			selectFrame.origin.x += 80
 		}
-
+        
 		if let selectButton = self.selectButton {
 			if !selectButton.isCustomMoved {
 				selectButton.frame = selectFrame
@@ -912,6 +923,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 					}
 				}
 			}
+            if alwaysRightAlign {
+                startFrame.origin.x += controlSize.width + spacing * 3
+            }
 		} else if super.view.bounds.size.width < super.view.bounds.size.height || UIDevice.current.orientation.isPortrait {
 			startFrame = CGRect(x: (view.frame.size.width / 2) + (spacing / 2),
                                 y: (buttonGroup?.frame.maxY ?? 0) + spacing,
@@ -920,10 +934,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 			if selectButton != nil {
 				startFrame.origin.x += (spacing / 2) + (controlSize.width / 2)
 			}
-		}
-
-		if ["PSX", "PS1"].contains(system.shortName.uppercased()) {
-            startFrame.origin.x += controlSize.width + spacing
+            if alwaysRightAlign {
+                startFrame.origin.x += controlSize.width + spacing
+            }
 		}
 
 		if startFrame.maxY >= view.frame.size.height {
@@ -959,7 +972,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		let spacing: CGFloat = 10
 		var layoutIsLandscape = false
 		var leftAnalogFrame = CGRect(x: xPadding, y: view.frame.height - yPadding - controlSize.height, width: controlSize.width, height: controlSize.height)
-
 		if super.view.bounds.size.width > super.view.bounds.size.height || UIDevice.current.orientation.isLandscape || UIDevice.current.userInterfaceIdiom == .pad {
 			layoutIsLandscape = true
 		}
@@ -1076,7 +1088,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         var joyPadFrame = joyPad.frame
         var dPadFrame = dPad.frame
 
-        let joystickOverDPad = joyPadFrame.minY <= dPadFrame.minY
+        let joystickOverDPad = joyPadFrame.minY <= dPadFrame.minY || alwaysJoypadOverDpad
 
         if joystickOverDPad {
             joyPadFrame.origin.y = dPadFrame.minY - joyPadFrame.size.height
