@@ -1,6 +1,15 @@
 // swift-tools-version:5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
+import Foundation
+
+//guard let sdkRoot = ProcessInfo.processInfo.environment["SDKROOT"] else {
+//    fatalError("Could not find SDKROOT")
+//}
+//
+//guard let cPath = ProcessInfo.processInfo.environment["CPATH"] else {
+//    fatalError("Could not find CPATH")
+//}
 
 let package = Package(
     name: "PVEmulatorCore",
@@ -49,7 +58,16 @@ let package = Package(
             ],
             swiftSettings: [
                 .define("LIBRETRO"),
-                .unsafeFlags(["-enable-experimental-cxx-interop"])
+                .unsafeFlags([
+                    "-Xfrontend", "-enable-cxx-interop",
+//                    "-Xfrontend", "-validate-tbd-against-ir=none",
+//                    "-I", "Sources/CXX/include",
+//                    "-I", "\(sdkRoot)/usr/include",
+//                    "-I", "\(cPath)",
+//                    "-lc++",
+//                    "-Xfrontend", "-disable-implicit-concurrency-module-import",
+//                    "-Xcc", "-nostdinc++"
+                ])
             ],
             linkerSettings: [
                 .linkedFramework("GameController", .when(platforms: [.iOS, .tvOS])),

@@ -7,6 +7,7 @@
 //
 
 @_exported import CocoaLumberjack
+@_exported import CocoaLumberjackSwift
 @_exported import CocoaLumberjackSwiftSupport
 
 import Foundation

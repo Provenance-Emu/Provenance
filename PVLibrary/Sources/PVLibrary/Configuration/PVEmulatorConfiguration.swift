@@ -5,7 +5,7 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
-import Foundation
+import Foundation.NSPathUtilities
 import PVSupport
 import RealmSwift
 

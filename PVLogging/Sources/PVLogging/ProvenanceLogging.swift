@@ -6,7 +6,7 @@
 //  Copyright (c) 2023 Joe Mattiello. All rights reserved.
 //
 
-import Foundation
+import Foundation.NSPathUtilities
 let LOGGING_STACK_SIZE = 1024
 
 public final class PVProvenanceLogging {

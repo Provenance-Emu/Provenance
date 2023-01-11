@@ -9,6 +9,9 @@
 import Foundation
 @_exported import PVSupport
 import ZipArchive
+import SWCompression
+import PVLogging
+//@_implimentation_only import PVLogging
 
 public typealias PVExtractionStartedHandler = (_ path: URL) -> Void
 public typealias PVExtractionUpdatedHandler = (_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void
@@ -29,7 +32,6 @@ public final class DirectoryWatcher: NSObject {
     fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     fileprivate var previousContents: [URL]?
-    private var reader: LzmaSDKObjCReader?
     private var unzippedFiles = [URL]()
 
     public init(directory: URL, extractionStartedHandler startedHandler: PVExtractionStartedHandler?, extractionUpdatedHandler updatedHandler: PVExtractionUpdatedHandler?, extractionCompleteHandler completeHandler: PVExtractionCompleteHandler?) {
@@ -262,47 +264,59 @@ public final class DirectoryWatcher: NSObject {
                 self.delayedStartMonitoring()
             })
         } else if ext == "7z" {
-            let reader = LzmaSDKObjCReader(fileURL: filePath, andType: LzmaSDKObjCFileType7z)
-            self.reader = reader
-            reader.delegate = self
-
             do {
-                try reader.open()
+                let container = try Data(contentsOf: filePath)
+                let entries: [SevenZipEntry] = try SevenZipContainer.open(container: container)
+                                    
+                entries.forEach { item in
+                    if item.info.type != .directory {
+                        let fileName = item.info.name
+                        // if needs this item - store to array.
+                        let fullPath = watchedDirectory.appendingPathComponent(fileName)
+                        self.unzippedFiles.append(fullPath)
+                    }
+                }
+                
+                // TODO: Support natively using 7zips by matching crcs
+                let crcs = Set(entries.filter({
+                    guard let crc = $0.info.crc, crc != 0 else { return false }
+                    return true
+                }).map { String($0.info.crc!, radix: 16, uppercase: true) })
+                if let releaseID = GameImporter.shared.releaseID(forCRCs: crcs) {
+                    ILOG("Found a release ID \(releaseID) inside this 7Zip")
+                }
+
+                stopMonitoring()
+                let length = entries.count
+                var progress: Float = 0.0
+                try entries.enumerated().forEach { (index, entry) in
+                    guard let data = entry.data else {
+                        ELOG("7zip entry \(entry.info.name) data is nil.")
+                        return
+                    }
+                    try data.write(to: watchedDirectory.standardizedFileURL, options: [.atomic, .noFileProtection])
+                    
+                    // Send update info
+                    if extractionUpdatedHandler != nil {
+                        progress = Float(index) / Float(length)
+                        DirectoryWatcher.handlerQueue.async(execute: {[weak self]() -> Void in
+                            self?.extractionUpdatedHandler?(filePath, index, Int(length), progress)
+                        })
+                    }
+                }
+                
+                try FileManager.default.removeItem(at: filePath)
+                let unzippedItems = unzippedFiles
+                DirectoryWatcher.handlerQueue.async(execute: {[weak self] () -> Void in
+                    self?.extractionCompleteHandler?(unzippedItems)
+                })
+                self.unzippedFiles.removeAll()
+                delayedStartMonitoring()
             } catch {
                 ELOG("7z open error: \(error.localizedDescription)")
                 startMonitoring()
                 return
             }
-
-            var items = [LzmaSDKObjCItem]()
-
-            // Array with selected items.
-            // Iterate all archive items, track what items do you need & hold them in array.
-            reader.iterate(handler: {[weak self] (item, error) -> Bool in
-				guard let self = self else { ELOG("nil self"); return false}
-                if let error = error {
-                    ELOG("7z error: \(error.localizedDescription)")
-                    return true // Continue to iterate, false to stop
-                }
-
-                items.append(item)
-                // if needs this item - store to array.
-                if !item.isDirectory, let fileName = item.fileName {
-                    let fullPath = watchedDirectory.appendingPathComponent(fileName)
-                    self.unzippedFiles.append(fullPath)
-                }
-
-                return true // Continue to iterate
-            })
-
-            // TODO: Support natively using 7zips by matching crcs
-            let crcs = Set(items.filter({ $0.crc32 != 0 }).map { String($0.crc32, radix: 16, uppercase: true) })
-            if let releaseID = GameImporter.shared.releaseID(forCRCs: crcs) {
-                ILOG("Found a release ID \(releaseID) inside this 7Zip")
-            }
-
-            stopMonitoring()
-            reader.extract(items, toPath: watchedDirectory.path, withFullPaths: false)
         } else {
             startMonitoring()
         }
@@ -313,39 +327,5 @@ public final class DirectoryWatcher: NSObject {
         DirectoryWatcher.handlerQueue.asyncAfter(deadline: .now() + 2, execute: {
             self.startMonitoring()
         })
-    }
-}
-
-extension DirectoryWatcher: LzmaSDKObjCReaderDelegate {
-    public func onLzmaSDKObjCReader(_ reader: LzmaSDKObjCReader, extractProgress progress: Float) {
-        guard let fileURL = reader.fileURL else {
-            ELOG("fileURL of reader was nil")
-            return
-        }
-
-        if progress >= 1 {
-            if extractionCompleteHandler != nil {
-                let unzippedItems = unzippedFiles
-                DirectoryWatcher.handlerQueue.async(execute: {[weak self] () -> Void in
-                    self?.extractionCompleteHandler?(unzippedItems)
-                })
-            }
-
-            do {
-                try FileManager.default.removeItem(at: fileURL)
-            } catch {
-                ELOG("Unable to delete file at path \(fileURL.path), because \(error.localizedDescription)")
-            }
-
-            unzippedFiles.removeAll()
-            delayedStartMonitoring()
-        } else {
-            if extractionUpdatedHandler != nil {
-                let entryNumber = Int(floor(Float(reader.itemsCount) * progress))
-                DirectoryWatcher.handlerQueue.async(execute: {[weak self]() -> Void in
-                    self?.extractionUpdatedHandler?(fileURL, entryNumber, Int(reader.itemsCount), progress)
-                })
-            }
-        }
     }
 }

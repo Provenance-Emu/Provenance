@@ -9,9 +9,10 @@
 
 import CoreSpotlight
 import Foundation
+import PVLogging
+import GRDB
 @_exported import PVSupport
 @_exported import RealmSwift
-@_exported import SQLite
 
 #if canImport(UIKit)
 import UIKit
@@ -78,6 +79,10 @@ public final class GameImporter {
 
     public static let shared: GameImporter = GameImporter()
 
+    // MARK: - Database connections
+    fileprivate let openVGDB: OpenVGDBDatabase = .init()
+
+    // MARK: - Queues
     let workQueue: OperationQueue = {
         let q = OperationQueue()
         q.name = "romImporterWorkQueue"
@@ -111,27 +116,16 @@ public final class GameImporter {
         return romExtensionToSystemsMap[fileExtension]
     }
 
+    public func releaseID(forCRCs crcs: Set<String>) -> Int? {
+        return openVGDB.releaseID(forCRCs: crcs)
+    }
+
     internal func isCDROM(_ romFile: ImportCandidateFile) -> Bool {
         let cdExtensions = PVEmulatorConfiguration.supportedCDFileExtensions
         let ext = romFile.filePath.pathExtension
         if ext.lowercased() == "chd" { return false }
         return cdExtensions.contains(ext)
     }
-
-    lazy var openVGDB: OESQLiteDatabase = {
-		let bundle = ThisBundle
-        let _openVGDB = try! OESQLiteDatabase(url: bundle.url(forResource: "openvgdb", withExtension: "sqlite")!)
-        return _openVGDB
-    }()
-
-    lazy var sqldb: Connection = {
-        let bundle = ThisBundle
-		let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
-        let sqldb = try! Connection(sqlFile.path, readonly: true)
-        return sqldb
-    }()
-
-	fileprivate let ThisBundle: Bundle = Bundle(for: GameImporter.self)
 
     public var conflictedFiles: [URL]? {
         guard FileManager.default.fileExists(atPath: conflictPath.path),
@@ -147,6 +141,8 @@ public final class GameImporter {
 
     fileprivate var notificationToken: NotificationToken?
     public let initialized = DispatchGroup()
+
+    fileprivate let ThisBundle: Bundle = Bundle.module //Bundle(for: GameImporter.self)
 
     fileprivate func initSystemPlists() {
         // Scane all subclasses of  PVEmulator core, and get their metadata
@@ -202,7 +198,7 @@ public final class GameImporter {
 
     @objc
     public func calculateMD5(forGame game: PVGame) -> String? {
-        var offset: UInt = 0
+        var offset: Int64 = 0
         if game.system.enumValue == .SNES {
             offset = 16
         }
@@ -659,7 +655,7 @@ public extension GameImporter {
         let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85)
         #endif
         // Hash the image and save to cache
-        let hash: String = (coverArtScaledData as NSData).md5Hash
+        let hash: String = coverArtScaledData.md5
 
         do {
             let destinationURL = try PVMediaCache.writeData(toDisk: coverArtScaledData, withKey: hash)
@@ -795,7 +791,7 @@ public extension GameImporter {
 
             if systems.count > 1 {
                 // Try to match by MD5 first
-                if let systemIDMatch = systemId(forROMCandidate: ImportCandidateFile(filePath: urlPath)), let system = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemIDMatch) {
+                if let systemIDMatch = openVGDB.systemId(forROMCandidate: ImportCandidateFile(filePath: urlPath)), let system = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemIDMatch) {
                     systems = [system]
                     DLOG("Matched \(urlPath.path) by MD5 to system \(systemIDMatch)")
                 } else {
@@ -875,6 +871,12 @@ public extension GameImporter {
 
     // MARK: - ROM Lookup
 
+    static var charset: CharacterSet = {
+        var c = CharacterSet.punctuationCharacters
+        c.remove(charactersIn: ",-+&.'")
+        return c
+    }()
+
     func lookupInfo(for game: PVGame, overwrite: Bool = true) {
         let database = RomDatabase.sharedInstance
         database.refresh()
@@ -889,7 +891,7 @@ public extension GameImporter {
 
             let romFullPath = PVEmulatorConfiguration.documentsPath.appendingPathComponent(game.romPath).path
 
-            if let md5Hash = FileManager.default.md5ForFile(atPath: romFullPath, fromOffset: offset) {
+            if let md5Hash = FileManager.default.md5ForFile(atPath: romFullPath, fromOffset: Int64(offset)) {
                 do {
                     try database.writeTransaction {
                         game.md5Hash = md5Hash
@@ -907,7 +909,7 @@ public extension GameImporter {
 
         var resultsMaybe: [[String: Any]]?
         do {
-            resultsMaybe = try searchDatabase(usingKey: "romHashMD5", value: game.md5Hash.uppercased(), systemID: game.systemIdentifier)
+            resultsMaybe = try openVGDB.searchDatabase(usingKey: "romHashMD5", value: game.md5Hash.uppercased(), systemID: game.systemIdentifier)
         } catch {
             ELOG("\(error.localizedDescription)")
         }
@@ -925,7 +927,7 @@ public extension GameImporter {
             }
             let subfileName = String(fileName.prefix(gameTitleLen))
             do {
-                resultsMaybe = try searchDatabase(usingKey: "romFileName", value: subfileName, systemID: game.systemIdentifier)
+                resultsMaybe = try openVGDB.searchDatabase(usingKey: "romFileName", value: subfileName, systemID: game.systemIdentifier)
             } catch {
                 ELOG("\(error.localizedDescription)")
             }
@@ -1065,146 +1067,7 @@ public extension GameImporter {
         }
     }
 
-    func releaseID(forCRCs crcs: Set<String>) -> Int? {
-        let roms = Table("ROMs")
-        let romID = Expression<Int>("romID")
-        let romHashCRC = Expression<String>("romHashCRC")
 
-        let query = roms.select(romID).filter(crcs.contains(romHashCRC))
-
-        do {
-            let result = try sqldb.pluck(query)
-            let foundROMid = try result?.get(romID)
-            return foundROMid
-        } catch {
-            ELOG("Query error: \(error.localizedDescription)")
-            return nil
-        }
-    }
-
-    enum DatabaseQueryError: Error {
-        case invalidSystemID
-    }
-
-    func searchDatabase(usingKey key: String, value: String, systemID: SystemIdentifier) throws -> [[String: NSObject]]? {
-        guard let systemIDInt = PVEmulatorConfiguration.databaseID(forSystemID: systemID.rawValue) else {
-            throw DatabaseQueryError.invalidSystemID
-        }
-
-        return try searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
-    }
-
-    func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [[String: NSObject]]? {
-        guard let systemIDInt = PVEmulatorConfiguration.databaseID(forSystemID: systemID) else {
-            throw DatabaseQueryError.invalidSystemID
-        }
-
-        return try searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
-    }
-
-    // TODO: This was a quick copy of the general version for filenames specifically
-    func searchDatabase(usingFilename filename: String, systemID: String) throws -> [[String: NSObject]]? {
-        guard let systemIDInt = PVEmulatorConfiguration.databaseID(forSystemID: systemID) else {
-            throw DatabaseQueryError.invalidSystemID
-        }
-
-        return try searchDatabase(usingFilename: filename, systemID: systemIDInt)
-    }
-    func searchDatabase(usingFilename filename: String, systemIDs: [String]) throws -> [[String: NSObject]]? {
-        let systemIDsInts: [Int] = systemIDs.compactMap { PVEmulatorConfiguration.databaseID(forSystemID: $0) }
-        guard !systemIDsInts.isEmpty else {
-            throw DatabaseQueryError.invalidSystemID
-        }
-
-        return try searchDatabase(usingFilename: filename, systemIDs: systemIDsInts)
-    }
-    func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [[String: NSObject]]? {
-        let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
-
-        let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" AND systemID IN (%@) ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
-        let dbSystemID: String = systemIDs.compactMap { "\($0)" }.joined(separator: ",")
-        let queryString = String(format: likeQuery, filename, dbSystemID, filename)
-
-        let results: [Any]?
-
-        do {
-            results = try openVGDB.executeQuery(queryString)
-        } catch {
-            ELOG("Failed to execute query: \(error.localizedDescription)")
-            throw error
-        }
-
-        if let validResult = results as? [[String: NSObject]], !validResult.isEmpty {
-            return validResult
-        } else {
-            return nil
-        }
-    }
-    func searchDatabase(usingFilename filename: String, systemID: Int? = nil) throws -> [[String: NSObject]]? {
-        let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
-
-        let queryString: String
-        if let systemID = systemID {
-            let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
-            let dbSystemID: String = String(systemID)
-            queryString = String(format: likeQuery, filename, dbSystemID, filename)
-        } else {
-            let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
-            queryString = String(format: likeQuery, filename, filename)
-        }
-
-        let results: [Any]?
-
-        do {
-            results = try openVGDB.executeQuery(queryString)
-        } catch {
-            ELOG("Failed to execute query: \(error.localizedDescription)")
-            throw error
-        }
-
-        if let validResult = results as? [[String: NSObject]], !validResult.isEmpty {
-            return validResult
-        } else {
-            return nil
-        }
-    }
-
-    func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [[String: NSObject]]? {
-        var results: [Any]?
-
-        let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
-
-        let exactQuery = "SELECT DISTINCT " + properties + ", TEMPsystemShortName as 'systemShortName', systemID as 'systemID' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
-
-        let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
-
-        let queryString: String
-        if let systemID = systemID {
-            let dbSystemID: String = String(systemID)
-            queryString = String(format: likeQuery, key, value, dbSystemID, key, value)
-        } else {
-            queryString = String(format: exactQuery, key, value)
-        }
-
-        do {
-            results = try openVGDB.executeQuery(queryString)
-        } catch {
-            ELOG("Failed to execute query: \(error.localizedDescription)")
-            throw error
-        }
-
-        if let validResult = results as? [[String: NSObject]], !validResult.isEmpty {
-            return validResult
-        } else {
-            return nil
-        }
-    }
-
-    static var charset: CharacterSet = {
-        var c = CharacterSet.punctuationCharacters
-        c.remove(charactersIn: ",-+&.'")
-        return c
-    }()
 }
 
 // MARK: - Movers
@@ -1230,7 +1093,7 @@ extension GameImporter {
 
         if systemsForExtension.count > 1 {
             // Try to match by MD5 or filename
-            if let systemID = self.systemId(forROMCandidate: candidateFile) {
+            if let systemID = self.openVGDB.systemId(forROMCandidate: candidateFile) {
                 subfolderPathMaybe = systemToPathMap[systemID]
                 matchedSystemID = systemID
             } else {
@@ -1558,13 +1421,13 @@ extension GameImporter {
         let fileMD5 = candidateFile.md5?.uppercased()
 
         if let fileMD5 = fileMD5,
-            !fileMD5.isEmpty,
-            let searchResults = try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5),
-            let gotit = searchResults.first,
-            let sid: Int = gotit["systemID"] as? Int,
-            let system = RomDatabase.sharedInstance.all(PVSystem.self, where: "openvgDatabaseID", value: sid).first,
-            let subfolderPath = self.path(forSystemID: system.identifier),
-            let subPath = _moveRomFoundSubpath(subfolderPath: subfolderPath, filePath: filePath) {
+           !fileMD5.isEmpty,
+           let searchResults = try? self.openVGDB.searchDatabase(usingKey: "romHashMD5", value: fileMD5),
+           let gotit = searchResults.first,
+           let sid: Int = gotit["systemID"] as? Int,
+           let system = RomDatabase.sharedInstance.all(PVSystem.self, where: "openvgDatabaseID", value: sid).first,
+           let subfolderPath = self.path(forSystemID: system.identifier),
+           let subPath = _moveRomFoundSubpath(subfolderPath: subfolderPath, filePath: filePath) {
             ILOG("MD5 matched, moved to subPath <\(subPath.path)>")
             return subPath
         }
@@ -1590,35 +1453,35 @@ extension GameImporter {
             let filename = candidateFile.filePath.deletingPathExtension().lastPathComponent
             DLOG("Will search for filename \(filename) in possible systems by extension.")
 
-            // TODO: test if search by name works
-            #if false
-            // TODO: test if search by system array works
+                // TODO: test if search by name works
+#if false
+                // TODO: test if search by system array works
             results =  try? self.searchDatabase(usingFilename: filename, systemIDs: [systemsForExtension])
-            #else
+#else
             for currentSystem: String in systemsForExtension {
-                if let gotit = try? self.searchDatabase(usingFilename: filename, systemID: currentSystem) {
+                if let gotit = try? self.openVGDB.searchDatabase(usingFilename: filename, systemID: currentSystem) {
                     foundSystemIDMaybe = currentSystem
                     results = gotit
                     DLOG("Got it by filename: \(gotit.debugDescription)")
                     break
                 }
             }
-            #endif
+#endif
 
             if results == nil {
-                #if false
-                // TODO: test if search by array works
+#if false
+                    // TODO: test if search by array works
                 results =  try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5, systemIDs: [systemsForExtension])
-                #else
+#else
                 for currentSystem: String in systemsForExtension {
-                    if let gotit = try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5, systemID: currentSystem) {
+                    if let gotit = try? self.openVGDB.searchDatabase(usingKey: "romHashMD5", value: fileMD5, systemID: currentSystem) {
                         foundSystemIDMaybe = currentSystem
                         results = gotit
                         DLOG("Got it: \(gotit.debugDescription)")
                         break
                     }
                 }
-                #endif
+#endif
             }
 
             if let results = results, !results.isEmpty {
@@ -1822,33 +1685,5 @@ extension GameImporter {
         }
 
         return filesMovedToPaths.isEmpty ? nil : filesMovedToPaths
-    }
-
-    // Helper
-    public func systemId(forROMCandidate rom: ImportCandidateFile) -> String? {
-        guard let md5 = rom.md5 else {
-            ELOG("MD5 was blank")
-            return nil
-        }
-
-        let fileName: String = rom.filePath.lastPathComponent
-        let queryString = "SELECT DISTINCT systemID FROM ROMs WHERE romHashMD5 = '\(md5)' OR romFileName = '\(fileName)'"
-
-        do {
-            // var results: [[String: NSObject]]? = nil
-            let results = try openVGDB.executeQuery(queryString)
-            if
-                let match = results.first,
-                let databaseID = match["systemID"] as? Int,
-                let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
-                return systemID
-            } else {
-                ILOG("Could't match \(rom.filePath.lastPathComponent) based off of MD5 {\(md5)}")
-                return nil
-            }
-        } catch {
-            DLOG("Unable to find rom by MD5: \(error.localizedDescription)")
-            return nil
-        }
     }
 }

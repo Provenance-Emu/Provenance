@@ -49,12 +49,6 @@ public extension Notification.Name {
     static let PVMediaCacheWasEmptied = Notification.Name("PVMediaCacheWasEmptiedNotification")
 }
 
-public extension String {
-    var md5Hash: String {
-        return (self as NSString).md5Hash()
-    }
-}
-
 public enum MediaCacheError: Error {
     case keyWasEmpty
     case failedToScaleImage
@@ -110,7 +104,7 @@ public final class PVMediaCache: NSObject {
             return nil
         }
 
-        let keyHash: String = key.md5Hash()
+        let keyHash: String = key.MD5
         let filePath = cachePath.appendingPathComponent(keyHash, isDirectory: false)
 //        let fileExists: Bool = FileManager.default.fileExists(atPath: filePath.path)
 
@@ -123,7 +117,7 @@ public final class PVMediaCache: NSObject {
             return false
         }
 
-        let keyHash: String = key.md5Hash()
+        let keyHash: String = key.MD5
         let filePath = cachePath.appendingPathComponent(keyHash, isDirectory: false)
         return FileManager.default.fileExists(atPath: filePath.path)
     }
@@ -166,7 +160,7 @@ public final class PVMediaCache: NSObject {
             throw MediaCacheError.keyWasEmpty
         }
 
-        let keyHash: String = key.md5Hash()
+        let keyHash: String = key.MD5
         let cachePath = self.cachePath.appendingPathComponent(keyHash, isDirectory: false)
 
         do {
@@ -184,7 +178,7 @@ public final class PVMediaCache: NSObject {
             throw MediaCacheError.keyWasEmpty
         }
 
-        let keyHash: String = key.md5Hash()
+        let keyHash: String = key.MD5
         let cachePath = self.cachePath.appendingPathComponent(keyHash, isDirectory: false)
 
         memCache.removeObject(forKey: keyHash as NSString)
@@ -225,7 +219,7 @@ public final class PVMediaCache: NSObject {
 
         let operation = BlockOperation(block: { () -> Void in
             let cacheDir = PVMediaCache.cachePath
-            let keyHash = key.md5Hash
+            let keyHash = key.MD5
 
             let cachePath = cacheDir.appendingPathComponent(keyHash, isDirectory: false).path
 
@@ -258,7 +252,7 @@ public final class PVMediaCache: NSObject {
 
         let operation = BlockOperation(block: { () -> Void in
             let cacheDir = PVMediaCache.cachePath
-            let keyHash = key.md5Hash
+            let keyHash = key.MD5
 
             let cachePath = cacheDir.appendingPathComponent(keyHash, isDirectory: false).path
 

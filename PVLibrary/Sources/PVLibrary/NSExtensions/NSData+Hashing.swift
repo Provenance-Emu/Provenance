@@ -1,44 +1,35 @@
 import Foundation
+import CryptoKit
 
 @objc
 public extension NSData {
     @objc var md5: String {
-        // TODO: Fix Me
-        return ""
-        //        let digestLength = Int(CC_MD5_DIGEST_LENGTH)
-        //        let md5Buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: digestLength)
-        //
-        //        _ = withUnsafeBytes { (body: UnsafePointer<UInt8>) -> UInt8 in
-        //            CC_MD5(body, CC_LONG(count), md5Buffer)
-        //            return 0
-        //        }
-        //
-        //        let output = (0..<digestLength).reduce("") { (output, i) -> String in
-        //            return output + String(format: "%02x", md5Buffer[i])
-        //        }
-        //
-        //        md5Buffer.deallocate()
-        //
-        //        return output
+        let computed = Insecure.MD5.hash(data: self)
+        return computed.map {
+            String(format: "%02hhx", $0)
+        }.joined()
     }
     
     @objc var sha1: String {
-        // TODO: Fix Me
-        return ""
-//        let digestLength = Int(CC_SHA1_DIGEST_LENGTH)
-//        let sha1Buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: digestLength)
-//
-//        _ = withUnsafeBytes { (body: UnsafePointer<UInt8>) -> UInt8 in
-//            CC_SHA1(body, CC_LONG(count), sha1Buffer)
-//            return 0
-//        }
-//
-//        let output = (0..<digestLength).reduce("") { (output, i) -> String in
-//            return output + String(format: "%02x", sha1Buffer[i])
-//        }
-//
-//        sha1Buffer.deallocate()
-//
-//        return output
+        let computed = Insecure.SHA1.hash(data: self)
+        return computed.map {
+            String(format: "%02hhx", $0)
+        }.joined()
+    }
+}
+
+public extension Data {
+    var md5: String {
+        let computed = Insecure.MD5.hash(data: self)
+        return computed.map {
+            String(format: "%02hhx", $0)
+        }.joined()
+    }
+    
+    var sha1: String {
+        let computed = Insecure.SHA1.hash(data: self)
+        return computed.map {
+            String(format: "%02hhx", $0)
+        }.joined()
     }
 }

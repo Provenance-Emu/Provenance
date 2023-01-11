@@ -39,6 +39,7 @@ public typealias PVExtractionCompleteSubjext = PublishSubject<[URL]?>
 public enum DirectoryWatcherError: Error {
     case pathNotDirectory
     case pathAlreadyWatched
+    case cannotOpenFile
 }
 
 public final class DirectoryWatcher2 {

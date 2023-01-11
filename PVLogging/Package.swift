@@ -32,26 +32,40 @@ let package = Package(
         .package(url: "https://github.com/fpillet/NSLogger", branch: "master")
     ],
     targets: [
-         .target(
-             name: "PVLoggingObjC",
-             dependencies: [
-                "PVLogging",
-                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
-                 .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
-                 .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
-                 "NSLogger"
-             ],
-             publicHeadersPath: "include"),
-
         .target(
-            name: "PVLogging",
+            name: "PVLoggingObjC",
             dependencies: [
+                "PVLogging",
                 .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
                 "NSLogger"
             ],
             publicHeadersPath: "include"),
+
+            .target(
+                name: "PVLogging",
+                dependencies: [
+                    .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
+                    .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
+                    .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
+                    "NSLogger"
+                ],
+                publicHeadersPath: "include"
+                // This breaks ObjC Cocoalumberjack to Swift bindings for option types
+//                swiftSettings: [
+//                    .unsafeFlags([
+//                        "-Xfrontend", "-enable-cxx-interop",
+//                        //                    "-Xfrontend", "-validate-tbd-against-ir=none",
+//                        //                    "-I", "Sources/CXX/include",
+//                        //                    "-I", "\(sdkRoot)/usr/include",
+//                        //                    "-I", "\(cPath)",
+//                        //                    "-lc++",
+//                        //                    "-Xfrontend", "-disable-implicit-concurrency-module-import",
+//                        //                    "-Xcc", "-nostdinc++"
+//                    ])
+//                ]
+            ),
 
         // MARK: SwiftPM tests
         .testTarget(
@@ -60,6 +74,6 @@ let package = Package(
             path: "Tests")
     ],
     swiftLanguageVersions: [.v5],
-    cLanguageStandard: .c11,
-    cxxLanguageStandard: .cxx14
+    cLanguageStandard: .c17,
+    cxxLanguageStandard: .cxx17
 )
