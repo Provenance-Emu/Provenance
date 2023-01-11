@@ -18,7 +18,7 @@
 
 // Flycast imports
 #include "types.h"
-#include "profiler/profiler.h"
+//#include "profiler/profiler.h"
 #include "cfg/cfg.h"
 //#include "rend/rend.h"
 #include "rend/TexCache.h"
