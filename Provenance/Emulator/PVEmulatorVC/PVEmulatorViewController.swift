@@ -42,7 +42,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var BIOSPath: URL { return PVEmulatorConfiguration.biosPath(forGame: game) }
     var menuButton: MenuButton?
 
-	let use_metal: Bool = PVSettingsModel.shared.debugOptions.useMetal
+    let use_metal: Bool = PVSettingsModel.shared.debugOptions.useMetal
     private(set) lazy var gpuViewController: PVGPUViewController = use_metal ? PVMetalViewController(emulatorCore: core) : PVGLViewController(emulatorCore: core)
     private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = {
         let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
@@ -83,6 +83,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.screenType = game.system.screenType.rawValue
 
         super.init(nibName: nil, bundle: nil)
+        
+        let app = UIApplication.shared as! PVApplication
+        app.core=core
+                
+        if core.alwaysUseMetal {
+            gpuViewController = PVMetalViewController(emulatorCore: core)
+        }
 
         staticSelf = self
 
@@ -142,6 +149,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         if let menuGestureRecognizer = menuGestureRecognizer {
             view.removeGestureRecognizer(menuGestureRecognizer)
         }
+        
+        let appDelegate = UIApplication.shared as! PVApplication
+        appDelegate.core=nil
     }
 
     private func initNotifcationObservers() {

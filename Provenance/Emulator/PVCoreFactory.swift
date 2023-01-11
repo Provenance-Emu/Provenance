@@ -41,7 +41,9 @@ public final class PVCoreFactory: NSObject {
         guard let controllerLayout = system.controllerLayout else {
             fatalError("No controller layout config defined for system \(system.name)")
         }
-
+        if let core = core as? PVRetroArchCoreResponderClient {
+            return nil
+        }
         switch system.enumValue {
         case .Genesis, .GameGear, .SegaCD, .MasterSystem, .SG1000:
             if let core = core as? PVGenesisSystemResponderClient {

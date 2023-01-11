@@ -6,10 +6,81 @@
 	objectVersion = 55;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		934BE793296E6AD200FB9933 /* FlycastAdjustments */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 934BE794296E6AD200FB9933 /* Build configuration list for PBXAggregateTarget "FlycastAdjustments" */;
+			buildPhases = (
+				934BE798296E6AD900FB9933 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = FlycastAdjustments;
+			productName = FlycastAdjustments;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
+		934BE785296E638800FB9933 /* ta_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934BE784296E638800FB9933 /* ta_util.cpp */; };
+		934BE78D296E663500FB9933 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36AE8C2295F0A7F00CC9D4F /* libz.tbd */; };
+		934BE7A5296E6BA200FB9933 /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B39821F029239F4300A82429 /* stdstring.c */; };
+		934BE7A6296E6BA200FB9933 /* retro_dirent.c in Sources */ = {isa = PBXBuildFile; fileRef = B398219229239F4300A82429 /* retro_dirent.c */; };
+		934BE7A7296E6BA200FB9933 /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = B398219129239F4300A82429 /* file_path.c */; };
+		934BE7A8296E6BA200FB9933 /* memalign.c in Sources */ = {isa = PBXBuildFile; fileRef = B39821EA29239F4300A82429 /* memalign.c */; };
+		934BE7AA296E6BA200FB9933 /* option.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F5E29239F4A00A82429 /* option.cpp */; };
+		934BE7AB296E6BA200FB9933 /* vfs_implementation.c in Sources */ = {isa = PBXBuildFile; fileRef = B398218229239F4300A82429 /* vfs_implementation.c */; };
+		934BE7AC296E6BA200FB9933 /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B39821EC29239F4300A82429 /* glsm.c */; };
+		934BE7AD296E6BA200FB9933 /* vmu_xhair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F6229239F4A00A82429 /* vmu_xhair.cpp */; };
+		934BE7AE296E6BA200FB9933 /* fopen_utf8.c in Sources */ = {isa = PBXBuildFile; fileRef = B398218629239F4300A82429 /* fopen_utf8.c */; };
+		934BE7AF296E6BA200FB9933 /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F6429239F4A00A82429 /* LogManager.cpp */; };
+		934BE7B0296E6BA200FB9933 /* compat_strcasestr.c in Sources */ = {isa = PBXBuildFile; fileRef = B398218529239F4300A82429 /* compat_strcasestr.c */; };
+		934BE7B1296E6BA200FB9933 /* compat_strl.c in Sources */ = {isa = PBXBuildFile; fileRef = B398218429239F4300A82429 /* compat_strl.c */; };
+		934BE7B2296E6BA200FB9933 /* audiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F5B29239F4A00A82429 /* audiostream.cpp */; };
+		934BE7B3296E6BA200FB9933 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B398218029239F4300A82429 /* encoding_utf.c */; };
+		934BE7B4296E6BA200FB9933 /* oslib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F5D29239F4A00A82429 /* oslib.cpp */; };
+		934BE7B6296E6BA200FB9933 /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B398218C29239F4300A82429 /* rglgen.c */; };
+		934BE7C3296E6C1600FB9933 /* libflycast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libflycast.a */; };
+		934BE7C4296E6C2900FB9933 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36AE9FE295F1C3000CC9D4F /* libbz2.tbd */; };
+		934BE7C6296E6CD800FB9933 /* zip_source_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE7C5296E6CD800FB9933 /* zip_source_compress.c */; };
+		934BE7D0296E978D00FB9933 /* libomp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE7CF296E978D00FB9933 /* libomp.a */; };
+		934BE93A296EB58800FB9933 /* liblibminiupnpc-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE929296EB34500FB9933 /* liblibminiupnpc-static.a */; };
+		934BE977296EB71D00FB9933 /* upnpreplyparse.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE950296EB70700FB9933 /* upnpreplyparse.c */; };
+		934BE978296EB75100FB9933 /* receivedata.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE953296EB70800FB9933 /* receivedata.c */; };
+		934BE979296EB75A00FB9933 /* minisoap.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE942296EB70200FB9933 /* minisoap.c */; };
+		934BE97A296EB75F00FB9933 /* addr_is_reserved.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE954296EB70800FB9933 /* addr_is_reserved.c */; };
+		934BE97B296EB76400FB9933 /* portlistingparse.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE945296EB70300FB9933 /* portlistingparse.c */; };
+		934BE97C296EB76A00FB9933 /* connecthostport.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE93B296EB6ED00FB9933 /* connecthostport.c */; };
+		934BE97E296EB77F00FB9933 /* miniwget.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE940296EB6EE00FB9933 /* miniwget.c */; };
+		934BE97F296EB78300FB9933 /* upnpdev.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE95A296EB70A00FB9933 /* upnpdev.c */; };
+		934BE980296EB78900FB9933 /* upnpcommands.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE941296EB70100FB9933 /* upnpcommands.c */; };
+		934BE981296EB78D00FB9933 /* upnperrors.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE95C296EB70B00FB9933 /* upnperrors.c */; };
+		934BE982296EB79000FB9933 /* minixml.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE93F296EB6EE00FB9933 /* minixml.c */; };
+		934BE983296EB79700FB9933 /* minissdpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE95B296EB70A00FB9933 /* minissdpc.c */; };
+		934BE984296EB79D00FB9933 /* miniupnpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE957296EB70900FB9933 /* miniupnpc.c */; };
+		934BE985296EB7A100FB9933 /* igd_desc_parse.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE94B296EB70500FB9933 /* igd_desc_parse.c */; };
+		934BE986296ECE7A00FB9933 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102029239F3700A82429 /* LzmaEnc.c */; };
+		934BE987296ECE7A00FB9933 /* LzFind.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102129239F3700A82429 /* LzFind.c */; };
+		934BE988296ECE7A00FB9933 /* Sort.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102229239F3700A82429 /* Sort.c */; };
+		934BE989296ECE7A00FB9933 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102329239F3700A82429 /* Bra86.c */; };
+		934BE98A296ECE7A00FB9933 /* Alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102429239F3700A82429 /* Alloc.c */; };
+		934BE98B296ECE7A00FB9933 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102529239F3700A82429 /* LzmaDec.c */; };
+		934BE98C296ECE7A00FB9933 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102629239F3700A82429 /* BraIA64.c */; };
+		934BE98D296ECE7A00FB9933 /* Lzma86Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102729239F3700A82429 /* Lzma86Dec.c */; };
+		934BE98E296ECE7A00FB9933 /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102829239F3700A82429 /* Delta.c */; };
+		934BE98F296ECE7A00FB9933 /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102929239F3700A82429 /* CpuArch.c */; };
+		934BE990296ECF1C00FB9933 /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E1B29239F4900A82429 /* Lzma2Dec.c */; };
+		934BE991296ECF1D00FB9933 /* Lzma86Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E3629239F4900A82429 /* Lzma86Dec.c */; };
+		934BE992296ECF1D00FB9933 /* Lzma86Enc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E3E29239F4900A82429 /* Lzma86Enc.c */; };
+		934BE993296ECF1D00FB9933 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E2F29239F4900A82429 /* LzmaDec.c */; };
+		934BE994296ECF1D00FB9933 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E1D29239F4900A82429 /* LzmaEnc.c */; };
+		934BE995296ECF1D00FB9933 /* LzmaLib.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E4429239F4A00A82429 /* LzmaLib.c */; };
+		934BE996296ED64300FB9933 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E8729239F3700A82429 /* common.cpp */; };
+		934BE998296EF9AA00FB9933 /* pvr_mem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934BE997296EF9A900FB9933 /* pvr_mem.cpp */; };
+		934BE99A296EFB2B00FB9933 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934BE999296EFB2B00FB9933 /* libretro.cpp */; };
+		934BE99B296EFB3600FB9933 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934BE999296EFB2B00FB9933 /* libretro.cpp */; };
+		934BE99C296EFB4300FB9933 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934BE999296EFB2B00FB9933 /* libretro.cpp */; };
 		B301797F207C909E0051B93D /* libflycast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libflycast.a */; };
 		B316B4E721926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
-		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B34CFF64295F30540014C8AF /* pvr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34CFF63295F30540014C8AF /* pvr.cpp */; };
@@ -26,13 +97,10 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B36AE80F295F034C00CC9D4F /* flycast_libretro.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE80E295F034C00CC9D4F /* flycast_libretro.m */; };
-		B36AE810295F034C00CC9D4F /* flycast_libretro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B36AE80D295F034C00CC9D4F /* flycast_libretro.h */; };
 		B36AE815295F036000CC9D4F /* option.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F5E29239F4A00A82429 /* option.cpp */; };
 		B36AE816295F036000CC9D4F /* oslib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F5D29239F4A00A82429 /* oslib.cpp */; };
 		B36AE817295F036000CC9D4F /* vmu_xhair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F6229239F4A00A82429 /* vmu_xhair.cpp */; };
 		B36AE818295F036000CC9D4F /* audiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F5B29239F4A00A82429 /* audiostream.cpp */; };
-		B36AE819295F036000CC9D4F /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F6129239F4A00A82429 /* libretro.cpp */; };
 		B36AE81A295F036000CC9D4F /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F6429239F4A00A82429 /* LogManager.cpp */; };
 		B36AE81C295F03C900CC9D4F /* cheats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980D8B29239F3600A82429 /* cheats.cpp */; };
 		B36AE81D295F03C900CC9D4F /* nullDC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E6529239F3700A82429 /* nullDC.cpp */; };
@@ -95,7 +163,6 @@
 		B36AE871295F051900CC9D4F /* pvr_sb_regs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980DDA29239F3600A82429 /* pvr_sb_regs.cpp */; };
 		B36AE872295F051900CC9D4F /* ta.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980DE429239F3600A82429 /* ta.cpp */; };
 		B36AE873295F051900CC9D4F /* ta_vtx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980DE129239F3600A82429 /* ta_vtx.cpp */; };
-		B36AE874295F051900CC9D4F /* pvr_mem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980DD429239F3600A82429 /* pvr_mem.cpp */; };
 		B36AE875295F051900CC9D4F /* Renderer_if.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980DE029239F3600A82429 /* Renderer_if.cpp */; };
 		B36AE876295F052400CC9D4F /* naomi_flashrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980DF529239F3600A82429 /* naomi_flashrom.cpp */; };
 		B36AE877295F052400CC9D4F /* m1cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980DF229239F3600A82429 /* m1cartridge.cpp */; };
@@ -145,9 +212,7 @@
 		B36AE8A8295F093C00CC9D4F /* xxhsum.c in Sources */ = {isa = PBXBuildFile; fileRef = B398222829239F4300A82429 /* xxhsum.c */; };
 		B36AE8A9295F095700CC9D4F /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = B398222529239F4300A82429 /* xxhash.c */; };
 		B36AE8AC295F09BC00CC9D4F /* 7zFile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E3A29239F4900A82429 /* 7zFile.c */; };
-		B36AE8AD295F09D000CC9D4F /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E2F29239F4900A82429 /* LzmaDec.c */; };
 		B36AE8AF295F09D000CC9D4F /* Bcj2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E1F29239F4900A82429 /* Bcj2.c */; };
-		B36AE8B0295F09D000CC9D4F /* LzmaLib.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E4429239F4A00A82429 /* LzmaLib.c */; };
 		B36AE8B1295F09D000CC9D4F /* Sort.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E2429239F4900A82429 /* Sort.c */; };
 		B36AE8B2295F09D000CC9D4F /* 7zArcIn.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E2A29239F4900A82429 /* 7zArcIn.c */; };
 		B36AE8B3295F09D000CC9D4F /* 7zCrcOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E4129239F4A00A82429 /* 7zCrcOpt.c */; };
@@ -157,15 +222,11 @@
 		B36AE8B7295F09D000CC9D4F /* Bra.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E2729239F4900A82429 /* Bra.c */; };
 		B36AE8B8295F09D000CC9D4F /* 7zCrc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E3C29239F4900A82429 /* 7zCrc.c */; };
 		B36AE8B9295F09D000CC9D4F /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E2929239F4900A82429 /* Bra86.c */; };
-		B36AE8BA295F09D000CC9D4F /* Lzma2Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E1B29239F4900A82429 /* Lzma2Dec.c */; };
 		B36AE8BB295F09D000CC9D4F /* 7zBuf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E4329239F4A00A82429 /* 7zBuf.c */; };
 		B36AE8BC295F09D000CC9D4F /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E3529239F4900A82429 /* BraIA64.c */; };
 		B36AE8BD295F09D000CC9D4F /* CpuArch.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E3F29239F4A00A82429 /* CpuArch.c */; };
 		B36AE8BF295F09D000CC9D4F /* Delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E3929239F4900A82429 /* Delta.c */; };
-		B36AE8C0295F09D000CC9D4F /* Lzma86Dec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E3629239F4900A82429 /* Lzma86Dec.c */; };
 		B36AE8C1295F09D000CC9D4F /* 7zDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E3029239F4900A82429 /* 7zDec.c */; };
-		B36AE8C3295F0A7F00CC9D4F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36AE8C2295F0A7F00CC9D4F /* libz.tbd */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, ); };
-		B36AE8C5295F0A8500CC9D4F /* liblzma.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36AE8C4295F0A8500CC9D4F /* liblzma.tbd */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, ); };
 		B36AE8CB295F0BA300CC9D4F /* naomi_network.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E4929239F3700A82429 /* naomi_network.cpp */; };
 		B36AE8CC295F0BCC00CC9D4F /* posix_vmem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E8829239F3700A82429 /* posix_vmem.cpp */; };
 		B36AE8CF295F0C5600CC9D4F /* libchdr_bitstream.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102D29239F3700A82429 /* libchdr_bitstream.c */; };
@@ -175,7 +236,6 @@
 		B36AE8D4295F0CBB00CC9D4F /* miniupnp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E4E29239F3700A82429 /* miniupnp.cpp */; };
 		B36AE8D5295F0CBB00CC9D4F /* picoppp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E4A29239F3700A82429 /* picoppp.cpp */; };
 		B36AE8D6295F0CBB00CC9D4F /* dns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E4F29239F3700A82429 /* dns.cpp */; };
-		B36AE8DA295F0EB500CC9D4F /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E1D29239F4900A82429 /* LzmaEnc.c */; };
 		B36AE8DB295F0F3400CC9D4F /* PVFlycast.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVFlycast.mm */; };
 		B36AE8E7295F118D00CC9D4F /* sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E7629239F3700A82429 /* sdl.cpp */; };
 		B36AE8E8295F118D00CC9D4F /* wgl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E7129239F3700A82429 /* wgl.cpp */; };
@@ -189,7 +249,6 @@
 		B36AE8F4295F153600CC9D4F /* sorter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982EBE29239F4A00A82429 /* sorter.cpp */; };
 		B36AE8F5295F153C00CC9D4F /* osd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982EF729239F4A00A82429 /* osd.cpp */; };
 		B36AE8F6295F154400CC9D4F /* CustomTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982EBC29239F4A00A82429 /* CustomTexture.cpp */; };
-		B36AE8F7295F15B100CC9D4F /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E8729239F3700A82429 /* common.cpp */; };
 		B36AE8F8295F15C100CC9D4F /* context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E8929239F3700A82429 /* context.cpp */; };
 		B36AE8F9295F15C900CC9D4F /* unwind_info.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E8A29239F3700A82429 /* unwind_info.cpp */; };
 		B36AE8FB295F163000CC9D4F /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B39821EC29239F4300A82429 /* glsm.c */; };
@@ -262,7 +321,6 @@
 		B36AE9C2295F1BA100CC9D4F /* zip_source_close.c in Sources */ = {isa = PBXBuildFile; fileRef = B39823F329239F4400A82429 /* zip_source_close.c */; };
 		B36AE9C3295F1BA100CC9D4F /* zip_source_tell_write.c in Sources */ = {isa = PBXBuildFile; fileRef = B398238F29239F4400A82429 /* zip_source_tell_write.c */; };
 		B36AE9C4295F1BA100CC9D4F /* zip_source_begin_write.c in Sources */ = {isa = PBXBuildFile; fileRef = B398239329239F4400A82429 /* zip_source_begin_write.c */; };
-		B36AE9C5295F1BA100CC9D4F /* zip_source_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = B398240629239F4400A82429 /* zip_source_compress.c */; };
 		B36AE9C6295F1BA100CC9D4F /* zip_stat_init.c in Sources */ = {isa = PBXBuildFile; fileRef = B398241129239F4400A82429 /* zip_stat_init.c */; };
 		B36AE9C7295F1BA100CC9D4F /* zip_source_tell.c in Sources */ = {isa = PBXBuildFile; fileRef = B398240229239F4400A82429 /* zip_source_tell.c */; };
 		B36AE9C8295F1BA100CC9D4F /* zip_replace.c in Sources */ = {isa = PBXBuildFile; fileRef = B39823E929239F4400A82429 /* zip_replace.c */; };
@@ -347,7 +405,6 @@
 		B36AEA1B295F280200CC9D4F /* pico_socket_multicast.c in Sources */ = {isa = PBXBuildFile; fileRef = B398106E29239F3700A82429 /* pico_socket_multicast.c */; };
 		B36AEA1C295F280200CC9D4F /* pico_tree.c in Sources */ = {isa = PBXBuildFile; fileRef = B398106B29239F3700A82429 /* pico_tree.c */; };
 		B36AEA1D295F280200CC9D4F /* pico_device.c in Sources */ = {isa = PBXBuildFile; fileRef = B398106A29239F3700A82429 /* pico_device.c */; };
-		B36AEA1E295F283500CC9D4F /* liblzma.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36AE8C4295F0A8500CC9D4F /* liblzma.tbd */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, ); };
 		B36AEA1F295F288200CC9D4F /* zip_source_winzip_aes_decode.c in Sources */ = {isa = PBXBuildFile; fileRef = B398241029239F4400A82429 /* zip_source_winzip_aes_decode.c */; };
 		B36AEA20295F289500CC9D4F /* zip_source_winzip_aes_encode.c in Sources */ = {isa = PBXBuildFile; fileRef = B398241829239F4400A82429 /* zip_source_winzip_aes_encode.c */; };
 		B36AEA21295F28B300CC9D4F /* zip_winzip_aes.c in Sources */ = {isa = PBXBuildFile; fileRef = B39823E829239F4400A82429 /* zip_winzip_aes.c */; };
@@ -381,6 +438,58 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		934BE799296E6B3600FB9933 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 934BE793296E6AD200FB9933;
+			remoteInfo = FlycastAdjustments;
+		};
+		934BE79B296E6B3C00FB9933 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 934BE793296E6AD200FB9933;
+			remoteInfo = FlycastAdjustments;
+		};
+		934BE7A3296E6BA200FB9933 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 934BE793296E6AD200FB9933;
+			remoteInfo = FlycastAdjustments;
+		};
+		934BE7BF296E6BE900FB9933 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 934BE7A1296E6BA200FB9933;
+			remoteInfo = "flycast-retroarch-module";
+		};
+		934BE7C1296E6C0F00FB9933 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B30178D2207C901D0051B93D;
+			remoteInfo = flycast;
+		};
+		934BE7D7296EB34500FB9933 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 934BE793296E6AD200FB9933;
+			remoteInfo = FlycastAdjustments;
+		};
+		934BE938296EB57F00FB9933 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 934BE7D5296EB34500FB9933;
+			remoteInfo = "libminiupnpc-static";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXContainerItemProxy section */
 		B3BA0126296FCC4900534359 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -391,6 +500,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		934BE924296EB34500FB9933 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -406,13 +524,59 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				B36AE810295F034C00CC9D4F /* flycast_libretro.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		934BE784296E638800FB9933 /* ta_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ta_util.cpp; sourceTree = "<group>"; };
+		934BE787296E659700FB9933 /* liblibzip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibzip.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		934BE789296E65D100FB9933 /* libz.1.2.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.8.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.1.2.8.tbd; sourceTree = DEVELOPER_DIR; };
+		934BE78B296E65FD00FB9933 /* liblibzip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibzip.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		934BE7BE296E6BA200FB9933 /* libflycast-retroarch-module.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libflycast-retroarch-module.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		934BE7C5296E6CD800FB9933 /* zip_source_compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zip_source_compress.c; path = cmake/zip_source_compress.c; sourceTree = "<group>"; };
+		934BE7CA296E955800FB9933 /* OpenMP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenMP.framework; path = cmake/OpenMP.framework; sourceTree = "<group>"; };
+		934BE7CF296E978D00FB9933 /* libomp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libomp.a; path = cmake/OpenMP.framework/Versions/A/libomp.a; sourceTree = "<group>"; };
+		934BE7D2296E999200FB9933 /* omp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = omp.h; path = cmake/OpenMP.framework/Versions/A/Headers/omp.h; sourceTree = "<group>"; };
+		934BE929296EB34500FB9933 /* liblibminiupnpc-static.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "liblibminiupnpc-static.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		934BE93B296EB6ED00FB9933 /* connecthostport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = connecthostport.c; path = src/connecthostport.c; sourceTree = "<group>"; };
+		934BE93C296EB6ED00FB9933 /* minixmlvalid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minixmlvalid.c; path = src/minixmlvalid.c; sourceTree = "<group>"; };
+		934BE93D296EB6ED00FB9933 /* testaddr_is_reserved.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testaddr_is_reserved.c; path = src/testaddr_is_reserved.c; sourceTree = "<group>"; };
+		934BE93E296EB6EE00FB9933 /* listdevices.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = listdevices.c; path = src/listdevices.c; sourceTree = "<group>"; };
+		934BE93F296EB6EE00FB9933 /* minixml.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minixml.c; path = src/minixml.c; sourceTree = "<group>"; };
+		934BE940296EB6EE00FB9933 /* miniwget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = miniwget.c; path = src/miniwget.c; sourceTree = "<group>"; };
+		934BE941296EB70100FB9933 /* upnpcommands.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = upnpcommands.c; path = src/upnpcommands.c; sourceTree = "<group>"; };
+		934BE942296EB70200FB9933 /* minisoap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minisoap.c; path = src/minisoap.c; sourceTree = "<group>"; };
+		934BE943296EB70200FB9933 /* minisoap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = minisoap.h; path = src/minisoap.h; sourceTree = "<group>"; };
+		934BE944296EB70200FB9933 /* minixml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = minixml.h; path = src/minixml.h; sourceTree = "<group>"; };
+		934BE945296EB70300FB9933 /* portlistingparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = portlistingparse.c; path = src/portlistingparse.c; sourceTree = "<group>"; };
+		934BE946296EB70300FB9933 /* receivedata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = receivedata.h; path = src/receivedata.h; sourceTree = "<group>"; };
+		934BE947296EB70300FB9933 /* connecthostport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = connecthostport.h; path = src/connecthostport.h; sourceTree = "<group>"; };
+		934BE948296EB70400FB9933 /* testupnpreplyparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testupnpreplyparse.c; path = src/testupnpreplyparse.c; sourceTree = "<group>"; };
+		934BE949296EB70400FB9933 /* miniwget_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = miniwget_private.h; path = src/miniwget_private.h; sourceTree = "<group>"; };
+		934BE94A296EB70500FB9933 /* addr_is_reserved.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = addr_is_reserved.h; path = src/addr_is_reserved.h; sourceTree = "<group>"; };
+		934BE94B296EB70500FB9933 /* igd_desc_parse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = igd_desc_parse.c; path = src/igd_desc_parse.c; sourceTree = "<group>"; };
+		934BE94C296EB70500FB9933 /* minihttptestserver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minihttptestserver.c; path = src/minihttptestserver.c; sourceTree = "<group>"; };
+		934BE94D296EB70600FB9933 /* miniupnpc_socketdef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = miniupnpc_socketdef.h; path = src/miniupnpc_socketdef.h; sourceTree = "<group>"; };
+		934BE94E296EB70600FB9933 /* upnpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = upnpc.c; path = src/upnpc.c; sourceTree = "<group>"; };
+		934BE94F296EB70600FB9933 /* minissdpc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = minissdpc.h; path = src/minissdpc.h; sourceTree = "<group>"; };
+		934BE950296EB70700FB9933 /* upnpreplyparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = upnpreplyparse.c; path = src/upnpreplyparse.c; sourceTree = "<group>"; };
+		934BE951296EB70700FB9933 /* win32_snprintf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = win32_snprintf.h; path = src/win32_snprintf.h; sourceTree = "<group>"; };
+		934BE952296EB70800FB9933 /* miniupnpcmodule.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = miniupnpcmodule.c; path = src/miniupnpcmodule.c; sourceTree = "<group>"; };
+		934BE953296EB70800FB9933 /* receivedata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = receivedata.c; path = src/receivedata.c; sourceTree = "<group>"; };
+		934BE954296EB70800FB9933 /* addr_is_reserved.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = addr_is_reserved.c; path = src/addr_is_reserved.c; sourceTree = "<group>"; };
+		934BE955296EB70900FB9933 /* testigddescparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testigddescparse.c; path = src/testigddescparse.c; sourceTree = "<group>"; };
+		934BE956296EB70900FB9933 /* codelength.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = codelength.h; path = src/codelength.h; sourceTree = "<group>"; };
+		934BE957296EB70900FB9933 /* miniupnpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = miniupnpc.c; path = src/miniupnpc.c; sourceTree = "<group>"; };
+		934BE958296EB70A00FB9933 /* testminiwget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testminiwget.c; path = src/testminiwget.c; sourceTree = "<group>"; };
+		934BE959296EB70A00FB9933 /* testminixml.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testminixml.c; path = src/testminixml.c; sourceTree = "<group>"; };
+		934BE95A296EB70A00FB9933 /* upnpdev.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = upnpdev.c; path = src/upnpdev.c; sourceTree = "<group>"; };
+		934BE95B296EB70A00FB9933 /* minissdpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minissdpc.c; path = src/minissdpc.c; sourceTree = "<group>"; };
+		934BE95C296EB70B00FB9933 /* upnperrors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = upnperrors.c; path = src/upnperrors.c; sourceTree = "<group>"; };
+		934BE95D296EB70B00FB9933 /* testportlistingparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testportlistingparse.c; path = src/testportlistingparse.c; sourceTree = "<group>"; };
+		934BE997296EF9A900FB9933 /* pvr_mem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pvr_mem.cpp; path = cmake/pvr_mem.cpp; sourceTree = "<group>"; };
+		934BE999296EFB2B00FB9933 /* libretro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = libretro.cpp; path = cmake/libretro.cpp; sourceTree = "<group>"; };
 		B30178D3207C901D0051B93D /* libflycast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libflycast.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4E621926FE500693472 /* emu.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emu.cfg; sourceTree = "<group>"; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -460,8 +624,6 @@
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B36AE80B295F034C00CC9D4F /* libflycast-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libflycast-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B36AE80D295F034C00CC9D4F /* flycast_libretro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = flycast_libretro.h; sourceTree = "<group>"; };
-		B36AE80E295F034C00CC9D4F /* flycast_libretro.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = flycast_libretro.m; sourceTree = "<group>"; };
 		B36AE8C2295F0A7F00CC9D4F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B36AE8C4295F0A8500CC9D4F /* liblzma.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = liblzma.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/liblzma.tbd; sourceTree = DEVELOPER_DIR; };
 		B36AE98D295F1A6B00CC9D4F /* libcompression.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcompression.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libcompression.tbd; sourceTree = DEVELOPER_DIR; };
@@ -802,17 +964,10 @@
 		B3980EF929239F3700A82429 /* License.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = License.txt; sourceTree = "<group>"; };
 		B3980EFA29239F3700A82429 /* xbrz.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = xbrz.cpp; sourceTree = "<group>"; };
 		B3980EFC29239F3700A82429 /* Makefile.mingw */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.mingw; sourceTree = "<group>"; };
-		B3980EFD29239F3700A82429 /* win32_snprintf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = win32_snprintf.h; sourceTree = "<group>"; };
-		B3980EFE29239F3700A82429 /* miniwget_private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = miniwget_private.h; sourceTree = "<group>"; };
-		B3980EFF29239F3700A82429 /* minisoap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = minisoap.c; sourceTree = "<group>"; };
-		B3980F0029239F3700A82429 /* miniupnpc_declspec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = miniupnpc_declspec.h; sourceTree = "<group>"; };
-		B3980F0129239F3700A82429 /* addr_is_reserved.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = addr_is_reserved.c; sourceTree = "<group>"; };
 		B3980F0229239F3700A82429 /* wingenminiupnpcstrings.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = wingenminiupnpcstrings.c; sourceTree = "<group>"; };
 		B3980F0329239F3700A82429 /* miniupnpcstrings.h.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = miniupnpcstrings.h.cmake; sourceTree = "<group>"; };
-		B3980F0429239F3700A82429 /* upnpcommands.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = upnpcommands.h; sourceTree = "<group>"; };
 		B3980F0529239F3700A82429 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		B3980F0629239F3700A82429 /* testminiwget.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = testminiwget.sh; sourceTree = "<group>"; };
-		B3980F0729239F3700A82429 /* testupnpreplyparse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = testupnpreplyparse.c; sourceTree = "<group>"; };
 		B3980F0829239F3700A82429 /* miniupnpc.rc */ = {isa = PBXFileReference; lastKnownFileType = text; path = miniupnpc.rc; sourceTree = "<group>"; };
 		B3980F0A29239F3700A82429 /* upnpc-static.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "upnpc-static.vcxproj"; sourceTree = "<group>"; };
 		B3980F0B29239F3700A82429 /* upnpc-static_vs2010.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "upnpc-static_vs2010.vcxproj"; sourceTree = "<group>"; };
@@ -829,12 +984,8 @@
 		B3980F1629239F3700A82429 /* miniupnpc_vs2010.sln */ = {isa = PBXFileReference; lastKnownFileType = text; path = miniupnpc_vs2010.sln; sourceTree = "<group>"; };
 		B3980F1729239F3700A82429 /* genminiupnpcstrings.vbs */ = {isa = PBXFileReference; lastKnownFileType = text; path = genminiupnpcstrings.vbs; sourceTree = "<group>"; };
 		B3980F1829239F3700A82429 /* setupmingw32.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = setupmingw32.py; sourceTree = "<group>"; };
-		B3980F1929239F3700A82429 /* testminiwget.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = testminiwget.c; sourceTree = "<group>"; };
 		B3980F1A29239F3700A82429 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		B3980F1B29239F3700A82429 /* portlistingparse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = portlistingparse.c; sourceTree = "<group>"; };
-		B3980F1C29239F3700A82429 /* testminixml.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = testminixml.c; sourceTree = "<group>"; };
 		B3980F1D29239F3700A82429 /* updateminiupnpcstrings.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = updateminiupnpcstrings.sh; sourceTree = "<group>"; };
-		B3980F1E29239F3700A82429 /* connecthostport.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = connecthostport.c; sourceTree = "<group>"; };
 		B3980F1F29239F3700A82429 /* pymoduletest.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = pymoduletest.py; sourceTree = "<group>"; };
 		B3980F2129239F3700A82429 /* GetSpecificPortMappingEntryResp.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GetSpecificPortMappingEntryResp.xml; sourceTree = "<group>"; };
 		B3980F2229239F3700A82429 /* SetDefaultConnectionService.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = SetDefaultConnectionService.xml; sourceTree = "<group>"; };
@@ -847,65 +998,30 @@
 		B3980F2929239F3700A82429 /* GetSpecificPortMappingEntryReq.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GetSpecificPortMappingEntryReq.xml; sourceTree = "<group>"; };
 		B3980F2A29239F3700A82429 /* GetExternalIPAddress.namevalue */ = {isa = PBXFileReference; lastKnownFileType = text; path = GetExternalIPAddress.namevalue; sourceTree = "<group>"; };
 		B3980F2B29239F3700A82429 /* SetDefaultConnectionService.namevalue */ = {isa = PBXFileReference; lastKnownFileType = text; path = SetDefaultConnectionService.namevalue; sourceTree = "<group>"; };
-		B3980F2C29239F3700A82429 /* miniupnpcmodule.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = miniupnpcmodule.c; sourceTree = "<group>"; };
 		B3980F2E29239F3700A82429 /* miniupnpc.3 */ = {isa = PBXFileReference; lastKnownFileType = text; path = miniupnpc.3; sourceTree = "<group>"; };
-		B3980F2F29239F3700A82429 /* listdevices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = listdevices.c; sourceTree = "<group>"; };
 		B3980F3029239F3700A82429 /* testupnpigd.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = testupnpigd.py; sourceTree = "<group>"; };
-		B3980F3129239F3700A82429 /* upnpreplyparse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = upnpreplyparse.c; sourceTree = "<group>"; };
 		B3980F3229239F3700A82429 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B3980F3329239F3700A82429 /* pymoduletest3.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = pymoduletest3.py; sourceTree = "<group>"; };
-		B3980F3429239F3700A82429 /* minixml.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minixml.h; sourceTree = "<group>"; };
-		B3980F3529239F3700A82429 /* receivedata.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = receivedata.c; sourceTree = "<group>"; };
-		B3980F3629239F3700A82429 /* miniupnpc_socketdef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = miniupnpc_socketdef.h; sourceTree = "<group>"; };
-		B3980F3729239F3700A82429 /* miniwget.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = miniwget.c; sourceTree = "<group>"; };
-		B3980F3829239F3700A82429 /* upnperrors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = upnperrors.h; sourceTree = "<group>"; };
-		B3980F3929239F3700A82429 /* igd_desc_parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = igd_desc_parse.h; sourceTree = "<group>"; };
-		B3980F3A29239F3700A82429 /* upnpdev.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = upnpdev.c; sourceTree = "<group>"; };
 		B3980F3C29239F3700A82429 /* testjava.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = testjava.sh; sourceTree = "<group>"; };
 		B3980F3D29239F3700A82429 /* JavaBridgeTest.java */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.java; path = JavaBridgeTest.java; sourceTree = "<group>"; };
 		B3980F3E29239F3700A82429 /* testjava.bat */ = {isa = PBXFileReference; lastKnownFileType = text; path = testjava.bat; sourceTree = "<group>"; };
 		B3980F3F29239F3700A82429 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B3980F4029239F3700A82429 /* MANIFEST.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = MANIFEST.in; sourceTree = "<group>"; };
-		B3980F4129239F3700A82429 /* minissdpc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minissdpc.h; sourceTree = "<group>"; };
 		B3980F4229239F3700A82429 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		B3980F4329239F3700A82429 /* miniupnpc.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = miniupnpc.def; sourceTree = "<group>"; };
-		B3980F4429239F3700A82429 /* miniupnpc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = miniupnpc.h; sourceTree = "<group>"; };
-		B3980F4529239F3700A82429 /* miniupnpctypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = miniupnpctypes.h; sourceTree = "<group>"; };
-		B3980F4629239F3700A82429 /* upnpcommands.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = upnpcommands.c; sourceTree = "<group>"; };
-		B3980F4729239F3700A82429 /* testigddescparse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = testigddescparse.c; sourceTree = "<group>"; };
-		B3980F4829239F3700A82429 /* addr_is_reserved.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = addr_is_reserved.h; sourceTree = "<group>"; };
 		B3980F4929239F3700A82429 /* external-ip.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "external-ip.sh"; sourceTree = "<group>"; };
 		B3980F4A29239F3700A82429 /* miniupnpcstrings.h.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = miniupnpcstrings.h.in; sourceTree = "<group>"; };
 		B3980F4B29239F3700A82429 /* setup.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = setup.py; sourceTree = "<group>"; };
-		B3980F4C29239F3700A82429 /* minisoap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minisoap.h; sourceTree = "<group>"; };
 		B3980F4D29239F3700A82429 /* testupnpreplyparse.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = testupnpreplyparse.sh; sourceTree = "<group>"; };
-		B3980F4E29239F3700A82429 /* VERSION.miniupnpc */ = {isa = PBXFileReference; lastKnownFileType = text; path = VERSION.miniupnpc; sourceTree = "<group>"; };
 		B3980F4F29239F3700A82429 /* apiversions.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = apiversions.txt; sourceTree = "<group>"; };
-		B3980F5029239F3700A82429 /* upnpc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = upnpc.c; sourceTree = "<group>"; };
 		B3980F5129239F3700A82429 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		B3980F5229239F3700A82429 /* portlistingparse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = portlistingparse.h; sourceTree = "<group>"; };
-		B3980F5329239F3700A82429 /* minihttptestserver.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = minihttptestserver.c; sourceTree = "<group>"; };
-		B3980F5429239F3700A82429 /* connecthostport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = connecthostport.h; sourceTree = "<group>"; };
 		B3980F5529239F3700A82429 /* miniupnpc-config.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = "miniupnpc-config.cmake"; sourceTree = "<group>"; };
 		B3980F5629239F3700A82429 /* Changelog.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Changelog.txt; sourceTree = "<group>"; };
-		B3980F5729239F3700A82429 /* minixmlvalid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = minixmlvalid.c; sourceTree = "<group>"; };
-		B3980F5829239F3700A82429 /* upnperrors.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = upnperrors.c; sourceTree = "<group>"; };
-		B3980F5929239F3700A82429 /* miniwget.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = miniwget.h; sourceTree = "<group>"; };
-		B3980F5A29239F3700A82429 /* codelength.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = codelength.h; sourceTree = "<group>"; };
-		B3980F5B29239F3700A82429 /* minixml.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = minixml.c; sourceTree = "<group>"; };
-		B3980F5C29239F3700A82429 /* receivedata.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = receivedata.h; sourceTree = "<group>"; };
-		B3980F5D29239F3700A82429 /* testportlistingparse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = testportlistingparse.c; sourceTree = "<group>"; };
-		B3980F5E29239F3700A82429 /* upnpreplyparse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = upnpreplyparse.h; sourceTree = "<group>"; };
-		B3980F5F29239F3700A82429 /* minissdpc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = minissdpc.c; sourceTree = "<group>"; };
-		B3980F6029239F3700A82429 /* miniupnpc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = miniupnpc.c; sourceTree = "<group>"; };
 		B3980F6229239F3700A82429 /* linksys_WAG200G_desc.values */ = {isa = PBXFileReference; lastKnownFileType = text; path = linksys_WAG200G_desc.values; sourceTree = "<group>"; };
 		B3980F6329239F3700A82429 /* new_LiveBox_desc.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = new_LiveBox_desc.xml; sourceTree = "<group>"; };
 		B3980F6429239F3700A82429 /* linksys_WAG200G_desc.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = linksys_WAG200G_desc.xml; sourceTree = "<group>"; };
 		B3980F6529239F3700A82429 /* new_LiveBox_desc.values */ = {isa = PBXFileReference; lastKnownFileType = text; path = new_LiveBox_desc.values; sourceTree = "<group>"; };
-		B3980F6629239F3700A82429 /* upnpdev.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = upnpdev.h; sourceTree = "<group>"; };
-		B3980F6729239F3700A82429 /* testaddr_is_reserved.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = testaddr_is_reserved.c; sourceTree = "<group>"; };
 		B3980F6829239F3700A82429 /* mingw32make.bat */ = {isa = PBXFileReference; lastKnownFileType = text; path = mingw32make.bat; sourceTree = "<group>"; };
-		B3980F6929239F3700A82429 /* igd_desc_parse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = igd_desc_parse.c; sourceTree = "<group>"; };
 		B3980F8629239F3700A82429 /* gamesdk.cmake */ = {isa = PBXFileReference; lastKnownFileType = text; path = gamesdk.cmake; sourceTree = "<group>"; };
 		B3980F8929239F3700A82429 /* LatencyTuner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LatencyTuner.h; sourceTree = "<group>"; };
 		B3980F8A29239F3700A82429 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
@@ -3604,7 +3720,7 @@
 		B3981A6929239F3F00A82429 /* TestDropFile-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TestDropFile-Info.plist"; sourceTree = "<group>"; };
 		B3981A6B29239F3F00A82429 /* Doxyfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		B3981A7229239F3F00A82429 /* ReadMe.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
-		B3981A7329239F3F00A82429 /* SDL_DS_Store */ = {isa = PBXFileReference; lastKnownFileType = file; path = SDL_DS_Store; sourceTree = "<group>"; };
+		B3981A7329239F3F00A82429 /* SDL_DS_Store */ = {isa = PBXFileReference; lastKnownFileType = text; path = SDL_DS_Store; sourceTree = "<group>"; };
 		B3981A7429239F3F00A82429 /* License.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = License.txt; sourceTree = "<group>"; };
 		B3981A7529239F3F00A82429 /* SDL.info */ = {isa = PBXFileReference; lastKnownFileType = text; path = SDL.info; sourceTree = "<group>"; };
 		B3981A7629239F3F00A82429 /* sdl_logo.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = sdl_logo.pdf; sourceTree = "<group>"; };
@@ -8504,12 +8620,29 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		934BE7B7296E6BA200FB9933 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				934BE7C4296E6C2900FB9933 /* libbz2.tbd in Frameworks */,
+				934BE7C3296E6C1600FB9933 /* libflycast.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		934BE921296EB34500FB9933 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B30178D0207C901D0051B93D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B36AE8C5295F0A8500CC9D4F /* liblzma.tbd in Frameworks */,
-				B36AE8C3295F0A7F00CC9D4F /* libz.tbd in Frameworks */,
+				934BE93A296EB58800FB9933 /* liblibminiupnpc-static.a in Frameworks */,
+				934BE78D296E663500FB9933 /* libz.tbd in Frameworks */,
+				934BE7D0296E978D00FB9933 /* libomp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8532,7 +8665,6 @@
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libflycast.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B36AEA1E295F283500CC9D4F /* liblzma.tbd in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B39E12A128925DD900016387 /* PVLibRetro.framework in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
@@ -8544,6 +8676,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		934BE792296E6A8800FB9933 /* cmake */ = {
+			isa = PBXGroup;
+			children = (
+				934BE999296EFB2B00FB9933 /* libretro.cpp */,
+				934BE997296EF9A900FB9933 /* pvr_mem.cpp */,
+				934BE7D2296E999200FB9933 /* omp.h */,
+				934BE7CF296E978D00FB9933 /* libomp.a */,
+				934BE7CA296E955800FB9933 /* OpenMP.framework */,
+				934BE7C5296E6CD800FB9933 /* zip_source_compress.c */,
+			);
+			name = cmake;
+			sourceTree = "<group>";
+		};
 		B3447EA8218BC51300557ACE /* Audio */ = {
 			isa = PBXGroup;
 			children = (
@@ -8596,15 +8741,6 @@
 				B34CFF7C295F32CF0014C8AF /* scraper.h */,
 			);
 			path = boxart;
-			sourceTree = "<group>";
-		};
-		B36AE80C295F034C00CC9D4F /* flycast-libretro */ = {
-			isa = PBXGroup;
-			children = (
-				B36AE80D295F034C00CC9D4F /* flycast_libretro.h */,
-				B36AE80E295F034C00CC9D4F /* flycast_libretro.m */,
-			);
-			path = "flycast-libretro";
 			sourceTree = "<group>";
 		};
 		B3980D8329239F3600A82429 /* flycast */ = {
@@ -8805,6 +8941,7 @@
 		B3980DD129239F3600A82429 /* pvr */ = {
 			isa = PBXGroup;
 			children = (
+				934BE784296E638800FB9933 /* ta_util.cpp */,
 				B34CFF61295F303E0014C8AF /* elan.cpp */,
 				B34CFF63295F30540014C8AF /* pvr.cpp */,
 				B3980DD429239F3600A82429 /* pvr_mem.cpp */,
@@ -9330,82 +9467,71 @@
 		B3980EFB29239F3700A82429 /* miniupnpc */ = {
 			isa = PBXGroup;
 			children = (
+				934BE954296EB70800FB9933 /* addr_is_reserved.c */,
+				934BE94A296EB70500FB9933 /* addr_is_reserved.h */,
+				934BE956296EB70900FB9933 /* codelength.h */,
+				934BE93B296EB6ED00FB9933 /* connecthostport.c */,
+				934BE947296EB70300FB9933 /* connecthostport.h */,
+				934BE94B296EB70500FB9933 /* igd_desc_parse.c */,
+				934BE93E296EB6EE00FB9933 /* listdevices.c */,
+				934BE94C296EB70500FB9933 /* minihttptestserver.c */,
+				934BE942296EB70200FB9933 /* minisoap.c */,
+				934BE943296EB70200FB9933 /* minisoap.h */,
+				934BE95B296EB70A00FB9933 /* minissdpc.c */,
+				934BE94F296EB70600FB9933 /* minissdpc.h */,
+				934BE94D296EB70600FB9933 /* miniupnpc_socketdef.h */,
+				934BE957296EB70900FB9933 /* miniupnpc.c */,
+				934BE952296EB70800FB9933 /* miniupnpcmodule.c */,
+				934BE949296EB70400FB9933 /* miniwget_private.h */,
+				934BE940296EB6EE00FB9933 /* miniwget.c */,
+				934BE93F296EB6EE00FB9933 /* minixml.c */,
+				934BE944296EB70200FB9933 /* minixml.h */,
+				934BE93C296EB6ED00FB9933 /* minixmlvalid.c */,
+				934BE945296EB70300FB9933 /* portlistingparse.c */,
+				934BE953296EB70800FB9933 /* receivedata.c */,
+				934BE946296EB70300FB9933 /* receivedata.h */,
+				934BE93D296EB6ED00FB9933 /* testaddr_is_reserved.c */,
+				934BE955296EB70900FB9933 /* testigddescparse.c */,
+				934BE958296EB70A00FB9933 /* testminiwget.c */,
+				934BE959296EB70A00FB9933 /* testminixml.c */,
+				934BE95D296EB70B00FB9933 /* testportlistingparse.c */,
+				934BE948296EB70400FB9933 /* testupnpreplyparse.c */,
+				934BE94E296EB70600FB9933 /* upnpc.c */,
+				934BE941296EB70100FB9933 /* upnpcommands.c */,
+				934BE95A296EB70A00FB9933 /* upnpdev.c */,
+				934BE95C296EB70B00FB9933 /* upnperrors.c */,
+				934BE950296EB70700FB9933 /* upnpreplyparse.c */,
+				934BE951296EB70700FB9933 /* win32_snprintf.h */,
 				B3980EFC29239F3700A82429 /* Makefile.mingw */,
-				B3980EFD29239F3700A82429 /* win32_snprintf.h */,
-				B3980EFE29239F3700A82429 /* miniwget_private.h */,
-				B3980EFF29239F3700A82429 /* minisoap.c */,
-				B3980F0029239F3700A82429 /* miniupnpc_declspec.h */,
-				B3980F0129239F3700A82429 /* addr_is_reserved.c */,
 				B3980F0229239F3700A82429 /* wingenminiupnpcstrings.c */,
 				B3980F0329239F3700A82429 /* miniupnpcstrings.h.cmake */,
-				B3980F0429239F3700A82429 /* upnpcommands.h */,
 				B3980F0529239F3700A82429 /* CMakeLists.txt */,
 				B3980F0629239F3700A82429 /* testminiwget.sh */,
-				B3980F0729239F3700A82429 /* testupnpreplyparse.c */,
 				B3980F0829239F3700A82429 /* miniupnpc.rc */,
 				B3980F0929239F3700A82429 /* msvc */,
 				B3980F1829239F3700A82429 /* setupmingw32.py */,
-				B3980F1929239F3700A82429 /* testminiwget.c */,
 				B3980F1A29239F3700A82429 /* LICENSE */,
-				B3980F1B29239F3700A82429 /* portlistingparse.c */,
-				B3980F1C29239F3700A82429 /* testminixml.c */,
 				B3980F1D29239F3700A82429 /* updateminiupnpcstrings.sh */,
-				B3980F1E29239F3700A82429 /* connecthostport.c */,
 				B3980F1F29239F3700A82429 /* pymoduletest.py */,
 				B3980F2029239F3700A82429 /* testreplyparse */,
-				B3980F2C29239F3700A82429 /* miniupnpcmodule.c */,
 				B3980F2D29239F3700A82429 /* man3 */,
-				B3980F2F29239F3700A82429 /* listdevices.c */,
 				B3980F3029239F3700A82429 /* testupnpigd.py */,
-				B3980F3129239F3700A82429 /* upnpreplyparse.c */,
 				B3980F3229239F3700A82429 /* Makefile */,
 				B3980F3329239F3700A82429 /* pymoduletest3.py */,
-				B3980F3429239F3700A82429 /* minixml.h */,
-				B3980F3529239F3700A82429 /* receivedata.c */,
-				B3980F3629239F3700A82429 /* miniupnpc_socketdef.h */,
-				B3980F3729239F3700A82429 /* miniwget.c */,
-				B3980F3829239F3700A82429 /* upnperrors.h */,
-				B3980F3929239F3700A82429 /* igd_desc_parse.h */,
-				B3980F3A29239F3700A82429 /* upnpdev.c */,
 				B3980F3B29239F3700A82429 /* java */,
 				B3980F4029239F3700A82429 /* MANIFEST.in */,
-				B3980F4129239F3700A82429 /* minissdpc.h */,
 				B3980F4229239F3700A82429 /* README */,
 				B3980F4329239F3700A82429 /* miniupnpc.def */,
-				B3980F4429239F3700A82429 /* miniupnpc.h */,
-				B3980F4529239F3700A82429 /* miniupnpctypes.h */,
-				B3980F4629239F3700A82429 /* upnpcommands.c */,
-				B3980F4729239F3700A82429 /* testigddescparse.c */,
-				B3980F4829239F3700A82429 /* addr_is_reserved.h */,
 				B3980F4929239F3700A82429 /* external-ip.sh */,
 				B3980F4A29239F3700A82429 /* miniupnpcstrings.h.in */,
 				B3980F4B29239F3700A82429 /* setup.py */,
-				B3980F4C29239F3700A82429 /* minisoap.h */,
 				B3980F4D29239F3700A82429 /* testupnpreplyparse.sh */,
-				B3980F4E29239F3700A82429 /* VERSION.miniupnpc */,
 				B3980F4F29239F3700A82429 /* apiversions.txt */,
-				B3980F5029239F3700A82429 /* upnpc.c */,
 				B3980F5129239F3700A82429 /* .gitignore */,
-				B3980F5229239F3700A82429 /* portlistingparse.h */,
-				B3980F5329239F3700A82429 /* minihttptestserver.c */,
-				B3980F5429239F3700A82429 /* connecthostport.h */,
 				B3980F5529239F3700A82429 /* miniupnpc-config.cmake */,
 				B3980F5629239F3700A82429 /* Changelog.txt */,
-				B3980F5729239F3700A82429 /* minixmlvalid.c */,
-				B3980F5829239F3700A82429 /* upnperrors.c */,
-				B3980F5929239F3700A82429 /* miniwget.h */,
-				B3980F5A29239F3700A82429 /* codelength.h */,
-				B3980F5B29239F3700A82429 /* minixml.c */,
-				B3980F5C29239F3700A82429 /* receivedata.h */,
-				B3980F5D29239F3700A82429 /* testportlistingparse.c */,
-				B3980F5E29239F3700A82429 /* upnpreplyparse.h */,
-				B3980F5F29239F3700A82429 /* minissdpc.c */,
-				B3980F6029239F3700A82429 /* miniupnpc.c */,
 				B3980F6129239F3700A82429 /* testdesc */,
-				B3980F6629239F3700A82429 /* upnpdev.h */,
-				B3980F6729239F3700A82429 /* testaddr_is_reserved.c */,
 				B3980F6829239F3700A82429 /* mingw32make.bat */,
-				B3980F6929239F3700A82429 /* igd_desc_parse.c */,
 			);
 			path = miniupnpc;
 			sourceTree = "<group>";
@@ -22501,12 +22627,12 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				934BE792296E6A8800FB9933 /* cmake */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				B3F9F3A9295F4D7800DF8B8A /* PVFlycastCore+Options.swift */,
 				B3980D8329239F3600A82429 /* flycast */,
 				B3C762202078327B009950E4 /* PVFlycastCore */,
 				B3C7621220783162009950E4 /* PVFlycast */,
-				B36AE80C295F034C00CC9D4F /* flycast-libretro */,
 				B3C7621120783162009950E4 /* Products */,
 				B3C7621B20783242009950E4 /* Frameworks */,
 			);
@@ -22518,6 +22644,8 @@
 				B3C7621020783162009950E4 /* PVFlycast.framework */,
 				B30178D3207C901D0051B93D /* libflycast.a */,
 				B36AE80B295F034C00CC9D4F /* libflycast-libretro.a */,
+				934BE7BE296E6BA200FB9933 /* libflycast-retroarch-module.dylib */,
+				934BE929296EB34500FB9933 /* liblibminiupnpc-static.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -22536,6 +22664,9 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				934BE78B296E65FD00FB9933 /* liblibzip.a */,
+				934BE789296E65D100FB9933 /* libz.1.2.8.tbd */,
+				934BE787296E659700FB9933 /* liblibzip.a */,
 				B36AE9FE295F1C3000CC9D4F /* libbz2.tbd */,
 				B36AE98D295F1A6B00CC9D4F /* libcompression.tbd */,
 				B36AE8C4295F0A8500CC9D4F /* liblzma.tbd */,
@@ -22585,6 +22716,43 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		934BE7A1296E6BA200FB9933 /* flycast-retroarch-module */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 934BE7BA296E6BA200FB9933 /* Build configuration list for PBXNativeTarget "flycast-retroarch-module" */;
+			buildPhases = (
+				934BE7A4296E6BA200FB9933 /* Sources */,
+				934BE7B7296E6BA200FB9933 /* Frameworks */,
+				934BE7C7296E6FFC00FB9933 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				934BE7C2296E6C0F00FB9933 /* PBXTargetDependency */,
+				934BE7A2296E6BA200FB9933 /* PBXTargetDependency */,
+			);
+			name = "flycast-retroarch-module";
+			productName = "flycast-libretro";
+			productReference = 934BE7BE296E6BA200FB9933 /* libflycast-retroarch-module.dylib */;
+			productType = "com.apple.product-type.library.static";
+		};
+		934BE7D5296EB34500FB9933 /* libminiupnpc-static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 934BE925296EB34500FB9933 /* Build configuration list for PBXNativeTarget "libminiupnpc-static" */;
+			buildPhases = (
+				934BE7D8296EB34500FB9933 /* Sources */,
+				934BE921296EB34500FB9933 /* Frameworks */,
+				934BE924296EB34500FB9933 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				934BE7D6296EB34500FB9933 /* PBXTargetDependency */,
+			);
+			name = "libminiupnpc-static";
+			productName = flycast;
+			productReference = 934BE929296EB34500FB9933 /* liblibminiupnpc-static.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		B30178D2207C901D0051B93D /* flycast */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "flycast" */;
@@ -22596,6 +22764,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				934BE939296EB57F00FB9933 /* PBXTargetDependency */,
+				934BE79A296E6B3600FB9933 /* PBXTargetDependency */,
 			);
 			name = flycast;
 			productName = flycast;
@@ -22613,6 +22783,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				934BE79C296E6B3C00FB9933 /* PBXTargetDependency */,
 			);
 			name = "flycast-libretro";
 			productName = "flycast-libretro";
@@ -22631,6 +22802,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				934BE7C0296E6BE900FB9933 /* PBXTargetDependency */,
 				B3BA0127296FCC4900534359 /* PBXTargetDependency */,
 			);
 			name = PVFlycast;
@@ -22649,6 +22821,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					934BE793296E6AD200FB9933 = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -22691,6 +22866,9 @@
 				B3C7620F20783162009950E4 /* PVFlycast */,
 				B30178D2207C901D0051B93D /* flycast */,
 				B36AE80A295F034C00CC9D4F /* flycast-libretro */,
+				934BE793296E6AD200FB9933 /* FlycastAdjustments */,
+				934BE7D5296EB34500FB9933 /* libminiupnpc-static */,
+				934BE7A1296E6BA200FB9933 /* flycast-retroarch-module */,
 			);
 		};
 /* End PBXProject section */
@@ -22701,26 +22879,125 @@
 			buildActionMask = 2147483647;
 			files = (
 				B316B4E721926FE500693472 /* emu.cfg in Resources */,
-				B33350262078619C0036A448 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		934BE798296E6AD900FB9933 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#cd ${SRCROOT}/flycast\n#git pull origin master --recurse\n#git checkout origin/master\n\n";
+		};
+		934BE7C7296E6FFC00FB9933 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncmake -E cmake_symlink_library ${TARGET_BUILD_DIR}/libflycast-retroarch-module.dylib ${TARGET_BUILD_DIR}/libflycast-retroarch-module.dylib ${TARGET_BUILD_DIR}/libflycast-retroarch-module.dylib\ncp ${TARGET_BUILD_DIR}/libflycast-retroarch-module.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/flycast_libretro_ios.dylib\n\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		934BE7A4296E6BA200FB9933 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				934BE7A5296E6BA200FB9933 /* stdstring.c in Sources */,
+				934BE7A6296E6BA200FB9933 /* retro_dirent.c in Sources */,
+				934BE7A7296E6BA200FB9933 /* file_path.c in Sources */,
+				934BE7A8296E6BA200FB9933 /* memalign.c in Sources */,
+				934BE99B296EFB3600FB9933 /* libretro.cpp in Sources */,
+				934BE7AA296E6BA200FB9933 /* option.cpp in Sources */,
+				934BE7AB296E6BA200FB9933 /* vfs_implementation.c in Sources */,
+				934BE7AC296E6BA200FB9933 /* glsm.c in Sources */,
+				934BE7AD296E6BA200FB9933 /* vmu_xhair.cpp in Sources */,
+				934BE7AE296E6BA200FB9933 /* fopen_utf8.c in Sources */,
+				934BE7AF296E6BA200FB9933 /* LogManager.cpp in Sources */,
+				934BE7B0296E6BA200FB9933 /* compat_strcasestr.c in Sources */,
+				934BE7B1296E6BA200FB9933 /* compat_strl.c in Sources */,
+				934BE7B2296E6BA200FB9933 /* audiostream.cpp in Sources */,
+				934BE7B3296E6BA200FB9933 /* encoding_utf.c in Sources */,
+				934BE7B4296E6BA200FB9933 /* oslib.cpp in Sources */,
+				934BE7B6296E6BA200FB9933 /* rglgen.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		934BE7D8296EB34500FB9933 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				934BE978296EB75100FB9933 /* receivedata.c in Sources */,
+				934BE979296EB75A00FB9933 /* minisoap.c in Sources */,
+				934BE97A296EB75F00FB9933 /* addr_is_reserved.c in Sources */,
+				934BE97B296EB76400FB9933 /* portlistingparse.c in Sources */,
+				934BE97C296EB76A00FB9933 /* connecthostport.c in Sources */,
+				934BE977296EB71D00FB9933 /* upnpreplyparse.c in Sources */,
+				934BE97E296EB77F00FB9933 /* miniwget.c in Sources */,
+				934BE97F296EB78300FB9933 /* upnpdev.c in Sources */,
+				934BE980296EB78900FB9933 /* upnpcommands.c in Sources */,
+				934BE981296EB78D00FB9933 /* upnperrors.c in Sources */,
+				934BE982296EB79000FB9933 /* minixml.c in Sources */,
+				934BE983296EB79700FB9933 /* minissdpc.c in Sources */,
+				934BE984296EB79D00FB9933 /* miniupnpc.c in Sources */,
+				934BE985296EB7A100FB9933 /* igd_desc_parse.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B30178CF207C901D0051B93D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				934BE990296ECF1C00FB9933 /* Lzma2Dec.c in Sources */,
+				934BE996296ED64300FB9933 /* common.cpp in Sources */,
+				934BE991296ECF1D00FB9933 /* Lzma86Dec.c in Sources */,
+				934BE992296ECF1D00FB9933 /* Lzma86Enc.c in Sources */,
+				934BE993296ECF1D00FB9933 /* LzmaDec.c in Sources */,
+				934BE994296ECF1D00FB9933 /* LzmaEnc.c in Sources */,
+				934BE995296ECF1D00FB9933 /* LzmaLib.c in Sources */,
+				934BE986296ECE7A00FB9933 /* LzmaEnc.c in Sources */,
+				934BE987296ECE7A00FB9933 /* LzFind.c in Sources */,
+				934BE988296ECE7A00FB9933 /* Sort.c in Sources */,
+				934BE989296ECE7A00FB9933 /* Bra86.c in Sources */,
+				934BE98A296ECE7A00FB9933 /* Alloc.c in Sources */,
+				934BE98B296ECE7A00FB9933 /* LzmaDec.c in Sources */,
+				934BE98C296ECE7A00FB9933 /* BraIA64.c in Sources */,
+				934BE98D296ECE7A00FB9933 /* Lzma86Dec.c in Sources */,
+				934BE98E296ECE7A00FB9933 /* Delta.c in Sources */,
+				934BE98F296ECE7A00FB9933 /* CpuArch.c in Sources */,
 				B36AE9A6295F1BA000CC9D4F /* zip_source_supports.c in Sources */,
+				934BE785296E638800FB9933 /* ta_util.cpp in Sources */,
 				B36AE98E295F1BA000CC9D4F /* zip_unchange_data.c in Sources */,
 				B36AEA05295F202700CC9D4F /* libchdr_flac.c in Sources */,
 				B36AE9AF295F1BA000CC9D4F /* zip_extra_field.c in Sources */,
 				B36AE822295F040300CC9D4F /* egl.cpp in Sources */,
+				B36AE873295F051900CC9D4F /* ta_vtx.cpp in Sources */,
 				B36AE87D295F052400CC9D4F /* m4cartridge.cpp in Sources */,
 				B36AE9E8295F1BA100CC9D4F /* zip_open.c in Sources */,
 				B36AE876295F052400CC9D4F /* naomi_flashrom.cpp in Sources */,
-				B36AE8F7295F15B100CC9D4F /* common.cpp in Sources */,
 				B36AE89A295F055A00CC9D4F /* dsp_x64.cpp in Sources */,
 				B36AE9F1295F1BA100CC9D4F /* zip_name_locate.c in Sources */,
 				B36AE8BF295F09D000CC9D4F /* Delta.c in Sources */,
@@ -22787,7 +23064,6 @@
 				B36AEA13295F27A600CC9D4F /* pico_ethernet.c in Sources */,
 				B36AE9BF295F1BA000CC9D4F /* zip_get_num_entries.c in Sources */,
 				B36AE9C8295F1BA100CC9D4F /* zip_replace.c in Sources */,
-				B36AE9C5295F1BA100CC9D4F /* zip_source_compress.c in Sources */,
 				B36AE991295F1BA000CC9D4F /* zip_add_entry.c in Sources */,
 				B36AE9F3295F1BA100CC9D4F /* zip_source_accept_empty.c in Sources */,
 				B36AE852295F04D800CC9D4F /* gdi.cpp in Sources */,
@@ -22808,6 +23084,7 @@
 				B36AE9FD295F1C1500CC9D4F /* zip_err_str.c in Sources */,
 				B36AE834295F044200CC9D4F /* gltex.cpp in Sources */,
 				B36AE841295F047400CC9D4F /* reios_elf.cpp in Sources */,
+				934BE7C6296E6CD800FB9933 /* zip_source_compress.c in Sources */,
 				B36AE833295F043700CC9D4F /* norend.cpp in Sources */,
 				B36AE8D0295F0C5900CC9D4F /* libchdr_huffman.c in Sources */,
 				B36AE87C295F052400CC9D4F /* naomi.cpp in Sources */,
@@ -22829,6 +23106,7 @@
 				B36AE859295F04EA00CC9D4F /* sh4_mem.cpp in Sources */,
 				B36AE89D295F055A00CC9D4F /* dsp_arm32.cpp in Sources */,
 				B36AE9D7295F1BA100CC9D4F /* zip_source_get_file_attributes.c in Sources */,
+				934BE998296EF9AA00FB9933 /* pvr_mem.cpp in Sources */,
 				B36AE994295F1BA000CC9D4F /* zip_set_archive_flag.c in Sources */,
 				B36AE8A9295F095700CC9D4F /* xxhash.c in Sources */,
 				B36AE8B4295F09D000CC9D4F /* LzFind.c in Sources */,
@@ -22849,12 +23127,10 @@
 				B36AEA14295F27A600CC9D4F /* pico_dhcp_common.c in Sources */,
 				B36AEA12295F27A600CC9D4F /* pico_dns_common.c in Sources */,
 				B36AEA29295F2B8000CC9D4F /* disasm-aarch64.cc in Sources */,
-				B36AE873295F051900CC9D4F /* ta_vtx.cpp in Sources */,
 				B36AEA1C295F280200CC9D4F /* pico_tree.c in Sources */,
 				B36AE9B5295F1BA000CC9D4F /* zip_source_zip.c in Sources */,
 				B36AE9D8295F1BA100CC9D4F /* zip_source_seek_write.c in Sources */,
 				B36AE9A4295F1BA000CC9D4F /* zip_strerror.c in Sources */,
-				B36AE8DA295F0EB500CC9D4F /* LzmaEnc.c in Sources */,
 				B36AE9ED295F1BA100CC9D4F /* zip_get_name.c in Sources */,
 				B36AE86C295F050B00CC9D4F /* decoder.cpp in Sources */,
 				B36AE88E295F055A00CC9D4F /* bba.cpp in Sources */,
@@ -22884,6 +23160,7 @@
 				B36AEA00295F1E3C00CC9D4F /* libchdr_chd.c in Sources */,
 				B36AE9B8295F1BA000CC9D4F /* zip_error.c in Sources */,
 				B36AE9B1295F1BA000CC9D4F /* zip_fopen_index.c in Sources */,
+				934BE99A296EFB2B00FB9933 /* libretro.cpp in Sources */,
 				B36AE9B6295F1BA000CC9D4F /* zip_file_get_offset.c in Sources */,
 				B36AE8A7295F059700CC9D4F /* 7zArchive.cpp in Sources */,
 				B36AE8D6295F0CBB00CC9D4F /* dns.cpp in Sources */,
@@ -22920,7 +23197,6 @@
 				B36AEA26295F2B5B00CC9D4F /* compiler-intrinsics-vixl.cc in Sources */,
 				B36AE851295F04D800CC9D4F /* ioctl.cpp in Sources */,
 				B36AE879295F052400CC9D4F /* decrypt.cpp in Sources */,
-				B36AE8B0295F09D000CC9D4F /* LzmaLib.c in Sources */,
 				B36AEA09295F27A500CC9D4F /* pico_dhcp_server.c in Sources */,
 				B36AE87A295F052400CC9D4F /* naomi_cart.cpp in Sources */,
 				B36AE88A295F055A00CC9D4F /* aica.cpp in Sources */,
@@ -22934,7 +23210,6 @@
 				B36AE8E9295F118D00CC9D4F /* xgl.cpp in Sources */,
 				B36AE990295F1BA000CC9D4F /* zip_source_file_common.c in Sources */,
 				B36AE81C295F03C900CC9D4F /* cheats.cpp in Sources */,
-				B36AE874295F051900CC9D4F /* pvr_mem.cpp in Sources */,
 				B36AEA0C295F27A500CC9D4F /* pico_fragments.c in Sources */,
 				B36AE8D2295F0C6100CC9D4F /* libchdr_cdrom.c in Sources */,
 				B36AE9E5295F1BA100CC9D4F /* zip_add_dir.c in Sources */,
@@ -22959,7 +23234,6 @@
 				B36AE9B3295F1BA000CC9D4F /* zip_source_function.c in Sources */,
 				B36AE9EC295F1BA100CC9D4F /* zip_ftell.c in Sources */,
 				B36AE886295F053600CC9D4F /* maple_if.cpp in Sources */,
-				B36AE8C0295F09D000CC9D4F /* Lzma86Dec.c in Sources */,
 				B36AE890295F055A00CC9D4F /* arm7_rec_x64.cpp in Sources */,
 				B36AE875295F051900CC9D4F /* Renderer_if.cpp in Sources */,
 				B36AEA30295F2B8100CC9D4F /* logic-aarch64.cc in Sources */,
@@ -22988,7 +23262,6 @@
 				B36AEA24295F2AEE00CC9D4F /* macro-assembler-aarch64.cc in Sources */,
 				B36AE9B4295F1BA000CC9D4F /* zip_file_rename.c in Sources */,
 				B36AE9A5295F1BA000CC9D4F /* zip_file_error_clear.c in Sources */,
-				B36AE8AD295F09D000CC9D4F /* LzmaDec.c in Sources */,
 				B36AE9C7295F1BA100CC9D4F /* zip_source_tell.c in Sources */,
 				B34CFF73295F327D0014C8AF /* isofs.cpp in Sources */,
 				B36AE83E295F047400CC9D4F /* reios.cpp in Sources */,
@@ -23031,7 +23304,6 @@
 				B36AE837295F044200CC9D4F /* quad.cpp in Sources */,
 				B36AE9CD295F1BA100CC9D4F /* zip_string.c in Sources */,
 				B36AE908295F177300CC9D4F /* xbrz.cpp in Sources */,
-				B36AE8BA295F09D000CC9D4F /* Lzma2Dec.c in Sources */,
 				B36AE894295F055A00CC9D4F /* arm7_rec.cpp in Sources */,
 				B36AE87B295F052400CC9D4F /* naomi_roms.cpp in Sources */,
 				B36AE992295F1BA000CC9D4F /* zip_source_open.c in Sources */,
@@ -23051,7 +23323,7 @@
 				B36AE904295F16E600CC9D4F /* retro_dirent.c in Sources */,
 				B36AE903295F16D500CC9D4F /* file_path.c in Sources */,
 				B36AE906295F16F200CC9D4F /* memalign.c in Sources */,
-				B36AE819295F036000CC9D4F /* libretro.cpp in Sources */,
+				934BE99C296EFB4300FB9933 /* libretro.cpp in Sources */,
 				B36AE815295F036000CC9D4F /* option.cpp in Sources */,
 				B36AE8FE295F166400CC9D4F /* vfs_implementation.c in Sources */,
 				B36AE8FB295F163000CC9D4F /* glsm.c in Sources */,
@@ -23063,7 +23335,6 @@
 				B36AE818295F036000CC9D4F /* audiostream.cpp in Sources */,
 				B36AE8FD295F165400CC9D4F /* encoding_utf.c in Sources */,
 				B36AE816295F036000CC9D4F /* oslib.cpp in Sources */,
-				B36AE80F295F034C00CC9D4F /* flycast_libretro.m in Sources */,
 				B36AE8FC295F163F00CC9D4F /* rglgen.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -23078,6 +23349,44 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		934BE79A296E6B3600FB9933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 934BE793296E6AD200FB9933 /* FlycastAdjustments */;
+			targetProxy = 934BE799296E6B3600FB9933 /* PBXContainerItemProxy */;
+		};
+		934BE79C296E6B3C00FB9933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 934BE793296E6AD200FB9933 /* FlycastAdjustments */;
+			targetProxy = 934BE79B296E6B3C00FB9933 /* PBXContainerItemProxy */;
+		};
+		934BE7A2296E6BA200FB9933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 934BE793296E6AD200FB9933 /* FlycastAdjustments */;
+			targetProxy = 934BE7A3296E6BA200FB9933 /* PBXContainerItemProxy */;
+		};
+		934BE7C0296E6BE900FB9933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 934BE7A1296E6BA200FB9933 /* flycast-retroarch-module */;
+			targetProxy = 934BE7BF296E6BE900FB9933 /* PBXContainerItemProxy */;
+		};
+		934BE7C2296E6C0F00FB9933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B30178D2207C901D0051B93D /* flycast */;
+			targetProxy = 934BE7C1296E6C0F00FB9933 /* PBXContainerItemProxy */;
+		};
+		934BE7D6296EB34500FB9933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 934BE793296E6AD200FB9933 /* FlycastAdjustments */;
+			targetProxy = 934BE7D7296EB34500FB9933 /* PBXContainerItemProxy */;
+		};
+		934BE939296EB57F00FB9933 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 934BE7D5296EB34500FB9933 /* libminiupnpc-static */;
+			targetProxy = 934BE938296EB57F00FB9933 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXTargetDependency section */
 		B3BA0127296FCC4900534359 /* PBXTargetDependency */ = {
@@ -23153,16 +23462,509 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		934BE795296E6AD200FB9933 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		934BE796296E6AD200FB9933 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		934BE797296E6AD200FB9933 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
+		934BE7BB296E6BA200FB9933 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = NO;
+				DEAD_CODE_STRIPPING = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EXECUTABLE_EXTENSION = dylib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/glsym\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common\"",
+					"\"$(SRCROOT)/cmake/include\"",
+					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
+				);
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-mno-thumb",
+					"-mfpu=neon",
+					"-fno-operator-names",
+					"-fno-rtti",
+					"-ffast-math",
+					"-ftree-vectorize",
+					"-fno-strict-aliasing",
+					"-frename-registers",
+					"-fno-rtti",
+					"-fpermissive",
+					"-fno-operator-names",
+					"-fsingle-precision-constant",
+					"-fPIC",
+					"-dynamiclib",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Debug;
+		};
+		934BE7BC296E6BA200FB9933 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = NO;
+				DEAD_CODE_STRIPPING = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EXECUTABLE_EXTENSION = dylib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/glsym\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common\"",
+					"\"$(SRCROOT)/cmake/include\"",
+					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
+				);
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-mno-thumb",
+					"-mfpu=neon",
+					"-fno-operator-names",
+					"-fno-rtti",
+					"-ffast-math",
+					"-ftree-vectorize",
+					"-fno-strict-aliasing",
+					"-frename-registers",
+					"-fno-rtti",
+					"-fpermissive",
+					"-fno-operator-names",
+					"-fsingle-precision-constant",
+					"-fPIC",
+					"-dynamiclib",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Release;
+		};
+		934BE7BD296E6BA200FB9933 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = NO;
+				DEAD_CODE_STRIPPING = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				EXECUTABLE_EXTENSION = dylib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/glsym\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common\"",
+					"\"$(SRCROOT)/cmake/include\"",
+					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
+				);
+				LIBRARY_STYLE = DYNAMIC;
+				MACH_O_TYPE = mh_dylib;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-mno-thumb",
+					"-mfpu=neon",
+					"-fno-operator-names",
+					"-fno-rtti",
+					"-ffast-math",
+					"-ftree-vectorize",
+					"-fno-strict-aliasing",
+					"-frename-registers",
+					"-fno-rtti",
+					"-fpermissive",
+					"-fno-operator-names",
+					"-fsingle-precision-constant",
+					"-dynamiclib",
+					"-fPIC",
+				);
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Archive;
+		};
+		934BE926296EB34500FB9933 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = NO;
+				DEAD_CODE_STRIPPING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake",
+				);
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/cmake/include\"",
+					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+					"\"$(SRCROOT)/flycast/core/deps/miniupnpc/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
+				);
+				OTHER_LDFLAGS = (
+					"-Xclang",
+					"-fopenmp",
+					"-fobjc-arc",
+					"-fmodules",
+					"-Wall",
+					"-std=c++11",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
+			};
+			name = Debug;
+		};
+		934BE927296EB34500FB9933 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = NO;
+				DEAD_CODE_STRIPPING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake",
+				);
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/cmake/include\"",
+					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+					"\"$(SRCROOT)/flycast/core/deps/miniupnpc/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
+				);
+				OTHER_LDFLAGS = (
+					"-Xclang",
+					"-fopenmp",
+					"-fobjc-arc",
+					"-fmodules",
+					"-Wall",
+					"-std=c++11",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
+			};
+			name = Release;
+		};
+		934BE928296EB34500FB9933 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = NO;
+				DEAD_CODE_STRIPPING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake",
+				);
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/cmake/include\"",
+					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+					"\"$(SRCROOT)/flycast/core/deps/miniupnpc/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
+				);
+				OTHER_LDFLAGS = (
+					"-Xclang",
+					"-fopenmp",
+					"-fobjc-arc",
+					"-fmodules",
+					"-Wall",
+					"-std=c++11",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
+			};
+			name = Archive;
+		};
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = NO;
 				DEAD_CODE_STRIPPING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake",
+				);
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/cmake/include\"",
+					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+					"\"$(SRCROOT)/flycast/core/deps/miniupnpc/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
+				);
+				OTHER_LDFLAGS = (
+					"-Xclang",
+					"-fopenmp",
+					"-fobjc-arc",
+					"-fmodules",
+					"-fno-strict-aliasing",
+					"-Wall",
+				);
 				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -23178,10 +23980,51 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = NO;
 				DEAD_CODE_STRIPPING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake",
+				);
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/cmake/include\"",
+					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+					"\"$(SRCROOT)/flycast/core/deps/miniupnpc/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
+				);
+				OTHER_LDFLAGS = (
+					"-Xclang",
+					"-fopenmp",
+					"-fobjc-arc",
+					"-fmodules",
+					"-fno-strict-aliasing",
+					"-Wall",
+				);
 				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -23292,6 +24135,28 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
 				INFOPLIST_FILE = PVFlycast/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -23317,10 +24182,51 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = NO;
 				DEAD_CODE_STRIPPING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake",
+				);
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/cmake/include\"",
+					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+					"\"$(SRCROOT)/flycast/core/deps/miniupnpc/include\"",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
+				);
+				OTHER_LDFLAGS = (
+					"-Xclang",
+					"-fopenmp",
+					"-fobjc-arc",
+					"-fmodules",
+					"-fno-strict-aliasing",
+					"-Wall",
+				);
 				PRODUCT_NAME = flycast;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -23343,6 +24249,31 @@
 					"$(inherited)",
 				);
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/glsym\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common\"",
+					"\"$(SRCROOT)/cmake/include\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -23365,6 +24296,31 @@
 				DEAD_CODE_STRIPPING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/glsym\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common\"",
+					"\"$(SRCROOT)/cmake/include\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -23386,6 +24342,31 @@
 				DEAD_CODE_STRIPPING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/glsym\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common\"",
+					"\"$(SRCROOT)/cmake/include\"",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -23590,6 +24571,28 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
 				INFOPLIST_FILE = PVFlycast/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -23623,6 +24626,28 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Deps\"",
+					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
+					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
+					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
+					"\"$(SRCROOT)/flycast/core\"",
+					"\"$(SRCROOT)/flycast/core/hw\"",
+					"\"$(SRCROOT)/flycast/core/khronos\"",
+					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
+					"\"$(SRCROOT)/flycast/core/deps\"",
+					"\"$(SRCROOT)/flycast/core/deps/glm\"",
+					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
+					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
+					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
+					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
+					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+				);
 				INFOPLIST_FILE = PVFlycast/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -23645,6 +24670,36 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		934BE794296E6AD200FB9933 /* Build configuration list for PBXAggregateTarget "FlycastAdjustments" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				934BE795296E6AD200FB9933 /* Debug */,
+				934BE796296E6AD200FB9933 /* Release */,
+				934BE797296E6AD200FB9933 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		934BE7BA296E6BA200FB9933 /* Build configuration list for PBXNativeTarget "flycast-retroarch-module" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				934BE7BB296E6BA200FB9933 /* Debug */,
+				934BE7BC296E6BA200FB9933 /* Release */,
+				934BE7BD296E6BA200FB9933 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		934BE925296EB34500FB9933 /* Build configuration list for PBXNativeTarget "libminiupnpc-static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				934BE926296EB34500FB9933 /* Debug */,
+				934BE927296EB34500FB9933 /* Release */,
+				934BE928296EB34500FB9933 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "flycast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
