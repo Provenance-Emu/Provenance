@@ -1,0 +1,951 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		3E0512A1B294466B9FBB9801 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = F11C0E218B74471690EDB784 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				3F1BF96DC131065FF1EECFA0 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				B9F30D1A27CA41F0A9930829 /* PBXTargetDependency */,
+				83067400E5CB467CB9DC32B3 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		C32F70ADF0204D969C8EEFCF /* RUN_TESTS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 6CE842E5F0474404B1AD3800 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildPhases = (
+				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+			);
+			name = RUN_TESTS;
+			productName = RUN_TESTS;
+		};
+		D751429D84A846EA8C98A1BE /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = FBA5A9DE39F94542B45D3272 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				332842DCD73DDDC4556890FB /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		0094B5F1D66147159781499D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/ChangeLog.rst */ = {isa = PBXBuildFile; fileRef = FB25F05B7A93461DAEB083D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/ChangeLog.rst */; };
+		0BFED823EC4E4EA68C086429 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/xchar.h */ = {isa = PBXBuildFile; fileRef = 68B36F78DC7449C8BF9BE369 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/xchar.h */; };
+		1727556F0ABB498F85C86BB0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/core.h */ = {isa = PBXBuildFile; fileRef = F98DFD9410EB42269C2710F2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/core.h */; };
+		1738E73E50ED4802BB179F8F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/chrono.h */ = {isa = PBXBuildFile; fileRef = F42860B8F7FD4673BFA681A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/chrono.h */; };
+		430C1077287942D49B956AED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/compile.h */ = {isa = PBXBuildFile; fileRef = D01B9BC1209343B3BDE54C2D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/compile.h */; };
+		50B7B872A4494C7CBADCAFD3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format.h */ = {isa = PBXBuildFile; fileRef = 62D513DDD6F54BC88B72DBF5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format.h */; };
+		526100A02D3E4C208CCB9F06 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/README.rst */ = {isa = PBXBuildFile; fileRef = C0AA02C0059147BFBE3FBD23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/README.rst */; };
+		5706384E249D452B951B2C45 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/printf.h */ = {isa = PBXBuildFile; fileRef = 1C54D1F47D7A4F0C8C11D475 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/printf.h */; };
+		6A0AFC099624484A8DADA5F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/args.h */ = {isa = PBXBuildFile; fileRef = 27270740ABC5485DB275DBA1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/args.h */; };
+		854AF075833A47828F180AB6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/format.cc */ = {isa = PBXBuildFile; fileRef = DFA6A249AE6447B1BF3582AE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/format.cc */; };
+		C6495673F1B04B178F715662 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ostream.h */ = {isa = PBXBuildFile; fileRef = B72691FF9B5B423F9CE9ED0E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ostream.h */; };
+		CA06CEA11411477F8D173FA8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/color.h */ = {isa = PBXBuildFile; fileRef = 83FAC3C210484FAE85A73B34 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/color.h */; };
+		CF3B395C0D834A349F6EDC5F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/os.h */ = {isa = PBXBuildFile; fileRef = 3C5B96E5EEDA4B2D9FE01794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/os.h */; };
+		DBB05E12F1FC4ADB9CC74601 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = A18277BE2D7F45798EC536E6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */; };
+		DBCC47C70CB541FEBFF92F59 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ranges.h */ = {isa = PBXBuildFile; fileRef = 077072B9826048D3A40AFCD4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ranges.h */; };
+		DC2724A94A384A0BABD25EDC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format-inl.h */ = {isa = PBXBuildFile; fileRef = D930A15EB40C4B0BA389FA15 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format-inl.h */; };
+		DF135B829096497AB2FD3792 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = F1EEA48767694BDFBD188CCD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */; };
+		E6478406E48348579B8C7040 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/os.cc */ = {isa = PBXBuildFile; fileRef = 02C81D0DA5714DAA8E366148 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/os.cc */; };
+		F903E146CC634E199F892946 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/std.h */ = {isa = PBXBuildFile; fileRef = 1526CFA7A5CF4DCB82180305 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/std.h */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		917E852E0AA64F518830C396 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		AD56BFF999BE46248C0E6FC2 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		EB6F137D950B4357BFA392A9 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		EF51C9874EAC4380A9C12C50 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		B39F22830D9141A38CB951BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C3C0AC3E9AE147DEBC96B4BA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9C0F2F5DE7B1474CA378CA6A;
+			remoteInfo = fmt;
+		};
+		C6E072ADAE2440AF899D16E8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C3C0AC3E9AE147DEBC96B4BA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D751429D84A846EA8C98A1BE;
+			remoteInfo = ZERO_CHECK;
+		};
+		EE29D98698D943B9A60E01EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C3C0AC3E9AE147DEBC96B4BA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D751429D84A846EA8C98A1BE;
+			remoteInfo = ZERO_CHECK;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		02C81D0DA5714DAA8E366148 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/os.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = os.cc; path = src/os.cc; sourceTree = SOURCE_ROOT; };
+		077072B9826048D3A40AFCD4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ranges.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ranges.h; path = include/fmt/ranges.h; sourceTree = SOURCE_ROOT; };
+		1526CFA7A5CF4DCB82180305 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/std.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = std.h; path = include/fmt/std.h; sourceTree = SOURCE_ROOT; };
+		1C54D1F47D7A4F0C8C11D475 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/printf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = printf.h; path = include/fmt/printf.h; sourceTree = SOURCE_ROOT; };
+		27270740ABC5485DB275DBA1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/args.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = args.h; path = include/fmt/args.h; sourceTree = SOURCE_ROOT; };
+		2885E3531FA74604AAF73F36 /* fmt */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libfmtd.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C5B96E5EEDA4B2D9FE01794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/os.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = os.h; path = include/fmt/os.h; sourceTree = SOURCE_ROOT; };
+		62D513DDD6F54BC88B72DBF5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = format.h; path = include/fmt/format.h; sourceTree = SOURCE_ROOT; };
+		68B36F78DC7449C8BF9BE369 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/xchar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = xchar.h; path = include/fmt/xchar.h; sourceTree = SOURCE_ROOT; };
+		83FAC3C210484FAE85A73B34 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/color.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = color.h; path = include/fmt/color.h; sourceTree = SOURCE_ROOT; };
+		A18277BE2D7F45798EC536E6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist; sourceTree = "<absolute>"; };
+		B71D17BA9D3C4E3181FA438A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		B72691FF9B5B423F9CE9ED0E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ostream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ostream.h; path = include/fmt/ostream.h; sourceTree = SOURCE_ROOT; };
+		C0AA02C0059147BFBE3FBD23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/README.rst */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = README.rst; path = README.rst; sourceTree = SOURCE_ROOT; };
+		D01B9BC1209343B3BDE54C2D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/compile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compile.h; path = include/fmt/compile.h; sourceTree = SOURCE_ROOT; };
+		D930A15EB40C4B0BA389FA15 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format-inl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "format-inl.h"; path = "include/fmt/format-inl.h"; sourceTree = SOURCE_ROOT; };
+		DFA6A249AE6447B1BF3582AE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/format.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = format.cc; path = src/format.cc; sourceTree = SOURCE_ROOT; };
+		F1EEA48767694BDFBD188CCD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F42860B8F7FD4673BFA681A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/chrono.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = chrono.h; path = include/fmt/chrono.h; sourceTree = SOURCE_ROOT; };
+		F98DFD9410EB42269C2710F2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/core.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = core.h; path = include/fmt/core.h; sourceTree = SOURCE_ROOT; };
+		FB25F05B7A93461DAEB083D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/ChangeLog.rst */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = ChangeLog.rst; path = ChangeLog.rst; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		362A7B18AF0D4833982BBE21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0B24E15999F54AC594CA065F /* fmt */ = {
+			isa = PBXGroup;
+			children = (
+				9431AF00E11A4B4DBEC1AC09 /* Source Files */,
+				270378F991274735BD8CFFB2 /* Header Files */,
+				F859D7FD03CF489D82AF3FAC /* Resources */,
+				F1EEA48767694BDFBD188CCD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */,
+				FB25F05B7A93461DAEB083D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/ChangeLog.rst */,
+				C0AA02C0059147BFBE3FBD23 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/README.rst */,
+			);
+			name = fmt;
+			sourceTree = "<group>";
+		};
+		270378F991274735BD8CFFB2 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				27270740ABC5485DB275DBA1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/args.h */,
+				F42860B8F7FD4673BFA681A9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/chrono.h */,
+				83FAC3C210484FAE85A73B34 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/color.h */,
+				D01B9BC1209343B3BDE54C2D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/compile.h */,
+				F98DFD9410EB42269C2710F2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/core.h */,
+				D930A15EB40C4B0BA389FA15 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format-inl.h */,
+				62D513DDD6F54BC88B72DBF5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format.h */,
+				3C5B96E5EEDA4B2D9FE01794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/os.h */,
+				B72691FF9B5B423F9CE9ED0E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ostream.h */,
+				1C54D1F47D7A4F0C8C11D475 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/printf.h */,
+				077072B9826048D3A40AFCD4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ranges.h */,
+				1526CFA7A5CF4DCB82180305 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/std.h */,
+				68B36F78DC7449C8BF9BE369 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/xchar.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		2C9858E73FB445DC949B1458 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		502E265F63A84E1387BFFFB4 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		537C487064624542A032599A = {
+			isa = PBXGroup;
+			children = (
+				0B24E15999F54AC594CA065F /* fmt */,
+				95CD8BA5780A4129B2A59C6B /* ALL_BUILD */,
+				5683DC8D072547709A856D23 /* Products */,
+				2C9858E73FB445DC949B1458 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		5683DC8D072547709A856D23 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2885E3531FA74604AAF73F36 /* fmt */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9431AF00E11A4B4DBEC1AC09 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				DFA6A249AE6447B1BF3582AE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/format.cc */,
+				02C81D0DA5714DAA8E366148 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/os.cc */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		95CD8BA5780A4129B2A59C6B /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				502E265F63A84E1387BFFFB4 /* CMake Rules */,
+				B71D17BA9D3C4E3181FA438A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		F859D7FD03CF489D82AF3FAC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A18277BE2D7F45798EC536E6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9C0F2F5DE7B1474CA378CA6A /* fmt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E8AD7ED712DB4F748D4FA4EB /* Build configuration list for PBXNativeTarget "fmt" */;
+			buildPhases = (
+				111612A3A0F446D4AF69ECD9 /* Sources */,
+				362A7B18AF0D4833982BBE21 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2937CB0B03AC432BA2F89B17 /* PBXTargetDependency */,
+			);
+			name = fmt;
+			productName = fmt;
+			productReference = 2885E3531FA74604AAF73F36 /* fmt */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C3C0AC3E9AE147DEBC96B4BA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1420;
+			};
+			buildConfigurationList = ADB9B9A6F68D44788CD42B18 /* Build configuration list for PBXProject "FMT" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				EB6F137D950B4357BFA392A9 /* Debug */,
+				917E852E0AA64F518830C396 /* Release */,
+				AD56BFF999BE46248C0E6FC2 /* MinSizeRel */,
+				EF51C9874EAC4380A9C12C50 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 537C487064624542A032599A;
+			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt;
+			projectRoot = "";
+			targets = (
+				3E0512A1B294466B9FBB9801 /* ALL_BUILD */,
+				C32F70ADF0204D969C8EEFCF /* RUN_TESTS */,
+				D751429D84A846EA8C98A1BE /* ZERO_CHECK */,
+				9C0F2F5DE7B1474CA378CA6A /* fmt */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		003C8D08B0008F35F218E126 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		332842DCD73DDDC4556890FB /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		3F1BF96DC131065FF1EECFA0 /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		910A41151295C5F9742C25BD = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		9B50530E35CC49C82C2FACCF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		111612A3A0F446D4AF69ECD9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				854AF075833A47828F180AB6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/format.cc */,
+				E6478406E48348579B8C7040 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/os.cc */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2937CB0B03AC432BA2F89B17 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D751429D84A846EA8C98A1BE /* ZERO_CHECK */;
+			targetProxy = EE29D98698D943B9A60E01EC /* PBXContainerItemProxy */;
+		};
+		83067400E5CB467CB9DC32B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9C0F2F5DE7B1474CA378CA6A /* fmt */;
+			targetProxy = B39F22830D9141A38CB951BB /* PBXContainerItemProxy */;
+		};
+		B9F30D1A27CA41F0A9930829 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D751429D84A846EA8C98A1BE /* ZERO_CHECK */;
+			targetProxy = C6E072ADAE2440AF899D16E8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		064E5BABA86C4D9B95A5ACA3 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = ../lib;
+			};
+			name = RelWithDebInfo;
+		};
+		0FBF14E699064DD9B0FB4E10 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		1C8F7A8E3E254AC19B8BA408 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		1CFA06BB7B8B4970B698E434 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = ../lib;
+			};
+			name = Release;
+		};
+		1D707DAE738B46A1AC086D2E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		26D47C1E39494BC8856ACC4F /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		29205D5C41124E5388398290 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		2A6A9C132387496BB8F8FF90 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				LLVM_LTO = YES_THIN;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -Wall -Wno-switch -Wno-invalid-offsetof     -DNDEBUG '-flto=thin' -fvisibility=hidden '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fmt;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		2D04D81601C94B52B9E70AD0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		34BEB74354CB43FE855AE720 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		393BD261631A40D6AD829B63 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				LLVM_LTO = YES_THIN;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -Wall -Wno-switch -Wno-invalid-offsetof     -DNDEBUG '-flto=thin' -fvisibility=hidden '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fmt;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		3FC71F4181FF44C588C4A2FF /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		5CF1866E57EE407CA6E86838 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		6BD166DA5BC749B89B2B38F3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				LLVM_LTO = YES_THIN;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -Wall -Wno-switch -Wno-invalid-offsetof    -D_DEBUG '-flto=thin' -fvisibility=hidden '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fmtd;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		6C4797F7ABA14A7EA1C24145 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		6E0F037C1CA84D78AFC193FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		9D313CA09A50400C9DCA7D32 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = ../lib;
+			};
+			name = MinSizeRel;
+		};
+		A6A95BB12E754CFBB6EA23EA /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				LLVM_LTO = YES_THIN;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -Wall -Wno-switch -Wno-invalid-offsetof        -DNDEBUG '-flto=thin' -fvisibility=hidden '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fmt;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		AB1C717CEB25498A8BD62FA3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		BECAAF42E7DE473F8C4ED830 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				BUILD_DIR = ../lib;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6CE842E5F0474404B1AD3800 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E0F037C1CA84D78AFC193FD /* Debug */,
+				0FBF14E699064DD9B0FB4E10 /* Release */,
+				1C8F7A8E3E254AC19B8BA408 /* MinSizeRel */,
+				26D47C1E39494BC8856ACC4F /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		ADB9B9A6F68D44788CD42B18 /* Build configuration list for PBXProject "FMT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BECAAF42E7DE473F8C4ED830 /* Debug */,
+				1CFA06BB7B8B4970B698E434 /* Release */,
+				9D313CA09A50400C9DCA7D32 /* MinSizeRel */,
+				064E5BABA86C4D9B95A5ACA3 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E8AD7ED712DB4F748D4FA4EB /* Build configuration list for PBXNativeTarget "fmt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6BD166DA5BC749B89B2B38F3 /* Debug */,
+				2A6A9C132387496BB8F8FF90 /* Release */,
+				393BD261631A40D6AD829B63 /* MinSizeRel */,
+				A6A95BB12E754CFBB6EA23EA /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F11C0E218B74471690EDB784 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1D707DAE738B46A1AC086D2E /* Debug */,
+				AB1C717CEB25498A8BD62FA3 /* Release */,
+				34BEB74354CB43FE855AE720 /* MinSizeRel */,
+				5CF1866E57EE407CA6E86838 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FBA5A9DE39F94542B45D3272 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2D04D81601C94B52B9E70AD0 /* Debug */,
+				6C4797F7ABA14A7EA1C24145 /* Release */,
+				3FC71F4181FF44C588C4A2FF /* MinSizeRel */,
+				29205D5C41124E5388398290 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C3C0AC3E9AE147DEBC96B4BA /* Project object */;
+}

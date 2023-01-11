@@ -22,20 +22,39 @@ ln -s ../../../Cores/Dolphin/dolphin-ios/Externals/MoltenVK lib
 
 # This sets mobile to true...
 # cp ../PVPlayCore/Core/GSH_VulkanPlatformDefs.h ../Play-/Source/gs/GSH_Vulkan/
+rm CMakeCache.txt
 echo "VULKAN_SDK="${VULKAN_SDK}
 cmake ../duckstation -G Xcode \
+-DCMAKE_BUILD_TYPE=Release \
+-DPLATFORM=OS64COMBINED \
 -DTARGET_IOS=ON \
+-DDEPLOYMENT_TARGET=13.0 \
+-DENABLE_BITCODE=OFF \
 -DFRAMEWORK_VULKAN_LIBS=${FRAMEWORK_VULKAN_LIBS} \
 -DUSE_GSH_VULKAN=ON \
--DCMAKE_BUILD_TYPE=Release \
+-DBUILD_NOGUI_FRONTEND=ON \
+-DBUILD_QT_FRONTEND=OFF \
+-DUSE_SDL2=OFF \
+-DBUILD_REGTEST=OFF \
+-DENABLE_CUBEB=OFF \
+-DENABLE_VULKAN=ON \
+-DENABLE_OPENGL=ON \
+-DENABLE_DISCORD_PRESENCE=OFF \
+-DENABLE_CHEEVOS=OFF \
+-DUSE_SDL2=OFF \
+-DUSE_X11=OFF \
+-DUSE_WAYLAND=OFF \
 -DCMAKE_C_FLAGS_RELEASE="-Os -DNDEBUG" \
 -DCMAKE_CXX_FLAGS_RELEASE="-Os -DNDEBUG" \
 -DCMAKE_PREFIX_PATH="${VULKAN_SDK}" \
 -DVulkan_INCLUDE_DIR=${Vulkan_INCLUDE_DIR} \
 -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="iPhone Developer" \
 -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM="XXXXXXXXXX" \
+-DCMAKE_TOOLCHAIN_FILE=../ios.toolchain.cmake \
 -DCMAKE_XCODE_ATTRIBUTE_PROVISIONING_PROFILE_SPECIFIER="iOS Team Provisioning Profile: *"
-# -DCMAKE_TOOLCHAIN_FILE=../duckstation/CMakeModules/aarch64-cross-toolchain.cmake \
+
+# -Bbuild-release \
+# -DUSE_EGL=ON \
 
 # Path adjustements
 python3 xcode_absolute_path_to_relative.py

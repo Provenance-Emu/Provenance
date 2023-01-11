@@ -16,16 +16,6 @@
    <Group
       location = "container:"
       name = "Cores">
-      <Group
-         location = "container:"
-         name = "Broken">
-         <FileRef
-            location = "group:Cores/O2EM/PVO2EM.xcodeproj">
-         </FileRef>
-         <FileRef
-            location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
-         </FileRef>
-      </Group>
       <FileRef
          location = "group:Cores/4DO/PV4DO.xcodeproj">
       </FileRef>
@@ -40,6 +30,9 @@
       </FileRef>
       <FileRef
          location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/DuckStation/PVDuckStation.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/FCEU/PVFCEU.xcodeproj">
@@ -58,6 +51,9 @@
       </FileRef>
       <FileRef
          location = "group:Cores/Mupen64Plus/PVMupen64Plus.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/O2EM/PVO2EM.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Play/PVPlayCore.xcodeproj">

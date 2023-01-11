@@ -62,8 +62,19 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 - (void)startRenderingOnAlternateThread;
 - (void)didRenderFrameOnAlternateThread;
 
+/*!
+ * @property presentationFramebuffer
+ * @discussion
+ * 2D - Not used.
+ * 3D - For cores which can directly render to a GL FBO or equivalent,
+ * this will return the FBO which game pixels eventually go to. This
+ * allows porting of cores that overwrite GL_DRAW_FRAMEBUFFER.
+ */
+@property (nonatomic, readonly, nullable) id presentationFramebuffer;
+
 @optional
 @property (nonatomic, nullable, readonly) MTKView* mtlview;
+
 @end
 
 @interface PVEmulatorCore : NSObject {

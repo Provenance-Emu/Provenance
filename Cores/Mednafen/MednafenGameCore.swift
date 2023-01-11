@@ -65,11 +65,11 @@ extension MednafenGameCore: GameWithCheat {
         }
     }
 
-    public func cheatCodeTypes() -> NSArray {
+    public var cheatCodeTypes: [String] {
         return self.getCheatCodeTypes() as! NSArray
     }
 
-    public func supportsCheatCode() -> Bool
+    public var supportsCheatCode: Bool
     {
         return self.getCheatSupport();
     }

@@ -17,11 +17,11 @@ extension PVSNESEmulatorCore: GameWithCheat {
         }
     }
 
-    public func cheatCodeTypes() -> NSArray {
+    public var cheatCodeTypes: [String] {
         return ["Game Genie", "Pro Action Replay", "Gold Finger", "Raw Code"]
     }
 
-    public func supportsCheatCode() -> Bool
+    public var supportsCheatCode: Bool
     {
         return true
     }

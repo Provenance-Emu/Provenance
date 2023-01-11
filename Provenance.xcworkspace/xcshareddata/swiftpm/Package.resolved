@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
         "state": {
           "branch": null,
-          "revision": "b145c6f3619619fb48715c479643e2f2e0e42d2d",
-          "version": "2.5.2"
+          "revision": "3016df0730fb7daa85d73e29ec9d02851db831ae",
+          "version": "2.5.3"
         }
       }
     ]

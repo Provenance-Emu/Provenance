@@ -55,3 +55,9 @@ Cores/Play/cmake/**/*.build
 /Cores/PPSSPP/cmake/assets/debugger
 /Cores/PPSSPP/lib/Release-iphoneos
 /Cores/PPSSPP/lib/Debug-iphoneos
+/Cores/Play/lib
+/Cores/PPSSPP/lib/libMoltenVK_PPSSPP.dylib
+/Cores/DuckStation/cmake/bin
+/Cores/DuckStation/cmake/.qt
+/Cores/DuckStation/lib/Debug-iphoneos/libscmversion.a
+/Cores/DuckStation/lib/Debug-iphoneos/libfrontend-common.a

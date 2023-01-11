@@ -8,7 +8,7 @@ MOLTEN_DIR = '/Users/jmattiello/VulkanSDK/1.3.204.1/MoltenVK'
 
 # Path to CMake XCode project files to process
 # (This will do recursive processing of all pbxproj files inside )
-DIRECTORY_TO_READ = os.getcwd() # Process current directory
+DIRECTORY_TO_READ = os.getcwd() #+ '/build-release' # Process current directory
 
 # This should be the absolute path to the Core / Vulkan directory
 CORE_DIR = PROVENANCE_DIR + '/Cores/Play'

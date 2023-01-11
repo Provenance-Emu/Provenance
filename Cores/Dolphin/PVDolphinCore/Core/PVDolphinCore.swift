@@ -177,12 +177,12 @@ extension PVDolphinCore: GameWithCheat {
         }
     }
 
-    public func supportsCheatCode() -> Bool
+    public var supportsCheatCode: Bool
     {
         return true
     }
 
-    public func cheatCodeTypes() -> NSArray {
+    public var cheatCodeTypes: [String] {
         return [
             "Gecko",
             "Pro Action Replay",

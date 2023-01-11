@@ -23,7 +23,6 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
-#import "PVDuckStation.h"
 
 #define TickCount DuckTickCount
 #include "OpenGLHostDisplay.hpp"
@@ -37,67 +36,61 @@
 #include <dlfcn.h>
 #include <os/log.h>
 
-#include <glad.h>
-
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
-#import <OpenGLES/gltypes.h>
-//#import <OpenGLES/ES3/gl.h>
-//#import <OpenGLES/ES3/glext.h>
-#import <OpenGLES/EAGL.h>
-#else
-#import <OpenGL/OpenGL.h>
-#endif
-
-#define OE_CORE_LOG OS_LOG_DEFAULT
+#import "PVDuckStation.h"
+#import <PVDuckStation/PVDuckStation-Swift.h>
 
 namespace OpenEmu {
 class ContextGL final : public GL::Context
 {
 public:
-	ContextGL(const WindowInfo& wi);
-	~ContextGL() override;
-	
-	static std::unique_ptr<Context> Create(const WindowInfo& wi, const Version* versions_to_try,
-										   size_t num_versions_to_try);
-	
-	void* GetProcAddress(const char* name) override;
-	bool ChangeSurface(const WindowInfo& new_wi) override;
-	void ResizeSurface(u32 new_surface_width = 0, u32 new_surface_height = 0) override;
-	bool SwapBuffers() override;
-	bool MakeCurrent() override;
-	bool DoneCurrent() override;
-	bool SetSwapInterval(s32 interval) override;
-	std::unique_ptr<Context> CreateSharedContext(const WindowInfo& wi) override;
-	
+    ContextGL(const WindowInfo& wi);
+    ~ContextGL() override;
+
+    static std::unique_ptr<Context> Create(const WindowInfo& wi, const Version* versions_to_try,
+                                           size_t num_versions_to_try);
+
+    void* GetProcAddress(const char* name) override;
+    bool ChangeSurface(const WindowInfo& new_wi) override;
+    void ResizeSurface(u32 new_surface_width = 0, u32 new_surface_height = 0) override;
+    bool SwapBuffers() override;
+    bool MakeCurrent() override;
+    bool DoneCurrent() override;
+    bool IsCurrent() override;
+
+    bool SetSwapInterval(s32 interval) override;
+    std::unique_ptr<Context> CreateSharedContext(const WindowInfo& wi) override;
+
 private:
-	//! returns true if dimensions have changed
-	bool UpdateDimensions();
-	
-//	void* m_opengl_module_handle = nullptr;
+        //! returns true if dimensions have changed
+    bool UpdateDimensions();
+
+    void* m_opengl_module_handle = nullptr;
 };
 
 #pragma mark -
 
-class OGLHostDisplayTexture final : public HostDisplayTexture
+class OGLHostDisplayTexture final : public GPUTexture
 {
 public:
-	OGLHostDisplayTexture(GL::Texture texture, HostDisplayPixelFormat format)
-	: m_texture(std::move(texture)), m_format(format){}
-	~OGLHostDisplayTexture() override = default;
-	
-	void* GetHandle() const override { return reinterpret_cast<void*>(static_cast<uintptr_t>(m_texture.GetGLId())); }
-	u32 GetWidth() const override { return m_texture.GetWidth(); }
-	u32 GetHeight() const override { return m_texture.GetHeight(); }
-	u32 GetLayers() const override { return 1; }
-	u32 GetLevels() const override { return 1; }
-	u32 GetSamples() const override { return m_texture.GetSamples(); }
-	HostDisplayPixelFormat GetFormat() const override { return m_format; }
-	
-	GLuint GetGLID() const { return m_texture.GetGLId(); }
-	
+    OGLHostDisplayTexture(GL::Texture texture, GPUTexture::Format format)
+    : m_texture(std::move(texture)), m_format(format){}
+    ~OGLHostDisplayTexture() override = default;
+
+    void* GetHandle() const /*override*/ { return reinterpret_cast<void*>(static_cast<uintptr_t>(m_texture.GetGLId())); }
+    u32 GetWidth() const /*override*/ { return m_texture.GetWidth(); }
+    u32 GetHeight() const /*override*/ { return m_texture.GetHeight(); }
+    u32 GetLayers() const /*override*/ { return 1; }
+    u32 GetLevels() const /*override*/ { return 1; }
+    u32 GetSamples() const /*override*/ { return m_texture.GetSamples(); }
+    GPUTexture::Format GetFormat() const /*override*/ { return m_format; }
+
+    bool IsValid() const override { return m_texture.GetGLId() != 0; }
+
+    GLuint GetGLID() const { return m_texture.GetGLId(); }
+
 private:
-	GL::Texture m_texture;
-	HostDisplayPixelFormat m_format;
+    GL::Texture m_texture;
+    GPUTexture::Format m_format;
 };
 
 }
@@ -106,376 +99,348 @@ using namespace OpenEmu;
 
 #pragma mark -
 
-OpenGLHostDisplay::OpenGLHostDisplay(PVDuckStationCore *core) :
+PVOpenGLHostDisplay::PVOpenGLHostDisplay(PVDuckStationCore *core) :
 _current(core)
 {
-	
+
 }
 
-OpenGLHostDisplay::~OpenGLHostDisplay()
+PVOpenGLHostDisplay::~PVOpenGLHostDisplay()
 {
-	AssertMsg(!m_gl_context, "Context should have been destroyed by now");
+    if (!m_gl_context) {
+        return;
+    }
+
+    DestroyResources();
+
+    m_gl_context->DoneCurrent();
+    m_gl_context.reset();
 }
 
-HostDisplay::RenderAPI OpenGLHostDisplay::GetRenderAPI() const
+RenderAPI PVOpenGLHostDisplay::GetRenderAPI() const
 {
-	return RenderAPI::OpenGLES;
+    GET_CURRENT_OR_RETURN(RenderAPI::OpenGLES);
+    return current.sb
+    return RenderAPI::OpenGLES;
 }
 
-void* OpenGLHostDisplay::GetRenderDevice() const
+void* PVOpenGLHostDisplay::GetDevice() const
 {
-	return nullptr;
+    return nullptr;
 }
 
-void* OpenGLHostDisplay::GetRenderContext() const
+void* PVOpenGLHostDisplay::GetContext() const
 {
-	return m_gl_context.get();
+    return m_gl_context.get();
 }
 
-static constexpr std::array<std::tuple<GLenum, GLenum, GLenum>, static_cast<u32>(HostDisplayPixelFormat::Count)>
-  s_display_pixel_format_mapping = {{
-	{},                                                  // Unknown
-	{GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE},               // RGBA8
-	{GL_RGBA8, GL_BGRA, GL_UNSIGNED_BYTE},               // BGRA8
-	{GL_RGB565, GL_RGB, GL_UNSIGNED_SHORT_5_6_5},        // RGB565
-	{GL_RGB5_A1, GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV} // RGBA5551
-  }};
-
-std::unique_ptr<HostDisplayTexture> OpenGLHostDisplay::CreateTexture(u32 width, u32 height, u32 layers,
-																	 u32 levels, u32 samples,
-																	 HostDisplayPixelFormat format,
-																	 const void* data, u32 data_stride,
-																	 bool dynamic /* = false */)
+static const std::tuple<GLenum, GLenum, GLenum>& GetPixelFormatMapping(bool is_gles, GPUTexture::Format format)
 {
-	if (layers != 1 || levels != 1) {
-		return {};
-	}
-	
-	const auto [gl_internal_format, gl_format, gl_type] = s_display_pixel_format_mapping[static_cast<u32>(format)];
-	
-	// TODO: Set pack width
-	Assert(!data || data_stride == (width * sizeof(u32)));
-	
-	GL::Texture tex;
-	if (!tex.Create(width, height, samples, gl_internal_format, gl_format, gl_type, data, data_stride)) {
-		return {};
-	}
-	
-	return std::make_unique<OpenEmu::OGLHostDisplayTexture>(std::move(tex), format);
+    static constexpr std::array<std::tuple<GLenum, GLenum, GLenum>, static_cast<u32>(GPUTexture::Format::Count)>
+    mapping = {{
+        {},                                                  // Unknown
+        {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE},               // RGBA8
+        {GL_RGBA8, GL_BGRA, GL_UNSIGNED_BYTE},               // BGRA8
+        {GL_RGB565, GL_RGB, GL_UNSIGNED_SHORT_5_6_5},        // RGB565
+        {GL_RGB5_A1, GL_BGRA, GL_UNSIGNED_SHORT_1_5_5_5_REV}, // RGBA5551
+        {GL_R8, GL_RED, GL_UNSIGNED_BYTE},                    // R8
+        {GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT, GL_SHORT}, // D16
+    }};
+
+    static constexpr std::array<std::tuple<GLenum, GLenum, GLenum>, static_cast<u32>(GPUTexture::Format::Count)>
+    mapping_gles2 = {{
+        {},                                        // Unknown
+        {GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE},      // RGBA8
+        {},                                        // BGRA8
+        {GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5}, // RGB565
+        {},                                        // RGBA5551
+        {},                                        // R8
+        {},                                        // D16
+    }};
+
+    if (is_gles && !GLAD_GL_ES_VERSION_3_0)
+        return mapping_gles2[static_cast<u32>(format)];
+    else
+        return mapping[static_cast<u32>(format)];
 }
 
-void OpenGLHostDisplay::UpdateTexture(HostDisplayTexture* texture, u32 x, u32 y, u32 width, u32 height,
-									  const void* texture_data, u32 texture_data_stride)
+std::unique_ptr<GPUTexture> PVOpenGLHostDisplay::CreateTexture(u32 width, u32 height, u32 layers, u32 levels,
+                                                                     u32 samples, GPUTexture::Format format,
+                                                                     const void* data, u32 data_stride,
+                                                                     bool dynamic /* = false */)
 {
-	OpenEmu::OGLHostDisplayTexture* tex = static_cast<OpenEmu::OGLHostDisplayTexture*>(texture);
-	const auto [gl_internal_format, gl_format, gl_type] =
-	s_display_pixel_format_mapping[static_cast<u32>(texture->GetFormat())];
-	GLint alignment;
-	if (texture_data_stride & 1) {
-		alignment = 1;
-	} else if (texture_data_stride & 2) {
-		alignment = 2;
-	} else {
-		alignment = 4;
-	}
-	
-	GLint old_texture_binding = 0, old_alignment = 0, old_row_length = 0;
-	glGetIntegerv(GL_TEXTURE_BINDING_2D, &old_texture_binding);
-	glBindTexture(GL_TEXTURE_2D, tex->GetGLID());
-	
-	glGetIntegerv(GL_UNPACK_ALIGNMENT, &old_alignment);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
-	
-	glGetIntegerv(GL_UNPACK_ROW_LENGTH, &old_row_length);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, texture_data_stride / GetDisplayPixelFormatSize(texture->GetFormat()));
-	
-	glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, gl_format, gl_type, texture_data);
-	
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, old_row_length);
-	
-	glPixelStorei(GL_UNPACK_ALIGNMENT, old_alignment);
-	glBindTexture(GL_TEXTURE_2D, old_texture_binding);
+    if (layers != 1 || levels != 1) {
+        return {};
+    }
+
+    const auto [gl_internal_format, gl_format, gl_type] = GetPixelFormatMapping(m_gl_context->IsGLES(), format);
+
+        // TODO: Set pack width
+    Assert(!data || data_stride == (width * sizeof(u32)));
+
+    GL::Texture tex;
+//   BOOL success = tex.Create(width, height, layers, levels, samples, gl_format, data, data_stride);
+    BOOL success = tex.Create(width,
+                              height,
+                              layers,
+                              levels,
+                              samples,
+                              format,
+                              data,
+                              data_stride);
+    if (!success) {
+//        tex.reset();
+//
+//        return tex;
+        return {};
+    }
+
+    return std::make_unique<OpenEmu::OGLHostDisplayTexture>(std::move(tex), format);
 }
 
-bool OpenGLHostDisplay::DownloadTexture(const void* texture_handle, HostDisplayPixelFormat texture_format,
-										u32 x, u32 y, u32 width, u32 height, void* out_data,
-										u32 out_data_stride)
+
+bool PVOpenGLHostDisplay::BeginTextureUpdate(GPUTexture* texture, u32 width, u32 height, void** out_buffer,
+                                           u32* out_pitch)
 {
-	GLint alignment;
-	if (out_data_stride & 1) {
-		alignment = 1;
-	} else if (out_data_stride & 2) {
-		alignment = 2;
-	} else {
-		alignment = 4;
-	}
-	
-	GLint old_alignment = 0, old_row_length = 0;
-	glGetIntegerv(GL_PACK_ALIGNMENT, &old_alignment);
-	glPixelStorei(GL_PACK_ALIGNMENT, alignment);
-	glGetIntegerv(GL_PACK_ROW_LENGTH, &old_row_length);
-	glPixelStorei(GL_PACK_ROW_LENGTH, out_data_stride / GetDisplayPixelFormatSize(texture_format));
-	
-	const GLuint texture = static_cast<GLuint>(reinterpret_cast<uintptr_t>(texture_handle));
-	const auto [gl_internal_format, gl_format, gl_type] =
-	s_display_pixel_format_mapping[static_cast<u32>(texture_format)];
-	
-	GL::Texture::GetTextureSubImage(texture, 0, x, y, 0, width, height, 1, gl_format, gl_type,
-									height * out_data_stride, out_data);
-	
-	glPixelStorei(GL_PACK_ALIGNMENT, old_alignment);
-	glPixelStorei(GL_PACK_ROW_LENGTH, old_row_length);
-	return true;
+    WLOG(@"STUB BeginTextureUpdate")
+    return true;
 }
 
-bool OpenGLHostDisplay::SupportsDisplayPixelFormat(HostDisplayPixelFormat format) const
+void PVOpenGLHostDisplay::EndTextureUpdate(GPUTexture* texture, u32 x, u32 y, u32 width, u32 height)
 {
-	return (std::get<0>(s_display_pixel_format_mapping[static_cast<u32>(format)]) != static_cast<GLenum>(0));
+    WLOG(@"STUB EndTextureUpdate")
 }
 
-bool OpenGLHostDisplay::BeginSetDisplayPixels(HostDisplayPixelFormat format, u32 width, u32 height,
-											  void** out_buffer, u32* out_pitch)
+bool PVOpenGLHostDisplay::UpdateTexture(GPUTexture* texture, u32 x, u32 y, u32 width, u32 height, const void* data,
+                                      u32 pitch)
 {
-	const u32 pixel_size = GetDisplayPixelFormatSize(format);
-	const u32 stride = Common::AlignUpPow2(width * pixel_size, 4);
-	const u32 size_required = stride * height * pixel_size;
-	const u32 buffer_size = Common::AlignUpPow2(size_required * 2, 4 * 1024 * 1024);
-	if (!m_display_pixels_texture_pbo || m_display_pixels_texture_pbo->GetSize() < buffer_size) {
-		m_display_pixels_texture_pbo.reset();
-		m_display_pixels_texture_pbo = GL::StreamBuffer::Create(GL_PIXEL_UNPACK_BUFFER, buffer_size);
-		if (!m_display_pixels_texture_pbo) {
-			return false;
-		}
-	}
-	
-	const auto map = m_display_pixels_texture_pbo->Map(GetDisplayPixelFormatSize(format), size_required);
-	m_display_texture_format = format;
-	m_display_pixels_texture_pbo_map_offset = map.buffer_offset;
-	m_display_pixels_texture_pbo_map_size = size_required;
-	*out_buffer = map.pointer;
-	*out_pitch = stride;
-	
-	if (m_display_pixels_texture_id == 0) {
-		glGenTextures(1, &m_display_pixels_texture_id);
-		glBindTexture(GL_TEXTURE_2D, m_display_pixels_texture_id);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
-	}
-	
-	SetDisplayTexture(reinterpret_cast<void*>(static_cast<uintptr_t>(m_display_pixels_texture_id)), format, width,
-					  height, 0, 0, width, height);
-	return true;
+    GL::Texture* gl_texture = static_cast<GL::Texture*>(texture);
+    const auto [gl_internal_format, gl_format, gl_type] = GL::Texture::GetPixelFormatMapping(gl_texture->GetFormat());
+    const u32 pixel_size = gl_texture->GetPixelSize();
+    const bool is_packed_tightly = (pitch == (pixel_size * width));
+
+    const bool whole_texture = (!gl_texture->UseTextureStorage() && x == 0 && y == 0 && width == gl_texture->GetWidth() &&
+                                height == gl_texture->GetHeight());
+    gl_texture->Bind();
+
+        // If we have GLES3, we can set row_length.
+//    if (UseGLES3DrawPath() || is_packed_tightly)
+//    {
+        if (!is_packed_tightly)
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, pitch / pixel_size);
+
+        if (whole_texture)
+            glTexImage2D(GL_TEXTURE_2D, 0, gl_internal_format, width, height, 0, gl_format, gl_type, data);
+        else
+            glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, gl_format, gl_type, data);
+
+        if (!is_packed_tightly)
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+//    }
+//    else
+//    {
+//            // Otherwise, we need to repack the image.
+//        std::vector<u8>& repack_buffer = GetTextureRepackBuffer();
+//        const u32 packed_pitch = width * pixel_size;
+//        const u32 repack_size = packed_pitch * height;
+//        if (repack_buffer.size() < repack_size)
+//            repack_buffer.resize(repack_size);
+//
+//        StringUtil::StrideMemCpy(repack_buffer.data(), packed_pitch, data, pitch, packed_pitch, height);
+//
+//        if (whole_texture)
+//            glTexImage2D(GL_TEXTURE_2D, 0, gl_internal_format, width, height, 0, gl_format, gl_type, repack_buffer.data());
+//        else
+//            glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, width, height, gl_format, gl_type, repack_buffer.data());
+//    }
+
+    return true;
 }
 
-void OpenGLHostDisplay::EndSetDisplayPixels()
+
+bool PVOpenGLHostDisplay::DownloadTexture(GPUTexture* texture,
+                                        u32 x, u32 y, u32 width, u32 height, void* out_data,
+                                        u32 out_data_stride)
 {
-	const u32 width = static_cast<u32>(m_display_texture_view_width);
-	const u32 height = static_cast<u32>(m_display_texture_view_height);
-	
-	const auto [gl_internal_format, gl_format, gl_type] =
-	s_display_pixel_format_mapping[static_cast<u32>(m_display_texture_format)];
-	
-	// glTexImage2D should be quicker on Mali...
-	m_display_pixels_texture_pbo->Unmap(m_display_pixels_texture_pbo_map_size);
-	m_display_pixels_texture_pbo->Bind();
-	glBindTexture(GL_TEXTURE_2D, m_display_pixels_texture_id);
-	glTexImage2D(GL_TEXTURE_2D, 0, gl_internal_format, width, height, 0, gl_format, gl_type,
-				 reinterpret_cast<void*>(static_cast<uintptr_t>(m_display_pixels_texture_pbo_map_offset)));
-	glBindTexture(GL_TEXTURE_2D, 0);
-	m_display_pixels_texture_pbo->Unbind();
-	
-	m_display_pixels_texture_pbo_map_offset = 0;
-	m_display_pixels_texture_pbo_map_size = 0;
+    GLint alignment;
+    if (out_data_stride & 1) {
+        alignment = 1;
+    } else if (out_data_stride & 2) {
+        alignment = 2;
+    } else {
+        alignment = 4;
+    }
+
+    GLint old_alignment = 0, old_row_length = 0;
+    glGetIntegerv(GL_PACK_ALIGNMENT, &old_alignment);
+    glPixelStorei(GL_PACK_ALIGNMENT, alignment);
+    glGetIntegerv(GL_PACK_ROW_LENGTH, &old_row_length);
+    glPixelStorei(GL_PACK_ROW_LENGTH, out_data_stride / texture->GetPixelSize());
+
+//    const GLuint texture = static_cast<GLuint>(reinterpret_cast<uintptr_t>(texture_handle));
+//    const auto [gl_internal_format, gl_format, gl_type] = GetPixelFormatMapping(m_gl_context->IsGLES(), texture_format);
+    const auto [gl_internal_format, gl_format, gl_type] = GL::Texture::GetPixelFormatMapping(texture->GetFormat());
+
+
+    GL::Texture::GetTextureSubImage(static_cast<const GL::Texture*>(texture)->GetGLId(), 0, x, y, 0, width, height, 1, gl_format, gl_type,
+                                    height * out_data_stride, out_data);
+
+    glPixelStorei(GL_PACK_ALIGNMENT, old_alignment);
+    glPixelStorei(GL_PACK_ROW_LENGTH, old_row_length);
+    return true;
 }
 
-bool OpenGLHostDisplay::SetDisplayPixels(HostDisplayPixelFormat format, u32 width, u32 height,
-										 const void* buffer, u32 pitch)
+bool PVOpenGLHostDisplay::SupportsTextureFormat(GPUTexture::Format format) const
 {
-	if (m_display_pixels_texture_id == 0) {
-		glGenTextures(1, &m_display_pixels_texture_id);
-		glBindTexture(GL_TEXTURE_2D, m_display_pixels_texture_id);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 1);
-	} else {
-		glBindTexture(GL_TEXTURE_2D, m_display_pixels_texture_id);
-	}
-	
-	const auto [gl_internal_format, gl_format, gl_type] = s_display_pixel_format_mapping[static_cast<u32>(format)];
-	
-	glTexImage2D(GL_TEXTURE_2D, 0, gl_internal_format, width, height, 0, gl_format, gl_type, buffer);
-	
-	glBindTexture(GL_TEXTURE_2D, 0);
-	
-	SetDisplayTexture(reinterpret_cast<void*>(static_cast<uintptr_t>(m_display_pixels_texture_id)), format, width,
-					  height, 0, 0, width, height);
-	return true;
+    const auto [gl_internal_format, gl_format, gl_type] = GetPixelFormatMapping(m_gl_context->IsGLES(), format);
+    return (gl_internal_format != static_cast<GLenum>(0));
 }
 
-void OpenGLHostDisplay::SetVSync(bool enabled)
+void PVOpenGLHostDisplay::SetVSync(bool enabled)
 {
-	if (m_gl_context->GetWindowInfo().type == WindowInfo::Type::Surfaceless) {
-		return;
-	}
-	
-	// Window framebuffer has to be bound to call SetSwapInterval.
-	GLint current_fbo = 0;
-	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &current_fbo);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	m_gl_context->SetSwapInterval(enabled ? 1 : 0);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, current_fbo);
-//	_current.renderDelegate.enableVSync = enabled;
+    if (m_gl_context->GetWindowInfo().type == WindowInfo::Type::Surfaceless) {
+        return;
+    }
+
+        // Window framebuffer has to be bound to call SetSwapInterval.
+    GLint current_fbo = 0;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &current_fbo);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+    m_gl_context->SetSwapInterval(enabled ? 1 : 0);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, current_fbo);
 }
 
-const char* OpenGLHostDisplay::GetGLSLVersionString() const
+const char* PVOpenGLHostDisplay::GetGLSLVersionString() const
 {
-	if (GLAD_GL_VERSION_3_3) {
-		return "#version 330";
-	} else {
-		return "#version 130";
-	}
+    if (GLAD_GL_VERSION_3_3) {
+        return "#version 330";
+    } else {
+        return "#version 130";
+    }
 }
 
-std::string OpenGLHostDisplay::GetGLSLVersionHeader() const
+std::string PVOpenGLHostDisplay::GetGLSLVersionHeader() const
 {
-	std::string header = GetGLSLVersionString();
-	header += "\n\n";
-	
-	return header;
+    std::string header = GetGLSLVersionString();
+    header += "\n\n";
+
+    return header;
 }
 
-bool OpenGLHostDisplay::HasRenderDevice() const
+bool PVOpenGLHostDisplay::HasDevice() const
 {
-	return m_gl_context != nullptr;
+    return m_gl_context != nullptr;
 }
 
-bool OpenGLHostDisplay::HasRenderSurface() const
+bool PVOpenGLHostDisplay::HasSurface() const
 {
-	return m_window_info.type != WindowInfo::Type::Surfaceless;
+    return m_window_info.type != WindowInfo::Type::Surfaceless;
 }
 
-bool OpenGLHostDisplay::CreateRenderDevice(const WindowInfo& wi, std::string_view adapter_name,
-										   bool debug_device, bool threaded_presentation)
+bool PVOpenGLHostDisplay::CreateDevice(const WindowInfo& wi, bool vsync)
 {
-	static constexpr std::array<GL::Context::Version, 3> versArray {{{GL::Context::Profile::Core, 4, 1}, {GL::Context::Profile::Core, 3, 3}, {GL::Context::Profile::Core, 3, 2}}};
-	
-	m_gl_context = ContextGL::Create(wi, versArray.data(), versArray.size());
-	if (!m_gl_context) {
-		os_log_fault(OE_CORE_LOG, "Failed to create any GL context");
-		return false;
-	}
-	
-	gladLoadGL();
-	m_window_info = wi;
-	m_window_info.surface_width = m_gl_context->GetSurfaceWidth();
-	m_window_info.surface_height = m_gl_context->GetSurfaceHeight();
-	return true;
+    static constexpr std::array<GL::Context::Version, 3> versArray {{{GL::Context::Profile::Core, 4, 1}, {GL::Context::Profile::Core, 3, 3}, {GL::Context::Profile::Core, 3, 2}}};
+
+    m_gl_context = ContextGL::Create(wi, versArray.data(), versArray.size());
+    if (!m_gl_context) {
+        os_log_fault(OE_CORE_LOG, "Failed to create any GL context");
+        m_gl_context.reset();
+        return false;
+    }
+
+    gladLoadGL();
+    m_window_info = wi;
+    m_window_info.surface_width = m_gl_context->GetSurfaceWidth();
+    m_window_info.surface_height = m_gl_context->GetSurfaceHeight();
+    return true;
 }
 
-bool OpenGLHostDisplay::InitializeRenderDevice(std::string_view shader_cache_directory, bool debug_device,
-											   bool threaded_presentation)
+bool PVOpenGLHostDisplay::SetupDevice()
 {
-	glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, reinterpret_cast<GLint*>(&m_uniform_buffer_alignment));
-	
-	if (!CreateResources()) {
-		return false;
-	}
-	
-	// Start with vsync on.
-	SetVSync(true);
-	
-	return true;
+    glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, reinterpret_cast<GLint*>(&m_uniform_buffer_alignment));
+
+    if (!CreateResources()) {
+        return false;
+    }
+
+        // Start with vsync on.
+    SetVSync(true);
+
+    return true;
 }
 
-bool OpenGLHostDisplay::MakeRenderContextCurrent()
+bool PVOpenGLHostDisplay::MakeCurrent()
 {
-	if (!m_gl_context->MakeCurrent()) {
-		os_log_fault(OE_CORE_LOG, "Failed to make GL context current");
-		return false;
-	}
-	
-	return true;
+    if (!m_gl_context->MakeCurrent()) {
+        os_log_fault(OE_CORE_LOG, "Failed to make GL context current");
+        return false;
+    }
+
+    return true;
 }
 
-bool OpenGLHostDisplay::DoneRenderContextCurrent()
+bool PVOpenGLHostDisplay::DoneCurrent()
 {
-	return m_gl_context->DoneCurrent();
+    return m_gl_context->DoneCurrent();
 }
 
-void OpenGLHostDisplay::DestroyRenderDevice()
+bool PVOpenGLHostDisplay::ChangeWindow(const WindowInfo& new_wi)
 {
-	if (!m_gl_context) {
-		return;
-	}
-	
-	DestroyResources();
-	
-	m_gl_context->DoneCurrent();
-	m_gl_context.reset();
+    Assert(m_gl_context);
+
+    if (!m_gl_context->ChangeSurface(new_wi)) {
+        os_log_fault(OE_CORE_LOG, "Failed to change surface");
+        return false;
+    }
+
+    m_window_info = new_wi;
+    m_window_info.surface_width = m_gl_context->GetSurfaceWidth();
+    m_window_info.surface_height = m_gl_context->GetSurfaceHeight();
+
+    return true;
 }
 
-bool OpenGLHostDisplay::ChangeRenderWindow(const WindowInfo& new_wi)
+void PVOpenGLHostDisplay::ResizeWindow(s32 new_window_width, s32 new_window_height)
 {
-	Assert(m_gl_context);
-	
-	if (!m_gl_context->ChangeSurface(new_wi)) {
-		os_log_fault(OE_CORE_LOG, "Failed to change surface");
-		return false;
-	}
-	
-	m_window_info = new_wi;
-	m_window_info.surface_width = m_gl_context->GetSurfaceWidth();
-	m_window_info.surface_height = m_gl_context->GetSurfaceHeight();
-	
-	return true;
+    if (!m_gl_context) {
+        return;
+    }
+
+    m_gl_context->ResizeSurface(static_cast<u32>(new_window_width), static_cast<u32>(new_window_height));
+    m_window_info.surface_width = m_gl_context->GetSurfaceWidth();
+    m_window_info.surface_height = m_gl_context->GetSurfaceHeight();
 }
 
-void OpenGLHostDisplay::ResizeRenderWindow(s32 new_window_width, s32 new_window_height)
+bool PVOpenGLHostDisplay::SupportsFullscreen() const
 {
-	if (!m_gl_context) {
-		return;
-	}
-	
-	m_gl_context->ResizeSurface(static_cast<u32>(new_window_width), static_cast<u32>(new_window_height));
-	m_window_info.surface_width = m_gl_context->GetSurfaceWidth();
-	m_window_info.surface_height = m_gl_context->GetSurfaceHeight();
+    return false;
 }
 
-bool OpenGLHostDisplay::SupportsFullscreen() const
+bool PVOpenGLHostDisplay::IsFullscreen()
 {
-	return false;
+    return false;
 }
 
-bool OpenGLHostDisplay::IsFullscreen()
+bool PVOpenGLHostDisplay::SetFullscreen(bool fullscreen, u32 width, u32 height, float refresh_rate)
 {
-	return false;
+    return false;
 }
 
-bool OpenGLHostDisplay::SetFullscreen(bool fullscreen, u32 width, u32 height, float refresh_rate)
+void PVOpenGLHostDisplay::DestroySurface()
 {
-	return false;
+    if (!m_gl_context) {
+        return;
+    }
+
+    m_window_info = {};
+    if (!m_gl_context->ChangeSurface(m_window_info)) {
+        os_log_fault(OE_CORE_LOG, "Failed to switch to surfaceless");
+    }
 }
 
-void OpenGLHostDisplay::DestroyRenderSurface()
+bool PVOpenGLHostDisplay::CreateResources()
 {
-	if (!m_gl_context) {
-		return;
-	}
-	
-	m_window_info = {};
-	if (!m_gl_context->ChangeSurface(m_window_info)) {
-		os_log_fault(OE_CORE_LOG, "Failed to switch to surfaceless");
-	}
-}
-
-bool OpenGLHostDisplay::CreateResources()
-{
-	static constexpr char fullscreen_quad_vertex_shader[] = R"(
+    static constexpr char fullscreen_quad_vertex_shader[] = R"(
 uniform vec4 u_src_rect;
 out vec2 v_tex0;
 
@@ -487,7 +452,7 @@ void main()
 }
 )";
 
-	static constexpr char display_fragment_shader[] = R"(
+    static constexpr char display_fragment_shader[] = R"(
 uniform sampler2D samp0;
 
 in vec2 v_tex0;
@@ -499,7 +464,7 @@ void main()
 }
 )";
 
-	static constexpr char cursor_fragment_shader[] = R"(
+    static constexpr char cursor_fragment_shader[] = R"(
 uniform sampler2D samp0;
 
 in vec2 v_tex0;
@@ -511,262 +476,311 @@ void main()
 }
 )";
 
-	if (!m_display_program.Compile(GetGLSLVersionHeader() + fullscreen_quad_vertex_shader, {},
-								   GetGLSLVersionHeader() + display_fragment_shader) ||
-		!m_cursor_program.Compile(GetGLSLVersionHeader() + fullscreen_quad_vertex_shader, {},
-								  GetGLSLVersionHeader() + cursor_fragment_shader)) {
-		os_log_fault(OE_CORE_LOG, "Failed to compile display shaders");
-		return false;
-	}
-	
-	m_display_program.BindFragData(0, "o_col0");
-	m_cursor_program.BindFragData(0, "o_col0");
-	
-	if (!m_display_program.Link() || !m_cursor_program.Link()) {
-		os_log_fault(OE_CORE_LOG, "Failed to link display programs");
-		return false;
-	}
-	
-	m_display_program.Bind();
-	m_display_program.RegisterUniform("u_src_rect");
-	m_display_program.RegisterUniform("samp0");
-	m_display_program.Uniform1i(1, 0);
-	m_cursor_program.Bind();
-	m_cursor_program.RegisterUniform("u_src_rect");
-	m_cursor_program.RegisterUniform("samp0");
-	m_cursor_program.Uniform1i(1, 0);
-	
-	glGenVertexArrays(1, &m_display_vao);
-	
-	// samplers
-	glGenSamplers(1, &m_display_nearest_sampler);
-	glSamplerParameteri(m_display_nearest_sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glSamplerParameteri(m_display_nearest_sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glGenSamplers(1, &m_display_linear_sampler);
-	glSamplerParameteri(m_display_linear_sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glSamplerParameteri(m_display_linear_sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	
-	return true;
+    if (!m_display_program.Compile(GetGLSLVersionHeader() + fullscreen_quad_vertex_shader, {},
+                                   GetGLSLVersionHeader() + display_fragment_shader) ||
+        !m_cursor_program.Compile(GetGLSLVersionHeader() + fullscreen_quad_vertex_shader, {},
+                                  GetGLSLVersionHeader() + cursor_fragment_shader)) {
+        os_log_fault(OE_CORE_LOG, "Failed to compile display shaders");
+        return false;
+    }
+
+    m_display_program.BindFragData(0, "o_col0");
+    m_cursor_program.BindFragData(0, "o_col0");
+
+    if (!m_display_program.Link() || !m_cursor_program.Link()) {
+        os_log_fault(OE_CORE_LOG, "Failed to link display programs");
+        return false;
+    }
+
+    m_display_program.Bind();
+    m_display_program.RegisterUniform("u_src_rect");
+    m_display_program.RegisterUniform("samp0");
+    m_display_program.Uniform1i(1, 0);
+    m_cursor_program.Bind();
+    m_cursor_program.RegisterUniform("u_src_rect");
+    m_cursor_program.RegisterUniform("samp0");
+    m_cursor_program.Uniform1i(1, 0);
+
+    glGenVertexArrays(1, &m_display_vao);
+
+        // samplers
+    glGenSamplers(1, &m_display_nearest_sampler);
+    glSamplerParameteri(m_display_nearest_sampler, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glSamplerParameteri(m_display_nearest_sampler, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glGenSamplers(1, &m_display_linear_sampler);
+    glSamplerParameteri(m_display_linear_sampler, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glSamplerParameteri(m_display_linear_sampler, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    return true;
 }
 
-void OpenGLHostDisplay::DestroyResources()
+void PVOpenGLHostDisplay::DestroyResources()
 {
-	if (m_display_pixels_texture_id != 0) {
-		glDeleteTextures(1, &m_display_pixels_texture_id);
-		m_display_pixels_texture_id = 0;
-	}
-	
-	if (m_display_vao != 0) {
-		glDeleteVertexArrays(1, &m_display_vao);
-		m_display_vao = 0;
-	}
-	if (m_display_linear_sampler != 0) {
-		glDeleteSamplers(1, &m_display_linear_sampler);
-		m_display_linear_sampler = 0;
-	}
-	if (m_display_nearest_sampler != 0) {
-		glDeleteSamplers(1, &m_display_nearest_sampler);
-		m_display_nearest_sampler = 0;
-	}
-	
-	m_cursor_program.Destroy();
-	m_display_program.Destroy();
+    if (m_display_pixels_texture_id != 0) {
+        glDeleteTextures(1, &m_display_pixels_texture_id);
+        m_display_pixels_texture_id = 0;
+    }
+
+    if (m_display_vao != 0) {
+        glDeleteVertexArrays(1, &m_display_vao);
+        m_display_vao = 0;
+    }
+    if (m_display_linear_sampler != 0) {
+        glDeleteSamplers(1, &m_display_linear_sampler);
+        m_display_linear_sampler = 0;
+    }
+    if (m_display_nearest_sampler != 0) {
+        glDeleteSamplers(1, &m_display_nearest_sampler);
+        m_display_nearest_sampler = 0;
+    }
+
+    m_cursor_program.Destroy();
+    m_display_program.Destroy();
 }
 
-bool OpenGLHostDisplay::Render()
+void PVOpenGLHostDisplay::RenderDisplay()
 {
-#warning "fix me"
-    GLuint framebuffer = 0; //[[[_current renderDelegate] alternateThreadFramebufferFront] unsignedIntValue];
+    if (!HasDisplayTexture()) {
+        return;
+    }
 
-	glDisable(GL_SCISSOR_TEST);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+    const auto [left, top, width, height] = CalculateDrawRect(GetWindowWidth(), GetWindowHeight());
 
-	RenderDisplay();
-
-	RenderSoftwareCursor();
-
-	m_gl_context->SwapBuffers();
-
-	return true;
+    RenderDisplay(left,
+                  GetWindowHeight() - top - height,
+                  width,
+                  height,
+                  static_cast<GL::Texture*>(m_display_texture),
+                  m_display_texture_view_x,
+                  m_display_texture_view_y,
+                  m_display_texture_view_width,
+                  m_display_texture_view_height,
+                  IsUsingLinearFiltering());
 }
 
-void OpenGLHostDisplay::RenderDisplay()
+void PVOpenGLHostDisplay::RenderDisplay(s32 left, s32 bottom, s32 width, s32 height, GL::Texture* texture,
+                                      s32 texture_view_x, s32 texture_view_y, s32 texture_view_width,
+                                      s32 texture_view_height, bool linear_filter)
 {
-	if (!HasDisplayTexture()) {
-		return;
-	}
-	
-	const auto [left, top, width, height] = CalculateDrawRect(GetWindowWidth(), GetWindowHeight(), m_display_top_margin);
-	
-	RenderDisplay(left, GetWindowHeight() - top - height, width, height, m_display_texture_handle,
-				  m_display_texture_width, m_display_texture_height, m_display_texture_view_x, m_display_texture_view_y,
-				  m_display_texture_view_width, m_display_texture_view_height, m_display_linear_filtering);
+    glViewport(left, bottom, width, height);
+    glDisable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_SCISSOR_TEST);
+    glDepthMask(GL_FALSE);
+    m_display_program.Bind();
+//            glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(reinterpret_cast<uintptr_t>(texture)));
+    texture->Bind();
+
+    auto texture_width = texture->GetWidth();
+    auto texture_height = texture->GetHeight();
+
+    const float position_adjust = IsUsingLinearFiltering() ? 0.5f : 0.0f;
+    const float size_adjust = IsUsingLinearFiltering() ? 1.0f : 0.0f;
+    const float flip_adjust = (texture_view_height < 0) ? -1.0f : 1.0f;
+    m_display_program.Uniform4f(0, (static_cast<float>(texture_view_x) + position_adjust) / static_cast<float>(texture_width),
+                                (static_cast<float>(texture_view_y) + (position_adjust * flip_adjust)) / static_cast<float>(texture_height),
+                                (static_cast<float>(texture_view_width) - size_adjust) / static_cast<float>(texture_width),
+                                (static_cast<float>(texture_view_height) - (size_adjust * flip_adjust)) / static_cast<float>(texture_height));
+    glBindSampler(0, linear_filter ? m_display_linear_sampler : m_display_nearest_sampler);
+    glBindVertexArray(m_display_vao);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindSampler(0, 0);
 }
 
-void OpenGLHostDisplay::RenderDisplay(s32 left, s32 bottom, s32 width, s32 height, void* texture_handle,
-									  u32 texture_width, s32 texture_height, s32 texture_view_x,
-									  s32 texture_view_y, s32 texture_view_width, s32 texture_view_height,
-									  bool linear_filter)
+void PVOpenGLHostDisplay::RenderSoftwareCursor()
 {
-	glViewport(left, bottom, width, height);
-	glDisable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_SCISSOR_TEST);
-	glDepthMask(GL_FALSE);
-	glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(reinterpret_cast<uintptr_t>(texture_handle)));
-	m_display_program.Bind();
-	
-	const float position_adjust = m_display_linear_filtering ? 0.5f : 0.0f;
-	const float size_adjust = m_display_linear_filtering ? 1.0f : 0.0f;
-	const float flip_adjust = (texture_view_height < 0) ? -1.0f : 1.0f;
-	m_display_program.Uniform4f(0, (static_cast<float>(texture_view_x) + position_adjust) / static_cast<float>(texture_width),
-								(static_cast<float>(texture_view_y) + (position_adjust * flip_adjust)) / static_cast<float>(texture_height),
-								(static_cast<float>(texture_view_width) - size_adjust) / static_cast<float>(texture_width),
-								(static_cast<float>(texture_view_height) - (size_adjust * flip_adjust)) / static_cast<float>(texture_height));
-	glBindSampler(0, linear_filter ? m_display_linear_sampler : m_display_nearest_sampler);
-	glBindVertexArray(m_display_vao);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glBindSampler(0, 0);
+    if (!HasSoftwareCursor()) {
+        return;
+    }
+
+    const auto [left, top, width, height] = CalculateSoftwareCursorDrawRect();
+    RenderSoftwareCursor(left, GetWindowHeight() - top - height, width, height, m_cursor_texture.get());
 }
 
-void OpenGLHostDisplay::RenderSoftwareCursor()
+void PVOpenGLHostDisplay::RenderSoftwareCursor(s32 left, s32 bottom, s32 width, s32 height,
+                                             GPUTexture* texture_handle)
 {
-	if (!HasSoftwareCursor()) {
-		return;
-	}
-	
-	const auto [left, top, width, height] = CalculateSoftwareCursorDrawRect();
-	RenderSoftwareCursor(left, GetWindowHeight() - top - height, width, height, m_cursor_texture.get());
+    glViewport(left, bottom, width, height);
+    glEnable(GL_BLEND);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+    glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_SCISSOR_TEST);
+    glDepthMask(GL_FALSE);
+    m_cursor_program.Bind();
+    glBindTexture(GL_TEXTURE_2D, static_cast<OGLHostDisplayTexture*>(texture_handle)->GetGLID());
+
+    m_cursor_program.Uniform4f(0, 0.0f, 0.0f, 1.0f, 1.0f);
+    glBindSampler(0, m_display_linear_sampler);
+    glBindVertexArray(m_display_vao);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindSampler(0, 0);
 }
 
-void OpenGLHostDisplay::RenderSoftwareCursor(s32 left, s32 bottom, s32 width, s32 height,
-											 HostDisplayTexture* texture_handle)
+bool PVOpenGLHostDisplay::SetPostProcessingChain(const std::string_view& config)
 {
-	glViewport(left, bottom, width, height);
-	glEnable(GL_BLEND);
-	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_SCISSOR_TEST);
-	glDepthMask(GL_FALSE);
-	m_cursor_program.Bind();
-	glBindTexture(GL_TEXTURE_2D, static_cast<OGLHostDisplayTexture*>(texture_handle)->GetGLID());
-	
-	m_cursor_program.Uniform4f(0, 0.0f, 0.0f, 1.0f, 1.0f);
-	glBindSampler(0, m_display_linear_sampler);
-	glBindVertexArray(m_display_vao);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glBindSampler(0, 0);
+    return true;
 }
 
-bool OpenGLHostDisplay::SetPostProcessingChain(const std::string_view& config)
+HostDisplay::AdapterAndModeList PVOpenGLHostDisplay::GetAdapterAndModeList()
 {
-	return false;
+    AdapterAndModeList aml;
+
+    if (m_gl_context) {
+        for (const GL::Context::FullscreenModeInfo& fmi : m_gl_context->EnumerateFullscreenModes()) {
+            aml.fullscreen_modes.push_back(GetFullscreenModeString(fmi.width, fmi.height, fmi.refresh_rate));
+        }
+    }
+
+    return aml;
 }
 
-static std::string GetFullscreenModeString(u32 width, u32 height, float refresh_rate)
+bool PVOpenGLHostDisplay::RenderScreenshot(u32 width, u32 height, std::vector<u32>* out_pixels, u32* out_stride,
+                                         GPUTexture::Format* out_format)
 {
-	char val[64];
-	snprintf(val, sizeof(val), "%u x %u @ %f hz", width, height, refresh_rate);
-	return val;
+        // do nothing: OpenEmu handles all the screen shotting stuff.
+    return false;
 }
 
-HostDisplay::AdapterAndModeList OpenGLHostDisplay::GetAdapterAndModeList()
+bool PVOpenGLHostDisplay::Render(bool skip_present)
 {
-	AdapterAndModeList aml;
-	
-	if (m_gl_context) {
-		for (const GL::Context::FullscreenModeInfo& fmi : m_gl_context->EnumerateFullscreenModes()) {
-			aml.fullscreen_modes.push_back(GetFullscreenModeString(fmi.width, fmi.height, fmi.refresh_rate));
-		}
-	}
-	
-	return aml;
+    if (skip_present || m_window_info.type == WindowInfo::Type::Surfaceless) {
+        return false;
+    }
+    GLuint framebuffer = [[_current.renderDelegate presentationFramebuffer] unsignedIntValue];
+
+    glDisable(GL_SCISSOR_TEST);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuffer);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    RenderDisplay();
+
+    RenderSoftwareCursor();
+
+    m_gl_context->SwapBuffers();
+
+    return true;
 }
 
-bool OpenGLHostDisplay::RenderScreenshot(u32 width, u32 height, std::vector<u32>* out_pixels, u32* out_stride,
-										 HostDisplayPixelFormat* out_format)
+bool PVOpenGLHostDisplay::SetGPUTimingEnabled(bool enabled)
 {
-	// do nothing: OpenEmu handles all the screen shotting stuff.
-	return false;
+    return false;
+}
+
+float PVOpenGLHostDisplay::GetAndResetAccumulatedGPUTime()
+{
+    return 0.0f;
+}
+
+#pragma mark ImGUI
+
+bool PVOpenGLHostDisplay::CreateImGuiContext()
+{
+    return true;
+}
+
+void PVOpenGLHostDisplay::DestroyImGuiContext()
+{
+
+}
+
+bool PVOpenGLHostDisplay::UpdateImGuiFontTexture()
+{
+    return true;
 }
 
 #pragma mark -
 
 ContextGL::ContextGL(const WindowInfo& wi) : Context(wi)
 {
-//	m_opengl_module_handle = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_NOW);
-//	if (!m_opengl_module_handle) {
-//		os_log_fault(OE_CORE_LOG, "Could not open OpenGL.framework, function lookups will probably fail");
-//	}
+    m_opengl_module_handle = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_NOW);
+    if (!m_opengl_module_handle) {
+        os_log_fault(OE_CORE_LOG, "Could not open OpenGL.framework, function lookups will probably fail");
+    }
 }
 
 ContextGL::~ContextGL() = default;
 
 std::unique_ptr<GL::Context> ContextGL::Create(const WindowInfo& wi, const Version* versions_to_try,
-											   size_t num_versions_to_try)
+                                               size_t num_versions_to_try)
 {
-	std::unique_ptr<ContextGL> context = std::make_unique<ContextGL>(wi);
-	return context;
+    std::unique_ptr<ContextGL> context = std::make_unique<ContextGL>(wi);
+    return context;
 }
 
 void* ContextGL::GetProcAddress(const char* name)
 {
-//	void* addr = m_opengl_module_handle ? dlsym(m_opengl_module_handle, name) : nullptr;
-//	if (addr) {
-//		return addr;
-//	}
-//
-//	return dlsym(RTLD_NEXT, name);
-    void* addr = dlsym(RTLD_DEFAULT, name);
-    if (addr)
-      return addr;
+    void* addr = m_opengl_module_handle ? dlsym(m_opengl_module_handle, name) : nullptr;
+    if (addr) {
+        return addr;
+    }
 
     return dlsym(RTLD_NEXT, name);
 }
 
 bool ContextGL::ChangeSurface(const WindowInfo& new_wi)
 {
-	return true;
+    return true;
 }
 
 void ContextGL::ResizeSurface(u32 new_surface_width /*= 0*/, u32 new_surface_height /*= 0*/)
 {
-	UpdateDimensions();
+    UpdateDimensions();
 }
 
 bool ContextGL::UpdateDimensions()
 {
-	return true;
+    return true;
 }
-
+#define TEST_SEMAPHORES 1
 bool ContextGL::SwapBuffers()
 {
-	return true;
+    GET_CURRENT_OR_RETURN(false);
+    if(_current.isDoubleBuffered) {
+        [_current swapBuffers];
+    }
+    return true;
 }
 
 bool ContextGL::MakeCurrent()
 {
-	return true;
+#if TEST_SEMAPHORES
+    GET_CURRENT_OR_RETURN(false);
+    return dispatch_semaphore_signal(current->coreWaitToEndFrameSemaphore);
+#else
+    return true;
+#endif
 }
 
 bool ContextGL::DoneCurrent()
 {
-	return true;
+#if TEST_SEMAPHORES
+    GET_CURRENT_OR_RETURN(false);
+    float frameTime = 1.0/[current frameInterval];
+    dispatch_time_t killTime = dispatch_time(DISPATCH_TIME_NOW, frameTime * NSEC_PER_SEC);
+
+    return dispatch_semaphore_wait(current->mupenWaitToBeginFrameSemaphore, killTime);
+#else
+    return true;
+#endif
+}
+
+bool ContextGL::IsCurrent()
+{
+    return true;
 }
 
 bool ContextGL::SetSwapInterval(s32 interval)
 {
-	return true;
+    return true;
 }
 
 std::unique_ptr<GL::Context> ContextGL::CreateSharedContext(const WindowInfo& wi)
 {
-	std::unique_ptr<ContextGL> context = std::make_unique<ContextGL>(wi);
-	
-	return context;
+    std::unique_ptr<ContextGL> context = std::make_unique<ContextGL>(wi);
+
+    return context;
 }

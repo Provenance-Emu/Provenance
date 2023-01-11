@@ -518,6 +518,10 @@
 		B36B853829599AA800FDEA29 /* PVSnesticle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B36B84D529598F6600FDEA29 /* PVSnesticle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36C40FC2898773100EAEF59 /* Moveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D30B427BCD82B00C01114 /* Moveable.swift */; };
 		B36C410B28987A5000EAEF59 /* SettingsOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38D02332884D03A008FBED8 /* SettingsOptionRow.swift */; };
+		B36C50D8296F4D0900921F85 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B306E1412769FE65001DC52E /* PVO2EM.framework */; };
+		B36C50D9296F4D0900921F85 /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B306E1412769FE65001DC52E /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B36C50DA296F4D1200921F85 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B306E1412769FE65001DC52E /* PVO2EM.framework */; };
+		B36C50DB296F4D1200921F85 /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B306E1412769FE65001DC52E /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -936,6 +940,7 @@
 				B3FAC9B3292B4783005E8B11 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3FAC991292B4766005E8B11 /* PVGB.framework in Embed Frameworks */,
 				B3AF701D21916E38000FA7F9 /* PVSupport.framework in Embed Frameworks */,
+				B36C50DB296F4D1200921F85 /* PVO2EM.framework in Embed Frameworks */,
 				B3FAC9B5292B4784005E8B11 /* PVSNES.framework in Embed Frameworks */,
 				B3FAC9A7292B477A005E8B11 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B3AEDE2C293F34CB0050BDB6 /* PVPicoDrive.framework in Embed Frameworks */,
@@ -1003,6 +1008,7 @@
 				B3FAC956292B45B7005E8B11 /* PVTGBDual.framework in Embed Frameworks */,
 				B3AEDE26293F34760050BDB6 /* PVProSystem.framework in Embed Frameworks */,
 				B36B852E29599A3700FDEA29 /* PVMelonDS.framework in Embed Frameworks */,
+				B36C50D9296F4D0900921F85 /* PVO2EM.framework in Embed Frameworks */,
 				B36B853629599A9700FDEA29 /* PVOpera.framework in Embed Frameworks */,
 				B37CE7C2293F287D0010B746 /* PVFreeIntv.framework in Embed Frameworks */,
 				B37CE7C9293F29AD0010B746 /* PVFreeDO.framework in Embed Frameworks */,
@@ -1882,6 +1888,7 @@
 				1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */,
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
 				B3FAC94F292B45A6005E8B11 /* PVRSPCXD4.framework in Frameworks */,
+				B36C50D8296F4D0900921F85 /* PVO2EM.framework in Frameworks */,
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
 				B3FAC94D292B45A3005E8B11 /* PVPotator.framework in Frameworks */,
 				936FDBEB295855670073628A /* libMoltenVK_Play.dylib in Frameworks */,
@@ -1989,6 +1996,7 @@
 				B3FAC9B0292B4781005E8B11 /* PVPotator.framework in Frameworks */,
 				B3AF70662191733D000FA7F9 /* GameController.framework in Frameworks */,
 				1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */,
+				B36C50DA296F4D1200921F85 /* PVO2EM.framework in Frameworks */,
 				B3FAC984292B475E005E8B11 /* PVAtari800.framework in Frameworks */,
 				B3FAC9AA292B477D005E8B11 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 			);

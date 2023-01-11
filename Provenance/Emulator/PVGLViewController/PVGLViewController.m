@@ -1103,7 +1103,19 @@ PV_OBJC_DIRECT_MEMBERS
 //    glBindFramebuffer(GL_FRAMEBUFFER, alternateThreadFramebufferBack);
 }
 
+- (id) presentationFramebuffer {
+    GLuint bufferID = self.emulatorCore.isDoubleBuffered ? alternateThreadFramebufferBack : alternateThreadFramebufferFront;
+    return [NSNumber numberWithInt:bufferID];
+}
+
+
 #else
+
+- (id) presentationFramebuffer {
+    GLuint bufferID = self.emulatorCore.isDoubleBuffered ? alternateThreadFramebufferBack : alternateThreadFramebufferFront;
+    return [NSNumber numberWithInt:bufferID];
+}
+
 - (void)startRenderingOnAlternateThread
 {
     self.emulatorCore.glesVersion = self.glesVersion;

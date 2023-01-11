@@ -83,12 +83,12 @@ extension PVPlayCore: GameWithCheat {
         }
     }
 
-    public func supportsCheatCode() -> Bool
+    public var supportsCheatCode: Bool
     {
         return true
     }
 
-    public func cheatCodeTypes() -> NSArray {
+    public var cheatCodeTypes: [String] {
         return [
             "Code Breaker",
             "Game Shark V3",

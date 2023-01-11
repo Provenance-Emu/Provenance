@@ -16,11 +16,11 @@ import Foundation
 //            return false
 //        }
 //        
-//        public func cheatCodeTypes() -> NSArray {
+//        public var cheatCodeTypes: [String] {
 //            ["Game Genie", "Pro Action Replay"]
 //        }
 //        
-//        public func supportsCheatCode() -> Bool
+//        public var supportsCheatCode: Bool
 //        {
 //            return true
 //        }
