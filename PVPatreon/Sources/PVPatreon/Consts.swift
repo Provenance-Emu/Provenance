@@ -33,4 +33,12 @@ internal enum Const {
     static internal let keychainService: String = {
         bundle.infoDictionary!["KEYCHAIN_SERIVCE"] as! String
     }()
+    
+    internal enum Patreon {
+        internal enum Provenance {
+            static internal let clientID = "nSNDsv4K_SHF_kLfNgjTi52cU2bTuwunxu9g6j61WtQxoaGEHy1aNAZydM4VcMiz"
+            static internal let clientSecret = "QkHx9MirO0QYvVcJzrsoRU5IO9qusihvbwaXVQRlUohnS631CQKunSkDDVAnJbkZ"
+            static internal let campaignID = "2198356"
+        }
+    }
 }

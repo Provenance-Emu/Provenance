@@ -8,15 +8,14 @@
 
 import CoreData
 
-@available(iOS 12.0, tvOS 12.0, *)
-extension PatreonAPI
-{
-    struct AccountResponse: Decodable
-    {
-        struct Data: Decodable
-        {
-            struct Attributes: Decodable
-            {
+extension PatreonAPI {
+    struct AccountResponse: Codable, Equatable, Hashable {
+        static func == (lhs: PatreonAPI.AccountResponse, rhs: PatreonAPI.AccountResponse) -> Bool {
+            return lhs.data.id == rhs.data.id
+        }
+        
+        struct Data: Codable, Equatable, Hashable {
+            struct Attributes:  Codable, Equatable, Hashable {
                 var first_name: String?
                 var full_name: String
             }
@@ -30,9 +29,8 @@ extension PatreonAPI
     }
 }
 
-@available(iOS 12.0, tvOS 12.0, *)
-public struct PatreonAccount: Codable
-{
+
+public struct PatreonAccount: Identifiable, Codable, Equatable, Hashable {
     public let identifier: String
     
 	public let name: String

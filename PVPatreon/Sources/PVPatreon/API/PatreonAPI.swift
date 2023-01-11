@@ -8,18 +8,14 @@
 
 import Foundation
 import AuthenticationServices
-import CoreData
+import PVLogging
 
-private let clientID = "nSNDsv4K_SHF_kLfNgjTi52cU2bTuwunxu9g6j61WtQxoaGEHy1aNAZydM4VcMiz"
-private let clientSecret = "QkHx9MirO0QYvVcJzrsoRU5IO9qusihvbwaXVQRlUohnS631CQKunSkDDVAnJbkZ"
+private let clientID = Const.Patreon.Provenance.clientID
+private let clientSecret = Const.Patreon.Provenance.clientSecret
+private let campaignID = Const.Patreon.Provenance.campaignID
 
-private let campaignID = "2198356"
-
-@available(iOS 12.0, tvOS 12.0, *)
-extension PatreonAPI
-{
-    enum Error: LocalizedError
-    {
+extension PatreonAPI {
+    enum Error: LocalizedError {
         case unknown
         case notAuthenticated
         case invalidAccessToken
@@ -34,25 +30,21 @@ extension PatreonAPI
         }
     }
     
-    enum AuthorizationType
-    {
+    enum AuthorizationType {
         case none
         case user
         case creator
     }
     
-    enum AnyResponse: Decodable
-    {
+    enum AnyResponse: Decodable {
         case tier(TierResponse)
         case benefit(BenefitResponse)
         
-        enum CodingKeys: String, CodingKey
-        {
+        enum CodingKeys: String, CodingKey {
             case type
         }
         
-        init(from decoder: Decoder) throws
-        {
+        init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             
             let type = try container.decode(String.self, forKey: .type)
@@ -72,13 +64,12 @@ extension PatreonAPI
     }
 }
 
-@available(iOS 12.0, tvOS 12.0, *)
-public class PatreonAPI: NSObject
-{
-    public static let shared = PatreonAPI()
+public class PatreonAPI: NSObject {
+    public static let shared = PatreonAPI(dataManager: Keychain.shared)
+    public let dataManager: PatreonDataManager
     
     public var isAuthenticated: Bool {
-        return Keychain.shared.patreonAccessToken != nil
+        return dataManager.patreonAccessToken != nil
     }
     
     private var authenticationSession: ASWebAuthenticationSession?
@@ -86,72 +77,61 @@ public class PatreonAPI: NSObject
     private let session = URLSession(configuration: .ephemeral)
     private let baseURL = URL(string: "https://www.patreon.com/")!
     
-    private override init()
-    {
+    required init(dataManager: PatreonDataManager) {
+        self.dataManager = dataManager
         super.init()
     }
 }
 
-@available(iOS 12.0, tvOS 12.0, *)
-public extension PatreonAPI
-{
-    func authenticate(completion: @escaping (Result<PatreonAccount, Swift.Error>) -> Void)
-    {
+public extension PatreonAPI {
+    func authenticate(completion: @escaping (Result<PatreonAccount, Swift.Error>) -> Void) {
         var components = URLComponents(string: "/oauth2/authorize")!
         components.queryItems = [URLQueryItem(name: "response_type", value: "code"),
                                  URLQueryItem(name: "client_id", value: clientID),
                                  URLQueryItem(name: "redirect_uri", value: "https://rileytestut.com/patreon/altstore")]
-        
+
         let requestURL = components.url(relativeTo: self.baseURL)!
-        
+
         self.authenticationSession = ASWebAuthenticationSession(url: requestURL, callbackURLScheme: "altstore") { (callbackURL, error) in
-            do
-            {
+            do {
                 let callbackURL = try Result(callbackURL, error).get()
-                
+
                 guard
                     let components = URLComponents(url: callbackURL, resolvingAgainstBaseURL: false),
                     let codeQueryItem = components.queryItems?.first(where: { $0.name == "code" }),
                     let code = codeQueryItem.value
                 else { throw Error.unknown }
-                
+
                 self.fetchAccessToken(oauthCode: code) { (result) in
-                    switch result
-                    {
+                    switch result {
                     case .failure(let error): completion(.failure(error))
                     case .success((let accessToken, let refreshToken)):
-                        Keychain.shared.patreonAccessToken = accessToken
-                        Keychain.shared.patreonRefreshToken = refreshToken
-                        
+                        self.dataManager.patreonAccessToken = accessToken
+                        self.dataManager.patreonRefreshToken = refreshToken
+
                         self.fetchAccount { (result) in
-                            switch result
-                            {
-                            case .success(let account): Keychain.shared.patreonAccountID = account.identifier
-                            case .failure: break
+                            switch result {
+                            case .success(let account):
+                                self.dataManager.patreonAccountID = account.identifier
+                            case .failure:
+                                break
                             }
-                            
+
                             completion(result)
                         }
-                        
                     }
                 }
-            }
-            catch
-            {
+            } catch {
                 completion(.failure(error))
             }
         }
-        
-        if #available(iOS 13.0, *)
-        {
-            self.authenticationSession?.presentationContextProvider = self
-        }
-        
+
+        self.authenticationSession?.presentationContextProvider = self
+
         self.authenticationSession?.start()
     }
     
-    func fetchAccount(completion: @escaping (Result<PatreonAccount, Swift.Error>) -> Void)
-    {
+    func fetchAccount(completion: @escaping (Result<PatreonAccount, Swift.Error>) -> Void) {
         var components = URLComponents(string: "/api/oauth2/v2/identity")!
         components.queryItems = [URLQueryItem(name: "include", value: "memberships"),
                                  URLQueryItem(name: "fields[user]", value: "first_name,full_name"),
@@ -161,8 +141,7 @@ public extension PatreonAPI
         let request = URLRequest(url: requestURL)
         
         self.send(request, authorizationType: .user) { (result: Result<AccountResponse, Swift.Error>) in
-            switch result
-            {
+            switch result {
             case .failure(Error.notAuthenticated):
                 self.signOut() { (result) in
                     completion(.failure(Error.notAuthenticated))
@@ -170,16 +149,13 @@ public extension PatreonAPI
                 
             case .failure(let error): completion(.failure(error))
             case .success(let response):
-                DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
-                    let account = PatreonAccount(response: response, context: context)
+                    let account = PatreonAccount(response: response)
                     completion(.success(account))
-                }
             }
         }
     }
     
-    func fetchPatrons(completion: @escaping (Result<[Patron], Swift.Error>) -> Void)
-    {
+    func fetchPatrons(completion: @escaping (Result<[Patron], Swift.Error>) -> Void) {
         var components = URLComponents(string: "/api/oauth2/v2/campaigns/\(campaignID)/members")!
         components.queryItems = [URLQueryItem(name: "include", value: "currently_entitled_tiers,currently_entitled_tiers.benefits"),
                                  URLQueryItem(name: "fields[tier]", value: "title"),
@@ -188,8 +164,7 @@ public extension PatreonAPI
         
         let requestURL = components.url(relativeTo: self.baseURL)!
         
-        struct Response: Decodable
-        {
+        struct Response: Decodable {
             var data: [PatronResponse]
             var included: [AnyResponse]
             var links: [String: URL]?
@@ -197,18 +172,15 @@ public extension PatreonAPI
         
         var allPatrons = [Patron]()
         
-        func fetchPatrons(url: URL)
-        {
+        func fetchPatrons(url: URL) {
             let request = URLRequest(url: url)
             
             self.send(request, authorizationType: .creator) { (result: Result<Response, Swift.Error>) in
-                switch result
-                {
+                switch result {
                 case .failure(let error): completion(.failure(error))
                 case .success(let response):
                     let tiers = response.included.compactMap { (response) -> Tier? in
-                        switch response
-                        {
+                        switch response {
                         case .tier(let tierResponse): return Tier(response: tierResponse)
                         case .benefit: return nil
                         }
@@ -219,8 +191,7 @@ public extension PatreonAPI
                     let patrons = response.data.map { (response) -> Patron in
                         let patron = Patron(response: response)
                         
-                        for tierID in response.relationships?.currently_entitled_tiers.data ?? []
-                        {
+                        for tierID in response.relationships?.currently_entitled_tiers.data ?? [] {
                             guard let tier = tiersByIdentifier[tierID.id] else { continue }
                             patron.benefits.formUnion(tier.benefits)
                         }
@@ -230,12 +201,9 @@ public extension PatreonAPI
                     
                     allPatrons.append(contentsOf: patrons)
                     
-                    if let nextURL = response.links?["next"]
-                    {
+                    if let nextURL = response.links?["next"] {
                         fetchPatrons(url: nextURL)
-                    }
-                    else
-                    {
+                    } else {
                         completion(.success(allPatrons))
                     }
                 }
@@ -245,62 +213,42 @@ public extension PatreonAPI
         fetchPatrons(url: requestURL)
     }
     
-    func signOut(completion: @escaping (Result<Void, Swift.Error>) -> Void)
-    {
-        DatabaseManager.shared.persistentContainer.performBackgroundTask { (context) in
-            do
-            {
-                if let account = DatabaseManager.shared.patreonAccount(in: context) {
-                    context.delete(account)
-                }
-                
-                self.deactivateBetaApps(in: context)
-                
-                try context.save()
-                
-                Keychain.shared.patreonAccessToken = nil
-                Keychain.shared.patreonRefreshToken = nil
-                Keychain.shared.patreonAccountID = nil
-                
-                completion(.success(()))
-            }
-            catch
-            {
-                completion(.failure(error))
-            }
+    func signOut(completion: @escaping (Result<Void, Swift.Error>) -> Void) {
+        if let account = DatabaseManager.shared.patreonAccount() {
+            // TODO: This
+//                    context.delete(account)
         }
+        
+//                try context.save()
+        
+        dataManager.patreonAccessToken = nil
+        dataManager.patreonRefreshToken = nil
+        dataManager.patreonAccountID = nil
+        
+        completion(.success(()))
     }
     
-    func refreshPatreonAccount()
-    {
+    func refreshPatreonAccount() {
         guard PatreonAPI.shared.isAuthenticated else { return }
         
         PatreonAPI.shared.fetchAccount { (result: Result<PatreonAccount, Swift.Error>) in
-            do
-            {
+            do {
                 let account = try result.get()
                 
-                if let context = account.managedObjectContext, !account.isPatron
-                {
-                    // Deactivate all beta apps now that we're no longer a patron.
-                    self.deactivateBetaApps(in: context)
+                if !account.isPatron {
+                    // TODO: Disable beta features, call to delegate?
                 }
                 
-                try account.managedObjectContext?.save()
-            }
-            catch
-            {
-                print("Failed to fetch Patreon account.", error)
+                // TODO: Save / update PatreonAccount
+            } catch {
+                ELOG("Failed to fetch Patreon account. \(error)")
             }
         }
     }
 }
 
-@available(iOS 12.0, tvOS 12.0, *)
-private extension PatreonAPI
-{
-    func fetchAccessToken(oauthCode: String, completion: @escaping (Result<(String, String), Swift.Error>) -> Void)
-    {
+private extension PatreonAPI {
+    func fetchAccessToken(oauthCode: String, completion: @escaping (Result<(String, String), Swift.Error>) -> Void) {
         let encodedRedirectURI = ("https://provenance-emu.com/patreon_redirect" as NSString).addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
         let encodedOauthCode = (oauthCode as NSString).addingPercentEncoding(withAllowedCharacters: .alphanumerics)!
         
@@ -313,24 +261,21 @@ private extension PatreonAPI
         request.httpBody = body.data(using: .utf8)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
-        struct Response: Decodable
-        {
+        struct Response: Decodable {
             var access_token: String
             var refresh_token: String
         }
         
         self.send(request, authorizationType: .none) { (result: Result<Response, Swift.Error>) in
-            switch result
-            {
+            switch result {
             case .failure(let error): completion(.failure(error))
             case .success(let response): completion(.success((response.access_token, response.refresh_token)))
             }
         }
     }
     
-    func refreshAccessToken(completion: @escaping (Result<Void, Swift.Error>) -> Void)
-    {
-        guard let refreshToken = Keychain.shared.patreonRefreshToken else { return }
+    func refreshAccessToken(completion: @escaping (Result<Void, Swift.Error>) -> Void) {
+        guard let refreshToken = dataManager.patreonRefreshToken else { return }
         
         var components = URLComponents(string: "/api/oauth2/token")!
         components.queryItems = [URLQueryItem(name: "grant_type", value: "refresh_token"),
@@ -354,37 +299,34 @@ private extension PatreonAPI
             {
             case .failure(let error): completion(.failure(error))
             case .success(let response):
-                Keychain.shared.patreonAccessToken = response.access_token
-                Keychain.shared.patreonRefreshToken = response.refresh_token
+                self.dataManager.patreonAccessToken = response.access_token
+                self.dataManager.patreonRefreshToken = response.refresh_token
                 
                 completion(.success(()))
             }
         }
     }
     
-    func send<ResponseType: Decodable>(_ request: URLRequest, authorizationType: AuthorizationType, completion: @escaping (Result<ResponseType, Swift.Error>) -> Void)
-    {
+    func send<ResponseType: Decodable>(_ request: URLRequest, authorizationType: AuthorizationType, completion: @escaping (Result<ResponseType, Swift.Error>) -> Void) {
         var request = request
         
         switch authorizationType
         {
         case .none: break
         case .creator:
-            guard let creatorAccessToken = Keychain.shared.patreonCreatorAccessToken else { return completion(.failure(Error.invalidAccessToken)) }
+            guard let creatorAccessToken = dataManager.patreonCreatorAccessToken else { return completion(.failure(Error.invalidAccessToken)) }
             request.setValue("Bearer " + creatorAccessToken, forHTTPHeaderField: "Authorization")
             
         case .user:
-            guard let accessToken = Keychain.shared.patreonAccessToken else { return completion(.failure(Error.notAuthenticated)) }
+            guard let accessToken = dataManager.patreonAccessToken else { return completion(.failure(Error.notAuthenticated)) }
             request.setValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
         }
         
         let task = self.session.dataTask(with: request) { (data, response, error) in
-            do
-            {
+            do {
                 let data = try Result(data, error).get()
                 
-                if let response = response as? HTTPURLResponse, response.statusCode == 401
-                {
+                if let response = response as? HTTPURLResponse, response.statusCode == 401 {
                     switch authorizationType
                     {
                     case .creator: completion(.failure(Error.invalidAccessToken))
@@ -405,30 +347,10 @@ private extension PatreonAPI
                 let response = try JSONDecoder().decode(ResponseType.self, from: data)
                 completion(.success(response))
             }
-            catch let error
-            {
+            catch let error {
                 completion(.failure(error))
             }
         }
-        
         task.resume()
-    }
-    
-    func deactivateBetaApps(in context: NSManagedObjectContext)
-    {
-        let predicate = NSPredicate(format: "%K != %@ AND %K != nil AND %K == YES",
-                                    #keyPath(InstalledApp.bundleIdentifier), StoreApp.altstoreAppID, #keyPath(InstalledApp.storeApp), #keyPath(InstalledApp.storeApp.isBeta))
-        
-        let installedApps = InstalledApp.all(satisfying: predicate, in: context)
-        installedApps.forEach { $0.isActive = false }
-    }
-}
-
-@available(iOS 13.0, *)
-extension PatreonAPI: ASWebAuthenticationPresentationContextProviding
-{
-    public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor
-    {
-        return UIApplication.shared.keyWindow ?? UIWindow()
     }
 }

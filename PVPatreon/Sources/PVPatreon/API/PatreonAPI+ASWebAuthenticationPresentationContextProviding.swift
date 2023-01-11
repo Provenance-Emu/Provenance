@@ -10,11 +10,8 @@ import Foundation
 #if canImport(AuthenticationServices)
 import AuthenticationServices
 
-@available(tvOS 16.0, *)
-extension PatreonAPI: ASWebAuthenticationPresentationContextProviding
-{
-    public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor
-    {
+extension PatreonAPI: ASWebAuthenticationPresentationContextProviding {
+    public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
         return UIApplication.shared.keyWindow ?? UIWindow()
     }
 }
