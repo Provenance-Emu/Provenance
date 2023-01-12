@@ -120,8 +120,7 @@ PVOpenGLHostDisplay::~PVOpenGLHostDisplay()
 RenderAPI PVOpenGLHostDisplay::GetRenderAPI() const
 {
     GET_CURRENT_OR_RETURN(RenderAPI::OpenGLES);
-    return current.sb
-    return RenderAPI::OpenGLES;
+    return current.gs == 0 ? RenderAPI::OpenGLES : RenderAPI::Vulkan;
 }
 
 void* PVOpenGLHostDisplay::GetDevice() const

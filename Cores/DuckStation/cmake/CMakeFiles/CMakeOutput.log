@@ -850,3 +850,855 @@ Apple clang version 14.0.0 (clang-1400.0.29.202)
 Target: arm64-apple-darwin22.2.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+The target system is: iOS - 16.2 - aarch64
+The host system is: Darwin - 22.2.0 - arm64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild
+
+User defaults from command line:
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: 419357c7c963804becfb3e438e743d20
+Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/./XCBuildData/419357c7c963804becfb3e438e743d20-desc.xcbuild
+
+warning: Building targets in manual order is deprecated - check "Parallelize build for command-line builds" in the project editor, or set DISABLE_MANUAL_TARGET_ORDER_BUILD_WARNING in any of the targets in the current build to suppress this warning
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/EagerLinkingTBDs
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/EagerLinkingTBDs
+
+warning: Traditional headermap style is no longer supported; please migrate to using separate headermaps and set 'ALWAYS_SEARCH_USER_PATHS' to NO. (in target 'CompilerIdC' from project 'CompilerIdC')
+note: Run script build phase 'Run Script' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'CompilerIdC' from project 'CompilerIdC')
+MkDir /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    /bin/mkdir -p /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-project-headers.hmap (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-project-headers.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/all-product-headers.yaml (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/all-product-headers.yaml
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC.hmap (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-generated-files.hmap (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-generated-files.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-own-target-headers.hmap (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-all-target-headers.hmap (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-all-non-framework-target-headers.hmap (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-all-non-framework-target-headers.hmap
+
+CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Objects-normal/arm64/CMakeCCompilerId.o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CMakeCCompilerId.c normal arm64 c com.apple.compilers.llvm.clang.1_0.compiler (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c -target arm64-apple-ios16.2 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-implicit-fallthrough -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-semicolon-before-method-body -iquote /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-generated-files.hmap -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-own-target-headers.hmap -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-all-target-headers.hmap -iquote /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/CompilerIdC-project-headers.hmap -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/Developer/Library/Frameworks -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Objects-normal/arm64/CMakeCCompilerId.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Objects-normal/arm64/CMakeCCompilerId.dia -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CMakeCCompilerId.c -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Objects-normal/arm64/CMakeCCompilerId.o
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/empty-CompilerIdC.plist (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/empty-CompilerIdC.plist
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Objects-normal/arm64/CompilerIdC.LinkFileList (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Objects-normal/arm64/CompilerIdC.LinkFileList
+
+ProcessInfoPlistFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest/Info.plist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/empty-CompilerIdC.plist (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    builtin-infoPlistUtility /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/empty-CompilerIdC.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest/Info.plist
+
+Ld /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest/CompilerIdC normal (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -target arm64-apple-ios16.2 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/EagerLinkingTBDs -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/EagerLinkingTBDs -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/Developer/Library/Frameworks -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Objects-normal/arm64/CompilerIdC.LinkFileList -Xlinker -rpath -Xlinker @loader_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Objects-normal/arm64/CompilerIdC_lto.o -framework XCTest -Xlinker -dependency_info -Xlinker /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Objects-normal/arm64/CompilerIdC_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest/CompilerIdC
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Script-2C8FEB8E15DC1A1A00E56A5D.sh (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Script-2C8FEB8E15DC1A1A00E56A5D.sh
+
+GenerateDSYMFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest.dSYM /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest/CompilerIdC (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest/CompilerIdC -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest.dSYM
+
+PhaseScriptExecution Run\ Script /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Script-2C8FEB8E15DC1A1A00E56A5D.sh (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    /bin/sh -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.build/Debug-iphoneos/CompilerIdC.build/Script-2C8FEB8E15DC1A1A00E56A5D.sh
+GCC_VERSION=com.apple.compilers.llvm.clang.1_0
+ARCHS=arm64
+
+RegisterExecutionPolicyException /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    builtin-RegisterExecutionPolicyException /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest
+
+Touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest (in target 'CompilerIdC' from project 'CompilerIdC')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC
+    /usr/bin/touch -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest
+
+** BUILD SUCCEEDED **
+
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.xctest/CompilerIdC"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.xctest/Info.plist"
+
+The C compiler identification is AppleClang, found in "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdC/CompilerIdC.xctest/CompilerIdC"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild
+
+User defaults from command line:
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: 9f27f4c76954fb7b7f259c24e0f09c3b
+Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/./XCBuildData/9f27f4c76954fb7b7f259c24e0f09c3b-desc.xcbuild
+
+warning: Building targets in manual order is deprecated - check "Parallelize build for command-line builds" in the project editor, or set DISABLE_MANUAL_TARGET_ORDER_BUILD_WARNING in any of the targets in the current build to suppress this warning
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/EagerLinkingTBDs
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/EagerLinkingTBDs
+
+warning: Traditional headermap style is no longer supported; please migrate to using separate headermaps and set 'ALWAYS_SEARCH_USER_PATHS' to NO. (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+note: Run script build phase 'Run Script' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+MkDir /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    /bin/mkdir -p /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX.hmap (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/all-product-headers.yaml (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/all-product-headers.yaml
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-project-headers.hmap (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-project-headers.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-own-target-headers.hmap (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-all-target-headers.hmap (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-generated-files.hmap (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-generated-files.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-all-non-framework-target-headers.hmap (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Objects-normal/arm64/CompilerIdCXX.LinkFileList (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Objects-normal/arm64/CompilerIdCXX.LinkFileList
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/empty-CompilerIdCXX.plist (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/empty-CompilerIdCXX.plist
+
+CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Objects-normal/arm64/CMakeCXXCompilerId.o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CMakeCXXCompilerId.cpp normal arm64 c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -target arm64-apple-ios16.2 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -Os -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -g -fvisibility-inlines-hidden -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -Wno-semicolon-before-method-body -iquote /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-generated-files.hmap -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-own-target-headers.hmap -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-all-target-headers.hmap -iquote /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/CompilerIdCXX-project-headers.hmap -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/Developer/Library/Frameworks -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Objects-normal/arm64/CMakeCXXCompilerId.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Objects-normal/arm64/CMakeCXXCompilerId.dia -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CMakeCXXCompilerId.cpp -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Objects-normal/arm64/CMakeCXXCompilerId.o
+
+ProcessInfoPlistFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest/Info.plist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/empty-CompilerIdCXX.plist (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    builtin-infoPlistUtility /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/empty-CompilerIdCXX.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphoneos -requiredArchitecture arm64 -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest/Info.plist
+
+Ld /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest/CompilerIdCXX normal (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -target arm64-apple-ios16.2 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/EagerLinkingTBDs -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/EagerLinkingTBDs -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/Developer/Library/Frameworks -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Objects-normal/arm64/CompilerIdCXX.LinkFileList -Xlinker -rpath -Xlinker @loader_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Objects-normal/arm64/CompilerIdCXX_lto.o -framework XCTest -Xlinker -dependency_info -Xlinker /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Objects-normal/arm64/CompilerIdCXX_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest/CompilerIdCXX
+
+GenerateDSYMFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest.dSYM /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest/CompilerIdCXX (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/dsymutil /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest/CompilerIdCXX -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest.dSYM
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Script-2C8FEB8E15DC1A1A00E56A5D.sh (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Script-2C8FEB8E15DC1A1A00E56A5D.sh
+
+PhaseScriptExecution Run\ Script /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Script-2C8FEB8E15DC1A1A00E56A5D.sh (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    /bin/sh -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.build/Debug-iphoneos/CompilerIdCXX.build/Script-2C8FEB8E15DC1A1A00E56A5D.sh
+GCC_VERSION=com.apple.compilers.llvm.clang.1_0
+ARCHS=arm64
+
+RegisterExecutionPolicyException /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    builtin-RegisterExecutionPolicyException /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest
+
+Touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest (in target 'CompilerIdCXX' from project 'CompilerIdCXX')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX
+    /usr/bin/touch -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest
+
+** BUILD SUCCEEDED **
+
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.xctest/CompilerIdCXX"
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.xctest/Info.plist"
+
+The CXX compiler identification is AppleClang, found in "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/3.25.1/CompilerIdCXX/CompilerIdCXX.xctest/CompilerIdCXX"
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t
+
+Run Build Command(s):/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_38ed9 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment && Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_38ed9 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment
+
+User defaults from command line:
+    HideShellScriptEnvironment = YES
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: 600a611c9db17b3da05afabf78416f11
+Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/XCBuildData/600a611c9db17b3da05afabf78416f11-desc.xcbuild
+
+note: Building targets in dependency order
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/EagerLinkingTBDs
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/EagerLinkingTBDs
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/cmTC_38ed9.LinkFileList (in target 'cmTC_38ed9' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/cmTC_38ed9.LinkFileList
+
+CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.o /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCCompilerABI.c normal arm64 c com.apple.compilers.llvm.clang.1_0.compiler (in target 'cmTC_38ed9' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c -target arm64-apple-ios13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-implicit-fallthrough -DCMAKE_INTDIR\=\"Debug-iphoneos\" -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-semicolon-before-method-body -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug -v -Wl,-v -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.dia -c /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCCompilerABI.c -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.o
+Apple clang version 14.0.0 (clang-1400.0.29.202)
+Target: arm64-apple-ios13.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+clang: warning: -Wl,-v: 'linker' input unused [-Wunused-command-line-argument]
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple arm64-apple-ios13.0.0 -Wundef-prefix=TARGET_OS_ -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -Werror=implicit-function-declaration -emit-obj -mrelax-all --mrelax-relocations -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model pic -pic-level 2 -mframe-pointer=non-leaf -fno-strict-return -fno-rounding-math -funwind-tables=2 -fobjc-msgsend-selector-stubs -target-sdk-version=16.2 -fvisibility-inlines-hidden-static-local-var -target-cpu apple-a7 -target-feature +fp-armv8 -target-feature +neon -target-feature +crypto -target-feature +zcm -target-feature +zcz -target-feature +sha2 -target-feature +aes -target-abi darwinpcs -fallow-half-arguments-and-returns -debug-info-kind=standalone -dwarf-version=4 -debugger-tuning=lldb -target-linker-version 820.1 -v -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0 -dependency-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.d -skip-unused-modulemap-deps -MT dependencies -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -D "CMAKE_INTDIR=\"Debug-iphoneos\"" -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug/include -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources-normal/arm64 -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources/arm64 -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug -internal-isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/local/include -internal-isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include -internal-externc-isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include -internal-externc-isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -O0 -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-implicit-fallthrough -Wdeprecated-declarations -Wno-sign-conversion -Wno-infinite-recursion -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-semicolon-before-method-body -Wno-reorder-init-list -Wno-implicit-int-float-conversion -Wno-c99-designator -Wno-final-dtor-non-final-class -Wno-extra-semi-stmt -Wno-misleading-indentation -Wno-quoted-include-in-framework-header -Wno-implicit-fallthrough -Wno-enum-enum-conversion -Wno-enum-float-conversion -Wno-elaborated-enum-base -Wno-reserved-identifier -Wno-gnu-folding-constant -Wno-cast-function-type -Wno-bitwise-instead-of-logical -fdebug-compilation-dir=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t -ferror-limit 19 -fmacro-backtrace-limit 0 -stack-protector 1 -fstack-check -mdarwin-stkchk-strong-link -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fpascal-strings -fmax-type-align=16 -fcommon -fdiagnostics-show-note-include-stack -serialize-diagnostic-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.dia -clang-vendor-feature=+messageToSelfInClassMethodIdReturnType -clang-vendor-feature=+disableInferNewAvailabilityFromInit -clang-vendor-feature=+disableNonDependentMemberExprInCurrentInstantiation -fno-odr-hash-protocols -clang-vendor-feature=+enableAggressiveVLAFolding -clang-vendor-feature=+revert09abecef7bbf -clang-vendor-feature=+thisNoAlignAttr -clang-vendor-feature=+thisNoNullAttr -mllvm -disable-aligned-alloc-awareness=1 -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.o -x c /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCCompilerABI.c
+clang -cc1 version 14.0.0 (clang-1400.0.29.202) default target arm64-apple-darwin22.2.0
+ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug/include"
+ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources-normal/arm64"
+ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources/arm64"
+ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/local/include"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/Library/Frameworks"
+#include "..." search starts here:
+#include <...> search starts here:
+ /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug (framework directory)
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+
+Libtool /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug/libcmTC_38ed9.a normal (in target 'cmTC_38ed9' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only arm64 -D -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/cmTC_38ed9.LinkFileList -dependency_info /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/cmTC_38ed9_libtool_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug/libcmTC_38ed9.a
+
+** BUILD SUCCEEDED **
+
+
+
+
+Parsed C implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include]
+    add: [/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include]
+    add: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include]
+  end of search list found
+  collapse include dir [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include] ==> [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include]
+  collapse include dir [/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include] ==> [/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include]
+  collapse include dir [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include] ==> [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include]
+  implicit include dirs: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include;/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include;/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include]
+
+
+Parsed C implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_38ed9 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment && Command line invocation:]
+  ignore line: [    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_38ed9 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment]
+  ignore line: []
+  ignore line: [User defaults from command line:]
+  ignore line: [    HideShellScriptEnvironment = YES]
+  ignore line: [    IDEPackageSupportUseBuiltinSCM = YES]
+  ignore line: []
+  ignore line: [Computing target dependency graph and provisioning inputs]
+  ignore line: []
+  ignore line: [Create build description]
+  ignore line: [Build description signature: 600a611c9db17b3da05afabf78416f11]
+  ignore line: [Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/XCBuildData/600a611c9db17b3da05afabf78416f11-desc.xcbuild]
+  ignore line: []
+  ignore line: [note: Building targets in dependency order]
+  ignore line: [CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/CMAKE_TRY_COMPILE.xcodeproj]
+  ignore line: [    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug]
+  ignore line: []
+  ignore line: [CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/CMAKE_TRY_COMPILE.xcodeproj]
+  ignore line: [    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build]
+  ignore line: []
+  ignore line: [CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/EagerLinkingTBDs]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/CMAKE_TRY_COMPILE.xcodeproj]
+  ignore line: [    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/EagerLinkingTBDs]
+  ignore line: []
+  ignore line: [WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/cmTC_38ed9.LinkFileList (in target 'cmTC_38ed9' from project 'CMAKE_TRY_COMPILE')]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t]
+  ignore line: [    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/cmTC_38ed9.LinkFileList]
+  ignore line: []
+  ignore line: [CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.o /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCCompilerABI.c normal arm64 c com.apple.compilers.llvm.clang.1_0.compiler (in target 'cmTC_38ed9' from project 'CMAKE_TRY_COMPILE')]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t]
+  ignore line: [    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c -target arm64-apple-ios13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-implicit-fallthrough -DCMAKE_INTDIR\=\"Debug-iphoneos\" -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-semicolon-before-method-body -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug -v -Wl -v -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.dia -c /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCCompilerABI.c -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.o]
+  ignore line: [Apple clang version 14.0.0 (clang-1400.0.29.202)]
+  ignore line: [Target: arm64-apple-ios13.0]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin]
+  ignore line: [clang: warning: -Wl -v: 'linker' input unused [-Wunused-command-line-argument]]
+  ignore line: [ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple arm64-apple-ios13.0.0 -Wundef-prefix=TARGET_OS_ -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -Werror=implicit-function-declaration -emit-obj -mrelax-all --mrelax-relocations -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCCompilerABI.c -mrelocation-model pic -pic-level 2 -mframe-pointer=non-leaf -fno-strict-return -fno-rounding-math -funwind-tables=2 -fobjc-msgsend-selector-stubs -target-sdk-version=16.2 -fvisibility-inlines-hidden-static-local-var -target-cpu apple-a7 -target-feature +fp-armv8 -target-feature +neon -target-feature +crypto -target-feature +zcm -target-feature +zcz -target-feature +sha2 -target-feature +aes -target-abi darwinpcs -fallow-half-arguments-and-returns -debug-info-kind=standalone -dwarf-version=4 -debugger-tuning=lldb -target-linker-version 820.1 -v -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0 -dependency-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.d -skip-unused-modulemap-deps -MT dependencies -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -D "CMAKE_INTDIR=\"Debug-iphoneos\"" -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug/include -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources-normal/arm64 -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources/arm64 -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug -internal-isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/local/include -internal-isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include -internal-externc-isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include -internal-externc-isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -O0 -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-implicit-fallthrough -Wdeprecated-declarations -Wno-sign-conversion -Wno-infinite-recursion -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-semicolon-before-method-body -Wno-reorder-init-list -Wno-implicit-int-float-conversion -Wno-c99-designator -Wno-final-dtor-non-final-class -Wno-extra-semi-stmt -Wno-misleading-indentation -Wno-quoted-include-in-framework-header -Wno-implicit-fallthrough -Wno-enum-enum-conversion -Wno-enum-float-conversion -Wno-elaborated-enum-base -Wno-reserved-identifier -Wno-gnu-folding-constant -Wno-cast-function-type -Wno-bitwise-instead-of-logical -fdebug-compilation-dir=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t -ferror-limit 19 -fmacro-backtrace-limit 0 -stack-protector 1 -fstack-check -mdarwin-stkchk-strong-link -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fpascal-strings -fmax-type-align=16 -fcommon -fdiagnostics-show-note-include-stack -serialize-diagnostic-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.dia -clang-vendor-feature=+messageToSelfInClassMethodIdReturnType -clang-vendor-feature=+disableInferNewAvailabilityFromInit -clang-vendor-feature=+disableNonDependentMemberExprInCurrentInstantiation -fno-odr-hash-protocols -clang-vendor-feature=+enableAggressiveVLAFolding -clang-vendor-feature=+revert09abecef7bbf -clang-vendor-feature=+thisNoAlignAttr -clang-vendor-feature=+thisNoNullAttr -mllvm -disable-aligned-alloc-awareness=1 -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/CMakeCCompilerABI.o -x c /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCCompilerABI.c]
+  ignore line: [clang -cc1 version 14.0.0 (clang-1400.0.29.202) default target arm64-apple-darwin22.2.0]
+  ignore line: [ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug/include"]
+  ignore line: [ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources-normal/arm64"]
+  ignore line: [ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources/arm64"]
+  ignore line: [ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/DerivedSources"]
+  ignore line: [ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/local/include"]
+  ignore line: [ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/Library/Frameworks"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug (framework directory)]
+  ignore line: [ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include]
+  ignore line: [ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include]
+  ignore line: [ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include]
+  ignore line: [ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/System/Library/Frameworks (framework directory)]
+  ignore line: [End of search list.]
+  ignore line: []
+  ignore line: [Libtool /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug/libcmTC_38ed9.a normal (in target 'cmTC_38ed9' from project 'CMAKE_TRY_COMPILE')]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t]
+  ignore line: [    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only arm64 -D -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/cmTC_38ed9.LinkFileList -dependency_info /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/build/cmTC_38ed9.build/Debug-iphoneos/Objects-normal/arm64/cmTC_38ed9_libtool_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-5W360t/Debug/libcmTC_38ed9.a]
+  ignore line: []
+  ignore line: [** BUILD SUCCEEDED **]
+  ignore line: []
+  ignore line: []
+  ignore line: []
+  implicit libs: []
+  implicit objs: []
+  implicit dirs: []
+  implicit fwks: []
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v
+
+Run Build Command(s):/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_b104a -parallelizeTargets -configuration Debug -hideShellScriptEnvironment && Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_b104a -parallelizeTargets -configuration Debug -hideShellScriptEnvironment
+
+User defaults from command line:
+    HideShellScriptEnvironment = YES
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: 680759fc25fe5b923fbab6e19d440d63
+Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/XCBuildData/680759fc25fe5b923fbab6e19d440d63-desc.xcbuild
+
+note: Building targets in dependency order
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/EagerLinkingTBDs
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/EagerLinkingTBDs
+
+CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.o /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCXXCompilerABI.cpp normal arm64 c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'cmTC_b104a' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -target arm64-apple-ios13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -DCMAKE_INTDIR\=\"Debug-iphoneos\" -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -Wno-semicolon-before-method-body -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug -v -Wl,-v -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.dia -c /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCXXCompilerABI.cpp -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.o
+Apple clang version 14.0.0 (clang-1400.0.29.202)
+Target: arm64-apple-ios13.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+clang: warning: -Wl,-v: 'linker' input unused [-Wunused-command-line-argument]
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple arm64-apple-ios13.0.0 -Wundef-prefix=TARGET_OS_ -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -Werror=implicit-function-declaration -emit-obj -mrelax-all --mrelax-relocations -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mframe-pointer=non-leaf -fno-strict-return -fno-rounding-math -funwind-tables=2 -fobjc-msgsend-selector-stubs -target-sdk-version=16.2 -fvisibility-inlines-hidden-static-local-var -target-cpu apple-a7 -target-feature +fp-armv8 -target-feature +neon -target-feature +crypto -target-feature +zcm -target-feature +zcz -target-feature +sha2 -target-feature +aes -target-abi darwinpcs -fallow-half-arguments-and-returns -debug-info-kind=standalone -dwarf-version=4 -debugger-tuning=lldb -target-linker-version 820.1 -v -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0 -dependency-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.d -skip-unused-modulemap-deps -MT dependencies -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -D "CMAKE_INTDIR=\"Debug-iphoneos\"" -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug/include -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources-normal/arm64 -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources/arm64 -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug -stdlib=libc++ -internal-isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include/c++/v1 -internal-isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/local/include -internal-isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include -internal-externc-isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include -internal-externc-isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -O0 -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -Wdeprecated-declarations -Winvalid-offsetof -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -Wno-semicolon-before-method-body -Wno-reorder-init-list -Wno-implicit-int-float-conversion -Wno-c99-designator -Wno-final-dtor-non-final-class -Wno-extra-semi-stmt -Wno-misleading-indentation -Wno-quoted-include-in-framework-header -Wno-implicit-fallthrough -Wno-enum-enum-conversion -Wno-enum-float-conversion -Wno-elaborated-enum-base -Wno-reserved-identifier -Wno-gnu-folding-constant -Wno-cast-function-type -Wno-bitwise-instead-of-logical -fdeprecated-macro -fdebug-compilation-dir=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v -ferror-limit 19 -fmacro-backtrace-limit 0 -stack-protector 1 -fstack-check -mdarwin-stkchk-strong-link -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fno-cxx-modules -fcxx-exceptions -fexceptions -fpascal-strings -fmax-type-align=16 -fcommon -fdiagnostics-show-note-include-stack -serialize-diagnostic-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.dia -clang-vendor-feature=+messageToSelfInClassMethodIdReturnType -clang-vendor-feature=+disableInferNewAvailabilityFromInit -clang-vendor-feature=+disableNonDependentMemberExprInCurrentInstantiation -fno-odr-hash-protocols -clang-vendor-feature=+enableAggressiveVLAFolding -clang-vendor-feature=+revert09abecef7bbf -clang-vendor-feature=+thisNoAlignAttr -clang-vendor-feature=+thisNoNullAttr -mllvm -disable-aligned-alloc-awareness=1 -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.o -x c++ /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+clang -cc1 version 14.0.0 (clang-1400.0.29.202) default target arm64-apple-darwin22.2.0
+ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug/include"
+ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources-normal/arm64"
+ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources/arm64"
+ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/local/include"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/Library/Frameworks"
+#include "..." search starts here:
+#include <...> search starts here:
+ /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug (framework directory)
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include/c++/v1
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/cmTC_b104a.LinkFileList (in target 'cmTC_b104a' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/cmTC_b104a.LinkFileList
+
+Libtool /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug/libcmTC_b104a.a normal (in target 'cmTC_b104a' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only arm64 -D -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/cmTC_b104a.LinkFileList -dependency_info /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/cmTC_b104a_libtool_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug/libcmTC_b104a.a
+
+** BUILD SUCCEEDED **
+
+
+
+
+Parsed CXX implicit include dir info from above output: rv=done
+  found start of include info
+  found start of implicit include info
+    add: [/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include/c++/v1]
+    add: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include]
+    add: [/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include]
+    add: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include]
+  end of search list found
+  collapse include dir [/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include/c++/v1] ==> [/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include/c++/v1]
+  collapse include dir [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include] ==> [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include]
+  collapse include dir [/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include] ==> [/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include]
+  collapse include dir [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include] ==> [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include]
+  implicit include dirs: [/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include/c++/v1;/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include;/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include;/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include]
+
+
+Parsed CXX implicit link information from above output:
+  link line regex: [^( *|.*[/\])(ld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\]+-)?ld|collect2)[^/\]*( |$)]
+  ignore line: [Change Dir: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v]
+  ignore line: []
+  ignore line: [Run Build Command(s):/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_b104a -parallelizeTargets -configuration Debug -hideShellScriptEnvironment && Command line invocation:]
+  ignore line: [    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_b104a -parallelizeTargets -configuration Debug -hideShellScriptEnvironment]
+  ignore line: []
+  ignore line: [User defaults from command line:]
+  ignore line: [    HideShellScriptEnvironment = YES]
+  ignore line: [    IDEPackageSupportUseBuiltinSCM = YES]
+  ignore line: []
+  ignore line: [Computing target dependency graph and provisioning inputs]
+  ignore line: []
+  ignore line: [Create build description]
+  ignore line: [Build description signature: 680759fc25fe5b923fbab6e19d440d63]
+  ignore line: [Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/XCBuildData/680759fc25fe5b923fbab6e19d440d63-desc.xcbuild]
+  ignore line: []
+  ignore line: [note: Building targets in dependency order]
+  ignore line: [CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/CMAKE_TRY_COMPILE.xcodeproj]
+  ignore line: [    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build]
+  ignore line: []
+  ignore line: [CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/CMAKE_TRY_COMPILE.xcodeproj]
+  ignore line: [    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug]
+  ignore line: []
+  ignore line: [CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/EagerLinkingTBDs]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/CMAKE_TRY_COMPILE.xcodeproj]
+  ignore line: [    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/EagerLinkingTBDs]
+  ignore line: []
+  ignore line: [CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.o /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCXXCompilerABI.cpp normal arm64 c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'cmTC_b104a' from project 'CMAKE_TRY_COMPILE')]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v]
+  ignore line: [    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -target arm64-apple-ios13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -DCMAKE_INTDIR\=\"Debug-iphoneos\" -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -Wno-semicolon-before-method-body -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug -v -Wl -v -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.dia -c /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCXXCompilerABI.cpp -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.o]
+  ignore line: [Apple clang version 14.0.0 (clang-1400.0.29.202)]
+  ignore line: [Target: arm64-apple-ios13.0]
+  ignore line: [Thread model: posix]
+  ignore line: [InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin]
+  ignore line: [clang: warning: -Wl -v: 'linker' input unused [-Wunused-command-line-argument]]
+  ignore line: [ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple arm64-apple-ios13.0.0 -Wundef-prefix=TARGET_OS_ -Wdeprecated-objc-isa-usage -Werror=deprecated-objc-isa-usage -Werror=implicit-function-declaration -emit-obj -mrelax-all --mrelax-relocations -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model pic -pic-level 2 -mframe-pointer=non-leaf -fno-strict-return -fno-rounding-math -funwind-tables=2 -fobjc-msgsend-selector-stubs -target-sdk-version=16.2 -fvisibility-inlines-hidden-static-local-var -target-cpu apple-a7 -target-feature +fp-armv8 -target-feature +neon -target-feature +crypto -target-feature +zcm -target-feature +zcz -target-feature +sha2 -target-feature +aes -target-abi darwinpcs -fallow-half-arguments-and-returns -debug-info-kind=standalone -dwarf-version=4 -debugger-tuning=lldb -target-linker-version 820.1 -v -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0 -dependency-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.d -skip-unused-modulemap-deps -MT dependencies -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -D "CMAKE_INTDIR=\"Debug-iphoneos\"" -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug/include -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources-normal/arm64 -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources/arm64 -I /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug -stdlib=libc++ -internal-isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include/c++/v1 -internal-isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/local/include -internal-isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include -internal-externc-isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include -internal-externc-isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -O0 -Wno-trigraphs -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -Wdeprecated-declarations -Winvalid-offsetof -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -Wno-semicolon-before-method-body -Wno-reorder-init-list -Wno-implicit-int-float-conversion -Wno-c99-designator -Wno-final-dtor-non-final-class -Wno-extra-semi-stmt -Wno-misleading-indentation -Wno-quoted-include-in-framework-header -Wno-implicit-fallthrough -Wno-enum-enum-conversion -Wno-enum-float-conversion -Wno-elaborated-enum-base -Wno-reserved-identifier -Wno-gnu-folding-constant -Wno-cast-function-type -Wno-bitwise-instead-of-logical -fdeprecated-macro -fdebug-compilation-dir=/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v -ferror-limit 19 -fmacro-backtrace-limit 0 -stack-protector 1 -fstack-check -mdarwin-stkchk-strong-link -fblocks -fencode-extended-block-signature -fregister-global-dtors-with-atexit -fgnuc-version=4.2.1 -fno-cxx-modules -fcxx-exceptions -fexceptions -fpascal-strings -fmax-type-align=16 -fcommon -fdiagnostics-show-note-include-stack -serialize-diagnostic-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.dia -clang-vendor-feature=+messageToSelfInClassMethodIdReturnType -clang-vendor-feature=+disableInferNewAvailabilityFromInit -clang-vendor-feature=+disableNonDependentMemberExprInCurrentInstantiation -fno-odr-hash-protocols -clang-vendor-feature=+enableAggressiveVLAFolding -clang-vendor-feature=+revert09abecef7bbf -clang-vendor-feature=+thisNoAlignAttr -clang-vendor-feature=+thisNoNullAttr -mllvm -disable-aligned-alloc-awareness=1 -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/CMakeCXXCompilerABI.o -x c++ /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [clang -cc1 version 14.0.0 (clang-1400.0.29.202) default target arm64-apple-darwin22.2.0]
+  ignore line: [ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug/include"]
+  ignore line: [ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources-normal/arm64"]
+  ignore line: [ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources/arm64"]
+  ignore line: [ignoring nonexistent directory "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/DerivedSources"]
+  ignore line: [ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/local/include"]
+  ignore line: [ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/Library/Frameworks"]
+  ignore line: [#include "..." search starts here:]
+  ignore line: [#include <...> search starts here:]
+  ignore line: [ /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug (framework directory)]
+  ignore line: [ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include/c++/v1]
+  ignore line: [ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/14.0.0/include]
+  ignore line: [ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/include]
+  ignore line: [ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include]
+  ignore line: [ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/System/Library/Frameworks (framework directory)]
+  ignore line: [End of search list.]
+  ignore line: []
+  ignore line: [WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/cmTC_b104a.LinkFileList (in target 'cmTC_b104a' from project 'CMAKE_TRY_COMPILE')]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v]
+  ignore line: [    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/cmTC_b104a.LinkFileList]
+  ignore line: []
+  ignore line: [Libtool /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug/libcmTC_b104a.a normal (in target 'cmTC_b104a' from project 'CMAKE_TRY_COMPILE')]
+  ignore line: [    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v]
+  ignore line: [    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only arm64 -D -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/cmTC_b104a.LinkFileList -dependency_info /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/build/cmTC_b104a.build/Debug-iphoneos/Objects-normal/arm64/cmTC_b104a_libtool_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-G5kO5v/Debug/libcmTC_b104a.a]
+  ignore line: []
+  ignore line: [** BUILD SUCCEEDED **]
+  ignore line: []
+  ignore line: []
+  ignore line: []
+  implicit libs: []
+  implicit objs: []
+  implicit dirs: []
+  implicit fwks: []
+
+
+Performing C++ SOURCE FILE Test COMPILER_SUPPORTS_WALL succeeded with the following output:
+Change Dir: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc
+
+Run Build Command(s):/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_45020 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment && Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_45020 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment
+
+User defaults from command line:
+    HideShellScriptEnvironment = YES
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: 69efd28d42f6c499f530321b71439e30
+Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/XCBuildData/69efd28d42f6c499f530321b71439e30-desc.xcbuild
+
+note: Building targets in dependency order
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/Debug
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/Debug
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/EagerLinkingTBDs
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/EagerLinkingTBDs
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/Objects-normal/arm64/cmTC_45020.LinkFileList (in target 'cmTC_45020' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/Objects-normal/arm64/cmTC_45020.LinkFileList
+
+CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/Objects-normal/arm64/src.o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/src.cxx normal arm64 c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'cmTC_45020' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -target arm64-apple-ios13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -DCMAKE_INTDIR\=\"Debug-iphoneos\" -DCOMPILER_SUPPORTS_WALL -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -Wno-semicolon-before-method-body -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/Debug/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/Debug -D_DEBUG -std\=gnu++17 -Werror -Wall -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/Objects-normal/arm64/src.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/Objects-normal/arm64/src.dia -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/src.cxx -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/Objects-normal/arm64/src.o
+
+Libtool /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/Debug/libcmTC_45020.a normal (in target 'cmTC_45020' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only arm64 -D -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/Debug -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/Objects-normal/arm64/cmTC_45020.LinkFileList -dependency_info /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/build/cmTC_45020.build/Debug-iphoneos/Objects-normal/arm64/cmTC_45020_libtool_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-nt68gc/Debug/libcmTC_45020.a
+
+** BUILD SUCCEEDED **
+
+
+
+Source file was:
+int main() { return 0; }
+
+Performing C++ SOURCE FILE Test COMPILER_SUPPORTS_OFFSETOF succeeded with the following output:
+Change Dir: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2
+
+Run Build Command(s):/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_55670 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment && Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_55670 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment
+
+User defaults from command line:
+    HideShellScriptEnvironment = YES
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: 6343d6a5e2df4f992501884c6e91d82c
+Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/XCBuildData/6343d6a5e2df4f992501884c6e91d82c-desc.xcbuild
+
+note: Building targets in dependency order
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/Debug
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/Debug
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/EagerLinkingTBDs
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/EagerLinkingTBDs
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/Objects-normal/arm64/cmTC_55670.LinkFileList (in target 'cmTC_55670' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/Objects-normal/arm64/cmTC_55670.LinkFileList
+
+CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/Objects-normal/arm64/src.o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/src.cxx normal arm64 c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'cmTC_55670' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -target arm64-apple-ios13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -DCMAKE_INTDIR\=\"Debug-iphoneos\" -DCOMPILER_SUPPORTS_OFFSETOF -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -Wno-semicolon-before-method-body -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/Debug/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/Debug -Wall -Wno-switch -D_DEBUG -std\=gnu++17 -Werror -Wno-invalid-offsetof -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/Objects-normal/arm64/src.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/Objects-normal/arm64/src.dia -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/src.cxx -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/Objects-normal/arm64/src.o
+
+Libtool /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/Debug/libcmTC_55670.a normal (in target 'cmTC_55670' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only arm64 -D -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/Debug -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/Objects-normal/arm64/cmTC_55670.LinkFileList -dependency_info /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/build/cmTC_55670.build/Debug-iphoneos/Objects-normal/arm64/cmTC_55670_libtool_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-Nhajl2/Debug/libcmTC_55670.a
+
+** BUILD SUCCEEDED **
+
+
+
+Source file was:
+int main() { return 0; }
+
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD succeeded with the following output:
+Change Dir: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag
+
+Run Build Command(s):/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_2278b -parallelizeTargets -configuration Debug -hideShellScriptEnvironment && Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_2278b -parallelizeTargets -configuration Debug -hideShellScriptEnvironment
+
+User defaults from command line:
+    HideShellScriptEnvironment = YES
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: 6b1c3b24fe8a6a079e834a2ff0f053c8
+Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/XCBuildData/6b1c3b24fe8a6a079e834a2ff0f053c8-desc.xcbuild
+
+note: Building targets in dependency order
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/Debug
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/Debug
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/EagerLinkingTBDs
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/EagerLinkingTBDs
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/Objects-normal/arm64/cmTC_2278b.LinkFileList (in target 'cmTC_2278b' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/Objects-normal/arm64/cmTC_2278b.LinkFileList
+
+CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/Objects-normal/arm64/src.o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/src.c normal arm64 c com.apple.compilers.llvm.clang.1_0.compiler (in target 'cmTC_2278b' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c -target arm64-apple-ios13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wpointer-sign -Wno-newline-eof -Wno-implicit-fallthrough -DCMAKE_INTDIR\=\"Debug-iphoneos\" -DCMAKE_HAVE_LIBC_PTHREAD -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-semicolon-before-method-body -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/Debug/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/Debug -Wno-switch -D_DEBUG -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/Objects-normal/arm64/src.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/Objects-normal/arm64/src.dia -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/src.c -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/Objects-normal/arm64/src.o
+
+Libtool /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/Debug/libcmTC_2278b.a normal (in target 'cmTC_2278b' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only arm64 -D -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/Debug -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/Objects-normal/arm64/cmTC_2278b.LinkFileList -dependency_info /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/build/cmTC_2278b.build/Debug-iphoneos/Objects-normal/arm64/cmTC_2278b_libtool_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-d6W9Ag/Debug/libcmTC_2278b.a
+
+** BUILD SUCCEEDED **
+
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+
+Performing C++ SOURCE FILE Test has_std_17_flag succeeded with the following output:
+Change Dir: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9
+
+Run Build Command(s):/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_53388 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment && Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_53388 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment
+
+User defaults from command line:
+    HideShellScriptEnvironment = YES
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: 6e9e9cbd9d6a51e025f5ed79749a84e4
+Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/XCBuildData/6e9e9cbd9d6a51e025f5ed79749a84e4-desc.xcbuild
+
+note: Building targets in dependency order
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/Debug
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/Debug
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/EagerLinkingTBDs
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/EagerLinkingTBDs
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/Objects-normal/arm64/cmTC_53388.LinkFileList (in target 'cmTC_53388' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/Objects-normal/arm64/cmTC_53388.LinkFileList
+
+CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/Objects-normal/arm64/src.o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/src.cxx normal arm64 c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'cmTC_53388' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -target arm64-apple-ios13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -DCMAKE_INTDIR\=\"Debug-iphoneos\" -Dhas_std_17_flag -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -Wno-semicolon-before-method-body -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/Debug/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/Debug -Wall -Wno-switch -Wno-invalid-offsetof -D_DEBUG -std\=gnu++17 -std\=c++17 -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/Objects-normal/arm64/src.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/Objects-normal/arm64/src.dia -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/src.cxx -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/Objects-normal/arm64/src.o
+
+Libtool /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/Debug/libcmTC_53388.a normal (in target 'cmTC_53388' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only arm64 -D -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/Debug -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/Objects-normal/arm64/cmTC_53388.LinkFileList -dependency_info /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/build/cmTC_53388.build/Debug-iphoneos/Objects-normal/arm64/cmTC_53388_libtool_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-whJ6k9/Debug/libcmTC_53388.a
+
+** BUILD SUCCEEDED **
+
+
+
+Source file was:
+int main() { return 0; }
+
+Performing C++ SOURCE FILE Test has_std_1z_flag succeeded with the following output:
+Change Dir: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX
+
+Run Build Command(s):/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_90ab8 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment && Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_90ab8 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment
+
+User defaults from command line:
+    HideShellScriptEnvironment = YES
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: ecba37f5f8b7a98de5ecd6abc35447c4
+Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/XCBuildData/ecba37f5f8b7a98de5ecd6abc35447c4-desc.xcbuild
+
+note: Building targets in dependency order
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/Debug
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/Debug
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/EagerLinkingTBDs
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/EagerLinkingTBDs
+
+CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/Objects-normal/arm64/src.o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/src.cxx normal arm64 c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'cmTC_90ab8' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -target arm64-apple-ios13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -DCMAKE_INTDIR\=\"Debug-iphoneos\" -Dhas_std_1z_flag -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -Wno-semicolon-before-method-body -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/Debug/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/Debug -Wall -Wno-switch -Wno-invalid-offsetof -D_DEBUG -std\=gnu++17 -std\=c++1z -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/Objects-normal/arm64/src.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/Objects-normal/arm64/src.dia -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/src.cxx -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/Objects-normal/arm64/src.o
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/Objects-normal/arm64/cmTC_90ab8.LinkFileList (in target 'cmTC_90ab8' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/Objects-normal/arm64/cmTC_90ab8.LinkFileList
+
+Libtool /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/Debug/libcmTC_90ab8.a normal (in target 'cmTC_90ab8' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only arm64 -D -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/Debug -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/Objects-normal/arm64/cmTC_90ab8.LinkFileList -dependency_info /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/build/cmTC_90ab8.build/Debug-iphoneos/Objects-normal/arm64/cmTC_90ab8_libtool_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-sdbPxX/Debug/libcmTC_90ab8.a
+
+** BUILD SUCCEEDED **
+
+
+
+Source file was:
+int main() { return 0; }
+
+Performing C++ SOURCE FILE Test HAS_NULLPTR_WARNING succeeded with the following output:
+Change Dir: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK
+
+Run Build Command(s):/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_1c461 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment && Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project CMAKE_TRY_COMPILE.xcodeproj build -target cmTC_1c461 -parallelizeTargets -configuration Debug -hideShellScriptEnvironment
+
+User defaults from command line:
+    HideShellScriptEnvironment = YES
+    IDEPackageSupportUseBuiltinSCM = YES
+
+Computing target dependency graph and provisioning inputs
+
+Create build description
+Build description signature: ad5c4d45b1489f98db49afab46791b56
+Build description path: /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/XCBuildData/ad5c4d45b1489f98db49afab46791b56-desc.xcbuild
+
+note: Building targets in dependency order
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/Debug
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/Debug
+
+CreateBuildDirectory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/EagerLinkingTBDs
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/CMAKE_TRY_COMPILE.xcodeproj
+    builtin-create-build-directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/EagerLinkingTBDs
+
+WriteAuxiliaryFile /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/Objects-normal/arm64/cmTC_1c461.LinkFileList (in target 'cmTC_1c461' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK
+    write-file /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/Objects-normal/arm64/cmTC_1c461.LinkFileList
+
+CompileC /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/Objects-normal/arm64/src.o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/src.cxx normal arm64 c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'cmTC_1c461' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -x c++ -target arm64-apple-ios13.0 -fmessage-length\=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit\=0 -Wno-trigraphs -fpascal-strings -O0 -Wno-missing-field-initializers -Wno-missing-prototypes -Wno-return-type -Wno-non-virtual-dtor -Wno-overloaded-virtual -Wno-exit-time-destructors -Wno-missing-braces -Wparentheses -Wswitch -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable -Wunused-value -Wno-empty-body -Wno-uninitialized -Wno-unknown-pragmas -Wno-shadow -Wno-four-char-constants -Wno-conversion -Wno-constant-conversion -Wno-int-conversion -Wno-bool-conversion -Wno-enum-conversion -Wno-float-conversion -Wno-non-literal-null-conversion -Wno-objc-literal-conversion -Wshorten-64-to-32 -Wno-newline-eof -Wno-c++11-extensions -Wno-implicit-fallthrough -DCMAKE_INTDIR\=\"Debug-iphoneos\" -DHAS_NULLPTR_WARNING -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -fstrict-aliasing -Wdeprecated-declarations -Winvalid-offsetof -g -Wno-sign-conversion -Wno-infinite-recursion -Wno-move -Wno-comma -Wno-block-capture-autoreleasing -Wno-strict-prototypes -Wno-range-loop-analysis -Wno-semicolon-before-method-body -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/Debug/include -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/DerivedSources-normal/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/DerivedSources/arm64 -I/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/DerivedSources -F/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/Debug -Wall -Wno-switch -Wno-invalid-offsetof -D_DEBUG -std\=gnu++17 -Wzero-as-null-pointer-constant -MMD -MT dependencies -MF /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/Objects-normal/arm64/src.d --serialize-diagnostics /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/Objects-normal/arm64/src.dia -c /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/src.cxx -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/Objects-normal/arm64/src.o
+
+Libtool /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/Debug/libcmTC_1c461.a normal (in target 'cmTC_1c461' from project 'CMAKE_TRY_COMPILE')
+    cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -static -arch_only arm64 -D -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk -L/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/Debug -filelist /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/Objects-normal/arm64/cmTC_1c461.LinkFileList -dependency_info /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/build/cmTC_1c461.build/Debug-iphoneos/Objects-normal/arm64/cmTC_1c461_libtool_dependency_info.dat -o /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/CMakeScratch/TryCompile-BUIxxK/Debug/libcmTC_1c461.a
+
+** BUILD SUCCEEDED **
+
+
+
+Source file was:
+int main() { return 0; }
+
+Checking whether the ASM compiler is Clang using "--version" matched "(clang version)":
+Apple clang version 14.0.0 (clang-1400.0.29.202)
+Target: arm64-apple-darwin22.2.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin

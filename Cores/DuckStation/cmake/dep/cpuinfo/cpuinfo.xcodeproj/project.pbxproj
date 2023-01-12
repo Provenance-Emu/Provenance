@@ -7,24 +7,24 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		3E0512A1B294466B9FBB9801 /* ALL_BUILD */ = {
+		5E7F7554D3AE463A8152F8B4 /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 0A5C6374A6C94FD6BC05997F /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildConfigurationList = 31ABCDDD59EF43A7A237FC9F /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
 			buildPhases = (
 				731A0FAEC4BEA4AB4FBC4D06 /* Generate CMakeFiles/ALL_BUILD */,
 			);
 			dependencies = (
-				749FCCB882C6465F9AE258F3 /* PBXTargetDependency */,
-				0F7A3FDD84C74797944FFB2F /* PBXTargetDependency */,
-				B7A03ED96DB84126AE1E6CCC /* PBXTargetDependency */,
-				445AD4EF74394F1C84833181 /* PBXTargetDependency */,
+				C5078DA953764559AA5714C2 /* PBXTargetDependency */,
+				49C2E5FF8F4F4658BD23DE5F /* PBXTargetDependency */,
+				63C4C3ADB151447398F81807 /* PBXTargetDependency */,
+				228E0F9B7BEF45AEB0F3EDBE /* PBXTargetDependency */,
 			);
 			name = ALL_BUILD;
 			productName = ALL_BUILD;
 		};
-		C32F70ADF0204D969C8EEFCF /* RUN_TESTS */ = {
+		754BB04FD875447580DB15DF /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 77C117275C034CDC92F1D051 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 00ECFE28E7F54938B1E05896 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -33,9 +33,9 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
-		D751429D84A846EA8C98A1BE /* ZERO_CHECK */ = {
+		DE53D5C84AAE4D0494639869 /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 9B2AC857C7B14ED39CF1F2C3 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = D35CAD3147BE4EAE970E2156 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
 				350D8F25C04CC21A7F228330 /* Generate CMakeFiles/ZERO_CHECK */,
 			);
@@ -47,163 +47,163 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0B4EE0AD083D475A8A3BB836 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 3CF168BEE49E4B31812DEE31 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */; };
-		0F877DC4CD464D04BFD63CEF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 242ED4866F25406F9A912B60 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */; };
-		2DC40146F86444D99993E812 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 600C99B66FD64F34834002B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */; };
-		424272BEE6254528BE9D670C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */ = {isa = PBXBuildFile; fileRef = 130A87FB301B4C46BAC038C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */; };
-		4814CC808A53499BA11F5CC0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */ = {isa = PBXBuildFile; fileRef = A30619D748874D97B3EA2A70 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */; };
-		560FAFB2E0CB47B9A45C1582 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */ = {isa = PBXBuildFile; fileRef = 5022D05F5E6745A6A2805A20 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */; };
-		56C7E9C2ADD84DE4A66CB630 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */ = {isa = PBXBuildFile; fileRef = 0472A0C34DC347358C0001C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */; };
-		67A597BBBC574FCCA68A1916 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */ = {isa = PBXBuildFile; fileRef = FA1C7B86D4A947C88C66739A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */; };
-		7805CBDDF0E94517B5D1C957 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */ = {isa = PBXBuildFile; fileRef = 1278BF5D48254C358F29F356 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */; };
-		79538F7662964914B3F125B2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */ = {isa = PBXBuildFile; fileRef = 0E2BA66D2863447DBCF728EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */; };
-		96F0897181FB4D64AD3D05FD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = A0BC76D1C91F489698A9C6F5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */; };
-		A8C1D66F0DAC4E4D89CD7CFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */ = {isa = PBXBuildFile; fileRef = B735E6FDD68146A980E2F9E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */; };
-		ABEBFB57864E4C0CBA659BB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */ = {isa = PBXBuildFile; fileRef = 047A4955F7474BA3B22615FF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */; };
-		B6C83B01FBD54E3899674796 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */ = {isa = PBXBuildFile; fileRef = D5EF4F9AEE5C4AE8B371F3DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */; };
-		CB1CDC9D4FED470A9D3CC0B0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = D241D0792243473AA41427D7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist */; };
-		D3A182C1D0614B12AFEA92BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */ = {isa = PBXBuildFile; fileRef = F81CEAFCB97D45C1A97A7554 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */; };
-		D816378DBADA4AD7B1B6CE38 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */ = {isa = PBXBuildFile; fileRef = 085DC05AE1304FF6B8CAACAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */; };
-		E440F1DAF5F540F4985ED0ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */ = {isa = PBXBuildFile; fileRef = D28ECDA038CA47A88D890B05 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */; };
-		EC271768499246478DCCCC7F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = F9CD4A44AC804EC0A4F32A32 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist */; };
-		F0A199BD5069494B8D57046E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */ = {isa = PBXBuildFile; fileRef = 191B6122D9654EA59025804E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */; };
-		F8E35ADBAD1845ECA4842767 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */ = {isa = PBXBuildFile; fileRef = 79C63AA6BB2940C98BF67D6C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */; };
+		038232DD1A58474FBAF9CD91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = C6D0DEABF7774A9380197B32 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist */; };
+		0B269F85F49C44CBAF440EF5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */ = {isa = PBXBuildFile; fileRef = 6FB3129A207E46179EBF794C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */; };
+		2C686882BD9A44538F334002 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */ = {isa = PBXBuildFile; fileRef = D4568212D65B4BE0A7F5D6B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */; };
+		3078BC4364E642A39BA58107 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */ = {isa = PBXBuildFile; fileRef = 49840CBB54DE430EA2F2052A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */; };
+		3A226F5CFDFE4EC1B4933892 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */ = {isa = PBXBuildFile; fileRef = 2D8A689EDF0F4BCEAA496662 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */; };
+		45B5C186363742C889CC50EB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */ = {isa = PBXBuildFile; fileRef = FEA03A28AFDD46B0B559DE5D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */; };
+		488B5BFA02BA4DFD938E43B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */ = {isa = PBXBuildFile; fileRef = 1CA968204E0F4DFA9330EDDF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */; };
+		8A08B5CED66843AE8F9ACBD2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 9AADD7F32BEE4156AAA131A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist */; };
+		9A2F71F4EF074E6D91E3C640 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */ = {isa = PBXBuildFile; fileRef = 2D14C38EC1F34E17A40017D0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */; };
+		A29AFCFB411C409CA641ABA8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = F4FE54EC6F20473CA11F3165 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */; };
+		AFA5CA8BEC8449DA9C466FDD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 1C588A0E100A4A8FBE9CB771 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */; };
+		BF1A11154B0C4742B1B9C4A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */ = {isa = PBXBuildFile; fileRef = EFD98862FA7D400085D18525 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */; };
+		CB1F15A2EDC149D29A8033F6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */ = {isa = PBXBuildFile; fileRef = 09D00D5811374119B1CFE399 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */; };
+		D6F845B4EA6A40F4AB11FAE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */ = {isa = PBXBuildFile; fileRef = 532AEA286D8941CF8A34789B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */; };
+		D71C4A8049C945519FE416D9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 27F69343B6B04653BBB67104 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */; };
+		DA3CAC63A5AA4C149D6F7AB6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */ = {isa = PBXBuildFile; fileRef = 92C145B8636D44A6BCB43F84 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */; };
+		DAA22B659C82474C8569B1E6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */ = {isa = PBXBuildFile; fileRef = 502040F2C3CE4A28B5A60480 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */; };
+		DC010F6DAA21472BBE2BF66D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */ = {isa = PBXBuildFile; fileRef = 9A60932692F04A169B5FDA6D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */; };
+		DE56C4F57781445BB9C7BB66 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */ = {isa = PBXBuildFile; fileRef = 17276992B05542A499DA151D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */; };
+		E1738780095241608B6E7B57 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */ = {isa = PBXBuildFile; fileRef = DB3CE5E78E0C43009300A5E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */; };
+		F962D4334D014C1486A6DB1E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 802B621510064048AA462799 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		8DB5233199264B9CB00BF13B /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		9791E5E10A8B41AA91AC4742 /* Release */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Release;
-		};
-		E52B6B9970FE49658AC6BC1D /* RelWithDebInfo */ = {
+		13A0ED50FD3E410CB07805DB /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
-		E854E0880F914AA9887449CC /* MinSizeRel */ = {
+		328B1F9AE48C456D9A33F639 /* MinSizeRel */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = MinSizeRel;
 		};
+		4D6E175704C443AA8DE45B4C /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		E3CB0B1BB2BF4E32912E35EA /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		101F49F7443544B289923C49 /* PBXContainerItemProxy */ = {
+		32EB0DA10A9A46CE9FBA38C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A8198B8B48F940A4846B5FCC /* Project object */;
+			containerPortal = 21F6C65FC6A9487E8263565B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 4D0FD7F0BE9440DB95DC9D01;
+			remoteGlobalIDString = 16FB24763E5C4AB9BE01469E;
 			remoteInfo = clog;
 		};
-		3A1A9FE42195417A89EE43C8 /* PBXContainerItemProxy */ = {
+		47F0235F453E46F29FF6F0BD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A8198B8B48F940A4846B5FCC /* Project object */;
+			containerPortal = 21F6C65FC6A9487E8263565B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 63D581EDAABA4D02A315DD8E;
-			remoteInfo = cpuinfo_internals;
-		};
-		44CCA9C728284D2698F9CC65 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A8198B8B48F940A4846B5FCC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D751429D84A846EA8C98A1BE;
+			remoteGlobalIDString = DE53D5C84AAE4D0494639869;
 			remoteInfo = ZERO_CHECK;
 		};
-		4ED2B6A6EB834688ACD3F8AC /* PBXContainerItemProxy */ = {
+		4E3DE59A480240A5B1596AD9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A8198B8B48F940A4846B5FCC /* Project object */;
+			containerPortal = 21F6C65FC6A9487E8263565B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D751429D84A846EA8C98A1BE;
-			remoteInfo = ZERO_CHECK;
-		};
-		61A353C3ADE2404CA1413FA3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A8198B8B48F940A4846B5FCC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D751429D84A846EA8C98A1BE;
-			remoteInfo = ZERO_CHECK;
-		};
-		8A37E626030743D29E2CA92E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A8198B8B48F940A4846B5FCC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CF4DF890A1A147168D7CABB8;
+			remoteGlobalIDString = 273DAB5FBDB84D1C82D4B884;
 			remoteInfo = cpuinfo;
 		};
-		A51A2822917A466CACED4823 /* PBXContainerItemProxy */ = {
+		5D9A411721C34AB1811338C1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A8198B8B48F940A4846B5FCC /* Project object */;
+			containerPortal = 21F6C65FC6A9487E8263565B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 4D0FD7F0BE9440DB95DC9D01;
+			remoteGlobalIDString = A53B55C6727B49C789EB5AEB;
+			remoteInfo = cpuinfo_internals;
+		};
+		643077B00EC745E8BDE74B00 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21F6C65FC6A9487E8263565B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 16FB24763E5C4AB9BE01469E;
 			remoteInfo = clog;
 		};
-		B7FD8B6B742248B29740E031 /* PBXContainerItemProxy */ = {
+		69248178FE5B42CFB851F057 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A8198B8B48F940A4846B5FCC /* Project object */;
+			containerPortal = 21F6C65FC6A9487E8263565B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 4D0FD7F0BE9440DB95DC9D01;
+			remoteGlobalIDString = DE53D5C84AAE4D0494639869;
+			remoteInfo = ZERO_CHECK;
+		};
+		90EA7591DBCF417AB46FBA2D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21F6C65FC6A9487E8263565B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 16FB24763E5C4AB9BE01469E;
 			remoteInfo = clog;
+		};
+		CD4777A3A46A4588B13AAA9F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 21F6C65FC6A9487E8263565B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DE53D5C84AAE4D0494639869;
+			remoteInfo = ZERO_CHECK;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0472A0C34DC347358C0001C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = uarch.c; path = src/arm/uarch.c; sourceTree = SOURCE_ROOT; };
-		047A4955F7474BA3B22615FF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = src/arm/cache.c; sourceTree = SOURCE_ROOT; };
-		085DC05AE1304FF6B8CAACAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = src/cache.c; sourceTree = SOURCE_ROOT; };
-		0E2BA66D2863447DBCF728EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = clog.c; path = deps/clog/src/clog.c; sourceTree = SOURCE_ROOT; };
-		1278BF5D48254C358F29F356 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = topology.c; path = src/mach/topology.c; sourceTree = SOURCE_ROOT; };
-		130A87FB301B4C46BAC038C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = api.c; path = src/api.c; sourceTree = SOURCE_ROOT; };
-		191B6122D9654EA59025804E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = uarch.c; path = src/arm/uarch.c; sourceTree = SOURCE_ROOT; };
-		242ED4866F25406F9A912B60 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist; sourceTree = "<absolute>"; };
-		3CF168BEE49E4B31812DEE31 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		3D55C68E9CEA4CA1863493C9 /* cpuinfo */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcpuinfo.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		5022D05F5E6745A6A2805A20 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = src/cache.c; sourceTree = SOURCE_ROOT; };
-		600C99B66FD64F34834002B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		738D9BF7CF6046C3B79772CF /* cpuinfo_internals */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcpuinfo_internals.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		79C63AA6BB2940C98BF67D6C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = topology.c; path = src/mach/topology.c; sourceTree = SOURCE_ROOT; };
-		7F3B6471C7D74620AC26CABA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		A0BC76D1C91F489698A9C6F5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = deps/clog/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		A30619D748874D97B3EA2A70 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = src/init.c; sourceTree = SOURCE_ROOT; };
-		B735E6FDD68146A980E2F9E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = src/arm/mach/init.c; sourceTree = SOURCE_ROOT; };
-		D241D0792243473AA41427D7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist; sourceTree = "<absolute>"; };
-		D28ECDA038CA47A88D890B05 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = src/arm/cache.c; sourceTree = SOURCE_ROOT; };
-		D5EF4F9AEE5C4AE8B371F3DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = api.c; path = src/api.c; sourceTree = SOURCE_ROOT; };
-		E98CACF6281A4C889D41BF2B /* clog */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libclog.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		F81CEAFCB97D45C1A97A7554 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = src/init.c; sourceTree = SOURCE_ROOT; };
-		F9CD4A44AC804EC0A4F32A32 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist; sourceTree = "<absolute>"; };
-		FA1C7B86D4A947C88C66739A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = src/arm/mach/init.c; sourceTree = SOURCE_ROOT; };
+		09D00D5811374119B1CFE399 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = uarch.c; path = src/arm/uarch.c; sourceTree = SOURCE_ROOT; };
+		17276992B05542A499DA151D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = src/init.c; sourceTree = SOURCE_ROOT; };
+		1C588A0E100A4A8FBE9CB771 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = deps/clog/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		1CA968204E0F4DFA9330EDDF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = src/arm/cache.c; sourceTree = SOURCE_ROOT; };
+		27F69343B6B04653BBB67104 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist; sourceTree = "<absolute>"; };
+		2D14C38EC1F34E17A40017D0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = src/init.c; sourceTree = SOURCE_ROOT; };
+		2D8A689EDF0F4BCEAA496662 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = api.c; path = src/api.c; sourceTree = SOURCE_ROOT; };
+		49840CBB54DE430EA2F2052A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = src/arm/mach/init.c; sourceTree = SOURCE_ROOT; };
+		502040F2C3CE4A28B5A60480 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = topology.c; path = src/mach/topology.c; sourceTree = SOURCE_ROOT; };
+		532AEA286D8941CF8A34789B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = src/arm/mach/init.c; sourceTree = SOURCE_ROOT; };
+		6FB3129A207E46179EBF794C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = src/cache.c; sourceTree = SOURCE_ROOT; };
+		802B621510064048AA462799 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		92C145B8636D44A6BCB43F84 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = api.c; path = src/api.c; sourceTree = SOURCE_ROOT; };
+		9632AEBFBFA841939A9A2872 /* clog */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libclog.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A60932692F04A169B5FDA6D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = topology.c; path = src/mach/topology.c; sourceTree = SOURCE_ROOT; };
+		9AADD7F32BEE4156AAA131A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist; sourceTree = "<absolute>"; };
+		9CE83952A36545BDB4B36B5F /* cpuinfo */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcpuinfo.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6D0DEABF7774A9380197B32 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist; sourceTree = "<absolute>"; };
+		D4568212D65B4BE0A7F5D6B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = src/arm/cache.c; sourceTree = SOURCE_ROOT; };
+		DB3CE5E78E0C43009300A5E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = uarch.c; path = src/arm/uarch.c; sourceTree = SOURCE_ROOT; };
+		E2D4BA97E20146C48370EF7B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		EFD98862FA7D400085D18525 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = clog.c; path = deps/clog/src/clog.c; sourceTree = SOURCE_ROOT; };
+		F4FE54EC6F20473CA11F3165 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F52D1E6EA0E747789455F199 /* cpuinfo_internals */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcpuinfo_internals.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FEA03A28AFDD46B0B559DE5D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = src/cache.c; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		02D93884EB7E4E6795421973 /* Frameworks */ = {
+		71E715547BBD437DB2F394D3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		4246292B74184CA0864DF29A /* Frameworks */ = {
+		9EAB0AA3E815413CBA64D1A9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		9B779E57FF0545868B5D64A9 /* Frameworks */ = {
+		E29C178506E44B1D993BF6F8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -213,150 +213,150 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0593B4278A04454DA5180046 /* Frameworks */ = {
+		004E4D8DBFF24A62AFD35D2D /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		0E9BDFF8A392452FACDF0138 = {
-			isa = PBXGroup;
-			children = (
-				1807DB3A034F4BD98FC03F5C /* cpuinfo */,
-				A8BD7676122F4BD294D7AE1B /* cpuinfo_internals */,
-				C7C332F555D2409EB84960D2 /* ALL_BUILD */,
-				9F1CD49CDB054EB7A7E2C242 /* clog */,
-				F4359E036F2F4DF4ABD19BBD /* Products */,
-				0593B4278A04454DA5180046 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		1807DB3A034F4BD98FC03F5C /* cpuinfo */ = {
-			isa = PBXGroup;
-			children = (
-				42BF5C129DDF40CF924A566A /* Source Files */,
-				CDDE6476D4034D9FBCC1A2B9 /* Resources */,
-				3CF168BEE49E4B31812DEE31 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */,
-			);
-			name = cpuinfo;
-			sourceTree = "<group>";
-		};
-		3DA05A157F3F43F2BF33588C /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				0E2BA66D2863447DBCF728EA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */,
+				92C145B8636D44A6BCB43F84 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */,
+				D4568212D65B4BE0A7F5D6B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */,
+				49840CBB54DE430EA2F2052A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */,
+				DB3CE5E78E0C43009300A5E2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */,
+				6FB3129A207E46179EBF794C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */,
+				17276992B05542A499DA151D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */,
+				9A60932692F04A169B5FDA6D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		42BF5C129DDF40CF924A566A /* Source Files */ = {
+		160971631A1047D98E84EFF9 /* clog */ = {
 			isa = PBXGroup;
 			children = (
-				D5EF4F9AEE5C4AE8B371F3DA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */,
-				047A4955F7474BA3B22615FF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */,
-				B735E6FDD68146A980E2F9E5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */,
-				0472A0C34DC347358C0001C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */,
-				085DC05AE1304FF6B8CAACAF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */,
-				A30619D748874D97B3EA2A70 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */,
-				79C63AA6BB2940C98BF67D6C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */,
+				2CE38DB0583C44BC881EAC02 /* Source Files */,
+				47CD2ABD757E44098EB93F67 /* Resources */,
+				1C588A0E100A4A8FBE9CB771 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */,
 			);
-			name = "Source Files";
+			name = clog;
 			sourceTree = "<group>";
 		};
-		498F071AA2DC4C408B495B4E /* Resources */ = {
+		1CC87963607E467793E7413F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				D241D0792243473AA41427D7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist */,
+				C6D0DEABF7774A9380197B32 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		5C362F5BB7C14CA4B2CE9361 /* Source Files */ = {
+		2CE38DB0583C44BC881EAC02 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				130A87FB301B4C46BAC038C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */,
-				D28ECDA038CA47A88D890B05 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */,
-				FA1C7B86D4A947C88C66739A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */,
-				191B6122D9654EA59025804E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */,
-				5022D05F5E6745A6A2805A20 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */,
-				F81CEAFCB97D45C1A97A7554 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */,
-				1278BF5D48254C358F29F356 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */,
+				EFD98862FA7D400085D18525 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		5E10C584457E42D1ABB099E3 /* CMake Rules */ = {
+		3558D32E266B490691FDE396 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				4BB23063CFE1473199698ACA /* CMake Rules */,
+				E2D4BA97E20146C48370EF7B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		47CD2ABD757E44098EB93F67 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				27F69343B6B04653BBB67104 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		4BB23063CFE1473199698ACA /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		9F1CD49CDB054EB7A7E2C242 /* clog */ = {
+		501EF837E4DD4C97ABE260EB /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3DA05A157F3F43F2BF33588C /* Source Files */,
-				ACA02373C7944C9C90B71FEC /* Resources */,
-				A0BC76D1C91F489698A9C6F5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */,
-			);
-			name = clog;
-			sourceTree = "<group>";
-		};
-		A8BD7676122F4BD294D7AE1B /* cpuinfo_internals */ = {
-			isa = PBXGroup;
-			children = (
-				5C362F5BB7C14CA4B2CE9361 /* Source Files */,
-				498F071AA2DC4C408B495B4E /* Resources */,
-				600C99B66FD64F34834002B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */,
-			);
-			name = cpuinfo_internals;
-			sourceTree = "<group>";
-		};
-		ACA02373C7944C9C90B71FEC /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				242ED4866F25406F9A912B60 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */,
+				9AADD7F32BEE4156AAA131A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		C7C332F555D2409EB84960D2 /* ALL_BUILD */ = {
+		9B7906BD07EC425CBE7E54EC /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				5E10C584457E42D1ABB099E3 /* CMake Rules */,
-				7F3B6471C7D74620AC26CABA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */,
+				2D8A689EDF0F4BCEAA496662 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */,
+				1CA968204E0F4DFA9330EDDF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */,
+				532AEA286D8941CF8A34789B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */,
+				09D00D5811374119B1CFE399 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */,
+				FEA03A28AFDD46B0B559DE5D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */,
+				2D14C38EC1F34E17A40017D0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */,
+				502040F2C3CE4A28B5A60480 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */,
 			);
-			name = ALL_BUILD;
+			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		CDDE6476D4034D9FBCC1A2B9 /* Resources */ = {
+		9D0F8C02B36A4D189754E387 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F9CD4A44AC804EC0A4F32A32 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist */,
 			);
-			name = Resources;
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		F4359E036F2F4DF4ABD19BBD /* Products */ = {
+		A083FE51BE3C445FA3CE35C8 = {
 			isa = PBXGroup;
 			children = (
-				E98CACF6281A4C889D41BF2B /* clog */,
-				3D55C68E9CEA4CA1863493C9 /* cpuinfo */,
-				738D9BF7CF6046C3B79772CF /* cpuinfo_internals */,
+				FF4D7B4BD5AA4D4B8CA6E8F8 /* cpuinfo */,
+				FF8E890FECB749CE8AD4AB31 /* cpuinfo_internals */,
+				3558D32E266B490691FDE396 /* ALL_BUILD */,
+				160971631A1047D98E84EFF9 /* clog */,
+				A60D991F1F8F474DA9316E25 /* Products */,
+				9D0F8C02B36A4D189754E387 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		A60D991F1F8F474DA9316E25 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9632AEBFBFA841939A9A2872 /* clog */,
+				9CE83952A36545BDB4B36B5F /* cpuinfo */,
+				F52D1E6EA0E747789455F199 /* cpuinfo_internals */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		FF4D7B4BD5AA4D4B8CA6E8F8 /* cpuinfo */ = {
+			isa = PBXGroup;
+			children = (
+				9B7906BD07EC425CBE7E54EC /* Source Files */,
+				1CC87963607E467793E7413F /* Resources */,
+				802B621510064048AA462799 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */,
+			);
+			name = cpuinfo;
+			sourceTree = "<group>";
+		};
+		FF8E890FECB749CE8AD4AB31 /* cpuinfo_internals */ = {
+			isa = PBXGroup;
+			children = (
+				004E4D8DBFF24A62AFD35D2D /* Source Files */,
+				501EF837E4DD4C97ABE260EB /* Resources */,
+				F4FE54EC6F20473CA11F3165 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt */,
+			);
+			name = cpuinfo_internals;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4D0FD7F0BE9440DB95DC9D01 /* clog */ = {
+		16FB24763E5C4AB9BE01469E /* clog */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D880D513030E420D9895B457 /* Build configuration list for PBXNativeTarget "clog" */;
+			buildConfigurationList = BB2CA42727F7432B90F5D45E /* Build configuration list for PBXNativeTarget "clog" */;
 			buildPhases = (
-				8D036891AB354586B58EDF7D /* Sources */,
-				9B779E57FF0545868B5D64A9 /* Frameworks */,
+				B47743AC6A154049B0C0C735 /* Sources */,
+				E29C178506E44B1D993BF6F8 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -364,75 +364,75 @@
 			);
 			name = clog;
 			productName = clog;
-			productReference = E98CACF6281A4C889D41BF2B /* clog */;
+			productReference = 9632AEBFBFA841939A9A2872 /* clog */;
 			productType = "com.apple.product-type.library.static";
 		};
-		63D581EDAABA4D02A315DD8E /* cpuinfo_internals */ = {
+		273DAB5FBDB84D1C82D4B884 /* cpuinfo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 443B1417CC514253B0794DCB /* Build configuration list for PBXNativeTarget "cpuinfo_internals" */;
+			buildConfigurationList = 2FBE4257904D4665BFD63FB5 /* Build configuration list for PBXNativeTarget "cpuinfo" */;
 			buildPhases = (
-				C233A3769CC34223A437DE9A /* Sources */,
-				4246292B74184CA0864DF29A /* Frameworks */,
+				DB9E28B0367A4F51B0BD46B2 /* Sources */,
+				71E715547BBD437DB2F394D3 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				72171B3233A8470B9E6B5DB3 /* PBXTargetDependency */,
-				E774927AC7334E7FA76D8467 /* PBXTargetDependency */,
-			);
-			name = cpuinfo_internals;
-			productName = cpuinfo_internals;
-			productReference = 738D9BF7CF6046C3B79772CF /* cpuinfo_internals */;
-			productType = "com.apple.product-type.library.static";
-		};
-		CF4DF890A1A147168D7CABB8 /* cpuinfo */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8483ECCD093045A7BFBD4E7B /* Build configuration list for PBXNativeTarget "cpuinfo" */;
-			buildPhases = (
-				A52960B09A8D49C5AB90E2B9 /* Sources */,
-				02D93884EB7E4E6795421973 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				64A075F17AB945898FEA01C3 /* PBXTargetDependency */,
-				889BB08D2D074C94B4F00034 /* PBXTargetDependency */,
+				91417993879148ECAE87660D /* PBXTargetDependency */,
+				9A632D5B3D9C440C98096833 /* PBXTargetDependency */,
 			);
 			name = cpuinfo;
 			productName = cpuinfo;
-			productReference = 3D55C68E9CEA4CA1863493C9 /* cpuinfo */;
+			productReference = 9CE83952A36545BDB4B36B5F /* cpuinfo */;
+			productType = "com.apple.product-type.library.static";
+		};
+		A53B55C6727B49C789EB5AEB /* cpuinfo_internals */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E362898DEAE4E2DB042A066 /* Build configuration list for PBXNativeTarget "cpuinfo_internals" */;
+			buildPhases = (
+				5DB9CF4F189544E784AC4EAD /* Sources */,
+				9EAB0AA3E815413CBA64D1A9 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A7EF11FE7212441AB781349C /* PBXTargetDependency */,
+				82D2E1DFBA6640668C400D0D /* PBXTargetDependency */,
+			);
+			name = cpuinfo_internals;
+			productName = cpuinfo_internals;
+			productReference = F52D1E6EA0E747789455F199 /* cpuinfo_internals */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		A8198B8B48F940A4846B5FCC /* Project object */ = {
+		21F6C65FC6A9487E8263565B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1420;
 			};
-			buildConfigurationList = E8FB80DB315A4D418E8814BF /* Build configuration list for PBXProject "cpuinfo" */;
+			buildConfigurationList = 0F8FED182DEE43959C5DB480 /* Build configuration list for PBXProject "cpuinfo" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				8DB5233199264B9CB00BF13B /* Debug */,
-				9791E5E10A8B41AA91AC4742 /* Release */,
-				E854E0880F914AA9887449CC /* MinSizeRel */,
-				E52B6B9970FE49658AC6BC1D /* RelWithDebInfo */,
+				4D6E175704C443AA8DE45B4C /* Debug */,
+				E3CB0B1BB2BF4E32912E35EA /* Release */,
+				328B1F9AE48C456D9A33F639 /* MinSizeRel */,
+				13A0ED50FD3E410CB07805DB /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 0E9BDFF8A392452FACDF0138;
+			mainGroup = A083FE51BE3C445FA3CE35C8;
 			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo;
 			projectRoot = "";
 			targets = (
-				3E0512A1B294466B9FBB9801 /* ALL_BUILD */,
-				C32F70ADF0204D969C8EEFCF /* RUN_TESTS */,
-				D751429D84A846EA8C98A1BE /* ZERO_CHECK */,
-				4D0FD7F0BE9440DB95DC9D01 /* clog */,
-				CF4DF890A1A147168D7CABB8 /* cpuinfo */,
-				63D581EDAABA4D02A315DD8E /* cpuinfo_internals */,
+				5E7F7554D3AE463A8152F8B4 /* ALL_BUILD */,
+				754BB04FD875447580DB15DF /* RUN_TESTS */,
+				DE53D5C84AAE4D0494639869 /* ZERO_CHECK */,
+				16FB24763E5C4AB9BE01469E /* clog */,
+				273DAB5FBDB84D1C82D4B884 /* cpuinfo */,
+				A53B55C6727B49C789EB5AEB /* cpuinfo_internals */,
 			);
 		};
 /* End PBXProject section */
@@ -583,194 +583,94 @@ exit 0";
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		8D036891AB354586B58EDF7D /* Sources */ = {
+		5DB9CF4F189544E784AC4EAD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79538F7662964914B3F125B2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */,
+				DA3CAC63A5AA4C149D6F7AB6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */,
+				2C686882BD9A44538F334002 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */,
+				3078BC4364E642A39BA58107 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */,
+				E1738780095241608B6E7B57 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */,
+				0B269F85F49C44CBAF440EF5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */,
+				DE56C4F57781445BB9C7BB66 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */,
+				DC010F6DAA21472BBE2BF66D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A52960B09A8D49C5AB90E2B9 /* Sources */ = {
+		B47743AC6A154049B0C0C735 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B6C83B01FBD54E3899674796 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */,
-				ABEBFB57864E4C0CBA659BB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */,
-				A8C1D66F0DAC4E4D89CD7CFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */,
-				56C7E9C2ADD84DE4A66CB630 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */,
-				D816378DBADA4AD7B1B6CE38 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */,
-				4814CC808A53499BA11F5CC0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */,
-				F8E35ADBAD1845ECA4842767 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */,
+				BF1A11154B0C4742B1B9C4A5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C233A3769CC34223A437DE9A /* Sources */ = {
+		DB9E28B0367A4F51B0BD46B2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				424272BEE6254528BE9D670C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */,
-				E440F1DAF5F540F4985ED0ED /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */,
-				67A597BBBC574FCCA68A1916 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */,
-				F0A199BD5069494B8D57046E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */,
-				560FAFB2E0CB47B9A45C1582 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */,
-				D3A182C1D0614B12AFEA92BF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */,
-				7805CBDDF0E94517B5D1C957 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */,
+				3A226F5CFDFE4EC1B4933892 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/api.c */,
+				488B5BFA02BA4DFD938E43B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/cache.c */,
+				D6F845B4EA6A40F4AB11FAE5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/mach/init.c */,
+				CB1F15A2EDC149D29A8033F6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/arm/uarch.c */,
+				45B5C186363742C889CC50EB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/cache.c */,
+				9A2F71F4EF074E6D91E3C640 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/init.c */,
+				DAA22B659C82474C8569B1E6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src/mach/topology.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0F7A3FDD84C74797944FFB2F /* PBXTargetDependency */ = {
+		228E0F9B7BEF45AEB0F3EDBE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = CF4DF890A1A147168D7CABB8 /* cpuinfo */;
-			targetProxy = 8A37E626030743D29E2CA92E /* PBXContainerItemProxy */;
+			target = 16FB24763E5C4AB9BE01469E /* clog */;
+			targetProxy = 32EB0DA10A9A46CE9FBA38C2 /* PBXContainerItemProxy */;
 		};
-		445AD4EF74394F1C84833181 /* PBXTargetDependency */ = {
+		49C2E5FF8F4F4658BD23DE5F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4D0FD7F0BE9440DB95DC9D01 /* clog */;
-			targetProxy = 101F49F7443544B289923C49 /* PBXContainerItemProxy */;
+			target = 273DAB5FBDB84D1C82D4B884 /* cpuinfo */;
+			targetProxy = 4E3DE59A480240A5B1596AD9 /* PBXContainerItemProxy */;
 		};
-		64A075F17AB945898FEA01C3 /* PBXTargetDependency */ = {
+		63C4C3ADB151447398F81807 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D751429D84A846EA8C98A1BE /* ZERO_CHECK */;
-			targetProxy = 4ED2B6A6EB834688ACD3F8AC /* PBXContainerItemProxy */;
+			target = A53B55C6727B49C789EB5AEB /* cpuinfo_internals */;
+			targetProxy = 5D9A411721C34AB1811338C1 /* PBXContainerItemProxy */;
 		};
-		72171B3233A8470B9E6B5DB3 /* PBXTargetDependency */ = {
+		82D2E1DFBA6640668C400D0D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D751429D84A846EA8C98A1BE /* ZERO_CHECK */;
-			targetProxy = 61A353C3ADE2404CA1413FA3 /* PBXContainerItemProxy */;
+			target = 16FB24763E5C4AB9BE01469E /* clog */;
+			targetProxy = 90EA7591DBCF417AB46FBA2D /* PBXContainerItemProxy */;
 		};
-		749FCCB882C6465F9AE258F3 /* PBXTargetDependency */ = {
+		91417993879148ECAE87660D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D751429D84A846EA8C98A1BE /* ZERO_CHECK */;
-			targetProxy = 44CCA9C728284D2698F9CC65 /* PBXContainerItemProxy */;
+			target = DE53D5C84AAE4D0494639869 /* ZERO_CHECK */;
+			targetProxy = 69248178FE5B42CFB851F057 /* PBXContainerItemProxy */;
 		};
-		889BB08D2D074C94B4F00034 /* PBXTargetDependency */ = {
+		9A632D5B3D9C440C98096833 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4D0FD7F0BE9440DB95DC9D01 /* clog */;
-			targetProxy = B7FD8B6B742248B29740E031 /* PBXContainerItemProxy */;
+			target = 16FB24763E5C4AB9BE01469E /* clog */;
+			targetProxy = 643077B00EC745E8BDE74B00 /* PBXContainerItemProxy */;
 		};
-		B7A03ED96DB84126AE1E6CCC /* PBXTargetDependency */ = {
+		A7EF11FE7212441AB781349C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 63D581EDAABA4D02A315DD8E /* cpuinfo_internals */;
-			targetProxy = 3A1A9FE42195417A89EE43C8 /* PBXContainerItemProxy */;
+			target = DE53D5C84AAE4D0494639869 /* ZERO_CHECK */;
+			targetProxy = CD4777A3A46A4588B13AAA9F /* PBXContainerItemProxy */;
 		};
-		E774927AC7334E7FA76D8467 /* PBXTargetDependency */ = {
+		C5078DA953764559AA5714C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4D0FD7F0BE9440DB95DC9D01 /* clog */;
-			targetProxy = A51A2822917A466CACED4823 /* PBXContainerItemProxy */;
+			target = DE53D5C84AAE4D0494639869 /* ZERO_CHECK */;
+			targetProxy = 47F0235F453E46F29FF6F0BD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0E4F2BBBD0B74B309BA4B1BB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "arm64 x86_64";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				BUILD_DIR = ../lib;
-			};
-			name = Debug;
-		};
-		1122B265C07E4930BD5FC8B7 /* MinSizeRel */ = {
+		0C26C1669E9443BFBCA81348 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CPUINFO_LOG_LEVEL=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -Wno-switch     -DNDEBUG -fvisibility=hidden '-std=c99' ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo_internals;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		24AA787F673343D8960D46F8 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "arm64 x86_64";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				BUILD_DIR = ../lib;
-			};
-			name = RelWithDebInfo;
-		};
-		2C3A7F3BE99F40E09052FE29 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		3048099C8C604232AD3F4654 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		384BA17C243C4BD7B9603833 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -787,135 +687,13 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo_internals;
 				SECTORDER_FLAGS = "";
-				
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo_internals.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		38AB516A918D4655A3C0A45B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		439C38B38F4543C0AF9D25D6 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		4AD7D531DD7247A0B35EF7FF /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CPUINFO_LOG_LEVEL=2'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -Wno-switch        -DNDEBUG -fvisibility=hidden '-std=c99' ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		567DFAA8F4D746E4923DE160 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CLOG_LOG_TO_STDIO=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -Wno-switch     -DNDEBUG -fPIC '-std=c99' ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = clog;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		74A4B583A07F4CE8BD320AB9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CLOG_LOG_TO_STDIO=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -Wno-switch     -DNDEBUG -fPIC '-std=c99' ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = clog;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		80EE1537FCF449D2B8306883 /* MinSizeRel */ = {
+		1446310339844C919993F2CA /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -934,12 +712,12 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		902F35F4B75E4736969435CF /* RelWithDebInfo */ = {
+		24CD6083189944B19B1EF418 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -956,18 +734,37 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = clog;
 				SECTORDER_FLAGS = "";
-				
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = RelWithDebInfo;
 		};
-		A461F50EFCE6495BB60BE6BA /* Release */ = {
+		26C4889330B74717B0E5176B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		2935AD4EA80A4DCFB09F5F38 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -984,60 +781,13 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo_internals;
 				SECTORDER_FLAGS = "";
-				
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo_internals.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
-		A6902955B0EF4A6E8F4474AD /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CPUINFO_LOG_LEVEL=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -Wno-switch        -DNDEBUG -fvisibility=hidden '-std=c99' ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo_internals;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		A7306AD7EAD84573B8DD0C47 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		AA19AA50DABF44A2BF87B953 /* MinSizeRel */ = {
+		3587B041A73247E58972F4CC /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "arm64 x86_64";
@@ -1050,30 +800,11 @@ exit 0";
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				BUILD_DIR = ../lib;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
 			};
 			name = MinSizeRel;
 		};
-		AF2D440C77544B16951BE894 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		B65083DA0B514D3C8CBC6CC4 /* Release */ = {
+		4800D06166C54260B346EA0C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1092,172 +823,12 @@ exit 0";
 			};
 			name = Release;
 		};
-		B75CCA93755D47D2811B7B6E /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		C63C232197194C0D935A462E /* Debug */ = {
+		4A84EF5FD6D44142BF4AEABE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CLOG_LOG_TO_STDIO=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -Wno-switch    -D_DEBUG -fPIC '-std=c99' ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = clog;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		D05D893FA8504A37837776CD /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CPUINFO_LOG_LEVEL=2'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -Wno-switch     -DNDEBUG -fvisibility=hidden '-std=c99' ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		D19E171837A040B88836C1DD /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		E029E3A3C10A4D57833D6A39 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		E2B8BB33063140E987F1CC4D /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		EF469D4CC3574F0E94882575 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CPUINFO_LOG_LEVEL=2'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -Wno-switch     -DNDEBUG -fvisibility=hidden '-std=c99' ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		F918F6B979594B39B07BCC78 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -1274,13 +845,13 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo;
 				SECTORDER_FLAGS = "";
-				
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		FCD0FD4D007F4230A24ADE23 /* Release */ = {
+		4BD284D2C66D4D1D8C52A9DB /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "arm64 x86_64";
@@ -1293,91 +864,520 @@ exit 0";
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				BUILD_DIR = ../lib;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+			};
+			name = RelWithDebInfo;
+		};
+		50853BD986044E4B968B7954 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CPUINFO_LOG_LEVEL=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wno-switch        -DNDEBUG -fvisibility=hidden '-std=c99' ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = cpuinfo_internals;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo_internals.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		564DE93C01934D1DAEAB9884 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CLOG_LOG_TO_STDIO=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wno-switch     -DNDEBUG -fPIC '-std=c99' ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = clog;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		5CAC93B85D0E419CACF45D63 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		62A70BE68474489698DCF4DD /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		72C17630D09A435D88686D92 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/Debug${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CLOG_LOG_TO_STDIO=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wno-switch    -D_DEBUG -fPIC '-std=c99' ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = clog;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		74CC2EF4F4A043A5A882273A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		9D6F683A565E45239BB553E1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+			};
+			name = Debug;
+		};
+		A6ED4C6E422549598A16B882 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		C55A58A8360E4DEB92F536DB /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		CC267D94BC054FB09CECA85D /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CPUINFO_LOG_LEVEL=2'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wno-switch     -DNDEBUG -fvisibility=hidden '-std=c99' ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = cpuinfo;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		D75414A0AB3049C7A85C8923 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
 			};
 			name = Release;
+		};
+		D8D33DEC382D4A4DA5BA8890 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CPUINFO_LOG_LEVEL=2'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wno-switch        -DNDEBUG -fvisibility=hidden '-std=c99' ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = cpuinfo;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		E66148CA50904FE8A3D173FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		E6BB22EE39FF415AA9B6ED38 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E8FA5812031A493DB8687FEB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/Release${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CLOG_LOG_TO_STDIO=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wno-switch     -DNDEBUG -fPIC '-std=c99' ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = clog;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		EE0EC1E9E1714B7DB45FDE29 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		F7CA83171D69436F81DBF898 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		F8B9091539984C09944B89E1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/Release${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CPUINFO_LOG_LEVEL=2'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wno-switch     -DNDEBUG -fvisibility=hidden '-std=c99' ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = cpuinfo;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		F9931DDB2BFA460C85D5EC20 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CPUINFO_LOG_LEVEL=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -Wno-switch     -DNDEBUG -fvisibility=hidden '-std=c99' ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = cpuinfo_internals;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo_internals.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0A5C6374A6C94FD6BC05997F /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		00ECFE28E7F54938B1E05896 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E029E3A3C10A4D57833D6A39 /* Debug */,
-				38AB516A918D4655A3C0A45B /* Release */,
-				439C38B38F4543C0AF9D25D6 /* MinSizeRel */,
-				E2B8BB33063140E987F1CC4D /* RelWithDebInfo */,
+				EE0EC1E9E1714B7DB45FDE29 /* Debug */,
+				4800D06166C54260B346EA0C /* Release */,
+				1446310339844C919993F2CA /* MinSizeRel */,
+				62A70BE68474489698DCF4DD /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		443B1417CC514253B0794DCB /* Build configuration list for PBXNativeTarget "cpuinfo_internals" */ = {
+		0F8FED182DEE43959C5DB480 /* Build configuration list for PBXProject "cpuinfo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				384BA17C243C4BD7B9603833 /* Debug */,
-				A461F50EFCE6495BB60BE6BA /* Release */,
-				1122B265C07E4930BD5FC8B7 /* MinSizeRel */,
-				A6902955B0EF4A6E8F4474AD /* RelWithDebInfo */,
+				9D6F683A565E45239BB553E1 /* Debug */,
+				D75414A0AB3049C7A85C8923 /* Release */,
+				3587B041A73247E58972F4CC /* MinSizeRel */,
+				4BD284D2C66D4D1D8C52A9DB /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		77C117275C034CDC92F1D051 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		2FBE4257904D4665BFD63FB5 /* Build configuration list for PBXNativeTarget "cpuinfo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3048099C8C604232AD3F4654 /* Debug */,
-				B65083DA0B514D3C8CBC6CC4 /* Release */,
-				80EE1537FCF449D2B8306883 /* MinSizeRel */,
-				D19E171837A040B88836C1DD /* RelWithDebInfo */,
+				4A84EF5FD6D44142BF4AEABE /* Debug */,
+				F8B9091539984C09944B89E1 /* Release */,
+				CC267D94BC054FB09CECA85D /* MinSizeRel */,
+				D8D33DEC382D4A4DA5BA8890 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		8483ECCD093045A7BFBD4E7B /* Build configuration list for PBXNativeTarget "cpuinfo" */ = {
+		31ABCDDD59EF43A7A237FC9F /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F918F6B979594B39B07BCC78 /* Debug */,
-				EF469D4CC3574F0E94882575 /* Release */,
-				D05D893FA8504A37837776CD /* MinSizeRel */,
-				4AD7D531DD7247A0B35EF7FF /* RelWithDebInfo */,
+				E6BB22EE39FF415AA9B6ED38 /* Debug */,
+				26C4889330B74717B0E5176B /* Release */,
+				A6ED4C6E422549598A16B882 /* MinSizeRel */,
+				F7CA83171D69436F81DBF898 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		9B2AC857C7B14ED39CF1F2C3 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		5E362898DEAE4E2DB042A066 /* Build configuration list for PBXNativeTarget "cpuinfo_internals" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A7306AD7EAD84573B8DD0C47 /* Debug */,
-				2C3A7F3BE99F40E09052FE29 /* Release */,
-				AF2D440C77544B16951BE894 /* MinSizeRel */,
-				B75CCA93755D47D2811B7B6E /* RelWithDebInfo */,
+				0C26C1669E9443BFBCA81348 /* Debug */,
+				2935AD4EA80A4DCFB09F5F38 /* Release */,
+				F9931DDB2BFA460C85D5EC20 /* MinSizeRel */,
+				50853BD986044E4B968B7954 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		D880D513030E420D9895B457 /* Build configuration list for PBXNativeTarget "clog" */ = {
+		BB2CA42727F7432B90F5D45E /* Build configuration list for PBXNativeTarget "clog" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C63C232197194C0D935A462E /* Debug */,
-				74A4B583A07F4CE8BD320AB9 /* Release */,
-				567DFAA8F4D746E4923DE160 /* MinSizeRel */,
-				902F35F4B75E4736969435CF /* RelWithDebInfo */,
+				72C17630D09A435D88686D92 /* Debug */,
+				E8FA5812031A493DB8687FEB /* Release */,
+				564DE93C01934D1DAEAB9884 /* MinSizeRel */,
+				24CD6083189944B19B1EF418 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E8FB80DB315A4D418E8814BF /* Build configuration list for PBXProject "cpuinfo" */ = {
+		D35CAD3147BE4EAE970E2156 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0E4F2BBBD0B74B309BA4B1BB /* Debug */,
-				FCD0FD4D007F4230A24ADE23 /* Release */,
-				AA19AA50DABF44A2BF87B953 /* MinSizeRel */,
-				24AA787F673343D8960D46F8 /* RelWithDebInfo */,
+				5CAC93B85D0E419CACF45D63 /* Debug */,
+				E66148CA50904FE8A3D173FF /* Release */,
+				C55A58A8360E4DEB92F536DB /* MinSizeRel */,
+				74CC2EF4F4A043A5A882273A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = A8198B8B48F940A4846B5FCC /* Project object */;
+	rootObject = 21F6C65FC6A9487E8263565B /* Project object */;
 }

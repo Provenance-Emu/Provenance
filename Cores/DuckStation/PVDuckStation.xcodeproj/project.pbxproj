@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B30408762970C08B00180897 /* libfmtd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4F296F9819005D110B /* libfmtd.a */; platformFilters = (ios, maccatalyst, ); };
 		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (Weak, ); }; };
 		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
 		B34C2BF4296F9B24002146BB /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
@@ -21,7 +22,6 @@
 		B373CD7C296F9983005D110B /* libcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD49296F9819005D110B /* libcore.a */; };
 		B373CD7D296F9983005D110B /* libcpuinfo_internals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4D296F9819005D110B /* libcpuinfo_internals.a */; };
 		B373CD7E296F9983005D110B /* libcpuinfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4B296F9819005D110B /* libcpuinfo.a */; };
-		B373CD7F296F9983005D110B /* libfmtd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4F296F9819005D110B /* libfmtd.a */; };
 		B373CD80296F9983005D110B /* libfrontend-common.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD51296F9819005D110B /* libfrontend-common.a */; };
 		B373CD81296F9983005D110B /* libglad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD53296F9819005D110B /* libglad.a */; };
 		B373CD82296F9983005D110B /* libglslang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD55296F9819005D110B /* libglslang.a */; };
@@ -58,6 +58,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B30408742970C08300180897 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D13422B1CF6E467997EEF928;
+			remoteInfo = "common-tests";
+		};
 		B373CD42296F9819005D110B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
@@ -244,7 +251,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 3E0512A1B294466B9FBB9801;
+			remoteGlobalIDString = 5E7F7554D3AE463A8152F8B4;
 			remoteInfo = ALL_BUILD;
 		};
 		B3D8AD4E26BE55E20096A354 /* PBXContainerItemProxy */ = {
@@ -407,12 +414,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30408762970C08B00180897 /* libfmtd.a in Frameworks */,
 				B373CD7A296F9983005D110B /* libclog.a in Frameworks */,
 				B373CD7B296F9983005D110B /* libcommon.a in Frameworks */,
 				B373CD7C296F9983005D110B /* libcore.a in Frameworks */,
 				B373CD7D296F9983005D110B /* libcpuinfo_internals.a in Frameworks */,
 				B373CD7E296F9983005D110B /* libcpuinfo.a in Frameworks */,
-				B373CD7F296F9983005D110B /* libfmtd.a in Frameworks */,
 				B373CD80296F9983005D110B /* libfrontend-common.a in Frameworks */,
 				B373CD81296F9983005D110B /* libglad.a in Frameworks */,
 				B373CD82296F9983005D110B /* libglslang.a in Frameworks */,
@@ -605,6 +612,7 @@
 			children = (
 				B373CD43296F9819005D110B /* libclog.a */,
 				B373CD45296F9819005D110B /* libcommon.a */,
+				B30408752970C08300180897 /* common-tests */,
 				B373CD49296F9819005D110B /* libcore.a */,
 				B373CD4B296F9819005D110B /* libcpuinfo.a */,
 				B373CD4D296F9819005D110B /* libcpuinfo_internals.a */,
@@ -762,6 +770,14 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		B30408752970C08300180897 /* common-tests */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			name = "common-tests";
+			path = "common-tests.app";
+			remoteRef = B30408742970C08300180897 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		B373CD43296F9819005D110B /* libclog.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;

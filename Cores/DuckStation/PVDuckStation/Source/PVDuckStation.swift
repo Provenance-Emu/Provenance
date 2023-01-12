@@ -88,7 +88,7 @@ extension PVDuckStationCore: CoreOptional {
 }
 
 @objc public extension PVDuckStationCore {
-    @objc var gs: Int{
+    @objc var gs: Int {
         PVDuckStationCore.valueForOption(PVDuckStationCore.gsOption).asInt ?? 0
     }
 
