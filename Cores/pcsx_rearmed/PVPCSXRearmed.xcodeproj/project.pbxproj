@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		B301797F207C909E0051B93D /* libpcsx_rearmed.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libpcsx_rearmed.a */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
+		B3136452296FF27800C34FED /* linkage_arm64.S in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1892872967500EAEB37 /* linkage_arm64.S */; };
+		B3136453296FF2BE00C34FED /* new_dynarec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1922872967500EAEB37 /* new_dynarec.c */; };
+		B3136454296FF67D00C34FED /* pcsxmem.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA18F2872967500EAEB37 /* pcsxmem.c */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
@@ -137,6 +140,8 @@
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libpcsx_rearmed.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpcsx_rearmed.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
+		B3136456296FF82600C34FED /* libc.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libc.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libc.tbd; sourceTree = DEVELOPER_DIR; };
+		B3136457296FF82600C34FED /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3344BC32859E088006E6B3A /* libpcsx_rearmed-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libpcsx_rearmed-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
@@ -947,6 +952,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3136456296FF82600C34FED /* libc.tbd */,
+				B3136457296FF82600C34FED /* libc++.tbd */,
 				B3980D792923908700A82429 /* OpenGL.framework */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
@@ -2437,6 +2444,7 @@
 				B391903B2873F0AF000838F6 /* dma.c in Sources */,
 				B39190012873EF6B000838F6 /* mdec.c in Sources */,
 				B3918FED2873EF6B000838F6 /* gte_divider.c in Sources */,
+				B3136452296FF27800C34FED /* linkage_arm64.S in Sources */,
 				B39190532873F1A7000838F6 /* Alloc.c in Sources */,
 				B3918FEA2873EF6B000838F6 /* cdriso.c in Sources */,
 				B391903A2873F0AF000838F6 /* reverb.c in Sources */,
@@ -2455,6 +2463,7 @@
 				B391903D2873F0AF000838F6 /* xa.c in Sources */,
 				B3918FF22873EF6B000838F6 /* plugins.c in Sources */,
 				B3918FF82873EF6B000838F6 /* psxhle.c in Sources */,
+				B3136454296FF67D00C34FED /* pcsxmem.c in Sources */,
 				B39190422873F0AF000838F6 /* freeze.c in Sources */,
 				B3918FF62873EF6B000838F6 /* psxcommon.c in Sources */,
 				B391905A2873F1A7000838F6 /* Sort.c in Sources */,
@@ -2465,6 +2474,7 @@
 				B3918FEF2873EF6B000838F6 /* psxmem.c in Sources */,
 				B39190582873F1A7000838F6 /* LzmaDec.c in Sources */,
 				B3918FEB2873EF6B000838F6 /* sio.c in Sources */,
+				B3136453296FF2BE00C34FED /* new_dynarec.c in Sources */,
 				B3918FF52873EF6B000838F6 /* cheat.c in Sources */,
 				B39190022873EF6B000838F6 /* r3000a.c in Sources */,
 				B3918FE92873EF6B000838F6 /* ppf.c in Sources */,

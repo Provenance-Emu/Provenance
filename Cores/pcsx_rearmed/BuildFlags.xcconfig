@@ -6,18 +6,30 @@
 //
 //
 
+// TODO: Do I need to run this?
+// it was in the libretro makefile
+// CC_AS = perl ./tools/gas-preprocessor.pl $(CC)
+
+
 // All
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) __LIBRETRO__=1 HAVE_LIBRETRO=1  TEXTURE_CACHE_4BPP=1 TEXTURE_CACHE_8BPP=1 HAVE_CHD=1 _7ZIP_ST=1 HAVE_GLES=1 HAVE_CHD=1 USE_LIBRETRO_VFS=1 FRONTEND_SUPPORTS_RGB565=1 NO_FRONTEND=1 DRC_DISABLE=1 THREAD_RENDERING=1 GL_SILENCE_DEPRECATION=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) __LIBRETRO__=1 HAVE_LIBRETRO=1  TEXTURE_CACHE_4BPP=1 TEXTURE_CACHE_8BPP=1 HAVE_CHD=1 _7ZIP_ST=1 HAVE_GLES=1 HAVE_CHD=1 USE_LIBRETRO_VFS=1 FRONTEND_SUPPORTS_RGB565=1 NO_FRONTEND=1 THREAD_RENDERING=1 GL_SILENCE_DEPRECATION=1 IOS=1 TVOS=1 HAVE_NEON=1 BUILTIN_GPU_NEON=1 BUILTIN_GPU=neon __ARM_NEON__ DYNAREC=ari64
+
+// DRC_DISABLE=1DYNAREC=ari64
+//
+// "Lightrec should not be used on ARM (please specify DYNAREC=ari64 to make)
+// HAVE_NEON_ASM=1 // Not for arm64
+// BUILTIN_GPU=peops
+// DYNAREC=0
+
 OTHER_CFLAGS = $(inherited) -ObjC -ffast-math -DREV="1" -fno-strict-aliasing
 // GPU_NEON=1 NEON_BUILD=1
 // -ffast-math -ftree-vectorize -fno-strict-aliasing -fpermissive -fomit-frame-pointer
 OTHER_LDFLAGS =  $(inherited) -ObjC -Wl,-all_load -all_load
 //LDFLAGS += -lm
 
-
     // Device
-GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1 HAVE_NEON=0 DYNAREC=ari64 BUILTIN_GPU=peops
-//DYNAREC=0
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1
+// DYNAREC=ari64
 OTHER_CFLAGS[sdk=iphoneos*] = $(inherited)
 
 // Simulator
