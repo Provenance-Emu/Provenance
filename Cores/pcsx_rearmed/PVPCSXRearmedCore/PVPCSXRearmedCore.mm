@@ -155,9 +155,9 @@
 - (void *)getVariable:(const char *)variable {
     ILOG(@"%s", variable);
 
-    #define STRINGIFY(x) #x
-    #define ESYM(name) STRINGIFY(pcsx_rearmed_##name)
-    #define V(x) strcmp(variable, ESYM(x)) == 0
+#define STRINGIFY(x) #x
+#define ESYM(name) STRINGIFY(pcsx_rearmed_##name)
+#define V(x) strcmp(variable, ESYM(x)) == 0
 
     if (V(frameskip_type)) {
         char *value = strdup("auto");
@@ -176,23 +176,23 @@
         return value;
     }
     else if (V(neon_enhancement_enable)) {
-        // Might be slow
-        char *value = strdup("enabled"); //disabled, sync, async
+            // Might be slow
+        char *value = strdup("enabled");
         return value;
     }
     else if (V(neon_enhancement_no_main)) {
             // "Improves performance when 'Enhanced Resolution (Slow)' is enabled, but reduces compatibility and may cause rendering errors."
-        char *value = strdup("enabled"); //disabled, sync, async
+        char *value = strdup("enabled");
         return value;
     }
     else if (V(drc)) {
-        //       "Dynamically recompile PSX CPU instructions to native instructions. Much faster than using an interpreter, but may be less accurate on some platforms.",
-        char *value = strdup("enabled"); //disabled, sync, async
+            //       "Dynamically recompile PSX CPU instructions to native instructions. Much faster than using an interpreter, but may be less accurate on some platforms.",
+        char *value = strdup("enabled");
         return value;
     }
     else if (V(async_cd)) {
             // "Select method used to read data from content disk images. 'Synchronous' mimics original hardware. 'Asynchronous' can reduce stuttering on devices with slow storage. 'Pre-Cache (CHD)' loads disk image into memory for faster access (CHD files only)."
-        char *value = strdup("sync"); //sync, async, precache(chd)
+        char *value = strdup("precache"); //sync, async, precache(chd)
         return value;
     }
     else if (V(show_bios_bootlogo)) {
