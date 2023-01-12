@@ -17,8 +17,8 @@
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
 
-#define SAMPLERATE 48000
-#define SIZESOUNDBUFFER 48000 / 60 * 4
+#define SAMPLERATE 44100
+#define SIZESOUNDBUFFER 44100 / 60 * 4
 #define OpenEmu 1
 
 #pragma mark - Private
@@ -148,6 +148,70 @@
 # pragma mark - Audio
 
 - (double)audioSampleRate {
-    return 22255;
+    return SAMPLERATE;
+}
+
+#pragma mark - Options
+- (void *)getVariable:(const char *)variable {
+    ILOG(@"%s", variable);
+
+    #define STRINGIFY(x) #x
+    #define ESYM(name) STRINGIFY(pcsx_rearmed_##name)
+    #define V(x) strcmp(variable, ESYM(x)) == 0
+
+    if (V(frameskip_type)) {
+        char *value = strdup("auto");
+        return value;
+    }
+    else if (V(gpu_thread_rendering)) {
+        char *value = strdup("async"); //disabled, sync, async
+        return value;
+    }
+    else if (V(duping_enable)) {
+        char *value = strdup("enabled"); //disabled, sync, async
+        return value;
+    }
+    else if (V(neon_interlace_enable)) {
+        char *value = strdup("disabled"); //disabled, sync, async
+        return value;
+    }
+    else if (V(neon_enhancement_enable)) {
+        // Might be slow
+        char *value = strdup("enabled"); //disabled, sync, async
+        return value;
+    }
+    else if (V(neon_enhancement_no_main)) {
+            // "Improves performance when 'Enhanced Resolution (Slow)' is enabled, but reduces compatibility and may cause rendering errors."
+        char *value = strdup("enabled"); //disabled, sync, async
+        return value;
+    }
+    else if (V(drc)) {
+        //       "Dynamically recompile PSX CPU instructions to native instructions. Much faster than using an interpreter, but may be less accurate on some platforms.",
+        char *value = strdup("enabled"); //disabled, sync, async
+        return value;
+    }
+    else if (V(async_cd)) {
+            // "Select method used to read data from content disk images. 'Synchronous' mimics original hardware. 'Asynchronous' can reduce stuttering on devices with slow storage. 'Pre-Cache (CHD)' loads disk image into memory for faster access (CHD files only)."
+        char *value = strdup("sync"); //sync, async, precache(chd)
+        return value;
+    }
+    else if (V(show_bios_bootlogo)) {
+        char *value = strdup("enabled");
+        return value;
+    }
+    else if (V(memcard2)) {
+            //       "Emulate a second memory card in slot 2. This will be shared by all games.",
+
+        char *value = strdup("enabled"); //sync, async, precache(chd)
+        return value;
+    }
+    else {
+        ELOG(@"Unprocessed var: %s", variable);
+        return nil;
+    }
+
+#undef V
+#undef ESYM
+    return NULL;
 }
 @end
