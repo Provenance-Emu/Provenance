@@ -26,7 +26,7 @@ protocol PVCheatsViewControllerDelegate: AnyObject {
          cheatIndex: UInt8,
          completion: @escaping CheatsCompletion)
     func cheatsViewController(_ cheatsViewController: PVCheatsViewController, load state: PVCheats)
-    func getCheatTypes() -> NSArray
+    func getCheatTypes() -> [String]
 }
 
 struct CheatsSection {
@@ -173,8 +173,9 @@ final class PVCheatsViewController: UITableViewController {
         }
     }
 
-    func getCheatTypes() -> NSArray {
-        return delegate!.getCheatTypes();
+    func getCheatTypes() -> [String] {
+        guard let delegate = delegate else { return [] }
+        return delegate.getCheatTypes()
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

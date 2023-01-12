@@ -66,7 +66,7 @@ extension MednafenGameCore: GameWithCheat {
     }
 
     public var cheatCodeTypes: [String] {
-        return self.getCheatCodeTypes() as! NSArray
+        return self.getCheatCodeTypes()
     }
 
     public var supportsCheatCode: Bool

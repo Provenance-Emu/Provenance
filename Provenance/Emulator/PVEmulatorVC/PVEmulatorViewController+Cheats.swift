@@ -185,28 +185,23 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         present(cheatsNavController, animated: true)
     }
 
-    @objc func getCheatTypes() -> NSArray {
-        if let gameWithCheat = core as? GameWithCheat {
-            return gameWithCheat.cheatCodeTypes();
+    @objc func getCheatTypes() -> [String] {
+        guard let gameWithCheat = core as? GameWithCheat else {
+            return []
         }
-        return [];
+        return gameWithCheat.cheatCodeTypes
     }
 }
 
 @objc extension PVEmulatorCore {
-    @objc public func setCheat(
-        code: String,
-        type: String,
-        enabled: Bool
-    ) -> Bool {
+    @objc public func setCheat(code: String, type: String, enabled: Bool) -> Bool {
         return false
     }
-    @objc public func supportsCheatCode() -> Bool
-    {
+    @objc public var supportsCheatCode: Bool {
         return false
     }
     /* This is list of cheat code types (will be passed to codeType) */
-    @objc public func cheatCodeTypes() -> NSArray {
+    @objc public var cheatCodeTypes: [String] {
         return [];
     }
     /* This is always called, with blank codeType if none is provided */
@@ -215,8 +210,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         type: String,
         codeType: String,
         cheatIndex: UInt8,
-        enabled: Bool
-    ) -> Bool {
+        enabled: Bool) -> Bool {
         return self.setCheat(code:code, type:type, enabled:enabled)
     }
 }

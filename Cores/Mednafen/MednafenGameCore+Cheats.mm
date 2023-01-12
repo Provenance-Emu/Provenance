@@ -79,8 +79,7 @@
     }
 }
 
-- (NSArray *)getCheatCodeTypes
-{
+- (NSArray<NSString*> *)getCheatCodeTypes {
     NSArray *types=@[];
     switch (self.systemType) {
         case MednaSystemGB:
@@ -98,8 +97,7 @@
     return types;
 }
 
-- (BOOL)getCheatSupport
-{
+- (BOOL)getCheatSupport {
     if (self.systemType == MednaSystemPSX ||
         self.systemType == MednaSystemSNES ||
         self.systemType == MednaSystemGB) {

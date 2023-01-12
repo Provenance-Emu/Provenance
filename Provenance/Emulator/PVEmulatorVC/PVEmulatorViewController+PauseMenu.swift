@@ -1,10 +1,10 @@
-//
-//  PVEmulatorViewController~iOS.swift
-//  Provenance
-//
-//  Created by Joseph Mattiello on 7/20/18.
-//  Copyright © 2018 Provenance. All rights reserved.
-//
+    //
+    //  PVEmulatorViewController~iOS.swift
+    //  Provenance
+    //
+    //  Created by Joseph Mattiello on 7/20/18.
+    //  Copyright © 2018 Provenance. All rights reserved.
+    //
 
 import Foundation
 import PVLibrary
@@ -19,7 +19,7 @@ extension PVEmulatorViewController {
 
         let actionSheet = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
 
-        // only popup if sumoned from menuButton
+            // only popup if sumoned from menuButton
 #if targetEnvironment(macCatalyst) || os(macOS)
         if let menuButton = menuButton, sender === menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
@@ -54,14 +54,14 @@ extension PVEmulatorViewController {
         let wantsStartSelectInMenu: Bool = PVEmulatorConfiguration.systemIDWantsStartAndSelectInMenu(game.system.identifier)
         var hideP1MenuActions = false
         if let player1: GCController = controllerManager.player1 {
-            #if os(iOS)
-                if PVSettingsModel.shared.missingButtonsAlwaysOn {
-                    hideP1MenuActions = true
-                }
-            #endif
+#if os(iOS)
+            if PVSettingsModel.shared.missingButtonsAlwaysOn {
+                hideP1MenuActions = true
+            }
+#endif
             if player1.extendedGamepad != nil || wantsStartSelectInMenu, !hideP1MenuActions {
-                // left trigger bound to Start
-                // right trigger bound to Select
+                    // left trigger bound to Start
+                    // right trigger bound to Select
                 actionSheet.addAction(UIAlertAction(title: "P1 Start", style: .default, handler: { action in
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false
@@ -147,11 +147,11 @@ extension PVEmulatorViewController {
                 }))
             }
         }
-        #if os(iOS)
-            actionSheet.addAction(UIAlertAction(title: "Save Screenshot", style: .default, handler: { action in
-                self.perform(#selector(self.takeScreenshot), with: nil, afterDelay: 0.1)
-            }))
-        #endif
+#if os(iOS)
+        actionSheet.addAction(UIAlertAction(title: "Save Screenshot", style: .default, handler: { action in
+            self.perform(#selector(self.takeScreenshot), with: nil, afterDelay: 0.1)
+        }))
+#endif
         actionSheet.addAction(UIAlertAction(title: "Game Info", style: .default, handler: { action in
             self.showMoreInfo()
         }))
@@ -164,10 +164,10 @@ extension PVEmulatorViewController {
             }))
         }
         if let gameWithCheat = core as? GameWithCheat,
-           gameWithCheat.supportsCheatCode() {
-                actionSheet.addAction(UIAlertAction(title: "Cheat Codes", style: .default, handler: { action in
-                    self.perform(#selector(self.showCheatsMenu), with: nil, afterDelay: 0.1)
-                }))
+           gameWithCheat.supportsCheatCode {
+            actionSheet.addAction(UIAlertAction(title: "Cheat Codes", style: .default, handler: { action in
+                self.perform(#selector(self.showCheatsMenu), with: nil, afterDelay: 0.1)
+            }))
         }
         actionSheet.addAction(UIAlertAction(title: "Reset", style: .default, handler: { action in
             let completion = {
@@ -199,26 +199,26 @@ extension PVEmulatorViewController {
         shouldSave = shouldSave && abs(game.saveStates.sorted(byKeyPath: "date", ascending: true).last?.date.timeIntervalSinceNow ?? minutes(2)) > minutes(1)
         shouldSave = shouldSave && self.core.supportsSaveStates
 
-        // Add Non-Saving quit first
+            // Add Non-Saving quit first
         let quitTitle = shouldSave ? "Quit (without saving)" : "Quit"
         actionSheet.addAction(UIAlertAction(title: quitTitle, style: .destructive, handler: {[weak self] action in
-			guard let self = self else { return }
-			DispatchQueue.main.async {
-				self.quit(optionallySave: false)
-			}
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.quit(optionallySave: false)
+            }
         }))
 
-        // If save and quit is an option, add it last with different style
+            // If save and quit is an option, add it last with different style
         if shouldSave {
             actionSheet.addAction(UIAlertAction(title: "Save & Quit", style: .destructive, handler: {[weak self] action in
-				guard let self = self else { return }
-				DispatchQueue.main.async {
-					self.quit(optionallySave: true)
-				}
+                guard let self = self else { return }
+                DispatchQueue.main.async {
+                    self.quit(optionallySave: true)
+                }
             }))
         }
 
-        // make sure this item is marked .cancel so it will be called even if user dismises popup
+            // make sure this item is marked .cancel so it will be called even if user dismises popup
         let resumeAction = UIAlertAction(title: "Resume", style: .cancel, handler: { action in
             self.core.setPauseEmulation(false)
             self.isShowingMenu = false

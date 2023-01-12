@@ -14,7 +14,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
     var mustRefreshDataSource: Bool = false
 
     public var codeTypeText:String = "";
-    public var codeTypeButtons:NSMutableArray = [];
+    public var codeTypeButtons:[MenuButton] = [];
     @IBOutlet public var typeText: UITextField!
     #if os(iOS)
     @IBOutlet public var codeText: UITextView!
@@ -146,13 +146,19 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
     }
 
     func play() {
-        let table:UITableView = delegate!.view as! UITableView
+        guard
+            let delegate = delegate,
+            let table:UITableView = delegate.view as? UITableView else {
+            ELOG("Nil delegate")
+            return
+        }
+
         let cheatIndex:UInt8 = UInt8(table.numberOfRows(inSection:0))
         if typeText.text == "" {
             typeText.text="Cheat Code"
         }
         #if os(iOS)
-        delegate?.saveCheatCode(code: codeText.text!,
+        delegate.saveCheatCode(code: codeText.text ?? "nil",
             type: typeText.text!,
             codeType: codeTypeText,
             cheatIndex: cheatIndex,
@@ -165,7 +171,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
         if !fieldValue.isEmpty {
             self.delegate?.saveCheatCode(
                 code: fieldValue,
-                type: typeText.text!,
+                type: typeText.text ?? "nil",
                 codeType: codeTypeText,
                 cheatIndex: cheatIndex,
                 enabled: true)
@@ -193,16 +199,21 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
             case let .error(error):
                 ELOG("An error occurred: \(error)")
             case .deleted:
-                print("The object was deleted.")
+                ILOG("The object was deleted.")
             }
         })
     }
 
     @objc func codeTypeSelected(_ sender: UIButton) {
-        let types = delegate!.getCheatTypes();
+        guard let delegate = delegate else {
+            ELOG("Nil delegate")
+            return
+        }
+
+        let types = delegate.getCheatTypes();
         codeTypeText=String(describing:types[sender.tag])
         for button in codeTypeButtons {
-            let codeTypeButton:UIButton = button as! UIButton
+            let codeTypeButton:UIButton = button
             if codeTypeButton.tag == sender.tag {
                 codeTypeButton.setBackgroundImage(.pixel(ofColor: .provenanceBlue), for: .normal)
             } else {
@@ -212,7 +223,12 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
     }
 
     @objc func addCodeTypes() {
-        let types = delegate!.getCheatTypes();
+        guard let delegate = delegate else {
+            ELOG("Nil delegate")
+            return
+        }
+
+        let types = delegate.getCheatTypes();
         var typeIdx:Int = 0;
         var anchorObject = self.view!
         #if os(tvOS)
@@ -261,7 +277,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
             codeTypeButton.isSelected = false
             anchorObject=codeTypeButton
             typeIdx+=1;
-            codeTypeButtons.add(codeTypeButton);
+            codeTypeButtons.append(codeTypeButton)
         }
         #if os(tvOS)
         saveButton.topAnchor.constraint(equalTo: anchorObject.bottomAnchor, constant: 20).isActive = true
