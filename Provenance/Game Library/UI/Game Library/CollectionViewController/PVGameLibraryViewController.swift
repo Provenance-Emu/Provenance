@@ -954,8 +954,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     }
 
     private func longPressed(item: Section.Item, at indexPath: IndexPath, point: CGPoint) {
-        let cell = collectionView!.cellForItem(at: indexPath)!
-        let actionSheet = contextMenu(for: item, cell: cell, point: point)
+        guard let cell = collectionView?.cellForItem(at: indexPath),
+              let actionSheet = contextMenu(for: item, cell: cell, point: point) else {
+            ELOG("nils here")
+            return
+        }
 
         actionSheet.popoverPresentationController?.sourceView = cell
         actionSheet.popoverPresentationController?.sourceRect = cell.bounds
@@ -980,18 +983,18 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     }
     #endif
 
-    private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIViewController {
+    private func contextMenu(for item: Section.Item, cell: UICollectionViewCell, point: CGPoint) -> UIViewController? {
         switch item {
         case .game(let game):
             return contextMenu(for: game, sender: cell)
         case .favorites:
-            let game: PVGame = (cell as! CollectionViewInCollectionViewCell).item(at: point)!
+            guard let game: PVGame = (cell as? CollectionViewInCollectionViewCell)?.item(at: point) else { return nil }
             return contextMenu(for: game, sender: cell)
         case .saves:
-            let saveState: PVSaveState = (cell as! CollectionViewInCollectionViewCell).item(at: point)!
+            guard let saveState: PVSaveState = (cell as? CollectionViewInCollectionViewCell)?.item(at: point) else { return nil }
             return contextMenu(for: saveState)
         case .recents:
-            let game: PVRecentGame = (cell as! CollectionViewInCollectionViewCell).item(at: point)!
+            guard let game: PVRecentGame = (cell as? CollectionViewInCollectionViewCell)?.item(at: point) else { return nil }
             return contextMenu(for: game.game, sender: cell)
         }
     }
