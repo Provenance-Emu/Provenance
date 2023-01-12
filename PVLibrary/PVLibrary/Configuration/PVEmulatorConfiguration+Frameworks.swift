@@ -28,7 +28,9 @@ public extension PVEmulatorConfiguration {
         let libRetroCoreClass: AnyClass? = NSClassFromString("PVLibRetroCore")
         let libRetroGLESCoreClass: AnyClass? = NSClassFromString("PVLibRetroGLESCore")
 
-        let motherClassInfo = [ClassInfo(PVEmulatorCore.self), ClassInfo(libRetroCoreClass), ClassInfo(libRetroGLESCoreClass)]
+        let motherClassInfo = [ClassInfo(PVEmulatorCore.self),
+                               ClassInfo(libRetroCoreClass),
+                               ClassInfo(libRetroGLESCoreClass)]
         var subclassList = [ClassInfo]()
 
         var count = UInt32(0)
@@ -36,7 +38,10 @@ public extension PVEmulatorConfiguration {
         let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
         for i in 0 ..< Int(count) {
-            if let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]), let superclassesInfo = classInfo.superclassesInfo, motherClassInfo.intersects(with: motherClassInfo) {
+            if
+                let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]),
+                let superclassesInfo = classInfo.superclassesInfo,
+                motherClassInfo.intersects(with: motherClassInfo) {
                 subclassList.append(classInfo)
             }
         }
