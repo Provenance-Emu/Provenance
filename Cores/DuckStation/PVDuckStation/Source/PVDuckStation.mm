@@ -1290,6 +1290,7 @@ NS_INLINE NSString *OEDisplayModeListGetPrefKeyFromModeName(
 #include "common/assert.h"
 #include "common/byte_stream.h"
 #include "common/file_system.h"
+#include "common/threading.h"
 #include "common/log.h"
 #include "common/string_util.h"
 #include "core/analog_controller.h"
@@ -1306,7 +1307,28 @@ NS_INLINE NSString *OEDisplayModeListGetPrefKeyFromModeName(
 #include <vector>
 
 #pragma mark - Host Mapping
-
+namespace Host {
+    static Threading::Thread s_cpu_thread;
+    static std::mutex s_cpu_thread_events_mutex;
+    static std::condition_variable s_cpu_thread_event_done;
+    static std::condition_variable s_cpu_thread_event_posted;
+    static std::deque<std::pair<std::function<void()>, bool>> s_cpu_thread_events;
+    static u32 s_blocking_cpu_events_pending = 0;
+    void OnAchievementsRefreshed() {
+    }
+    void RunOnCPUThread(std::function<void()> function, bool block /* = false */) {
+        std::unique_lock lock(s_cpu_thread_events_mutex);
+        s_cpu_thread_events.emplace_back(std::move(function), block);
+        s_cpu_thread_event_posted.notify_one();
+        if (block)
+            s_cpu_thread_event_done.wait(lock, []() { return s_blocking_cpu_events_pending == 0; });
+    }
+}
+namespace FullscreenUI {
+    bool IsInitialized() {
+        return true;
+    }
+}
 bool Host::AcquireHostDisplay(RenderAPI api)
 {
     GET_CURRENT_OR_RETURN(false);

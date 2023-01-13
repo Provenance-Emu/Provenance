@@ -45,25 +45,25 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		095394571AD941499895E7BD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = ADA9B203BAC4437C8B367D26 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */; };
-		1228FA18072845CCB388AF50 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 331E040CC3FE4855875F4AB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */; };
-		21310A0427A248F291EE38F0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/os.cc */ = {isa = PBXBuildFile; fileRef = C4B2D6B7ACAE45E895366C06 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/os.cc */; };
-		227D86FE86EA4FE4BE5C7F33 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/compile.h */ = {isa = PBXBuildFile; fileRef = 9A92B346DEA946F6AA2B2D13 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/compile.h */; };
-		2F5F4B3E1D5548E194CE6745 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/std.h */ = {isa = PBXBuildFile; fileRef = AC7B7BE492C445BE9A4AD213 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/std.h */; };
-		40EF356D42D24E878F6F57F9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/format.cc */ = {isa = PBXBuildFile; fileRef = 6142BD3BD65A460E9FDABAC8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/format.cc */; };
-		4BCAB9CDBB624AD99A4E95D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/color.h */ = {isa = PBXBuildFile; fileRef = 78200FD5EE6D492EA8916765 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/color.h */; };
-		57B934FD17DC4556A0E7DEBA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format-inl.h */ = {isa = PBXBuildFile; fileRef = FFBBDE2E00574B098BEB695F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format-inl.h */; };
-		672C3385467C4B5FADF5BB18 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ostream.h */ = {isa = PBXBuildFile; fileRef = EA515A4D7CB64B10BCB77A9B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ostream.h */; };
-		7EF9A3EFE568415188C73069 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/args.h */ = {isa = PBXBuildFile; fileRef = B23EA858087148D9BC6314B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/args.h */; };
-		87DCB18FBEBE4BA586F0DFE0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/core.h */ = {isa = PBXBuildFile; fileRef = 52BB7A15A1F74A05ABAC7AAD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/core.h */; };
-		91E36F8BB8274C05A003E322 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/chrono.h */ = {isa = PBXBuildFile; fileRef = E7EEA267CAD34903B10396FB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/chrono.h */; };
-		9D4D6D8C95EB4187A471641A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/printf.h */ = {isa = PBXBuildFile; fileRef = 58144AA806CB4A55A26CEA75 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/printf.h */; };
-		A4E2F77F7111432FA9BBF5A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/ChangeLog.rst */ = {isa = PBXBuildFile; fileRef = E9A46D55350946A4BA3DE740 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/ChangeLog.rst */; };
-		BE85D73E4F134C96827D46C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/README.rst */ = {isa = PBXBuildFile; fileRef = 3FA7DADA56274BAC84D0464B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/README.rst */; };
-		C70FAB5CAD614789818F36DE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/os.h */ = {isa = PBXBuildFile; fileRef = ECD00A46B7694C0EA2C582C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/os.h */; };
-		D74255ADAC0C436E870AAEDC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ranges.h */ = {isa = PBXBuildFile; fileRef = B2E1C0979036496788115CB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ranges.h */; };
-		E28A95DDB2894570A120379A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/xchar.h */ = {isa = PBXBuildFile; fileRef = 7F1CA23BD2AA44F68557E73E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/xchar.h */; };
-		EA3B4892803C49FDBC64D9A4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format.h */ = {isa = PBXBuildFile; fileRef = 58219878F33849EAAC2F8471 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format.h */; };
+		095394571AD941499895E7BD /* ../cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = ADA9B203BAC4437C8B367D26 /* ../cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */; };
+		1228FA18072845CCB388AF50 /* ../duckstation/dep/fmt/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 331E040CC3FE4855875F4AB1 /* ../duckstation/dep/fmt/CMakeLists.txt */; };
+		21310A0427A248F291EE38F0 /* ../duckstation/dep/fmt/src/os.cc */ = {isa = PBXBuildFile; fileRef = C4B2D6B7ACAE45E895366C06 /* ../duckstation/dep/fmt/src/os.cc */; };
+		227D86FE86EA4FE4BE5C7F33 /* ../duckstation/dep/fmt/include/fmt/compile.h */ = {isa = PBXBuildFile; fileRef = 9A92B346DEA946F6AA2B2D13 /* ../duckstation/dep/fmt/include/fmt/compile.h */; };
+		2F5F4B3E1D5548E194CE6745 /* ../duckstation/dep/fmt/include/fmt/std.h */ = {isa = PBXBuildFile; fileRef = AC7B7BE492C445BE9A4AD213 /* ../duckstation/dep/fmt/include/fmt/std.h */; };
+		40EF356D42D24E878F6F57F9 /* ../duckstation/dep/fmt/src/format.cc */ = {isa = PBXBuildFile; fileRef = 6142BD3BD65A460E9FDABAC8 /* ../duckstation/dep/fmt/src/format.cc */; };
+		4BCAB9CDBB624AD99A4E95D3 /* ../duckstation/dep/fmt/include/fmt/color.h */ = {isa = PBXBuildFile; fileRef = 78200FD5EE6D492EA8916765 /* ../duckstation/dep/fmt/include/fmt/color.h */; };
+		57B934FD17DC4556A0E7DEBA /* ../duckstation/dep/fmt/include/fmt/format-inl.h */ = {isa = PBXBuildFile; fileRef = FFBBDE2E00574B098BEB695F /* ../duckstation/dep/fmt/include/fmt/format-inl.h */; };
+		672C3385467C4B5FADF5BB18 /* ../duckstation/dep/fmt/include/fmt/ostream.h */ = {isa = PBXBuildFile; fileRef = EA515A4D7CB64B10BCB77A9B /* ../duckstation/dep/fmt/include/fmt/ostream.h */; };
+		7EF9A3EFE568415188C73069 /* ../duckstation/dep/fmt/include/fmt/args.h */ = {isa = PBXBuildFile; fileRef = B23EA858087148D9BC6314B5 /* ../duckstation/dep/fmt/include/fmt/args.h */; };
+		87DCB18FBEBE4BA586F0DFE0 /* ../duckstation/dep/fmt/include/fmt/core.h */ = {isa = PBXBuildFile; fileRef = 52BB7A15A1F74A05ABAC7AAD /* ../duckstation/dep/fmt/include/fmt/core.h */; };
+		91E36F8BB8274C05A003E322 /* ../duckstation/dep/fmt/include/fmt/chrono.h */ = {isa = PBXBuildFile; fileRef = E7EEA267CAD34903B10396FB /* ../duckstation/dep/fmt/include/fmt/chrono.h */; };
+		9D4D6D8C95EB4187A471641A /* ../duckstation/dep/fmt/include/fmt/printf.h */ = {isa = PBXBuildFile; fileRef = 58144AA806CB4A55A26CEA75 /* ../duckstation/dep/fmt/include/fmt/printf.h */; };
+		A4E2F77F7111432FA9BBF5A7 /* ../duckstation/dep/fmt/ChangeLog.rst */ = {isa = PBXBuildFile; fileRef = E9A46D55350946A4BA3DE740 /* ../duckstation/dep/fmt/ChangeLog.rst */; };
+		BE85D73E4F134C96827D46C5 /* ../duckstation/dep/fmt/README.rst */ = {isa = PBXBuildFile; fileRef = 3FA7DADA56274BAC84D0464B /* ../duckstation/dep/fmt/README.rst */; };
+		C70FAB5CAD614789818F36DE /* ../duckstation/dep/fmt/include/fmt/os.h */ = {isa = PBXBuildFile; fileRef = ECD00A46B7694C0EA2C582C5 /* ../duckstation/dep/fmt/include/fmt/os.h */; };
+		D74255ADAC0C436E870AAEDC /* ../duckstation/dep/fmt/include/fmt/ranges.h */ = {isa = PBXBuildFile; fileRef = B2E1C0979036496788115CB9 /* ../duckstation/dep/fmt/include/fmt/ranges.h */; };
+		E28A95DDB2894570A120379A /* ../duckstation/dep/fmt/include/fmt/xchar.h */ = {isa = PBXBuildFile; fileRef = 7F1CA23BD2AA44F68557E73E /* ../duckstation/dep/fmt/include/fmt/xchar.h */; };
+		EA3B4892803C49FDBC64D9A4 /* ../duckstation/dep/fmt/include/fmt/format.h */ = {isa = PBXBuildFile; fileRef = 58219878F33849EAAC2F8471 /* ../duckstation/dep/fmt/include/fmt/format.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -122,27 +122,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		331E040CC3FE4855875F4AB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		3FA7DADA56274BAC84D0464B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/README.rst */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = README.rst; path = README.rst; sourceTree = SOURCE_ROOT; };
-		52BB7A15A1F74A05ABAC7AAD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/core.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = core.h; path = include/fmt/core.h; sourceTree = SOURCE_ROOT; };
-		58144AA806CB4A55A26CEA75 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/printf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = printf.h; path = include/fmt/printf.h; sourceTree = SOURCE_ROOT; };
-		58219878F33849EAAC2F8471 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = format.h; path = include/fmt/format.h; sourceTree = SOURCE_ROOT; };
-		6142BD3BD65A460E9FDABAC8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/format.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = format.cc; path = src/format.cc; sourceTree = SOURCE_ROOT; };
-		7380ADEB4A96475DB2B58DF6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		331E040CC3FE4855875F4AB1 /* ../duckstation/dep/fmt/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		3FA7DADA56274BAC84D0464B /* ../duckstation/dep/fmt/README.rst */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = README.rst; path = README.rst; sourceTree = SOURCE_ROOT; };
+		52BB7A15A1F74A05ABAC7AAD /* ../duckstation/dep/fmt/include/fmt/core.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = core.h; path = include/fmt/core.h; sourceTree = SOURCE_ROOT; };
+		58144AA806CB4A55A26CEA75 /* ../duckstation/dep/fmt/include/fmt/printf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = printf.h; path = include/fmt/printf.h; sourceTree = SOURCE_ROOT; };
+		58219878F33849EAAC2F8471 /* ../duckstation/dep/fmt/include/fmt/format.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = format.h; path = include/fmt/format.h; sourceTree = SOURCE_ROOT; };
+		6142BD3BD65A460E9FDABAC8 /* ../duckstation/dep/fmt/src/format.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = format.cc; path = src/format.cc; sourceTree = SOURCE_ROOT; };
+		7380ADEB4A96475DB2B58DF6 /* ../duckstation/dep/fmt/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		7540EAA0C8CB40AE99F98A8A /* fmt */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libfmtd.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		78200FD5EE6D492EA8916765 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/color.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = color.h; path = include/fmt/color.h; sourceTree = SOURCE_ROOT; };
-		7F1CA23BD2AA44F68557E73E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/xchar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = xchar.h; path = include/fmt/xchar.h; sourceTree = SOURCE_ROOT; };
-		9A92B346DEA946F6AA2B2D13 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/compile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compile.h; path = include/fmt/compile.h; sourceTree = SOURCE_ROOT; };
-		AC7B7BE492C445BE9A4AD213 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/std.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = std.h; path = include/fmt/std.h; sourceTree = SOURCE_ROOT; };
-		ADA9B203BAC4437C8B367D26 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist; sourceTree = "<absolute>"; };
-		B23EA858087148D9BC6314B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/args.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = args.h; path = include/fmt/args.h; sourceTree = SOURCE_ROOT; };
-		B2E1C0979036496788115CB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ranges.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ranges.h; path = include/fmt/ranges.h; sourceTree = SOURCE_ROOT; };
-		C4B2D6B7ACAE45E895366C06 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/os.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = os.cc; path = src/os.cc; sourceTree = SOURCE_ROOT; };
-		E7EEA267CAD34903B10396FB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/chrono.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = chrono.h; path = include/fmt/chrono.h; sourceTree = SOURCE_ROOT; };
-		E9A46D55350946A4BA3DE740 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/ChangeLog.rst */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = ChangeLog.rst; path = ChangeLog.rst; sourceTree = SOURCE_ROOT; };
-		EA515A4D7CB64B10BCB77A9B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ostream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ostream.h; path = include/fmt/ostream.h; sourceTree = SOURCE_ROOT; };
-		ECD00A46B7694C0EA2C582C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/os.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = os.h; path = include/fmt/os.h; sourceTree = SOURCE_ROOT; };
-		FFBBDE2E00574B098BEB695F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format-inl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "format-inl.h"; path = "include/fmt/format-inl.h"; sourceTree = SOURCE_ROOT; };
+		78200FD5EE6D492EA8916765 /* ../duckstation/dep/fmt/include/fmt/color.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = color.h; path = include/fmt/color.h; sourceTree = SOURCE_ROOT; };
+		7F1CA23BD2AA44F68557E73E /* ../duckstation/dep/fmt/include/fmt/xchar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = xchar.h; path = include/fmt/xchar.h; sourceTree = SOURCE_ROOT; };
+		9A92B346DEA946F6AA2B2D13 /* ../duckstation/dep/fmt/include/fmt/compile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compile.h; path = include/fmt/compile.h; sourceTree = SOURCE_ROOT; };
+		AC7B7BE492C445BE9A4AD213 /* ../duckstation/dep/fmt/include/fmt/std.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = std.h; path = include/fmt/std.h; sourceTree = SOURCE_ROOT; };
+		ADA9B203BAC4437C8B367D26 /* ../cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist; sourceTree = "<absolute>"; };
+		B23EA858087148D9BC6314B5 /* ../duckstation/dep/fmt/include/fmt/args.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = args.h; path = include/fmt/args.h; sourceTree = SOURCE_ROOT; };
+		B2E1C0979036496788115CB9 /* ../duckstation/dep/fmt/include/fmt/ranges.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ranges.h; path = include/fmt/ranges.h; sourceTree = SOURCE_ROOT; };
+		C4B2D6B7ACAE45E895366C06 /* ../duckstation/dep/fmt/src/os.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = os.cc; path = src/os.cc; sourceTree = SOURCE_ROOT; };
+		E7EEA267CAD34903B10396FB /* ../duckstation/dep/fmt/include/fmt/chrono.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = chrono.h; path = include/fmt/chrono.h; sourceTree = SOURCE_ROOT; };
+		E9A46D55350946A4BA3DE740 /* ../duckstation/dep/fmt/ChangeLog.rst */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = ChangeLog.rst; path = ChangeLog.rst; sourceTree = SOURCE_ROOT; };
+		EA515A4D7CB64B10BCB77A9B /* ../duckstation/dep/fmt/include/fmt/ostream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ostream.h; path = include/fmt/ostream.h; sourceTree = SOURCE_ROOT; };
+		ECD00A46B7694C0EA2C582C5 /* ../duckstation/dep/fmt/include/fmt/os.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = os.h; path = include/fmt/os.h; sourceTree = SOURCE_ROOT; };
+		FFBBDE2E00574B098BEB695F /* ../duckstation/dep/fmt/include/fmt/format-inl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "format-inl.h"; path = "include/fmt/format-inl.h"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,7 +159,7 @@
 		4D1CBC21EE7B47D0A23B45C6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				ADA9B203BAC4437C8B367D26 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */,
+				ADA9B203BAC4437C8B367D26 /* ../cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -170,9 +170,9 @@
 				FE880970C40F4D358B06E2FF /* Source Files */,
 				656AA1A09E144A438895A043 /* Header Files */,
 				4D1CBC21EE7B47D0A23B45C6 /* Resources */,
-				331E040CC3FE4855875F4AB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */,
-				E9A46D55350946A4BA3DE740 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/ChangeLog.rst */,
-				3FA7DADA56274BAC84D0464B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/README.rst */,
+				331E040CC3FE4855875F4AB1 /* ../duckstation/dep/fmt/CMakeLists.txt */,
+				E9A46D55350946A4BA3DE740 /* ../duckstation/dep/fmt/ChangeLog.rst */,
+				3FA7DADA56274BAC84D0464B /* ../duckstation/dep/fmt/README.rst */,
 			);
 			name = fmt;
 			sourceTree = "<group>";
@@ -180,19 +180,19 @@
 		656AA1A09E144A438895A043 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				B23EA858087148D9BC6314B5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/args.h */,
-				E7EEA267CAD34903B10396FB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/chrono.h */,
-				78200FD5EE6D492EA8916765 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/color.h */,
-				9A92B346DEA946F6AA2B2D13 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/compile.h */,
-				52BB7A15A1F74A05ABAC7AAD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/core.h */,
-				FFBBDE2E00574B098BEB695F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format-inl.h */,
-				58219878F33849EAAC2F8471 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/format.h */,
-				ECD00A46B7694C0EA2C582C5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/os.h */,
-				EA515A4D7CB64B10BCB77A9B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ostream.h */,
-				58144AA806CB4A55A26CEA75 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/printf.h */,
-				B2E1C0979036496788115CB9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/ranges.h */,
-				AC7B7BE492C445BE9A4AD213 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/std.h */,
-				7F1CA23BD2AA44F68557E73E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include/fmt/xchar.h */,
+				B23EA858087148D9BC6314B5 /* ../duckstation/dep/fmt/include/fmt/args.h */,
+				E7EEA267CAD34903B10396FB /* ../duckstation/dep/fmt/include/fmt/chrono.h */,
+				78200FD5EE6D492EA8916765 /* ../duckstation/dep/fmt/include/fmt/color.h */,
+				9A92B346DEA946F6AA2B2D13 /* ../duckstation/dep/fmt/include/fmt/compile.h */,
+				52BB7A15A1F74A05ABAC7AAD /* ../duckstation/dep/fmt/include/fmt/core.h */,
+				FFBBDE2E00574B098BEB695F /* ../duckstation/dep/fmt/include/fmt/format-inl.h */,
+				58219878F33849EAAC2F8471 /* ../duckstation/dep/fmt/include/fmt/format.h */,
+				ECD00A46B7694C0EA2C582C5 /* ../duckstation/dep/fmt/include/fmt/os.h */,
+				EA515A4D7CB64B10BCB77A9B /* ../duckstation/dep/fmt/include/fmt/ostream.h */,
+				58144AA806CB4A55A26CEA75 /* ../duckstation/dep/fmt/include/fmt/printf.h */,
+				B2E1C0979036496788115CB9 /* ../duckstation/dep/fmt/include/fmt/ranges.h */,
+				AC7B7BE492C445BE9A4AD213 /* ../duckstation/dep/fmt/include/fmt/std.h */,
+				7F1CA23BD2AA44F68557E73E /* ../duckstation/dep/fmt/include/fmt/xchar.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -233,7 +233,7 @@
 			isa = PBXGroup;
 			children = (
 				85BF13FCAB6A4374BF369ECD /* CMake Rules */,
-				7380ADEB4A96475DB2B58DF6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt */,
+				7380ADEB4A96475DB2B58DF6 /* ../duckstation/dep/fmt/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -241,8 +241,8 @@
 		FE880970C40F4D358B06E2FF /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				6142BD3BD65A460E9FDABAC8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/format.cc */,
-				C4B2D6B7ACAE45E895366C06 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/os.cc */,
+				6142BD3BD65A460E9FDABAC8 /* ../duckstation/dep/fmt/src/format.cc */,
+				C4B2D6B7ACAE45E895366C06 /* ../duckstation/dep/fmt/src/os.cc */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -288,7 +288,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = C4DCBF8168A84BFB9822AAB5;
-			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt;
+			projectDirPath = ../duckstation/dep/fmt;
 			projectRoot = "";
 			targets = (
 				5E7F7554D3AE463A8152F8B4 /* ALL_BUILD */,
@@ -313,19 +313,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  cd ../cmake/dep/fmt
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  cd ../cmake/dep/fmt
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  cd ../cmake/dep/fmt
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  cd ../cmake/dep/fmt
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -341,25 +341,25 @@ fi
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/ZERO_CHECK			);
+../cmake/dep/fmt/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeScripts/ReRunCMake.make
+  cd ../cmake/dep/fmt
+  make -f ../cmake/dep/fmt/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeScripts/ReRunCMake.make
+  cd ../cmake/dep/fmt
+  make -f ../cmake/dep/fmt/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeScripts/ReRunCMake.make
+  cd ../cmake/dep/fmt
+  make -f ../cmake/dep/fmt/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeScripts/ReRunCMake.make
+  cd ../cmake/dep/fmt
+  make -f ../cmake/dep/fmt/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -389,24 +389,24 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/ALL_BUILD			);
+../cmake/dep/fmt/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  cd ../cmake/dep/fmt
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  cd ../cmake/dep/fmt
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  cd ../cmake/dep/fmt
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt
+  cd ../cmake/dep/fmt
   echo Build\\ all\\ projects
 fi
 ";
@@ -449,8 +449,8 @@ exit 0";
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				40EF356D42D24E878F6F57F9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/format.cc */,
-				21310A0427A248F291EE38F0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/src/os.cc */,
+				40EF356D42D24E878F6F57F9 /* ../duckstation/dep/fmt/src/format.cc */,
+				21310A0427A248F291EE38F0 /* ../duckstation/dep/fmt/src/os.cc */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -488,7 +488,7 @@ exit 0";
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = RelWithDebInfo;
 		};
@@ -516,7 +516,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -524,7 +524,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../duckstation/dep/fmt/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				LLVM_LTO = YES_THIN;
@@ -534,7 +534,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmtd;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/fmt.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -545,7 +545,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -553,7 +553,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../duckstation/dep/fmt/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				LLVM_LTO = YES_THIN;
@@ -563,7 +563,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmt;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/fmt.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -601,7 +601,7 @@ exit 0";
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = MinSizeRel;
 		};
@@ -610,7 +610,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -618,7 +618,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../duckstation/dep/fmt/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				LLVM_LTO = YES_THIN;
@@ -628,7 +628,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmt;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/fmt.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -723,7 +723,7 @@ exit 0";
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = Release;
 		};
@@ -740,7 +740,7 @@ exit 0";
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = Debug;
 		};
@@ -825,7 +825,7 @@ exit 0";
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -833,7 +833,7 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../duckstation/dep/fmt/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				LLVM_LTO = YES_THIN;
@@ -843,7 +843,7 @@ exit 0";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmt;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/fmt.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};

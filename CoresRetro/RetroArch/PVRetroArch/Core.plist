@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>PVCoreIdentifier</key>
+	<string>com.provenance.core.retroarch</string>
+	<key>PVPrincipleClass</key>
+	<string>PVRetroArchCore</string>
+	<key>PVProjectName</key>
+	<string>RetroArch</string>
+	<key>PVSupportedSystems</key>
+	<array/>
+	<key>PVProjectURL</key>
+	<string>https://github.com/libretro/RetroArch</string>
+	<key>PVProjectVersion</key>
+	<string>1.27.1</string>
+	<key>PVCores</key>
+	<array>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mednafen_psx_libretro_ios.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Beetle PSX</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.psx</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/beetle-psx-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>0.9.44.1</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>snes9x_libretro_ios.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - SNES9x</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.snes</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://docs.libretro.com/library/snes9x/</string>
+			<key>PVProjectVersion</key>
+			<string>1.61</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>flycast_libretro_ios.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVProjectName</key>
+			<string>RetroArch - Flycast</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.dreamcast</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/flyinghead/flycast</string>
+			<key>PVProjectVersion</key>
+			<string>2.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>

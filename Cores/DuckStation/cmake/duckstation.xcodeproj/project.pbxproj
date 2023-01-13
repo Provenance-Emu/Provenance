@@ -60,7 +60,6 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 88E3BFA2FACD4F38B9C6545F /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
-				C3FD02D8DBDD4920B2453843 /* Generate CMakeFiles/ZERO_CHECK */,
 			);
 			dependencies = (
 			);
@@ -1219,7 +1218,7 @@
 		0623686B50EC480696AAF758 /* unzip.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = unzip.c; path = dep/minizip/src/unzip.c; sourceTree = SOURCE_ROOT; };
 		0630191AB1464B4CB2EAE90E /* rc_api_editor.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = rc_api_editor.h; path = dep/rcheevos/include/rc_api_editor.h; sourceTree = SOURCE_ROOT; };
 		06BE8545D9254EED9388D017 /* minizip_helpers.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = minizip_helpers.cpp; path = src/common/minizip_helpers.cpp; sourceTree = SOURCE_ROOT; };
-		0754A5D21E994ED5BD9DF4AA /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/imgui/CMakeFiles/imgui.dir/Info.plist; sourceTree = "<absolute>"; };
+		0754A5D21E994ED5BD9DF4AA /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/imgui/CMakeFiles/imgui.dir/Info.plist; sourceTree = "<absolute>"; };
 		07A6616C6E44446CAB667BF5 /* imgui_fullscreen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = imgui_fullscreen.h; path = "src/frontend-common/imgui_fullscreen.h"; sourceTree = SOURCE_ROOT; };
 		085CAF3D25F24BEDA2012203 /* negcon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = negcon.cpp; path = src/core/negcon.cpp; sourceTree = SOURCE_ROOT; };
 		087144F4CF6240BAA21353F9 /* fse_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_decompress.c; path = dep/zstd/lib/common/fse_decompress.c; sourceTree = SOURCE_ROOT; };
@@ -1231,7 +1230,7 @@
 		0A9CEFAF43514CFF826D055E /* types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = types.h; path = src/core/types.h; sourceTree = SOURCE_ROOT; };
 		0AA0AF3451214C75A7F1608F /* invalset-vixl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "invalset-vixl.h"; path = "dep/vixl/include/vixl/invalset-vixl.h"; sourceTree = SOURCE_ROOT; };
 		0B218E95F7C64917A0A3B7E5 /* libzstd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzstd.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		0B2CB684185245CFB8B73C06 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/zlib/CMakeFiles/zlib.dir/Info.plist; sourceTree = "<absolute>"; };
+		0B2CB684185245CFB8B73C06 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/zlib/CMakeFiles/zlib.dir/Info.plist; sourceTree = "<absolute>"; };
 		0B3F7F934EDB432A8C24754B /* guncon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = guncon.cpp; path = src/core/guncon.cpp; sourceTree = SOURCE_ROOT; };
 		0B4006BF19124B47A7CBC1A5 /* stb_image_write.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stb_image_write.h; path = dep/stb/include/stb_image_write.h; sourceTree = SOURCE_ROOT; };
 		0B97CC728C654779999C4380 /* byte_stream.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = byte_stream.cpp; path = src/common/byte_stream.cpp; sourceTree = SOURCE_ROOT; };
@@ -1248,8 +1247,8 @@
 		10571DD990ED425FB865289E /* zstd_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_common.c; path = dep/zstd/lib/common/zstd_common.c; sourceTree = SOURCE_ROOT; };
 		1060C62FCCA3407F9567C042 /* Link.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Link.cpp; path = dep/glslang/glslang/GenericCodeGen/Link.cpp; sourceTree = SOURCE_ROOT; };
 		109E65B3CA604034BAAA0567 /* string.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = string.h; path = src/common/string.h; sourceTree = SOURCE_ROOT; };
-		11951411800B46AE8B6F8BA9 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion/CMakeFiles/scmversion.dir/Info.plist; sourceTree = "<absolute>"; };
-		12296267013E4A19954AAC89 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/zstd/CMakeFiles/zstd.dir/Info.plist; sourceTree = "<absolute>"; };
+		11951411800B46AE8B6F8BA9 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/src/scmversion/CMakeFiles/scmversion.dir/Info.plist; sourceTree = "<absolute>"; };
+		12296267013E4A19954AAC89 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/zstd/CMakeFiles/zstd.dir/Info.plist; sourceTree = "<absolute>"; };
 		12FA75DBEC7C4F10B03D4ED2 /* libxxhash.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libxxhash.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		133EA4DDDC47433A9C3AD38C /* types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = types.h; path = src/common/types.h; sourceTree = SOURCE_ROOT; };
 		136DB510DC3244B5A655562C /* propagateNoContraction.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = propagateNoContraction.cpp; path = dep/glslang/glslang/MachineIndependent/propagateNoContraction.cpp; sourceTree = SOURCE_ROOT; };
@@ -1259,7 +1258,7 @@
 		14E90071A3754AA58BCB4EC8 /* make_array.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = make_array.h; path = src/common/make_array.h; sourceTree = SOURCE_ROOT; };
 		14F857780BEC4981BB82B2B8 /* thread_pool.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = thread_pool.cpp; path = src/common/thirdparty/thread_pool.cpp; sourceTree = SOURCE_ROOT; };
 		152E56D22E1C4B74B76B1810 /* scoped_guard.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = scoped_guard.h; path = src/common/scoped_guard.h; sourceTree = SOURCE_ROOT; };
-		158AD44B36A14BA2977605B4 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/googletest/CMakeFiles/gtest.dir/Info.plist; sourceTree = "<absolute>"; };
+		158AD44B36A14BA2977605B4 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/googletest/CMakeFiles/gtest.dir/Info.plist; sourceTree = "<absolute>"; };
 		15AD922069AD44AAB07F361A /* platform-vixl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "platform-vixl.h"; path = "dep/vixl/include/vixl/platform-vixl.h"; sourceTree = SOURCE_ROOT; };
 		1630E817E2354163A3C41F85 /* libutil.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libutil.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		16ADD4CC166A4AB2B0FB6F3D /* cd_xa.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cd_xa.cpp; path = src/util/cd_xa.cpp; sourceTree = SOURCE_ROOT; };
@@ -1273,12 +1272,12 @@
 		1811040E0137400685043F95 /* bios.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = bios.cpp; path = src/core/bios.cpp; sourceTree = SOURCE_ROOT; };
 		1863735CFF2C4AF889079E05 /* game_database.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = game_database.cpp; path = src/core/game_database.cpp; sourceTree = SOURCE_ROOT; };
 		1864997B55094E0B9FA2F263 /* libfmt.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libfmt.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		18B6FA3C5BCD451ABAA66293 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/tinyxml2/CMakeFiles/tinyxml2.dir/Info.plist; sourceTree = "<absolute>"; };
+		18B6FA3C5BCD451ABAA66293 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/tinyxml2/CMakeFiles/tinyxml2.dir/Info.plist; sourceTree = "<absolute>"; };
 		18DE486FDD1E45FAB366416F /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = dep/rcheevos/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		18E4F3345EAC48A28ADE9ACB /* operand.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = operand.c; path = dep/rcheevos/src/rcheevos/operand.c; sourceTree = SOURCE_ROOT; };
 		18FE852645AF49E49554F402 /* controller.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = controller.h; path = src/core/controller.h; sourceTree = SOURCE_ROOT; };
 		190A836423FE42F5B77A82D5 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = src/scmversion/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		19192568D73948A698BE4124 /* scmversion.cpp.rule */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = scmversion.cpp.rule; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion/scmversion.cpp.rule; sourceTree = "<absolute>"; };
+		19192568D73948A698BE4124 /* scmversion.cpp.rule */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = scmversion.cpp.rule; path = ../cmake/src/scmversion/scmversion.cpp.rule; sourceTree = "<absolute>"; };
 		1966823E652447018D1F1545 /* imgui_manager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = imgui_manager.h; path = "src/frontend-common/imgui_manager.h"; sourceTree = SOURCE_ROOT; };
 		19A38C78EE7F4148BB9AE9AC /* builders.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = builders.h; path = src/common/vulkan/builders.h; sourceTree = SOURCE_ROOT; };
 		19CC53BB6E1243BA9FD22C3D /* glslang_c_interface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = glslang_c_interface.cpp; path = dep/glslang/glslang/CInterface/glslang_c_interface.cpp; sourceTree = SOURCE_ROOT; };
@@ -1302,15 +1301,15 @@
 		21D66F831DC444C2B5167A67 /* SimpleIni.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SimpleIni.h; path = dep/simpleini/include/SimpleIni.h; sourceTree = SOURCE_ROOT; };
 		225A456185F84EAEA77BC811 /* stream_buffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = stream_buffer.cpp; path = src/common/gl/stream_buffer.cpp; sourceTree = SOURCE_ROOT; };
 		22620147ECBC40FE9A686B23 /* gpu_hw_shadergen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gpu_hw_shadergen.h; path = src/core/gpu_hw_shadergen.h; sourceTree = SOURCE_ROOT; };
-		22E16F76F09243EBBDF6DAA1 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist; sourceTree = "<absolute>"; };
+		22E16F76F09243EBBDF6DAA1 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist; sourceTree = "<absolute>"; };
 		230D8152FD7743FFB586B442 /* libimgui.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libimgui.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		2375CFA3DF114AABA3653DD4 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/common-tests/CMakeFiles/common-tests.dir/Info.plist"; sourceTree = "<absolute>"; };
+		2375CFA3DF114AABA3653DD4 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../cmake/src/common-tests/CMakeFiles/common-tests.dir/Info.plist"; sourceTree = "<absolute>"; };
 		2585A2EB543248128E2BC97D /* libfrontend-common.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libfrontend-common.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		25963FE24DA04959B12BB6B8 /* huf_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_compress.c; path = dep/zstd/lib/compress/huf_compress.c; sourceTree = SOURCE_ROOT; };
 		25D91BC5EA634DF99BC42BAF /* postprocessing_chain.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = postprocessing_chain.h; path = "src/frontend-common/postprocessing_chain.h"; sourceTree = SOURCE_ROOT; };
 		2628283BA8A244CE9CB8383C /* compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = compress.c; path = dep/zlib/src/compress.c; sourceTree = SOURCE_ROOT; };
 		2644BDDB59F9450D933698EC /* vulkan_host_display.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = vulkan_host_display.cpp; path = "src/frontend-common/vulkan_host_display.cpp"; sourceTree = SOURCE_ROOT; };
-		267C03112F52437D931A0FF0 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/minizip/CMakeFiles/minizip.dir/Info.plist; sourceTree = "<absolute>"; };
+		267C03112F52437D931A0FF0 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/minizip/CMakeFiles/minizip.dir/Info.plist; sourceTree = "<absolute>"; };
 		26AE9ECAD54445BFA2D8744F /* TDStretch.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TDStretch.cpp; path = dep/soundtouch/source/SoundTouch/TDStretch.cpp; sourceTree = SOURCE_ROOT; };
 		2740F9790DC94DB7BB3E2771 /* memory_settings_interface.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = memory_settings_interface.cpp; path = src/common/memory_settings_interface.cpp; sourceTree = SOURCE_ROOT; };
 		274BE67133354A6280E20377 /* cd_image_ecm.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cd_image_ecm.cpp; path = src/util/cd_image_ecm.cpp; sourceTree = SOURCE_ROOT; };
@@ -1362,7 +1361,7 @@
 		377DF009190848D79D5A78F9 /* game_list.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = game_list.h; path = "src/frontend-common/game_list.h"; sourceTree = SOURCE_ROOT; };
 		3799442AFA03446A94A35295 /* window_info.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = window_info.h; path = src/common/window_info.h; sourceTree = SOURCE_ROOT; };
 		37A6E2A02D08402FB106D734 /* playstation_mouse.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = playstation_mouse.h; path = src/core/playstation_mouse.h; sourceTree = SOURCE_ROOT; };
-		37AD5B18E5874C9F8D18BA2C /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/util/CMakeFiles/util.dir/Info.plist; sourceTree = "<absolute>"; };
+		37AD5B18E5874C9F8D18BA2C /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/src/util/CMakeFiles/util.dir/Info.plist; sourceTree = "<absolute>"; };
 		37B5957E01EF42DCB5A60E49 /* PoolAlloc.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PoolAlloc.cpp; path = dep/glslang/glslang/MachineIndependent/PoolAlloc.cpp; sourceTree = SOURCE_ROOT; };
 		37D5BADCFBF8463C944855DB /* crash_handler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crash_handler.h; path = src/common/crash_handler.h; sourceTree = SOURCE_ROOT; };
 		38155395E07C4329AD498C28 /* rc_api_request.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = rc_api_request.h; path = dep/rcheevos/include/rc_api_request.h; sourceTree = SOURCE_ROOT; };
@@ -1386,7 +1385,7 @@
 		3DF322F7D53F4D37B3D7BF09 /* libchdr_cdrom.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_cdrom.c; path = dep/libchdr/src/libchdr_cdrom.c; sourceTree = SOURCE_ROOT; };
 		3DFD8B801C784A51BEC3847E /* LzmaLib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaLib.h; path = dep/lzma/include/LzmaLib.h; sourceTree = SOURCE_ROOT; };
 		3E30242E3A5F4B58BAE50F88 /* gpu_hw_vulkan.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = gpu_hw_vulkan.cpp; path = src/core/gpu_hw_vulkan.cpp; sourceTree = SOURCE_ROOT; };
-		3F4694793AC14E7391F5F9EB /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/glslang/CMakeFiles/glslang.dir/Info.plist; sourceTree = "<absolute>"; };
+		3F4694793AC14E7391F5F9EB /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/glslang/CMakeFiles/glslang.dir/Info.plist; sourceTree = "<absolute>"; };
 		3F511953D83D42F099BEF7BE /* fullscreen_ui.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fullscreen_ui.h; path = "src/frontend-common/fullscreen_ui.h"; sourceTree = SOURCE_ROOT; };
 		401F35ED3E4A47EE92EDCA3D /* string_util.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = string_util.cpp; path = src/common/string_util.cpp; sourceTree = SOURCE_ROOT; };
 		4030E130B7ED4FF7BA3E0FD1 /* libcpuinfo_internals.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcpuinfo_internals.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1398,7 +1397,7 @@
 		417BBB5E7118471EAEC94DDC /* memory_arena.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = memory_arena.h; path = src/util/memory_arena.h; sourceTree = SOURCE_ROOT; };
 		4222CC5C5DB24F42BCEC8DA3 /* program.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = program.cpp; path = src/common/gl/program.cpp; sourceTree = SOURCE_ROOT; };
 		4227286386274B2E9129BD7F /* pad.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pad.h; path = src/core/pad.h; sourceTree = SOURCE_ROOT; };
-		42D051AFA0484B09BA88CBBB /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/glad/CMakeFiles/glad.dir/Info.plist; sourceTree = "<absolute>"; };
+		42D051AFA0484B09BA88CBBB /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/glad/CMakeFiles/glad.dir/Info.plist; sourceTree = "<absolute>"; };
 		43BDF01A93C2446CB0458038 /* inftrees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inftrees.h; path = dep/zlib/src/inftrees.h; sourceTree = SOURCE_ROOT; };
 		4440E97D5F5449E2A378C57C /* xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = dep/zstd/lib/common/xxhash.c; sourceTree = SOURCE_ROOT; };
 		456C1A0C3C494076AAC61327 /* zlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zlib.h; path = dep/zlib/include/zlib.h; sourceTree = SOURCE_ROOT; };
@@ -1420,7 +1419,7 @@
 		4D96B50B4BBB4B07B6105199 /* cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = dep/cpuinfo/src/arm/cache.c; sourceTree = SOURCE_ROOT; };
 		4E0626EA7DF7443C8FF75698 /* gtest-printers.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = "gtest-printers.cc"; path = "dep/googletest/src/gtest-printers.cc"; sourceTree = SOURCE_ROOT; };
 		4E51C5C7871F458895435CCE /* libtinyxml2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libtinyxml2.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4E6E634719A0454BAA439357 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/libchdr/CMakeFiles/libchdr.dir/Info.plist; sourceTree = "<absolute>"; };
+		4E6E634719A0454BAA439357 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/libchdr/CMakeFiles/libchdr.dir/Info.plist; sourceTree = "<absolute>"; };
 		4EC2C5FB4FA4477DADC80599 /* url.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = url.c; path = dep/rcheevos/src/rurl/url.c; sourceTree = SOURCE_ROOT; };
 		4EDF52DFF8AA45ADA73E6DC3 /* chdconfig.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = chdconfig.h; path = dep/libchdr/include/libchdr/chdconfig.h; sourceTree = SOURCE_ROOT; };
 		4F008DA84C5743C79B6A4379 /* code-buffer-vixl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "code-buffer-vixl.h"; path = "dep/vixl/include/vixl/code-buffer-vixl.h"; sourceTree = SOURCE_ROOT; };
@@ -1445,7 +1444,7 @@
 		572B6DE55A1E4C89B3D3CEA5 /* imgui_impl_opengl3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = imgui_impl_opengl3.cpp; path = "src/frontend-common/imgui_impl_opengl3.cpp"; sourceTree = SOURCE_ROOT; };
 		575E9B3AC70A43C883D37057 /* pool-manager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "pool-manager.h"; path = "dep/vixl/include/vixl/pool-manager.h"; sourceTree = SOURCE_ROOT; };
 		5782140CC6C64F4E994CCBDA /* shadergen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = shadergen.h; path = src/core/shadergen.h; sourceTree = SOURCE_ROOT; };
-		57828DF4F60842AABA99BD53 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/lzma/CMakeFiles/lzma.dir/Info.plist; sourceTree = "<absolute>"; };
+		57828DF4F60842AABA99BD53 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/lzma/CMakeFiles/lzma.dir/Info.plist; sourceTree = "<absolute>"; };
 		5890B9247E8340F3ABD5BB52 /* gzread.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = gzread.c; path = dep/zlib/src/gzread.c; sourceTree = SOURCE_ROOT; };
 		58BFE0D6C1B24F4FAA4081D3 /* LzmaDec.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaDec.h; path = dep/lzma/include/LzmaDec.h; sourceTree = SOURCE_ROOT; };
 		591074F565F54C4D8D2E5A73 /* abi-aarch64.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "abi-aarch64.h"; path = "dep/vixl/include/vixl/aarch64/abi-aarch64.h"; sourceTree = SOURCE_ROOT; };
@@ -1520,7 +1519,7 @@
 		798406C660CE403F8A9DAEF0 /* SymbolTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SymbolTable.cpp; path = dep/glslang/glslang/MachineIndependent/SymbolTable.cpp; sourceTree = SOURCE_ROOT; };
 		7ABFA26983404F4EA807F9F2 /* rc_error.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = rc_error.h; path = dep/rcheevos/include/rc_error.h; sourceTree = SOURCE_ROOT; };
 		7B8CCC2BFFB747B6B5615AEE /* icon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = icon.h; path = "src/frontend-common/icon.h"; sourceTree = SOURCE_ROOT; };
-		7B9C1423E77A426C893578D0 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/rcheevos/CMakeFiles/rcheevos.dir/Info.plist; sourceTree = "<absolute>"; };
+		7B9C1423E77A426C893578D0 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/rcheevos/CMakeFiles/rcheevos.dir/Info.plist; sourceTree = "<absolute>"; };
 		7C6486F7F8004D19BB611B08 /* image.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = image.h; path = src/common/image.h; sourceTree = SOURCE_ROOT; };
 		7CABD07B62894E50B0DBA872 /* simulator-constants-aarch64.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "simulator-constants-aarch64.h"; path = "dep/vixl/include/vixl/aarch64/simulator-constants-aarch64.h"; sourceTree = SOURCE_ROOT; };
 		7D4292C86E1C4F7C80BBBF87 /* http_downloader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = http_downloader.cpp; path = src/common/http_downloader.cpp; sourceTree = SOURCE_ROOT; };
@@ -1568,7 +1567,7 @@
 		8C6862FEFD2F4E6ABE17A41A /* libsoundtouch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libsoundtouch.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CC325D7913B434A9D20B37A /* format-inl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "format-inl.h"; path = "dep/fmt/include/fmt/format-inl.h"; sourceTree = SOURCE_ROOT; };
 		8D142D01AFE84A0A8CD997B4 /* error.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = error.h; path = src/common/error.h; sourceTree = SOURCE_ROOT; };
-		8DD8874B80F8462F9FF6AF69 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/simpleini/CMakeFiles/simpleini.dir/Info.plist; sourceTree = "<absolute>"; };
+		8DD8874B80F8462F9FF6AF69 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/simpleini/CMakeFiles/simpleini.dir/Info.plist; sourceTree = "<absolute>"; };
 		8DDB4D5B79AB4E4EAEFCA543 /* inffast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inffast.c; path = dep/zlib/src/inffast.c; sourceTree = SOURCE_ROOT; };
 		8DF8CDF466CE460C885A8C2C /* cpu_recompiler_thunks.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu_recompiler_thunks.h; path = src/core/cpu_recompiler_thunks.h; sourceTree = SOURCE_ROOT; };
 		8E843C524A884A5984BD007B /* macro-assembler-aarch64.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = "macro-assembler-aarch64.cc"; path = "dep/vixl/src/aarch64/macro-assembler-aarch64.cc"; sourceTree = SOURCE_ROOT; };
@@ -1668,12 +1667,12 @@
 		B3903FB6A87A437BAA9405E6 /* Logger.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Logger.cpp; path = dep/glslang/SPIRV/Logger.cpp; sourceTree = SOURCE_ROOT; };
 		B39934866F3D4D0697583AE8 /* error.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = error.cpp; path = src/common/error.cpp; sourceTree = SOURCE_ROOT; };
 		B3E71CCF9BCE4B79AD53731A /* cpu_types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu_types.h; path = src/core/cpu_types.h; sourceTree = SOURCE_ROOT; };
-		B4650914248240B392EC1AC8 /* scmversion.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = scmversion.cpp; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion/scmversion.cpp; sourceTree = "<absolute>"; };
+		B4650914248240B392EC1AC8 /* scmversion.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = scmversion.cpp; path = ../cmake/src/scmversion/scmversion.cpp; sourceTree = "<absolute>"; };
 		B46BC93CC37F47E1BFDC2106 /* FIRFilter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FIRFilter.cpp; path = dep/soundtouch/source/SoundTouch/FIRFilter.cpp; sourceTree = SOURCE_ROOT; };
 		B5AFA876B83C482B9402323C /* achievements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = achievements.h; path = src/core/achievements.h; sourceTree = SOURCE_ROOT; };
 		B5F9249FF709405BA4D2F27A /* file_system.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = file_system.h; path = src/common/file_system.h; sourceTree = SOURCE_ROOT; };
 		B683A4A0AE8B4F55A59F29B2 /* log.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = log.cpp; path = src/common/log.cpp; sourceTree = SOURCE_ROOT; };
-		B68DCCFE451E4D5EBE659328 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/soundtouch/CMakeFiles/soundtouch.dir/Info.plist; sourceTree = "<absolute>"; };
+		B68DCCFE451E4D5EBE659328 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/soundtouch/CMakeFiles/soundtouch.dir/Info.plist; sourceTree = "<absolute>"; };
 		B6D03F5236B04E1E80C30DF5 /* imstb_textedit.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = imstb_textedit.h; path = dep/imgui/include/imstb_textedit.h; sourceTree = SOURCE_ROOT; };
 		B7557D5DF55745788FCF8E33 /* imstb_rectpack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = imstb_rectpack.h; path = dep/imgui/src/imstb_rectpack.h; sourceTree = SOURCE_ROOT; };
 		B77ACDB02FB0476AAE886746 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = dep/googletest/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
@@ -1682,8 +1681,8 @@
 		B8A65491D7614CB5871B10E6 /* disasm-aarch64.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "disasm-aarch64.h"; path = "dep/vixl/include/vixl/aarch64/disasm-aarch64.h"; sourceTree = SOURCE_ROOT; };
 		B8DC6061DDC54460A1F13599 /* gzwrite.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = gzwrite.c; path = dep/zlib/src/gzwrite.c; sourceTree = SOURCE_ROOT; };
 		B93299F35CEB4734B3C59DC3 /* gpu_hw.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gpu_hw.h; path = src/core/gpu_hw.h; sourceTree = SOURCE_ROOT; };
-		B97AA7BE3813445A9A35FA95 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/core/CMakeFiles/core.dir/Info.plist; sourceTree = "<absolute>"; };
-		B9EB3D7228144D7DA0575137 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist; sourceTree = "<absolute>"; };
+		B97AA7BE3813445A9A35FA95 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/src/core/CMakeFiles/core.dir/Info.plist; sourceTree = "<absolute>"; };
+		B9EB3D7228144D7DA0575137 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/fmt/CMakeFiles/fmt.dir/Info.plist; sourceTree = "<absolute>"; };
 		BA5557E1E7294D99B8022D2C /* window_info.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = window_info.cpp; path = src/common/window_info.cpp; sourceTree = SOURCE_ROOT; };
 		BB512F7D3BF94C0EA0E8FE73 /* InterpolateLinear.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = InterpolateLinear.cpp; path = dep/soundtouch/source/SoundTouch/InterpolateLinear.cpp; sourceTree = SOURCE_ROOT; };
 		BC0746ECA67C4E4C9D0EBE4C /* 7zTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = 7zTypes.h; path = dep/lzma/include/7zTypes.h; sourceTree = SOURCE_ROOT; };
@@ -1716,7 +1715,7 @@
 		C4D17BE2FBF8474CB02DBE67 /* assembler-base-vixl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "assembler-base-vixl.h"; path = "dep/vixl/include/vixl/assembler-base-vixl.h"; sourceTree = SOURCE_ROOT; };
 		C50414C5696D40C0877B75B4 /* BraIA64.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = BraIA64.c; path = dep/lzma/src/BraIA64.c; sourceTree = SOURCE_ROOT; };
 		C53A41AB08F14916894EF856 /* system.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = system.h; path = src/core/system.h; sourceTree = SOURCE_ROOT; };
-		C56E4E34388D42DB8BD98E6B /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/frontend-common/CMakeFiles/frontend-common.dir/Info.plist"; sourceTree = "<absolute>"; };
+		C56E4E34388D42DB8BD98E6B /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = "../cmake/src/frontend-common/CMakeFiles/frontend-common.dir/Info.plist"; sourceTree = "<absolute>"; };
 		C5816C1EAB824596A308771A /* liblzma.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblzma.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5B72044F910492ABE800FF2 /* byte_stream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = byte_stream.h; path = src/common/byte_stream.h; sourceTree = SOURCE_ROOT; };
 		C5BE282FC4374ED988A2BFDD /* jit_code_buffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = jit_code_buffer.cpp; path = src/util/jit_code_buffer.cpp; sourceTree = SOURCE_ROOT; };
@@ -1732,13 +1731,13 @@
 		CB6D00F18B884A56BF6141E9 /* dma.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = dma.cpp; path = src/core/dma.cpp; sourceTree = SOURCE_ROOT; };
 		CB9B29D138E8400D82418F5F /* gtest-matchers.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = "gtest-matchers.cc"; path = "dep/googletest/src/gtest-matchers.cc"; sourceTree = SOURCE_ROOT; };
 		CC587F021713492A84CDEB86 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = dep/soundtouch/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		CCC885FF715E4807A4471A40 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/xxhash/CMakeFiles/xxhash.dir/Info.plist; sourceTree = "<absolute>"; };
+		CCC885FF715E4807A4471A40 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/xxhash/CMakeFiles/xxhash.dir/Info.plist; sourceTree = "<absolute>"; };
 		CD99001A510E429895BD1382 /* SoundTouch.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SoundTouch.cpp; path = dep/soundtouch/source/SoundTouch/SoundTouch.cpp; sourceTree = SOURCE_ROOT; };
 		CEC5F44824A74F318C894C11 /* jit_code_buffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = jit_code_buffer.h; path = src/util/jit_code_buffer.h; sourceTree = SOURCE_ROOT; };
 		CF26E88E40254D27845AA450 /* fifo_queue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fifo_queue.h; path = src/common/fifo_queue.h; sourceTree = SOURCE_ROOT; };
 		CF6A7454DA294AF0A6598FC3 /* cpu_code_cache.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu_code_cache.h; path = src/core/cpu_code_cache.h; sourceTree = SOURCE_ROOT; };
 		CFEED6FF84B0474EA8F4F717 /* init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = dep/cpuinfo/src/init.c; sourceTree = SOURCE_ROOT; };
-		D024A2A1409244BABBBE238B /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/common/CMakeFiles/common.dir/Info.plist; sourceTree = "<absolute>"; };
+		D024A2A1409244BABBBE238B /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/src/common/CMakeFiles/common.dir/Info.plist; sourceTree = "<absolute>"; };
 		D03430460EDB4482891FA482 /* xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = dep/xxhash/src/xxhash.c; sourceTree = SOURCE_ROOT; };
 		D046EE1EF33C4923BF5532A4 /* imconfig.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = imconfig.h; path = dep/imgui/include/imconfig.h; sourceTree = SOURCE_ROOT; };
 		D0ADA4DEAE514203B693FBC5 /* libzlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1754,7 +1753,7 @@
 		D551B5845A774FE9ACC37858 /* psf_loader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = psf_loader.cpp; path = src/core/psf_loader.cpp; sourceTree = SOURCE_ROOT; };
 		D57E0613A8F94901B32A2AC6 /* dr_flac.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = dr_flac.h; path = dep/libchdr/include/dr_libs/dr_flac.h; sourceTree = SOURCE_ROOT; };
 		D594B67D1B01420EB773C485 /* host.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = host.h; path = src/core/host.h; sourceTree = SOURCE_ROOT; };
-		D5FDC7A1C9F7453FBC780ABD /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist; sourceTree = "<absolute>"; };
+		D5FDC7A1C9F7453FBC780ABD /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist; sourceTree = "<absolute>"; };
 		D62440D2A6B44D0EB2B271A1 /* zip.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zip.c; path = dep/minizip/src/zip.c; sourceTree = SOURCE_ROOT; };
 		D65769E909734F2CA5DF7930 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = "src/frontend-common/CMakeLists.txt"; sourceTree = SOURCE_ROOT; };
 		D76D1F237B96492CB85BAAA4 /* rc_hash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = rc_hash.h; path = dep/rcheevos/include/rc_hash.h; sourceTree = SOURCE_ROOT; };
@@ -1789,7 +1788,7 @@
 		E5FD183FA34A42F2994E693C /* shader_cache.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = shader_cache.cpp; path = src/common/gl/shader_cache.cpp; sourceTree = SOURCE_ROOT; };
 		E60E16D8C4074F7EB5C0653F /* cd_subchannel_replacement.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cd_subchannel_replacement.h; path = src/util/cd_subchannel_replacement.h; sourceTree = SOURCE_ROOT; };
 		E612A7D2FBBD4405AB597141 /* page_fault_handler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = page_fault_handler.cpp; path = src/util/page_fault_handler.cpp; sourceTree = SOURCE_ROOT; };
-		E6890C7F8D164E95BCF88256 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/vixl/CMakeFiles/vixl.dir/Info.plist; sourceTree = "<absolute>"; };
+		E6890C7F8D164E95BCF88256 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/vixl/CMakeFiles/vixl.dir/Info.plist; sourceTree = "<absolute>"; };
 		E73CFDFA9E7F4D2B942F9EE0 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = dep/zlib/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		E79F69B7532C46FABFFBD1E3 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = dep/cpuinfo/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		E80F18CC03574124AE948A3A /* swap_chain.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = swap_chain.cpp; path = src/common/vulkan/swap_chain.cpp; sourceTree = SOURCE_ROOT; };
@@ -1808,7 +1807,7 @@
 		EEE0229468D74ADBA9628217 /* log.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = log.h; path = src/common/log.h; sourceTree = SOURCE_ROOT; };
 		EEF9A78249CC40A5A85AA1AE /* bitfield.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bitfield.h; path = src/common/bitfield.h; sourceTree = SOURCE_ROOT; };
 		EF071AB9DF5A40359C5E0E0A /* context_agl_ios.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = context_agl_ios.h; path = src/common/gl/context_agl_ios.h; sourceTree = SOURCE_ROOT; };
-		EF4065CCCF914FBF90133CDF /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/stb/CMakeFiles/stb.dir/Info.plist; sourceTree = "<absolute>"; };
+		EF4065CCCF914FBF90133CDF /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/stb/CMakeFiles/stb.dir/Info.plist; sourceTree = "<absolute>"; };
 		EFB7916C11C44B7B9C8D0390 /* path_tests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = path_tests.cpp; path = "src/common-tests/path_tests.cpp"; sourceTree = SOURCE_ROOT; };
 		F031BAF8172B45F0B5D06849 /* assert.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = assert.cpp; path = src/common/assert.cpp; sourceTree = SOURCE_ROOT; };
 		F092A5C8E7924898BE0ED805 /* digital_controller.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = digital_controller.h; path = src/core/digital_controller.h; sourceTree = SOURCE_ROOT; };
@@ -1821,7 +1820,7 @@
 		F594CBA1505048A098E35FD7 /* postprocessing_shadergen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = postprocessing_shadergen.cpp; path = "src/frontend-common/postprocessing_shadergen.cpp"; sourceTree = SOURCE_ROOT; };
 		F5C317648BBD4387A40B3A30 /* input_source.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = input_source.h; path = "src/frontend-common/input_source.h"; sourceTree = SOURCE_ROOT; };
 		F5D16E8C1C5B41B38A3997E5 /* libgtest_main.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgtest_main.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		F5EE8519ACE5485DB7C6C005 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist; sourceTree = "<absolute>"; };
+		F5EE8519ACE5485DB7C6C005 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist; sourceTree = "<absolute>"; };
 		F606C9193B9849979FB9A406 /* thread_pool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = thread_pool.h; path = src/common/thirdparty/thread_pool.h; sourceTree = SOURCE_ROOT; };
 		F61DDC3CBE894BF0A37DDFB9 /* dma.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = dma.h; path = src/core/dma.h; sourceTree = SOURCE_ROOT; };
 		F627D7303EA94656B31CA2A1 /* fullscreen_ui.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = fullscreen_ui.cpp; path = "src/frontend-common/fullscreen_ui.cpp"; sourceTree = SOURCE_ROOT; };
@@ -1856,7 +1855,7 @@
 		FCBBE7FACD1F4DF3BF73C21E /* flac.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = flac.h; path = dep/libchdr/include/libchdr/flac.h; sourceTree = SOURCE_ROOT; };
 		FCDD7F82D21146448B969C7F /* zconf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zconf.h; path = dep/zlib/include/zconf.h; sourceTree = SOURCE_ROOT; };
 		FD3A01995E5E4714A0CD5989 /* progress_callback.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = progress_callback.cpp; path = src/common/progress_callback.cpp; sourceTree = SOURCE_ROOT; };
-		FD70C83272F341E08645B736 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/googletest/CMakeFiles/gtest_main.dir/Info.plist; sourceTree = "<absolute>"; };
+		FD70C83272F341E08645B736 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/googletest/CMakeFiles/gtest_main.dir/Info.plist; sourceTree = "<absolute>"; };
 		FDD7FA18D02848388FDE9B71 /* cdrom_async_reader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cdrom_async_reader.h; path = src/core/cdrom_async_reader.h; sourceTree = SOURCE_ROOT; };
 		FE2FD320C6A84D4B8702CB5A /* rc_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = rc_internal.h; path = dep/rcheevos/src/rcheevos/rc_internal.h; sourceTree = SOURCE_ROOT; };
 		FE73E94182E34EDC860E6DED /* input_manager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = input_manager.cpp; path = "src/frontend-common/input_manager.cpp"; sourceTree = SOURCE_ROOT; };
@@ -4075,7 +4074,7 @@
 				Base,
 			);
 			mainGroup = FDB822B601AD43CFAF50463E;
-			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation;
+			projectDirPath = ../duckstation;
 			projectRoot = "";
 			targets = (
 				5E7F7554D3AE463A8152F8B4 /* ALL_BUILD */,
@@ -4123,7 +4122,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\n";
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		01184BFB05ADCF4A41EC285E /* Generate CMakeFiles/ALL_BUILD */ = {
@@ -4136,11 +4135,11 @@
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-				/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/ALL_BUILD,
+				../cmake/CMakeFiles/ALL_BUILD,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  echo Build\\ all\\ projects\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  echo Build\\ all\\ projects\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  echo Build\\ all\\ projects\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  echo Build\\ all\\ projects\nfi\n";
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake\n  echo Build\\ all\\ projects\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake\n  echo Build\\ all\\ projects\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake\n  echo Build\\ all\\ projects\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake\n  echo Build\\ all\\ projects\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		4AD1D3279895A5F4E6C8B701 /* Generate src/scmversion/_scmversion.cpp */ = {
@@ -4152,12 +4151,12 @@
 			);
 			name = "Generate src/scmversion/_scmversion.cpp";
 			outputPaths = (
-				/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion/_scmversion.cpp,
-				/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion/scmversion.cpp,
+				../cmake/src/scmversion/_scmversion.cpp,
+				../cmake/src/scmversion/scmversion.cpp,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion\n  /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/scmversion/gen_scmversion.sh\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion\n  /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/scmversion/gen_scmversion.sh\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion\n  /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/scmversion/gen_scmversion.sh\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion\n  /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/scmversion/gen_scmversion.sh\nfi\n";
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ${SRCROOT}/../cmake/src/scmversion\n  ${SRCROOT}/../duckstation/src/scmversion/gen_scmversion.sh\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ${SRCROOT}/../cmake/src/scmversion\n  ${SRCROOT}/../duckstation/src/scmversion/gen_scmversion.sh\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ${SRCROOT}/../cmake/src/scmversion\n  ${SRCROOT}/../duckstation/src/scmversion/gen_scmversion.sh\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ${SRCROOT}/../cmake/src/scmversion\n  ${SRCROOT}/../duckstation/src/scmversion/gen_scmversion.sh\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		7376B54B96CA0EABD0C7B90F /* CMake PostBuild Rules */ = {
@@ -4171,24 +4170,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/frontend-common\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E copy_directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/data /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/bin\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/frontend-common\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E copy_directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/data /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/bin\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/frontend-common\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E copy_directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/data /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/bin\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/frontend-common\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E copy_directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/data /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/bin\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		C3FD02D8DBDD4920B2453843 /* Generate CMakeFiles/ZERO_CHECK */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ZERO_CHECK";
-			outputPaths = (
-				/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeFiles/ZERO_CHECK,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeScripts/ReRunCMake.make\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeScripts/ReRunCMake.make\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeScripts/ReRunCMake.make\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake\n  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/CMakeScripts/ReRunCMake.make\nfi\n";
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ${SRCROOT}/../cmake/src/frontend-common\n  cmake -E copy_directory ${SRCROOT}/../duckstation/data ${SRCROOT}/../cmake/bin\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ${SRCROOT}/../cmake/src/frontend-common\n  cmake -E copy_directory ${SRCROOT}/../duckstation/data ${SRCROOT}/../cmake/bin\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ${SRCROOT}/../cmake/src/frontend-common\n  cmake -E copy_directory ${SRCROOT}/../duckstation/data ${SRCROOT}/../cmake/bin\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ${SRCROOT}/../cmake/src/frontend-common\n  cmake -E copy_directory ${SRCROOT}/../duckstation/data ${SRCROOT}/../cmake/bin\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -5281,7 +5263,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/util/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -5295,14 +5276,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/soundtouch/include,
+					../duckstation/src/util/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/soundtouch/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5323,10 +5304,9 @@
 				PRODUCT_NAME = util;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/util.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5340,7 +5320,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -5352,7 +5331,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
+					../duckstation/dep/fmt/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5372,7 +5351,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmt;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/fmt.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5386,7 +5364,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/core/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -5405,20 +5382,20 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/core/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/xxhash/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rapidjson/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
+					../duckstation/src/core/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/src/util/..,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/xxhash/include,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/rapidjson/include,
+					../duckstation/dep/tinyxml2/include,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/vixl/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5445,10 +5422,9 @@
 				PRODUCT_NAME = core;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/core.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5462,7 +5438,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -5490,7 +5465,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = scmversion;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/scmversion.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5504,7 +5478,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/googletest/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -5516,8 +5489,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest/include,
+					../duckstation/dep/googletest,
+					../duckstation/dep/googletest/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5537,7 +5510,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest_main;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/gtest_main.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5551,7 +5523,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/xxhash/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -5563,7 +5534,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/xxhash/include,
+					../duckstation/dep/xxhash/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5581,7 +5552,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = xxhash;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/xxhash.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5595,7 +5565,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/soundtouch/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -5610,7 +5579,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/soundtouch/include,
+					../duckstation/dep/soundtouch/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5630,7 +5599,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = soundtouch;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/soundtouch.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5644,7 +5612,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/util/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -5658,14 +5625,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/soundtouch/include,
+					../duckstation/src/util/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/soundtouch/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5686,10 +5653,9 @@
 				PRODUCT_NAME = util;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/util.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5703,7 +5669,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/glslang/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -5715,7 +5680,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glslang,
+					../duckstation/dep/glslang,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5735,7 +5700,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glslang;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glslang.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5749,7 +5713,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
@@ -5759,7 +5722,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
+					../duckstation/dep/glad/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5777,7 +5740,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glad;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5791,7 +5753,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/minizip/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -5803,8 +5764,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/minizip/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/minizip/include,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5822,7 +5783,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/minizip.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5836,7 +5796,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -5849,7 +5808,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5866,7 +5825,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = clog;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5880,7 +5838,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -5890,7 +5847,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
+					../duckstation/dep/glad/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5908,7 +5865,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glad;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5922,7 +5878,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/googletest/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -5934,8 +5889,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest/include,
+					../duckstation/dep/googletest,
+					../duckstation/dep/googletest/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5955,7 +5910,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest_main;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/gtest_main.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -5969,7 +5923,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/zlib/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -5981,7 +5934,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -5999,7 +5952,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zlib;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/zlib.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6013,7 +5965,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/zstd/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -6025,7 +5976,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zstd/lib,
+					../duckstation/dep/zstd/lib,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6043,7 +5994,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zstd;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/zstd.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6057,7 +6007,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/rcheevos/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -6070,7 +6019,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rcheevos/include,
+					../duckstation/dep/rcheevos/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6088,7 +6037,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = rcheevos;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/rcheevos.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6102,7 +6050,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -6114,9 +6061,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/lzma/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/lzma/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6134,7 +6081,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = libchdr;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/libchdr.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6148,7 +6094,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/simpleini/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -6160,8 +6105,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/src,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/simpleini/src,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6179,7 +6124,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = simpleini;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/simpleini.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6193,7 +6137,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/lzma/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -6206,7 +6149,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/lzma/include,
+					../duckstation/dep/lzma/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6224,7 +6167,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzma;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/lzma.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6237,6 +6179,7 @@
 					arm64,
 					x86_64,
 				);
+				BUILD_DIR = ../lib;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
@@ -6246,7 +6189,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
 			};
 			name = Release;
 		};
@@ -6280,7 +6222,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -6293,9 +6234,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/src,
+					../duckstation/dep/cpuinfo/include,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6312,7 +6253,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6326,7 +6266,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/rcheevos/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -6339,7 +6278,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rcheevos/include,
+					../duckstation/dep/rcheevos/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6357,7 +6296,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = rcheevos;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/rcheevos.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6393,7 +6331,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/soundtouch/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -6408,7 +6345,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/soundtouch/include,
+					../duckstation/dep/soundtouch/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6428,7 +6365,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = soundtouch;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/soundtouch.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6442,7 +6378,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -6455,9 +6390,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/src,
+					../duckstation/dep/cpuinfo/include,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6474,7 +6409,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6488,7 +6422,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/frontend-common/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -6506,19 +6439,19 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/core/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rapidjson/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rcheevos/include,
+					../duckstation/src/core/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/src/util/..,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/vixl/include,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/tinyxml2/include,
+					../duckstation/dep/rapidjson/include,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/rcheevos/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6545,10 +6478,9 @@
 				PRODUCT_NAME = "frontend-common";
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/frontend-common.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6562,7 +6494,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/zstd/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -6574,7 +6505,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zstd/lib,
+					../duckstation/dep/zstd/lib,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6592,7 +6523,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zstd;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/zstd.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6606,7 +6536,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/vixl/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -6620,9 +6549,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include/vixl,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include/vixl/aarch64,
+					../duckstation/dep/vixl/include,
+					../duckstation/dep/vixl/include/vixl,
+					../duckstation/dep/vixl/include/vixl/aarch64,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6642,7 +6571,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = vixl;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/vixl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6656,7 +6584,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/minizip/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -6668,8 +6595,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/minizip/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/minizip/include,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6687,7 +6614,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/minizip.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6701,7 +6627,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/googletest/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -6713,8 +6638,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest/include,
+					../duckstation/dep/googletest,
+					../duckstation/dep/googletest/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6734,7 +6659,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/gtest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6770,7 +6694,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/zlib/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -6782,7 +6705,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6800,7 +6723,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zlib;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/zlib.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6814,7 +6736,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/simpleini/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -6826,8 +6747,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/src,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/simpleini/src,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6845,7 +6766,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = simpleini;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/simpleini.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6859,7 +6779,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/soundtouch/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -6874,7 +6793,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/soundtouch/include,
+					../duckstation/dep/soundtouch/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6894,7 +6813,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = soundtouch;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/soundtouch.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6908,7 +6826,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/zstd/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -6920,7 +6837,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zstd/lib,
+					../duckstation/dep/zstd/lib,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -6938,7 +6855,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zstd;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/zstd.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -6974,7 +6890,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/lzma/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -6987,7 +6902,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/lzma/include,
+					../duckstation/dep/lzma/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7005,7 +6920,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzma;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/lzma.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7019,7 +6933,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/util/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7033,14 +6946,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/soundtouch/include,
+					../duckstation/src/util/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/soundtouch/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7061,10 +6974,9 @@
 				PRODUCT_NAME = util;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/util.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7078,7 +6990,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7090,7 +7001,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
+					../duckstation/dep/fmt/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7110,7 +7021,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmt;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/fmt.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7146,7 +7056,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/xxhash/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7158,7 +7067,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/xxhash/include,
+					../duckstation/dep/xxhash/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7176,7 +7085,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = xxhash;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/xxhash.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7190,7 +7098,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/tinyxml2/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7202,7 +7109,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
+					../duckstation/dep/tinyxml2/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7222,7 +7129,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = tinyxml2;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/tinyxml2.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7236,7 +7142,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/googletest/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7248,8 +7153,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest/include,
+					../duckstation/dep/googletest,
+					../duckstation/dep/googletest/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7269,7 +7174,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/gtest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7282,6 +7186,7 @@
 					arm64,
 					x86_64,
 				);
+				BUILD_DIR = ../lib;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
@@ -7291,7 +7196,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
 			};
 			name = MinSizeRel;
 		};
@@ -7303,7 +7207,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/frontend-common/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7321,19 +7224,19 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/core/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rapidjson/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rcheevos/include,
+					../duckstation/src/core/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/src/util/..,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/vixl/include,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/tinyxml2/include,
+					../duckstation/dep/rapidjson/include,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/rcheevos/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7360,10 +7263,9 @@
 				PRODUCT_NAME = "frontend-common";
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/frontend-common.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7377,7 +7279,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7389,9 +7290,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/lzma/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/lzma/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7409,7 +7310,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = libchdr;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/libchdr.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7423,7 +7323,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/imgui/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7435,8 +7334,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/src,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/imgui/src,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7456,7 +7355,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = imgui;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/imgui.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7470,7 +7368,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/vixl/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -7484,9 +7381,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include/vixl,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include/vixl/aarch64,
+					../duckstation/dep/vixl/include,
+					../duckstation/dep/vixl/include/vixl,
+					../duckstation/dep/vixl/include/vixl/aarch64,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7506,7 +7403,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = vixl;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/vixl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7520,7 +7416,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -7532,7 +7427,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
+					../duckstation/dep/fmt/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7552,7 +7447,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmt;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/fmt.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7566,7 +7460,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/vixl/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7580,9 +7473,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include/vixl,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include/vixl/aarch64,
+					../duckstation/dep/vixl/include,
+					../duckstation/dep/vixl/include/vixl,
+					../duckstation/dep/vixl/include/vixl/aarch64,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7602,7 +7495,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = vixl;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/vixl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7616,7 +7508,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/common/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7630,16 +7521,16 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/minizip/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zstd/lib,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glslang,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/minizip/include,
+					../duckstation/dep/zstd/lib,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/glslang,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7666,10 +7557,9 @@
 				PRODUCT_NAME = common;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/common.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7705,7 +7595,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -7715,7 +7604,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
+					../duckstation/dep/glad/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7733,7 +7622,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glad;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7769,7 +7657,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/libchdr/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7781,9 +7668,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/lzma/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/lzma/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7801,7 +7688,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = libchdr;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/libchdr.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7815,7 +7701,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -7828,9 +7713,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/src,
+					../duckstation/dep/cpuinfo/include,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7847,7 +7732,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7861,7 +7745,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/glslang/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -7873,7 +7756,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glslang,
+					../duckstation/dep/glslang,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7893,7 +7776,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glslang;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glslang.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7907,7 +7789,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -7920,7 +7801,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -7937,7 +7818,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = clog;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -7950,6 +7830,7 @@
 					arm64,
 					x86_64,
 				);
+				BUILD_DIR = ../lib;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
@@ -7959,7 +7840,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
 			};
 			name = Debug;
 		};
@@ -7971,7 +7851,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/tinyxml2/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -7983,7 +7862,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
+					../duckstation/dep/tinyxml2/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8003,7 +7882,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = tinyxml2;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/tinyxml2.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8017,7 +7895,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -8045,7 +7922,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = scmversion;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/scmversion.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8059,7 +7935,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8087,7 +7962,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = scmversion;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/scmversion.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8101,7 +7975,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/core/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -8120,20 +7993,20 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/core/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/xxhash/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rapidjson/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
+					../duckstation/src/core/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/src/util/..,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/xxhash/include,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/rapidjson/include,
+					../duckstation/dep/tinyxml2/include,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/vixl/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8160,10 +8033,9 @@
 				PRODUCT_NAME = core;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/core.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8177,7 +8049,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/zlib/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8189,7 +8060,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8207,7 +8078,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zlib;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/zlib.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8265,7 +8135,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8278,7 +8147,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8295,7 +8164,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = clog;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8331,7 +8199,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/soundtouch/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -8346,7 +8213,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/soundtouch/include,
+					../duckstation/dep/soundtouch/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8366,7 +8233,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = soundtouch;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/soundtouch.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8380,7 +8246,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/stb/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8392,9 +8257,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/stb/src,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8412,7 +8277,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = stb;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/stb.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8426,7 +8290,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/googletest/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -8438,8 +8301,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest/include,
+					../duckstation/dep/googletest,
+					../duckstation/dep/googletest/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8459,7 +8322,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest_main;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/gtest_main.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8473,7 +8335,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/tinyxml2/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -8485,7 +8346,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
+					../duckstation/dep/tinyxml2/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8505,7 +8366,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = tinyxml2;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/tinyxml2.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8541,7 +8401,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8554,9 +8413,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/src,
+					../duckstation/dep/cpuinfo/include,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8573,7 +8432,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8587,7 +8445,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/core/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8606,20 +8463,20 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/core/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/xxhash/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rapidjson/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
+					../duckstation/src/core/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/src/util/..,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/xxhash/include,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/rapidjson/include,
+					../duckstation/dep/tinyxml2/include,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/vixl/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8646,10 +8503,9 @@
 				PRODUCT_NAME = core;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/core.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8663,7 +8519,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/common/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8677,16 +8532,16 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/minizip/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zstd/lib,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glslang,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/minizip/include,
+					../duckstation/dep/zstd/lib,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/glslang,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8713,10 +8568,9 @@
 				PRODUCT_NAME = common;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/common.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8730,7 +8584,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -8743,9 +8596,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/include,
+					../duckstation/dep/cpuinfo/src,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8762,7 +8615,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo_internals;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo_internals.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8776,7 +8628,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/googletest/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8788,8 +8639,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest/include,
+					../duckstation/dep/googletest,
+					../duckstation/dep/googletest/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8809,7 +8660,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/gtest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8823,7 +8673,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/glslang/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -8835,7 +8684,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glslang,
+					../duckstation/dep/glslang,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8855,7 +8704,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glslang;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glslang.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8869,7 +8717,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/frontend-common/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -8887,19 +8734,19 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/core/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rapidjson/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rcheevos/include,
+					../duckstation/src/core/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/src/util/..,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/vixl/include,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/tinyxml2/include,
+					../duckstation/dep/rapidjson/include,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/rcheevos/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8926,10 +8773,9 @@
 				PRODUCT_NAME = "frontend-common";
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/frontend-common.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8943,7 +8789,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/zstd/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -8955,7 +8800,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zstd/lib,
+					../duckstation/dep/zstd/lib,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -8973,7 +8818,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zstd;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/zstd.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -8987,7 +8831,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/scmversion/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9015,7 +8858,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = scmversion;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/scmversion.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9029,7 +8871,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/stb/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -9041,9 +8882,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/stb/src,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9061,7 +8902,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = stb;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/stb.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9075,7 +8915,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/tinyxml2/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9087,7 +8926,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
+					../duckstation/dep/tinyxml2/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9107,7 +8946,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = tinyxml2;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/tinyxml2.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9121,7 +8959,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/rcheevos/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9134,7 +8971,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rcheevos/include,
+					../duckstation/dep/rcheevos/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9152,7 +8989,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = rcheevos;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/rcheevos.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9166,7 +9002,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/simpleini/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9178,8 +9013,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/src,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/simpleini/src,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9197,7 +9032,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = simpleini;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/simpleini.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9211,7 +9045,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/core/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -9230,20 +9063,20 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/core/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/xxhash/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rapidjson/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
+					../duckstation/src/core/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/src/util/..,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/xxhash/include,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/rapidjson/include,
+					../duckstation/dep/tinyxml2/include,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/vixl/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9270,10 +9103,9 @@
 				PRODUCT_NAME = core;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/core.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9287,7 +9119,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/lzma/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9300,7 +9131,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/lzma/include,
+					../duckstation/dep/lzma/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9318,7 +9149,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzma;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/lzma.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9332,7 +9162,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/stb/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9344,9 +9173,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/stb/src,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9364,7 +9193,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = stb;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/stb.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9400,7 +9228,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -9410,7 +9237,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
+					../duckstation/dep/glad/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9428,7 +9255,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glad;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9442,7 +9268,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/util/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9456,14 +9281,14 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/soundtouch/include,
+					../duckstation/src/util/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/soundtouch/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9484,10 +9309,9 @@
 				PRODUCT_NAME = util;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/util.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9501,7 +9325,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9514,9 +9337,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/include,
+					../duckstation/dep/cpuinfo/src,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9533,7 +9356,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo_internals;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo_internals.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9547,7 +9369,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/zlib/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -9559,7 +9380,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9577,7 +9398,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zlib;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/zlib.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9590,6 +9410,7 @@
 					arm64,
 					x86_64,
 				);
+				BUILD_DIR = ../lib;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
@@ -9599,7 +9420,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
 			};
 			name = RelWithDebInfo;
 		};
@@ -9611,7 +9431,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/glslang/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9623,7 +9442,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glslang,
+					../duckstation/dep/glslang,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9643,7 +9462,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = glslang;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/glslang.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9657,7 +9475,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/common/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -9671,16 +9488,16 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/minizip/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zstd/lib,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glslang,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/minizip/include,
+					../duckstation/dep/zstd/lib,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/glslang,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9707,10 +9524,9 @@
 				PRODUCT_NAME = common;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/common.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9724,7 +9540,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fmt/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9736,7 +9551,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
+					../duckstation/dep/fmt/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9756,7 +9571,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmt;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/fmt.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9770,7 +9584,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/imgui/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -9782,8 +9595,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/src,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/imgui/src,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9803,7 +9616,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = imgui;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/imgui.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9817,7 +9629,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/frontend-common/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9835,19 +9646,19 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/core/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/util/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/tinyxml2/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rapidjson/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rcheevos/include,
+					../duckstation/src/core/..,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/src/util/..,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/vixl/include,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/tinyxml2/include,
+					../duckstation/dep/rapidjson/include,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/rcheevos/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9874,10 +9685,9 @@
 				PRODUCT_NAME = "frontend-common";
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/frontend-common.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9891,7 +9701,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/simpleini/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -9903,8 +9712,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/simpleini/src,
+					../duckstation/dep/simpleini/include,
+					../duckstation/dep/simpleini/src,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9922,7 +9731,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = simpleini;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/simpleini.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9936,7 +9744,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/lzma/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -9949,7 +9756,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/lzma/include,
+					../duckstation/dep/lzma/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -9967,7 +9774,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzma;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/lzma.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -9981,7 +9787,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -9994,9 +9799,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/include,
+					../duckstation/dep/cpuinfo/src,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10013,7 +9818,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo_internals;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo_internals.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10027,7 +9831,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -10040,7 +9843,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10057,7 +9860,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = clog;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10071,7 +9873,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/xxhash/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -10083,7 +9884,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/xxhash/include,
+					../duckstation/dep/xxhash/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10101,7 +9902,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = xxhash;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/xxhash.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10115,7 +9915,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/vixl/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -10129,9 +9928,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include/vixl,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vixl/include/vixl/aarch64,
+					../duckstation/dep/vixl/include,
+					../duckstation/dep/vixl/include/vixl,
+					../duckstation/dep/vixl/include/vixl/aarch64,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10151,7 +9950,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = vixl;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/vixl.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10165,7 +9963,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/imgui/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -10177,8 +9974,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/src,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/imgui/src,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10198,7 +9995,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = imgui;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/imgui.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10212,7 +10008,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/xxhash/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -10224,7 +10019,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/xxhash/include,
+					../duckstation/dep/xxhash/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10242,7 +10037,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = xxhash;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/xxhash.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10256,7 +10050,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -10268,9 +10061,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/lzma/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/lzma/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10288,7 +10081,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = libchdr;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/libchdr.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10302,7 +10094,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/minizip/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -10314,8 +10105,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/minizip/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/minizip/include,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10333,7 +10124,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/minizip.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10347,7 +10137,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/stb/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -10359,9 +10148,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/stb/src,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10379,7 +10168,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = stb;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/stb.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10393,7 +10181,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/googletest/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -10405,8 +10192,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest/include,
+					../duckstation/dep/googletest,
+					../duckstation/dep/googletest/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10426,7 +10213,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest_main;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/gtest_main.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10440,7 +10226,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/src/common/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -10454,16 +10239,16 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/src/common/..,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/vulkan/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/stb/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/libchdr/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/minizip/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zstd/lib,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glad/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/glslang,
+					../duckstation/src/common/..,
+					../duckstation/dep/fmt/include,
+					../duckstation/dep/vulkan/include,
+					../duckstation/dep/stb/include,
+					../duckstation/dep/zlib/include,
+					../duckstation/dep/libchdr/include,
+					../duckstation/dep/minizip/include,
+					../duckstation/dep/zstd/lib,
+					../duckstation/dep/glad/include,
+					../duckstation/dep/glslang,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10490,10 +10275,9 @@
 				PRODUCT_NAME = common;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/gsl/include,
+					../duckstation/dep/gsl/include,
 					"$(inherited)",
 				);
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/common.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10507,7 +10291,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/minizip/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -10519,8 +10302,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/minizip/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/zlib/include,
+					../duckstation/dep/minizip/include,
+					../duckstation/dep/zlib/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10538,7 +10321,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/minizip.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10552,7 +10334,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/imgui/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -10564,8 +10345,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/imgui/src,
+					../duckstation/dep/imgui/include,
+					../duckstation/dep/imgui/src,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10585,7 +10366,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = imgui;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/imgui.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10599,7 +10379,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/rcheevos/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -10612,7 +10391,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/rcheevos/include,
+					../duckstation/dep/rcheevos/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10630,7 +10409,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = rcheevos;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/rcheevos.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10644,7 +10422,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/Release${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -10657,9 +10434,9 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/include,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/src,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,
+					../duckstation/dep/cpuinfo/include,
+					../duckstation/dep/cpuinfo/src,
+					../duckstation/dep/cpuinfo/deps/clog/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10676,7 +10453,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpuinfo_internals;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/cpuinfo_internals.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -10690,7 +10466,6 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/googletest/Debug${EFFECTIVE_PLATFORM_NAME}";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -10702,8 +10477,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/googletest/include,
+					../duckstation/dep/googletest,
+					../duckstation/dep/googletest/include,
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10723,7 +10498,6 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/gtest.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
