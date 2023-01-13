@@ -45,9 +45,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		29ADF44DC9144B1AA216E6BC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 198D41C271794873975131BD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */; };
-		D229EDEF19534396A99A3C3D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 3917967A6FC74EA09CCA664D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */; };
-		E7427189A58E4E9388B66D7E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */ = {isa = PBXBuildFile; fileRef = 9A2E910907554CD2B4AE94B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */; };
+		29ADF44DC9144B1AA216E6BC /* ../duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 198D41C271794873975131BD /* ../duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */; };
+		D229EDEF19534396A99A3C3D /* ../cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 3917967A6FC74EA09CCA664D /* ../cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */; };
+		E7427189A58E4E9388B66D7E /* ../duckstation/dep/cpuinfo/deps/clog/src/clog.c */ = {isa = PBXBuildFile; fileRef = 9A2E910907554CD2B4AE94B3 /* ../duckstation/dep/cpuinfo/deps/clog/src/clog.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -106,10 +106,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		198D41C271794873975131BD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		3917967A6FC74EA09CCA664D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist; sourceTree = "<absolute>"; };
-		808749F2BE8942C39F65CC1E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		9A2E910907554CD2B4AE94B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = clog.c; path = src/clog.c; sourceTree = SOURCE_ROOT; };
+		198D41C271794873975131BD /* ../duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		3917967A6FC74EA09CCA664D /* ../cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist; sourceTree = "<absolute>"; };
+		808749F2BE8942C39F65CC1E /* ../duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		9A2E910907554CD2B4AE94B3 /* ../duckstation/dep/cpuinfo/deps/clog/src/clog.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = clog.c; path = src/clog.c; sourceTree = SOURCE_ROOT; };
 		CA8FD18036314291A5E1F8F3 /* clog */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libclog.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -135,7 +135,7 @@
 		4947DE6AA26F419BAE32D37D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3917967A6FC74EA09CCA664D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */,
+				3917967A6FC74EA09CCA664D /* ../cmake/dep/cpuinfo/deps/clog/CMakeFiles/clog.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -144,7 +144,7 @@
 			isa = PBXGroup;
 			children = (
 				64B2BE02D83D44C6BEC7E9E9 /* CMake Rules */,
-				808749F2BE8942C39F65CC1E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */,
+				808749F2BE8942C39F65CC1E /* ../duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -166,7 +166,7 @@
 		73990ABC111A470BAF527297 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				9A2E910907554CD2B4AE94B3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */,
+				9A2E910907554CD2B4AE94B3 /* ../duckstation/dep/cpuinfo/deps/clog/src/clog.c */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -186,7 +186,7 @@
 			children = (
 				73990ABC111A470BAF527297 /* Source Files */,
 				4947DE6AA26F419BAE32D37D /* Resources */,
-				198D41C271794873975131BD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */,
+				198D41C271794873975131BD /* ../duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt */,
 			);
 			name = clog;
 			sourceTree = "<group>";
@@ -232,7 +232,7 @@
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = A367317A9EEB4C7F84A9DB7D;
-			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog;
+			projectDirPath = ../duckstation/dep/cpuinfo/deps/clog;
 			projectRoot = "";
 			targets = (
 				5E7F7554D3AE463A8152F8B4 /* ALL_BUILD */,
@@ -257,19 +257,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
+  cd ../cmake/dep/cpuinfo/deps/clog
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
+  cd ../cmake/dep/cpuinfo/deps/clog
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
+  cd ../cmake/dep/cpuinfo/deps/clog
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
+  cd ../cmake/dep/cpuinfo/deps/clog
   /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -330,24 +330,24 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/ALL_BUILD			);
+../cmake/dep/cpuinfo/deps/clog/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
+  cd ../cmake/dep/cpuinfo/deps/clog
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
+  cd ../cmake/dep/cpuinfo/deps/clog
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
+  cd ../cmake/dep/cpuinfo/deps/clog
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
+  cd ../cmake/dep/cpuinfo/deps/clog
   echo Build\\ all\\ projects
 fi
 ";
@@ -363,25 +363,25 @@ fi
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeFiles/ZERO_CHECK			);
+../cmake/dep/cpuinfo/deps/clog/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeScripts/ReRunCMake.make
+  cd ../cmake/dep/cpuinfo/deps/clog
+  make -f ../cmake/dep/cpuinfo/deps/clog/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeScripts/ReRunCMake.make
+  cd ../cmake/dep/cpuinfo/deps/clog
+  make -f ../cmake/dep/cpuinfo/deps/clog/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeScripts/ReRunCMake.make
+  cd ../cmake/dep/cpuinfo/deps/clog
+  make -f ../cmake/dep/cpuinfo/deps/clog/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/CMakeScripts/ReRunCMake.make
+  cd ../cmake/dep/cpuinfo/deps/clog
+  make -f ../cmake/dep/cpuinfo/deps/clog/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -393,7 +393,7 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E7427189A58E4E9388B66D7E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/src/clog.c */,
+				E7427189A58E4E9388B66D7E /* ../duckstation/dep/cpuinfo/deps/clog/src/clog.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,7 +423,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -431,7 +431,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CLOG_LOG_TO_STDIO=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -440,7 +440,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = clog;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -497,7 +497,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = RelWithDebInfo;
 		};
@@ -525,7 +525,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/Debug${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -533,7 +533,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CLOG_LOG_TO_STDIO=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -542,7 +542,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = clog;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -656,7 +656,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = Release;
 		};
@@ -665,7 +665,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/Release${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -673,7 +673,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CLOG_LOG_TO_STDIO=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -682,7 +682,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = clog;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
@@ -720,7 +720,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = MinSizeRel;
 		};
@@ -794,7 +794,7 @@ fi
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				BUILD_DIR = ../lib;
 			};
 			name = Debug;
 		};
@@ -803,7 +803,7 @@ fi
 			buildSettings = {
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
-				CONFIGURATION_BUILD_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/cpuinfo/deps/clog/MinSizeRel${EFFECTIVE_PLATFORM_NAME}";
+				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -811,7 +811,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'CLOG_LOG_TO_STDIO=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
+				HEADER_SEARCH_PATHS = (../duckstation/dep/cpuinfo/deps/clog/include,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -820,7 +820,7 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = clog;
 				SECTORDER_FLAGS = "";
-				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build/clog.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};

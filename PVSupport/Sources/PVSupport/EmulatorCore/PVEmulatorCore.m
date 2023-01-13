@@ -77,6 +77,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         _gameSpeed               = GameSpeedNormal;
         _isDoubleBufferedCached = [self isDoubleBuffered];
         _skipEmulationLoop       = NO;
+        _alwaysUseMetal          = NO;
 	}
 	
 	return self;
@@ -556,4 +557,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 	return YES;
 }
 
+- (void)sendEvent:(UIEvent *)event {
+}
 @end

@@ -11,11 +11,11 @@ MOLTEN_DIR = '/Users/jmattiello/VulkanSDK/1.3.204.1/MoltenVK'
 DIRECTORY_TO_READ = os.getcwd() #+ '/build-release' # Process current directory
 
 # This should be the absolute path to the Core / Vulkan directory
-CORE_DIR = PROVENANCE_DIR + '/Cores/Play'
+CORE_DIR = PROVENANCE_DIR + '/Cores/DuckStation'
 VULKAN_DIR = PROVENANCE_DIR + '/MoltenVK'
 
 # Relative path to Core Lib Project Directory
-CORE_LIB_DIR = "../Play-"
+CORE_LIB_DIR = "../duckstation"
 
 # Places built library binaries under dolphin-ios/dolphin-build
 BUILD_DIR = "../lib"

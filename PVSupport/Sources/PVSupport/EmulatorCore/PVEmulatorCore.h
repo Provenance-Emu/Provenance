@@ -111,6 +111,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 
 @property (atomic, assign) BOOL shouldResyncTime;
 @property (nonatomic, assign) BOOL skipEmulationLoop;
+@property (nonatomic, assign) BOOL alwaysUseMetal;
 typedef NS_ENUM(NSInteger, GameSpeed) {
 	GameSpeedSlow = 0,
 	GameSpeedNormal,
@@ -185,4 +186,6 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
             completionHandler:(nonnull SaveStateCompletion)block;
 - (void)loadStateFromFileAtPath:(NSString *_Nonnull )fileName
               completionHandler:(nonnull SaveStateCompletion)block;
+
+- (void)sendEvent:(UIEvent *)event;
 @end
