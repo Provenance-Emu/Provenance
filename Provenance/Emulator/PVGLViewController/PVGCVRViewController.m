@@ -62,7 +62,7 @@
     self.cardboardView.vrModeEnabled = true;
     self.view = self.cardboardView;
     
-    self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+    self.glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
     [EAGLContext setCurrentContext:self.glContext];
 
     self.cardboardView.context = self.glContext;
