@@ -15,6 +15,7 @@ void MupenInitiateControllers (CONTROL_INFO ControlInfo);
 void MupenGetKeys(int Control, BUTTONS *Keys);
 void MupenControllerCommand(int Control, unsigned char *Command);
 
+PVCORE
 @interface MupenGameCore (Controls) <PVN64SystemResponderClient>
 
 - (void)initControllBuffers;

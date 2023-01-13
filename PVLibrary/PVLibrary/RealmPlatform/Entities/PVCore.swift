@@ -65,9 +65,9 @@ internal extension Core {
         principleClass = core.principleClass
         disabled = core.disabled
         // TODO: Supported systems
-		DLOG("\(core.projectName)")
-		print("loadcore: \(core.projectName) class: \(core.principleClass)")
-        project = CoreProject(name: core.projectName, url: URL(string: core.projectURL)!, version: core.projectVersion)
+        let url = URL(string: core.projectURL) ?? URL(string: "https://provenance-emu.com")!
+		print("loadcore: \(core.projectName) class: \(core.principleClass) identifier: \(identifier) disable: \(disabled)")
+        project = CoreProject(name: core.projectName, url: url, version: core.projectVersion)
     }
 }
 

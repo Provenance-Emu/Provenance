@@ -29,8 +29,6 @@
 #import <PVSupport/PVSupport-Swift.h>
 #import <PVSupport/PVEmulatorCore.h>
 
-__attribute__((visibility("default")))
+PVCORE_DIRECT_MEMBERS
 @interface PVStellaGameCore : PVEmulatorCore <PV2600SystemResponderClient>
-- (void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
-- (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
 @end
