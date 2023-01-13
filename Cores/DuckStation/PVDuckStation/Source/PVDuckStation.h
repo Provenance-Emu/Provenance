@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern os_log_t OE_CORE_LOG;
 
-__attribute__((visibility("default")))
+PVCORE_DIRECT_MEMBERS
 @interface PVDuckStationCore : PVEmulatorCore <PVPSXSystemResponderClient> {
     @public
     dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;

@@ -29,6 +29,7 @@
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 
+PVCORE
 @interface PVSNESEmulatorCore : PVEmulatorCore <PVSNESSystemResponderClient>
 
 - (void)didPushSNESButton:(PVSNESButton)button forPlayer:(NSInteger)player;

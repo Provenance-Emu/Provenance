@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+PVCORE
 @interface PVPlayCore (Controls) <PVDreamcastSystemResponderClient>
 
 - (void)initControllBuffers;

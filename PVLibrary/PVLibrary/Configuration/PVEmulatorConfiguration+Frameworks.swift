@@ -37,11 +37,9 @@ public extension PVEmulatorConfiguration {
         let classListPointer = objc_copyClassList(&count)!
         let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
+        let superclasses = ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]
         for i in 0 ..< Int(count) {
-            if
-                let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]),
-                let superclassesInfo = classInfo.superclassesInfo,
-                motherClassInfo.intersects(with: motherClassInfo) {
+            if let classInfo = ClassInfo(classList[i], withSuperclass: superclasses), let superclassesInfo = classInfo.superclassesInfo, motherClassInfo.intersects(with: motherClassInfo) {
                 subclassList.append(classInfo)
             }
         }

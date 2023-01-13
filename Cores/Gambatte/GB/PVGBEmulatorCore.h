@@ -28,10 +28,8 @@
 #import <PVSupport/PVSupport.h>
 #import <PVSupport/PVSupport-Swift.h>
 
+PVCORE
 @interface PVGBEmulatorCore : PVEmulatorCore <PVGBSystemResponderClient>
-
-- (void)didPushGBButton:(PVGBButton)button forPlayer:(NSInteger)player;
-- (void)didReleaseGBButton:(PVGBButton)button forPlayer:(NSInteger)player;
 
 @end
 

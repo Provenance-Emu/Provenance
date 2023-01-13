@@ -204,10 +204,10 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
         if (gameSettingsURL) {
             bool success = LoadCompatibilitySettings(gameSettingsURL);
             if (!success) {
-                os_log_fault(OE_CORE_LOG, "OpenEmu-specific overrides for particular discs didn't load, name %{public}@ at path %{private}@", gameSettingsURL.lastPathComponent, gameSettingsURL.path);
+                ELOG(@"OpenEmu-specific overrides for particular discs didn't load, name %{public}@ at path %{private}@", gameSettingsURL.lastPathComponent, gameSettingsURL.path);
             }
         } else {
-            os_log_fault(OE_CORE_LOG, "OpenEmu-specific overrides for particular discs wasn't found.");
+            ILOG(@"OpenEmu-specific overrides for particular discs wasn't found.");
         }
     }
     return self;

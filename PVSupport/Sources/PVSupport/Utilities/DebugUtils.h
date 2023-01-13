@@ -72,4 +72,5 @@ NSAssert([NSThread isMainThread], @"Not main thread");
 
 #define VISIBLE_DEFAULT __attribute__((visibility("default")))
 
-#define PVCORE VISIBLE_DEFAULT PV_OBJC_DIRECT_MEMBERS
+#define PVCORE VISIBLE_DEFAULT
+#define PVCORE_DIRECT_MEMBERS VISIBLE_DEFAULT PV_OBJC_DIRECT_MEMBERS
