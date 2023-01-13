@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B304085429700E3000180897 /* arm_jit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E44272E2C9800FF72B9 /* arm_jit.cpp */; };
 		B316B4E721926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B338055B28757C3A0009C732 /* PVDesmume2015Core+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */; };
@@ -2430,6 +2431,7 @@
 				B39312F62870FB8E00372EBB /* slot2_guitarGrip.cpp in Sources */,
 				B393134A2870FB8F00372EBB /* dlditool.c in Sources */,
 				B39313292870FB8F00372EBB /* tinyxmlparser.cpp in Sources */,
+				B304085429700E3000180897 /* arm_jit.cpp in Sources */,
 				B39312F82870FB8E00372EBB /* directory.c in Sources */,
 				B39313092870FB8F00372EBB /* memalign.c in Sources */,
 				B39312FB2870FB8F00372EBB /* firmware.cpp in Sources */,
@@ -2610,6 +2612,7 @@
 					"\"$(SRCROOT)/desmume2015-emulator/core\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/deps\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/khronos\"",
+					"\"$(SRCROOT)/desmume2015/desmume/src\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -2755,6 +2758,7 @@
 					"\"$(SRCROOT)/desmume2015-emulator/core\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/deps\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/khronos\"",
+					"\"$(SRCROOT)/desmume2015/desmume/src\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -2829,6 +2833,7 @@
 					"\"$(SRCROOT)/desmume2015-emulator/core\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/deps\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/khronos\"",
+					"\"$(SRCROOT)/desmume2015/desmume/src\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

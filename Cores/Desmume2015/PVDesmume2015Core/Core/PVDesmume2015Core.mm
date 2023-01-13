@@ -436,7 +436,7 @@
             return value;
     } else if (V("desmume_hybrid_layout_scale")) {
             // 1|3
-            char * value = strdup("3");
+            char * value = strdup("1");
             return value;
     } else {
         ELOG(@"Unprocessed var: %s", variable);
