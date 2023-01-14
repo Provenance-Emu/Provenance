@@ -213,7 +213,7 @@ static void vulkan_emulated_mailbox_loop(void *userdata)
       slock_unlock(mailbox->lock);
 
 
-#ifdef ANDROID
+#if defined(HAVE_COCOATOUCH) || defined(ANDROID)
       mailbox->result          = vkAcquireNextImageKHR(
             mailbox->device, mailbox->swapchain, UINT64_MAX,
             VK_NULL_HANDLE, fence, &mailbox->index);
@@ -2532,7 +2532,7 @@ void vulkan_present(gfx_ctx_vulkan_data_t *vk, unsigned index)
 #endif
    err = vkQueuePresentKHR(vk->context.queue, &present);
 
-#ifdef ANDROID
+#if defined(HAVE_COCOATOUCH) || defined(ANDROID)
    /* VK_SUBOPTIMAL_KHR can be returned on 
     * Android 10 when prerotate is not dealt with.
     * This is not an error we need to care about, 
@@ -2792,7 +2792,7 @@ retry:
       err = vkAcquireNextImageKHR(vk->context.device,
             vk->swapchain, UINT64_MAX,
             semaphore, fence, &vk->context.current_swapchain_index);
-#ifdef ANDROID
+#if defined(HAVE_COCOATOUCH) || defined(ANDROID)
       /* VK_SUBOPTIMAL_KHR can be returned on Android 10 
        * when prerotate is not dealt with.
        * This is not an error we need to care about, and 

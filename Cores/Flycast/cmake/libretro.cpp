@@ -14,7 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with Flycast.  If not, see <https://www.gnu.org/licenses/>.
  */
-// os_debug
+// os_debug emu.term -> emu.unloadGame, emu.init if (!emuInited)
 #include <cstdio>
 #include <cstdarg>
 #include <math.h>
@@ -328,16 +328,13 @@ void retro_init()
 
 	init_disk_control_interface();
 	retro_audio_init();
-
 	if (!_vmem_reserve())
 		ERROR_LOG(VMEM, "Cannot reserve memory space");
 
 	os_InstallFaultHandler();
 	MapleConfigMap::UpdateVibration = updateVibration;
 
-#if defined(__GNUC__) && defined(__linux__) && !defined(__ANDROID__)
-	if (!emuInited)
-#endif
+    if (!emuInited)
 		emu.init();
 	emuInited = true;
 }
@@ -353,12 +350,9 @@ void retro_deinit()
 		std::lock_guard<std::mutex> lock(mtx_serialization);
 	}
 	os_UninstallFaultHandler();
-	
-#if defined(__GNUC__) && defined(__linux__) && !defined(__ANDROID__)
-	_vmem_release();
-#else
-	emu.term();
-#endif
+    _vmem_release();
+    emu.unloadGame();
+    //emu.term();
 	libretro_supports_bitmasks = false;
 	categoriesSupported = false;
 	platformIsDreamcast = true;
@@ -373,7 +367,7 @@ void retro_deinit()
 	lightgunSettingsShown = true;
 	libretro_vsync_swap_interval = 1;
 	libretro_detect_vsync_swap_interval = false;
-	//LogManager::Shutdown();
+	LogManager::Shutdown();
 
 	retro_audio_deinit();
 }

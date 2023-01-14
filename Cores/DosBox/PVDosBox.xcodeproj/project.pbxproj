@@ -6,6 +6,20 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		9396AEEB297305F700B1EA1C /* DosBoxRetroArchCore */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9396AEEF297305F800B1EA1C /* Build configuration list for PBXAggregateTarget "DosBoxRetroArchCore" */;
+			buildPhases = (
+				9396AEF02973064500B1EA1C /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = DosBoxRetroArchCore;
+			productName = BuildDosBox;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		B301797F207C909E0051B93D /* libdos-box.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdos-box.a */; };
 		B3135B9B26E4CAD40047F338 /* PVDosBoxCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDosBoxCore.mm */; };
@@ -136,6 +150,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9396AEF92973078600B1EA1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9396AEEB297305F700B1EA1C;
+			remoteInfo = DosBoxRetroArchCore;
+		};
 		B39768F92859E23200558958 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -1126,6 +1147,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9396AEFA2973078600B1EA1C /* PBXTargetDependency */,
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
 			name = PVDosBox;
@@ -1144,6 +1166,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					9396AEEB297305F700B1EA1C = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -1180,6 +1205,7 @@
 				B3C7620F20783162009950E4 /* PVDosBox */,
 				B3344B522859E088006E6B3A /* dos-box-libretro */,
 				B30178D2207C901D0051B93D /* dos-box */,
+				9396AEEB297305F700B1EA1C /* DosBoxRetroArchCore */,
 			);
 		};
 /* End PBXProject section */
@@ -1194,6 +1220,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9396AEF02973064500B1EA1C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\ncp -pR ${SRCROOT}/dosbox-pure/* ${SRCROOT}/cmake/build/\ncp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd ${SRCROOT}/cmake/build/\n#make clean\nmake\ncp dosbox_pure_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/dosbox_pure_libretro_ios.dylib\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B30178CF207C901D0051B93D /* Sources */ = {
@@ -1331,6 +1377,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9396AEFA2973078600B1EA1C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9396AEEB297305F700B1EA1C /* DosBoxRetroArchCore */;
+			targetProxy = 9396AEF92973078600B1EA1C /* PBXContainerItemProxy */;
+		};
 		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3344B522859E088006E6B3A /* dos-box-libretro */;
@@ -1339,6 +1390,30 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		9396AEEC297305F800B1EA1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9396AEED297305F800B1EA1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		9396AEEE297305F800B1EA1C /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1798,6 +1873,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9396AEEF297305F800B1EA1C /* Build configuration list for PBXAggregateTarget "DosBoxRetroArchCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9396AEEC297305F800B1EA1C /* Debug */,
+				9396AEED297305F800B1EA1C /* Release */,
+				9396AEEE297305F800B1EA1C /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "dos-box" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

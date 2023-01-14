@@ -6,6 +6,20 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		934293282973FECF00975F0B /* MelonDSRetroArchCore */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9342932C2973FECF00975F0B /* Build configuration list for PBXAggregateTarget "MelonDSRetroArchCore" */;
+			buildPhases = (
+				9342932D2973FF5600975F0B /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = MelonDSRetroArchCore;
+			productName = BuildMelonRetroArchCore;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B338055B28757C3A0009C732 /* PVMelonDSCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVMelonDSCore+Controls.mm */; };
@@ -123,6 +137,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9342932E2973FFF800975F0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 934293282973FECF00975F0B;
+			remoteInfo = MelonDSRetroArchCore;
+		};
 		B39313812870FB9A00372EBB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -2733,6 +2754,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9342932F2973FFF800975F0B /* PBXTargetDependency */,
 				B39313822870FB9A00372EBB /* PBXTargetDependency */,
 			);
 			name = PVMelonDS;
@@ -2751,6 +2773,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					934293282973FECF00975F0B = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -2775,6 +2800,7 @@
 			targets = (
 				B3C7620F20783162009950E4 /* PVMelonDS */,
 				B30178D2207C901D0051B93D /* MelonDS */,
+				934293282973FECF00975F0B /* MelonDSRetroArchCore */,
 			);
 		};
 /* End PBXProject section */
@@ -2789,6 +2815,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9342932D2973FF5600975F0B /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\ncp -pR ${SRCROOT}/melonDS/* ${SRCROOT}/cmake/build/\ncp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd ${SRCROOT}/cmake/build/\n#make clean\nmake\ncp melonds_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/melonds_libretro_ios.dylib\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B30178CF207C901D0051B93D /* Sources */ = {
@@ -2900,6 +2946,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9342932F2973FFF800975F0B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 934293282973FECF00975F0B /* MelonDSRetroArchCore */;
+			targetProxy = 9342932E2973FFF800975F0B /* PBXContainerItemProxy */;
+		};
 		B39313822870FB9A00372EBB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B30178D2207C901D0051B93D /* MelonDS */;
@@ -2908,6 +2959,39 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		934293292973FECF00975F0B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LD_MAP_FILE_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9342932A2973FECF00975F0B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LD_MAP_FILE_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		9342932B2973FECF00975F0B /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LD_MAP_FILE_PATH = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3006,6 +3090,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
@@ -3133,6 +3218,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -3204,6 +3290,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "";
 				SDKROOT = iphoneos;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
@@ -3286,6 +3373,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9342932C2973FECF00975F0B /* Build configuration list for PBXAggregateTarget "MelonDSRetroArchCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				934293292973FECF00975F0B /* Debug */,
+				9342932A2973FECF00975F0B /* Release */,
+				9342932B2973FECF00975F0B /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "MelonDS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
