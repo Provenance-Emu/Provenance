@@ -308,20 +308,18 @@ static bool cocoa_vk_gfx_ctx_set_video_mode(void *data,
 	NSLog(@"Set:VULKAN:Setting Video Mode %d %d\n", width, height);
 	CocoaView *g_view           = [CocoaView get];
     CGRect bounds = [UIScreen mainScreen].bounds;
-    cocoa_ctx->width            = bounds.size.width;
-    cocoa_ctx->height           = bounds.size.height;
+    cocoa_ctx->width            = width > 1 ? width : bounds.size.width;
+    cocoa_ctx->height           = height > 1 ? height : bounds.size.height;
 	NSLog(@"Set:VULKAN:[iOS]: Native window size: %u x %u.\n",
-			cocoa_ctx->width
-              , cocoa_ctx->height);
-    
+			cocoa_ctx->width, cocoa_ctx->height);
     
 	if (!vulkan_surface_create(
 				&cocoa_ctx->vk,
 				VULKAN_WSI_MVK_IOS,
 				NULL,
-				(BRIDGE void *)_renderView.layer,
-                g_view.view.frame.size.width,
-				g_view.view.frame.size.height,
+				(BRIDGE void *)_renderView,
+                width,
+				height,
 				cocoa_ctx->swap_interval))
 	{
 		NSLog(@"Set:VULKAN:[iOS]: Failed to create surface.\n");
@@ -341,7 +339,6 @@ static bool cocoa_vk_gfx_ctx_set_video_mode(void *data,
 		 return false;
 	 }
      */
-
 	 return true;
 }
 
@@ -365,6 +362,7 @@ static void *cocoa_vk_gfx_ctx_init(void *video_driver)
 	 } else {
 		  NSLog(@"Set:VULKAN: libMoltenVK Not Found at %s\n", vulkan_path);
 	 }
+    
 	 if (!vulkan_context_init(&cocoa_ctx->vk, VULKAN_WSI_MVK_IOS, vulkan_path)) {
           NSLog(@"Set:VULKAN:Vulkan Context Initialize Failed\n");
 		  free(cocoa_ctx);
@@ -375,8 +373,8 @@ static void *cocoa_vk_gfx_ctx_init(void *video_driver)
 	 {
 		 free(cocoa_ctx);
 		 return NULL;
-	 }
-      */
+	 }*/
+      
 	 NSLog(@"Set:VULKAN: Vulkan Context Initialized OK\n");
 	 return cocoa_ctx;
 }

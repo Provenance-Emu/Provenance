@@ -48,6 +48,7 @@ typedef signed char    s8;
 typedef unsigned short u16;
 typedef unsigned int   u32;
 extern bool _isInitialized;
+extern __weak PVRetroArchCore *_current;
 void handle_touch_event(NSArray* touches);
 void handle_click_event(CGPoint click, bool pressed);
 
@@ -373,32 +374,57 @@ static void apple_gamecontroller_joypad_disconnect(GCController* controller)
 	}
 }
 
-void *apple_gamecontroller_joypad_init(void *data)
-{
-   static bool inited = false;
-   if (inited)
-	  return (void*)-1;
-   if (!apple_gamecontroller_available())
-	  return NULL;
-   mfiControllers = [[NSMutableArray alloc] initWithCapacity:MAX_MFI_CONTROLLERS];
-#ifdef __IPHONE_7_0
-   [[NSNotificationCenter defaultCenter] addObserverForName:GCControllerDidConnectNotification
-													 object:nil
-													  queue:[NSOperationQueue mainQueue]
-												 usingBlock:^(NSNotification *note)
-												 {
-													apple_gamecontroller_joypad_connect([note object]);
-												 }];
-   [[NSNotificationCenter defaultCenter] addObserverForName:GCControllerDidDisconnectNotification
-													 object:nil
-													  queue:[NSOperationQueue mainQueue]
-												 usingBlock:^(NSNotification *note)
-												 {
-													apple_gamecontroller_joypad_disconnect([note object]);
-												 } ];
-#endif
-
-   return (void*)-1;
+void refresh_gamecontrollers() {
+    if (_current) {
+        for (NSInteger player = 0; player < 4; player++) {
+            GCController *controller = nil;
+            if (_current.controller1 && player == 0)
+            {
+                controller = _current.controller1;
+            }
+            else if (_current.controller2 && player == 1)
+            {
+                controller = _current.controller2;
+            }
+            else if (_current.controller3 && player == 2)
+            {
+                controller = _current.controller3;
+            }
+            else if (_current.controller4 && player == 3)
+            {
+                controller = _current.controller4;
+            }
+            if (controller) {
+                apple_gamecontroller_joypad_connect(controller);
+            }
+        }
+    }
+}
+void *apple_gamecontroller_joypad_init(void *data) {
+    static bool inited = false;
+    if (inited)
+      return (void*)-1;
+    if (!apple_gamecontroller_available())
+      return NULL;
+    mfiControllers = [[NSMutableArray alloc] initWithCapacity:MAX_MFI_CONTROLLERS];
+    refresh_gamecontrollers();
+    [[NSNotificationCenter defaultCenter] addObserverForName:GCControllerDidConnectNotification
+                                                     object:nil
+                                                      queue:[NSOperationQueue mainQueue]
+                                                 usingBlock:^(NSNotification *note)
+                                                 {
+                                                    apple_gamecontroller_joypad_connect([note object]);
+                                                    refresh_gamecontrollers();
+                                                 }];
+    [[NSNotificationCenter defaultCenter] addObserverForName:GCControllerDidDisconnectNotification
+                                                     object:nil
+                                                      queue:[NSOperationQueue mainQueue]
+                                                 usingBlock:^(NSNotification *note)
+                                                 {
+                                                    apple_gamecontroller_joypad_disconnect([note object]);
+                                                    refresh_gamecontrollers();
+                                                 } ];
+    return (void*)-1;
 }
 
 static void apple_gamecontroller_joypad_destroy(void) { }

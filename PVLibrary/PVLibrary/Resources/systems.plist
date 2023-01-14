@@ -4534,6 +4534,19 @@
 			<string>com</string>
 			<string>bat</string>
 			<string>conf</string>
+			<string>cfg</string>
+			<string>img</string>
+			<string>zip</string>
+			<string>dosz</string>
+			<string>iso</string>
+			<string>cue</string>
+			<string>ins</string>
+			<string>ima</string>
+			<string>vhd</string>
+			<string>jrc</string>
+			<string>tc</string>
+			<string>m3u</string>
+			<string>m3u8</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -5185,10 +5198,10 @@
 		<string>com.provenance.macintosh</string>
 		<key>PVDatabaseID</key>
 		<string>-1</string>
-		<key>PVRequiresBIOS</key>
-		<false/>
-		<key>PVBIOSNames</key>
-		<array>
+                <key>PVRequiresBIOS</key>
+                <true/>
+                <key>PVBIOSNames</key>
+                <array>
 			<dict>
 				<key>Description</key>
 				<string>MacII ROM</string>
@@ -5196,17 +5209,18 @@
 				<string>66223be14974601f1e60885eeb35e03cc</string>
 				<key>Name</key>
 				<string>MacII.rom</string>
-				<key>Optional</key>
-				<true/>
-				<key>Size</key>
-				<integer>0</integer>
+                                <key>Size</key>
+                                <integer>262144</integer>
 			</dict>
 		</array>
 		<key>PVSupportedExtensions</key>
 		<array>
-			<string>exe</string>
-			<string>com</string>
-			<string>bat</string>
+			<string>hdi</string>
+			<string>img</string>
+			<string>dsk</string>
+			<string>zip</string>
+			<string>hvf</string>
+			<string>cmd</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>

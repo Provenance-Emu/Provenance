@@ -48,7 +48,7 @@ id<ApplePlatform> apple_platform;
 id apple_platform;
 #endif
 
-static CocoaView* g_instance;
+CocoaView* g_instance;
 
 #ifdef HAVE_COCOATOUCH
 void *glkitview_init(void);
@@ -75,13 +75,13 @@ void handle_touch_event(NSArray* touches);
 
 + (CocoaView*)get
 {
-   CocoaView *view = (BRIDGE CocoaView*)nsview_get_ptr();
-   if (!view)
+   CocoaView *view_controller = (BRIDGE CocoaView*)nsview_get_ptr();
+   if (!view_controller)
    {
-	  view = [CocoaView new];
-	  nsview_set_ptr(view);
+	  view_controller = [CocoaView new];
+      nsview_set_ptr(view_controller);
    }
-   return view;
+   return view_controller;
 }
 
 - (id)init
@@ -289,10 +289,8 @@ void handle_touch_event(NSArray* touches);
 
 -(void)loadView {
 #if defined(HAVE_COCOA_METAL)
-    NSLog(@"Set:METAL VULKAN:Common:loadView\n");
    self.view       = [UIView new];
 #else
-    NSLog(@"Set:OPENGLES3:Common:loadView\n");
    self.view       = (BRIDGE GLKView*)glkitview_init();
 #endif
 }

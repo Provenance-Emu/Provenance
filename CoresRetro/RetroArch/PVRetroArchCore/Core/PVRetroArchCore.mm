@@ -60,18 +60,19 @@ extern int g_gs_preference;
 - (instancetype)init {
 	if (self = [super init]) {
         self.alwaysUseMetal = true;
+        [self parseOptions];
 		CGRect bounds=[[UIScreen mainScreen] bounds];
 		_videoWidth  = bounds.size.width;
 		_videoHeight = bounds.size.height;
 		_videoBitDepth = 32;
 		sampleRate = 44100;
 		self->resFactor = 1;
-		self->gsPreference = 0;
 		isNTSC = YES;
 		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
 		_callbackQueue = dispatch_queue_create("org.provenance-emu.pvretroarchcore.CallbackHandlerQueue", queueAttributes);
 		g_gs_preference = self.gsPreference;
 		[self setRootView:false];
+        [CocoaView get];
 	}
 	_current=self;
 	return self;
@@ -101,5 +102,12 @@ extern int g_gs_preference;
 }
 -(void)startHaptic { }
 -(void)stopHaptic { }
--(void)resetEmulation { }
+-(void)resetEmulation {
+    command_event(CMD_EVENT_RESET, NULL);
+}
+- (void)setPauseEmulation:(BOOL)flag {
+    command_event(flag ? CMD_EVENT_PAUSE : CMD_EVENT_UNPAUSE, NULL);
+    [super setPauseEmulation:flag];
+}
+
 @end
