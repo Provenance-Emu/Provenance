@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>KEYCHAIN_SERIVCE</key>
+	<string>$(KEYCHAIN_SERIVCE)</string>
+	<key>PATREON</key>
+	<dict>
+		<key>CALLBACK_URL_SCHEME</key>
+		<string>$(CALLBACK_URL_SCHEME)</string>
+		<key>REDIRECT_URL</key>
+		<string>$(REDIRECT_URL)</string>
+		<key>CLIENT_ID</key>
+		<string>$(CLIENT_ID)</string>
+		<key>CLIENT_SECRET</key>
+		<string>$(CLIENT_SECRET)</string>
+		<key>CAMPAIGN_ID</key>
+		<string>$(CAMPAIGN_ID)</string>
+	</dict>
+</dict>
+</plist>
