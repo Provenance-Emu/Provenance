@@ -31,6 +31,7 @@ SOURCES := \
   src/*.cpp   \
   src/*/*.cpp \
   src/*/*/*.cpp
+
 platform = ios-arm64
 CPUFLAGS := $(MAKE_CPUFLAGS)
 STRIPCMD := strip --strip-all
@@ -129,7 +130,7 @@ else ifeq ($(platform),libnx)
   export DEPSDIR = $(CURDIR)
   include $(DEVKITPRO)/libnx/switch_rules
   COMMONFLAGS += -I$(LIBNX)/include/ -ftls-model=local-exec -specs=$(LIBNX)/switch.specs
-  COMMONFLAGS += $(INCLUDE) -D__SWITCH__ -DHAVE_LIBNX
+  COMMONFLAGS += $(INCLUDE) -D__SWITCH__ -DHAVE_LIBNX -fpic
   STATIC_LINKING = 1
 else ifeq ($(platform),gcw0)
   # You must used the toolchain built on or around 2014-08-20
@@ -206,7 +207,7 @@ else
   LDFLAGS  += -O2
 endif
 
-CFLAGS  += $(CPUFLAGS) -std=gnu++11 -fomit-frame-pointer -fno-exceptions -fno-non-call-exceptions -Wno-address-of-packed-member -Wno-format -Wno-switch -Wno-psabi
+CFLAGS  += $(CPUFLAGS) -std=gnu++11 -fomit-frame-pointer -fexceptions -Wno-address-of-packed-member -Wno-format -Wno-switch -Wno-psabi
 ifneq ($(STATIC_LINKING), 1)
   CFLAGS  += -fpic
 else

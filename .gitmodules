@@ -160,3 +160,6 @@
 [submodule "Cores/BeetlePSX/beetle-psx"]
 	path = Cores/BeetlePSX/beetle-psx
 	url = https://github.com/libretro/beetle-psx-libretro.git
+[submodule "Cores/DosBox/dosbox"]
+	path = Cores/DosBox/dosbox
+	url = https://github.com/schellingb/dosbox-pure.git
