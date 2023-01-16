@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVSameDuck.framework"
-               BlueprintName = "PVSameDuck-iOS"
+               BlueprintName = "PVSameDuck"
                ReferencedContainer = "container:PVSameDuck.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVSameDuck.framework"
-            BlueprintName = "PVSameDuck-iOS"
+            BlueprintName = "PVSameDuck"
             ReferencedContainer = "container:PVSameDuck.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
