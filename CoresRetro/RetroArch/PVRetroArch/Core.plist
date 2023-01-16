@@ -38,7 +38,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArchCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - SNES9x</string>
+			<string>SNES9x (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.snes</string>
@@ -54,7 +54,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArchCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Flycast</string>
+			<string>Flycast (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.dreamcast</string>
@@ -63,6 +63,38 @@
 			<string>https://github.com/flyinghead/flycast</string>
 			<key>PVProjectVersion</key>
 			<string>2.0</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mupen64plus_next_libretro_ios.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVProjectName</key>
+			<string>Mupen64Plus-Next (RetroArch)</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.n64</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/mupen64plus-libretro-nx</string>
+			<key>PVProjectVersion</key>
+			<string>2022.12.12</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>fuse_libretro.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVProjectName</key>
+			<string>Fuse (RetroArch)</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.zxspectrum</string>
+			</array>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/fuse-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>1.6.0</string>
 		</dict>
 		<dict>
 				<key>PVCoreIdentifier</key>
