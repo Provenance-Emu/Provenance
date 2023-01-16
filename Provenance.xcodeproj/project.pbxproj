@@ -2339,7 +2339,6 @@
 				B33155E32971D34D008767C5 /* PVFuse.framework */,
 				B322A98F2971670B00F0D876 /* PVDuckStation.framework */,
 				934BE9B5296F17A900FB9933 /* PVBeetlePSX.framework */,
-				B31364792970094A00C34FED /* PVDuckStation.framework */,
 				B31364762970092D00C34FED /* PVDuckStation.framework */,
 				93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */,
 				B36B84D429598F6600FDEA29 /* PVO2EM.framework */,

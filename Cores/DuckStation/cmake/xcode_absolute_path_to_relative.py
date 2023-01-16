@@ -21,7 +21,7 @@ CORE_LIB_DIR = "../duckstation"
 BUILD_DIR = "../lib"
 
 LIBS_TO_RENAME = []
-#LIBS_TO_RENAME.append([' = fmt;', ' = fmtd;'])
+LIBS_TO_RENAME.append([' = fmtd;', ' = fmt;'])
 
 # Paths to convert to relative path in XCode
 SRCROOT_PATH_TO_FIND = CORE_DIR + '/'
@@ -102,7 +102,7 @@ def get_files(path):
   for file in files:
     if path != '.':
       file=f'{path}/{file}'
-    if os.path.isdir(file):  
+    if os.path.isdir(file):
       get_files(file)
     elif os.path.isfile(file):
       process_file(file)

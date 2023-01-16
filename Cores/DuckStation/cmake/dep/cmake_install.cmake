@@ -154,6 +154,11 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/fast_float/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/dep/rcheevos/cmake_install.cmake")
 endif()
 

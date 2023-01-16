@@ -17,6 +17,6 @@
 	<key>PVProjectVersion</key>
 	<string>2023.01.11</string>
 	<key>PVDisabled</key>
-	<false/>
+	<true/>
 </dict>
 </plist>
