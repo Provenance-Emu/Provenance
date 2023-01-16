@@ -21,6 +21,262 @@
 		B37022CD2872558F00B3F6DA /* PVblueMSX.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVblueMSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libblueMSX-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libblueMSX-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
+		B3C47F2F2970FF7F0040C177 /* Machine.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108402896659E00FA401F /* Machine.c */; };
+		B3C47F302970FF7F0040C177 /* SG1000.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108412896659E00FA401F /* SG1000.c */; };
+		B3C47F312970FF7F0040C177 /* Coleco.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108422896659E00FA401F /* Coleco.c */; };
+		B3C47F322970FF7F0040C177 /* FileHistory.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109482896659E00FA401F /* FileHistory.c */; };
+		B3C47F332970FF7F0040C177 /* AppConfig.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109452896659E00FA401F /* AppConfig.c */; };
+		B3C47F342970FF7F0040C177 /* Patch.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109402896659E00FA401F /* Patch.c */; };
+		B3C47F352970FF7F0040C177 /* SVI.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108442896659E00FA401F /* SVI.c */; };
+		B3C47F362970FF7F0040C177 /* Actions.c in Sources */ = {isa = PBXBuildFile; fileRef = B351094E2896659E00FA401F /* Actions.c */; };
+		B3C47F382970FF7F0040C177 /* LaunchFile.c in Sources */ = {isa = PBXBuildFile; fileRef = B351094A2896659E00FA401F /* LaunchFile.c */; };
+		B3C47F392970FF7F0040C177 /* Board.c in Sources */ = {isa = PBXBuildFile; fileRef = B351083C2896659E00FA401F /* Board.c */; };
+		B3C47F3A2970FF7F0040C177 /* Properties.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109492896659E00FA401F /* Properties.c */; };
+		B3C47F3B2970FF7F0040C177 /* MSX.c in Sources */ = {isa = PBXBuildFile; fileRef = B351083E2896659E00FA401F /* MSX.c */; };
+		B3C47F3C2970FF7F0040C177 /* ArrayList.c in Sources */ = {isa = PBXBuildFile; fileRef = B351090D2896659E00FA401F /* ArrayList.c */; };
+		B3C47F3D2970FF7F0040C177 /* Adam.c in Sources */ = {isa = PBXBuildFile; fileRef = B351083D2896659E00FA401F /* Adam.c */; };
+		B3C47F3E2970FF920040C177 /* MsxAsciiLaser.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108C22896659E00FA401F /* MsxAsciiLaser.c */; };
+		B3C47F3F2970FF920040C177 /* MsxJoystick.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108BE2896659E00FA401F /* MsxJoystick.c */; };
+		B3C47F402970FF920040C177 /* InputEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108B32896659E00FA401F /* InputEvent.c */; };
+		B3C47F412970FF920040C177 /* MagicKeyDongle.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108AD2896659E00FA401F /* MagicKeyDongle.c */; };
+		B3C47F422970FF920040C177 /* MsxGunstick.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108B82896659E00FA401F /* MsxGunstick.c */; };
+		B3C47F432970FF920040C177 /* ColecoSuperAction.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108A12896659E00FA401F /* ColecoSuperAction.c */; };
+		B3C47F442970FF920040C177 /* CoinDevice.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108BC2896659E00FA401F /* CoinDevice.c */; };
+		B3C47F452970FF920040C177 /* SviJoystick.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108C52896659E00FA401F /* SviJoystick.c */; };
+		B3C47F462970FF920040C177 /* ColecoSteeringWheel.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108A82896659E00FA401F /* ColecoSteeringWheel.c */; };
+		B3C47F472970FF920040C177 /* MsxTetrisDongle.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108AE2896659E00FA401F /* MsxTetrisDongle.c */; };
+		B3C47F482970FF920040C177 /* JoystickPort.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108AF2896659E00FA401F /* JoystickPort.c */; };
+		B3C47F492970FF920040C177 /* ColecoJoystick.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108B42896659E00FA401F /* ColecoJoystick.c */; };
+		B3C47F4A2970FF920040C177 /* MsxMouse.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108B92896659E00FA401F /* MsxMouse.c */; };
+		B3C47F4B2970FF920040C177 /* MsxArkanoidPad.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108BB2896659E00FA401F /* MsxArkanoidPad.c */; };
+		B3C47F4C2970FF920040C177 /* Sg1000JoyIo.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108B12896659E00FA401F /* Sg1000JoyIo.c */; };
+		B3C47F4D2970FF920040C177 /* Sg1000Joystick.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108BA2896659E00FA401F /* Sg1000Joystick.c */; };
+		B3C47F4E2970FF920040C177 /* SviJoyIo.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108B72896659E00FA401F /* SviJoyIo.c */; };
+		B3C47F4F2970FFA00040C177 /* MsxPPI.c in Sources */ = {isa = PBXBuildFile; fileRef = B351085A2896659E00FA401F /* MsxPPI.c */; };
+		B3C47F502970FFA00040C177 /* Led.c in Sources */ = {isa = PBXBuildFile; fileRef = B351084A2896659E00FA401F /* Led.c */; };
+		B3C47F512970FFA00040C177 /* GameReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35108832896659E00FA401F /* GameReader.cpp */; };
+		B3C47F522970FFA00040C177 /* Switches.c in Sources */ = {isa = PBXBuildFile; fileRef = B351086B2896659E00FA401F /* Switches.c */; };
+		B3C47F532970FFA00040C177 /* MidiIO.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108762896659E00FA401F /* MidiIO.c */; };
+		B3C47F542970FFA00040C177 /* RTC.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108592896659E00FA401F /* RTC.c */; };
+		B3C47F552970FFA00040C177 /* FdcAudio.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108962896659E00FA401F /* FdcAudio.c */; };
+		B3C47F562970FFA00040C177 /* SunriseIDE.c in Sources */ = {isa = PBXBuildFile; fileRef = B351085D2896659E00FA401F /* SunriseIDE.c */; };
+		B3C47F572970FFA00040C177 /* sl811hs.c in Sources */ = {isa = PBXBuildFile; fileRef = B351087B2896659E00FA401F /* sl811hs.c */; };
+		B3C47F582970FFA00040C177 /* DirAsDisk.c in Sources */ = {isa = PBXBuildFile; fileRef = B351086A2896659E00FA401F /* DirAsDisk.c */; };
+		B3C47F592970FFA00040C177 /* I8251.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108792896659E00FA401F /* I8251.c */; };
+		B3C47F5A2970FFA00040C177 /* WD2793.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108842896659E00FA401F /* WD2793.c */; };
+		B3C47F5B2970FFA00040C177 /* MB89352.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108642896659E00FA401F /* MB89352.c */; };
+		B3C47F5D2970FFA00040C177 /* Sc3000PPI.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108742896659E00FA401F /* Sc3000PPI.c */; };
+		B3C47F5E2970FFA00040C177 /* MSXMidi.c in Sources */ = {isa = PBXBuildFile; fileRef = B351086F2896659E00FA401F /* MSXMidi.c */; };
+		B3C47F5F2970FFA00040C177 /* I8250.c in Sources */ = {isa = PBXBuildFile; fileRef = B351085F2896659E00FA401F /* I8250.c */; };
+		B3C47F602970FFA00040C177 /* Z8530.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108682896659E00FA401F /* Z8530.c */; };
+		B3C47F612970FFA00040C177 /* rtl8019.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108662896659E00FA401F /* rtl8019.c */; };
+		B3C47F622970FFA00040C177 /* Disk.c in Sources */ = {isa = PBXBuildFile; fileRef = B351088F2896659E00FA401F /* Disk.c */; };
+		B3C47F632970FFA00040C177 /* NEC765.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108882896659E00FA401F /* NEC765.c */; };
+		B3C47F642970FFA00040C177 /* PrinterIO.c in Sources */ = {isa = PBXBuildFile; fileRef = B351086E2896659E00FA401F /* PrinterIO.c */; };
+		B3C47F652970FFA00040C177 /* TC8566AF.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108712896659E00FA401F /* TC8566AF.c */; };
+		B3C47F672970FFA00040C177 /* WDCRC.c in Sources */ = {isa = PBXBuildFile; fileRef = B351087A2896659E00FA401F /* WDCRC.c */; };
+		B3C47F682970FFA00040C177 /* HarddiskIDE.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108622896659E00FA401F /* HarddiskIDE.c */; };
+		B3C47F692970FFA00040C177 /* Sf7000PPI.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108782896659E00FA401F /* Sf7000PPI.c */; };
+		B3C47F6A2970FFA00040C177 /* TurboRIO.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108562896659E00FA401F /* TurboRIO.c */; };
+		B3C47F6B2970FFA00040C177 /* wd33c93.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108572896659E00FA401F /* wd33c93.c */; };
+		B3C47F6C2970FFA00040C177 /* Casette.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108702896659E00FA401F /* Casette.c */; };
+		B3C47F6D2970FFA00040C177 /* Microwire93Cx6.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108532896659E00FA401F /* Microwire93Cx6.c */; };
+		B3C47F6E2970FFA00040C177 /* Microchip24x00.c in Sources */ = {isa = PBXBuildFile; fileRef = B351085C2896659E00FA401F /* Microchip24x00.c */; };
+		B3C47F6F2970FFA00040C177 /* SviPPI.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108772896659E00FA401F /* SviPPI.c */; };
+		B3C47F702970FFA00040C177 /* I8254.c in Sources */ = {isa = PBXBuildFile; fileRef = B351085E2896659E00FA401F /* I8254.c */; };
+		B3C47F712970FFA00040C177 /* UartIO.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108672896659E00FA401F /* UartIO.c */; };
+		B3C47F722970FFA00040C177 /* ScsiDevice.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108542896659E00FA401F /* ScsiDevice.c */; };
+		B3C47F732970FFA00040C177 /* I8255.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108732896659E00FA401F /* I8255.c */; };
+		B3C47F742970FFA00040C177 /* ft245.c in Sources */ = {isa = PBXBuildFile; fileRef = B351088B2896659E00FA401F /* ft245.c */; };
+		B3C47F752970FFA90040C177 /* LanguageMinimal.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108FD2896659E00FA401F /* LanguageMinimal.c */; };
+		B3C47F762970FFB30040C177 /* Menu.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109142896659E00FA401F /* Menu.c */; };
+		B3C47F772970FFB30040C177 /* VideoIn.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109112896659E00FA401F /* VideoIn.c */; };
+		B3C47F782970FFB30040C177 /* Mouse.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109122896659E00FA401F /* Mouse.c */; };
+		B3C47F792970FFB30040C177 /* Cdrom.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109152896659E00FA401F /* Cdrom.c */; };
+		B3C47F7A2970FFB30040C177 /* Timer.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109132896659E00FA401F /* Timer.c */; };
+		B3C47F7B2970FFB70040C177 /* File.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109242896659E00FA401F /* File.c */; };
+		B3C47F7C2970FFB70040C177 /* Emulator.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109252896659E00FA401F /* Emulator.c */; };
+		B3C47F7D2970FFB70040C177 /* Glob.c in Sources */ = {isa = PBXBuildFile; fileRef = B351091C2896659E00FA401F /* Glob.c */; };
+		B3C47F7E2970FFB70040C177 /* Sound.c in Sources */ = {isa = PBXBuildFile; fileRef = B351091F2896659E00FA401F /* Sound.c */; };
+		B3C47F7F2970FFB70040C177 /* Notifications.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109202896659E00FA401F /* Notifications.c */; };
+		B3C47F802970FFB70040C177 /* Event.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109212896659E00FA401F /* Event.c */; };
+		B3C47F812970FFB70040C177 /* Eth.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109262896659E00FA401F /* Eth.c */; };
+		B3C47F822970FFB80040C177 /* Dialog.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109232896659E00FA401F /* Dialog.c */; };
+		B3C47F832970FFB80040C177 /* Midi.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109222896659E00FA401F /* Midi.c */; };
+		B3C47F842970FFB80040C177 /* Printer.c in Sources */ = {isa = PBXBuildFile; fileRef = B351091E2896659E00FA401F /* Printer.c */; };
+		B3C47F852970FFB80040C177 /* Uart.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109272896659E00FA401F /* Uart.c */; };
+		B3C47F862970FFB80040C177 /* Input.c in Sources */ = {isa = PBXBuildFile; fileRef = B351091D2896659E00FA401F /* Input.c */; };
+		B3C47F872970FFCA0040C177 /* romMapperSCCplus.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107522896659D00FA401F /* romMapperSCCplus.c */; };
+		B3C47F892970FFCA0040C177 /* Crc32Calc.c in Sources */ = {isa = PBXBuildFile; fileRef = B351095E2896659F00FA401F /* Crc32Calc.c */; };
+		B3C47F8A2970FFCA0040C177 /* Sha1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B351095D2896659F00FA401F /* Sha1.cpp */; };
+		B3C47F8B2970FFCA0040C177 /* romMapperFMPAK.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107482896659D00FA401F /* romMapperFMPAK.c */; };
+		B3C47F8C2970FFCA0040C177 /* romMapperASCII8sram.c in Sources */ = {isa = PBXBuildFile; fileRef = B351074D2896659D00FA401F /* romMapperASCII8sram.c */; };
+		B3C47F8D2970FFCA0040C177 /* MegaromCartridge.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107512896659D00FA401F /* MegaromCartridge.c */; };
+		B3C47F8E2970FFCA0040C177 /* sramMapperMegaSCSI.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107592896659D00FA401F /* sramMapperMegaSCSI.c */; };
+		B3C47F8F2970FFCA0040C177 /* romMapperPanasonic.c in Sources */ = {isa = PBXBuildFile; fileRef = B351075F2896659D00FA401F /* romMapperPanasonic.c */; };
+		B3C47F902970FFCA0040C177 /* romMapperGameReader.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107632896659D00FA401F /* romMapperGameReader.c */; };
+		B3C47F912970FFCA0040C177 /* romMapperOpcodeSlotManager.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107452896659D00FA401F /* romMapperOpcodeSlotManager.c */; };
+		B3C47F922970FFCA0040C177 /* romMapperNms1210Rs232.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107532896659D00FA401F /* romMapperNms1210Rs232.c */; };
+		B3C47F932970FFCA0040C177 /* romMapperTurboRTimer.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107472896659D00FA401F /* romMapperTurboRTimer.c */; };
+		B3C47F942970FFCA0040C177 /* ramMapperIo.c in Sources */ = {isa = PBXBuildFile; fileRef = B351074E2896659D00FA401F /* ramMapperIo.c */; };
+		B3C47F952970FFCA0040C177 /* romMapperBasic.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107602896659D00FA401F /* romMapperBasic.c */; };
+		B3C47F962970FFCA0040C177 /* romMapperKorean90.c in Sources */ = {isa = PBXBuildFile; fileRef = B351075A2896659D00FA401F /* romMapperKorean90.c */; };
+		B3C47F972970FFCA0040C177 /* romMapperHarryFox.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107562896659D00FA401F /* romMapperHarryFox.c */; };
+		B3C47F982970FFCA0040C177 /* romMapperArc.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107572896659D00FA401F /* romMapperArc.c */; };
+		B3C47F992970FFCA0040C177 /* romMapperMuPack.c in Sources */ = {isa = PBXBuildFile; fileRef = B351074B2896659D00FA401F /* romMapperMuPack.c */; };
+		B3C47F9A2970FFD90040C177 /* romMapperNet.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107A02896659E00FA401F /* romMapperNet.c */; };
+		B3C47F9B2970FFD90040C177 /* romMapperMegaRAM.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107992896659E00FA401F /* romMapperMegaRAM.c */; };
+		B3C47F9C2970FFD90040C177 /* romMapperCrossBlaim.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107B82896659E00FA401F /* romMapperCrossBlaim.c */; };
+		B3C47F9D2970FFD90040C177 /* romMapperJoyrexPsg.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107C02896659E00FA401F /* romMapperJoyrexPsg.c */; };
+		B3C47F9E2970FFD90040C177 /* romMapperSvi738Fdc.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108292896659E00FA401F /* romMapperSvi738Fdc.c */; };
+		B3C47F9F2970FFD90040C177 /* romMapperSg1000RamExpander.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107A52896659E00FA401F /* romMapperSg1000RamExpander.c */; };
+		B3C47FA02970FFD90040C177 /* romMapperDumas.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107FC2896659E00FA401F /* romMapperDumas.c */; };
+		B3C47FA12970FFD90040C177 /* romMapperMatraINK.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107BE2896659E00FA401F /* romMapperMatraINK.c */; };
+		B3C47FA22970FFD90040C177 /* romMapperNettouYakyuu.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108192896659E00FA401F /* romMapperNettouYakyuu.c */; };
+		B3C47FA32970FFD90040C177 /* romMapperKorean126.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107AC2896659E00FA401F /* romMapperKorean126.c */; };
+		B3C47FA42970FFD90040C177 /* romMapperSf7000Ipl.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107782896659E00FA401F /* romMapperSf7000Ipl.c */; };
+		B3C47FA52970FFD90040C177 /* romMapperSegaBasic.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107F82896659E00FA401F /* romMapperSegaBasic.c */; };
+		B3C47FA62970FFD90040C177 /* ram1kBMirrored.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107712896659D00FA401F /* ram1kBMirrored.c */; };
+		B3C47FA72970FFD90040C177 /* romMapperKanji12.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107DD2896659E00FA401F /* romMapperKanji12.c */; };
+		B3C47FA82970FFD90040C177 /* romMapperGoudaSCSI.c in Sources */ = {isa = PBXBuildFile; fileRef = B351076B2896659D00FA401F /* romMapperGoudaSCSI.c */; };
+		B3C47FA92970FFD90040C177 /* romMapperKonami5.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108242896659E00FA401F /* romMapperKonami5.c */; };
+		B3C47FAA2970FFD90040C177 /* romMapperMajutsushi.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107F92896659E00FA401F /* romMapperMajutsushi.c */; };
+		B3C47FAB2970FFD90040C177 /* romMapperDRAM.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108252896659E00FA401F /* romMapperDRAM.c */; };
+		B3C47FAC2970FFD90040C177 /* romMapperOpcodePsg.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107FA2896659E00FA401F /* romMapperOpcodePsg.c */; };
+		B3C47FAE2970FFD90040C177 /* romMapperSunriseIDE.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107AE2896659E00FA401F /* romMapperSunriseIDE.c */; };
+		B3C47FB02970FFD90040C177 /* SlotManager.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108362896659E00FA401F /* SlotManager.c */; };
+		B3C47FB12970FFD90040C177 /* sramMapperMatsuchita.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107B12896659E00FA401F /* sramMapperMatsuchita.c */; };
+		B3C47FB22970FFD90040C177 /* romMapperDisk.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107FE2896659E00FA401F /* romMapperDisk.c */; };
+		B3C47FB32970FFD90040C177 /* romMapperKanji.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107BD2896659E00FA401F /* romMapperKanji.c */; };
+		B3C47FB42970FFD90040C177 /* romMapperMegaFlashRomScc.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107EC2896659E00FA401F /* romMapperMegaFlashRomScc.c */; };
+		B3C47FB52970FFD90040C177 /* romMapperKonamiKeyboardMaster.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107F12896659E00FA401F /* romMapperKonamiKeyboardMaster.c */; };
+		B3C47FB62970FFD90040C177 /* romMapperSvi727.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107A72896659E00FA401F /* romMapperSvi727.c */; };
+		B3C47FB72970FFD90040C177 /* romMapperDooly.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107BF2896659E00FA401F /* romMapperDooly.c */; };
+		B3C47FB82970FFD90040C177 /* romMapperNormal.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107852896659E00FA401F /* romMapperNormal.c */; };
+		B3C47FB92970FFD90040C177 /* romMapperFmDas.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107752896659D00FA401F /* romMapperFmDas.c */; };
+		B3C47FBA2970FFD90040C177 /* romMapperSvi707Fdc.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107902896659E00FA401F /* romMapperSvi707Fdc.c */; };
+		B3C47FBB2970FFD90040C177 /* romMapperActivisionPcb.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107692896659D00FA401F /* romMapperActivisionPcb.c */; };
+		B3C47FBC2970FFD90040C177 /* romMapperASCII16nf.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107B62896659E00FA401F /* romMapperASCII16nf.c */; };
+		B3C47FBD2970FFD90040C177 /* romMapperNational.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108312896659E00FA401F /* romMapperNational.c */; };
+		B3C47FBE2970FFD90040C177 /* romMapperCvMegaCart.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107D42896659E00FA401F /* romMapperCvMegaCart.c */; };
+		B3C47FBF2970FFD90040C177 /* romMapperBeerIDE.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107F62896659E00FA401F /* romMapperBeerIDE.c */; };
+		B3C47FC02970FFD90040C177 /* romMapperForteII.c in Sources */ = {isa = PBXBuildFile; fileRef = B351076A2896659D00FA401F /* romMapperForteII.c */; };
+		B3C47FC12970FFD90040C177 /* romMapperSvi328Rs232.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107B72896659E00FA401F /* romMapperSvi328Rs232.c */; };
+		B3C47FC22970FFD90040C177 /* romMapperMsxRs232.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107F42896659E00FA401F /* romMapperMsxRs232.c */; };
+		B3C47FC32970FFD90040C177 /* sramMapperS1985.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107B22896659E00FA401F /* sramMapperS1985.c */; };
+		B3C47FC42970FFD90040C177 /* romMapperF4device.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107CE2896659E00FA401F /* romMapperF4device.c */; };
+		B3C47FC52970FFD90040C177 /* DeviceManager.c in Sources */ = {isa = PBXBuildFile; fileRef = B351081E2896659E00FA401F /* DeviceManager.c */; };
+		B3C47FC62970FFD90040C177 /* romMapperOpcodeSaveRam.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107A62896659E00FA401F /* romMapperOpcodeSaveRam.c */; };
+		B3C47FC72970FFD90040C177 /* romMapperStandard.c in Sources */ = {isa = PBXBuildFile; fileRef = B351082F2896659E00FA401F /* romMapperStandard.c */; };
+		B3C47FC82970FFD90040C177 /* romMapperFMPAC.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107CA2896659E00FA401F /* romMapperFMPAC.c */; };
+		B3C47FC92970FFD90040C177 /* romMapperMsxMusic.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107D02896659E00FA401F /* romMapperMsxMusic.c */; };
+		B3C47FCA2970FFD90040C177 /* ramNormal.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107952896659E00FA401F /* ramNormal.c */; };
+		B3C47FCB2970FFD90040C177 /* romMapperA1FM.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107DB2896659E00FA401F /* romMapperA1FM.c */; };
+		B3C47FCC2970FFD90040C177 /* romMapperOpcodeBios.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107D32896659E00FA401F /* romMapperOpcodeBios.c */; };
+		B3C47FCD2970FFD90040C177 /* AmdFlash.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107D62896659E00FA401F /* AmdFlash.c */; };
+		B3C47FCE2970FFD90040C177 /* romMapperSonyHBI55.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108032896659E00FA401F /* romMapperSonyHBI55.c */; };
+		B3C47FCF2970FFD90040C177 /* romMapperTC8566AF.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107922896659E00FA401F /* romMapperTC8566AF.c */; };
+		B3C47FD02970FFD90040C177 /* romMapperASCII8.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107C72896659E00FA401F /* romMapperASCII8.c */; };
+		B3C47FD12970FFD90040C177 /* romMapperHolyQuran.c in Sources */ = {isa = PBXBuildFile; fileRef = B351077F2896659E00FA401F /* romMapperHolyQuran.c */; };
+		B3C47FD22970FFD90040C177 /* romMapperSvi328Prn.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108042896659E00FA401F /* romMapperSvi328Prn.c */; };
+		B3C47FD32970FFD90040C177 /* romMapperKonamiWordPro.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107FD2896659E00FA401F /* romMapperKonamiWordPro.c */; };
+		B3C47FD42970FFD90040C177 /* romMapperKonamiSynth.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107D52896659E00FA401F /* romMapperKonamiSynth.c */; };
+		B3C47FD52970FFD90040C177 /* romMapperGameMaster2.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107792896659E00FA401F /* romMapperGameMaster2.c */; };
+		B3C47FD62970FFD90040C177 /* romMapperSonyHBIV1.c in Sources */ = {isa = PBXBuildFile; fileRef = B351078A2896659E00FA401F /* romMapperSonyHBIV1.c */; };
+		B3C47FD72970FFD90040C177 /* romMapperMsxAudio.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108372896659E00FA401F /* romMapperMsxAudio.c */; };
+		B3C47FD82970FFD90040C177 /* romMapperKonami4.c in Sources */ = {isa = PBXBuildFile; fileRef = B351076C2896659D00FA401F /* romMapperKonami4.c */; };
+		B3C47FD92970FFD90040C177 /* sramMapperEseSCC.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108072896659E00FA401F /* sramMapperEseSCC.c */; };
+		B3C47FDA2970FFD90040C177 /* romMapperTurboRPcm.c in Sources */ = {isa = PBXBuildFile; fileRef = B351077E2896659E00FA401F /* romMapperTurboRPcm.c */; };
+		B3C47FDB2970FFD90040C177 /* romMapperMoonsound.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108212896659E00FA401F /* romMapperMoonsound.c */; };
+		B3C47FDC2970FFD90040C177 /* romMapperSvi328Fdc.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108012896659E00FA401F /* romMapperSvi328Fdc.c */; };
+		B3C47FDD2970FFD90040C177 /* IoPort.c in Sources */ = {isa = PBXBuildFile; fileRef = B351077B2896659E00FA401F /* IoPort.c */; };
+		B3C47FDE2970FFD90040C177 /* romMapperPlain.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108352896659E00FA401F /* romMapperPlain.c */; };
+		B3C47FDF2970FFD90040C177 /* romMapperOpcodeMegaRam.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107702896659D00FA401F /* romMapperOpcodeMegaRam.c */; };
+		B3C47FE02970FFD90040C177 /* romMapperNationalFdc.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108022896659E00FA401F /* romMapperNationalFdc.c */; };
+		B3C47FE12970FFD90040C177 /* romMapperCasette.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107F32896659E00FA401F /* romMapperCasette.c */; };
+		B3C47FE22970FFD90040C177 /* romMapperASCII16.c in Sources */ = {isa = PBXBuildFile; fileRef = B351082D2896659E00FA401F /* romMapperASCII16.c */; };
+		B3C47FE32970FFD90040C177 /* romMapperPhilipsFdc.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107E92896659E00FA401F /* romMapperPhilipsFdc.c */; };
+		B3C47FE42970FFD90040C177 /* romMapperLodeRunner.c in Sources */ = {isa = PBXBuildFile; fileRef = B351076E2896659D00FA401F /* romMapperLodeRunner.c */; };
+		B3C47FE52970FFD90040C177 /* romMapperObsonet.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107C52896659E00FA401F /* romMapperObsonet.c */; };
+		B3C47FE62970FFD90040C177 /* MegaSCSIsub.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108092896659E00FA401F /* MegaSCSIsub.c */; };
+		B3C47FE72970FFD90040C177 /* romMapperKorean80.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107682896659D00FA401F /* romMapperKorean80.c */; };
+		B3C47FE82970FFD90040C177 /* romMapperMsxPrn.c in Sources */ = {isa = PBXBuildFile; fileRef = B351082A2896659E00FA401F /* romMapperMsxPrn.c */; };
+		B3C47FE92970FFD90040C177 /* romMapperNms8280VideoDa.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108172896659E00FA401F /* romMapperNms8280VideoDa.c */; };
+		B3C47FEA2970FFD90040C177 /* romMapperMicrosolVmx80.c in Sources */ = {isa = PBXBuildFile; fileRef = B351076D2896659D00FA401F /* romMapperMicrosolVmx80.c */; };
+		B3C47FEB2970FFD90040C177 /* RomLoader.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107D92896659E00FA401F /* RomLoader.c */; };
+		B3C47FEC2970FFD90040C177 /* romMapperMicrosol.c in Sources */ = {isa = PBXBuildFile; fileRef = B351077D2896659E00FA401F /* romMapperMicrosol.c */; };
+		B3C47FED2970FFD90040C177 /* romMapperASCII16sram.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107672896659D00FA401F /* romMapperASCII16sram.c */; };
+		B3C47FEE2970FFD90040C177 /* romMapperGIDE.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107812896659E00FA401F /* romMapperGIDE.c */; };
+		B3C47FEF2970FFD90040C177 /* ramMapper.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107DF2896659E00FA401F /* ramMapper.c */; };
+		B3C47FF02970FFD90040C177 /* romMapperSfg05.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107AA2896659E00FA401F /* romMapperSfg05.c */; };
+		B3C47FF12970FFD90040C177 /* romMapperHalnote.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107B32896659E00FA401F /* romMapperHalnote.c */; };
+		B3C47FF22970FFD90040C177 /* sramLoader.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107C12896659E00FA401F /* sramLoader.c */; };
+		B3C47FF32970FFD90040C177 /* romMapperPlayBall.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107AD2896659E00FA401F /* romMapperPlayBall.c */; };
+		B3C47FF42970FFD90040C177 /* romMapperKoei.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108082896659E00FA401F /* romMapperKoei.c */; };
+		B3C47FF52970FFD90040C177 /* romMapperSg1000.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108262896659E00FA401F /* romMapperSg1000.c */; };
+		B3C47FF72970FFD90040C177 /* romMapperRType.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108122896659E00FA401F /* romMapperRType.c */; };
+		B3C47FF82970FFD90040C177 /* romMapperKonami4nf.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108232896659E00FA401F /* romMapperKonami4nf.c */; };
+		B3C47FFA2970FFD90040C177 /* romMapperMsxDos2.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107EE2896659E00FA401F /* romMapperMsxDos2.c */; };
+		B3C47FFB2970FFD90040C177 /* AtmelPerom.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108102896659E00FA401F /* AtmelPerom.c */; };
+		B3C47FFC2970FFD90040C177 /* romMapperSvi328RsIDE.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108182896659E00FA401F /* romMapperSvi328RsIDE.c */; };
+		B3C47FFD2970FFD90040C177 /* romMapperA1FMModem.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107A22896659E00FA401F /* romMapperA1FMModem.c */; };
+		B3C47FFE2970FFD90040C177 /* romMapperBunsetu.c in Sources */ = {isa = PBXBuildFile; fileRef = B351080F2896659E00FA401F /* romMapperBunsetu.c */; };
+		B3C47FFF2970FFD90040C177 /* romMapperS1990.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108052896659E00FA401F /* romMapperS1990.c */; };
+		B3C480002970FFD90040C177 /* romMapperOpcodeModule.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107B52896659E00FA401F /* romMapperOpcodeModule.c */; };
+		B3C480012970FFD90040C177 /* romMapperPAC.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107872896659E00FA401F /* romMapperPAC.c */; };
+		B3C480022970FFD90040C177 /* romMapperSvi80Col.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107722896659D00FA401F /* romMapperSvi80Col.c */; };
+		B3C480032970FFD90040C177 /* romMapperSg1000Castle.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107CC2896659E00FA401F /* romMapperSg1000Castle.c */; };
+		B3C480042970FFE50040C177 /* MsxPsg.c in Sources */ = {isa = PBXBuildFile; fileRef = B351072D2896659D00FA401F /* MsxPsg.c */; };
+		B3C480052970FFE50040C177 /* ym2151.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107182896659D00FA401F /* ym2151.c */; };
+		B3C480062970FFE50040C177 /* KeyClick.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107102896659D00FA401F /* KeyClick.c */; };
+		B3C480072970FFE50040C177 /* VLM5030.c in Sources */ = {isa = PBXBuildFile; fileRef = B351071B2896659D00FA401F /* VLM5030.c */; };
+		B3C480082970FFE50040C177 /* SCC.c in Sources */ = {isa = PBXBuildFile; fileRef = B351071E2896659D00FA401F /* SCC.c */; };
+		B3C480092970FFE50040C177 /* Y8950.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107092896659D00FA401F /* Y8950.c */; };
+		B3C4800A2970FFE50040C177 /* MameVLM5030.c in Sources */ = {isa = PBXBuildFile; fileRef = B351072A2896659D00FA401F /* MameVLM5030.c */; };
+		B3C4800B2970FFE50040C177 /* SamplePlayer.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107222896659D00FA401F /* SamplePlayer.c */; };
+		B3C4800C2970FFE50040C177 /* AY8910.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107342896659D00FA401F /* AY8910.c */; };
+		B3C4800D2970FFE50040C177 /* Fmopl.c in Sources */ = {isa = PBXBuildFile; fileRef = B351070C2896659D00FA401F /* Fmopl.c */; };
+		B3C4800E2970FFE50040C177 /* SN76489.c in Sources */ = {isa = PBXBuildFile; fileRef = B351070F2896659D00FA401F /* SN76489.c */; };
+		B3C4800F2970FFE50040C177 /* MameYM2151.c in Sources */ = {isa = PBXBuildFile; fileRef = B351072F2896659D00FA401F /* MameYM2151.c */; };
+		B3C480102970FFE50040C177 /* AudioMixer.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107282896659D00FA401F /* AudioMixer.c */; };
+		B3C480112970FFE50040C177 /* DAC.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107232896659D00FA401F /* DAC.c */; };
+		B3C480122970FFE50040C177 /* Ymdeltat.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107352896659D00FA401F /* Ymdeltat.c */; };
+		B3C480132970FFF10040C177 /* tinystr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B351073D2896659D00FA401F /* tinystr.cpp */; };
+		B3C480142970FFF10040C177 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B351073F2896659D00FA401F /* tinyxmlerror.cpp */; };
+		B3C480152970FFF10040C177 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35107402896659D00FA401F /* tinyxml.cpp */; };
+		B3C480162970FFF10040C177 /* tinyxmlparser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B351073E2896659D00FA401F /* tinyxmlparser.cpp */; };
+		B3C48019297100100040C177 /* VDP.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109042896659E00FA401F /* VDP.c */; };
+		B3C4801A297100100040C177 /* V9938.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109082896659E00FA401F /* V9938.c */; };
+		B3C4801B297100100040C177 /* VideoManager.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108FF2896659E00FA401F /* VideoManager.c */; };
+		B3C4801C297100100040C177 /* CRTC6845.c in Sources */ = {isa = PBXBuildFile; fileRef = B35109012896659E00FA401F /* CRTC6845.c */; };
+		B3C4801D297100190040C177 /* R800Debug.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108982896659E00FA401F /* R800Debug.c */; };
+		B3C4801E297100190040C177 /* R800.c in Sources */ = {isa = PBXBuildFile; fileRef = B351089B2896659E00FA401F /* R800.c */; };
+		B3C4801F297100190040C177 /* R800Dasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B351089E2896659E00FA401F /* R800Dasm.c */; };
+		B3C48020297100190040C177 /* R800SaveState.c in Sources */ = {isa = PBXBuildFile; fileRef = B351089C2896659E00FA401F /* R800SaveState.c */; };
+		B3C48027297100510040C177 /* compat_strcasestr.c in Sources */ = {isa = PBXBuildFile; fileRef = B35106D12896659D00FA401F /* compat_strcasestr.c */; };
+		B3C48028297100510040C177 /* compat_snprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = B35106D22896659D00FA401F /* compat_snprintf.c */; };
+		B3C48029297100510040C177 /* retro_dirent.c in Sources */ = {isa = PBXBuildFile; fileRef = B35106D42896659D00FA401F /* retro_dirent.c */; };
+		B3C4802A297100F80040C177 /* IniFileParser.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108EF2896659E00FA401F /* IniFileParser.c */; };
+		B3C4802B297100F80040C177 /* SaveState.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108F02896659E00FA401F /* SaveState.c */; };
+		B3C4802C297100F80040C177 /* StrcmpNoCase.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108E82896659E00FA401F /* StrcmpNoCase.c */; };
+		B3C4802D297100F80040C177 /* TokenExtract.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108EB2896659E00FA401F /* TokenExtract.c */; };
+		B3C4802E297100F80040C177 /* ZipFromMem.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108F72896659E00FA401F /* ZipFromMem.c */; };
+		B3C4802F297100F80040C177 /* IsFileExtension.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108F62896659E00FA401F /* IsFileExtension.c */; };
+		B3C48030297101DF0040C177 /* Debugger.c in Sources */ = {isa = PBXBuildFile; fileRef = B351093C2896659E00FA401F /* Debugger.c */; };
+		B3C48031297101E40040C177 /* DebugDeviceManager.c in Sources */ = {isa = PBXBuildFile; fileRef = B351093B2896659E00FA401F /* DebugDeviceManager.c */; };
+		B3C480322971020F0040C177 /* Moonsound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35107132896659D00FA401F /* Moonsound.cpp */; };
+		B3C48033297102380040C177 /* OpenMsxYMF262.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35107312896659D00FA401F /* OpenMsxYMF262.cpp */; };
+		B3C480342971027E0040C177 /* OpenMsxYMF278.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35107162896659D00FA401F /* OpenMsxYMF278.cpp */; };
+		B3C480352971027E0040C177 /* OpenMsxYM2413_2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35107202896659D00FA401F /* OpenMsxYM2413_2.cpp */; };
+		B3C480362971027E0040C177 /* OpenMsxYM2413.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35107302896659D00FA401F /* OpenMsxYM2413.cpp */; };
+		B3C48037297102AD0040C177 /* romMapperNoWind.c in Sources */ = {isa = PBXBuildFile; fileRef = B35107732896659D00FA401F /* romMapperNoWind.c */; };
+		B3C48038297102CE0040C177 /* YM2413.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B351071A2896659D00FA401F /* YM2413.cpp */; };
+		B3C4803D297103C20040C177 /* Databases in Resources */ = {isa = PBXBuildFile; fileRef = B3C4803B297103C10040C177 /* Databases */; };
+		B3C4803E297103C20040C177 /* Machines in Resources */ = {isa = PBXBuildFile; fileRef = B3C4803C297103C20040C177 /* Machines */; };
+		B3C4803F2971040B0040C177 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108CB2896659E00FA401F /* unzip.c */; };
+		B3C480402971040B0040C177 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108D12896659E00FA401F /* ioapi.c */; };
+		B3C480412971040B0040C177 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108CD2896659E00FA401F /* zip.c */; };
+		B3C48042297104540040C177 /* MediaDb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B351095F2896659F00FA401F /* MediaDb.cpp */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
@@ -71,7 +327,6 @@
 		B35104CC2896659C00FA401F /* Makefile.common */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.common; sourceTree = "<group>"; };
 		B35104CD2896659C00FA401F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B35104CE2896659C00FA401F /* Makefile.libretro */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.libretro; sourceTree = "<group>"; };
-		B35104CF2896659C00FA401F /* changes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = changes.txt; sourceTree = "<group>"; };
 		B35104D32896659C00FA401F /* segadb.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = segadb.xml; sourceTree = "<group>"; };
 		B35104D42896659C00FA401F /* msxsysromdb.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = msxsysromdb.xml; sourceTree = "<group>"; };
 		B35104D52896659C00FA401F /* msxcaswavdb.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = msxcaswavdb.xml; sourceTree = "<group>"; };
@@ -374,7 +629,6 @@
 		B35106C52896659D00FA401F /* config.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = config.ini; sourceTree = "<group>"; };
 		B35106C72896659D00FA401F /* config.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = config.ini; sourceTree = "<group>"; };
 		B35106C92896659D00FA401F /* config.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = config.ini; sourceTree = "<group>"; };
-		B35106CA2896659D00FA401F /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B35106CB2896659D00FA401F /* libretro_core_options.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libretro_core_options.h; sourceTree = "<group>"; };
 		B35106CE2896659D00FA401F /* compilation.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = compilation.yml; sourceTree = "<group>"; };
 		B35106D12896659D00FA401F /* compat_strcasestr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = compat_strcasestr.c; sourceTree = "<group>"; };
@@ -417,12 +671,8 @@
 		B35106FC2896659D00FA401F /* inffast.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = inffast.c; sourceTree = "<group>"; };
 		B35106FD2896659D00FA401F /* adler32.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = adler32.c; sourceTree = "<group>"; };
 		B35106FE2896659D00FA401F /* zconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = zconf.h; sourceTree = "<group>"; };
-		B35106FF2896659D00FA401F /* .gitlab-ci.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = ".gitlab-ci.yml"; sourceTree = "<group>"; };
-		B35107002896659D00FA401F /* link.T */ = {isa = PBXFileReference; lastKnownFileType = text; path = link.T; sourceTree = "<group>"; };
-		B35107012896659D00FA401F /* license.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = license.txt; sourceTree = "<group>"; };
 		B35107032896659D00FA401F /* Android.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Android.mk; sourceTree = "<group>"; };
 		B35107042896659D00FA401F /* Application.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Application.mk; sourceTree = "<group>"; };
-		B35107052896659D00FA401F /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .travis.yml; sourceTree = "<group>"; };
 		B35107062896659D00FA401F /* control */ = {isa = PBXFileReference; lastKnownFileType = text; path = control; sourceTree = "<group>"; };
 		B35107092896659D00FA401F /* Y8950.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Y8950.c; sourceTree = "<group>"; };
 		B351070A2896659D00FA401F /* YM2413.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YM2413.h; sourceTree = "<group>"; };
@@ -1020,6 +1270,9 @@
 		B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C48039297103160040C177 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		B3C4803B297103C10040C177 /* Databases */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Databases; path = "blueMSX-libretro/system/bluemsx/Databases"; sourceTree = "<group>"; };
+		B3C4803C297103C20040C177 /* Machines */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Machines; path = "blueMSX-libretro/system/bluemsx/Machines"; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVblueMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVblueMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -1067,7 +1320,6 @@
 		B35104C92896659C00FA401F /* blueMSX-libretro */ = {
 			isa = PBXGroup;
 			children = (
-				B35106CA2896659D00FA401F /* .gitignore */,
 				B35107062896659D00FA401F /* control */,
 				B35104CB2896659C00FA401F /* Makefile */,
 				B35104CA2896659C00FA401F /* libretro.c */,
@@ -1075,11 +1327,6 @@
 				B35106CB2896659D00FA401F /* libretro_core_options.h */,
 				B35104CE2896659C00FA401F /* Makefile.libretro */,
 				B35104CD2896659C00FA401F /* README.md */,
-				B35107002896659D00FA401F /* link.T */,
-				B35104CF2896659C00FA401F /* changes.txt */,
-				B35107012896659D00FA401F /* license.txt */,
-				B35106FF2896659D00FA401F /* .gitlab-ci.yml */,
-				B35107052896659D00FA401F /* .travis.yml */,
 				B35106CC2896659D00FA401F /* .github */,
 				B35106E22896659D00FA401F /* deps */,
 				B35107022896659D00FA401F /* jni */,
@@ -3181,55 +3428,55 @@
 		B35107082896659D00FA401F /* SoundChips */ = {
 			isa = PBXGroup;
 			children = (
-				B35107092896659D00FA401F /* Y8950.c */,
-				B351070A2896659D00FA401F /* YM2413.h */,
-				B351070B2896659D00FA401F /* OpenMsxY8950Adpcm.h */,
-				B351070C2896659D00FA401F /* Fmopl.c */,
-				B351070D2896659D00FA401F /* OpenMsxYMF278.h */,
-				B351070E2896659D00FA401F /* DAC.h */,
-				B351070F2896659D00FA401F /* SN76489.c */,
-				B35107102896659D00FA401F /* KeyClick.c */,
-				B35107112896659D00FA401F /* MameVLM5030.h */,
-				B35107122896659D00FA401F /* OpenMsxYMF262.h */,
-				B35107132896659D00FA401F /* Moonsound.cpp */,
-				B35107142896659D00FA401F /* VLM5030VoiceData.h */,
-				B35107152896659D00FA401F /* AudioMixer.h */,
-				B35107162896659D00FA401F /* OpenMsxYMF278.cpp */,
-				B35107172896659D00FA401F /* OpenMsxY8950.h */,
-				B35107182896659D00FA401F /* ym2151.c */,
-				B35107192896659D00FA401F /* AY8910.h */,
-				B351071A2896659D00FA401F /* YM2413.cpp */,
-				B351071B2896659D00FA401F /* VLM5030.c */,
-				B351071C2896659D00FA401F /* MameYM2151.h */,
-				B351071D2896659D00FA401F /* OpenMsxY8950.cpp */,
-				B351071E2896659D00FA401F /* SCC.c */,
-				B351071F2896659D00FA401F /* MsxPsg.h */,
-				B35107202896659D00FA401F /* OpenMsxYM2413_2.cpp */,
-				B35107212896659D00FA401F /* Ymdeltat.h */,
-				B35107222896659D00FA401F /* SamplePlayer.c */,
-				B35107232896659D00FA401F /* DAC.c */,
-				B35107242896659D00FA401F /* SN76489.h */,
-				B35107252896659D00FA401F /* OpenMsxY8950Adpcm.cpp */,
-				B35107262896659D00FA401F /* Fmopl.h */,
-				B35107272896659D00FA401F /* Y8950.h */,
 				B35107282896659D00FA401F /* AudioMixer.c */,
-				B35107292896659D00FA401F /* ym2151.h */,
+				B35107342896659D00FA401F /* AY8910.c */,
+				B35107232896659D00FA401F /* DAC.c */,
+				B351070C2896659D00FA401F /* Fmopl.c */,
+				B35107102896659D00FA401F /* KeyClick.c */,
 				B351072A2896659D00FA401F /* MameVLM5030.c */,
-				B351072B2896659D00FA401F /* MsxAudio.h */,
-				B351072C2896659D00FA401F /* KeyClick.h */,
-				B351072D2896659D00FA401F /* MsxPsg.c */,
-				B351072E2896659D00FA401F /* SCC.h */,
 				B351072F2896659D00FA401F /* MameYM2151.c */,
+				B351072D2896659D00FA401F /* MsxPsg.c */,
+				B35107222896659D00FA401F /* SamplePlayer.c */,
+				B351071E2896659D00FA401F /* SCC.c */,
+				B351070F2896659D00FA401F /* SN76489.c */,
+				B351071B2896659D00FA401F /* VLM5030.c */,
+				B35107092896659D00FA401F /* Y8950.c */,
+				B35107182896659D00FA401F /* ym2151.c */,
+				B35107352896659D00FA401F /* Ymdeltat.c */,
+				B35107132896659D00FA401F /* Moonsound.cpp */,
+				B35107382896659D00FA401F /* MsxAudio.cpp */,
+				B351071D2896659D00FA401F /* OpenMsxY8950.cpp */,
+				B35107252896659D00FA401F /* OpenMsxY8950Adpcm.cpp */,
+				B35107202896659D00FA401F /* OpenMsxYM2413_2.cpp */,
 				B35107302896659D00FA401F /* OpenMsxYM2413.cpp */,
 				B35107312896659D00FA401F /* OpenMsxYMF262.cpp */,
-				B35107322896659D00FA401F /* VLM5030.h */,
-				B35107332896659D00FA401F /* OpenMsxYM2413.h */,
-				B35107342896659D00FA401F /* AY8910.c */,
-				B35107352896659D00FA401F /* Ymdeltat.c */,
-				B35107362896659D00FA401F /* SamplePlayer.h */,
+				B35107162896659D00FA401F /* OpenMsxYMF278.cpp */,
+				B351071A2896659D00FA401F /* YM2413.cpp */,
+				B35107152896659D00FA401F /* AudioMixer.h */,
+				B35107192896659D00FA401F /* AY8910.h */,
+				B351070E2896659D00FA401F /* DAC.h */,
+				B35107262896659D00FA401F /* Fmopl.h */,
+				B351072C2896659D00FA401F /* KeyClick.h */,
+				B35107112896659D00FA401F /* MameVLM5030.h */,
+				B351071C2896659D00FA401F /* MameYM2151.h */,
 				B35107372896659D00FA401F /* Moonsound.h */,
-				B35107382896659D00FA401F /* MsxAudio.cpp */,
+				B351072B2896659D00FA401F /* MsxAudio.h */,
+				B351071F2896659D00FA401F /* MsxPsg.h */,
+				B35107172896659D00FA401F /* OpenMsxY8950.h */,
+				B351070B2896659D00FA401F /* OpenMsxY8950Adpcm.h */,
 				B35107392896659D00FA401F /* OpenMsxYM2413_2.h */,
+				B35107332896659D00FA401F /* OpenMsxYM2413.h */,
+				B35107122896659D00FA401F /* OpenMsxYMF262.h */,
+				B351070D2896659D00FA401F /* OpenMsxYMF278.h */,
+				B35107362896659D00FA401F /* SamplePlayer.h */,
+				B351072E2896659D00FA401F /* SCC.h */,
+				B35107242896659D00FA401F /* SN76489.h */,
+				B35107322896659D00FA401F /* VLM5030.h */,
+				B35107142896659D00FA401F /* VLM5030VoiceData.h */,
+				B35107272896659D00FA401F /* Y8950.h */,
+				B35107292896659D00FA401F /* ym2151.h */,
+				B351070A2896659D00FA401F /* YM2413.h */,
+				B35107212896659D00FA401F /* Ymdeltat.h */,
 			);
 			path = SoundChips;
 			sourceTree = "<group>";
@@ -3250,252 +3497,252 @@
 		B35107412896659D00FA401F /* Memory */ = {
 			isa = PBXGroup;
 			children = (
-				B35107422896659D00FA401F /* romMapperKonamiSynth.h */,
-				B35107432896659D00FA401F /* romMapperCvMegaCart.h */,
-				B35107442896659D00FA401F /* romMapperOpcodeBios.h */,
-				B35107452896659D00FA401F /* romMapperOpcodeSlotManager.c */,
-				B35107462896659D00FA401F /* RomLoader.h */,
-				B35107472896659D00FA401F /* romMapperTurboRTimer.c */,
-				B35107482896659D00FA401F /* romMapperFMPAK.c */,
-				B35107492896659D00FA401F /* AmdFlash.h */,
-				B351074A2896659D00FA401F /* romMapperF4device.h */,
-				B351074B2896659D00FA401F /* romMapperMuPack.c */,
-				B351074C2896659D00FA401F /* romMapperSg1000Castle.h */,
-				B351074D2896659D00FA401F /* romMapperASCII8sram.c */,
-				B351074E2896659D00FA401F /* ramMapperIo.c */,
-				B351074F2896659D00FA401F /* romMapperMsxMusic.h */,
-				B35107502896659D00FA401F /* romMapperObsonet.h */,
-				B35107512896659D00FA401F /* MegaromCartridge.c */,
-				B35107522896659D00FA401F /* romMapperSCCplus.c */,
-				B35107532896659D00FA401F /* romMapperNms1210Rs232.c */,
-				B35107542896659D00FA401F /* sramLoader.h */,
-				B35107552896659D00FA401F /* romMapperJoyrexPsg.h */,
-				B35107562896659D00FA401F /* romMapperHarryFox.c */,
-				B35107572896659D00FA401F /* romMapperArc.c */,
-				B35107582896659D00FA401F /* romMapperFMPAC.h */,
-				B35107592896659D00FA401F /* sramMapperMegaSCSI.c */,
-				B351075A2896659D00FA401F /* romMapperKorean90.c */,
-				B351075B2896659D00FA401F /* romMapperASCII8.h */,
-				B351075C2896659D00FA401F /* romMapperDooly.h */,
-				B351075D2896659D00FA401F /* romMapperMatraINK.h */,
-				B351075E2896659D00FA401F /* romMapperKanji.h */,
-				B351075F2896659D00FA401F /* romMapperPanasonic.c */,
-				B35107602896659D00FA401F /* romMapperBasic.c */,
-				B35107612896659D00FA401F /* romMapperMsxDos2.h */,
-				B35107622896659D00FA401F /* romMapperMegaFlashRomScc.h */,
-				B35107632896659D00FA401F /* romMapperGameReader.c */,
-				B35107642896659D00FA401F /* romMapperMsxRs232.h */,
-				B35107652896659D00FA401F /* romMapperCasette.h */,
-				B35107662896659D00FA401F /* romMapperKonamiKeyboardMaster.h */,
-				B35107672896659D00FA401F /* romMapperASCII16sram.c */,
-				B35107682896659D00FA401F /* romMapperKorean80.c */,
-				B35107692896659D00FA401F /* romMapperActivisionPcb.c */,
-				B351076A2896659D00FA401F /* romMapperForteII.c */,
-				B351076B2896659D00FA401F /* romMapperGoudaSCSI.c */,
-				B351076C2896659D00FA401F /* romMapperKonami4.c */,
-				B351076D2896659D00FA401F /* romMapperMicrosolVmx80.c */,
-				B351076E2896659D00FA401F /* romMapperLodeRunner.c */,
-				B351076F2896659D00FA401F /* romMapperPhilipsFdc.h */,
-				B35107702896659D00FA401F /* romMapperOpcodeMegaRam.c */,
-				B35107712896659D00FA401F /* ram1kBMirrored.c */,
-				B35107722896659D00FA401F /* romMapperSvi80Col.c */,
-				B35107732896659D00FA401F /* romMapperNoWind.c */,
-				B35107742896659D00FA401F /* ramMapper.h */,
-				B35107752896659D00FA401F /* romMapperFmDas.c */,
-				B35107762896659E00FA401F /* romMapperKanji12.h */,
-				B35107772896659E00FA401F /* romMapperA1FM.h */,
-				B35107782896659E00FA401F /* romMapperSf7000Ipl.c */,
-				B35107792896659E00FA401F /* romMapperGameMaster2.c */,
-				B351077A2896659E00FA401F /* AtmelPerom.h */,
-				B351077B2896659E00FA401F /* IoPort.c */,
-				B351077C2896659E00FA401F /* romMapperBunsetu.h */,
-				B351077D2896659E00FA401F /* romMapperMicrosol.c */,
-				B351077E2896659E00FA401F /* romMapperTurboRPcm.c */,
-				B351077F2896659E00FA401F /* romMapperHolyQuran.c */,
-				B35107802896659E00FA401F /* romMapperMegaFlashRomSccPlus.h */,
-				B35107812896659E00FA401F /* romMapperGIDE.c */,
-				B35107822896659E00FA401F /* romMapperRType.h */,
-				B35107832896659E00FA401F /* romMapperKoei.h */,
-				B35107842896659E00FA401F /* sramMapperEseSCC.h */,
-				B35107852896659E00FA401F /* romMapperNormal.c */,
-				B35107862896659E00FA401F /* romMapperS1990.h */,
-				B35107872896659E00FA401F /* romMapperPAC.c */,
-				B35107882896659E00FA401F /* MegaSCSIsub.h */,
-				B35107892896659E00FA401F /* romMapperSvi328Fdc.h */,
-				B351078A2896659E00FA401F /* romMapperSonyHBIV1.c */,
-				B351078B2896659E00FA401F /* romMapperSvi328Prn.h */,
-				B351078C2896659E00FA401F /* romMapperSonyHBI55.h */,
-				B351078D2896659E00FA401F /* romMapperNationalFdc.h */,
-				B351078E2896659E00FA401F /* romMapperMajutsushi.h */,
-				B351078F2896659E00FA401F /* romMapperSegaBasic.h */,
-				B35107902896659E00FA401F /* romMapperSvi707Fdc.c */,
-				B35107912896659E00FA401F /* romMapperBeerIDE.h */,
-				B35107922896659E00FA401F /* romMapperTC8566AF.c */,
-				B35107932896659E00FA401F /* romMapperDisk.h */,
-				B35107942896659E00FA401F /* romMapperKonamiWordPro.h */,
-				B35107952896659E00FA401F /* ramNormal.c */,
-				B35107962896659E00FA401F /* romMapperDumas.h */,
-				B35107972896659E00FA401F /* romMapperNoWind.cpp */,
-				B35107982896659E00FA401F /* romMapperOpcodePsg.h */,
-				B35107992896659E00FA401F /* romMapperMegaRAM.c */,
-				B351079A2896659E00FA401F /* romMapperMsxAudio.h */,
-				B351079B2896659E00FA401F /* SlotManager.h */,
-				B351079C2896659E00FA401F /* romMapperPlain.h */,
-				B351079D2896659E00FA401F /* RomMapper.c */,
-				B351079E2896659E00FA401F /* romMapperMsxPrn.h */,
-				B351079F2896659E00FA401F /* romMapperSvi738Fdc.h */,
-				B35107A02896659E00FA401F /* romMapperNet.c */,
-				B35107A12896659E00FA401F /* romMapperNational.h */,
-				B35107A22896659E00FA401F /* romMapperA1FMModem.c */,
-				B35107A32896659E00FA401F /* romMapperStandard.h */,
-				B35107A42896659E00FA401F /* romMapperASCII16.h */,
-				B35107A52896659E00FA401F /* romMapperSg1000RamExpander.c */,
-				B35107A62896659E00FA401F /* romMapperOpcodeSaveRam.c */,
-				B35107A72896659E00FA401F /* romMapperSvi727.c */,
-				B35107A82896659E00FA401F /* romMapperKonami4nf.h */,
-				B35107A92896659E00FA401F /* romMapperKonami5.h */,
-				B35107AA2896659E00FA401F /* romMapperSfg05.c */,
-				B35107AB2896659E00FA401F /* romMapperMoonsound.h */,
-				B35107AC2896659E00FA401F /* romMapperKorean126.c */,
-				B35107AD2896659E00FA401F /* romMapperPlayBall.c */,
-				B35107AE2896659E00FA401F /* romMapperSunriseIDE.c */,
-				B35107AF2896659E00FA401F /* romMapperSg1000.h */,
-				B35107B02896659E00FA401F /* romMapperDRAM.h */,
-				B35107B12896659E00FA401F /* sramMapperMatsuchita.c */,
-				B35107B22896659E00FA401F /* sramMapperS1985.c */,
-				B35107B32896659E00FA401F /* romMapperHalnote.c */,
-				B35107B42896659E00FA401F /* DeviceManager.h */,
-				B35107B52896659E00FA401F /* romMapperOpcodeModule.c */,
-				B35107B62896659E00FA401F /* romMapperASCII16nf.c */,
-				B35107B72896659E00FA401F /* romMapperSvi328Rs232.c */,
-				B35107B82896659E00FA401F /* romMapperCrossBlaim.c */,
-				B35107B92896659E00FA401F /* romMapperNettouYakyuu.h */,
-				B35107BA2896659E00FA401F /* romMapperNms8280VideoDa.h */,
-				B35107BB2896659E00FA401F /* romMapperSvi328RsIDE.h */,
-				B35107BC2896659E00FA401F /* romMapperPanasonic.h */,
-				B35107BD2896659E00FA401F /* romMapperKanji.c */,
-				B35107BE2896659E00FA401F /* romMapperMatraINK.c */,
-				B35107BF2896659E00FA401F /* romMapperDooly.c */,
-				B35107C02896659E00FA401F /* romMapperJoyrexPsg.c */,
-				B35107C12896659E00FA401F /* sramLoader.c */,
-				B35107C22896659E00FA401F /* romMapperHarryFox.h */,
-				B35107C32896659E00FA401F /* romMapperNms1210Rs232.h */,
-				B35107C42896659E00FA401F /* romMapperSCCplus.h */,
-				B35107C52896659E00FA401F /* romMapperObsonet.c */,
-				B35107C62896659E00FA401F /* MegaromCartridge.h */,
-				B35107C72896659E00FA401F /* romMapperASCII8.c */,
-				B35107C82896659E00FA401F /* romMapperKorean90.h */,
-				B35107C92896659E00FA401F /* sramMapperMegaSCSI.h */,
-				B35107CA2896659E00FA401F /* romMapperFMPAC.c */,
-				B35107CB2896659E00FA401F /* romMapperArc.h */,
-				B35107CC2896659E00FA401F /* romMapperSg1000Castle.c */,
-				B35107CD2896659E00FA401F /* romMapperMuPack.h */,
-				B35107CE2896659E00FA401F /* romMapperF4device.c */,
-				B35107CF2896659E00FA401F /* ramMapperIo.h */,
-				B35107D02896659E00FA401F /* romMapperMsxMusic.c */,
-				B35107D12896659E00FA401F /* romMapperASCII8sram.h */,
-				B35107D22896659E00FA401F /* romMapperOpcodeSlotManager.h */,
-				B35107D32896659E00FA401F /* romMapperOpcodeBios.c */,
-				B35107D42896659E00FA401F /* romMapperCvMegaCart.c */,
-				B35107D52896659E00FA401F /* romMapperKonamiSynth.c */,
 				B35107D62896659E00FA401F /* AmdFlash.c */,
-				B35107D72896659E00FA401F /* romMapperTurboRTimer.h */,
-				B35107D82896659E00FA401F /* romMapperFMPAK.h */,
-				B35107D92896659E00FA401F /* RomLoader.c */,
-				B35107DA2896659E00FA401F /* romMapperSf7000Ipl.h */,
-				B35107DB2896659E00FA401F /* romMapperA1FM.c */,
-				B35107DC2896659E00FA401F /* PlayballSamples.h */,
-				B35107DD2896659E00FA401F /* romMapperKanji12.c */,
-				B35107DE2896659E00FA401F /* romMapperFmDas.h */,
-				B35107DF2896659E00FA401F /* ramMapper.c */,
-				B35107E02896659E00FA401F /* romMapperNoWind.h */,
-				B35107E12896659E00FA401F /* romMapperGameMaster2.h */,
-				B35107E22896659E00FA401F /* ram1kBMirrored.h */,
-				B35107E32896659E00FA401F /* romMapperOpcodeMegaRam.h */,
-				B35107E42896659E00FA401F /* romMapperSvi80Col.h */,
-				B35107E52896659E00FA401F /* romMapperGoudaSCSI.h */,
-				B35107E62896659E00FA401F /* romMapperForteII.h */,
-				B35107E72896659E00FA401F /* romMapperActivisionPcb.h */,
-				B35107E82896659E00FA401F /* romMapperLodeRunner.h */,
-				B35107E92896659E00FA401F /* romMapperPhilipsFdc.c */,
-				B35107EA2896659E00FA401F /* romMapperMicrosolVmx80.h */,
-				B35107EB2896659E00FA401F /* romMapperKonami4.h */,
-				B35107EC2896659E00FA401F /* romMapperMegaFlashRomScc.c */,
-				B35107ED2896659E00FA401F /* NettouYakyuuSamples.h */,
-				B35107EE2896659E00FA401F /* romMapperMsxDos2.c */,
-				B35107EF2896659E00FA401F /* romMapperBasic.h */,
-				B35107F02896659E00FA401F /* romMapperKorean80.h */,
-				B35107F12896659E00FA401F /* romMapperKonamiKeyboardMaster.c */,
-				B35107F22896659E00FA401F /* romMapperASCII16sram.h */,
-				B35107F32896659E00FA401F /* romMapperCasette.c */,
-				B35107F42896659E00FA401F /* romMapperMsxRs232.c */,
-				B35107F52896659E00FA401F /* romMapperGameReader.h */,
-				B35107F62896659E00FA401F /* romMapperBeerIDE.c */,
-				B35107F72896659E00FA401F /* romMapperSvi707Fdc.h */,
-				B35107F82896659E00FA401F /* romMapperSegaBasic.c */,
-				B35107F92896659E00FA401F /* romMapperMajutsushi.c */,
-				B35107FA2896659E00FA401F /* romMapperOpcodePsg.c */,
-				B35107FB2896659E00FA401F /* ramNormal.h */,
-				B35107FC2896659E00FA401F /* romMapperDumas.c */,
-				B35107FD2896659E00FA401F /* romMapperKonamiWordPro.c */,
-				B35107FE2896659E00FA401F /* romMapperDisk.c */,
-				B35107FF2896659E00FA401F /* romMapperTC8566AF.h */,
-				B35108002896659E00FA401F /* romMapperSonyHBIV1.h */,
-				B35108012896659E00FA401F /* romMapperSvi328Fdc.c */,
-				B35108022896659E00FA401F /* romMapperNationalFdc.c */,
-				B35108032896659E00FA401F /* romMapperSonyHBI55.c */,
-				B35108042896659E00FA401F /* romMapperSvi328Prn.c */,
-				B35108052896659E00FA401F /* romMapperS1990.c */,
-				B35108062896659E00FA401F /* romMapperNormal.h */,
-				B35108072896659E00FA401F /* sramMapperEseSCC.c */,
-				B35108082896659E00FA401F /* romMapperKoei.c */,
-				B35108092896659E00FA401F /* MegaSCSIsub.c */,
-				B351080A2896659E00FA401F /* romMapperPAC.h */,
-				B351080B2896659E00FA401F /* romMapperMegaFlashRomSccPlus.c */,
-				B351080C2896659E00FA401F /* romMapperHolyQuran.h */,
-				B351080D2896659E00FA401F /* romMapperTurboRPcm.h */,
-				B351080E2896659E00FA401F /* romMapperMicrosol.h */,
-				B351080F2896659E00FA401F /* romMapperBunsetu.c */,
 				B35108102896659E00FA401F /* AtmelPerom.c */,
-				B35108112896659E00FA401F /* IoPort.h */,
-				B35108122896659E00FA401F /* romMapperRType.c */,
-				B35108132896659E00FA401F /* romMapperGIDE.h */,
-				B35108142896659E00FA401F /* romMapperHalnote.h */,
-				B35108152896659E00FA401F /* sramMapperS1985.h */,
-				B35108162896659E00FA401F /* sramMapperMatsuchita.h */,
-				B35108172896659E00FA401F /* romMapperNms8280VideoDa.c */,
-				B35108182896659E00FA401F /* romMapperSvi328RsIDE.c */,
-				B35108192896659E00FA401F /* romMapperNettouYakyuu.c */,
-				B351081A2896659E00FA401F /* romMapperCrossBlaim.h */,
-				B351081B2896659E00FA401F /* romMapperSvi328Rs232.h */,
-				B351081C2896659E00FA401F /* romMapperASCII16nf.h */,
-				B351081D2896659E00FA401F /* romMapperOpcodeModule.h */,
 				B351081E2896659E00FA401F /* DeviceManager.c */,
-				B351081F2896659E00FA401F /* romMapperKorean126.h */,
-				B35108202896659E00FA401F /* romExclusion.h */,
-				B35108212896659E00FA401F /* romMapperMoonsound.c */,
-				B35108222896659E00FA401F /* romMapperSfg05.h */,
+				B351077B2896659E00FA401F /* IoPort.c */,
+				B35107512896659D00FA401F /* MegaromCartridge.c */,
+				B35108092896659E00FA401F /* MegaSCSIsub.c */,
+				B35107712896659D00FA401F /* ram1kBMirrored.c */,
+				B35107DF2896659E00FA401F /* ramMapper.c */,
+				B351074E2896659D00FA401F /* ramMapperIo.c */,
+				B35107952896659E00FA401F /* ramNormal.c */,
+				B35107D92896659E00FA401F /* RomLoader.c */,
+				B351079D2896659E00FA401F /* RomMapper.c */,
+				B35107DB2896659E00FA401F /* romMapperA1FM.c */,
+				B35107A22896659E00FA401F /* romMapperA1FMModem.c */,
+				B35107692896659D00FA401F /* romMapperActivisionPcb.c */,
+				B35107572896659D00FA401F /* romMapperArc.c */,
+				B35107C72896659E00FA401F /* romMapperASCII8.c */,
+				B351074D2896659D00FA401F /* romMapperASCII8sram.c */,
+				B351082D2896659E00FA401F /* romMapperASCII16.c */,
+				B35107B62896659E00FA401F /* romMapperASCII16nf.c */,
+				B35107672896659D00FA401F /* romMapperASCII16sram.c */,
+				B35107602896659D00FA401F /* romMapperBasic.c */,
+				B35107F62896659E00FA401F /* romMapperBeerIDE.c */,
+				B351080F2896659E00FA401F /* romMapperBunsetu.c */,
+				B35107F32896659E00FA401F /* romMapperCasette.c */,
+				B35107B82896659E00FA401F /* romMapperCrossBlaim.c */,
+				B35107D42896659E00FA401F /* romMapperCvMegaCart.c */,
+				B35107FE2896659E00FA401F /* romMapperDisk.c */,
+				B35107BF2896659E00FA401F /* romMapperDooly.c */,
+				B35108252896659E00FA401F /* romMapperDRAM.c */,
+				B35107FC2896659E00FA401F /* romMapperDumas.c */,
+				B35107CE2896659E00FA401F /* romMapperF4device.c */,
+				B35107752896659D00FA401F /* romMapperFmDas.c */,
+				B35107CA2896659E00FA401F /* romMapperFMPAC.c */,
+				B35107482896659D00FA401F /* romMapperFMPAK.c */,
+				B351076A2896659D00FA401F /* romMapperForteII.c */,
+				B35107792896659E00FA401F /* romMapperGameMaster2.c */,
+				B35107632896659D00FA401F /* romMapperGameReader.c */,
+				B35107812896659E00FA401F /* romMapperGIDE.c */,
+				B351076B2896659D00FA401F /* romMapperGoudaSCSI.c */,
+				B35107B32896659E00FA401F /* romMapperHalnote.c */,
+				B35107562896659D00FA401F /* romMapperHarryFox.c */,
+				B351077F2896659E00FA401F /* romMapperHolyQuran.c */,
+				B35107C02896659E00FA401F /* romMapperJoyrexPsg.c */,
+				B35107BD2896659E00FA401F /* romMapperKanji.c */,
+				B35107DD2896659E00FA401F /* romMapperKanji12.c */,
+				B35108082896659E00FA401F /* romMapperKoei.c */,
+				B351076C2896659D00FA401F /* romMapperKonami4.c */,
 				B35108232896659E00FA401F /* romMapperKonami4nf.c */,
 				B35108242896659E00FA401F /* romMapperKonami5.c */,
-				B35108252896659E00FA401F /* romMapperDRAM.c */,
-				B35108262896659E00FA401F /* romMapperSg1000.c */,
-				B35108272896659E00FA401F /* romMapperSunriseIDE.h */,
-				B35108282896659E00FA401F /* romMapperPlayBall.h */,
-				B35108292896659E00FA401F /* romMapperSvi738Fdc.c */,
-				B351082A2896659E00FA401F /* romMapperMsxPrn.c */,
-				B351082B2896659E00FA401F /* romMapperSvi727.h */,
-				B351082C2896659E00FA401F /* romMapperOpcodeSaveRam.h */,
-				B351082D2896659E00FA401F /* romMapperASCII16.c */,
-				B351082E2896659E00FA401F /* romMapperSg1000RamExpander.h */,
-				B351082F2896659E00FA401F /* romMapperStandard.c */,
-				B35108302896659E00FA401F /* romMapperA1FMModem.h */,
-				B35108312896659E00FA401F /* romMapperNational.c */,
-				B35108322896659E00FA401F /* romMapperNet.h */,
-				B35108332896659E00FA401F /* romMapperMegaRAM.h */,
-				B35108342896659E00FA401F /* RomMapper.h */,
-				B35108352896659E00FA401F /* romMapperPlain.c */,
-				B35108362896659E00FA401F /* SlotManager.c */,
+				B35107F12896659E00FA401F /* romMapperKonamiKeyboardMaster.c */,
+				B35107D52896659E00FA401F /* romMapperKonamiSynth.c */,
+				B35107FD2896659E00FA401F /* romMapperKonamiWordPro.c */,
+				B35107682896659D00FA401F /* romMapperKorean80.c */,
+				B351075A2896659D00FA401F /* romMapperKorean90.c */,
+				B35107AC2896659E00FA401F /* romMapperKorean126.c */,
+				B351076E2896659D00FA401F /* romMapperLodeRunner.c */,
+				B35107F92896659E00FA401F /* romMapperMajutsushi.c */,
+				B35107BE2896659E00FA401F /* romMapperMatraINK.c */,
+				B35107EC2896659E00FA401F /* romMapperMegaFlashRomScc.c */,
+				B351080B2896659E00FA401F /* romMapperMegaFlashRomSccPlus.c */,
+				B35107992896659E00FA401F /* romMapperMegaRAM.c */,
+				B351077D2896659E00FA401F /* romMapperMicrosol.c */,
+				B351076D2896659D00FA401F /* romMapperMicrosolVmx80.c */,
+				B35108212896659E00FA401F /* romMapperMoonsound.c */,
 				B35108372896659E00FA401F /* romMapperMsxAudio.c */,
+				B35107EE2896659E00FA401F /* romMapperMsxDos2.c */,
+				B35107D02896659E00FA401F /* romMapperMsxMusic.c */,
+				B351082A2896659E00FA401F /* romMapperMsxPrn.c */,
+				B35107F42896659E00FA401F /* romMapperMsxRs232.c */,
+				B351074B2896659D00FA401F /* romMapperMuPack.c */,
+				B35108312896659E00FA401F /* romMapperNational.c */,
+				B35108022896659E00FA401F /* romMapperNationalFdc.c */,
+				B35107A02896659E00FA401F /* romMapperNet.c */,
+				B35108192896659E00FA401F /* romMapperNettouYakyuu.c */,
+				B35107532896659D00FA401F /* romMapperNms1210Rs232.c */,
+				B35108172896659E00FA401F /* romMapperNms8280VideoDa.c */,
+				B35107852896659E00FA401F /* romMapperNormal.c */,
+				B35107732896659D00FA401F /* romMapperNoWind.c */,
+				B35107C52896659E00FA401F /* romMapperObsonet.c */,
+				B35107D32896659E00FA401F /* romMapperOpcodeBios.c */,
+				B35107702896659D00FA401F /* romMapperOpcodeMegaRam.c */,
+				B35107B52896659E00FA401F /* romMapperOpcodeModule.c */,
+				B35107FA2896659E00FA401F /* romMapperOpcodePsg.c */,
+				B35107A62896659E00FA401F /* romMapperOpcodeSaveRam.c */,
+				B35107452896659D00FA401F /* romMapperOpcodeSlotManager.c */,
+				B35107872896659E00FA401F /* romMapperPAC.c */,
+				B351075F2896659D00FA401F /* romMapperPanasonic.c */,
+				B35107E92896659E00FA401F /* romMapperPhilipsFdc.c */,
+				B35108352896659E00FA401F /* romMapperPlain.c */,
+				B35107AD2896659E00FA401F /* romMapperPlayBall.c */,
+				B35108122896659E00FA401F /* romMapperRType.c */,
+				B35108052896659E00FA401F /* romMapperS1990.c */,
+				B35107522896659D00FA401F /* romMapperSCCplus.c */,
+				B35107F82896659E00FA401F /* romMapperSegaBasic.c */,
+				B35107782896659E00FA401F /* romMapperSf7000Ipl.c */,
+				B35107AA2896659E00FA401F /* romMapperSfg05.c */,
+				B35108262896659E00FA401F /* romMapperSg1000.c */,
+				B35107CC2896659E00FA401F /* romMapperSg1000Castle.c */,
+				B35107A52896659E00FA401F /* romMapperSg1000RamExpander.c */,
+				B35108032896659E00FA401F /* romMapperSonyHBI55.c */,
+				B351078A2896659E00FA401F /* romMapperSonyHBIV1.c */,
+				B351082F2896659E00FA401F /* romMapperStandard.c */,
+				B35107AE2896659E00FA401F /* romMapperSunriseIDE.c */,
+				B35107722896659D00FA401F /* romMapperSvi80Col.c */,
+				B35108012896659E00FA401F /* romMapperSvi328Fdc.c */,
+				B35108042896659E00FA401F /* romMapperSvi328Prn.c */,
+				B35107B72896659E00FA401F /* romMapperSvi328Rs232.c */,
+				B35108182896659E00FA401F /* romMapperSvi328RsIDE.c */,
+				B35107902896659E00FA401F /* romMapperSvi707Fdc.c */,
+				B35107A72896659E00FA401F /* romMapperSvi727.c */,
+				B35108292896659E00FA401F /* romMapperSvi738Fdc.c */,
+				B35107922896659E00FA401F /* romMapperTC8566AF.c */,
+				B351077E2896659E00FA401F /* romMapperTurboRPcm.c */,
+				B35107472896659D00FA401F /* romMapperTurboRTimer.c */,
+				B35108362896659E00FA401F /* SlotManager.c */,
+				B35107C12896659E00FA401F /* sramLoader.c */,
+				B35108072896659E00FA401F /* sramMapperEseSCC.c */,
+				B35107B12896659E00FA401F /* sramMapperMatsuchita.c */,
+				B35107592896659D00FA401F /* sramMapperMegaSCSI.c */,
+				B35107B22896659E00FA401F /* sramMapperS1985.c */,
+				B35107972896659E00FA401F /* romMapperNoWind.cpp */,
+				B35107492896659D00FA401F /* AmdFlash.h */,
+				B351077A2896659E00FA401F /* AtmelPerom.h */,
+				B35107B42896659E00FA401F /* DeviceManager.h */,
+				B35108112896659E00FA401F /* IoPort.h */,
+				B35107C62896659E00FA401F /* MegaromCartridge.h */,
+				B35107882896659E00FA401F /* MegaSCSIsub.h */,
+				B35107ED2896659E00FA401F /* NettouYakyuuSamples.h */,
+				B35107DC2896659E00FA401F /* PlayballSamples.h */,
+				B35107E22896659E00FA401F /* ram1kBMirrored.h */,
+				B35107742896659D00FA401F /* ramMapper.h */,
+				B35107CF2896659E00FA401F /* ramMapperIo.h */,
+				B35107FB2896659E00FA401F /* ramNormal.h */,
+				B35108202896659E00FA401F /* romExclusion.h */,
+				B35107462896659D00FA401F /* RomLoader.h */,
+				B35108342896659E00FA401F /* RomMapper.h */,
+				B35107772896659E00FA401F /* romMapperA1FM.h */,
+				B35108302896659E00FA401F /* romMapperA1FMModem.h */,
+				B35107E72896659E00FA401F /* romMapperActivisionPcb.h */,
+				B35107CB2896659E00FA401F /* romMapperArc.h */,
+				B351075B2896659D00FA401F /* romMapperASCII8.h */,
+				B35107D12896659E00FA401F /* romMapperASCII8sram.h */,
+				B35107A42896659E00FA401F /* romMapperASCII16.h */,
+				B351081C2896659E00FA401F /* romMapperASCII16nf.h */,
+				B35107F22896659E00FA401F /* romMapperASCII16sram.h */,
+				B35107EF2896659E00FA401F /* romMapperBasic.h */,
+				B35107912896659E00FA401F /* romMapperBeerIDE.h */,
+				B351077C2896659E00FA401F /* romMapperBunsetu.h */,
+				B35107652896659D00FA401F /* romMapperCasette.h */,
+				B351081A2896659E00FA401F /* romMapperCrossBlaim.h */,
+				B35107432896659D00FA401F /* romMapperCvMegaCart.h */,
+				B35107932896659E00FA401F /* romMapperDisk.h */,
+				B351075C2896659D00FA401F /* romMapperDooly.h */,
+				B35107B02896659E00FA401F /* romMapperDRAM.h */,
+				B35107962896659E00FA401F /* romMapperDumas.h */,
+				B351074A2896659D00FA401F /* romMapperF4device.h */,
+				B35107DE2896659E00FA401F /* romMapperFmDas.h */,
+				B35107582896659D00FA401F /* romMapperFMPAC.h */,
+				B35107D82896659E00FA401F /* romMapperFMPAK.h */,
+				B35107E62896659E00FA401F /* romMapperForteII.h */,
+				B35107E12896659E00FA401F /* romMapperGameMaster2.h */,
+				B35107F52896659E00FA401F /* romMapperGameReader.h */,
+				B35108132896659E00FA401F /* romMapperGIDE.h */,
+				B35107E52896659E00FA401F /* romMapperGoudaSCSI.h */,
+				B35108142896659E00FA401F /* romMapperHalnote.h */,
+				B35107C22896659E00FA401F /* romMapperHarryFox.h */,
+				B351080C2896659E00FA401F /* romMapperHolyQuran.h */,
+				B35107552896659D00FA401F /* romMapperJoyrexPsg.h */,
+				B351075E2896659D00FA401F /* romMapperKanji.h */,
+				B35107762896659E00FA401F /* romMapperKanji12.h */,
+				B35107832896659E00FA401F /* romMapperKoei.h */,
+				B35107EB2896659E00FA401F /* romMapperKonami4.h */,
+				B35107A82896659E00FA401F /* romMapperKonami4nf.h */,
+				B35107A92896659E00FA401F /* romMapperKonami5.h */,
+				B35107662896659D00FA401F /* romMapperKonamiKeyboardMaster.h */,
+				B35107422896659D00FA401F /* romMapperKonamiSynth.h */,
+				B35107942896659E00FA401F /* romMapperKonamiWordPro.h */,
+				B35107F02896659E00FA401F /* romMapperKorean80.h */,
+				B35107C82896659E00FA401F /* romMapperKorean90.h */,
+				B351081F2896659E00FA401F /* romMapperKorean126.h */,
+				B35107E82896659E00FA401F /* romMapperLodeRunner.h */,
+				B351078E2896659E00FA401F /* romMapperMajutsushi.h */,
+				B351075D2896659D00FA401F /* romMapperMatraINK.h */,
+				B35107622896659D00FA401F /* romMapperMegaFlashRomScc.h */,
+				B35107802896659E00FA401F /* romMapperMegaFlashRomSccPlus.h */,
+				B35108332896659E00FA401F /* romMapperMegaRAM.h */,
+				B351080E2896659E00FA401F /* romMapperMicrosol.h */,
+				B35107EA2896659E00FA401F /* romMapperMicrosolVmx80.h */,
+				B35107AB2896659E00FA401F /* romMapperMoonsound.h */,
+				B351079A2896659E00FA401F /* romMapperMsxAudio.h */,
+				B35107612896659D00FA401F /* romMapperMsxDos2.h */,
+				B351074F2896659D00FA401F /* romMapperMsxMusic.h */,
+				B351079E2896659E00FA401F /* romMapperMsxPrn.h */,
+				B35107642896659D00FA401F /* romMapperMsxRs232.h */,
+				B35107CD2896659E00FA401F /* romMapperMuPack.h */,
+				B35107A12896659E00FA401F /* romMapperNational.h */,
+				B351078D2896659E00FA401F /* romMapperNationalFdc.h */,
+				B35108322896659E00FA401F /* romMapperNet.h */,
+				B35107B92896659E00FA401F /* romMapperNettouYakyuu.h */,
+				B35107C32896659E00FA401F /* romMapperNms1210Rs232.h */,
+				B35107BA2896659E00FA401F /* romMapperNms8280VideoDa.h */,
+				B35108062896659E00FA401F /* romMapperNormal.h */,
+				B35107E02896659E00FA401F /* romMapperNoWind.h */,
+				B35107502896659D00FA401F /* romMapperObsonet.h */,
+				B35107442896659D00FA401F /* romMapperOpcodeBios.h */,
+				B35107E32896659E00FA401F /* romMapperOpcodeMegaRam.h */,
+				B351081D2896659E00FA401F /* romMapperOpcodeModule.h */,
+				B35107982896659E00FA401F /* romMapperOpcodePsg.h */,
+				B351082C2896659E00FA401F /* romMapperOpcodeSaveRam.h */,
+				B35107D22896659E00FA401F /* romMapperOpcodeSlotManager.h */,
+				B351080A2896659E00FA401F /* romMapperPAC.h */,
+				B35107BC2896659E00FA401F /* romMapperPanasonic.h */,
+				B351076F2896659D00FA401F /* romMapperPhilipsFdc.h */,
+				B351079C2896659E00FA401F /* romMapperPlain.h */,
+				B35108282896659E00FA401F /* romMapperPlayBall.h */,
+				B35107822896659E00FA401F /* romMapperRType.h */,
+				B35107862896659E00FA401F /* romMapperS1990.h */,
+				B35107C42896659E00FA401F /* romMapperSCCplus.h */,
+				B351078F2896659E00FA401F /* romMapperSegaBasic.h */,
+				B35107DA2896659E00FA401F /* romMapperSf7000Ipl.h */,
+				B35108222896659E00FA401F /* romMapperSfg05.h */,
+				B35107AF2896659E00FA401F /* romMapperSg1000.h */,
+				B351074C2896659D00FA401F /* romMapperSg1000Castle.h */,
+				B351082E2896659E00FA401F /* romMapperSg1000RamExpander.h */,
+				B351078C2896659E00FA401F /* romMapperSonyHBI55.h */,
+				B35108002896659E00FA401F /* romMapperSonyHBIV1.h */,
+				B35107A32896659E00FA401F /* romMapperStandard.h */,
+				B35108272896659E00FA401F /* romMapperSunriseIDE.h */,
+				B35107E42896659E00FA401F /* romMapperSvi80Col.h */,
+				B35107892896659E00FA401F /* romMapperSvi328Fdc.h */,
+				B351078B2896659E00FA401F /* romMapperSvi328Prn.h */,
+				B351081B2896659E00FA401F /* romMapperSvi328Rs232.h */,
+				B35107BB2896659E00FA401F /* romMapperSvi328RsIDE.h */,
+				B35107F72896659E00FA401F /* romMapperSvi707Fdc.h */,
+				B351082B2896659E00FA401F /* romMapperSvi727.h */,
+				B351079F2896659E00FA401F /* romMapperSvi738Fdc.h */,
+				B35107FF2896659E00FA401F /* romMapperTC8566AF.h */,
+				B351080D2896659E00FA401F /* romMapperTurboRPcm.h */,
+				B35107D72896659E00FA401F /* romMapperTurboRTimer.h */,
+				B351079B2896659E00FA401F /* SlotManager.h */,
+				B35107542896659D00FA401F /* sramLoader.h */,
+				B35107842896659E00FA401F /* sramMapperEseSCC.h */,
+				B35108162896659E00FA401F /* sramMapperMatsuchita.h */,
+				B35107C92896659E00FA401F /* sramMapperMegaSCSI.h */,
+				B35108152896659E00FA401F /* sramMapperS1985.h */,
 			);
 			path = Memory;
 			sourceTree = "<group>";
@@ -3524,85 +3771,85 @@
 		B35108472896659E00FA401F /* IoDevice */ = {
 			isa = PBXGroup;
 			children = (
-				B35108482896659E00FA401F /* WDCRC.h */,
-				B35108492896659E00FA401F /* Sf7000PPI.h */,
-				B351084A2896659E00FA401F /* Led.c */,
-				B351084B2896659E00FA401F /* MidiIO.h */,
-				B351084C2896659E00FA401F /* SviPPI.h */,
-				B351084D2896659E00FA401F /* I8251.h */,
-				B351084E2896659E00FA401F /* I8255.h */,
-				B351084F2896659E00FA401F /* Sc3000PPI.h */,
-				B35108502896659E00FA401F /* TC8566AF.h */,
-				B35108512896659E00FA401F /* MSXMidi.h */,
-				B35108522896659E00FA401F /* PrinterIO.h */,
-				B35108532896659E00FA401F /* Microwire93Cx6.c */,
-				B35108542896659E00FA401F /* ScsiDevice.c */,
-				B35108552896659E00FA401F /* Casette.h */,
-				B35108562896659E00FA401F /* TurboRIO.c */,
-				B35108572896659E00FA401F /* wd33c93.c */,
-				B35108582896659E00FA401F /* WD2793.h */,
-				B35108592896659E00FA401F /* RTC.c */,
-				B351085A2896659E00FA401F /* MsxPPI.c */,
-				B351085B2896659E00FA401F /* sl811hs.h */,
-				B351085C2896659E00FA401F /* Microchip24x00.c */,
-				B351085D2896659E00FA401F /* SunriseIDE.c */,
-				B351085E2896659E00FA401F /* I8254.c */,
-				B351085F2896659E00FA401F /* I8250.c */,
-				B35108602896659E00FA401F /* ft245.h */,
-				B35108612896659E00FA401F /* NEC765.h */,
-				B35108622896659E00FA401F /* HarddiskIDE.c */,
-				B35108632896659E00FA401F /* JoystickIO.c */,
-				B35108642896659E00FA401F /* MB89352.c */,
-				B35108652896659E00FA401F /* FdcAudio.h */,
-				B35108662896659E00FA401F /* rtl8019.c */,
-				B35108672896659E00FA401F /* UartIO.c */,
-				B35108682896659E00FA401F /* Z8530.c */,
-				B35108692896659E00FA401F /* Disk.h */,
-				B351086A2896659E00FA401F /* DirAsDisk.c */,
-				B351086B2896659E00FA401F /* Switches.c */,
-				B351086C2896659E00FA401F /* Microwire93Cx6.h */,
-				B351086D2896659E00FA401F /* ScsiDevice.h */,
-				B351086E2896659E00FA401F /* PrinterIO.c */,
-				B351086F2896659E00FA401F /* MSXMidi.c */,
 				B35108702896659E00FA401F /* Casette.c */,
-				B35108712896659E00FA401F /* TC8566AF.c */,
-				B35108722896659E00FA401F /* GameReader.h */,
-				B35108732896659E00FA401F /* I8255.c */,
-				B35108742896659E00FA401F /* Sc3000PPI.c */,
-				B35108752896659E00FA401F /* Led.h */,
-				B35108762896659E00FA401F /* MidiIO.c */,
-				B35108772896659E00FA401F /* SviPPI.c */,
-				B35108782896659E00FA401F /* Sf7000PPI.c */,
-				B35108792896659E00FA401F /* I8251.c */,
-				B351087A2896659E00FA401F /* WDCRC.c */,
-				B351087B2896659E00FA401F /* sl811hs.c */,
-				B351087C2896659E00FA401F /* MsxPPI.h */,
-				B351087D2896659E00FA401F /* Microchip24x00.h */,
-				B351087E2896659E00FA401F /* msxgr.cpp */,
-				B351087F2896659E00FA401F /* RTC.h */,
-				B35108802896659E00FA401F /* scsidev.h */,
-				B35108812896659E00FA401F /* wd33c93.h */,
-				B35108822896659E00FA401F /* TurboRIO.h */,
-				B35108832896659E00FA401F /* GameReader.cpp */,
-				B35108842896659E00FA401F /* WD2793.c */,
-				B35108852896659E00FA401F /* msxgr.h */,
-				B35108862896659E00FA401F /* ScsiDefs.h */,
-				B35108872896659E00FA401F /* HarddiskIDE.h */,
-				B35108882896659E00FA401F /* NEC765.c */,
-				B35108892896659E00FA401F /* JoystickIO.h */,
-				B351088A2896659E00FA401F /* I8250.h */,
-				B351088B2896659E00FA401F /* ft245.c */,
-				B351088C2896659E00FA401F /* DiskUtil.h */,
-				B351088D2896659E00FA401F /* I8254.h */,
-				B351088E2896659E00FA401F /* SunriseIDE.h */,
+				B351086A2896659E00FA401F /* DirAsDisk.c */,
 				B351088F2896659E00FA401F /* Disk.c */,
-				B35108902896659E00FA401F /* Z8530.h */,
-				B35108912896659E00FA401F /* Switches.h */,
-				B35108922896659E00FA401F /* DirAsDisk.h */,
-				B35108932896659E00FA401F /* UartIO.h */,
-				B35108942896659E00FA401F /* rtl8019.h */,
-				B35108952896659E00FA401F /* MB89352.h */,
 				B35108962896659E00FA401F /* FdcAudio.c */,
+				B351088B2896659E00FA401F /* ft245.c */,
+				B35108622896659E00FA401F /* HarddiskIDE.c */,
+				B351085F2896659E00FA401F /* I8250.c */,
+				B35108792896659E00FA401F /* I8251.c */,
+				B351085E2896659E00FA401F /* I8254.c */,
+				B35108732896659E00FA401F /* I8255.c */,
+				B35108632896659E00FA401F /* JoystickIO.c */,
+				B351084A2896659E00FA401F /* Led.c */,
+				B35108642896659E00FA401F /* MB89352.c */,
+				B351085C2896659E00FA401F /* Microchip24x00.c */,
+				B35108532896659E00FA401F /* Microwire93Cx6.c */,
+				B35108762896659E00FA401F /* MidiIO.c */,
+				B351086F2896659E00FA401F /* MSXMidi.c */,
+				B351085A2896659E00FA401F /* MsxPPI.c */,
+				B35108882896659E00FA401F /* NEC765.c */,
+				B351086E2896659E00FA401F /* PrinterIO.c */,
+				B35108592896659E00FA401F /* RTC.c */,
+				B35108662896659E00FA401F /* rtl8019.c */,
+				B35108742896659E00FA401F /* Sc3000PPI.c */,
+				B35108542896659E00FA401F /* ScsiDevice.c */,
+				B35108782896659E00FA401F /* Sf7000PPI.c */,
+				B351087B2896659E00FA401F /* sl811hs.c */,
+				B351085D2896659E00FA401F /* SunriseIDE.c */,
+				B35108772896659E00FA401F /* SviPPI.c */,
+				B351086B2896659E00FA401F /* Switches.c */,
+				B35108712896659E00FA401F /* TC8566AF.c */,
+				B35108562896659E00FA401F /* TurboRIO.c */,
+				B35108672896659E00FA401F /* UartIO.c */,
+				B35108572896659E00FA401F /* wd33c93.c */,
+				B35108842896659E00FA401F /* WD2793.c */,
+				B351087A2896659E00FA401F /* WDCRC.c */,
+				B35108682896659E00FA401F /* Z8530.c */,
+				B35108832896659E00FA401F /* GameReader.cpp */,
+				B351087E2896659E00FA401F /* msxgr.cpp */,
+				B35108552896659E00FA401F /* Casette.h */,
+				B35108922896659E00FA401F /* DirAsDisk.h */,
+				B35108692896659E00FA401F /* Disk.h */,
+				B351088C2896659E00FA401F /* DiskUtil.h */,
+				B35108652896659E00FA401F /* FdcAudio.h */,
+				B35108602896659E00FA401F /* ft245.h */,
+				B35108722896659E00FA401F /* GameReader.h */,
+				B35108872896659E00FA401F /* HarddiskIDE.h */,
+				B351088A2896659E00FA401F /* I8250.h */,
+				B351084D2896659E00FA401F /* I8251.h */,
+				B351088D2896659E00FA401F /* I8254.h */,
+				B351084E2896659E00FA401F /* I8255.h */,
+				B35108892896659E00FA401F /* JoystickIO.h */,
+				B35108752896659E00FA401F /* Led.h */,
+				B35108952896659E00FA401F /* MB89352.h */,
+				B351087D2896659E00FA401F /* Microchip24x00.h */,
+				B351086C2896659E00FA401F /* Microwire93Cx6.h */,
+				B351084B2896659E00FA401F /* MidiIO.h */,
+				B35108852896659E00FA401F /* msxgr.h */,
+				B35108512896659E00FA401F /* MSXMidi.h */,
+				B351087C2896659E00FA401F /* MsxPPI.h */,
+				B35108612896659E00FA401F /* NEC765.h */,
+				B35108522896659E00FA401F /* PrinterIO.h */,
+				B351087F2896659E00FA401F /* RTC.h */,
+				B35108942896659E00FA401F /* rtl8019.h */,
+				B351084F2896659E00FA401F /* Sc3000PPI.h */,
+				B35108862896659E00FA401F /* ScsiDefs.h */,
+				B35108802896659E00FA401F /* scsidev.h */,
+				B351086D2896659E00FA401F /* ScsiDevice.h */,
+				B35108492896659E00FA401F /* Sf7000PPI.h */,
+				B351085B2896659E00FA401F /* sl811hs.h */,
+				B351088E2896659E00FA401F /* SunriseIDE.h */,
+				B351084C2896659E00FA401F /* SviPPI.h */,
+				B35108912896659E00FA401F /* Switches.h */,
+				B35108502896659E00FA401F /* TC8566AF.h */,
+				B35108822896659E00FA401F /* TurboRIO.h */,
+				B35108932896659E00FA401F /* UartIO.h */,
+				B35108812896659E00FA401F /* wd33c93.h */,
+				B35108582896659E00FA401F /* WD2793.h */,
+				B35108482896659E00FA401F /* WDCRC.h */,
+				B35108902896659E00FA401F /* Z8530.h */,
 			);
 			path = IoDevice;
 			sourceTree = "<group>";
@@ -3610,14 +3857,14 @@
 		B35108972896659E00FA401F /* Z80 */ = {
 			isa = PBXGroup;
 			children = (
-				B35108982896659E00FA401F /* R800Debug.c */,
-				B35108992896659E00FA401F /* R800SaveState.h */,
-				B351089A2896659E00FA401F /* R800Dasm.h */,
 				B351089B2896659E00FA401F /* R800.c */,
-				B351089C2896659E00FA401F /* R800SaveState.c */,
-				B351089D2896659E00FA401F /* R800Debug.h */,
 				B351089E2896659E00FA401F /* R800Dasm.c */,
+				B35108982896659E00FA401F /* R800Debug.c */,
+				B351089C2896659E00FA401F /* R800SaveState.c */,
 				B351089F2896659E00FA401F /* R800.h */,
+				B351089A2896659E00FA401F /* R800Dasm.h */,
+				B351089D2896659E00FA401F /* R800Debug.h */,
+				B35108992896659E00FA401F /* R800SaveState.h */,
 			);
 			path = Z80;
 			sourceTree = "<group>";
@@ -3625,44 +3872,44 @@
 		B35108A02896659E00FA401F /* Input */ = {
 			isa = PBXGroup;
 			children = (
+				B35108BC2896659E00FA401F /* CoinDevice.c */,
+				B35108B42896659E00FA401F /* ColecoJoystick.c */,
+				B35108A82896659E00FA401F /* ColecoSteeringWheel.c */,
 				B35108A12896659E00FA401F /* ColecoSuperAction.c */,
+				B35108B32896659E00FA401F /* InputEvent.c */,
+				B35108AF2896659E00FA401F /* JoystickPort.c */,
+				B35108AD2896659E00FA401F /* MagicKeyDongle.c */,
+				B35108BB2896659E00FA401F /* MsxArkanoidPad.c */,
+				B35108C22896659E00FA401F /* MsxAsciiLaser.c */,
+				B35108B82896659E00FA401F /* MsxGunstick.c */,
+				B35108BE2896659E00FA401F /* MsxJoystick.c */,
+				B35108B92896659E00FA401F /* MsxMouse.c */,
+				B35108AE2896659E00FA401F /* MsxTetrisDongle.c */,
+				B35108B12896659E00FA401F /* Sg1000JoyIo.c */,
+				B35108BA2896659E00FA401F /* Sg1000Joystick.c */,
+				B35108B72896659E00FA401F /* SviJoyIo.c */,
+				B35108C52896659E00FA401F /* SviJoystick.c */,
+				B35108A92896659E00FA401F /* CoinDevice.h */,
 				B35108A22896659E00FA401F /* ColecoJoystick.h */,
+				B35108C02896659E00FA401F /* ColecoJoystickDevice.h */,
+				B35108BD2896659E00FA401F /* ColecoSteeringWheel.h */,
+				B35108B52896659E00FA401F /* ColecoSuperAction.h */,
+				B35108C12896659E00FA401F /* InputEvent.h */,
+				B35108C32896659E00FA401F /* JoystickPort.h */,
+				B35108C62896659E00FA401F /* MagicKeyDongle.h */,
+				B35108AB2896659E00FA401F /* MsxArkanoidPad.h */,
+				B35108B22896659E00FA401F /* MsxAsciiLaser.h */,
 				B35108A32896659E00FA401F /* MsxGunstick.h */,
+				B35108A62896659E00FA401F /* MsxJoystick.h */,
+				B35108B62896659E00FA401F /* MsxJoystickDevice.h */,
+				B35108AC2896659E00FA401F /* MsxMouse.h */,
+				B35108C42896659E00FA401F /* MsxTetrisDongle.h */,
+				B35108BF2896659E00FA401F /* Sg1000JoyIo.h */,
+				B35108AA2896659E00FA401F /* Sg1000Joystick.h */,
 				B35108A42896659E00FA401F /* Sg1000JoystickDevice.h */,
 				B35108A52896659E00FA401F /* SviJoyIo.h */,
-				B35108A62896659E00FA401F /* MsxJoystick.h */,
-				B35108A72896659E00FA401F /* SviJoystickDevice.h */,
-				B35108A82896659E00FA401F /* ColecoSteeringWheel.c */,
-				B35108A92896659E00FA401F /* CoinDevice.h */,
-				B35108AA2896659E00FA401F /* Sg1000Joystick.h */,
-				B35108AB2896659E00FA401F /* MsxArkanoidPad.h */,
-				B35108AC2896659E00FA401F /* MsxMouse.h */,
-				B35108AD2896659E00FA401F /* MagicKeyDongle.c */,
-				B35108AE2896659E00FA401F /* MsxTetrisDongle.c */,
-				B35108AF2896659E00FA401F /* JoystickPort.c */,
 				B35108B02896659E00FA401F /* SviJoystick.h */,
-				B35108B12896659E00FA401F /* Sg1000JoyIo.c */,
-				B35108B22896659E00FA401F /* MsxAsciiLaser.h */,
-				B35108B32896659E00FA401F /* InputEvent.c */,
-				B35108B42896659E00FA401F /* ColecoJoystick.c */,
-				B35108B52896659E00FA401F /* ColecoSuperAction.h */,
-				B35108B62896659E00FA401F /* MsxJoystickDevice.h */,
-				B35108B72896659E00FA401F /* SviJoyIo.c */,
-				B35108B82896659E00FA401F /* MsxGunstick.c */,
-				B35108B92896659E00FA401F /* MsxMouse.c */,
-				B35108BA2896659E00FA401F /* Sg1000Joystick.c */,
-				B35108BB2896659E00FA401F /* MsxArkanoidPad.c */,
-				B35108BC2896659E00FA401F /* CoinDevice.c */,
-				B35108BD2896659E00FA401F /* ColecoSteeringWheel.h */,
-				B35108BE2896659E00FA401F /* MsxJoystick.c */,
-				B35108BF2896659E00FA401F /* Sg1000JoyIo.h */,
-				B35108C02896659E00FA401F /* ColecoJoystickDevice.h */,
-				B35108C12896659E00FA401F /* InputEvent.h */,
-				B35108C22896659E00FA401F /* MsxAsciiLaser.c */,
-				B35108C32896659E00FA401F /* JoystickPort.h */,
-				B35108C42896659E00FA401F /* MsxTetrisDongle.h */,
-				B35108C52896659E00FA401F /* SviJoystick.c */,
-				B35108C62896659E00FA401F /* MagicKeyDongle.h */,
+				B35108A72896659E00FA401F /* SviJoystickDevice.h */,
 			);
 			path = Input;
 			sourceTree = "<group>";
@@ -3670,37 +3917,37 @@
 		B35108C72896659E00FA401F /* Unzip */ = {
 			isa = PBXGroup;
 			children = (
-				B35108C82896659E00FA401F /* zutil.h */,
-				B35108C92896659E00FA401F /* inftrees.h */,
-				B35108CA2896659E00FA401F /* inflate.c */,
-				B35108CB2896659E00FA401F /* unzip.c */,
+				B35108E52896659E00FA401F /* adler32.c */,
 				B35108CC2896659E00FA401F /* compress.c */,
-				B35108CD2896659E00FA401F /* zip.c */,
-				B35108CE2896659E00FA401F /* deflate.c */,
-				B35108CF2896659E00FA401F /* inffixed.h */,
-				B35108D02896659E00FA401F /* iowin32.h */,
-				B35108D12896659E00FA401F /* ioapi.c */,
-				B35108D22896659E00FA401F /* trees.h */,
-				B35108D32896659E00FA401F /* inffast.h */,
 				B35108D42896659E00FA401F /* crc32.c */,
+				B35108CE2896659E00FA401F /* deflate.c */,
+				B35108E32896659E00FA401F /* gzio.c */,
 				B35108D52896659E00FA401F /* infback.c */,
-				B35108D62896659E00FA401F /* crypt.h */,
+				B35108E42896659E00FA401F /* inffast.c */,
+				B35108CA2896659E00FA401F /* inflate.c */,
+				B35108DD2896659E00FA401F /* inftrees.c */,
+				B35108D12896659E00FA401F /* ioapi.c */,
+				B35108E12896659E00FA401F /* iowin32.c */,
+				B35108DF2896659E00FA401F /* trees.c */,
+				B35108DE2896659E00FA401F /* uncompr.c */,
+				B35108CB2896659E00FA401F /* unzip.c */,
+				B35108CD2896659E00FA401F /* zip.c */,
 				B35108D72896659E00FA401F /* zutil.c */,
+				B35108E22896659E00FA401F /* crc32.h */,
+				B35108D62896659E00FA401F /* crypt.h */,
 				B35108D82896659E00FA401F /* deflate.h */,
+				B35108D32896659E00FA401F /* inffast.h */,
+				B35108CF2896659E00FA401F /* inffixed.h */,
+				B35108DC2896659E00FA401F /* inflate.h */,
+				B35108C92896659E00FA401F /* inftrees.h */,
+				B35108E02896659E00FA401F /* ioapi.h */,
+				B35108D02896659E00FA401F /* iowin32.h */,
+				B35108D22896659E00FA401F /* trees.h */,
+				B35108DB2896659E00FA401F /* unzip.h */,
+				B35108E62896659E00FA401F /* zconf.h */,
 				B35108D92896659E00FA401F /* zip.h */,
 				B35108DA2896659E00FA401F /* zlib.h */,
-				B35108DB2896659E00FA401F /* unzip.h */,
-				B35108DC2896659E00FA401F /* inflate.h */,
-				B35108DD2896659E00FA401F /* inftrees.c */,
-				B35108DE2896659E00FA401F /* uncompr.c */,
-				B35108DF2896659E00FA401F /* trees.c */,
-				B35108E02896659E00FA401F /* ioapi.h */,
-				B35108E12896659E00FA401F /* iowin32.c */,
-				B35108E22896659E00FA401F /* crc32.h */,
-				B35108E32896659E00FA401F /* gzio.c */,
-				B35108E42896659E00FA401F /* inffast.c */,
-				B35108E52896659E00FA401F /* adler32.c */,
-				B35108E62896659E00FA401F /* zconf.h */,
+				B35108C82896659E00FA401F /* zutil.h */,
 			);
 			path = Unzip;
 			sourceTree = "<group>";
@@ -3708,25 +3955,25 @@
 		B35108E72896659E00FA401F /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				B35108E82896659E00FA401F /* StrcmpNoCase.c */,
-				B35108E92896659E00FA401F /* blowfish.h */,
-				B35108EA2896659E00FA401F /* ZipFromMem.h */,
-				B35108EB2896659E00FA401F /* TokenExtract.c */,
-				B35108EC2896659E00FA401F /* ziphelper.h */,
-				B35108ED2896659E00FA401F /* IsFileExtension.h */,
-				B35108EE2896659E00FA401F /* PacketFileSystem.c */,
-				B35108EF2896659E00FA401F /* IniFileParser.c */,
-				B35108F02896659E00FA401F /* SaveState.c */,
-				B35108F12896659E00FA401F /* authkey.h */,
 				B35108F22896659E00FA401F /* blowfish.c */,
-				B35108F32896659E00FA401F /* StrcmpNoCase.h */,
-				B35108F42896659E00FA401F /* ziphelper.c */,
-				B35108F52896659E00FA401F /* TokenExtract.h */,
+				B35108EF2896659E00FA401F /* IniFileParser.c */,
 				B35108F62896659E00FA401F /* IsFileExtension.c */,
+				B35108EE2896659E00FA401F /* PacketFileSystem.c */,
+				B35108F02896659E00FA401F /* SaveState.c */,
+				B35108E82896659E00FA401F /* StrcmpNoCase.c */,
+				B35108EB2896659E00FA401F /* TokenExtract.c */,
 				B35108F72896659E00FA401F /* ZipFromMem.c */,
+				B35108F42896659E00FA401F /* ziphelper.c */,
+				B35108F12896659E00FA401F /* authkey.h */,
+				B35108E92896659E00FA401F /* blowfish.h */,
 				B35108F82896659E00FA401F /* IniFileParser.h */,
+				B35108ED2896659E00FA401F /* IsFileExtension.h */,
 				B35108F92896659E00FA401F /* PacketFileSystem.h */,
 				B35108FA2896659E00FA401F /* SaveState.h */,
+				B35108F32896659E00FA401F /* StrcmpNoCase.h */,
+				B35108F52896659E00FA401F /* TokenExtract.h */,
+				B35108EA2896659E00FA401F /* ZipFromMem.h */,
+				B35108EC2896659E00FA401F /* ziphelper.h */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -3743,19 +3990,19 @@
 		B35108FE2896659E00FA401F /* VideoChips */ = {
 			isa = PBXGroup;
 			children = (
-				B35108FF2896659E00FA401F /* VideoManager.c */,
-				B35109002896659E00FA401F /* SpriteLine.c */,
 				B35109012896659E00FA401F /* CRTC6845.c */,
-				B35109022896659E00FA401F /* V9938.h */,
-				B35109032896659E00FA401F /* FrameBuffer.h */,
-				B35109042896659E00FA401F /* VDP.c */,
-				B35109052896659E00FA401F /* Common.h */,
-				B35109062896659E00FA401F /* VideoManager.h */,
-				B35109072896659E00FA401F /* SpriteLine.h */,
-				B35109082896659E00FA401F /* V9938.c */,
-				B35109092896659E00FA401F /* CRTC6845.h */,
-				B351090A2896659E00FA401F /* VDP.h */,
 				B351090B2896659E00FA401F /* FrameBuffer.c */,
+				B35109002896659E00FA401F /* SpriteLine.c */,
+				B35109082896659E00FA401F /* V9938.c */,
+				B35109042896659E00FA401F /* VDP.c */,
+				B35108FF2896659E00FA401F /* VideoManager.c */,
+				B35109052896659E00FA401F /* Common.h */,
+				B35109092896659E00FA401F /* CRTC6845.h */,
+				B35109032896659E00FA401F /* FrameBuffer.h */,
+				B35109072896659E00FA401F /* SpriteLine.h */,
+				B35109022896659E00FA401F /* V9938.h */,
+				B351090A2896659E00FA401F /* VDP.h */,
+				B35109062896659E00FA401F /* VideoManager.h */,
 			);
 			path = VideoChips;
 			sourceTree = "<group>";
@@ -3862,19 +4109,19 @@
 		B35109442896659E00FA401F /* Emulator */ = {
 			isa = PBXGroup;
 			children = (
-				B35109452896659E00FA401F /* AppConfig.c */,
-				B35109462896659E00FA401F /* Actions.h */,
-				B35109472896659E00FA401F /* Keyboard.c */,
-				B35109482896659E00FA401F /* FileHistory.c */,
-				B35109492896659E00FA401F /* Properties.c */,
-				B351094A2896659E00FA401F /* LaunchFile.c */,
-				B351094B2896659E00FA401F /* Emulator.h */,
-				B351094C2896659E00FA401F /* AppConfig.h */,
-				B351094D2896659E00FA401F /* Keyboard.h */,
 				B351094E2896659E00FA401F /* Actions.c */,
+				B35109452896659E00FA401F /* AppConfig.c */,
+				B35109482896659E00FA401F /* FileHistory.c */,
+				B35109472896659E00FA401F /* Keyboard.c */,
+				B351094A2896659E00FA401F /* LaunchFile.c */,
+				B35109492896659E00FA401F /* Properties.c */,
+				B35109462896659E00FA401F /* Actions.h */,
+				B351094C2896659E00FA401F /* AppConfig.h */,
+				B351094B2896659E00FA401F /* Emulator.h */,
 				B351094F2896659E00FA401F /* FileHistory.h */,
-				B35109502896659F00FA401F /* Properties.h */,
+				B351094D2896659E00FA401F /* Keyboard.h */,
 				B35109512896659F00FA401F /* LaunchFile.h */,
+				B35109502896659F00FA401F /* Properties.h */,
 			);
 			path = Emulator;
 			sourceTree = "<group>";
@@ -3942,6 +4189,8 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				B3C4803B297103C10040C177 /* Databases */,
+				B3C4803C297103C20040C177 /* Machines */,
 				B35104C92896659C00FA401F /* blueMSX-libretro */,
 				B37022BE287253B300B3F6DA /* PVblueMSX */,
 				B37022C4287253B300B3F6DA /* PVblueMSXCore */,
@@ -3965,6 +4214,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C48039297103160040C177 /* libz.tbd */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
 				B39769172859E3AD00558958 /* CoreFoundation.framework */,
@@ -4112,6 +4362,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B37022CB2872556600B3F6DA /* Core.plist in Resources */,
+				B3C4803E297103C20040C177 /* Machines in Resources */,
+				B3C4803D297103C20040C177 /* Databases in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4122,6 +4374,240 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C47F592970FFA00040C177 /* I8251.c in Sources */,
+				B3C47F692970FFA00040C177 /* Sf7000PPI.c in Sources */,
+				B3C47FAA2970FFD90040C177 /* romMapperMajutsushi.c in Sources */,
+				B3C47F9A2970FFD90040C177 /* romMapperNet.c in Sources */,
+				B3C47FE22970FFD90040C177 /* romMapperASCII16.c in Sources */,
+				B3C47F942970FFCA0040C177 /* ramMapperIo.c in Sources */,
+				B3C47FC92970FFD90040C177 /* romMapperMsxMusic.c in Sources */,
+				B3C47FA32970FFD90040C177 /* romMapperKorean126.c in Sources */,
+				B3C47FB52970FFD90040C177 /* romMapperKonamiKeyboardMaster.c in Sources */,
+				B3C47F352970FF7F0040C177 /* SVI.c in Sources */,
+				B3C47F892970FFCA0040C177 /* Crc32Calc.c in Sources */,
+				B3C480082970FFE50040C177 /* SCC.c in Sources */,
+				B3C47FB72970FFD90040C177 /* romMapperDooly.c in Sources */,
+				B3C47FCA2970FFD90040C177 /* ramNormal.c in Sources */,
+				B3C480122970FFE50040C177 /* Ymdeltat.c in Sources */,
+				B3C47FF12970FFD90040C177 /* romMapperHalnote.c in Sources */,
+				B3C47FF32970FFD90040C177 /* romMapperPlayBall.c in Sources */,
+				B3C47F342970FF7F0040C177 /* Patch.c in Sources */,
+				B3C47F982970FFCA0040C177 /* romMapperArc.c in Sources */,
+				B3C47F602970FFA00040C177 /* Z8530.c in Sources */,
+				B3C47FC42970FFD90040C177 /* romMapperF4device.c in Sources */,
+				B3C47FA52970FFD90040C177 /* romMapperSegaBasic.c in Sources */,
+				B3C47F992970FFCA0040C177 /* romMapperMuPack.c in Sources */,
+				B3C47FD42970FFD90040C177 /* romMapperKonamiSynth.c in Sources */,
+				B3C47FA72970FFD90040C177 /* romMapperKanji12.c in Sources */,
+				B3C47F3F2970FF920040C177 /* MsxJoystick.c in Sources */,
+				B3C47F972970FFCA0040C177 /* romMapperHarryFox.c in Sources */,
+				B3C4801B297100100040C177 /* VideoManager.c in Sources */,
+				B3C47F392970FF7F0040C177 /* Board.c in Sources */,
+				B3C47FC62970FFD90040C177 /* romMapperOpcodeSaveRam.c in Sources */,
+				B3C47FD62970FFD90040C177 /* romMapperSonyHBIV1.c in Sources */,
+				B3C480052970FFE50040C177 /* ym2151.c in Sources */,
+				B3C47F3C2970FF7F0040C177 /* ArrayList.c in Sources */,
+				B3C47F382970FF7F0040C177 /* LaunchFile.c in Sources */,
+				B3C47FF22970FFD90040C177 /* sramLoader.c in Sources */,
+				B3C47FD52970FFD90040C177 /* romMapperGameMaster2.c in Sources */,
+				B3C47FE92970FFD90040C177 /* romMapperNms8280VideoDa.c in Sources */,
+				B3C47FE32970FFD90040C177 /* romMapperPhilipsFdc.c in Sources */,
+				B3C47F492970FF920040C177 /* ColecoJoystick.c in Sources */,
+				B3C47F9F2970FFD90040C177 /* romMapperSg1000RamExpander.c in Sources */,
+				B3C47F6B2970FFA00040C177 /* wd33c93.c in Sources */,
+				B3C47FA42970FFD90040C177 /* romMapperSf7000Ipl.c in Sources */,
+				B3C47FBD2970FFD90040C177 /* romMapperNational.c in Sources */,
+				B3C47F3D2970FF7F0040C177 /* Adam.c in Sources */,
+				B3C47FFB2970FFD90040C177 /* AtmelPerom.c in Sources */,
+				B3C47FF02970FFD90040C177 /* romMapperSfg05.c in Sources */,
+				B3C47FB12970FFD90040C177 /* sramMapperMatsuchita.c in Sources */,
+				B3C48020297100190040C177 /* R800SaveState.c in Sources */,
+				B3C47FC72970FFD90040C177 /* romMapperStandard.c in Sources */,
+				B3C4803F2971040B0040C177 /* unzip.c in Sources */,
+				B3C47FA62970FFD90040C177 /* ram1kBMirrored.c in Sources */,
+				B3C4800E2970FFE50040C177 /* SN76489.c in Sources */,
+				B3C4802E297100F80040C177 /* ZipFromMem.c in Sources */,
+				B3C480412971040B0040C177 /* zip.c in Sources */,
+				B3C47F4A2970FF920040C177 /* MsxMouse.c in Sources */,
+				B3C47FDE2970FFD90040C177 /* romMapperPlain.c in Sources */,
+				B3C47F612970FFA00040C177 /* rtl8019.c in Sources */,
+				B3C47FD72970FFD90040C177 /* romMapperMsxAudio.c in Sources */,
+				B3C47F632970FFA00040C177 /* NEC765.c in Sources */,
+				B3C47FA02970FFD90040C177 /* romMapperDumas.c in Sources */,
+				B3C47FFD2970FFD90040C177 /* romMapperA1FMModem.c in Sources */,
+				B3C47F322970FF7F0040C177 /* FileHistory.c in Sources */,
+				B3C47FA12970FFD90040C177 /* romMapperMatraINK.c in Sources */,
+				B3C47FDA2970FFD90040C177 /* romMapperTurboRPcm.c in Sources */,
+				B3C47FD22970FFD90040C177 /* romMapperSvi328Prn.c in Sources */,
+				B3C47F6D2970FFA00040C177 /* Microwire93Cx6.c in Sources */,
+				B3C47FF82970FFD90040C177 /* romMapperKonami4nf.c in Sources */,
+				B3C480352971027E0040C177 /* OpenMsxYM2413_2.cpp in Sources */,
+				B3C480142970FFF10040C177 /* tinyxmlerror.cpp in Sources */,
+				B3C47FE62970FFD90040C177 /* MegaSCSIsub.c in Sources */,
+				B3C480112970FFE50040C177 /* DAC.c in Sources */,
+				B3C47FBF2970FFD90040C177 /* romMapperBeerIDE.c in Sources */,
+				B3C480022970FFD90040C177 /* romMapperSvi80Col.c in Sources */,
+				B3C47F482970FF920040C177 /* JoystickPort.c in Sources */,
+				B3C47F912970FFCA0040C177 /* romMapperOpcodeSlotManager.c in Sources */,
+				B3C4802F297100F80040C177 /* IsFileExtension.c in Sources */,
+				B3C480162970FFF10040C177 /* tinyxmlparser.cpp in Sources */,
+				B3C47F4B2970FF920040C177 /* MsxArkanoidPad.c in Sources */,
+				B3C4802B297100F80040C177 /* SaveState.c in Sources */,
+				B3C47F652970FFA00040C177 /* TC8566AF.c in Sources */,
+				B3C47FCB2970FFD90040C177 /* romMapperA1FM.c in Sources */,
+				B3C4801A297100100040C177 /* V9938.c in Sources */,
+				B3C47F532970FFA00040C177 /* MidiIO.c in Sources */,
+				B3C4802C297100F80040C177 /* StrcmpNoCase.c in Sources */,
+				B3C47FAB2970FFD90040C177 /* romMapperDRAM.c in Sources */,
+				B3C47F5D2970FFA00040C177 /* Sc3000PPI.c in Sources */,
+				B3C47F702970FFA00040C177 /* I8254.c in Sources */,
+				B3C4800D2970FFE50040C177 /* Fmopl.c in Sources */,
+				B3C47F472970FF920040C177 /* MsxTetrisDongle.c in Sources */,
+				B3C47FDD2970FFD90040C177 /* IoPort.c in Sources */,
+				B3C47FC82970FFD90040C177 /* romMapperFMPAC.c in Sources */,
+				B3C47F522970FFA00040C177 /* Switches.c in Sources */,
+				B3C47F6C2970FFA00040C177 /* Casette.c in Sources */,
+				B3C47FAE2970FFD90040C177 /* romMapperSunriseIDE.c in Sources */,
+				B3C47FCC2970FFD90040C177 /* romMapperOpcodeBios.c in Sources */,
+				B3C47F4F2970FFA00040C177 /* MsxPPI.c in Sources */,
+				B3C47F6A2970FFA00040C177 /* TurboRIO.c in Sources */,
+				B3C47F5A2970FFA00040C177 /* WD2793.c in Sources */,
+				B3C47FCF2970FFD90040C177 /* romMapperTC8566AF.c in Sources */,
+				B3C48030297101DF0040C177 /* Debugger.c in Sources */,
+				B3C47FD32970FFD90040C177 /* romMapperKonamiWordPro.c in Sources */,
+				B3C47FFA2970FFD90040C177 /* romMapperMsxDos2.c in Sources */,
+				B3C4802A297100F80040C177 /* IniFileParser.c in Sources */,
+				B3C47F6F2970FFA00040C177 /* SviPPI.c in Sources */,
+				B3C47F9C2970FFD90040C177 /* romMapperCrossBlaim.c in Sources */,
+				B3C47F582970FFA00040C177 /* DirAsDisk.c in Sources */,
+				B3C47F9B2970FFD90040C177 /* romMapperMegaRAM.c in Sources */,
+				B3C47FD12970FFD90040C177 /* romMapperHolyQuran.c in Sources */,
+				B3C480342971027E0040C177 /* OpenMsxYMF278.cpp in Sources */,
+				B3C47FEA2970FFD90040C177 /* romMapperMicrosolVmx80.c in Sources */,
+				B3C47FE02970FFD90040C177 /* romMapperNationalFdc.c in Sources */,
+				B3C480032970FFD90040C177 /* romMapperSg1000Castle.c in Sources */,
+				B3C4801F297100190040C177 /* R800Dasm.c in Sources */,
+				B3C47FFE2970FFD90040C177 /* romMapperBunsetu.c in Sources */,
+				B3C47FB62970FFD90040C177 /* romMapperSvi727.c in Sources */,
+				B3C47F362970FF7F0040C177 /* Actions.c in Sources */,
+				B3C480152970FFF10040C177 /* tinyxml.cpp in Sources */,
+				B3C480012970FFD90040C177 /* romMapperPAC.c in Sources */,
+				B3C47FEE2970FFD90040C177 /* romMapperGIDE.c in Sources */,
+				B3C4800A2970FFE50040C177 /* MameVLM5030.c in Sources */,
+				B3C47FE82970FFD90040C177 /* romMapperMsxPrn.c in Sources */,
+				B3C47FBA2970FFD90040C177 /* romMapperSvi707Fdc.c in Sources */,
+				B3C47FFC2970FFD90040C177 /* romMapperSvi328RsIDE.c in Sources */,
+				B3C47FDF2970FFD90040C177 /* romMapperOpcodeMegaRam.c in Sources */,
+				B3C47F962970FFCA0040C177 /* romMapperKorean90.c in Sources */,
+				B3C47FD82970FFD90040C177 /* romMapperKonami4.c in Sources */,
+				B3C47F9E2970FFD90040C177 /* romMapperSvi738Fdc.c in Sources */,
+				B3C47F3E2970FF920040C177 /* MsxAsciiLaser.c in Sources */,
+				B3C47FA92970FFD90040C177 /* romMapperKonami5.c in Sources */,
+				B3C48031297101E40040C177 /* DebugDeviceManager.c in Sources */,
+				B3C47F572970FFA00040C177 /* sl811hs.c in Sources */,
+				B3C47F622970FFA00040C177 /* Disk.c in Sources */,
+				B3C47FB22970FFD90040C177 /* romMapperDisk.c in Sources */,
+				B3C47F672970FFA00040C177 /* WDCRC.c in Sources */,
+				B3C47FED2970FFD90040C177 /* romMapperASCII16sram.c in Sources */,
+				B3C47FEB2970FFD90040C177 /* RomLoader.c in Sources */,
+				B3C47F8A2970FFCA0040C177 /* Sha1.cpp in Sources */,
+				B3C47F752970FFA90040C177 /* LanguageMinimal.c in Sources */,
+				B3C47F3A2970FF7F0040C177 /* Properties.c in Sources */,
+				B3C48042297104540040C177 /* MediaDb.cpp in Sources */,
+				B3C47FDB2970FFD90040C177 /* romMapperMoonsound.c in Sources */,
+				B3C47F5B2970FFA00040C177 /* MB89352.c in Sources */,
+				B3C47FCD2970FFD90040C177 /* AmdFlash.c in Sources */,
+				B3C47F712970FFA00040C177 /* UartIO.c in Sources */,
+				B3C48033297102380040C177 /* OpenMsxYMF262.cpp in Sources */,
+				B3C47FC52970FFD90040C177 /* DeviceManager.c in Sources */,
+				B3C47FF52970FFD90040C177 /* romMapperSg1000.c in Sources */,
+				B3C47FE42970FFD90040C177 /* romMapperLodeRunner.c in Sources */,
+				B3C47FFF2970FFD90040C177 /* romMapperS1990.c in Sources */,
+				B3C47F5F2970FFA00040C177 /* I8250.c in Sources */,
+				B3C47FCE2970FFD90040C177 /* romMapperSonyHBI55.c in Sources */,
+				B3C47F872970FFCA0040C177 /* romMapperSCCplus.c in Sources */,
+				B3C47FB82970FFD90040C177 /* romMapperNormal.c in Sources */,
+				B3C4801E297100190040C177 /* R800.c in Sources */,
+				B3C4800B2970FFE50040C177 /* SamplePlayer.c in Sources */,
+				B3C47FB92970FFD90040C177 /* romMapperFmDas.c in Sources */,
+				B3C47F542970FFA00040C177 /* RTC.c in Sources */,
+				B3C47F312970FF7F0040C177 /* Coleco.c in Sources */,
+				B3C47F4C2970FF920040C177 /* Sg1000JoyIo.c in Sources */,
+				B3C47F642970FFA00040C177 /* PrinterIO.c in Sources */,
+				B3C47FC02970FFD90040C177 /* romMapperForteII.c in Sources */,
+				B3C47FBE2970FFD90040C177 /* romMapperCvMegaCart.c in Sources */,
+				B3C47FBC2970FFD90040C177 /* romMapperASCII16nf.c in Sources */,
+				B3C47F8B2970FFCA0040C177 /* romMapperFMPAK.c in Sources */,
+				B3C47FF42970FFD90040C177 /* romMapperKoei.c in Sources */,
+				B3C47F432970FF920040C177 /* ColecoSuperAction.c in Sources */,
+				B3C47FE52970FFD90040C177 /* romMapperObsonet.c in Sources */,
+				B3C47FD02970FFD90040C177 /* romMapperASCII8.c in Sources */,
+				B3C480132970FFF10040C177 /* tinystr.cpp in Sources */,
+				B3C47F722970FFA00040C177 /* ScsiDevice.c in Sources */,
+				B3C47FB02970FFD90040C177 /* SlotManager.c in Sources */,
+				B3C47F9D2970FFD90040C177 /* romMapperJoyrexPsg.c in Sources */,
+				B3C47FC32970FFD90040C177 /* sramMapperS1985.c in Sources */,
+				B3C48038297102CE0040C177 /* YM2413.cpp in Sources */,
+				B3C480062970FFE50040C177 /* KeyClick.c in Sources */,
+				B3C480362971027E0040C177 /* OpenMsxYM2413.cpp in Sources */,
+				B3C4800F2970FFE50040C177 /* MameYM2151.c in Sources */,
+				B3C47F732970FFA00040C177 /* I8255.c in Sources */,
+				B3C4802D297100F80040C177 /* TokenExtract.c in Sources */,
+				B3C47F922970FFCA0040C177 /* romMapperNms1210Rs232.c in Sources */,
+				B3C47F932970FFCA0040C177 /* romMapperTurboRTimer.c in Sources */,
+				B3C47F3B2970FF7F0040C177 /* MSX.c in Sources */,
+				B3C47F562970FFA00040C177 /* SunriseIDE.c in Sources */,
+				B3C47FD92970FFD90040C177 /* sramMapperEseSCC.c in Sources */,
+				B3C480042970FFE50040C177 /* MsxPsg.c in Sources */,
+				B3C480322971020F0040C177 /* Moonsound.cpp in Sources */,
+				B3C47FF72970FFD90040C177 /* romMapperRType.c in Sources */,
+				B3C47FAC2970FFD90040C177 /* romMapperOpcodePsg.c in Sources */,
+				B3C48019297100100040C177 /* VDP.c in Sources */,
+				B3C47F8E2970FFCA0040C177 /* sramMapperMegaSCSI.c in Sources */,
+				B3C47F742970FFA00040C177 /* ft245.c in Sources */,
+				B3C47F552970FFA00040C177 /* FdcAudio.c in Sources */,
+				B3C480002970FFD90040C177 /* romMapperOpcodeModule.c in Sources */,
+				B3C47FC12970FFD90040C177 /* romMapperSvi328Rs232.c in Sources */,
+				B3C47F302970FF7F0040C177 /* SG1000.c in Sources */,
+				B3C4801C297100100040C177 /* CRTC6845.c in Sources */,
+				B3C480092970FFE50040C177 /* Y8950.c in Sources */,
+				B3C47FDC2970FFD90040C177 /* romMapperSvi328Fdc.c in Sources */,
+				B3C47F422970FF920040C177 /* MsxGunstick.c in Sources */,
+				B3C47F682970FFA00040C177 /* HarddiskIDE.c in Sources */,
+				B3C47F502970FFA00040C177 /* Led.c in Sources */,
+				B3C47FC22970FFD90040C177 /* romMapperMsxRs232.c in Sources */,
+				B3C47FE12970FFD90040C177 /* romMapperCasette.c in Sources */,
+				B3C47F8D2970FFCA0040C177 /* MegaromCartridge.c in Sources */,
+				B3C47FBB2970FFD90040C177 /* romMapperActivisionPcb.c in Sources */,
+				B3C47F902970FFCA0040C177 /* romMapperGameReader.c in Sources */,
+				B3C47FB32970FFD90040C177 /* romMapperKanji.c in Sources */,
+				B3C48037297102AD0040C177 /* romMapperNoWind.c in Sources */,
+				B3C480102970FFE50040C177 /* AudioMixer.c in Sources */,
+				B3C47FB42970FFD90040C177 /* romMapperMegaFlashRomScc.c in Sources */,
+				B3C47FA82970FFD90040C177 /* romMapperGoudaSCSI.c in Sources */,
+				B3C47F5E2970FFA00040C177 /* MSXMidi.c in Sources */,
+				B3C4800C2970FFE50040C177 /* AY8910.c in Sources */,
+				B3C47FE72970FFD90040C177 /* romMapperKorean80.c in Sources */,
+				B3C47F952970FFCA0040C177 /* romMapperBasic.c in Sources */,
+				B3C47F512970FFA00040C177 /* GameReader.cpp in Sources */,
+				B3C47F8F2970FFCA0040C177 /* romMapperPanasonic.c in Sources */,
+				B3C47FEF2970FFD90040C177 /* ramMapper.c in Sources */,
+				B3C47F4E2970FF920040C177 /* SviJoyIo.c in Sources */,
+				B3C47F462970FF920040C177 /* ColecoSteeringWheel.c in Sources */,
+				B3C47F402970FF920040C177 /* InputEvent.c in Sources */,
+				B3C47F332970FF7F0040C177 /* AppConfig.c in Sources */,
+				B3C47FA22970FFD90040C177 /* romMapperNettouYakyuu.c in Sources */,
+				B3C480402971040B0040C177 /* ioapi.c in Sources */,
+				B3C47F4D2970FF920040C177 /* Sg1000Joystick.c in Sources */,
+				B3C47F412970FF920040C177 /* MagicKeyDongle.c in Sources */,
+				B3C47F442970FF920040C177 /* CoinDevice.c in Sources */,
+				B3C480072970FFE50040C177 /* VLM5030.c in Sources */,
+				B3C47F6E2970FFA00040C177 /* Microchip24x00.c in Sources */,
+				B3C47F2F2970FF7F0040C177 /* Machine.c in Sources */,
+				B3C4801D297100190040C177 /* R800Debug.c in Sources */,
+				B3C47F8C2970FFCA0040C177 /* romMapperASCII8sram.c in Sources */,
+				B3C47FEC2970FFD90040C177 /* romMapperMicrosol.c in Sources */,
+				B3C47F452970FF920040C177 /* SviJoystick.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4129,7 +4615,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C47F762970FFB30040C177 /* Menu.c in Sources */,
+				B3C48027297100510040C177 /* compat_strcasestr.c in Sources */,
+				B3C47F852970FFB80040C177 /* Uart.c in Sources */,
+				B3C47F782970FFB30040C177 /* Mouse.c in Sources */,
 				B3510962289665CD00FA401F /* libretro.c in Sources */,
+				B3C48028297100510040C177 /* compat_snprintf.c in Sources */,
+				B3C47F7E2970FFB70040C177 /* Sound.c in Sources */,
+				B3C47F7A2970FFB30040C177 /* Timer.c in Sources */,
+				B3C47F7D2970FFB70040C177 /* Glob.c in Sources */,
+				B3C47F812970FFB70040C177 /* Eth.c in Sources */,
+				B3C47F802970FFB70040C177 /* Event.c in Sources */,
+				B3C48029297100510040C177 /* retro_dirent.c in Sources */,
+				B3C47F7F2970FFB70040C177 /* Notifications.c in Sources */,
+				B3C47F7C2970FFB70040C177 /* Emulator.c in Sources */,
+				B3C47F832970FFB80040C177 /* Midi.c in Sources */,
+				B3C47F862970FFB80040C177 /* Input.c in Sources */,
+				B3C47F792970FFB30040C177 /* Cdrom.c in Sources */,
+				B3C47F822970FFB80040C177 /* Dialog.c in Sources */,
+				B3C47F772970FFB30040C177 /* VideoIn.c in Sources */,
+				B3C47F842970FFB80040C177 /* Printer.c in Sources */,
+				B3C47F7B2970FFB70040C177 /* File.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4163,7 +4669,6 @@
 				PRODUCT_NAME = blueMSX;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -4180,7 +4685,6 @@
 				PRODUCT_NAME = blueMSX;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -4190,6 +4694,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4245,10 +4750,13 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -4269,6 +4777,32 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Arch\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Bios\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Board\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/BuildInfo\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Common\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Debugger\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Emulator\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Input\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/IoDevice\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Language\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Libretro\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Media\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Memory\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/SoundChips\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/ThirdParty\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/TinyXML\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Unzip\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Utils\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/VideoChips\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/VideoRender\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Z80\"",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVblueMSX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -4281,7 +4815,6 @@
 				PRODUCT_NAME = PVblueMSX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -4298,7 +4831,6 @@
 				PRODUCT_NAME = blueMSX;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -4312,10 +4844,15 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Utils\"",
+				);
 				PRODUCT_NAME = "blueMSX-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -4329,10 +4866,15 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Utils\"",
+				);
 				PRODUCT_NAME = "blueMSX-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -4346,10 +4888,15 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Utils\"",
+				);
 				PRODUCT_NAME = "blueMSX-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -4359,6 +4906,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4416,11 +4964,14 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -4432,6 +4983,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -4487,11 +5039,14 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -4512,6 +5067,32 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Arch\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Bios\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Board\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/BuildInfo\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Common\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Debugger\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Emulator\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Input\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/IoDevice\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Language\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Libretro\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Media\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Memory\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/SoundChips\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/ThirdParty\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/TinyXML\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Unzip\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Utils\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/VideoChips\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/VideoRender\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Z80\"",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVblueMSX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -4524,7 +5105,6 @@
 				PRODUCT_NAME = PVblueMSX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -4542,6 +5122,32 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Arch\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Bios\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Board\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/BuildInfo\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Common\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Debugger\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Emulator\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Input\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/IoDevice\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Language\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Libretro\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Media\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Memory\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/SoundChips\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/ThirdParty\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/TinyXML\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Unzip\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Utils\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/VideoChips\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/VideoRender\"",
+					"\"$(SRCROOT)/blueMSX-libretro/Src/Z80\"",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVblueMSX/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -4554,7 +5160,6 @@
 				PRODUCT_NAME = PVblueMSX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
