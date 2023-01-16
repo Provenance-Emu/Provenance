@@ -29,9 +29,7 @@
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 
+PVCORE_DIRECT_MEMBERS
 @interface PVGBAEmulatorCore : PVEmulatorCore <PVGBASystemResponderClient>
-
-- (void)didPushGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
-- (void)didReleaseGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player;
 
 @end
