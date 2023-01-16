@@ -3,8 +3,23 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
+
+/* Begin PBXAggregateTarget section */
+		B322A97D2971451800F0D876 /* fbneo-dylb */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B322A9822971451900F0D876 /* Build configuration list for PBXAggregateTarget "fbneo-dylb" */;
+			buildPhases = (
+				B322A9832971451F00F0D876 /* Build */,
+				B322A9842971452000F0D876 /* Copy */,
+			);
+			dependencies = (
+			);
+			name = "fbneo-dylb";
+			productName = "fbneo-dylb";
+		};
+/* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
@@ -21,7 +36,6 @@
 		B32291562878322A00585AD8 /* d_sf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4AF2871354F008A0E2F /* d_sf.cpp */; };
 		B32291572878322A00585AD8 /* fd1089.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3032871354E008A0E2F /* fd1089.cpp */; };
 		B32291582878322A00585AD8 /* taitof3_snd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4492871354F008A0E2F /* taitof3_snd.cpp */; };
-		B32291592878322A00585AD8 /* d_kbash2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3ED2871354F008A0E2F /* d_kbash2.cpp */; };
 		B322915A2878322A00585AD8 /* d_darkmist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4572871354F008A0E2F /* d_darkmist.cpp */; };
 		B322915B2878322A00585AD8 /* d_jack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4D628713550008A0E2F /* d_jack.cpp */; };
 		B322915C2878322A00585AD8 /* d_ambush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D55428713550008A0E2F /* d_ambush.cpp */; };
@@ -49,7 +63,6 @@
 		B32291722878322A00585AD8 /* d_sonson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4D128713550008A0E2F /* d_sonson.cpp */; };
 		B32291732878322A00585AD8 /* d_gaplus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4F028713550008A0E2F /* d_gaplus.cpp */; };
 		B32291742878322A00585AD8 /* d_1945kiii.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2AD2871354E008A0E2F /* d_1945kiii.cpp */; };
-		B32291752878322A00585AD8 /* toaplan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3DF2871354F008A0E2F /* toaplan.cpp */; };
 		B32291762878322A00585AD8 /* d_esprade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2482871354E008A0E2F /* d_esprade.cpp */; };
 		B32291772878322A00585AD8 /* d_metro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2982871354E008A0E2F /* d_metro.cpp */; };
 		B32291782878322A00585AD8 /* d_hyperpac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2BF2871354E008A0E2F /* d_hyperpac.cpp */; };
@@ -108,19 +121,16 @@
 		B32291AD2878322A00585AD8 /* d_segac2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3012871354E008A0E2F /* d_segac2.cpp */; };
 		B32291AE2878322A00585AD8 /* d_amspdwy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4A52871354F008A0E2F /* d_amspdwy.cpp */; };
 		B32291AF2878322A00585AD8 /* d_dorachan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D53728713550008A0E2F /* d_dorachan.cpp */; };
-		B32291B02878322A00585AD8 /* d_batrider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3EF2871354F008A0E2F /* d_batrider.cpp */; };
 		B32291B12878322A00585AD8 /* d_nitedrvr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D50E28713550008A0E2F /* d_nitedrvr.cpp */; };
 		B32291B22878322A00585AD8 /* smsrender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D23B2871354E008A0E2F /* smsrender.cpp */; };
 		B32291B32878322A00585AD8 /* d_rollrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4442871354F008A0E2F /* d_rollrace.cpp */; };
 		B32291B42878322A00585AD8 /* d_nmg5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2CA2871354E008A0E2F /* d_nmg5.cpp */; };
 		B32291B52878322A00585AD8 /* d_rpunch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4F128713550008A0E2F /* d_rpunch.cpp */; };
-		B32291B62878322A00585AD8 /* d_kbash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3E82871354F008A0E2F /* d_kbash.cpp */; };
 		B32291B72878322A00585AD8 /* d_flstory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4282871354F008A0E2F /* d_flstory.cpp */; };
 		B32291B82878322A00585AD8 /* d_seicross.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4F228713550008A0E2F /* d_seicross.cpp */; };
 		B32291B92878322A00585AD8 /* d_itech32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2A12871354E008A0E2F /* d_itech32.cpp */; };
 		B32291BA2878322A00585AD8 /* d_momoko.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D48A2871354F008A0E2F /* d_momoko.cpp */; };
 		B32291BB2878322A00585AD8 /* d_timelimt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D54F28713550008A0E2F /* d_timelimt.cpp */; };
-		B32291BC2878322A00585AD8 /* toaplan1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3EE2871354F008A0E2F /* toaplan1.cpp */; };
 		B32291BD2878322A00585AD8 /* d_psychic5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D54328713550008A0E2F /* d_psychic5.cpp */; };
 		B32291BE2878322A00585AD8 /* d_20pacgal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2852871354E008A0E2F /* d_20pacgal.cpp */; };
 		B32291BF2878322A00585AD8 /* d_galpanic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2AE2871354E008A0E2F /* d_galpanic.cpp */; };
@@ -137,11 +147,9 @@
 		B32291CA2878322A00585AD8 /* d_sailormn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2592871354E008A0E2F /* d_sailormn.cpp */; };
 		B32291CB2878322A00585AD8 /* d_solomon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D53528713550008A0E2F /* d_solomon.cpp */; };
 		B32291CC2878322A00585AD8 /* d_mirage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2972871354E008A0E2F /* d_mirage.cpp */; };
-		B32291CD2878322A00585AD8 /* d_vfive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3D62871354F008A0E2F /* d_vfive.cpp */; };
 		B32291CE2878322A00585AD8 /* d_vulgus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D51128713550008A0E2F /* d_vulgus.cpp */; };
 		B32291CF2878322A00585AD8 /* d_ssv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2912871354E008A0E2F /* d_ssv.cpp */; };
 		B32291D02878322A00585AD8 /* d_mole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4AB2871354F008A0E2F /* d_mole.cpp */; };
-		B32291D12878322A00585AD8 /* toa_palette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3E12871354F008A0E2F /* toa_palette.cpp */; };
 		B32291D22878322A00585AD8 /* d_copsnrob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4C828713550008A0E2F /* d_copsnrob.cpp */; };
 		B32291D32878322A00585AD8 /* d_kncljoe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4DE28713550008A0E2F /* d_kncljoe.cpp */; };
 		B32291D42878322A00585AD8 /* d_espial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D49E2871354F008A0E2F /* d_espial.cpp */; };
@@ -150,10 +158,8 @@
 		B32291D72878322A00585AD8 /* d_prehisle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4D828713550008A0E2F /* d_prehisle.cpp */; };
 		B32291D82878322A00585AD8 /* d_discoboy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2C42871354E008A0E2F /* d_discoboy.cpp */; };
 		B32291D92878322A00585AD8 /* d_raiden.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2BB2871354E008A0E2F /* d_raiden.cpp */; };
-		B32291DA2878322A00585AD8 /* d_twincobr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3D92871354F008A0E2F /* d_twincobr.cpp */; };
 		B32291DB2878322A00585AD8 /* d_shisen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4E528713550008A0E2F /* d_shisen.cpp */; };
 		B32291DC2878322A00585AD8 /* d_tunit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3B92871354F008A0E2F /* d_tunit.cpp */; };
-		B32291DD2878322A00585AD8 /* d_ghox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3DB2871354F008A0E2F /* d_ghox.cpp */; };
 		B32291DE2878322A00585AD8 /* kabuki.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4132871354F008A0E2F /* kabuki.cpp */; };
 		B32291DF2878322A00585AD8 /* d_crshrace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D28D2871354E008A0E2F /* d_crshrace.cpp */; };
 		B32291E02878322A00585AD8 /* smspio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D23C2871354E008A0E2F /* smspio.cpp */; };
@@ -192,7 +198,6 @@
 		B32292012878322A00585AD8 /* d_mcatadv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2B62871354E008A0E2F /* d_mcatadv.cpp */; };
 		B32292022878322A00585AD8 /* d_lkage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D44A2871354F008A0E2F /* d_lkage.cpp */; };
 		B32292032878322A00585AD8 /* d_alinvade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D47E2871354F008A0E2F /* d_alinvade.cpp */; };
-		B32292042878322A00585AD8 /* d_dogyuun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3E52871354F008A0E2F /* d_dogyuun.cpp */; };
 		B32292052878322A00585AD8 /* d_bionicc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D47C2871354F008A0E2F /* d_bionicc.cpp */; };
 		B32292062878322A00585AD8 /* d_markham.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4FB28713550008A0E2F /* d_markham.cpp */; };
 		B32292072878322A00585AD8 /* d_metmqstr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2472871354E008A0E2F /* d_metmqstr.cpp */; };
@@ -228,10 +233,8 @@
 		B32292252878322B00585AD8 /* usb_snd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2F42871354E008A0E2F /* usb_snd.cpp */; };
 		B32292262878322B00585AD8 /* tc0220ioc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4512871354F008A0E2F /* tc0220ioc.cpp */; };
 		B32292272878322B00585AD8 /* d_taitoh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D42B2871354F008A0E2F /* d_taitoh.cpp */; };
-		B32292282878322B00585AD8 /* toa_gp9001.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3E92871354F008A0E2F /* toa_gp9001.cpp */; };
 		B32292292878322B00585AD8 /* d_wwfsstar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D50928713550008A0E2F /* d_wwfsstar.cpp */; };
 		B322922A2878322B00585AD8 /* psikyo_sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3FA2871354F008A0E2F /* psikyo_sprite.cpp */; };
-		B322922B2878322B00585AD8 /* toa_extratext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3DE2871354F008A0E2F /* toa_extratext.cpp */; };
 		B322922C2878322B00585AD8 /* d_darius2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4542871354F008A0E2F /* d_darius2.cpp */; };
 		B322922D2878322B00585AD8 /* d_taitomisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D43C2871354F008A0E2F /* d_taitomisc.cpp */; };
 		B322922E2878322B00585AD8 /* tc0510nio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4472871354F008A0E2F /* tc0510nio.cpp */; };
@@ -240,14 +243,12 @@
 		B32292312878322B00585AD8 /* d_chinagat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D55028713550008A0E2F /* d_chinagat.cpp */; };
 		B32292322878322B00585AD8 /* d_feversos.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2442871354E008A0E2F /* d_feversos.cpp */; };
 		B32292332878322B00585AD8 /* d_metlfrzr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4A42871354F008A0E2F /* d_metlfrzr.cpp */; };
-		B32292342878322B00585AD8 /* d_slapfght.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3D72871354F008A0E2F /* d_slapfght.cpp */; };
 		B32292352878322B00585AD8 /* d_alpha68k1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4DB28713550008A0E2F /* d_alpha68k1.cpp */; };
 		B32292362878322B00585AD8 /* psikyo_palette.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3FD2871354F008A0E2F /* psikyo_palette.cpp */; };
 		B32292372878322B00585AD8 /* cps_rw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D41C2871354F008A0E2F /* cps_rw.cpp */; };
 		B32292382878322B00585AD8 /* d_efdt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4892871354F008A0E2F /* d_efdt.cpp */; };
 		B32292392878322B00585AD8 /* d_capbowl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4C028713550008A0E2F /* d_capbowl.cpp */; };
 		B322923A2878322B00585AD8 /* d_powerbal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2BE2871354E008A0E2F /* d_powerbal.cpp */; };
-		B322923B2878322B00585AD8 /* psikyo_tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3F82871354F008A0E2F /* psikyo_tile.cpp */; };
 		B322923C2878322B00585AD8 /* d_vmetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2C72871354E008A0E2F /* d_vmetal.cpp */; };
 		B322923D2878322B00585AD8 /* d_pasha2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2C92871354E008A0E2F /* d_pasha2.cpp */; };
 		B322923E2878322B00585AD8 /* d_toypop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D49D2871354F008A0E2F /* d_toypop.cpp */; };
@@ -261,7 +262,6 @@
 		B32292462878322B00585AD8 /* d_tankbust.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D48B2871354F008A0E2F /* d_tankbust.cpp */; };
 		B32292472878322B00585AD8 /* d_kickgoal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2792871354E008A0E2F /* d_kickgoal.cpp */; };
 		B32292482878322B00585AD8 /* d_spdodgeb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D49A2871354F008A0E2F /* d_spdodgeb.cpp */; };
-		B32292492878322B00585AD8 /* d_tekipaki.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3D52871354F008A0E2F /* d_tekipaki.cpp */; };
 		B322924A2878322B00585AD8 /* d_psikyosh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4012871354F008A0E2F /* d_psikyosh.cpp */; };
 		B322924B2878322B00585AD8 /* d_magmax.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4F328713550008A0E2F /* d_magmax.cpp */; };
 		B322924C2878322B00585AD8 /* ctv_make.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D40F2871354F008A0E2F /* ctv_make.cpp */; };
@@ -294,7 +294,6 @@
 		B32292672878322B00585AD8 /* d_bagman.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4BD28713550008A0E2F /* d_bagman.cpp */; };
 		B32292682878322B00585AD8 /* d_dogfgt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4F828713550008A0E2F /* d_dogfgt.cpp */; };
 		B32292692878322B00585AD8 /* d_pitnrun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D54C28713550008A0E2F /* d_pitnrun.cpp */; };
-		B322926A2878322B00585AD8 /* d_mahoudai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3D22871354F008A0E2F /* d_mahoudai.cpp */; };
 		B322926B2878322B00585AD8 /* pgm_asic3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D46D2871354F008A0E2F /* pgm_asic3.cpp */; };
 		B322926C2878322B00585AD8 /* fd1094.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2FC2871354E008A0E2F /* fd1094.cpp */; };
 		B322926D2878322B00585AD8 /* cchip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4252871354F008A0E2F /* cchip.cpp */; };
@@ -333,7 +332,6 @@
 		B322928E2878322B00585AD8 /* d_taitox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4322871354F008A0E2F /* d_taitox.cpp */; };
 		B322928F2878322B00585AD8 /* d_1942.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D47F2871354F008A0E2F /* d_1942.cpp */; };
 		B32292902878322B00585AD8 /* d_dacholer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4F628713550008A0E2F /* d_dacholer.cpp */; };
-		B32292912878322B00585AD8 /* d_wardner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3EA2871354F008A0E2F /* d_wardner.cpp */; };
 		B32292922878322B00585AD8 /* d_galastrm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D44D2871354F008A0E2F /* d_galastrm.cpp */; };
 		B32292932878322B00585AD8 /* d_ssozumo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4902871354F008A0E2F /* d_ssozumo.cpp */; };
 		B32292942878322B00585AD8 /* d_tetrisp2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2BA2871354E008A0E2F /* d_tetrisp2.cpp */; };
@@ -361,12 +359,9 @@
 		B32292AA2878322B00585AD8 /* d_snk68.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4F928713550008A0E2F /* d_snk68.cpp */; };
 		B32292AB2878322B00585AD8 /* d_drgnmst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2A72871354E008A0E2F /* d_drgnmst.cpp */; };
 		B32292AC2878322B00585AD8 /* d_gladiatr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4402871354F008A0E2F /* d_gladiatr.cpp */; };
-		B32292AD2878322B00585AD8 /* d_bbakraid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3D82871354F008A0E2F /* d_bbakraid.cpp */; };
-		B32292AE2878322B00585AD8 /* d_fixeight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3E72871354F008A0E2F /* d_fixeight.cpp */; };
 		B32292AF2878322B00585AD8 /* qs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4142871354F008A0E2F /* qs.cpp */; };
 		B32292B02878322B00585AD8 /* d_popeye.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4872871354F008A0E2F /* d_popeye.cpp */; };
 		B32292B12878322B00585AD8 /* d_battlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D50F28713550008A0E2F /* d_battlane.cpp */; };
-		B32292B22878322B00585AD8 /* toa_bcu2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3DD2871354F008A0E2F /* toa_bcu2.cpp */; };
 		B32292B32878322B00585AD8 /* d_limenko.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2A92871354E008A0E2F /* d_limenko.cpp */; };
 		B32292B42878322B00585AD8 /* d_wrally.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2E92871354E008A0E2F /* d_wrally.cpp */; };
 		B32292B52878322B00585AD8 /* d_pac2650.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4972871354F008A0E2F /* d_pac2650.cpp */; };
@@ -398,7 +393,6 @@
 		B32292CF2878322B00585AD8 /* d_cclimber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4B828713550008A0E2F /* d_cclimber.cpp */; };
 		B32292D02878322B00585AD8 /* d_rabbit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2C32871354E008A0E2F /* d_rabbit.cpp */; };
 		B32292D12878322B00585AD8 /* d_pwrinst2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2532871354E008A0E2F /* d_pwrinst2.cpp */; };
-		B32292D22878322B00585AD8 /* d_batsugun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3E02871354F008A0E2F /* d_batsugun.cpp */; };
 		B32292D32878322B00585AD8 /* d_nycaptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4352871354F008A0E2F /* d_nycaptor.cpp */; };
 		B32292D42878322B00585AD8 /* d_dotrikun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2F52871354E008A0E2F /* d_dotrikun.cpp */; };
 		B32292D52878322B00585AD8 /* d_sprcros2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4E128713550008A0E2F /* d_sprcros2.cpp */; };
@@ -406,7 +400,6 @@
 		B32292D72878322B00585AD8 /* cave_sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2462871354E008A0E2F /* cave_sprite.cpp */; };
 		B32292D82878322B00585AD8 /* d_tumbleb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D27B2871354E008A0E2F /* d_tumbleb.cpp */; };
 		B32292D92878322B00585AD8 /* neo_sprite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3CB2871354F008A0E2F /* neo_sprite.cpp */; };
-		B32292DA2878322B00585AD8 /* d_toaplan1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3E62871354F008A0E2F /* d_toaplan1.cpp */; };
 		B32292DB2878322B00585AD8 /* d_lasso.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4AA2871354F008A0E2F /* d_lasso.cpp */; };
 		B32292DC2878322B00585AD8 /* d_jchan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2D12871354E008A0E2F /* d_jchan.cpp */; };
 		B32292DD2878322B00585AD8 /* d_uopoko.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2522871354E008A0E2F /* d_uopoko.cpp */; };
@@ -475,7 +468,6 @@
 		B322931C2878322B00585AD8 /* d_thoop2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2E42871354E008A0E2F /* d_thoop2.cpp */; };
 		B322931D2878322B00585AD8 /* williams_adpcm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3BC2871354F008A0E2F /* williams_adpcm.cpp */; };
 		B322931E2878322B00585AD8 /* d_tbowl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D52C28713550008A0E2F /* d_tbowl.cpp */; };
-		B322931F2878322B00585AD8 /* d_battleg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3D42871354F008A0E2F /* d_battleg.cpp */; };
 		B32293202878322B00585AD8 /* d_kinst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3AE2871354F008A0E2F /* d_kinst.cpp */; };
 		B32293212878322B00585AD8 /* d_qix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4412871354F008A0E2F /* d_qix.cpp */; };
 		B32293222878322B00585AD8 /* d_tecmo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4812871354F008A0E2F /* d_tecmo.cpp */; };
@@ -486,7 +478,6 @@
 		B32293272878322B00585AD8 /* smsvdp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2392871354E008A0E2F /* smsvdp.cpp */; };
 		B32293282878322B00585AD8 /* d_wunit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3BE2871354F008A0E2F /* d_wunit.cpp */; };
 		B32293292878322B00585AD8 /* d_news.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2E52871354E008A0E2F /* d_news.cpp */; };
-		B322932A2878322B00585AD8 /* d_pipibibs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3EC2871354F008A0E2F /* d_pipibibs.cpp */; };
 		B322932B2878322B00585AD8 /* d_mmagic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4EB28713550008A0E2F /* d_mmagic.cpp */; };
 		B322932C2878322B00585AD8 /* d_tagteam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D50028713550008A0E2F /* d_tagteam.cpp */; };
 		B322932D2878322B00585AD8 /* d_redclash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D47A2871354F008A0E2F /* d_redclash.cpp */; };
@@ -498,7 +489,6 @@
 		B32293332878322B00585AD8 /* d_ddragon3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2DA2871354E008A0E2F /* d_ddragon3.cpp */; };
 		B32293342878322B00585AD8 /* d_sub.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D47D2871354F008A0E2F /* d_sub.cpp */; };
 		B32293352878322B00585AD8 /* d_ddayjlc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D53A28713550008A0E2F /* d_ddayjlc.cpp */; };
-		B32293362878322B00585AD8 /* d_snowbro2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3D32871354F008A0E2F /* d_snowbro2.cpp */; };
 		B32293372878322B00585AD8 /* d_kangaroo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D52328713550008A0E2F /* d_kangaroo.cpp */; };
 		B32293382878322B00585AD8 /* d_sidearms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4E928713550008A0E2F /* d_sidearms.cpp */; };
 		B32293392878322B00585AD8 /* d_mappy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D52528713550008A0E2F /* d_mappy.cpp */; };
@@ -507,7 +497,6 @@
 		B322933C2878322B00585AD8 /* tc0280grd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D44F2871354F008A0E2F /* tc0280grd.cpp */; };
 		B322933D2878322B00585AD8 /* d_jedi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4982871354F008A0E2F /* d_jedi.cpp */; };
 		B322933E2878322B00585AD8 /* d_exterm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4F428713550008A0E2F /* d_exterm.cpp */; };
-		B322933F2878322B00585AD8 /* d_shippumd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3DA2871354F008A0E2F /* d_shippumd.cpp */; };
 		B32293402878322B00585AD8 /* d_freekick.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D55228713550008A0E2F /* d_freekick.cpp */; };
 		B32293412878322B00585AD8 /* d_snk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4912871354F008A0E2F /* d_snk.cpp */; };
 		B32293422878322B00585AD8 /* d_vball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4FC28713550008A0E2F /* d_vball.cpp */; };
@@ -540,7 +529,6 @@
 		B322935D2878322B00585AD8 /* d_gaelco2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2DB2871354E008A0E2F /* d_gaelco2.cpp */; };
 		B322935E2878322B00585AD8 /* d_higemaru.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4FE28713550008A0E2F /* d_higemaru.cpp */; };
 		B322935F2878322B00585AD8 /* d_zerozone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2E62871354E008A0E2F /* d_zerozone.cpp */; };
-		B32293602878322B00585AD8 /* d_enmadaio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3EB2871354F008A0E2F /* d_enmadaio.cpp */; };
 		B32293612878322B00585AD8 /* d_xyonix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D52028713550008A0E2F /* d_xyonix.cpp */; };
 		B32293622878322B00585AD8 /* d_aquarium.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D28E2871354E008A0E2F /* d_aquarium.cpp */; };
 		B32293632878322B00585AD8 /* d_fastfred.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D50B28713550008A0E2F /* d_fastfred.cpp */; };
@@ -556,7 +544,6 @@
 		B322936D2878322B00585AD8 /* d_kingofbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4C628713550008A0E2F /* d_kingofbox.cpp */; };
 		B322936E2878322B00585AD8 /* d_alpha68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D4932871354F008A0E2F /* d_alpha68k.cpp */; };
 		B322936F2878322B00585AD8 /* d_f-32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2872871354E008A0E2F /* d_f-32.cpp */; };
-		B32293702878322B00585AD8 /* d_truxton2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3E42871354F008A0E2F /* d_truxton2.cpp */; };
 		B32293712878322B00585AD8 /* d_goori.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2A62871354E008A0E2F /* d_goori.cpp */; };
 		B32293722878322B00585AD8 /* d_dooyong.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2E02871354E008A0E2F /* d_dooyong.cpp */; };
 		B32293732878322B00585AD8 /* d_onetwo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D2942871354E008A0E2F /* d_onetwo.cpp */; };
@@ -566,11 +553,8 @@
 		B32293772878322B00585AD8 /* d_taitoz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D42F2871354F008A0E2F /* d_taitoz.cpp */; };
 		B32293782878322B00585AD8 /* d_drtomy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D29D2871354E008A0E2F /* d_drtomy.cpp */; };
 		B32296A1287833F700585AD8 /* lowpass2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D92028713553008A0E2F /* lowpass2.cpp */; };
-		B32296A32878342200585AD8 /* zipfn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9D928713554008A0E2F /* zipfn.cpp */; };
 		B32296A52878344900585AD8 /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D68B28713551008A0E2F /* m68kcpu.c */; };
-		B32296A9287834EF00585AD8 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D95228713554008A0E2F /* unzip.c */; };
 		B32296AB287834FA00585AD8 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D95728713554008A0E2F /* ioapi.c */; };
-		B32296BD2878360300585AD8 /* m68kops.c in Sources */ = {isa = PBXBuildFile; fileRef = B32296B1287835FB00585AD8 /* m68kops.c */; };
 		B32296C32878371D00585AD8 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3DDCB2871408F008A0E2F /* libretro.cpp */; };
 		B32296C52878373200585AD8 /* retro_common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3DBD72871408D008A0E2F /* retro_common.cpp */; };
 		B32296C72878373900585AD8 /* retro_input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3DBCE2871408D008A0E2F /* retro_input.cpp */; };
@@ -581,9 +565,15 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B379CE9B2971299A00AF0621 /* libfbneo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C480B6297115700040C177 /* libfbneo.a */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		B379CEA429712ED500AF0621 /* BraIA64.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D82428713553008A0E2F /* BraIA64.c */; };
+		B379CEA529712F2100AF0621 /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D81328713553008A0E2F /* LzmaDec.c */; };
+		B379CEA629712F9C00AF0621 /* 7zCrc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D83428713553008A0E2F /* 7zCrc.c */; };
+		B379CEA729712F9C00AF0621 /* 7zStream.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D82628713553008A0E2F /* 7zStream.c */; };
+		B379CEA829712F9C00AF0621 /* 7zFile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D83228713553008A0E2F /* 7zFile.c */; };
+		B379CEA929712F9C00AF0621 /* 7zArcIn.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D80728713553008A0E2F /* 7zArcIn.c */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3B3DA27287136A0008A0E2F /* PVFBNeoCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B3DA25287136A0008A0E2F /* PVFBNeoCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3B3DA29287136A0008A0E2F /* PVFBNeoCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B3DA26287136A0008A0E2F /* PVFBNeoCore.mm */; };
 		B3B3DA2B287136D6008A0E2F /* tilemap_generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D55C28713550008A0E2F /* tilemap_generic.cpp */; };
 		B3B3DA2C287136D6008A0E2F /* burn_shift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D61B28713551008A0E2F /* burn_shift.cpp */; };
 		B3B3DA2D287136D6008A0E2F /* burn_bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D57328713550008A0E2F /* burn_bitmap.cpp */; };
@@ -975,28 +965,102 @@
 		B3B3DE0D28714491008A0E2F /* mips3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D71028713552008A0E2F /* mips3.cpp */; };
 		B3B3DE0E28714491008A0E2F /* mips3_dasm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D71328713552008A0E2F /* mips3_dasm.cpp */; };
 		B3B3DE0F28714491008A0E2F /* tlcs90.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D79928713552008A0E2F /* tlcs90.cpp */; };
-		B3B3DE10287144D0008A0E2F /* libfbneo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libfbneo.a */; };
 		B3B3DE13287144D0008A0E2F /* libfbneo-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libfbneo-libretro.a */; };
 		B3B3DE162871456F008A0E2F /* burn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D56428713550008A0E2F /* burn.cpp */; };
+		B3C48044297106940040C177 /* cong.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9B628713554008A0E2F /* cong.cpp */; };
+		B3C48045297106940040C177 /* state.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D95928713554008A0E2F /* state.cpp */; };
+		B3C48046297106940040C177 /* dynhuff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D94128713554008A0E2F /* dynhuff.cpp */; };
+		B3C48049297106940040C177 /* luaengine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3DA1E28713554008A0E2F /* luaengine.cpp */; };
+		B3C4805929710A3B0040C177 /* luasav.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D95328713554008A0E2F /* luasav.cpp */; };
+		B3C48075297115700040C177 /* gamc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9DA28713554008A0E2F /* gamc.cpp */; };
+		B3C48076297115700040C177 /* 7zCrcOpt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D84228713553008A0E2F /* 7zCrcOpt.c */; };
+		B3C48077297115700040C177 /* XzCrc64Opt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D83F28713553008A0E2F /* XzCrc64Opt.c */; };
+		B3C48078297115700040C177 /* 2xsai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D8DE28713553008A0E2F /* 2xsai.cpp */; };
+		B3C48079297115700040C177 /* d_battleg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3D42871354F008A0E2F /* d_battleg.cpp */; };
+		B3C4807A297115700040C177 /* d_shippumd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3DA2871354F008A0E2F /* d_shippumd.cpp */; };
+		B3C4807B297115700040C177 /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7E828713552008A0E2F /* pngrutil.c */; };
+		B3C4807C297115700040C177 /* palette_neon_intrinsics.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7E328713552008A0E2F /* palette_neon_intrinsics.c */; };
+		B3C4807D297115700040C177 /* FBScanner.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D94B28713554008A0E2F /* FBScanner.mm */; };
+		B3C4807E297115700040C177 /* ips_manager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9BA28713554008A0E2F /* ips_manager.cpp */; };
+		B3C4807F297115700040C177 /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7CF28713552008A0E2F /* pngrio.c */; };
+		B3C48080297115700040C177 /* inftrees.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D85C28713553008A0E2F /* inftrees.c */; };
+		B3C48081297115700040C177 /* FBAboutController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D1A52871354D008A0E2F /* FBAboutController.m */; };
+		B3C48082297115700040C177 /* d_slapfght.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3D72871354F008A0E2F /* d_slapfght.cpp */; };
+		B3C48083297115700040C177 /* media.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9B828713554008A0E2F /* media.cpp */; };
+		B3C48084297115700040C177 /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D84D28713553008A0E2F /* compress.c */; };
+		B3C48085297115700040C177 /* toaplan1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3EE2871354F008A0E2F /* toaplan1.cpp */; };
+		B3C48086297115700040C177 /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7D128713552008A0E2F /* pngwio.c */; };
+		B3C48087297115700040C177 /* 7zBuf2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D82128713553008A0E2F /* 7zBuf2.c */; };
+		B3C48088297115700040C177 /* 7zBuf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D84628713553008A0E2F /* 7zBuf.c */; };
+		B3C48089297115700040C177 /* infback.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D85528713553008A0E2F /* infback.c */; };
+		B3C4808A297115700040C177 /* gzlib.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D85A28713553008A0E2F /* gzlib.c */; };
+		B3C4808B297115700040C177 /* FBVideo.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D8C528713553008A0E2F /* FBVideo.mm */; };
+		B3C4808C297115700040C177 /* vid_softfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D8E228713553008A0E2F /* vid_softfx.cpp */; };
+		B3C4808D297115700040C177 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D19C2871354D008A0E2F /* main.m */; };
+		B3C4808E297115700040C177 /* FBJoyCaptureView.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D1B32871354D008A0E2F /* FBJoyCaptureView.m */; };
+		B3C4808F297115700040C177 /* 7zDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D81928713553008A0E2F /* 7zDec.c */; };
+		B3C48090297115700040C177 /* d_dogyuun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3E52871354F008A0E2F /* d_dogyuun.cpp */; };
+		B3C48091297115700040C177 /* stringset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9BE28713554008A0E2F /* stringset.cpp */; };
+		B3C48092297115700040C177 /* FBMainThread.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D94C28713554008A0E2F /* FBMainThread.mm */; };
+		B3C48093297115700040C177 /* Bra86.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D80528713553008A0E2F /* Bra86.c */; };
+		B3C48094297115700040C177 /* xbr32.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D8CF28713553008A0E2F /* xbr32.cpp */; };
+		B3C48095297115700040C177 /* d_batrider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3EF2871354F008A0E2F /* d_batrider.cpp */; };
+		B3C48096297115700040C177 /* d_batsugun.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3E02871354F008A0E2F /* d_batsugun.cpp */; };
+		B3C48097297115700040C177 /* statec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9D628713554008A0E2F /* statec.cpp */; };
+		B3C48098297115700040C177 /* ddt3x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D8DB28713553008A0E2F /* ddt3x.cpp */; };
+		B3C48099297115700040C177 /* pngget.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7E528713552008A0E2F /* pngget.c */; };
+		B3C4809A297115700040C177 /* FBLauncherController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D1A12871354D008A0E2F /* FBLauncherController.m */; };
+		B3C4809B297115700040C177 /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7D528713552008A0E2F /* pngwrite.c */; };
+		B3C4809C297115700040C177 /* AKGamepadEventData.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7B028713552008A0E2F /* AKGamepadEventData.m */; };
+		B3C4809D297115700040C177 /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7D728713552008A0E2F /* pngwutil.c */; };
+		B3C4809E297115700040C177 /* pngpread.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7DB28713552008A0E2F /* pngpread.c */; };
+		B3C4809F297115700040C177 /* filter_neon.S in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7E028713552008A0E2F /* filter_neon.S */; };
+		B3C480A0297115700040C177 /* gzclose.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D86028713553008A0E2F /* gzclose.c */; };
+		B3C480A1297115700040C177 /* vid_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D8C828713553008A0E2F /* vid_support.cpp */; };
+		B3C480A2297115700040C177 /* aud_dsp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D93028713554008A0E2F /* aud_dsp.cpp */; };
+		B3C480A3297115700040C177 /* FBPreferencesController.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D1A62871354D008A0E2F /* FBPreferencesController.mm */; };
+		B3C480A4297115700040C177 /* FBLogViewerController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D1A92871354D008A0E2F /* FBLogViewerController.m */; };
+		B3C480A5297115700040C177 /* replay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9CC28713554008A0E2F /* replay.cpp */; };
+		B3C480A6297115700040C177 /* neocdlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9C128713554008A0E2F /* neocdlist.cpp */; };
+		B3C480A7297115700040C177 /* bzip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9C528713554008A0E2F /* bzip.cpp */; };
+		B3C480A8297115700040C177 /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7E628713552008A0E2F /* png.c */; };
+		B3C480A9297115700040C177 /* xbr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D8D528713553008A0E2F /* xbr.cpp */; };
+		B3C480AA297115700040C177 /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D85628713553008A0E2F /* zutil.c */; };
+		B3C480AB297115700040C177 /* stated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D9CE28713554008A0E2F /* stated.cpp */; };
+		B3C480AC297115700040C177 /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7D028713552008A0E2F /* pngerror.c */; };
+		B3C480AD297115700040C177 /* inp_interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D91828713553008A0E2F /* inp_interface.cpp */; };
+		B3C480AE297115700040C177 /* NSString+Etc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D94728713554008A0E2F /* NSString+Etc.m */; };
+		B3C480AF297115700040C177 /* toa_bcu2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D3DD2871354F008A0E2F /* toa_bcu2.cpp */; };
+		B3C480B0297115700040C177 /* misc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D94928713554008A0E2F /* misc.cpp */; };
+		B3C480B1297115700040C177 /* FBMainThread+Etc.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D94E28713554008A0E2F /* FBMainThread+Etc.mm */; };
+		B3C480B2297115700040C177 /* Bcj2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D7F728713553008A0E2F /* Bcj2.c */; };
+		B3C480B3297115700040C177 /* SDLAudioEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B3D92228713553008A0E2F /* SDLAudioEngine.m */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B3B3DE11287144D0008A0E2F /* PBXContainerItemProxy */ = {
+		B322A9872971479E00F0D876 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B30178D2207C901D0051B93D;
-			remoteInfo = "fbneo-iOS";
+			remoteGlobalIDString = B322A97D2971451800F0D876;
+			remoteInfo = "fbneo-dylb";
 		};
-		B3B3DE14287144D0008A0E2F /* PBXContainerItemProxy */ = {
+		B3C48066297114F00040C177 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3344B522859E088006E6B3A;
-			remoteInfo = "fbneo-libretro-iOS";
+			containerPortal = B3C48062297114F00040C177 /* Emulator.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = FE1B108D235615940065200C;
+			remoteInfo = Emulator;
+		};
+		B3C480B5297115700040C177 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C48062297114F00040C177 /* Emulator.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B3C4806C297115450040C177;
+			remoteInfo = fbneo;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1024,21 +1088,6 @@
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libfbneo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libfbneo.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
-		B32296AE287835FB00585AD8 /* neo_sprite_func.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = neo_sprite_func.h; sourceTree = "<group>"; };
-		B32296AF287835FB00585AD8 /* neo_sprite_func_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = neo_sprite_func_table.h; sourceTree = "<group>"; };
-		B32296B0287835FB00585AD8 /* toa_gp9001_func.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = toa_gp9001_func.h; sourceTree = "<group>"; };
-		B32296B1287835FB00585AD8 /* m68kops.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = m68kops.c; sourceTree = "<group>"; };
-		B32296B2287835FB00585AD8 /* driverlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = driverlist.h; sourceTree = "<group>"; };
-		B32296B3287835FB00585AD8 /* psikyo_tile_func_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = psikyo_tile_func_table.h; sourceTree = "<group>"; };
-		B32296B4287835FB00585AD8 /* psikyo_tile_func.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = psikyo_tile_func.h; sourceTree = "<group>"; };
-		B32296B5287835FB00585AD8 /* cave_tile_func.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cave_tile_func.h; sourceTree = "<group>"; };
-		B32296B6287835FB00585AD8 /* driverlist copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "driverlist copy.h"; sourceTree = "<group>"; };
-		B32296B7287835FB00585AD8 /* cave_sprite_func.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cave_sprite_func.h; sourceTree = "<group>"; };
-		B32296B8287835FB00585AD8 /* cave_sprite_func_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cave_sprite_func_table.h; sourceTree = "<group>"; };
-		B32296B9287835FB00585AD8 /* toa_gp9001_func_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = toa_gp9001_func_table.h; sourceTree = "<group>"; };
-		B32296BA287835FB00585AD8 /* pgm_sprite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pgm_sprite.h; sourceTree = "<group>"; };
-		B32296BB287835FB00585AD8 /* ctv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctv.h; sourceTree = "<group>"; };
-		B32296BC287835FB00585AD8 /* cave_tile_func_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cave_tile_func_table.h; sourceTree = "<group>"; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3344BC32859E088006E6B3A /* libfbneo-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libfbneo-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
@@ -1049,6 +1098,8 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B379CEA129712A9500AF0621 /* PVFBNeoSupport.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVFBNeoSupport.mm; sourceTree = "<group>"; };
+		B379CEA329712BFA00AF0621 /* PVFBNeoSupport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFBNeoSupport.h; sourceTree = "<group>"; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -3527,6 +3578,21 @@
 		B3B3DDD12871408F008A0E2F /* Application.mk */ = {isa = PBXFileReference; lastKnownFileType = text; path = Application.mk; sourceTree = "<group>"; };
 		B3B3DDD22871408F008A0E2F /* tchar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tchar.h; sourceTree = "<group>"; };
 		B3B3DDD32871408F008A0E2F /* ugui_tools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ugui_tools.h; sourceTree = "<group>"; };
+		B3C4804C29710A0F0040C177 /* psikyo_tile_func_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = psikyo_tile_func_table.h; sourceTree = "<group>"; };
+		B3C4804D29710A0F0040C177 /* cave_tile_func_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cave_tile_func_table.h; sourceTree = "<group>"; };
+		B3C4804E29710A0F0040C177 /* neo_sprite_func_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = neo_sprite_func_table.h; sourceTree = "<group>"; };
+		B3C4804F29710A100040C177 /* cave_sprite_func.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cave_sprite_func.h; sourceTree = "<group>"; };
+		B3C4805029710A100040C177 /* driverlist.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = driverlist.h; sourceTree = "<group>"; };
+		B3C4805129710A100040C177 /* toa_gp9001_func.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = toa_gp9001_func.h; sourceTree = "<group>"; };
+		B3C4805229710A100040C177 /* neo_sprite_func.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = neo_sprite_func.h; sourceTree = "<group>"; };
+		B3C4805329710A100040C177 /* ctv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ctv.h; sourceTree = "<group>"; };
+		B3C4805429710A100040C177 /* cave_tile_func.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cave_tile_func.h; sourceTree = "<group>"; };
+		B3C4805529710A100040C177 /* cave_sprite_func_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cave_sprite_func_table.h; sourceTree = "<group>"; };
+		B3C4805629710A100040C177 /* psikyo_tile_func.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = psikyo_tile_func.h; sourceTree = "<group>"; };
+		B3C4805729710A100040C177 /* pgm_sprite.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pgm_sprite.h; sourceTree = "<group>"; };
+		B3C4805829710A110040C177 /* toa_gp9001_func_table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = toa_gp9001_func_table.h; sourceTree = "<group>"; };
+		B3C48061297113DD0040C177 /* makefile.ios */ = {isa = PBXFileReference; explicitFileType = sourcecode.make; path = makefile.ios; sourceTree = "<group>"; };
+		B3C48062297114F00040C177 /* Emulator.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Emulator.xcodeproj; path = FBNeo/projectfiles/xcode/Emulator.xcodeproj; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVFBNeo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFBNeo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -3555,6 +3621,7 @@
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B379CE9B2971299A00AF0621 /* libfbneo.a in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
@@ -3563,7 +3630,6 @@
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3B3DE10287144D0008A0E2F /* libfbneo.a in Frameworks */,
 				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3574,21 +3640,19 @@
 		B32296AD287835FB00585AD8 /* generated */ = {
 			isa = PBXGroup;
 			children = (
-				B32296AE287835FB00585AD8 /* neo_sprite_func.h */,
-				B32296AF287835FB00585AD8 /* neo_sprite_func_table.h */,
-				B32296B0287835FB00585AD8 /* toa_gp9001_func.h */,
-				B32296B1287835FB00585AD8 /* m68kops.c */,
-				B32296B2287835FB00585AD8 /* driverlist.h */,
-				B32296B3287835FB00585AD8 /* psikyo_tile_func_table.h */,
-				B32296B4287835FB00585AD8 /* psikyo_tile_func.h */,
-				B32296B5287835FB00585AD8 /* cave_tile_func.h */,
-				B32296B6287835FB00585AD8 /* driverlist copy.h */,
-				B32296B7287835FB00585AD8 /* cave_sprite_func.h */,
-				B32296B8287835FB00585AD8 /* cave_sprite_func_table.h */,
-				B32296B9287835FB00585AD8 /* toa_gp9001_func_table.h */,
-				B32296BA287835FB00585AD8 /* pgm_sprite.h */,
-				B32296BB287835FB00585AD8 /* ctv.h */,
-				B32296BC287835FB00585AD8 /* cave_tile_func_table.h */,
+				B3C4805529710A100040C177 /* cave_sprite_func_table.h */,
+				B3C4804F29710A100040C177 /* cave_sprite_func.h */,
+				B3C4804D29710A0F0040C177 /* cave_tile_func_table.h */,
+				B3C4805429710A100040C177 /* cave_tile_func.h */,
+				B3C4805329710A100040C177 /* ctv.h */,
+				B3C4805029710A100040C177 /* driverlist.h */,
+				B3C4804E29710A0F0040C177 /* neo_sprite_func_table.h */,
+				B3C4805229710A100040C177 /* neo_sprite_func.h */,
+				B3C4805729710A100040C177 /* pgm_sprite.h */,
+				B3C4804C29710A0F0040C177 /* psikyo_tile_func_table.h */,
+				B3C4805629710A100040C177 /* psikyo_tile_func.h */,
+				B3C4805829710A110040C177 /* toa_gp9001_func_table.h */,
+				B3C4805129710A100040C177 /* toa_gp9001_func.h */,
 			);
 			path = generated;
 			sourceTree = "<group>";
@@ -3596,6 +3660,7 @@
 		B3B3D1772871354D008A0E2F /* FBNeo */ = {
 			isa = PBXGroup;
 			children = (
+				B3B3D2122871354D008A0E2F /* src */,
 				B3B3D1D72871354D008A0E2F /* .editorconfig */,
 				B3B3D1DB2871354D008A0E2F /* .gitignore */,
 				B3B3D1812871354D008A0E2F /* makefile */,
@@ -3612,13 +3677,13 @@
 				B3B3D1D82871354D008A0E2F /* README.md */,
 				B3B3D17B2871354D008A0E2F /* makefile.mingw */,
 				B3B3D17F2871354D008A0E2F /* makefile.pi */,
+				B3C48061297113DD0040C177 /* makefile.ios */,
 				B3B3D1792871354D008A0E2F /* makefile.sdl */,
 				B3B3D20F2871354D008A0E2F /* makefile.sdl2 */,
 				B3B3D1802871354D008A0E2F /* makefile.vc */,
 				B3B3D1DC2871354D008A0E2F /* .github */,
 				B3B3D1E92871354D008A0E2F /* fbahelpfilesrc */,
 				B3B3D1822871354D008A0E2F /* projectfiles */,
-				B3B3D2122871354D008A0E2F /* src */,
 			);
 			path = FBNeo;
 			sourceTree = "<group>";
@@ -3868,12 +3933,12 @@
 		B3B3D2122871354D008A0E2F /* src */ = {
 			isa = PBXGroup;
 			children = (
+				B3B3D93E28713554008A0E2F /* license.txt */,
 				B3B3D2132871354D008A0E2F /* burn */,
+				B3B3D93F28713554008A0E2F /* burner */,
 				B3B3D68728713551008A0E2F /* cpu */,
 				B3B3D7A528713552008A0E2F /* dep */,
 				B3B3D8BF28713553008A0E2F /* intf */,
-				B3B3D93E28713554008A0E2F /* license.txt */,
-				B3B3D93F28713554008A0E2F /* burner */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -4507,36 +4572,36 @@
 		B3B3D3D12871354F008A0E2F /* toaplan */ = {
 			isa = PBXGroup;
 			children = (
-				B3B3D3D22871354F008A0E2F /* d_mahoudai.cpp */,
-				B3B3D3D32871354F008A0E2F /* d_snowbro2.cpp */,
+				B3B3D3EF2871354F008A0E2F /* d_batrider.cpp */,
+				B3B3D3E02871354F008A0E2F /* d_batsugun.cpp */,
 				B3B3D3D42871354F008A0E2F /* d_battleg.cpp */,
-				B3B3D3D52871354F008A0E2F /* d_tekipaki.cpp */,
-				B3B3D3D62871354F008A0E2F /* d_vfive.cpp */,
-				B3B3D3D72871354F008A0E2F /* d_slapfght.cpp */,
 				B3B3D3D82871354F008A0E2F /* d_bbakraid.cpp */,
-				B3B3D3D92871354F008A0E2F /* d_twincobr.cpp */,
-				B3B3D3DA2871354F008A0E2F /* d_shippumd.cpp */,
+				B3B3D3E52871354F008A0E2F /* d_dogyuun.cpp */,
+				B3B3D3EB2871354F008A0E2F /* d_enmadaio.cpp */,
+				B3B3D3E72871354F008A0E2F /* d_fixeight.cpp */,
 				B3B3D3DB2871354F008A0E2F /* d_ghox.cpp */,
-				B3B3D3DC2871354F008A0E2F /* toaplan.h */,
+				B3B3D3E82871354F008A0E2F /* d_kbash.cpp */,
+				B3B3D3ED2871354F008A0E2F /* d_kbash2.cpp */,
+				B3B3D3D22871354F008A0E2F /* d_mahoudai.cpp */,
+				B3B3D3EC2871354F008A0E2F /* d_pipibibs.cpp */,
+				B3B3D3DA2871354F008A0E2F /* d_shippumd.cpp */,
+				B3B3D3D72871354F008A0E2F /* d_slapfght.cpp */,
+				B3B3D3D32871354F008A0E2F /* d_snowbro2.cpp */,
+				B3B3D3D52871354F008A0E2F /* d_tekipaki.cpp */,
+				B3B3D3E62871354F008A0E2F /* d_toaplan1.cpp */,
+				B3B3D3E42871354F008A0E2F /* d_truxton2.cpp */,
+				B3B3D3D92871354F008A0E2F /* d_twincobr.cpp */,
+				B3B3D3D62871354F008A0E2F /* d_vfive.cpp */,
+				B3B3D3EA2871354F008A0E2F /* d_wardner.cpp */,
 				B3B3D3DD2871354F008A0E2F /* toa_bcu2.cpp */,
 				B3B3D3DE2871354F008A0E2F /* toa_extratext.cpp */,
-				B3B3D3DF2871354F008A0E2F /* toaplan.cpp */,
-				B3B3D3E02871354F008A0E2F /* d_batsugun.cpp */,
-				B3B3D3E12871354F008A0E2F /* toa_palette.cpp */,
-				B3B3D3E22871354F008A0E2F /* toa_gp9001_render.h */,
-				B3B3D3E32871354F008A0E2F /* toa_extratext.h */,
-				B3B3D3E42871354F008A0E2F /* d_truxton2.cpp */,
-				B3B3D3E52871354F008A0E2F /* d_dogyuun.cpp */,
-				B3B3D3E62871354F008A0E2F /* d_toaplan1.cpp */,
-				B3B3D3E72871354F008A0E2F /* d_fixeight.cpp */,
-				B3B3D3E82871354F008A0E2F /* d_kbash.cpp */,
 				B3B3D3E92871354F008A0E2F /* toa_gp9001.cpp */,
-				B3B3D3EA2871354F008A0E2F /* d_wardner.cpp */,
-				B3B3D3EB2871354F008A0E2F /* d_enmadaio.cpp */,
-				B3B3D3EC2871354F008A0E2F /* d_pipibibs.cpp */,
-				B3B3D3ED2871354F008A0E2F /* d_kbash2.cpp */,
+				B3B3D3E12871354F008A0E2F /* toa_palette.cpp */,
+				B3B3D3DF2871354F008A0E2F /* toaplan.cpp */,
 				B3B3D3EE2871354F008A0E2F /* toaplan1.cpp */,
-				B3B3D3EF2871354F008A0E2F /* d_batrider.cpp */,
+				B3B3D3E32871354F008A0E2F /* toa_extratext.h */,
+				B3B3D3E22871354F008A0E2F /* toa_gp9001_render.h */,
+				B3B3D3DC2871354F008A0E2F /* toaplan.h */,
 			);
 			path = toaplan;
 			sourceTree = "<group>";
@@ -5888,10 +5953,10 @@
 		B3B3D7CC28713552008A0E2F /* libs */ = {
 			isa = PBXGroup;
 			children = (
-				B3B3D7CD28713552008A0E2F /* libpng */,
 				B3B3D7EA28713553008A0E2F /* lib7z */,
-				B3B3D84928713553008A0E2F /* zlib */,
+				B3B3D7CD28713552008A0E2F /* libpng */,
 				B3B3D86628713553008A0E2F /* lua */,
+				B3B3D84928713553008A0E2F /* zlib */,
 			);
 			path = libs;
 			sourceTree = "<group>";
@@ -5941,100 +6006,100 @@
 		B3B3D7EA28713553008A0E2F /* lib7z */ = {
 			isa = PBXGroup;
 			children = (
-				B3B3D7EB28713553008A0E2F /* Lzma2Dec.c */,
-				B3B3D7EC28713553008A0E2F /* LzHash.h */,
-				B3B3D7ED28713553008A0E2F /* LzmaEnc.c */,
-				B3B3D7EE28713553008A0E2F /* Ppmd7Dec.c */,
-				B3B3D7EF28713553008A0E2F /* Aes.c */,
-				B3B3D7F028713553008A0E2F /* Ppmd8.h */,
-				B3B3D7F128713553008A0E2F /* LzFindMt.c */,
-				B3B3D7F228713553008A0E2F /* 7zTypes.h */,
-				B3B3D7F328713553008A0E2F /* HuffEnc.h */,
-				B3B3D7F428713553008A0E2F /* XzDec.c */,
-				B3B3D7F528713553008A0E2F /* MtDec.c */,
-				B3B3D7F628713553008A0E2F /* MtCoder.c */,
-				B3B3D7F728713553008A0E2F /* Bcj2.c */,
-				B3B3D7F828713553008A0E2F /* Compiler.h */,
-				B3B3D7F928713553008A0E2F /* LzFind.c */,
-				B3B3D7FA28713553008A0E2F /* XzCrc64.h */,
-				B3B3D7FB28713553008A0E2F /* Precomp.h */,
-				B3B3D7FC28713553008A0E2F /* DllSecur.c */,
-				B3B3D7FD28713553008A0E2F /* CpuArch.h */,
-				B3B3D7FE28713553008A0E2F /* Sort.c */,
-				B3B3D7FF28713553008A0E2F /* 7zCrc.h */,
-				B3B3D80028713553008A0E2F /* Ppmd7.c */,
-				B3B3D80128713553008A0E2F /* Delta.h */,
-				B3B3D80228713553008A0E2F /* Bra.c */,
-				B3B3D80328713553008A0E2F /* BwtSort.c */,
-				B3B3D80428713553008A0E2F /* 7zFile.h */,
-				B3B3D80528713553008A0E2F /* Bra86.c */,
-				B3B3D80628713553008A0E2F /* Sha1.c */,
-				B3B3D80728713553008A0E2F /* 7zArcIn.c */,
 				B3B3D80828713553008A0E2F /* 7zAlloc.c */,
-				B3B3D80928713553008A0E2F /* Sha256.h */,
-				B3B3D80A28713553008A0E2F /* XzIn.c */,
-				B3B3D80B28713553008A0E2F /* XzEnc.c */,
-				B3B3D80C28713553008A0E2F /* Lzma2DecMt.c */,
-				B3B3D80D28713553008A0E2F /* Threads.h */,
-				B3B3D80E28713553008A0E2F /* LzmaLib.h */,
-				B3B3D80F28713553008A0E2F /* 7zBuf.h */,
-				B3B3D81028713553008A0E2F /* 7z.h */,
-				B3B3D81128713553008A0E2F /* Alloc.c */,
-				B3B3D81228713553008A0E2F /* Xz.h */,
-				B3B3D81328713553008A0E2F /* LzmaDec.c */,
-				B3B3D81428713553008A0E2F /* Lzma2Enc.c */,
-				B3B3D81528713553008A0E2F /* Ppmd7Enc.c */,
-				B3B3D81628713553008A0E2F /* HuffEnc.c */,
-				B3B3D81728713553008A0E2F /* Ppmd8.c */,
-				B3B3D81828713553008A0E2F /* LzFindMt.h */,
-				B3B3D81928713553008A0E2F /* 7zDec.c */,
-				B3B3D81A28713553008A0E2F /* Lzma86.h */,
-				B3B3D81B28713553008A0E2F /* LzmaEnc.h */,
-				B3B3D81C28713553008A0E2F /* Lzma2Dec.h */,
-				B3B3D81D28713553008A0E2F /* Ppmd8Enc.c */,
-				B3B3D81E28713553008A0E2F /* Aes.h */,
-				B3B3D81F28713553008A0E2F /* Blake2.h */,
-				B3B3D82028713553008A0E2F /* DllSecur.h */,
-				B3B3D82128713553008A0E2F /* 7zBuf2.c */,
-				B3B3D82228713553008A0E2F /* XzCrc64.c */,
-				B3B3D82328713553008A0E2F /* LzFind.h */,
-				B3B3D82428713553008A0E2F /* BraIA64.c */,
-				B3B3D82528713553008A0E2F /* Lzma86Dec.c */,
-				B3B3D82628713553008A0E2F /* 7zStream.c */,
-				B3B3D82728713553008A0E2F /* Bcj2.h */,
-				B3B3D82828713553008A0E2F /* 7zVersion.rc */,
-				B3B3D82928713553008A0E2F /* Ppmd.h */,
-				B3B3D82A28713553008A0E2F /* MtDec.h */,
-				B3B3D82B28713553008A0E2F /* MtCoder.h */,
-				B3B3D82C28713553008A0E2F /* Sha1.h */,
-				B3B3D82D28713553008A0E2F /* Sha256.c */,
-				B3B3D82E28713553008A0E2F /* 7zAlloc.h */,
-				B3B3D82F28713553008A0E2F /* Delta.c */,
-				B3B3D83028713553008A0E2F /* 7zVersion.h */,
-				B3B3D83128713553008A0E2F /* BwtSort.h */,
-				B3B3D83228713553008A0E2F /* 7zFile.c */,
-				B3B3D83328713553008A0E2F /* Bra.h */,
-				B3B3D83428713553008A0E2F /* 7zCrc.c */,
-				B3B3D83528713553008A0E2F /* Blake2s.c */,
-				B3B3D83628713553008A0E2F /* Sort.h */,
-				B3B3D83728713553008A0E2F /* AesOpt.c */,
-				B3B3D83828713553008A0E2F /* RotateDefs.h */,
-				B3B3D83928713553008A0E2F /* Lzma86Enc.c */,
-				B3B3D83A28713553008A0E2F /* Ppmd7.h */,
-				B3B3D83B28713553008A0E2F /* CpuArch.c */,
-				B3B3D83C28713553008A0E2F /* Lzma2Enc.h */,
-				B3B3D83D28713553008A0E2F /* Bcj2Enc.c */,
-				B3B3D83E28713553008A0E2F /* LzmaDec.h */,
-				B3B3D83F28713553008A0E2F /* XzCrc64Opt.c */,
-				B3B3D84028713553008A0E2F /* Ppmd8Dec.c */,
-				B3B3D84128713553008A0E2F /* Xz.c */,
-				B3B3D84228713553008A0E2F /* 7zCrcOpt.c */,
-				B3B3D84328713553008A0E2F /* Alloc.h */,
-				B3B3D84428713553008A0E2F /* Threads.c */,
-				B3B3D84528713553008A0E2F /* Lzma2DecMt.h */,
+				B3B3D80728713553008A0E2F /* 7zArcIn.c */,
 				B3B3D84628713553008A0E2F /* 7zBuf.c */,
+				B3B3D82128713553008A0E2F /* 7zBuf2.c */,
+				B3B3D83428713553008A0E2F /* 7zCrc.c */,
+				B3B3D84228713553008A0E2F /* 7zCrcOpt.c */,
+				B3B3D81928713553008A0E2F /* 7zDec.c */,
+				B3B3D83228713553008A0E2F /* 7zFile.c */,
+				B3B3D82628713553008A0E2F /* 7zStream.c */,
+				B3B3D7EF28713553008A0E2F /* Aes.c */,
+				B3B3D83728713553008A0E2F /* AesOpt.c */,
+				B3B3D81128713553008A0E2F /* Alloc.c */,
+				B3B3D7F728713553008A0E2F /* Bcj2.c */,
+				B3B3D83D28713553008A0E2F /* Bcj2Enc.c */,
+				B3B3D83528713553008A0E2F /* Blake2s.c */,
+				B3B3D80228713553008A0E2F /* Bra.c */,
+				B3B3D80528713553008A0E2F /* Bra86.c */,
+				B3B3D82428713553008A0E2F /* BraIA64.c */,
+				B3B3D80328713553008A0E2F /* BwtSort.c */,
+				B3B3D83B28713553008A0E2F /* CpuArch.c */,
+				B3B3D82F28713553008A0E2F /* Delta.c */,
+				B3B3D7FC28713553008A0E2F /* DllSecur.c */,
+				B3B3D81628713553008A0E2F /* HuffEnc.c */,
+				B3B3D7F928713553008A0E2F /* LzFind.c */,
+				B3B3D7F128713553008A0E2F /* LzFindMt.c */,
+				B3B3D7EB28713553008A0E2F /* Lzma2Dec.c */,
+				B3B3D80C28713553008A0E2F /* Lzma2DecMt.c */,
+				B3B3D81428713553008A0E2F /* Lzma2Enc.c */,
+				B3B3D82528713553008A0E2F /* Lzma86Dec.c */,
+				B3B3D83928713553008A0E2F /* Lzma86Enc.c */,
+				B3B3D81328713553008A0E2F /* LzmaDec.c */,
+				B3B3D7ED28713553008A0E2F /* LzmaEnc.c */,
 				B3B3D84728713553008A0E2F /* LzmaLib.c */,
+				B3B3D7F628713553008A0E2F /* MtCoder.c */,
+				B3B3D7F528713553008A0E2F /* MtDec.c */,
+				B3B3D80028713553008A0E2F /* Ppmd7.c */,
+				B3B3D7EE28713553008A0E2F /* Ppmd7Dec.c */,
+				B3B3D81528713553008A0E2F /* Ppmd7Enc.c */,
+				B3B3D81728713553008A0E2F /* Ppmd8.c */,
+				B3B3D84028713553008A0E2F /* Ppmd8Dec.c */,
+				B3B3D81D28713553008A0E2F /* Ppmd8Enc.c */,
+				B3B3D80628713553008A0E2F /* Sha1.c */,
+				B3B3D82D28713553008A0E2F /* Sha256.c */,
+				B3B3D7FE28713553008A0E2F /* Sort.c */,
+				B3B3D84428713553008A0E2F /* Threads.c */,
+				B3B3D84128713553008A0E2F /* Xz.c */,
+				B3B3D82228713553008A0E2F /* XzCrc64.c */,
+				B3B3D83F28713553008A0E2F /* XzCrc64Opt.c */,
+				B3B3D7F428713553008A0E2F /* XzDec.c */,
+				B3B3D80B28713553008A0E2F /* XzEnc.c */,
+				B3B3D80A28713553008A0E2F /* XzIn.c */,
+				B3B3D81028713553008A0E2F /* 7z.h */,
+				B3B3D82E28713553008A0E2F /* 7zAlloc.h */,
+				B3B3D80F28713553008A0E2F /* 7zBuf.h */,
+				B3B3D7FF28713553008A0E2F /* 7zCrc.h */,
+				B3B3D80428713553008A0E2F /* 7zFile.h */,
+				B3B3D7F228713553008A0E2F /* 7zTypes.h */,
+				B3B3D83028713553008A0E2F /* 7zVersion.h */,
+				B3B3D81E28713553008A0E2F /* Aes.h */,
+				B3B3D84328713553008A0E2F /* Alloc.h */,
+				B3B3D82728713553008A0E2F /* Bcj2.h */,
+				B3B3D81F28713553008A0E2F /* Blake2.h */,
+				B3B3D83328713553008A0E2F /* Bra.h */,
+				B3B3D83128713553008A0E2F /* BwtSort.h */,
+				B3B3D7F828713553008A0E2F /* Compiler.h */,
+				B3B3D7FD28713553008A0E2F /* CpuArch.h */,
+				B3B3D80128713553008A0E2F /* Delta.h */,
+				B3B3D82028713553008A0E2F /* DllSecur.h */,
+				B3B3D7F328713553008A0E2F /* HuffEnc.h */,
+				B3B3D82328713553008A0E2F /* LzFind.h */,
+				B3B3D81828713553008A0E2F /* LzFindMt.h */,
+				B3B3D7EC28713553008A0E2F /* LzHash.h */,
+				B3B3D81C28713553008A0E2F /* Lzma2Dec.h */,
+				B3B3D84528713553008A0E2F /* Lzma2DecMt.h */,
+				B3B3D83C28713553008A0E2F /* Lzma2Enc.h */,
+				B3B3D81A28713553008A0E2F /* Lzma86.h */,
+				B3B3D83E28713553008A0E2F /* LzmaDec.h */,
+				B3B3D81B28713553008A0E2F /* LzmaEnc.h */,
+				B3B3D80E28713553008A0E2F /* LzmaLib.h */,
+				B3B3D82B28713553008A0E2F /* MtCoder.h */,
+				B3B3D82A28713553008A0E2F /* MtDec.h */,
+				B3B3D82928713553008A0E2F /* Ppmd.h */,
+				B3B3D83A28713553008A0E2F /* Ppmd7.h */,
+				B3B3D7F028713553008A0E2F /* Ppmd8.h */,
+				B3B3D7FB28713553008A0E2F /* Precomp.h */,
+				B3B3D83828713553008A0E2F /* RotateDefs.h */,
+				B3B3D82C28713553008A0E2F /* Sha1.h */,
+				B3B3D80928713553008A0E2F /* Sha256.h */,
+				B3B3D83628713553008A0E2F /* Sort.h */,
+				B3B3D80D28713553008A0E2F /* Threads.h */,
+				B3B3D81228713553008A0E2F /* Xz.h */,
+				B3B3D7FA28713553008A0E2F /* XzCrc64.h */,
 				B3B3D84828713553008A0E2F /* XzEnc.h */,
+				B3B3D82828713553008A0E2F /* 7zVersion.rc */,
 			);
 			path = lib7z;
 			sourceTree = "<group>";
@@ -6844,6 +6909,8 @@
 			children = (
 				B3B3DA25287136A0008A0E2F /* PVFBNeoCore.h */,
 				B3B3DA26287136A0008A0E2F /* PVFBNeoCore.mm */,
+				B379CEA329712BFA00AF0621 /* PVFBNeoSupport.h */,
+				B379CEA129712A9500AF0621 /* PVFBNeoSupport.mm */,
 			);
 			path = PVFBNeoCore;
 			sourceTree = "<group>";
@@ -8164,18 +8231,28 @@
 			path = jni;
 			sourceTree = "<group>";
 		};
+		B3C48063297114F00040C177 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B3C48067297114F00040C177 /* FinalBurn Neo.app */,
+				B3C480B6297115700040C177 /* libfbneo.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
-				B3B3D1772871354D008A0E2F /* FBNeo */,
+				B3C48062297114F00040C177 /* Emulator.xcodeproj */,
 				B3B3DA24287136A0008A0E2F /* PVFBNeoCore */,
+				B3B3D1772871354D008A0E2F /* FBNeo */,
+				B3C7621B20783242009950E4 /* Frameworks */,
+				B3C7621120783162009950E4 /* Products */,
 				B3B3DBC828713D66008A0E2F /* PVFBNeo.h */,
 				B3B3DBC928713D66008A0E2F /* PVFBNeo-Prefix.pch */,
 				B3B3DBCA28713D66008A0E2F /* Core.plist */,
 				B3B3DBC728713D66008A0E2F /* Info.plist */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
-				B3C7621B20783242009950E4 /* Frameworks */,
-				B3C7621120783162009950E4 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -8274,8 +8351,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B3B3DE12287144D0008A0E2F /* PBXTargetDependency */,
-				B3B3DE15287144D0008A0E2F /* PBXTargetDependency */,
+				B322A9882971479E00F0D876 /* PBXTargetDependency */,
 			);
 			name = PVFBNeo;
 			productName = PVReicast;
@@ -8296,6 +8372,9 @@
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
+					};
+					B322A97D2971451800F0D876 = {
+						CreatedOnToolsVersion = 14.2;
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
@@ -8324,14 +8403,38 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B3C48063297114F00040C177 /* Products */;
+					ProjectRef = B3C48062297114F00040C177 /* Emulator.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVFBNeo */,
 				B3344B522859E088006E6B3A /* fbneo-libretro */,
 				B30178D2207C901D0051B93D /* fbneo */,
+				B322A97D2971451800F0D876 /* fbneo-dylb */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B3C48067297114F00040C177 /* FinalBurn Neo.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "FinalBurn Neo.app";
+			remoteRef = B3C48066297114F00040C177 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3C480B6297115700040C177 /* libfbneo.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libfbneo.a;
+			remoteRef = B3C480B5297115700040C177 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B3C7620E20783162009950E4 /* Resources */ = {
@@ -8344,6 +8447,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		B322A9832971451F00F0D876 /* Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Build;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/FBNeo/fbneo.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\n#cd ${SRCROOT}/beetle-psx\n#git pull origin master\n#git checkout origin/master\n#git submodule update --init --recursive\n\n# Create Build Environment\n#if [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n#    mkdir ${SRCROOT}/cmake/build\n#fi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\n#cp -pR ${SRCROOT}/beetle-psx/* ${SRCROOT}/cmake/build/\n#cp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd \"${SRCROOT}/FBNeo\" #/cmake/build/\n#make clean\nmake -j4 ios\n";
+		};
+		B322A9842971452000F0D876 /* Copy */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/FBNeo/fbneo.dylib",
+			);
+			name = Copy;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/mupen64plus_next_libretro_ios.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ${SRCROOT}/FBNeo\n #/cmake/build/\n\ncp fbneo.dylib.dylib \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		B30178CF207C901D0051B93D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -8351,9 +8496,11 @@
 			files = (
 				B322931D2878322B00585AD8 /* williams_adpcm.cpp in Sources */,
 				B32292212878322B00585AD8 /* d_dynduke.cpp in Sources */,
+				B3C4807F297115700040C177 /* pngrio.c in Sources */,
 				B3B3DADB28713BFA008A0E2F /* pce.cpp in Sources */,
 				B3B3DDEF28714491008A0E2F /* mcs51.cpp in Sources */,
 				B3B3DA42287136EC008A0E2F /* sknsspr.cpp in Sources */,
+				B3C4807D297115700040C177 /* FBScanner.mm in Sources */,
 				B3B3DB4428713C78008A0E2F /* d_rocnrope.cpp in Sources */,
 				B32293062878322B00585AD8 /* sf2mdt_snd.cpp in Sources */,
 				B32293522878322B00585AD8 /* d_arabian.cpp in Sources */,
@@ -8365,6 +8512,7 @@
 				B32291EA2878322A00585AD8 /* williams_cvsd.cpp in Sources */,
 				B32292CE2878322B00585AD8 /* d_suprloco.cpp in Sources */,
 				B32292F02878322B00585AD8 /* d_supduck.cpp in Sources */,
+				B3C4809E297115700040C177 /* pngpread.c in Sources */,
 				B3B3DDF028714491008A0E2F /* z80ctc.cpp in Sources */,
 				B32291F12878322A00585AD8 /* d_donpachi.cpp in Sources */,
 				B3B3DAB928713711008A0E2F /* burn_ym2610.cpp in Sources */,
@@ -8375,15 +8523,17 @@
 				B3B3DB1528713C77008A0E2F /* d_mikie.cpp in Sources */,
 				B32291F52878322A00585AD8 /* d_dodonpachi.cpp in Sources */,
 				B3B3DAE928713C2A008A0E2F /* gal_stars.cpp in Sources */,
-				B32291DA2878322A00585AD8 /* d_twincobr.cpp in Sources */,
+				B3C48090297115700040C177 /* d_dogyuun.cpp in Sources */,
 				B32291BB2878322A00585AD8 /* d_timelimt.cpp in Sources */,
 				B32291A62878322A00585AD8 /* d_wallc.cpp in Sources */,
 				B3B3DB2528713C77008A0E2F /* k007452.cpp in Sources */,
 				B32292672878322B00585AD8 /* d_bagman.cpp in Sources */,
 				B32291E02878322A00585AD8 /* smspio.cpp in Sources */,
+				B3C480B3297115700040C177 /* SDLAudioEngine.m in Sources */,
 				B3B3DAA728713710008A0E2F /* flower.cpp in Sources */,
 				B32292002878322A00585AD8 /* d_mcr3.cpp in Sources */,
 				B32292CC2878322B00585AD8 /* sega_315_5195.cpp in Sources */,
+				B3C48098297115700040C177 /* ddt3x.cpp in Sources */,
 				B32291C32878322A00585AD8 /* cpsrd.cpp in Sources */,
 				B3B3DAE328713C21008A0E2F /* d_cps3.cpp in Sources */,
 				B3B3DB6628713C9D008A0E2F /* d_dreambal.cpp in Sources */,
@@ -8397,7 +8547,7 @@
 				B32291D92878322A00585AD8 /* d_raiden.cpp in Sources */,
 				B3B3DA6E287136EC008A0E2F /* eeprom.cpp in Sources */,
 				B3B3DB4C28713C78008A0E2F /* d_finalzr.cpp in Sources */,
-				B32292D22878322B00585AD8 /* d_batsugun.cpp in Sources */,
+				B3C48097297115700040C177 /* statec.cpp in Sources */,
 				B3B3DDEA28714491008A0E2F /* tlcs900.cpp in Sources */,
 				B3B3DDF328714491008A0E2F /* z80.cpp in Sources */,
 				B32292872878322B00585AD8 /* d_safarir.cpp in Sources */,
@@ -8413,7 +8563,7 @@
 				B32292772878322B00585AD8 /* tc0110pcr.cpp in Sources */,
 				B3B3DA60287136EC008A0E2F /* midsg.cpp in Sources */,
 				B32292B02878322B00585AD8 /* d_popeye.cpp in Sources */,
-				B32291CD2878322A00585AD8 /* d_vfive.cpp in Sources */,
+				B3C48075297115700040C177 /* gamc.cpp in Sources */,
 				B3B3DAFD28713C77008A0E2F /* d_bishi.cpp in Sources */,
 				B322930F2878322B00585AD8 /* tc0640fio.cpp in Sources */,
 				B32293332878322B00585AD8 /* d_ddragon3.cpp in Sources */,
@@ -8433,13 +8583,12 @@
 				B3B3DB2E28713C77008A0E2F /* k054338.cpp in Sources */,
 				B32291F62878322A00585AD8 /* d_bublbobl.cpp in Sources */,
 				B32292852878322B00585AD8 /* d_cloud9.cpp in Sources */,
-				B32292342878322B00585AD8 /* d_slapfght.cpp in Sources */,
 				B3B3DA55287136EC008A0E2F /* 8255ppi.cpp in Sources */,
 				B322920F2878322B00585AD8 /* d_snk6502.cpp in Sources */,
 				B3B3DB6228713C9D008A0E2F /* d_actfancr.cpp in Sources */,
-				B322931F2878322B00585AD8 /* d_battleg.cpp in Sources */,
+				B3C48087297115700040C177 /* 7zBuf2.c in Sources */,
 				B322936C2878322B00585AD8 /* d_ssrj.cpp in Sources */,
-				B32291B62878322A00585AD8 /* d_kbash.cpp in Sources */,
+				B379CEA829712F9C00AF0621 /* 7zFile.c in Sources */,
 				B32292142878322B00585AD8 /* d_aeroboto.cpp in Sources */,
 				B3B3DA46287136EC008A0E2F /* pandora.cpp in Sources */,
 				B32292BD2878322B00585AD8 /* d_himesiki.cpp in Sources */,
@@ -8447,7 +8596,9 @@
 				B32293682878322B00585AD8 /* psikyosh_render.cpp in Sources */,
 				B3B3DA8528713710008A0E2F /* fmopl.c in Sources */,
 				B32292B82878322B00585AD8 /* d_aztarac.cpp in Sources */,
+				B3C48096297115700040C177 /* d_batsugun.cpp in Sources */,
 				B3B3DA65287136EC008A0E2F /* decobsmt.cpp in Sources */,
+				B379CEA629712F9C00AF0621 /* 7zCrc.c in Sources */,
 				B3B3DDFD28714491008A0E2F /* z180.cpp in Sources */,
 				B32292A42878322B00585AD8 /* d_pacman.cpp in Sources */,
 				B3B3DB3A28713C78008A0E2F /* d_wecleman.cpp in Sources */,
@@ -8477,7 +8628,6 @@
 				B32293042878322B00585AD8 /* d_jollyjgr.cpp in Sources */,
 				B3B3DDF828714491008A0E2F /* cop1.cpp in Sources */,
 				B3B3DBC428713CE3008A0E2F /* d_xybots.cpp in Sources */,
-				B32291752878322A00585AD8 /* toaplan.cpp in Sources */,
 				B3B3DAB728713711008A0E2F /* dac.cpp in Sources */,
 				B3B3DB8028713C9E008A0E2F /* d_kchamp.cpp in Sources */,
 				B3B3DA8928713710008A0E2F /* c352.cpp in Sources */,
@@ -8485,6 +8635,7 @@
 				B32292972878322B00585AD8 /* d_macrossp.cpp in Sources */,
 				B32291AA2878322A00585AD8 /* d_crbaloon.cpp in Sources */,
 				B32291DE2878322A00585AD8 /* kabuki.cpp in Sources */,
+				B3C480AC297115700040C177 /* pngerror.c in Sources */,
 				B322919C2878322A00585AD8 /* d_mcr.cpp in Sources */,
 				B3B3DB6F28713C9D008A0E2F /* d_dietgogo.cpp in Sources */,
 				B32293582878322B00585AD8 /* d_bogeyman.cpp in Sources */,
@@ -8497,10 +8648,10 @@
 				B3B3DB0B28713C77008A0E2F /* d_simpsons.cpp in Sources */,
 				B32292B62878322B00585AD8 /* d_terracre.cpp in Sources */,
 				B32292932878322B00585AD8 /* d_ssozumo.cpp in Sources */,
+				B3C48044297106940040C177 /* cong.cpp in Sources */,
 				B32292822878322B00585AD8 /* d_shangha3.cpp in Sources */,
 				B3B3DA32287136D6008A0E2F /* burn_led.cpp in Sources */,
 				B32292EA2878322B00585AD8 /* d_kyugo.cpp in Sources */,
-				B32292AE2878322B00585AD8 /* d_fixeight.cpp in Sources */,
 				B32292C52878322B00585AD8 /* cps_mem.cpp in Sources */,
 				B32292132878322B00585AD8 /* d_munchmo.cpp in Sources */,
 				B3B3DA51287136EC008A0E2F /* avgdvg.cpp in Sources */,
@@ -8511,6 +8662,7 @@
 				B32292D72878322B00585AD8 /* cave_sprite.cpp in Sources */,
 				B3B3DA7728713710008A0E2F /* tms5110.cpp in Sources */,
 				B32292FD2878322B00585AD8 /* d_nmk16.cpp in Sources */,
+				B3C480B0297115700040C177 /* misc.cpp in Sources */,
 				B3B3DE0728714491008A0E2F /* tms34010.cpp in Sources */,
 				B322921F2878322B00585AD8 /* ctv.cpp in Sources */,
 				B3B3DB7928713C9D008A0E2F /* d_dblewing.cpp in Sources */,
@@ -8544,6 +8696,7 @@
 				B32292D62878322B00585AD8 /* d_segag80v.cpp in Sources */,
 				B3B3DA9228713710008A0E2F /* es5506.cpp in Sources */,
 				B3B3DACB28713B3B008A0E2F /* tms34_intf.cpp in Sources */,
+				B379CEA529712F2100AF0621 /* LzmaDec.c in Sources */,
 				B3B3DAD928713B9E008A0E2F /* neogeo.cpp in Sources */,
 				B32292F32878322B00585AD8 /* d_thedeep.cpp in Sources */,
 				B3B3DB4D28713C78008A0E2F /* d_pooyan.cpp in Sources */,
@@ -8552,7 +8705,6 @@
 				B322915F2878322A00585AD8 /* d_foodf.cpp in Sources */,
 				B3B3DE0228714491008A0E2F /* sh2.cpp in Sources */,
 				B322925C2878322B00585AD8 /* d_thepit.cpp in Sources */,
-				B32291B02878322A00585AD8 /* d_batrider.cpp in Sources */,
 				B32292902878322B00585AD8 /* d_dacholer.cpp in Sources */,
 				B3B3DB1E28713C77008A0E2F /* d_fastlane.cpp in Sources */,
 				B32291C82878322A00585AD8 /* d_dkong.cpp in Sources */,
@@ -8561,7 +8713,6 @@
 				B3B3DB3328713C77008A0E2F /* d_surpratk.cpp in Sources */,
 				B3B3DB5128713C78008A0E2F /* d_jailbrek.cpp in Sources */,
 				B3B3DA3E287136EC008A0E2F /* mathbox.cpp in Sources */,
-				B32291DD2878322A00585AD8 /* d_ghox.cpp in Sources */,
 				B3B3DA5E287136EC008A0E2F /* seibusnd.cpp in Sources */,
 				B3B3DB7028713C9D008A0E2F /* deco146.cpp in Sources */,
 				B32292E12878322B00585AD8 /* d_skyfox.cpp in Sources */,
@@ -8570,6 +8721,7 @@
 				B322935B2878322B00585AD8 /* d_eolith.cpp in Sources */,
 				B32291822878322A00585AD8 /* d_dribling.cpp in Sources */,
 				B322930B2878322B00585AD8 /* d_4enraya.cpp in Sources */,
+				B379CEA929712F9C00AF0621 /* 7zArcIn.c in Sources */,
 				B32292ED2878322B00585AD8 /* d_gunbuster.cpp in Sources */,
 				B322927F2878322B00585AD8 /* ps_m.cpp in Sources */,
 				B32291B52878322A00585AD8 /* d_rpunch.cpp in Sources */,
@@ -8580,21 +8732,24 @@
 				B322921A2878322B00585AD8 /* d_warpsped.cpp in Sources */,
 				B3B3DB3F28713C78008A0E2F /* k051960.cpp in Sources */,
 				B32292612878322B00585AD8 /* d_ms32.cpp in Sources */,
-				B32292282878322B00585AD8 /* toa_gp9001.cpp in Sources */,
 				B32291622878322A00585AD8 /* d_qbert.cpp in Sources */,
 				B322936E2878322B00585AD8 /* d_alpha68k.cpp in Sources */,
 				B3B3DB6B28713C9D008A0E2F /* d_decocass.cpp in Sources */,
 				B32293572878322B00585AD8 /* pgm_draw.cpp in Sources */,
 				B32291F92878322A00585AD8 /* d_namcos1.cpp in Sources */,
 				B32293562878322B00585AD8 /* tc0140syt.cpp in Sources */,
+				B3C48084297115700040C177 /* compress.c in Sources */,
 				B32291C22878322A00585AD8 /* d_go2000.cpp in Sources */,
+				B3C48081297115700040C177 /* FBAboutController.m in Sources */,
 				B322925A2878322B00585AD8 /* d_cischeat.cpp in Sources */,
 				B32293772878322B00585AD8 /* d_taitoz.cpp in Sources */,
 				B32291F82878322A00585AD8 /* d_cybertnk.cpp in Sources */,
 				B32291ED2878322A00585AD8 /* d_vicdual.cpp in Sources */,
 				B3B3DB0628713C77008A0E2F /* d_mainevt.cpp in Sources */,
 				B32292472878322B00585AD8 /* d_kickgoal.cpp in Sources */,
+				B3C48049297106940040C177 /* luaengine.cpp in Sources */,
 				B32291992878322A00585AD8 /* d_ladybug.cpp in Sources */,
+				B3C4809D297115700040C177 /* pngwutil.c in Sources */,
 				B32292F62878322B00585AD8 /* sys16_gfx.cpp in Sources */,
 				B3B3DA9D28713710008A0E2F /* burn_y8950.cpp in Sources */,
 				B3B3DB2A28713C77008A0E2F /* d_labyrunr.cpp in Sources */,
@@ -8627,6 +8782,7 @@
 				B3B3DB4228713C78008A0E2F /* d_contra.cpp in Sources */,
 				B32292D12878322B00585AD8 /* d_pwrinst2.cpp in Sources */,
 				B32291772878322A00585AD8 /* d_metro.cpp in Sources */,
+				B3C480AE297115700040C177 /* NSString+Etc.m in Sources */,
 				B3B3DB8328713C9E008A0E2F /* d_progolf.cpp in Sources */,
 				B32291C42878322A00585AD8 /* d_pengadvb.cpp in Sources */,
 				B3B3DA62287136EC008A0E2F /* nmk004.cpp in Sources */,
@@ -8643,6 +8799,7 @@
 				B3B3DA57287136EC008A0E2F /* v3021.cpp in Sources */,
 				B3B3DB2C28713C77008A0E2F /* d_ultraman.cpp in Sources */,
 				B3B3DA36287136D6008A0E2F /* vector.cpp in Sources */,
+				B3C4809F297115700040C177 /* filter_neon.S in Sources */,
 				B3B3DB0728713C77008A0E2F /* d_thunderx.cpp in Sources */,
 				B3B3DA9728713710008A0E2F /* k053260.cpp in Sources */,
 				B3B3DACD28713B3B008A0E2F /* pic16c5x_intf.cpp in Sources */,
@@ -8661,11 +8818,10 @@
 				B3B3DA9B28713710008A0E2F /* burn_ym3526.cpp in Sources */,
 				B3B3DB6928713C9D008A0E2F /* d_vaportra.cpp in Sources */,
 				B32292652878322B00585AD8 /* pgm_sprite_create.cpp in Sources */,
-				B32291D12878322A00585AD8 /* toa_palette.cpp in Sources */,
 				B3B3DB5328713C78008A0E2F /* d_hcastle.cpp in Sources */,
-				B32292B22878322B00585AD8 /* toa_bcu2.cpp in Sources */,
 				B32293502878322B00585AD8 /* d_suna16.cpp in Sources */,
 				B3B3DB7F28713C9E008A0E2F /* d_deco32.cpp in Sources */,
+				B3C48095297115700040C177 /* d_batrider.cpp in Sources */,
 				B3B3DA7528713710008A0E2F /* k051649.cpp in Sources */,
 				B3B3DAD428713B9E008A0E2F /* neo_palette.cpp in Sources */,
 				B32292592878322B00585AD8 /* d_ccastles.cpp in Sources */,
@@ -8682,6 +8838,7 @@
 				B32292162878322B00585AD8 /* smstms.cpp in Sources */,
 				B32291952878322A00585AD8 /* d_xbrd.cpp in Sources */,
 				B3B3DA8628713710008A0E2F /* burn_ym3812.cpp in Sources */,
+				B3C48083297115700040C177 /* media.cpp in Sources */,
 				B32291572878322A00585AD8 /* fd1089.cpp in Sources */,
 				B32291922878322A00585AD8 /* d_cop01.cpp in Sources */,
 				B32292B72878322B00585AD8 /* d_wc90b.cpp in Sources */,
@@ -8691,6 +8848,7 @@
 				B32293052878322B00585AD8 /* d_suna8.cpp in Sources */,
 				B3B3DB2428713C77008A0E2F /* d_nemesis.cpp in Sources */,
 				B32296A1287833F700585AD8 /* lowpass2.cpp in Sources */,
+				B3C48089297115700040C177 /* infback.c in Sources */,
 				B3B3DADE28713BFA008A0E2F /* d_nes.cpp in Sources */,
 				B32292582878322B00585AD8 /* d_toki.cpp in Sources */,
 				B32292DB2878322B00585AD8 /* d_lasso.cpp in Sources */,
@@ -8699,6 +8857,8 @@
 				B322924A2878322B00585AD8 /* d_psikyosh.cpp in Sources */,
 				B322931A2878322B00585AD8 /* d_blueprnt.cpp in Sources */,
 				B32292AF2878322B00585AD8 /* qs.cpp in Sources */,
+				B3C480AB297115700040C177 /* stated.cpp in Sources */,
+				B3C4805929710A3B0040C177 /* luasav.cpp in Sources */,
 				B322934C2878322B00585AD8 /* d_bigstrkb.cpp in Sources */,
 				B3B3DB7A28713C9E008A0E2F /* d_sshangha.cpp in Sources */,
 				B32291932878322A00585AD8 /* d_seta.cpp in Sources */,
@@ -8717,13 +8877,13 @@
 				B32293482878322B00585AD8 /* midwunit.cpp in Sources */,
 				B322915B2878322A00585AD8 /* d_jack.cpp in Sources */,
 				B3B3DA9328713710008A0E2F /* ymf278b.c in Sources */,
+				B3C48076297115700040C177 /* 7zCrcOpt.c in Sources */,
 				B3B3DA53287136EC008A0E2F /* k1ge.cpp in Sources */,
 				B3B3DAC328713B3B008A0E2F /* m68000_intf.cpp in Sources */,
 				B3B3DA2B287136D6008A0E2F /* tilemap_generic.cpp in Sources */,
 				B32291962878322A00585AD8 /* d_xain.cpp in Sources */,
 				B32292EB2878322B00585AD8 /* mc8123.cpp in Sources */,
 				B3B3DB1C28713C77008A0E2F /* k007342_k007420.cpp in Sources */,
-				B322933F2878322B00585AD8 /* d_shippumd.cpp in Sources */,
 				B32291702878322A00585AD8 /* d_battlex.cpp in Sources */,
 				B32292982878322B00585AD8 /* d_rallyx.cpp in Sources */,
 				B322922A2878322B00585AD8 /* psikyo_sprite.cpp in Sources */,
@@ -8745,9 +8905,11 @@
 				B322919D2878322A00585AD8 /* d_pturn.cpp in Sources */,
 				B3B3DB0128713C77008A0E2F /* d_88games.cpp in Sources */,
 				B3B3DB1128713C77008A0E2F /* d_gradius3.cpp in Sources */,
+				B3C480A4297115700040C177 /* FBLogViewerController.m in Sources */,
 				B3B3DB1A28713C77008A0E2F /* d_mystwarr.cpp in Sources */,
 				B32291CE2878322A00585AD8 /* d_vulgus.cpp in Sources */,
 				B3B3DA48287136EC008A0E2F /* atariic.cpp in Sources */,
+				B3C48085297115700040C177 /* toaplan1.cpp in Sources */,
 				B32292CF2878322B00585AD8 /* d_cclimber.cpp in Sources */,
 				B3B3DABF28713B3B008A0E2F /* m6809_intf.cpp in Sources */,
 				B3B3DBBC28713CE3008A0E2F /* d_klax.cpp in Sources */,
@@ -8755,17 +8917,19 @@
 				B32291BD2878322A00585AD8 /* d_psychic5.cpp in Sources */,
 				B3B3DB3E28713C78008A0E2F /* k053245.cpp in Sources */,
 				B322931B2878322B00585AD8 /* d_iqblock.cpp in Sources */,
+				B3C48078297115700040C177 /* 2xsai.cpp in Sources */,
 				B3B3DB0228713C77008A0E2F /* d_kontest.cpp in Sources */,
 				B3B3DA7E28713710008A0E2F /* ym2612.c in Sources */,
 				B32293622878322B00585AD8 /* d_aquarium.cpp in Sources */,
+				B3C480A0297115700040C177 /* gzclose.c in Sources */,
 				B32291A12878322A00585AD8 /* d_stuntair.cpp in Sources */,
 				B3B3DAB828713711008A0E2F /* flt_rc.cpp in Sources */,
 				B3B3DA68287136EC008A0E2F /* seibucop.cpp in Sources */,
-				B32296BD2878360300585AD8 /* m68kops.c in Sources */,
 				B32291682878322A00585AD8 /* d_1943.cpp in Sources */,
 				B32292FA2878322B00585AD8 /* d_matmania.cpp in Sources */,
 				B3B3DAC428713B3B008A0E2F /* z80_intf.cpp in Sources */,
 				B32291672878322A00585AD8 /* d_undrfire.cpp in Sources */,
+				B379CEA729712F9C00AF0621 /* 7zStream.c in Sources */,
 				B3B3DB0028713C77008A0E2F /* d_junofrst.cpp in Sources */,
 				B32292CA2878322B00585AD8 /* d_tsamurai.cpp in Sources */,
 				B32291512878322A00585AD8 /* pgm_asic27a_type2.cpp in Sources */,
@@ -8775,6 +8939,7 @@
 				B3B3DA8C28713710008A0E2F /* ymz280b.cpp in Sources */,
 				B322919F2878322A00585AD8 /* d_quizo.cpp in Sources */,
 				B3B3DAA028713710008A0E2F /* gaelco.cpp in Sources */,
+				B3C48077297115700040C177 /* XzCrc64Opt.c in Sources */,
 				B32291CB2878322A00585AD8 /* d_solomon.cpp in Sources */,
 				B3B3DA61287136EC008A0E2F /* kaneko_tmap.cpp in Sources */,
 				B3B3DA8B28713710008A0E2F /* x1010.cpp in Sources */,
@@ -8790,14 +8955,15 @@
 				B32291A22878322A00585AD8 /* d_wwfwfest.cpp in Sources */,
 				B3B3DDED28714491008A0E2F /* v60.cpp in Sources */,
 				B3B3DAE428713C21008A0E2F /* cps3run.cpp in Sources */,
+				B3C480AF297115700040C177 /* toa_bcu2.cpp in Sources */,
 				B322928B2878322B00585AD8 /* taito_m68705.cpp in Sources */,
 				B32292992878322B00585AD8 /* d_xxmissio.cpp in Sources */,
+				B3C4808F297115700040C177 /* 7zDec.c in Sources */,
 				B32291DF2878322A00585AD8 /* d_crshrace.cpp in Sources */,
 				B322922F2878322B00585AD8 /* d_pgm.cpp in Sources */,
 				B322928F2878322B00585AD8 /* d_1942.cpp in Sources */,
 				B32291FA2878322A00585AD8 /* ide.cpp in Sources */,
 				B3B3DABE28713B3B008A0E2F /* hd6309_intf.cpp in Sources */,
-				B32292492878322B00585AD8 /* d_tekipaki.cpp in Sources */,
 				B32293722878322B00585AD8 /* d_dooyong.cpp in Sources */,
 				B3B3DA34287136D6008A0E2F /* burn_memory.cpp in Sources */,
 				B32292842878322B00585AD8 /* cps_draw.cpp in Sources */,
@@ -8806,6 +8972,7 @@
 				B322923F2878322B00585AD8 /* smsfmintf.cpp in Sources */,
 				B32292452878322B00585AD8 /* d_fantland.cpp in Sources */,
 				B3B3DAA228713710008A0E2F /* ym2413.c in Sources */,
+				B3C48091297115700040C177 /* stringset.cpp in Sources */,
 				B32293202878322B00585AD8 /* d_kinst.cpp in Sources */,
 				B3B3DAA828713710008A0E2F /* snk6502_sound.cpp in Sources */,
 				B3B3DE0828714491008A0E2F /* 2100dasm.cpp in Sources */,
@@ -8820,12 +8987,12 @@
 				B32291742878322A00585AD8 /* d_1945kiii.cpp in Sources */,
 				B32292C92878322B00585AD8 /* d_sstrangr.cpp in Sources */,
 				B3B3DA43287136EC008A0E2F /* timekpr.cpp in Sources */,
-				B32296A9287834EF00585AD8 /* unzip.c in Sources */,
-				B322923B2878322B00585AD8 /* psikyo_tile.cpp in Sources */,
 				B3B3DA3B287136D6008A0E2F /* tiles_generic.cpp in Sources */,
+				B3C48079297115700040C177 /* d_battleg.cpp in Sources */,
 				B3B3DAE628713C2A008A0E2F /* gal_gfx.cpp in Sources */,
 				B32292C02878322B00585AD8 /* d_tecmo16.cpp in Sources */,
 				B3B3DDE528714491008A0E2F /* upd7810.cpp in Sources */,
+				B3C48088297115700040C177 /* 7zBuf.c in Sources */,
 				B3B3DB3628713C78008A0E2F /* d_pandoras.cpp in Sources */,
 				B32292BE2878322B00585AD8 /* d_btoads.cpp in Sources */,
 				B32291E22878322A00585AD8 /* d_atetris.cpp in Sources */,
@@ -8838,6 +9005,7 @@
 				B322934F2878322B00585AD8 /* d_angelkds.cpp in Sources */,
 				B3B3DB7B28713C9E008A0E2F /* d_dec8.cpp in Sources */,
 				B32292572878322B00585AD8 /* d_bwidow.cpp in Sources */,
+				B3C4808E297115700040C177 /* FBJoyCaptureView.m in Sources */,
 				B322933E2878322B00585AD8 /* d_exterm.cpp in Sources */,
 				B32293102878322B00585AD8 /* dcs2k.cpp in Sources */,
 				B32291522878322A00585AD8 /* d_slapshot.cpp in Sources */,
@@ -8874,7 +9042,6 @@
 				B3B3DDE928714491008A0E2F /* h6280.cpp in Sources */,
 				B32292AA2878322B00585AD8 /* d_snk68.cpp in Sources */,
 				B32292352878322B00585AD8 /* d_alpha68k1.cpp in Sources */,
-				B32291BC2878322A00585AD8 /* toaplan1.cpp in Sources */,
 				B32292F72878322B00585AD8 /* d_punchout.cpp in Sources */,
 				B322914E2878322A00585AD8 /* tc0100scn.cpp in Sources */,
 				B32292222878322B00585AD8 /* d_pirates.cpp in Sources */,
@@ -8883,7 +9050,6 @@
 				B3B3DE0328714491008A0E2F /* tms34010.cpp in Sources */,
 				B3B3DBBA28713CE3008A0E2F /* d_akkaarrh.cpp in Sources */,
 				B3B3DA4F287136EC008A0E2F /* 8257dma.cpp in Sources */,
-				B32292912878322B00585AD8 /* d_wardner.cpp in Sources */,
 				B32293412878322B00585AD8 /* d_snk.cpp in Sources */,
 				B322916D2878322A00585AD8 /* d_flipjack.cpp in Sources */,
 				B3B3DB5528713C89008A0E2F /* d_m72.cpp in Sources */,
@@ -8894,7 +9060,6 @@
 				B32292482878322B00585AD8 /* d_spdodgeb.cpp in Sources */,
 				B3B3DB2328713C77008A0E2F /* d_battlnts.cpp in Sources */,
 				B32292D32878322B00585AD8 /* d_nycaptor.cpp in Sources */,
-				B322932A2878322B00585AD8 /* d_pipibibs.cpp in Sources */,
 				B32292032878322A00585AD8 /* d_alinvade.cpp in Sources */,
 				B3B3DB3828713C78008A0E2F /* d_parodius.cpp in Sources */,
 				B3B3DAB528713711008A0E2F /* ymf262.cpp in Sources */,
@@ -8930,11 +9095,14 @@
 				B3B3DE0F28714491008A0E2F /* tlcs90.cpp in Sources */,
 				B322917E2878322A00585AD8 /* d_commando.cpp in Sources */,
 				B3B3DA39287136D6008A0E2F /* load.cpp in Sources */,
+				B3C480A3297115700040C177 /* FBPreferencesController.mm in Sources */,
 				B3B3DB6128713C9D008A0E2F /* d_liberate.cpp in Sources */,
 				B322927A2878322B00585AD8 /* d_arkanoid.cpp in Sources */,
 				B3B3DB6A28713C9D008A0E2F /* d_darkseal.cpp in Sources */,
 				B3B3DE0B28714491008A0E2F /* mcs48.cpp in Sources */,
+				B3C480B2297115700040C177 /* Bcj2.c in Sources */,
 				B32292792878322B00585AD8 /* d_silvmil.cpp in Sources */,
+				B3C48080297115700040C177 /* inftrees.c in Sources */,
 				B3B3DDF228714491008A0E2F /* cop0.cpp in Sources */,
 				B32291502878322A00585AD8 /* d_lastduel.cpp in Sources */,
 				B3B3DA3A287136D6008A0E2F /* hiscore.cpp in Sources */,
@@ -8943,11 +9111,12 @@
 				B32292D82878322B00585AD8 /* d_tumbleb.cpp in Sources */,
 				B32293282878322B00585AD8 /* d_wunit.cpp in Sources */,
 				B32292A32878322B00585AD8 /* d_gaiden.cpp in Sources */,
+				B3C480A1297115700040C177 /* vid_support.cpp in Sources */,
 				B3B3DAA628713710008A0E2F /* wiping.cpp in Sources */,
 				B3B3DA44287136EC008A0E2F /* nb1414m4_8bit.cpp in Sources */,
 				B322916C2878322A00585AD8 /* yawdim_sound.cpp in Sources */,
+				B3C48086297115700040C177 /* pngwio.c in Sources */,
 				B32293382878322B00585AD8 /* d_sidearms.cpp in Sources */,
-				B32296A32878342200585AD8 /* zipfn.cpp in Sources */,
 				B3B3DA9028713710008A0E2F /* rf5c68.cpp in Sources */,
 				B3B3DA3D287136EC008A0E2F /* resnet.cpp in Sources */,
 				B32291892878322A00585AD8 /* smssound.cpp in Sources */,
@@ -8956,6 +9125,7 @@
 				B3B3DB8728713C9E008A0E2F /* d_deco156.cpp in Sources */,
 				B3B3DA7F28713710008A0E2F /* i5000.cpp in Sources */,
 				B32293152878322B00585AD8 /* d_yunsun16.cpp in Sources */,
+				B3C480AD297115700040C177 /* inp_interface.cpp in Sources */,
 				B3B3DBB528713CE3008A0E2F /* d_shuuz.cpp in Sources */,
 				B3B3DACC28713B3B008A0E2F /* m6800_intf.cpp in Sources */,
 				B3B3DA6B287136EC008A0E2F /* qs1000.cpp in Sources */,
@@ -8966,10 +9136,13 @@
 				B3B3DDF128714491008A0E2F /* m6805.cpp in Sources */,
 				B322934E2878322B00585AD8 /* tc0150rod.cpp in Sources */,
 				B3B3DA9F28713710008A0E2F /* t6w28.cpp in Sources */,
+				B3C480A7297115700040C177 /* bzip.cpp in Sources */,
 				B32291FD2878322A00585AD8 /* d_seta2.cpp in Sources */,
+				B3C4807A297115700040C177 /* d_shippumd.cpp in Sources */,
 				B32291942878322A00585AD8 /* d_airbustr.cpp in Sources */,
 				B3B3DB1B28713C77008A0E2F /* d_hexion.cpp in Sources */,
 				B32291582878322A00585AD8 /* taitof3_snd.cpp in Sources */,
+				B379CEA429712ED500AF0621 /* BraIA64.c in Sources */,
 				B32293142878322B00585AD8 /* d_travrusa.cpp in Sources */,
 				B32293652878322B00585AD8 /* d_yunsung8.cpp in Sources */,
 				B322916F2878322A00585AD8 /* d_cps2.cpp in Sources */,
@@ -8978,20 +9151,20 @@
 				B32291EB2878322A00585AD8 /* d_madmotor.cpp in Sources */,
 				B322917D2878322A00585AD8 /* d_naughtyb.cpp in Sources */,
 				B3B3DB5828713C89008A0E2F /* irem_sound.cpp in Sources */,
+				B3C4809B297115700040C177 /* pngwrite.c in Sources */,
 				B32292072878322A00585AD8 /* d_metmqstr.cpp in Sources */,
 				B3B3DAE128713C21008A0E2F /* d_coleco.cpp in Sources */,
 				B322936D2878322B00585AD8 /* d_kingofbox.cpp in Sources */,
 				B3B3DA7228713710008A0E2F /* ym2151.c in Sources */,
-				B32293602878322B00585AD8 /* d_enmadaio.cpp in Sources */,
 				B3B3DA5A287136EC008A0E2F /* atarirle.cpp in Sources */,
 				B3B3DADD28713BFA008A0E2F /* d_pce.cpp in Sources */,
+				B3C4808B297115700040C177 /* FBVideo.mm in Sources */,
 				B322927E2878322B00585AD8 /* d_taitosj.cpp in Sources */,
 				B32291C72878322A00585AD8 /* d_argus.cpp in Sources */,
 				B3B3DA49287136EC008A0E2F /* namco_c45.cpp in Sources */,
 				B32292AB2878322B00585AD8 /* d_drgnmst.cpp in Sources */,
 				B3B3DB4528713C78008A0E2F /* d_chqflag.cpp in Sources */,
 				B3B3DA8128713710008A0E2F /* llander.cpp in Sources */,
-				B32292042878322A00585AD8 /* d_dogyuun.cpp in Sources */,
 				B32291632878322A00585AD8 /* d_epos.cpp in Sources */,
 				B32292C42878322B00585AD8 /* d_tnzs.cpp in Sources */,
 				B322935E2878322B00585AD8 /* d_higemaru.cpp in Sources */,
@@ -9007,8 +9180,11 @@
 				B32292312878322B00585AD8 /* d_chinagat.cpp in Sources */,
 				B32292332878322B00585AD8 /* d_metlfrzr.cpp in Sources */,
 				B322932E2878322B00585AD8 /* d_popper.cpp in Sources */,
+				B3C48082297115700040C177 /* d_slapfght.cpp in Sources */,
 				B3B3DB7528713C9D008A0E2F /* d_supbtime.cpp in Sources */,
+				B3C480AA297115700040C177 /* zutil.c in Sources */,
 				B3B3DB2228713C77008A0E2F /* k052109.cpp in Sources */,
+				B3C48092297115700040C177 /* FBMainThread.mm in Sources */,
 				B32292892878322B00585AD8 /* cps_scr.cpp in Sources */,
 				B3B3DE0C28714491008A0E2F /* m6809.cpp in Sources */,
 				B32293222878322B00585AD8 /* d_tecmo.cpp in Sources */,
@@ -9043,12 +9219,12 @@
 				B3B3DA7C28713710008A0E2F /* pokey.cpp in Sources */,
 				B3B3DB4B28713C78008A0E2F /* k007121.cpp in Sources */,
 				B3B3DB7228713C9D008A0E2F /* d_cninja.cpp in Sources */,
+				B3C48093297115700040C177 /* Bra86.c in Sources */,
 				B322917F2878322A00585AD8 /* d_spacefb.cpp in Sources */,
 				B322920B2878322B00585AD8 /* d_armedf.cpp in Sources */,
 				B32293212878322B00585AD8 /* d_qix.cpp in Sources */,
 				B3B3DB1828713C77008A0E2F /* d_crimfght.cpp in Sources */,
 				B32293422878322B00585AD8 /* d_vball.cpp in Sources */,
-				B32292DA2878322B00585AD8 /* d_toaplan1.cpp in Sources */,
 				B32292D42878322B00585AD8 /* d_dotrikun.cpp in Sources */,
 				B3B3DB2D28713C77008A0E2F /* k053936.cpp in Sources */,
 				B3B3DA30287136D6008A0E2F /* cheat.cpp in Sources */,
@@ -9056,6 +9232,7 @@
 				B3B3DAAC28713710008A0E2F /* multipcm.cpp in Sources */,
 				B3B3DB4F28713C78008A0E2F /* d_blockhl.cpp in Sources */,
 				B32292642878322B00585AD8 /* midwayic.cpp in Sources */,
+				B3C48099297115700040C177 /* pngget.c in Sources */,
 				B32291842878322A00585AD8 /* d_tigeroad.cpp in Sources */,
 				B3B3DB3028713C77008A0E2F /* d_bottom9.cpp in Sources */,
 				B3B3DDF928714491008A0E2F /* hd6309.cpp in Sources */,
@@ -9063,9 +9240,11 @@
 				B3B3DA7628713710008A0E2F /* fm.c in Sources */,
 				B32293402878322B00585AD8 /* d_freekick.cpp in Sources */,
 				B32293122878322B00585AD8 /* midtunit.cpp in Sources */,
+				B3C48045297106940040C177 /* state.cpp in Sources */,
 				B3B3DA8F28713710008A0E2F /* tms36xx.cpp in Sources */,
 				B32291852878322A00585AD8 /* sms.cpp in Sources */,
 				B3B3DBC528713CE3008A0E2F /* d_missile.cpp in Sources */,
+				B3C480A8297115700040C177 /* png.c in Sources */,
 				B3B3DAD628713B9E008A0E2F /* neo_text.cpp in Sources */,
 				B3B3DA8728713710008A0E2F /* burn_ymf271.cpp in Sources */,
 				B32291762878322A00585AD8 /* d_esprade.cpp in Sources */,
@@ -9077,6 +9256,7 @@
 				B3B3DA6F287136EC008A0E2F /* tms34061.cpp in Sources */,
 				B32291902878322A00585AD8 /* d_vastar.cpp in Sources */,
 				B32292E62878322B00585AD8 /* d_thief.cpp in Sources */,
+				B3C480A6297115700040C177 /* neocdlist.cpp in Sources */,
 				B3B3DA8028713710008A0E2F /* upd7759.cpp in Sources */,
 				B3B3DBB928713CE3008A0E2F /* d_eprom.cpp in Sources */,
 				B32292432878322B00585AD8 /* d_segas32.cpp in Sources */,
@@ -9092,12 +9272,15 @@
 				B32292292878322B00585AD8 /* d_wwfsstar.cpp in Sources */,
 				B3B3DB6428713C9D008A0E2F /* d_bwing.cpp in Sources */,
 				B322916A2878322A00585AD8 /* tc0180vcu.cpp in Sources */,
+				B3C48094297115700040C177 /* xbr32.cpp in Sources */,
 				B3B3DB3128713C77008A0E2F /* d_moo.cpp in Sources */,
 				B32291832878322A00585AD8 /* d_artmagic.cpp in Sources */,
 				B3B3DA4B287136EC008A0E2F /* midsat.cpp in Sources */,
 				B32291C52878322A00585AD8 /* d_funkybee.cpp in Sources */,
 				B32292DE2878322B00585AD8 /* d_guwange.cpp in Sources */,
+				B3C4807E297115700040C177 /* ips_manager.cpp in Sources */,
 				B32291732878322A00585AD8 /* d_gaplus.cpp in Sources */,
+				B3C4808D297115700040C177 /* main.m in Sources */,
 				B32292B12878322B00585AD8 /* d_battlane.cpp in Sources */,
 				B32291652878322A00585AD8 /* d_sandscrp.cpp in Sources */,
 				B3B3DA45287136EC008A0E2F /* mermaid.cpp in Sources */,
@@ -9109,13 +9292,13 @@
 				B3B3DA2D287136D6008A0E2F /* burn_bitmap.cpp in Sources */,
 				B3B3DB5A28713C89008A0E2F /* d_m52.cpp in Sources */,
 				B3B3DA8A28713710008A0E2F /* sn76496.cpp in Sources */,
+				B3C4808A297115700040C177 /* gzlib.c in Sources */,
 				B322924C2878322B00585AD8 /* ctv_make.cpp in Sources */,
 				B322930A2878322B00585AD8 /* d_gaia.cpp in Sources */,
 				B3B3DADC28713BFA008A0E2F /* d_sg1000.cpp in Sources */,
 				B32291982878322A00585AD8 /* d_hangon.cpp in Sources */,
 				B3B3DA50287136EC008A0E2F /* joyprocess.cpp in Sources */,
 				B32291E82878322A00585AD8 /* d_glass.cpp in Sources */,
-				B32292AD2878322B00585AD8 /* d_bbakraid.cpp in Sources */,
 				B32293532878322B00585AD8 /* d_taotaido.cpp in Sources */,
 				B322927C2878322B00585AD8 /* d_fuukifg3.cpp in Sources */,
 				B3B3DE162871456F008A0E2F /* burn.cpp in Sources */,
@@ -9162,12 +9345,11 @@
 				B3B3DA9E28713710008A0E2F /* k005289.cpp in Sources */,
 				B32292682878322B00585AD8 /* d_dogfgt.cpp in Sources */,
 				B3B3DAA528713710008A0E2F /* namco_snd.cpp in Sources */,
+				B3C4807C297115700040C177 /* palette_neon_intrinsics.c in Sources */,
 				B32292E92878322B00585AD8 /* d_mrflea.cpp in Sources */,
 				B3B3DB7128713C9D008A0E2F /* d_brkthru.cpp in Sources */,
-				B322922B2878322B00585AD8 /* toa_extratext.cpp in Sources */,
 				B322914F2878322A00585AD8 /* d_zodiack.cpp in Sources */,
 				B322930D2878322B00585AD8 /* d_psikyo4.cpp in Sources */,
-				B322926A2878322B00585AD8 /* d_mahoudai.cpp in Sources */,
 				B32292182878322B00585AD8 /* cave_tile.cpp in Sources */,
 				B32293432878322B00585AD8 /* d_drmicro.cpp in Sources */,
 				B32292502878322B00585AD8 /* d_route16.cpp in Sources */,
@@ -9178,6 +9360,7 @@
 				B3B3DB7D28713C9E008A0E2F /* d_dec0.cpp in Sources */,
 				B3B3DA37287136D6008A0E2F /* timer.cpp in Sources */,
 				B32292732878322B00585AD8 /* d_appoooh.cpp in Sources */,
+				B3C4808C297115700040C177 /* vid_softfx.cpp in Sources */,
 				B3B3DA7B28713710008A0E2F /* msm5205.cpp in Sources */,
 				B3B3DB8228713C9E008A0E2F /* d_pktgaldx.cpp in Sources */,
 				B3B3DA7828713710008A0E2F /* pleiadssound.cpp in Sources */,
@@ -9197,7 +9380,9 @@
 				B3B3DE0E28714491008A0E2F /* mips3_dasm.cpp in Sources */,
 				B3B3DAA328713710008A0E2F /* redbaron.cpp in Sources */,
 				B3B3DAFC28713C52008A0E2F /* d_megadrive.cpp in Sources */,
+				B3C480A2297115700040C177 /* aud_dsp.cpp in Sources */,
 				B322919E2878322A00585AD8 /* d_speedspn.cpp in Sources */,
+				B3C480A9297115700040C177 /* xbr.cpp in Sources */,
 				B32293392878322B00585AD8 /* d_mappy.cpp in Sources */,
 				B3B3DA64287136EC008A0E2F /* bsmt2000.cpp in Sources */,
 				B3B3DA56287136EC008A0E2F /* gaelco_crypt.cpp in Sources */,
@@ -9205,7 +9390,7 @@
 				B322933A2878322B00585AD8 /* d_galivan.cpp in Sources */,
 				B3B3DAB628713711008A0E2F /* s14001a.cpp in Sources */,
 				B3B3DDEC28714491008A0E2F /* nec.cpp in Sources */,
-				B32293362878322B00585AD8 /* d_snowbro2.cpp in Sources */,
+				B3C4807B297115700040C177 /* pngrutil.c in Sources */,
 				B3B3DA7128713710008A0E2F /* burn_ym2612.cpp in Sources */,
 				B32291E12878322A00585AD8 /* d_docastle.cpp in Sources */,
 				B32292392878322B00585AD8 /* d_capbowl.cpp in Sources */,
@@ -9238,7 +9423,6 @@
 				B3B3DA9A28713710008A0E2F /* sp0256.cpp in Sources */,
 				B32293172878322B00585AD8 /* d_renegade.cpp in Sources */,
 				B3B3DA9C28713710008A0E2F /* hc55516.cpp in Sources */,
-				B32291592878322A00585AD8 /* d_kbash2.cpp in Sources */,
 				B32293512878322B00585AD8 /* d_shadfrce.cpp in Sources */,
 				B3B3DA6A287136EC008A0E2F /* poly.cpp in Sources */,
 				B3B3DB4928713C78008A0E2F /* d_vendetta.cpp in Sources */,
@@ -9247,6 +9431,7 @@
 				B32291BF2878322A00585AD8 /* d_galpanic.cpp in Sources */,
 				B32292B92878322B00585AD8 /* d_holeland.cpp in Sources */,
 				B32291D72878322A00585AD8 /* d_prehisle.cpp in Sources */,
+				B3C4809A297115700040C177 /* FBLauncherController.m in Sources */,
 				B32291F72878322A00585AD8 /* d_silkroad.cpp in Sources */,
 				B32292DD2878322B00585AD8 /* d_uopoko.cpp in Sources */,
 				B322934A2878322B00585AD8 /* d_galspnbl.cpp in Sources */,
@@ -9262,11 +9447,13 @@
 				B32293262878322B00585AD8 /* d_targeth.cpp in Sources */,
 				B3B3DDFE28714491008A0E2F /* i386.cpp in Sources */,
 				B3B3DAF828713C52008A0E2F /* stm95.cpp in Sources */,
+				B3C48046297106940040C177 /* dynhuff.cpp in Sources */,
 				B3B3DAFE28713C77008A0E2F /* d_combatsc.cpp in Sources */,
 				B322920C2878322B00585AD8 /* d_exerion.cpp in Sources */,
 				B322933B2878322B00585AD8 /* taitof3_video.cpp in Sources */,
 				B32292832878322B00585AD8 /* d_baraduke.cpp in Sources */,
 				B322915D2878322A00585AD8 /* d_asuka.cpp in Sources */,
+				B3C480B1297115700040C177 /* FBMainThread+Etc.mm in Sources */,
 				B322928A2878322B00585AD8 /* d_raiden2.cpp in Sources */,
 				B32291882878322A00585AD8 /* d_hvyunit.cpp in Sources */,
 				B322936B2878322B00585AD8 /* d_bloodbro.cpp in Sources */,
@@ -9276,6 +9463,7 @@
 				B3B3DA3C287136EC008A0E2F /* midcsd.cpp in Sources */,
 				B32292A52878322B00585AD8 /* d_marineb.cpp in Sources */,
 				B3B3DAB328713711008A0E2F /* burn_ym2203.cpp in Sources */,
+				B3C480A5297115700040C177 /* replay.cpp in Sources */,
 				B322934B2878322B00585AD8 /* d_hotdogst.cpp in Sources */,
 				B3B3DB7C28713C9E008A0E2F /* d_stadhero.cpp in Sources */,
 				B32292802878322B00585AD8 /* d_olibochu.cpp in Sources */,
@@ -9283,7 +9471,6 @@
 				B32291A72878322A00585AD8 /* d_sys16b.cpp in Sources */,
 				B32291B92878322A00585AD8 /* d_itech32.cpp in Sources */,
 				B32293452878322B00585AD8 /* d_mexico86.cpp in Sources */,
-				B32293702878322B00585AD8 /* d_truxton2.cpp in Sources */,
 				B32291F32878322A00585AD8 /* d_mastboyo.cpp in Sources */,
 				B32291BE2878322A00585AD8 /* d_20pacgal.cpp in Sources */,
 				B32292262878322B00585AD8 /* tc0220ioc.cpp in Sources */,
@@ -9302,6 +9489,7 @@
 				B3B3DB6728713C9D008A0E2F /* decobac06.cpp in Sources */,
 				B32292C72878322B00585AD8 /* d_pushman.cpp in Sources */,
 				B322929E2878322B00585AD8 /* d_alpha68k2.cpp in Sources */,
+				B3C4809C297115700040C177 /* AKGamepadEventData.m in Sources */,
 				B3B3DB7728713C9D008A0E2F /* d_simpl156.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9321,22 +9509,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3B3DA29287136A0008A0E2F /* PVFBNeoCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B3B3DE12287144D0008A0E2F /* PBXTargetDependency */ = {
+		B322A9882971479E00F0D876 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B30178D2207C901D0051B93D /* fbneo */;
-			targetProxy = B3B3DE11287144D0008A0E2F /* PBXContainerItemProxy */;
-		};
-		B3B3DE15287144D0008A0E2F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* fbneo-libretro */;
-			targetProxy = B3B3DE14287144D0008A0E2F /* PBXContainerItemProxy */;
+			target = B322A97D2971451800F0D876 /* fbneo-dylb */;
+			targetProxy = B322A9872971479E00F0D876 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -9426,6 +9608,30 @@
 			};
 			name = Release;
 		};
+		B322A97E2971451900F0D876 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B322A97F2971451900F0D876 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B322A9802971451900F0D876 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 		B324C5012191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
@@ -9485,6 +9691,13 @@
 					"\"$(SRCROOT)/FBNeo/src/dep/generated\"",
 					"\"$(SRCROOT)/FBNeo/src/intf\"",
 					"\"$(SRCROOT)/FBNeo/src/cpu\"",
+					"\"$(SRCROOT)/FBNeo/src/dep/generated\"",
+					"\"$(SRCROOT)/FBNeo/src\"",
+					"\"$(SRCROOT)/FBNeo/src/intf/video/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/burner/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/intf/audio/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/intf/input/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/dep/macos\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -9522,7 +9735,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -9657,6 +9870,13 @@
 					"\"$(SRCROOT)/FBNeo/src/dep/generated\"",
 					"\"$(SRCROOT)/FBNeo/src/intf\"",
 					"\"$(SRCROOT)/FBNeo/src/cpu\"",
+					"\"$(SRCROOT)/FBNeo/src/dep/generated\"",
+					"\"$(SRCROOT)/FBNeo/src\"",
+					"\"$(SRCROOT)/FBNeo/src/intf/video/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/burner/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/intf/audio/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/intf/input/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/dep/macos\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -9728,6 +9948,13 @@
 					"\"$(SRCROOT)/FBNeo/src/dep/generated\"",
 					"\"$(SRCROOT)/FBNeo/src/intf\"",
 					"\"$(SRCROOT)/FBNeo/src/cpu\"",
+					"\"$(SRCROOT)/FBNeo/src/dep/generated\"",
+					"\"$(SRCROOT)/FBNeo/src\"",
+					"\"$(SRCROOT)/FBNeo/src/intf/video/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/burner/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/intf/audio/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/intf/input/macos\"",
+					"\"$(SRCROOT)/FBNeo/src/dep/macos\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -9766,7 +9993,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -9797,7 +10024,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -9812,6 +10039,16 @@
 				B30178DA207C901D0051B93D /* Debug */,
 				B30178DB207C901D0051B93D /* Release */,
 				B324C5042191A2A2009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B322A9822971451900F0D876 /* Build configuration list for PBXAggregateTarget "fbneo-dylb" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B322A97E2971451900F0D876 /* Debug */,
+				B322A97F2971451900F0D876 /* Release */,
+				B322A9802971451900F0D876 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
