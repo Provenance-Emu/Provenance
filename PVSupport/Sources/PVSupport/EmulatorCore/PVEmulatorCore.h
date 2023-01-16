@@ -159,6 +159,7 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (void)startEmulation NS_REQUIRES_SUPER;
 - (void)resetEmulation;
 - (void)setPauseEmulation:(BOOL)flag NS_REQUIRES_SUPER;
+- (void)stopEmulationWithMessage:(NSString * _Nullable) message NS_REQUIRES_SUPER;
 - (void)stopEmulation NS_REQUIRES_SUPER;
 - (void)executeFrame;
 - (BOOL)loadFileAtPath:(NSString * _Nonnull)path
