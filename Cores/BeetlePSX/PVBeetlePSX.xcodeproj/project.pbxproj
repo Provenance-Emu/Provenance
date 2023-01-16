@@ -11,7 +11,8 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 937EAAF6296C2023003D89EB /* Build configuration list for PBXAggregateTarget "BuildBeetlePSXRetroArchModule" */;
 			buildPhases = (
-				937EAAF7296C203D003D89EB /* ShellScript */,
+				937EAAF7296C203D003D89EB /* Build */,
+				B322A986297145AD00F0D876 /* Copy */,
 			);
 			dependencies = (
 			);
@@ -817,7 +818,7 @@
 		B3EBAFE52872978B00EAEB37 /* configure */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = configure; sourceTree = "<group>"; };
 		B3EBAFE62872978B00EAEB37 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B3EBAFE72872978B00EAEB37 /* mman.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mman.h; sourceTree = "<group>"; };
-		B3EBAFEB2872978C00EAEB37 /* .suo */ = {isa = PBXFileReference; lastKnownFileType = file; path = .suo; sourceTree = "<group>"; };
+		B3EBAFEB2872978C00EAEB37 /* .suo */ = {isa = PBXFileReference; lastKnownFileType = text; path = .suo; sourceTree = "<group>"; };
 		B3EBAFEC2872978C00EAEB37 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B3EBAFED2872978C00EAEB37 /* mman.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = mman.vcxproj; sourceTree = "<group>"; };
 		B3EBAFEE2872978C00EAEB37 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -2955,7 +2956,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		937EAAF7296C203D003D89EB /* ShellScript */ = {
+		937EAAF7296C203D003D89EB /* Build */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -2964,13 +2965,34 @@
 			);
 			inputPaths = (
 			);
+			name = Build;
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Update Repository\n#cd ${SRCROOT}/beetle-psx\n#git pull origin master\n#git checkout origin/master\n#git submodule update --init --recursive\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\ncp -pR ${SRCROOT}/beetle-psx/* ${SRCROOT}/cmake/build/\ncp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd ${SRCROOT}/cmake/build/\n#make clean\nmake\ncp mednafen_psx_hw_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib\n";
+			shellScript = "# Update Repository\n#cd ${SRCROOT}/beetle-psx\n#git pull origin master\n#git checkout origin/master\n#git submodule update --init --recursive\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\ncp -pR ${SRCROOT}/beetle-psx/* ${SRCROOT}/cmake/build/\ncp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd ${SRCROOT}/cmake/build/\n#make clean\nmake -j4\n#cp mednafen_psx_hw_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib\n";
+		};
+		B322A986297145AD00F0D876 /* Copy */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/cmake/build/mednafen_psx_hw_libretro_ios.dylib",
+			);
+			name = Copy;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# copy\ncd ${SRCROOT}/cmake/build/\ncp mednafen_psx_hw_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
