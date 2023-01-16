@@ -61,9 +61,15 @@ Cores/Play/cmake/**/*.build
 /Cores/DuckStation/cmake/.qt
 /Cores/DuckStation/lib/Debug-iphoneos/libscmversion.a
 /Cores/DuckStation/lib/Debug-iphoneos/libfrontend-common.a
+Cores/snes9x/cmake/build/
 Cores/DuckStation/cmake/build/
 Cores/DuckStation/cmake/bin/
 Cores/DuckStation/cmake/src/
+/Cores/Citra/cmake/dist
+/Cores/Citra/cmake/externals
+/Cores/Citra/cmake/generated-includes
+/Cores/Citra/cmake/include
+/Cores/Citra/cmake/CMakeFiles
 Cores/DuckStation/cmake/CMakeFiles/
 /Cores/DuckStation/cmake/CMakeScripts
 Cores/DuckStation/cmake/dep/
