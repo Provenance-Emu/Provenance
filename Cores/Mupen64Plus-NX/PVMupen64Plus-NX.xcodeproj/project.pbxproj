@@ -6,6 +6,21 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B322A96629713F9300F0D876 /* mupen64plus-dylib */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B322A96A29713F9300F0D876 /* Build configuration list for PBXAggregateTarget "mupen64plus-dylib" */;
+			buildPhases = (
+				B322A96B29713F9900F0D876 /* Build */,
+				B322A96C29713FA000F0D876 /* Copy */,
+			);
+			dependencies = (
+			);
+			name = "mupen64plus-dylib";
+			productName = "mupen64plus-dylib";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		B32296E828783C1200585AD8 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A59D2877D0BA0037A946 /* callbacks.c */; };
 		B32296E928783C1200585AD8 /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C8A59D2877D0BA0037A946 /* callbacks.c */; };
@@ -607,8 +622,6 @@
 		B33809362877C5530009C732 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B33809212877C5530009C732 /* Info.plist */; };
 		B33809372877C5530009C732 /* PVMupen64Plus-NXCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B33809232877C5530009C732 /* PVMupen64Plus-NXCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B33809382877C5530009C732 /* PVMupen64Plus-NXCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B33809232877C5530009C732 /* PVMupen64Plus-NXCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B33809532877C5FE0009C732 /* libmupen64plus-nx-retro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E4C1DED23C600896D96 /* libmupen64plus-nx-retro.a */; };
-		B33809562877C5FE0009C732 /* libmupen64plus-nx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3800FF5208522DC00FA03B8 /* libmupen64plus-nx.a */; };
 		B33809592877C6090009C732 /* libmupen64plus-nx-retro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF703921916E60000FA7F9 /* libmupen64plus-nx-retro.a */; };
 		B338095C2877C6090009C732 /* libmupen64plus-nx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705221916E87000FA7F9 /* libmupen64plus-nx.a */; };
 		B37263B526EA164900E95488 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A326EA0D6700E95488 /* libz.tbd */; };
@@ -630,19 +643,12 @@
 			remoteGlobalIDString = B3303E4B1DED23C600896D96;
 			remoteInfo = "png-iOS";
 		};
-		B33809542877C5FE0009C732 /* PBXContainerItemProxy */ = {
+		B322A96D2971403B00F0D876 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3303E4B1DED23C600896D96;
-			remoteInfo = "mupen64plus-nx-retro-iOS";
-		};
-		B33809572877C5FE0009C732 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3800FF4208522DC00FA03B8;
-			remoteInfo = "mupen64plus-nx-iOS";
+			remoteGlobalIDString = B322A96629713F9300F0D876;
+			remoteInfo = "mupen64plus-dylib";
 		};
 		B338095A2877C6090009C732 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2987,9 +2993,7 @@
 				B39E129A28925CB000016387 /* PVLibRetro.framework in Frameworks */,
 				B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */,
 				B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */,
-				B33809562877C5FE0009C732 /* libmupen64plus-nx.a in Frameworks */,
 				B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */,
-				B33809532877C5FE0009C732 /* libmupen64plus-nx-retro.a in Frameworks */,
 				B324C63121920BDB009F4EDC /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7816,8 +7820,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B33809552877C5FE0009C732 /* PBXTargetDependency */,
-				B33809582877C5FE0009C732 /* PBXTargetDependency */,
+				B322A96E2971403B00F0D876 /* PBXTargetDependency */,
 			);
 			name = "PVMupen64Plus-NX-iOS";
 			productName = "PVMupen64Plus-NXDynamic";
@@ -7907,6 +7910,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					B322A96629713F9300F0D876 = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					B3303E4B1DED23C600896D96 = {
 						CreatedOnToolsVersion = 8.1;
 						ProvisioningStyle = Automatic;
@@ -7942,6 +7948,7 @@
 				B3AF702121916E60000FA7F9 /* mupen64plus-nx-retro-tvOS */,
 				B3800FF4208522DC00FA03B8 /* mupen64plus-nx-iOS */,
 				B3AF703A21916E87000FA7F9 /* mupen64plus-nx-tvOS */,
+				B322A96629713F9300F0D876 /* mupen64plus-dylib */,
 			);
 		};
 /* End PBXProject section */
@@ -7965,6 +7972,47 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B322A96B29713F9900F0D876 /* Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Build;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\n#cd ${SRCROOT}/beetle-psx\n#git pull origin master\n#git checkout origin/master\n#git submodule update --init --recursive\n\n# Create Build Environment\n#if [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n#    mkdir ${SRCROOT}/cmake/build\n#fi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\n#cp -pR ${SRCROOT}/beetle-psx/* ${SRCROOT}/cmake/build/\n#cp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd \"${SRCROOT}/mupen64plus-libretro-nx\" #/cmake/build/\n#make clean\nmake -j5 platform=ios-arm64\n";
+		};
+		B322A96C29713FA000F0D876 /* Copy */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/mupen64plus-libretro-nx/mupen64plus_next_libretro_ios.dylib",
+			);
+			name = Copy;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/mupen64plus_next_libretro_ios.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ${SRCROOT}/mupen64plus-libretro-nx #/cmake/build/\n\ncp mupen64plus_next_libretro_ios.dylib \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B3303E481DED23C600896D96 /* Sources */ = {
@@ -8609,15 +8657,10 @@
 			target = B3303E4B1DED23C600896D96 /* mupen64plus-nx-retro-iOS */;
 			targetProxy = B31737FF2783F925002D3ACD /* PBXContainerItemProxy */;
 		};
-		B33809552877C5FE0009C732 /* PBXTargetDependency */ = {
+		B322A96E2971403B00F0D876 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3303E4B1DED23C600896D96 /* mupen64plus-nx-retro-iOS */;
-			targetProxy = B33809542877C5FE0009C732 /* PBXContainerItemProxy */;
-		};
-		B33809582877C5FE0009C732 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3800FF4208522DC00FA03B8 /* mupen64plus-nx-iOS */;
-			targetProxy = B33809572877C5FE0009C732 /* PBXContainerItemProxy */;
+			target = B322A96629713F9300F0D876 /* mupen64plus-dylib */;
+			targetProxy = B322A96D2971403B00F0D876 /* PBXContainerItemProxy */;
 		};
 		B338095B2877C6090009C732 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8792,6 +8835,30 @@
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Release;
+		};
+		B322A96729713F9300F0D876 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B322A96829713F9300F0D876 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B322A96929713F9300F0D876 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
 		};
 		B324C51D2191A3FE009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
@@ -9687,6 +9754,16 @@
 				1DEB913F08733D840010E9CD /* Debug */,
 				1DEB914008733D840010E9CD /* Release */,
 				B324C51D2191A3FE009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B322A96A29713F9300F0D876 /* Build configuration list for PBXAggregateTarget "mupen64plus-dylib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B322A96729713F9300F0D876 /* Debug */,
+				B322A96829713F9300F0D876 /* Release */,
+				B322A96929713F9300F0D876 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
