@@ -355,6 +355,7 @@
 		B346AED1297602190090E014 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B346AED2297602210090E014 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; };
 		B346AED3297602210090E014 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B346AEDF297617E30090E014 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.m */; };
 		B3475E66293CB6F300725A82 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3475E65293CB6F200725A82 /* PVDesmume2015.framework */; };
 		B3475E67293CB6F300725A82 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3475E65293CB6F200725A82 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B34CFF5D295F2BE90014C8AF /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; };
@@ -751,8 +752,6 @@
 		B3F94A4C27093794002A71EF /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B3F94A4E27093ABC002A71EF /* AppCenterAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4D27093ABC002A71EF /* AppCenterAnalytics */; };
 		B3F94A5027093ABC002A71EF /* AppCenterCrashes in Frameworks */ = {isa = PBXBuildFile; productRef = B3F94A4F27093ABC002A71EF /* AppCenterCrashes */; };
-		B3F9F3B0295F511200DF8B8A /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; };
-		B3F9F3B1295F511200DF8B8A /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC921292B44F3005E8B11 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B3FAC922292B44F4005E8B11 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC927292B4501005E8B11 /* PVEP128Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296D72878384A00585AD8 /* PVEP128Emu.framework */; };
@@ -1001,7 +1000,6 @@
 				B3FAC985292B475E005E8B11 /* PVAtari800.framework in Embed Frameworks */,
 				B3FAC99B292B476E005E8B11 /* PVLibRetro.framework in Embed Frameworks */,
 				B3FAC9AD292B477E005E8B11 /* PVOpera.framework in Embed Frameworks */,
-				B3F9F3B1295F511200DF8B8A /* PVFlycast.framework in Embed Frameworks */,
 				B3FAC9AB292B477D005E8B11 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3FAC9A5292B4778005E8B11 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3FAC999292B476C005E8B11 /* PVGME.framework in Embed Frameworks */,
@@ -2042,7 +2040,6 @@
 				B3AF701C21916E38000FA7F9 /* PVSupport.framework in Frameworks */,
 				B3F94A5027093ABC002A71EF /* AppCenterCrashes in Frameworks */,
 				B3F94A4E27093ABC002A71EF /* AppCenterAnalytics in Frameworks */,
-				B3F9F3B0295F511200DF8B8A /* PVFlycast.framework in Frameworks */,
 				B324C308219195A8009F4EDC /* GLKit.framework in Frameworks */,
 				B3FAC992292B4767005E8B11 /* PVGBA.framework in Frameworks */,
 				B322A9902971670B00F0D876 /* PVDuckStation.framework in Frameworks */,
@@ -4916,6 +4913,7 @@
 				B361F62F27C07B240080D368 /* ConsoleGamesView.swift in Sources */,
 				B32746BE219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift in Sources */,
 				B3290499270D1F95002707AC /* PVAppDelegate+NitoTV.swift in Sources */,
+				B346AEDF297617E30090E014 /* main.m in Sources */,
 				B3B104C3218F2EF400210C39 /* PVAtari7800ControllerViewController.swift in Sources */,
 				B361F63427C07B300080D368 /* GameItemView.swift in Sources */,
 				B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,

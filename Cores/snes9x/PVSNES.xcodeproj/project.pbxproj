@@ -11,7 +11,8 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 934BE9A1296F080500FB9933 /* Build configuration list for PBXAggregateTarget "SNES9x RetroArch" */;
 			buildPhases = (
-				934BE9A2296F081B00FB9933 /* ShellScript */,
+				934BE9A2296F081B00FB9933 /* Build */,
+				B346AEDE297616710090E014 /* Copy */,
 			);
 			dependencies = (
 			);
@@ -617,7 +618,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		934BE9A2296F081B00FB9933 /* ShellScript */ = {
+		934BE9A2296F081B00FB9933 /* Build */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -626,13 +627,35 @@
 			);
 			inputPaths = (
 			);
+			name = Build;
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(SRCROOT)/dist/ios-arm64/snes9x_libretro_ios.dylib",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\ncp -pR ${SRCROOT}/../../CoresRetro/RetroArch/libretro-super/* ${SRCROOT}/cmake/build/\ncd ${SRCROOT}/cmake/build\nsh libretro-fetch.sh snes9x\nsh libretro-build-ios-arm64.sh snes9x\ncp dist/ios-arm64/snes9x_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules\n\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\ncp -pR ${SRCROOT}/../../CoresRetro/RetroArch/libretro-super/* ${SRCROOT}/cmake/build/\ncd ${SRCROOT}/cmake/build\nsh libretro-fetch.sh snes9x\nsh libretro-build-ios-arm64.sh snes9x\n\n";
+		};
+		B346AEDE297616710090E014 /* Copy */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/dist/ios-arm64/snes9x_libretro_ios.dylib",
+			);
+			name = Copy;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ${SRCROOT}/cmake/build\ncp dist/ios-arm64/snes9x_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

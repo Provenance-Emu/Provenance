@@ -5832,6 +5832,7 @@
 		22706698479F4D97ADFD22D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ARCHS = (
 					arm64,
 					x86_64,
@@ -5845,6 +5846,8 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
 			};
 			name = Debug;
@@ -6331,6 +6334,7 @@
 		3C1B1EC1ED9643CAAD15C463 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ARCHS = (
 					arm64,
 					x86_64,
@@ -6344,6 +6348,8 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
 			};
 			name = RelWithDebInfo;
@@ -8750,6 +8756,7 @@
 		A06C301297AE417FBDFFA2CB /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ARCHS = (
 					arm64,
 					x86_64,
@@ -8763,6 +8770,8 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
 			};
 			name = MinSizeRel;
@@ -10123,6 +10132,7 @@
 		E2C72E5D0AAF4853AC560994 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ARCHS = (
 					arm64,
 					x86_64,
@@ -10136,6 +10146,8 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
 			};
 			name = Release;

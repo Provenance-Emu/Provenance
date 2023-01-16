@@ -16,7 +16,7 @@ import SteamController
 import UIKit
 #endif
 
-class PVApplication: UIApplication {
+final class PVApplication: UIApplication {
     var core: PVEmulatorCore?
     override func sendEvent(_ event: UIEvent) {
         if (core != nil) {
@@ -26,6 +26,7 @@ class PVApplication: UIApplication {
         super.sendEvent(event)
     }
 }
+
 
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     internal var window: UIWindow?
