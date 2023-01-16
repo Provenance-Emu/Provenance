@@ -110,9 +110,6 @@
          <FileRef
             location = "group:Cores/TIC80/PVTIC80.xcodeproj">
          </FileRef>
-         <FileRef
-            location = "group:Cores/Yabause/PVYabause.xcodeproj">
-         </FileRef>
       </Group>
       <FileRef
          location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
@@ -130,13 +127,13 @@
          location = "group:Cores/EP128Emu/PVEP128Emu.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:Cores/Flycast/PVFlycast.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/fMSX/PVfMSX.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/FreeIntv/PVFreeIntv.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Flycast/PVFlycast.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/fuse/PVFuse.xcodeproj">
@@ -151,25 +148,28 @@
          location = "group:Cores/melonDS/PVMelonDS.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Mini_vMac/PVMiniVMac.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Mu/PVMu.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/Opera/PVOpera.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/pcsx_rearmed/PVPCSXRearmed.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Potator/PVPotator.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/VecX/PVVecX.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/Yabause/PVYabause.xcodeproj">
       </FileRef>
    </Group>
 </Workspace>

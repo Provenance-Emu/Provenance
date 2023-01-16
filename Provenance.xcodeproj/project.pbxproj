@@ -351,6 +351,10 @@
 		B343717D276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */; };
 		B343717E276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */; };
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
+		B346AED0297602190090E014 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; };
+		B346AED1297602190090E014 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B346AED2297602210090E014 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; };
+		B346AED3297602210090E014 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3475E66293CB6F300725A82 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3475E65293CB6F200725A82 /* PVDesmume2015.framework */; };
 		B3475E67293CB6F300725A82 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3475E65293CB6F200725A82 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B34CFF5D295F2BE90014C8AF /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; };
@@ -1002,6 +1006,7 @@
 				B3FAC9A5292B4778005E8B11 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3FAC999292B476C005E8B11 /* PVGME.framework in Embed Frameworks */,
 				B3FAC993292B4768005E8B11 /* PVGBA.framework in Embed Frameworks */,
+				B346AED3297602210090E014 /* PVYabause.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1063,6 +1068,7 @@
 				B3DEEF932942F92C00A6957C /* PVBliss.framework in Embed Frameworks */,
 				B3FAC942292B4593005E8B11 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B31364782970092D00C34FED /* PVDuckStation.framework in Embed Frameworks */,
+				B346AED1297602190090E014 /* PVYabause.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1967,6 +1973,7 @@
 				B3FAC953292B45AC005E8B11 /* PVStella.framework in Frameworks */,
 				B3FAC921292B44F3005E8B11 /* PVAtari800.framework in Frameworks */,
 				1A4869E017C8D60C0019F6D2 /* SystemConfiguration.framework in Frameworks */,
+				B346AED0297602190090E014 /* PVYabause.framework in Frameworks */,
 				B36B852D29599A3700FDEA29 /* PVMelonDS.framework in Frameworks */,
 				B36B853729599AA800FDEA29 /* PVSnesticle.framework in Frameworks */,
 				1A4869D617C8D5450019F6D2 /* CoreData.framework in Frameworks */,
@@ -2059,6 +2066,7 @@
 				B36C50DA296F4D1200921F85 /* PVO2EM.framework in Frameworks */,
 				B3FAC984292B475E005E8B11 /* PVAtari800.framework in Frameworks */,
 				B3FAC9AA292B477D005E8B11 /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				B346AED2297602210090E014 /* PVYabause.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -75,3 +75,9 @@ Cores/DuckStation/cmake/CMakeFiles/
 Cores/DuckStation/cmake/dep/
 Release-iphoneos
 Cores/DuckStation/lib/
+/Cores/Yabause/cmake/build
+/Cores/Yabause/cmake/CMakeFiles
+/Cores/Yabause/cmake/CMakeScripts
+/Cores/Yabause/cmake/doc
+/Cores/Yabause/cmake/l10n
+/Cores/Yabause/cmake/src

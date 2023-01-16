@@ -1,0 +1,2002 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		0AB4D1F744514BC7B1BE8814 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5967174799FC4078A7DE87E5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				D999660E616CFA131BD927FB /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		5ABFECA5144941559EC7C6F6 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = CEABB60CD7F443AEA8A6160F /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				1D342B02D35A4BEC9C4772D6 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		61A04DAF2D3F43B6B33F2A24 /* package */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5136694986974E9B96D9A855 /* Build configuration list for PBXAggregateTarget "package" */;
+			buildPhases = (
+				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				AF1100614B164213904488F8 /* PBXTargetDependency */,
+			);
+			name = package;
+			productName = package;
+		};
+		87039582440C440EB9DD3F02 /* doc */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = E74A8685F9654A1D97334FC7 /* Build configuration list for PBXAggregateTarget "doc" */;
+			buildPhases = (
+				3E7E93E2405C17C65F25C2ED /* Generate doc/CMakeFiles/doc */,
+			);
+			dependencies = (
+			);
+			name = doc;
+			productName = doc;
+		};
+		A8706FCB3D3344AD92D5F0CA /* m68kmake */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 455531F0E2CE4FBB906D8BFF /* Build configuration list for PBXAggregateTarget "m68kmake" */;
+			buildPhases = (
+				D17F6C5C6236A659AFE80748 /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-mkdir */,
+				A9F5136E28034F3E33FA09CA /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-download */,
+				D58DD42AE006FCE3FDC5FDEB /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-update */,
+				AB72F75B11D6D42DB0F6D608 /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-patch */,
+				786C79EEA49E7825FF0E0204 /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-configure */,
+				2A1116BE69FFB1EB50B77C6E /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-build */,
+				274C06BCF9B75581655DB63C /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-install */,
+				59539EC570D031E0066729C3 /* Generate src/CMakeFiles/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-complete */,
+				59F00EB9E1EF9CC0F7B7B348 /* Generate src/CMakeFiles/m68kmake */,
+			);
+			dependencies = (
+			);
+			name = m68kmake;
+			productName = m68kmake;
+		};
+		E0AE020ED20E4096AA414346 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = FFB51EE515BD4A809577ABB5 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				A77366540DA077ECE1D00284 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				E9E766DE3BE94BB39F4D5794 /* PBXTargetDependency */,
+				154F7258EA6D46199E3165DC /* PBXTargetDependency */,
+				7AEDF298C41B4EAB965992E2 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		0189A104E79946DFB8DA8D36 /* m68kopdm.c in Sources */ = {isa = PBXBuildFile; fileRef = DB0E3C0702914E7AB13FF4E2 /* m68kopdm.c */; };
+		03AF9E9ED7B94ACBBE5148B8 /* yglcache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0DCE80A36D704AB28FD64302 /* yglcache.c */; };
+		0C6590519C7C4B729DAB5A64 /* smpc.c in Sources */ = {isa = PBXBuildFile; fileRef = 80B2F9887E264E8AAED818BF /* smpc.c */; };
+		0D80A26DF15F449EB8451687 /* m68kcpu.c in Sources */ = {isa = PBXBuildFile; fileRef = AE549349E8594328AD24318B /* m68kcpu.c */; };
+		121D90F14E774B11A17B9235 /* netlink.c in Sources */ = {isa = PBXBuildFile; fileRef = 17B3B495A14A40E38DF3CD3F /* netlink.c */; };
+		1315F24780854E4F8E1A55FB /* ygles.c in Sources */ = {isa = PBXBuildFile; fileRef = 11E8A25098FC43C991085FB3 /* ygles.c */; };
+		15D590A5191C4851A2F41BF9 /* titan.c in Sources */ = {isa = PBXBuildFile; fileRef = 77A1D55272764F70BD9658BA /* titan.c */; };
+		1CAF873DB1064B70A100E2B7 /* sndal.c in Sources */ = {isa = PBXBuildFile; fileRef = 82909D4DBD3949F5A549B90E /* sndal.c */; };
+		211E4971F3F44B03BE69A1A2 /* thr-macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = D07B6DF7D5354E6FBA631C58 /* thr-macosx.c */; };
+		218A5E8B503B4408B9B901C1 /* vdp2debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 6AA02F9D38064F97BC8C0EAF /* vdp2debug.c */; };
+		252DD76A192A40409C3679E9 /* vidogl.c in Sources */ = {isa = PBXBuildFile; fileRef = 67E0CC0B27624BB2BD1BDCD3 /* vidogl.c */; };
+		27384D1192AC47E1B7AA3C64 /* sh2core.c in Sources */ = {isa = PBXBuildFile; fileRef = C2B67F1F71094B8E84F56440 /* sh2core.c */; };
+		291A2B63D084441E8F68EC43 /* japmodem.c in Sources */ = {isa = PBXBuildFile; fileRef = 786F59187E0740C7BB96D212 /* japmodem.c */; };
+		2976B54706B64850A6DFB5D8 /* vidshared.c in Sources */ = {isa = PBXBuildFile; fileRef = B26A91B7947344698BE05FCB /* vidshared.c */; };
+		2D63438A4FD24C1DBA8D185B /* sh7034.c in Sources */ = {isa = PBXBuildFile; fileRef = AD337DF04F364B1DA189B95A /* sh7034.c */; };
+		3256B4F2756E4D84AB35387E /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = A2D3CC0CAEFC493395A2CCA7 /* memory.c */; };
+		355FACDBA9C44D4AA4C916AB /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = A2638580732A491D951EB973 /* movie.c */; };
+		3E4A6D6AE60C4C8CBA2A6BDD /* Tsunami.c in Sources */ = {isa = PBXBuildFile; fileRef = A26F1F6D2EBB4668ABB7031F /* Tsunami.c */; };
+		420AAE6B24FF4379922857D8 /* ssf.c in Sources */ = {isa = PBXBuildFile; fileRef = 91F875FF3D0D4B4286E0EC95 /* ssf.c */; };
+		442E387B9581401B9FA5B658 /* m68kd.c in Sources */ = {isa = PBXBuildFile; fileRef = 3DB7A5D2A2164A3E995D2593 /* m68kd.c */; };
+		447793EB3D4F4428968F2D76 /* yglshaderes.c in Sources */ = {isa = PBXBuildFile; fileRef = D739A1A4F66A48DF8436C609 /* yglshaderes.c */; };
+		4796B61D96CA49F69CC34BC2 /* sock-dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = D76321F0C99E4C97A0C31215 /* sock-dummy.c */; };
+		47FCB36E95DE4400A6295046 /* sndmac.c in Sources */ = {isa = PBXBuildFile; fileRef = 81903809FE944B2BBB335497 /* sndmac.c */; };
+		53090DB659BD44AAAA261EC9 /* peripheral.c in Sources */ = {isa = PBXBuildFile; fileRef = C05C6C3251504ED0A176C325 /* peripheral.c */; };
+		57B5AC39143C474B884D9CA3 /* cdbase.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BBC02EBCF31404C8BCAED65 /* cdbase.c */; };
+		58FB01A5F9EE42AA8807FC62 /* scu.c in Sources */ = {isa = PBXBuildFile; fileRef = AD6FE4D7400A4D269C70D07B /* scu.c */; };
+		59CB304E21E4421E9CC5F724 /* osdcore.c in Sources */ = {isa = PBXBuildFile; fileRef = A2A111E0AA8D42CEA8743EE9 /* osdcore.c */; };
+		6EBCC2DD76C649A2B1B06214 /* vidsoft.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A302C940E4341338773E6C4 /* vidsoft.c */; };
+		6EFF078D9F664763A464DBF9 /* scspdsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 60752FA9BF80441593A5E0F8 /* scspdsp.c */; };
+		6F0B0ECC5740447DAF726123 /* m68kops.c in Sources */ = {isa = PBXBuildFile; fileRef = A9CF0B9B510E45C2B998477F /* m68kops.c */; };
+		713E665B25FE4B849740F82A /* cs0.c in Sources */ = {isa = PBXBuildFile; fileRef = 8D3A9DDB23004E689DFEA18A /* cs0.c */; };
+		74C36544610343EB8E1B6926 /* mpeg_card.c in Sources */ = {isa = PBXBuildFile; fileRef = D10378682CA540E389C66D99 /* mpeg_card.c */; };
+		7B8817AEC5A0409CB3B6A7E1 /* glew.c in Sources */ = {isa = PBXBuildFile; fileRef = 81805650E5FA48748F81E562 /* glew.c */; };
+		7EC8D76D4BA542C393A02DDA /* coffelf.c in Sources */ = {isa = PBXBuildFile; fileRef = FDC2376CDF9A4C73AB50F0A2 /* coffelf.c */; };
+		8A3D3BF3810F45FF96DFFB72 /* vdp2.c in Sources */ = {isa = PBXBuildFile; fileRef = 2E9D9EC104774A4188492FF4 /* vdp2.c */; };
+		8CE0BE6BC72143FD876F8314 /* cd-macosx.c in Sources */ = {isa = PBXBuildFile; fileRef = 7071F897017B41BEBCB619DC /* cd-macosx.c */; };
+		951E2388995A4D5E8902BD67 /* cs1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5095398267D74A75B6BE5C26 /* cs1.c */; };
+		A09DE6E948EC4DC381D03E67 /* gameinfo.c in Sources */ = {isa = PBXBuildFile; fileRef = 546A2AE5E6D74BEA840E1542 /* gameinfo.c */; };
+		A16288DDB0954504977529CB /* permacjoy.c in Sources */ = {isa = PBXBuildFile; fileRef = 6A11D0F3201447799442B5F3 /* permacjoy.c */; };
+		AE04DE7668874817AEEEC37D /* m68kdasm.c in Sources */ = {isa = PBXBuildFile; fileRef = A67F48A2E96D4E6284174F09 /* m68kdasm.c */; };
+		B2039F24E3CC4389AF57048E /* sh2cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 254523CA6B1D43208B1E5AA5 /* sh2cache.c */; };
+		B4415D280B02496D9EA035A0 /* macjoy.c in Sources */ = {isa = PBXBuildFile; fileRef = DBD9E56A563747269DA1B69E /* macjoy.c */; };
+		B5340F7CE59C449E80286BEC /* sh2trace.c in Sources */ = {isa = PBXBuildFile; fileRef = A349DAD091144A62904A991D /* sh2trace.c */; };
+		BB3D878467764355824311E3 /* snddummy.c in Sources */ = {isa = PBXBuildFile; fileRef = 263C1FB6A5E34B6180E82D57 /* snddummy.c */; };
+		BE491CF1D4304D708DF8A32A /* cd_drive.c in Sources */ = {isa = PBXBuildFile; fileRef = ECAC3424FE5749F987FDA192 /* cd_drive.c */; };
+		C07F55751E3342C1A6ADF8F4 /* ygr.c in Sources */ = {isa = PBXBuildFile; fileRef = C2E8756D4DEE466885FE88CA /* ygr.c */; };
+		C0893BE1A048499BAB5D9D9C /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = CC65FD3E810B47B88ACFE6F9 /* error.c */; };
+		C1BD0D5250EF4DBA82BAF2D4 /* sh2d.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C35D05076CC4B17A584B47C /* sh2d.c */; };
+		C2C3D510A2BE4CEA9A2C945F /* eng_ssf.c in Sources */ = {isa = PBXBuildFile; fileRef = 62A3B898C47D4621AAF26B6C /* eng_ssf.c */; };
+		C365C75B0870422399F2641D /* m68kmusashi.c in Sources */ = {isa = PBXBuildFile; fileRef = 6CC0166A77CB4D8DBB778E1C /* m68kmusashi.c */; };
+		C420834A700A4198A192EA95 /* m68kcore.c in Sources */ = {isa = PBXBuildFile; fileRef = 960A47445677496B81DC7CCA /* m68kcore.c */; };
+		C8EEE97D61DA4A26A641121E /* bios.c in Sources */ = {isa = PBXBuildFile; fileRef = E7D5C1C3611F4004B8D3F748 /* bios.c */; };
+		CB98DF93135F4EDDA01DF52F /* sh2idle.c in Sources */ = {isa = PBXBuildFile; fileRef = FEE55662CE9C4E369D9E9B94 /* sh2idle.c */; };
+		D74C0AF2588E4A749E82FA3C /* sh2int.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A55BE9E4A1646EF892212CA /* sh2int.c */; };
+		D80BB2EAC4CD41FFADCE205D /* m68kopnz.c in Sources */ = {isa = PBXBuildFile; fileRef = C5FAC788D34D41F39164A2F2 /* m68kopnz.c */; };
+		DBAED4E6DCF5438E89A6049B /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = 6903FBEB3960408E9A5FDA2E /* cheat.c */; };
+		DE5B4477C395447BAD14420F /* debug.c in Sources */ = {isa = PBXBuildFile; fileRef = 82B951796F504F5588942CBB /* debug.c */; };
+		E05C397F3EFB4319BDA83047 /* corlett.c in Sources */ = {isa = PBXBuildFile; fileRef = 477CE51DD1154E5B9D5E8904 /* corlett.c */; };
+		E59AA6359F934F96B6B1F6CA /* yabause.c in Sources */ = {isa = PBXBuildFile; fileRef = B0454B2FB7B648CFA9FCE911 /* yabause.c */; };
+		E63A3BF3E5194801A0BCFB7B /* vdp1.c in Sources */ = {isa = PBXBuildFile; fileRef = EC8EC0446839475CAAD7C369 /* vdp1.c */; };
+		E77039CACF6A442285B47D15 /* yab_tsunami.c in Sources */ = {isa = PBXBuildFile; fileRef = 9085F19399C24DB4A04C889F /* yab_tsunami.c */; };
+		EA9D297640F64D80BDA95A47 /* m68kopac.c in Sources */ = {isa = PBXBuildFile; fileRef = 571194DCDE6E4BEB80033EA5 /* m68kopac.c */; };
+		EFE1030453AC4BE28BA3E55F /* scsp.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D67585901DD4B6BB9D29EAF /* scsp.c */; };
+		F6C4D7D4548B46AAA615C7C0 /* cs2.c in Sources */ = {isa = PBXBuildFile; fileRef = 3B224D486E9A4F0494B5CE2C /* cs2.c */; };
+		F8342903E2684F8D939EAD94 /* profile.c in Sources */ = {isa = PBXBuildFile; fileRef = 471808B5B6534641A9BCEE5D /* profile.c */; };
+		FCB6B3A4D97B4B11A8FFBDF0 /* sh2iasm.c in Sources */ = {isa = PBXBuildFile; fileRef = 6734B86D7E404FF2B66E1A02 /* sh2iasm.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		2B7715FA6CA1408DA9C3BF90 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 45040E8FE55248489B168786 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A8706FCB3D3344AD92D5F0CA;
+			remoteInfo = m68kmake;
+		};
+		88AC933563064E57A88F5607 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 45040E8FE55248489B168786 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DC63795ACC80406BAEF8CA7D;
+			remoteInfo = yabause;
+		};
+		B15E391F300B4E1F8F9EBE91 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 45040E8FE55248489B168786 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E0AE020ED20E4096AA414346;
+			remoteInfo = ALL_BUILD;
+		};
+		CE647748F9D2463FAECE58CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 45040E8FE55248489B168786 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E0AE020ED20E4096AA414346;
+			remoteInfo = ALL_BUILD;
+		};
+		E68AC6D20B1E49FA85F2C670 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 45040E8FE55248489B168786 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0AB4D1F744514BC7B1BE8814;
+			remoteInfo = ZERO_CHECK;
+		};
+		E9426A6C870945A7ACCAB6F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 45040E8FE55248489B168786 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A8706FCB3D3344AD92D5F0CA;
+			remoteInfo = m68kmake;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0298C3CAECDE44D1B0F27E68 /* CoreFoundation.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		0CFD42FD8F1A4C0782F8F48D /* cs2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cs2.h; path = src/cs2.h; sourceTree = SOURCE_ROOT; };
+		0DCE80A36D704AB28FD64302 /* yglcache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = yglcache.c; path = src/yglcache.c; sourceTree = SOURCE_ROOT; };
+		10E1202E41DA4ABAB17BFF37 /* sock.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sock.h; path = src/sock.h; sourceTree = SOURCE_ROOT; };
+		11E8A25098FC43C991085FB3 /* ygles.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ygles.c; path = src/ygles.c; sourceTree = SOURCE_ROOT; };
+		16F7C1CB645840488E179959 /* bios.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bios.h; path = src/bios.h; sourceTree = SOURCE_ROOT; };
+		179F42A7727245ADA9F03A25 /* YabauseController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = YabauseController.m; path = src/cocoa/YabauseController.m; sourceTree = SOURCE_ROOT; };
+		17B3B495A14A40E38DF3CD3F /* netlink.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = netlink.c; path = src/netlink.c; sourceTree = SOURCE_ROOT; };
+		186E552DF9994D21B20501AF /* m68kcore.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = m68kcore.h; path = src/m68kcore.h; sourceTree = SOURCE_ROOT; };
+		1BBC02EBCF31404C8BCAED65 /* cdbase.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cdbase.c; path = src/cdbase.c; sourceTree = SOURCE_ROOT; };
+		1D403AED7AF447EF869C78C5 /* vidogl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = vidogl.h; path = src/vidogl.h; sourceTree = SOURCE_ROOT; };
+		1F518BF76B0E4DE88B1591BA /* osdcore.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = osdcore.h; path = src/osdcore.h; sourceTree = SOURCE_ROOT; };
+		1FFD8AF05667466B9343A2E4 /* smpc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = smpc.h; path = src/smpc.h; sourceTree = SOURCE_ROOT; };
+		231C454BCA2743B2B6C00E2F /* m68kmusashi.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = m68kmusashi.h; path = src/m68kmusashi.h; sourceTree = SOURCE_ROOT; };
+		254523CA6B1D43208B1E5AA5 /* sh2cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sh2cache.c; path = src/sh2cache.c; sourceTree = SOURCE_ROOT; };
+		25564D55898648C38ED9C30A /* cdbase.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cdbase.h; path = src/cdbase.h; sourceTree = SOURCE_ROOT; };
+		263C1FB6A5E34B6180E82D57 /* snddummy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = snddummy.c; path = src/snddummy.c; sourceTree = SOURCE_ROOT; };
+		279C7A0B08CA49D29DF5BD5D /* sh2idle.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sh2idle.h; path = src/sh2idle.h; sourceTree = SOURCE_ROOT; };
+		28F42484122F444D98EAD1F7 /* ssf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ssf.h; path = src/aosdk/ssf.h; sourceTree = SOURCE_ROOT; };
+		2902D43113E84D84BBB16CBB /* sndal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sndal.h; path = src/sndal.h; sourceTree = SOURCE_ROOT; };
+		2C35D05076CC4B17A584B47C /* sh2d.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sh2d.c; path = src/sh2d.c; sourceTree = SOURCE_ROOT; };
+		2E4F3FA812B34278A2226460 /* YabauseButtonFormatter.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = YabauseButtonFormatter.m; path = src/cocoa/YabauseButtonFormatter.m; sourceTree = SOURCE_ROOT; };
+		2E9D9EC104774A4188492FF4 /* vdp2.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vdp2.c; path = src/vdp2.c; sourceTree = SOURCE_ROOT; };
+		2F87A46D69AA4F699868ABA9 /* m68kd.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = m68kd.h; path = src/m68kd.h; sourceTree = SOURCE_ROOT; };
+		330ED62C694D48EF9C050504 /* gameinfo.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gameinfo.h; path = src/gameinfo.h; sourceTree = SOURCE_ROOT; };
+		33530876D1A1490FBD320ECD /* cheat.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cheat.h; path = src/cheat.h; sourceTree = SOURCE_ROOT; };
+		33E6726203F54C63916B7D30 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = src/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		3530A3C801E94F079E843C2B /* YabausePrefsController.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = YabausePrefsController.m; path = src/cocoa/YabausePrefsController.m; sourceTree = SOURCE_ROOT; };
+		3B224D486E9A4F0494B5CE2C /* cs2.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cs2.c; path = src/cs2.c; sourceTree = SOURCE_ROOT; };
+		3DB7A5D2A2164A3E995D2593 /* m68kd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = m68kd.c; path = src/m68kd.c; sourceTree = SOURCE_ROOT; };
+		408780DD2D2742AA9F3DA127 /* yab_tsunami.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = yab_tsunami.h; path = src/tsunami/yab_tsunami.h; sourceTree = SOURCE_ROOT; };
+		41AEC9255F0E47F999A0E3EB /* GLUT.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GLUT.framework; sourceTree = "<absolute>"; };
+		471808B5B6534641A9BCEE5D /* profile.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = profile.c; path = src/profile.c; sourceTree = SOURCE_ROOT; };
+		477CE51DD1154E5B9D5E8904 /* corlett.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = corlett.c; path = src/aosdk/corlett.c; sourceTree = SOURCE_ROOT; };
+		4FE124D2EF8E4F6989F8F2FF /* vidgcd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vidgcd.c; path = src/cocoa/vidgcd.c; sourceTree = SOURCE_ROOT; };
+		5095398267D74A75B6BE5C26 /* cs1.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cs1.c; path = src/cs1.c; sourceTree = SOURCE_ROOT; };
+		546A2AE5E6D74BEA840E1542 /* gameinfo.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = gameinfo.c; path = src/gameinfo.c; sourceTree = SOURCE_ROOT; };
+		54A65BE08EB5441AA3CB6141 /* titan.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = titan.h; path = src/titan/titan.h; sourceTree = SOURCE_ROOT; };
+		5568EABC2940453DB20719F7 /* cd_drive.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cd_drive.h; path = src/cd_drive.h; sourceTree = SOURCE_ROOT; };
+		571194DCDE6E4BEB80033EA5 /* m68kopac.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = m68kopac.c; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi/m68kopac.c; sourceTree = "<absolute>"; };
+		5D67585901DD4B6BB9D29EAF /* scsp.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = scsp.c; path = src/scsp.c; sourceTree = SOURCE_ROOT; };
+		603E30E72E16404E8985F0D0 /* OpenGL.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		60752FA9BF80441593A5E0F8 /* scspdsp.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = scspdsp.c; path = src/scspdsp.c; sourceTree = SOURCE_ROOT; };
+		625F36FC1831484CA788E3EE /* japmodem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = japmodem.h; path = src/japmodem.h; sourceTree = SOURCE_ROOT; };
+		62A3B898C47D4621AAF26B6C /* eng_ssf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = eng_ssf.c; path = src/aosdk/eng_ssf.c; sourceTree = SOURCE_ROOT; };
+		6734B86D7E404FF2B66E1A02 /* sh2iasm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sh2iasm.c; path = src/sh2iasm.c; sourceTree = SOURCE_ROOT; };
+		67B22DBABB2748D58021B294 /* yui.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = yui.h; path = src/yui.h; sourceTree = SOURCE_ROOT; };
+		67E0CC0B27624BB2BD1BDCD3 /* vidogl.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vidogl.c; path = src/vidogl.c; sourceTree = SOURCE_ROOT; };
+		6903FBEB3960408E9A5FDA2E /* cheat.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cheat.c; path = src/cheat.c; sourceTree = SOURCE_ROOT; };
+		69279015F8154966B7D83319 /* sh2iasm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sh2iasm.h; path = src/sh2iasm.h; sourceTree = SOURCE_ROOT; };
+		6A11D0F3201447799442B5F3 /* permacjoy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = permacjoy.c; path = src/permacjoy.c; sourceTree = SOURCE_ROOT; };
+		6A302C940E4341338773E6C4 /* vidsoft.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vidsoft.c; path = src/vidsoft.c; sourceTree = SOURCE_ROOT; };
+		6AA02F9D38064F97BC8C0EAF /* vdp2debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vdp2debug.c; path = src/vdp2debug.c; sourceTree = SOURCE_ROOT; };
+		6AD1AF31FF4249FEB13DC2B4 /* sh2d.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sh2d.h; path = src/sh2d.h; sourceTree = SOURCE_ROOT; };
+		6CC0166A77CB4D8DBB778E1C /* m68kmusashi.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = m68kmusashi.c; path = src/m68kmusashi.c; sourceTree = SOURCE_ROOT; };
+		6E26CBEF8D32405E99026F43 /* debug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = debug.h; path = src/debug.h; sourceTree = SOURCE_ROOT; };
+		6E3A4EC7DC0D4C06870AA237 /* YabauseGLView.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = YabauseGLView.m; path = src/cocoa/YabauseGLView.m; sourceTree = SOURCE_ROOT; };
+		6F1C4DC631514B8A96EAC4B5 /* vidsoft.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = vidsoft.h; path = src/vidsoft.h; sourceTree = SOURCE_ROOT; };
+		7071F897017B41BEBCB619DC /* cd-macosx.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = "cd-macosx.c"; path = "src/cd-macosx.c"; sourceTree = SOURCE_ROOT; };
+		70F975A9444A4B499554FACB /* m68kops.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = m68kops.h; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi/m68kops.h; sourceTree = "<absolute>"; };
+		749A4C7F39F4495D93603A8D /* mpeg_card.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mpeg_card.h; path = src/mpeg_card.h; sourceTree = SOURCE_ROOT; };
+		74EF9683ADCD4EF18BB93F7B /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = src/cocoa/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		76117DD815F049DCB260FED4 /* cs1.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cs1.h; path = src/cs1.h; sourceTree = SOURCE_ROOT; };
+		77A1D55272764F70BD9658BA /* titan.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = titan.c; path = src/titan/titan.c; sourceTree = SOURCE_ROOT; };
+		786F59187E0740C7BB96D212 /* japmodem.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = japmodem.c; path = src/japmodem.c; sourceTree = SOURCE_ROOT; };
+		797EAA1428634558A5D5603A /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = src/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		7B348CA37F22454199AF7931 /* vdp2debug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = vdp2debug.h; path = src/vdp2debug.h; sourceTree = SOURCE_ROOT; };
+		7CC4A80B616F419284991BC8 /* vdp2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = vdp2.h; path = src/vdp2.h; sourceTree = SOURCE_ROOT; };
+		803642BAD7574613A7963C4A /* cs0.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cs0.h; path = src/cs0.h; sourceTree = SOURCE_ROOT; };
+		80B2F9887E264E8AAED818BF /* smpc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = smpc.c; path = src/smpc.c; sourceTree = SOURCE_ROOT; };
+		81116B3DC32540B4B1E76F13 /* macjoy.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = macjoy.h; path = src/macjoy.h; sourceTree = SOURCE_ROOT; };
+		81805650E5FA48748F81E562 /* glew.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = glew.c; path = src/gllibs/glew/glew.c; sourceTree = SOURCE_ROOT; };
+		81903809FE944B2BBB335497 /* sndmac.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sndmac.c; path = src/sndmac.c; sourceTree = SOURCE_ROOT; };
+		82909D4DBD3949F5A549B90E /* sndal.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sndal.c; path = src/sndal.c; sourceTree = SOURCE_ROOT; };
+		82B951796F504F5588942CBB /* debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = src/debug.c; sourceTree = SOURCE_ROOT; };
+		85C6CFEF0AEF4E42839AF94D /* scu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = scu.h; path = src/scu.h; sourceTree = SOURCE_ROOT; };
+		8676033B0A974865BBC72EB9 /* sh2trace.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sh2trace.h; path = src/sh2trace.h; sourceTree = SOURCE_ROOT; };
+		882C442FC41E41AEB09AF03A /* memory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = memory.h; path = src/memory.h; sourceTree = SOURCE_ROOT; };
+		888AD14F06604B498003B2B6 /* ao.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ao.h; path = src/aosdk/ao.h; sourceTree = SOURCE_ROOT; };
+		8B708CF8127D443E89417322 /* vdp1.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = vdp1.h; path = src/vdp1.h; sourceTree = SOURCE_ROOT; };
+		8D3A9DDB23004E689DFEA18A /* cs0.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cs0.c; path = src/cs0.c; sourceTree = SOURCE_ROOT; };
+		8DA4F8275A8D49CAA1E8F0B1 /* libyabause.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libyabause.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DBB3FCE0DEB465BA73C7091 /* scsp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = scsp.h; path = src/scsp.h; sourceTree = SOURCE_ROOT; };
+		9085F19399C24DB4A04C889F /* yab_tsunami.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = yab_tsunami.c; path = src/tsunami/yab_tsunami.c; sourceTree = SOURCE_ROOT; };
+		91F875FF3D0D4B4286E0EC95 /* ssf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ssf.c; path = src/aosdk/ssf.c; sourceTree = SOURCE_ROOT; };
+		960A47445677496B81DC7CCA /* m68kcore.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = m68kcore.c; path = src/m68kcore.c; sourceTree = SOURCE_ROOT; };
+		966775544F1E4EC7BF21ED7D /* sndmac.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sndmac.h; path = src/sndmac.h; sourceTree = SOURCE_ROOT; };
+		98C9A3EBAAB74786A1B5F0BE /* sh2cache.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sh2cache.h; path = src/sh2cache.h; sourceTree = SOURCE_ROOT; };
+		9A55BE9E4A1646EF892212CA /* sh2int.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sh2int.c; path = src/sh2int.c; sourceTree = SOURCE_ROOT; };
+		9E5632D778FB4F9D87C571E0 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/cocoa/CMakeFiles/yabause-cocoa.dir/Info.plist"; sourceTree = "<absolute>"; };
+		A2638580732A491D951EB973 /* movie.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = movie.c; path = src/movie.c; sourceTree = SOURCE_ROOT; };
+		A26F1F6D2EBB4668ABB7031F /* Tsunami.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Tsunami.c; path = src/tsunami/Tsunami.c; sourceTree = SOURCE_ROOT; };
+		A2A111E0AA8D42CEA8743EE9 /* osdcore.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = osdcore.c; path = src/osdcore.c; sourceTree = SOURCE_ROOT; };
+		A2D3CC0CAEFC493395A2CCA7 /* memory.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = memory.c; path = src/memory.c; sourceTree = SOURCE_ROOT; };
+		A349DAD091144A62904A991D /* sh2trace.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sh2trace.c; path = src/sh2trace.c; sourceTree = SOURCE_ROOT; };
+		A41F20B5F7574F1282E6486E /* peripheral.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = peripheral.h; path = src/peripheral.h; sourceTree = SOURCE_ROOT; };
+		A67F48A2E96D4E6284174F09 /* m68kdasm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = m68kdasm.c; path = src/musashi/m68kdasm.c; sourceTree = SOURCE_ROOT; };
+		A97556E421164A90B04C01A9 /* permacjoy.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = permacjoy.h; path = src/permacjoy.h; sourceTree = SOURCE_ROOT; };
+		A9CF0B9B510E45C2B998477F /* m68kops.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = m68kops.c; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi/m68kops.c; sourceTree = "<absolute>"; };
+		AB0AC5106E764AE08AFB3D03 /* sh2int.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sh2int.h; path = src/sh2int.h; sourceTree = SOURCE_ROOT; };
+		AD337DF04F364B1DA189B95A /* sh7034.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sh7034.c; path = src/sh7034.c; sourceTree = SOURCE_ROOT; };
+		AD6FE4D7400A4D269C70D07B /* scu.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = scu.c; path = src/scu.c; sourceTree = SOURCE_ROOT; };
+		AE549349E8594328AD24318B /* m68kcpu.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = m68kcpu.c; path = src/musashi/m68kcpu.c; sourceTree = SOURCE_ROOT; };
+		AF138B8887F5484F95EB5084 /* corlett.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = corlett.h; path = src/aosdk/corlett.h; sourceTree = SOURCE_ROOT; };
+		B0454B2FB7B648CFA9FCE911 /* yabause.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = yabause.c; path = src/yabause.c; sourceTree = SOURCE_ROOT; };
+		B0D3D1392377470F9CF33408 /* movie.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = movie.h; path = src/movie.h; sourceTree = SOURCE_ROOT; };
+		B26A91B7947344698BE05FCB /* vidshared.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vidshared.c; path = src/vidshared.c; sourceTree = SOURCE_ROOT; };
+		B4B7AF9C013C42B99FA81281 /* m68kcpu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = m68kcpu.h; path = src/musashi/m68kcpu.h; sourceTree = SOURCE_ROOT; };
+		B6C9CB6E7824404F870A6F17 /* yabause.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = yabause.h; path = src/yabause.h; sourceTree = SOURCE_ROOT; };
+		BA334C1A32C244A682D5BABD /* main.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = main.m; path = src/cocoa/main.m; sourceTree = SOURCE_ROOT; };
+		BB069E728A1E493491CF20AF /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = doc/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		BF8FE1F317BC40438617D929 /* netlink.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = netlink.h; path = src/netlink.h; sourceTree = SOURCE_ROOT; };
+		C05C6C3251504ED0A176C325 /* peripheral.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = peripheral.c; path = src/peripheral.c; sourceTree = SOURCE_ROOT; };
+		C2B67F1F71094B8E84F56440 /* sh2core.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sh2core.c; path = src/sh2core.c; sourceTree = SOURCE_ROOT; };
+		C2E8756D4DEE466885FE88CA /* ygr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ygr.c; path = src/ygr.c; sourceTree = SOURCE_ROOT; };
+		C5FAC788D34D41F39164A2F2 /* m68kopnz.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = m68kopnz.c; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi/m68kopnz.c; sourceTree = "<absolute>"; };
+		C7C5FBD1F27A467CA4B52D29 /* PerCocoa.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = PerCocoa.m; path = src/cocoa/PerCocoa.m; sourceTree = SOURCE_ROOT; };
+		C885F16C18B24A248261EC83 /* vidshared.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = vidshared.h; path = src/vidshared.h; sourceTree = SOURCE_ROOT; };
+		C9F6B9494E7E4297B2B529C5 /* vidgcd.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = vidgcd.h; path = src/cocoa/vidgcd.h; sourceTree = SOURCE_ROOT; };
+		CABAD43F14EE4DF6BFEF094E /* core.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = core.h; path = src/core.h; sourceTree = SOURCE_ROOT; };
+		CAE8E86E605749DA9866D9A9 /* ygl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ygl.h; path = src/ygl.h; sourceTree = SOURCE_ROOT; };
+		CC65FD3E810B47B88ACFE6F9 /* error.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = error.c; path = src/error.c; sourceTree = SOURCE_ROOT; };
+		CF289AC46AC742629895232E /* profile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = profile.h; path = src/profile.h; sourceTree = SOURCE_ROOT; };
+		D0230F83834845C7BF20DC47 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		D07B6DF7D5354E6FBA631C58 /* thr-macosx.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = "thr-macosx.c"; path = "src/thr-macosx.c"; sourceTree = SOURCE_ROOT; };
+		D10378682CA540E389C66D99 /* mpeg_card.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = mpeg_card.c; path = src/mpeg_card.c; sourceTree = SOURCE_ROOT; };
+		D118AD90350848CA9C2EF6F0 /* threads.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = threads.h; path = src/threads.h; sourceTree = SOURCE_ROOT; };
+		D5EA3977037C480F9337F188 /* scspdsp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = scspdsp.h; path = src/scspdsp.h; sourceTree = SOURCE_ROOT; };
+		D739A1A4F66A48DF8436C609 /* yglshaderes.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = yglshaderes.c; path = src/yglshaderes.c; sourceTree = SOURCE_ROOT; };
+		D76321F0C99E4C97A0C31215 /* sock-dummy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = "sock-dummy.c"; path = "src/sock-dummy.c"; sourceTree = SOURCE_ROOT; };
+		D7DEB2EEC5C0462DB1A8667B /* Cocoa.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		DB0E3C0702914E7AB13FF4E2 /* m68kopdm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = m68kopdm.c; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi/m68kopdm.c; sourceTree = "<absolute>"; };
+		DBD9E56A563747269DA1B69E /* macjoy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = macjoy.c; path = src/macjoy.c; sourceTree = SOURCE_ROOT; };
+		DEF4FF6BF04046618FCF2CC5 /* coffelf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = coffelf.h; path = src/coffelf.h; sourceTree = SOURCE_ROOT; };
+		E38AEDA5B4AE421BAACE3A91 /* m68k.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = m68k.h; path = src/musashi/m68k.h; sourceTree = SOURCE_ROOT; };
+		E4C6FB1669F04E1388DEC45B /* OpenAL.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = OpenAL.framework; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenAL.framework; sourceTree = "<absolute>"; };
+		E76DC546E22442D5B9254BB7 /* AudioUnit.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
+		E7D5C1C3611F4004B8D3F748 /* bios.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = bios.c; path = src/bios.c; sourceTree = SOURCE_ROOT; };
+		EC8EC0446839475CAAD7C369 /* vdp1.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vdp1.c; path = src/vdp1.c; sourceTree = SOURCE_ROOT; };
+		ECAC3424FE5749F987FDA192 /* cd_drive.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cd_drive.c; path = src/cd_drive.c; sourceTree = SOURCE_ROOT; };
+		EE04994A0FEC417E9666E449 /* IOKit.framework */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		F889F934590B488C9F7AFBBC /* ygr.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ygr.h; path = src/ygr.h; sourceTree = SOURCE_ROOT; };
+		FB789E0F37CB492B9A125067 /* sh2core.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sh2core.h; path = src/sh2core.h; sourceTree = SOURCE_ROOT; };
+		FC962F3114204AF6B8475E76 /* error.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = error.h; path = src/error.h; sourceTree = SOURCE_ROOT; };
+		FCF170397F804522B5054E3D /* sh7034.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sh7034.h; path = src/sh7034.h; sourceTree = SOURCE_ROOT; };
+		FDC2376CDF9A4C73AB50F0A2 /* coffelf.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = coffelf.c; path = src/coffelf.c; sourceTree = SOURCE_ROOT; };
+		FEE55662CE9C4E369D9E9B94 /* sh2idle.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sh2idle.c; path = src/sh2idle.c; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		BC14ABB0AC67476CA72D3093 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0FE79ED9B18349FF90B1F894 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		3EA38772D12846179765E7FF /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		3FFF51453CC0495489B62D49 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				70F975A9444A4B499554FACB /* m68kops.h */,
+				888AD14F06604B498003B2B6 /* ao.h */,
+				AF138B8887F5484F95EB5084 /* corlett.h */,
+				28F42484122F444D98EAD1F7 /* ssf.h */,
+				16F7C1CB645840488E179959 /* bios.h */,
+				5568EABC2940453DB20719F7 /* cd_drive.h */,
+				25564D55898648C38ED9C30A /* cdbase.h */,
+				33530876D1A1490FBD320ECD /* cheat.h */,
+				DEF4FF6BF04046618FCF2CC5 /* coffelf.h */,
+				CABAD43F14EE4DF6BFEF094E /* core.h */,
+				803642BAD7574613A7963C4A /* cs0.h */,
+				76117DD815F049DCB260FED4 /* cs1.h */,
+				0CFD42FD8F1A4C0782F8F48D /* cs2.h */,
+				6E26CBEF8D32405E99026F43 /* debug.h */,
+				FC962F3114204AF6B8475E76 /* error.h */,
+				330ED62C694D48EF9C050504 /* gameinfo.h */,
+				625F36FC1831484CA788E3EE /* japmodem.h */,
+				186E552DF9994D21B20501AF /* m68kcore.h */,
+				2F87A46D69AA4F699868ABA9 /* m68kd.h */,
+				231C454BCA2743B2B6C00E2F /* m68kmusashi.h */,
+				81116B3DC32540B4B1E76F13 /* macjoy.h */,
+				882C442FC41E41AEB09AF03A /* memory.h */,
+				B0D3D1392377470F9CF33408 /* movie.h */,
+				749A4C7F39F4495D93603A8D /* mpeg_card.h */,
+				E38AEDA5B4AE421BAACE3A91 /* m68k.h */,
+				B4B7AF9C013C42B99FA81281 /* m68kcpu.h */,
+				BF8FE1F317BC40438617D929 /* netlink.h */,
+				1F518BF76B0E4DE88B1591BA /* osdcore.h */,
+				A41F20B5F7574F1282E6486E /* peripheral.h */,
+				A97556E421164A90B04C01A9 /* permacjoy.h */,
+				CF289AC46AC742629895232E /* profile.h */,
+				8DBB3FCE0DEB465BA73C7091 /* scsp.h */,
+				D5EA3977037C480F9337F188 /* scspdsp.h */,
+				85C6CFEF0AEF4E42839AF94D /* scu.h */,
+				98C9A3EBAAB74786A1B5F0BE /* sh2cache.h */,
+				FB789E0F37CB492B9A125067 /* sh2core.h */,
+				6AD1AF31FF4249FEB13DC2B4 /* sh2d.h */,
+				69279015F8154966B7D83319 /* sh2iasm.h */,
+				279C7A0B08CA49D29DF5BD5D /* sh2idle.h */,
+				AB0AC5106E764AE08AFB3D03 /* sh2int.h */,
+				8676033B0A974865BBC72EB9 /* sh2trace.h */,
+				FCF170397F804522B5054E3D /* sh7034.h */,
+				1FFD8AF05667466B9343A2E4 /* smpc.h */,
+				2902D43113E84D84BBB16CBB /* sndal.h */,
+				966775544F1E4EC7BF21ED7D /* sndmac.h */,
+				10E1202E41DA4ABAB17BFF37 /* sock.h */,
+				D118AD90350848CA9C2EF6F0 /* threads.h */,
+				54A65BE08EB5441AA3CB6141 /* titan.h */,
+				408780DD2D2742AA9F3DA127 /* yab_tsunami.h */,
+				8B708CF8127D443E89417322 /* vdp1.h */,
+				7CC4A80B616F419284991BC8 /* vdp2.h */,
+				7B348CA37F22454199AF7931 /* vdp2debug.h */,
+				1D403AED7AF447EF869C78C5 /* vidogl.h */,
+				C885F16C18B24A248261EC83 /* vidshared.h */,
+				6F1C4DC631514B8A96EAC4B5 /* vidsoft.h */,
+				B6C9CB6E7824404F870A6F17 /* yabause.h */,
+				CAE8E86E605749DA9866D9A9 /* ygl.h */,
+				F889F934590B488C9F7AFBBC /* ygr.h */,
+				67B22DBABB2748D58021B294 /* yui.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		40A9EAC2600C49A4BA757E2C /* yabause */ = {
+			isa = PBXGroup;
+			children = (
+				CA48A7F005D045C69F07699D /* Source Files */,
+				3FFF51453CC0495489B62D49 /* Header Files */,
+				33E6726203F54C63916B7D30 /* CMakeLists.txt */,
+			);
+			name = yabause;
+			sourceTree = "<group>";
+		};
+		4BA1F14D2C4643B081EEF5F1 = {
+			isa = PBXGroup;
+			children = (
+				846F237DF66441C994EFEC3D /* ALL_BUILD */,
+				612ABFBE785946FDB570D42E /* doc */,
+				ED176E68F3274A16834F46EC /* m68kmake */,
+				40A9EAC2600C49A4BA757E2C /* yabause */,
+				72B341B2077E491986E18E8B /* yabause-cocoa */,
+				50D2694762534207A9732012 /* Products */,
+				5F5D343E7816405F9291499B /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		50D2694762534207A9732012 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DA4F8275A8D49CAA1E8F0B1 /* libyabause.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5F5D343E7816405F9291499B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				603E30E72E16404E8985F0D0 /* OpenGL.framework */,
+				41AEC9255F0E47F999A0E3EB /* GLUT.framework */,
+				D7DEB2EEC5C0462DB1A8667B /* Cocoa.framework */,
+				E4C6FB1669F04E1388DEC45B /* OpenAL.framework */,
+				0298C3CAECDE44D1B0F27E68 /* CoreFoundation.framework */,
+				EE04994A0FEC417E9666E449 /* IOKit.framework */,
+				E76DC546E22442D5B9254BB7 /* AudioUnit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		612ABFBE785946FDB570D42E /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				3EA38772D12846179765E7FF /* CMake Rules */,
+				BB069E728A1E493491CF20AF /* CMakeLists.txt */,
+			);
+			name = doc;
+			sourceTree = "<group>";
+		};
+		72B341B2077E491986E18E8B /* yabause-cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				F0D2C2C126D14DF7AA775BC7 /* Source Files */,
+				90EBC5FF4CB34F3E9FB1DE69 /* Header Files */,
+				8823D01D13E94110BDD52D71 /* Resources */,
+				74EF9683ADCD4EF18BB93F7B /* CMakeLists.txt */,
+			);
+			name = "yabause-cocoa";
+			sourceTree = "<group>";
+		};
+		846F237DF66441C994EFEC3D /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				CBCE8E9ECB644BF1B8AA7AA1 /* CMake Rules */,
+				D0230F83834845C7BF20DC47 /* CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		8823D01D13E94110BDD52D71 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9E5632D778FB4F9D87C571E0 /* Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		90EBC5FF4CB34F3E9FB1DE69 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				C9F6B9494E7E4297B2B529C5 /* vidgcd.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		CA48A7F005D045C69F07699D /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				571194DCDE6E4BEB80033EA5 /* m68kopac.c */,
+				DB0E3C0702914E7AB13FF4E2 /* m68kopdm.c */,
+				C5FAC788D34D41F39164A2F2 /* m68kopnz.c */,
+				A9CF0B9B510E45C2B998477F /* m68kops.c */,
+				477CE51DD1154E5B9D5E8904 /* corlett.c */,
+				62A3B898C47D4621AAF26B6C /* eng_ssf.c */,
+				91F875FF3D0D4B4286E0EC95 /* ssf.c */,
+				E7D5C1C3611F4004B8D3F748 /* bios.c */,
+				7071F897017B41BEBCB619DC /* cd-macosx.c */,
+				ECAC3424FE5749F987FDA192 /* cd_drive.c */,
+				1BBC02EBCF31404C8BCAED65 /* cdbase.c */,
+				6903FBEB3960408E9A5FDA2E /* cheat.c */,
+				FDC2376CDF9A4C73AB50F0A2 /* coffelf.c */,
+				8D3A9DDB23004E689DFEA18A /* cs0.c */,
+				5095398267D74A75B6BE5C26 /* cs1.c */,
+				3B224D486E9A4F0494B5CE2C /* cs2.c */,
+				82B951796F504F5588942CBB /* debug.c */,
+				CC65FD3E810B47B88ACFE6F9 /* error.c */,
+				546A2AE5E6D74BEA840E1542 /* gameinfo.c */,
+				81805650E5FA48748F81E562 /* glew.c */,
+				786F59187E0740C7BB96D212 /* japmodem.c */,
+				960A47445677496B81DC7CCA /* m68kcore.c */,
+				3DB7A5D2A2164A3E995D2593 /* m68kd.c */,
+				6CC0166A77CB4D8DBB778E1C /* m68kmusashi.c */,
+				DBD9E56A563747269DA1B69E /* macjoy.c */,
+				A2D3CC0CAEFC493395A2CCA7 /* memory.c */,
+				A2638580732A491D951EB973 /* movie.c */,
+				D10378682CA540E389C66D99 /* mpeg_card.c */,
+				AE549349E8594328AD24318B /* m68kcpu.c */,
+				A67F48A2E96D4E6284174F09 /* m68kdasm.c */,
+				17B3B495A14A40E38DF3CD3F /* netlink.c */,
+				A2A111E0AA8D42CEA8743EE9 /* osdcore.c */,
+				C05C6C3251504ED0A176C325 /* peripheral.c */,
+				6A11D0F3201447799442B5F3 /* permacjoy.c */,
+				471808B5B6534641A9BCEE5D /* profile.c */,
+				5D67585901DD4B6BB9D29EAF /* scsp.c */,
+				60752FA9BF80441593A5E0F8 /* scspdsp.c */,
+				AD6FE4D7400A4D269C70D07B /* scu.c */,
+				254523CA6B1D43208B1E5AA5 /* sh2cache.c */,
+				C2B67F1F71094B8E84F56440 /* sh2core.c */,
+				2C35D05076CC4B17A584B47C /* sh2d.c */,
+				6734B86D7E404FF2B66E1A02 /* sh2iasm.c */,
+				FEE55662CE9C4E369D9E9B94 /* sh2idle.c */,
+				9A55BE9E4A1646EF892212CA /* sh2int.c */,
+				A349DAD091144A62904A991D /* sh2trace.c */,
+				AD337DF04F364B1DA189B95A /* sh7034.c */,
+				80B2F9887E264E8AAED818BF /* smpc.c */,
+				82909D4DBD3949F5A549B90E /* sndal.c */,
+				263C1FB6A5E34B6180E82D57 /* snddummy.c */,
+				81903809FE944B2BBB335497 /* sndmac.c */,
+				D76321F0C99E4C97A0C31215 /* sock-dummy.c */,
+				D07B6DF7D5354E6FBA631C58 /* thr-macosx.c */,
+				77A1D55272764F70BD9658BA /* titan.c */,
+				A26F1F6D2EBB4668ABB7031F /* Tsunami.c */,
+				9085F19399C24DB4A04C889F /* yab_tsunami.c */,
+				EC8EC0446839475CAAD7C369 /* vdp1.c */,
+				2E9D9EC104774A4188492FF4 /* vdp2.c */,
+				6AA02F9D38064F97BC8C0EAF /* vdp2debug.c */,
+				67E0CC0B27624BB2BD1BDCD3 /* vidogl.c */,
+				B26A91B7947344698BE05FCB /* vidshared.c */,
+				6A302C940E4341338773E6C4 /* vidsoft.c */,
+				B0454B2FB7B648CFA9FCE911 /* yabause.c */,
+				0DCE80A36D704AB28FD64302 /* yglcache.c */,
+				11E8A25098FC43C991085FB3 /* ygles.c */,
+				D739A1A4F66A48DF8436C609 /* yglshaderes.c */,
+				C2E8756D4DEE466885FE88CA /* ygr.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		CBCE8E9ECB644BF1B8AA7AA1 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		ED176E68F3274A16834F46EC /* m68kmake */ = {
+			isa = PBXGroup;
+			children = (
+				0FE79ED9B18349FF90B1F894 /* CMake Rules */,
+				797EAA1428634558A5D5603A /* CMakeLists.txt */,
+			);
+			name = m68kmake;
+			sourceTree = "<group>";
+		};
+		F0D2C2C126D14DF7AA775BC7 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				C7C5FBD1F27A467CA4B52D29 /* PerCocoa.m */,
+				2E4F3FA812B34278A2226460 /* YabauseButtonFormatter.m */,
+				179F42A7727245ADA9F03A25 /* YabauseController.m */,
+				6E3A4EC7DC0D4C06870AA237 /* YabauseGLView.m */,
+				3530A3C801E94F079E843C2B /* YabausePrefsController.m */,
+				BA334C1A32C244A682D5BABD /* main.m */,
+				4FE124D2EF8E4F6989F8F2FF /* vidgcd.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DC63795ACC80406BAEF8CA7D /* yabause */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 87945DD8E6914EBEBBCCFC35 /* Build configuration list for PBXNativeTarget "yabause" */;
+			buildPhases = (
+				05FEC4362DAA46A7A4F68630 /* Sources */,
+				BC14ABB0AC67476CA72D3093 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				772186FFCD3B4231A27F55AA /* PBXTargetDependency */,
+			);
+			name = yabause;
+			productName = yabause;
+			productReference = 8DA4F8275A8D49CAA1E8F0B1 /* libyabause.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		45040E8FE55248489B168786 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1420;
+			};
+			buildConfigurationList = E5EAEEF4AB40413A910A4B23 /* Build configuration list for PBXProject "yabause" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4BA1F14D2C4643B081EEF5F1;
+			projectDirPath = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause;
+			projectRoot = "";
+			targets = (
+				E0AE020ED20E4096AA414346 /* ALL_BUILD */,
+				0AB4D1F744514BC7B1BE8814 /* ZERO_CHECK */,
+				87039582440C440EB9DD3F02 /* doc */,
+				5ABFECA5144941559EC7C6F6 /* install */,
+				A8706FCB3D3344AD92D5F0CA /* m68kmake */,
+				61A04DAF2D3F43B6B33F2A24 /* package */,
+				DC63795ACC80406BAEF8CA7D /* yabause */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		274C06BCF9B75581655DB63C /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-install */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-build",
+			);
+			name = "Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-install";
+			outputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-install",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-install\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-install\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-install\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-install\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		2A1116BE69FFB1EB50B77C6E /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-configure",
+			);
+			name = "Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-build";
+			outputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-build",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake --build . --config Debug\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-build\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake --build . --config Release\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-build\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake --build . --config MinSizeRel\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-build\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake --build . --config RelWithDebInfo\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-build\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		3E7E93E2405C17C65F25C2ED /* Generate doc/CMakeFiles/doc */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate doc/CMakeFiles/doc";
+			outputPaths = (
+				/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/doc/CMakeFiles/doc,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/doc\n  /opt/homebrew/bin/doxygen /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/doc/Doxyfile\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/doc\n  /opt/homebrew/bin/doxygen /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/doc/Doxyfile\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/doc\n  /opt/homebrew/bin/doxygen /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/doc/Doxyfile\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/doc\n  /opt/homebrew/bin/doxygen /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/doc/Doxyfile\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		59539EC570D031E0066729C3 /* Generate src/CMakeFiles/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-complete */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-build",
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-configure",
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-download",
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-install",
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-mkdir",
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-patch",
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-update",
+			);
+			name = "Generate src/CMakeFiles/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-complete";
+			outputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-complete",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E make_directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-complete\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-done\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E make_directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-complete\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-done\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E make_directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-complete\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-done\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E make_directory /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-complete\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-done\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		59F00EB9E1EF9CC0F7B7B348 /* Generate src/CMakeFiles/m68kmake */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-complete",
+			);
+			name = "Generate src/CMakeFiles/m68kmake";
+			outputPaths = (
+				/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/CMakeFiles/m68kmake,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		786C79EEA49E7825FF0E0204 /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-configure */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-patch",
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/tmp/m68kmake-cfgcmd.txt",
+			);
+			name = "Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-configure";
+			outputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-configure",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -GXcode /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-configure\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -GXcode /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-configure\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -GXcode /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-configure\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -GXcode /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-configure\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		A77366540DA077ECE1D00284 /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+				/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/CMakeFiles/ALL_BUILD,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  echo Build\\ all\\ projects\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  echo Build\\ all\\ projects\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  echo Build\\ all\\ projects\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  echo Build\\ all\\ projects\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		A9F5136E28034F3E33FA09CA /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-download */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-mkdir",
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/m68kmake-custominfo.txt",
+			);
+			name = "Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-download";
+			outputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-download",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-download\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-download\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-download\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-download\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		AB72F75B11D6D42DB0F6D608 /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-patch */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-update",
+			);
+			name = "Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-patch";
+			outputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-patch",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-patch\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-patch\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-patch\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-patch\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D17F6C5C6236A659AFE80748 /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-mkdir */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-mkdir";
+			outputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-mkdir",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -Dcfgdir=/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/tmp/m68kmake-mkdirs.cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-mkdir\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -Dcfgdir=/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/tmp/m68kmake-mkdirs.cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-mkdir\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -Dcfgdir=/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/tmp/m68kmake-mkdirs.cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-mkdir\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -Dcfgdir=/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME -P /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/tmp/m68kmake-mkdirs.cmake\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-mkdir\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D58DD42AE006FCE3FDC5FDEB /* Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-update */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-download",
+			);
+			name = "Generate src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-update";
+			outputPaths = (
+				"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/m68kmake-update",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-update\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-update\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-update\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E echo_append\n  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -E touch /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/m68kmake-prefix/src/m68kmake-stamp/$CONFIGURATION$EFFECTIVE_PLATFORM_NAME/m68kmake-update\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D999660E616CFA131BD927FB /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+				/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/CMakeFiles/ZERO_CHECK,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/CMakeScripts/ReRunCMake.make\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/CMakeScripts/ReRunCMake.make\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/CMakeScripts/ReRunCMake.make\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake\n  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/CMakeScripts/ReRunCMake.make\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		05FEC4362DAA46A7A4F68630 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EA9D297640F64D80BDA95A47 /* m68kopac.c in Sources */,
+				0189A104E79946DFB8DA8D36 /* m68kopdm.c in Sources */,
+				D80BB2EAC4CD41FFADCE205D /* m68kopnz.c in Sources */,
+				6F0B0ECC5740447DAF726123 /* m68kops.c in Sources */,
+				E05C397F3EFB4319BDA83047 /* corlett.c in Sources */,
+				C2C3D510A2BE4CEA9A2C945F /* eng_ssf.c in Sources */,
+				420AAE6B24FF4379922857D8 /* ssf.c in Sources */,
+				C8EEE97D61DA4A26A641121E /* bios.c in Sources */,
+				8CE0BE6BC72143FD876F8314 /* cd-macosx.c in Sources */,
+				BE491CF1D4304D708DF8A32A /* cd_drive.c in Sources */,
+				57B5AC39143C474B884D9CA3 /* cdbase.c in Sources */,
+				DBAED4E6DCF5438E89A6049B /* cheat.c in Sources */,
+				7EC8D76D4BA542C393A02DDA /* coffelf.c in Sources */,
+				713E665B25FE4B849740F82A /* cs0.c in Sources */,
+				951E2388995A4D5E8902BD67 /* cs1.c in Sources */,
+				F6C4D7D4548B46AAA615C7C0 /* cs2.c in Sources */,
+				DE5B4477C395447BAD14420F /* debug.c in Sources */,
+				C0893BE1A048499BAB5D9D9C /* error.c in Sources */,
+				A09DE6E948EC4DC381D03E67 /* gameinfo.c in Sources */,
+				7B8817AEC5A0409CB3B6A7E1 /* glew.c in Sources */,
+				291A2B63D084441E8F68EC43 /* japmodem.c in Sources */,
+				C420834A700A4198A192EA95 /* m68kcore.c in Sources */,
+				442E387B9581401B9FA5B658 /* m68kd.c in Sources */,
+				C365C75B0870422399F2641D /* m68kmusashi.c in Sources */,
+				B4415D280B02496D9EA035A0 /* macjoy.c in Sources */,
+				3256B4F2756E4D84AB35387E /* memory.c in Sources */,
+				355FACDBA9C44D4AA4C916AB /* movie.c in Sources */,
+				74C36544610343EB8E1B6926 /* mpeg_card.c in Sources */,
+				0D80A26DF15F449EB8451687 /* m68kcpu.c in Sources */,
+				AE04DE7668874817AEEEC37D /* m68kdasm.c in Sources */,
+				121D90F14E774B11A17B9235 /* netlink.c in Sources */,
+				59CB304E21E4421E9CC5F724 /* osdcore.c in Sources */,
+				53090DB659BD44AAAA261EC9 /* peripheral.c in Sources */,
+				A16288DDB0954504977529CB /* permacjoy.c in Sources */,
+				F8342903E2684F8D939EAD94 /* profile.c in Sources */,
+				EFE1030453AC4BE28BA3E55F /* scsp.c in Sources */,
+				6EFF078D9F664763A464DBF9 /* scspdsp.c in Sources */,
+				58FB01A5F9EE42AA8807FC62 /* scu.c in Sources */,
+				B2039F24E3CC4389AF57048E /* sh2cache.c in Sources */,
+				27384D1192AC47E1B7AA3C64 /* sh2core.c in Sources */,
+				C1BD0D5250EF4DBA82BAF2D4 /* sh2d.c in Sources */,
+				FCB6B3A4D97B4B11A8FFBDF0 /* sh2iasm.c in Sources */,
+				CB98DF93135F4EDDA01DF52F /* sh2idle.c in Sources */,
+				D74C0AF2588E4A749E82FA3C /* sh2int.c in Sources */,
+				B5340F7CE59C449E80286BEC /* sh2trace.c in Sources */,
+				2D63438A4FD24C1DBA8D185B /* sh7034.c in Sources */,
+				0C6590519C7C4B729DAB5A64 /* smpc.c in Sources */,
+				1CAF873DB1064B70A100E2B7 /* sndal.c in Sources */,
+				BB3D878467764355824311E3 /* snddummy.c in Sources */,
+				47FCB36E95DE4400A6295046 /* sndmac.c in Sources */,
+				4796B61D96CA49F69CC34BC2 /* sock-dummy.c in Sources */,
+				211E4971F3F44B03BE69A1A2 /* thr-macosx.c in Sources */,
+				15D590A5191C4851A2F41BF9 /* titan.c in Sources */,
+				3E4A6D6AE60C4C8CBA2A6BDD /* Tsunami.c in Sources */,
+				E77039CACF6A442285B47D15 /* yab_tsunami.c in Sources */,
+				E63A3BF3E5194801A0BCFB7B /* vdp1.c in Sources */,
+				8A3D3BF3810F45FF96DFFB72 /* vdp2.c in Sources */,
+				218A5E8B503B4408B9B901C1 /* vdp2debug.c in Sources */,
+				252DD76A192A40409C3679E9 /* vidogl.c in Sources */,
+				2976B54706B64850A6DFB5D8 /* vidshared.c in Sources */,
+				6EBCC2DD76C649A2B1B06214 /* vidsoft.c in Sources */,
+				E59AA6359F934F96B6B1F6CA /* yabause.c in Sources */,
+				03AF9E9ED7B94ACBBE5148B8 /* yglcache.c in Sources */,
+				1315F24780854E4F8E1A55FB /* ygles.c in Sources */,
+				447793EB3D4F4428968F2D76 /* yglshaderes.c in Sources */,
+				C07F55751E3342C1A6ADF8F4 /* ygr.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		154F7258EA6D46199E3165DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DC63795ACC80406BAEF8CA7D /* yabause */;
+			targetProxy = 88AC933563064E57A88F5607 /* PBXContainerItemProxy */;
+		};
+		1D342B02D35A4BEC9C4772D6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E0AE020ED20E4096AA414346 /* ALL_BUILD */;
+			targetProxy = B15E391F300B4E1F8F9EBE91 /* PBXContainerItemProxy */;
+		};
+		772186FFCD3B4231A27F55AA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A8706FCB3D3344AD92D5F0CA /* m68kmake */;
+			targetProxy = E9426A6C870945A7ACCAB6F0 /* PBXContainerItemProxy */;
+		};
+		7AEDF298C41B4EAB965992E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0AB4D1F744514BC7B1BE8814 /* ZERO_CHECK */;
+			targetProxy = E68AC6D20B1E49FA85F2C670 /* PBXContainerItemProxy */;
+		};
+		AF1100614B164213904488F8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E0AE020ED20E4096AA414346 /* ALL_BUILD */;
+			targetProxy = CE647748F9D2463FAECE58CE /* PBXContainerItemProxy */;
+		};
+		E9E766DE3BE94BB39F4D5794 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A8706FCB3D3344AD92D5F0CA /* m68kmake */;
+			targetProxy = 2B7715FA6CA1408DA9C3BF90 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		041A0BEC503A4545852D3EEB /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/build;
+			};
+			name = MinSizeRel;
+		};
+		062F68F0A85C4F268250DB2D /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = MinSizeRel;
+		};
+		10CC14E8C89D4280A550AF9B /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = MinSizeRel;
+		};
+		27E3BEC7BB0C4D279D3ECDC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/Debug;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"'YAB_WANT_SSF=1'",
+					"'HAVE_GETTIMEOFDAY=1'",
+					"'HAVE_FLOORF=1'",
+					"'HAVE_STRCASECMP=1'",
+					"'HAVE_BUILTIN_BSWAP16=1'",
+					"'HAVE_BUILTIN_BSWAP32=1'",
+					"'HAVE_SYS_TIME_H=1'",
+					"'HAVE_STDINT_H=1'",
+					"'HAVE_LIBGL=1'",
+					"'HAVE_LIBGLUT=1'",
+					_OGL3_,
+					_USEGLEW_,
+					GLEW_STATIC,
+					"'HAVE_LIBAL=1'",
+					"'HAVE_FBO=1'",
+					"'HAVE_MUSASHI=1'",
+					"'ARCH_IS_MACOSX=1'",
+					"'PACKAGE=\"yabause\"'",
+					"'VERSION=\"0.9.15\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GLUT.framework/Headers,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/gllibs/include,
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi,
+					"$(inherited)",
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "    $(inherited)";
+				OTHER_LIBTOOLFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = yabause;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/build/yabause.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Debug;
+		};
+		308CB6B089D5469E9F63B219 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/build;
+			};
+			name = Debug;
+		};
+		40468274594546C2A24A8481 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Debug;
+		};
+		42E5CD90BF18483FBCDA9A28 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = RelWithDebInfo;
+		};
+		5736B22065574E1C8CBCB8CA /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = doc;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = MinSizeRel;
+		};
+		63130D647A044DB2B872D037 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = doc;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = RelWithDebInfo;
+		};
+		7131A3EEAD5B4E9F858E97EB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = m68kmake;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Release;
+		};
+		76623265D2164D0694EF2A77 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = RelWithDebInfo;
+		};
+		7A16CDAC429A4B87A8ED467F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/Release;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"'YAB_WANT_SSF=1'",
+					"'HAVE_GETTIMEOFDAY=1'",
+					"'HAVE_FLOORF=1'",
+					"'HAVE_STRCASECMP=1'",
+					"'HAVE_BUILTIN_BSWAP16=1'",
+					"'HAVE_BUILTIN_BSWAP32=1'",
+					"'HAVE_SYS_TIME_H=1'",
+					"'HAVE_STDINT_H=1'",
+					"'HAVE_LIBGL=1'",
+					"'HAVE_LIBGLUT=1'",
+					_OGL3_,
+					_USEGLEW_,
+					GLEW_STATIC,
+					"'HAVE_LIBAL=1'",
+					"'HAVE_FBO=1'",
+					"'HAVE_MUSASHI=1'",
+					"'ARCH_IS_MACOSX=1'",
+					"'PACKAGE=\"yabause\"'",
+					"'VERSION=\"0.9.15\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GLUT.framework/Headers,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/gllibs/include,
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi,
+					"$(inherited)",
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"$(inherited)",
+				);
+				OTHER_LIBTOOLFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = yabause;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/build/yabause.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Release;
+		};
+		7F494F0B844048DF8E506AB0 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = RelWithDebInfo;
+		};
+		856963D28DAB4C9889EA48ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Release;
+		};
+		879E0168BD4F4C2380A80227 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = RelWithDebInfo;
+		};
+		88CF12DCD8EB4B87B2BF76B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Release;
+		};
+		9684FE2A205F409EBF8C5585 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Debug;
+		};
+		9FEAC9881BE443FCBD6A72A8 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = MinSizeRel;
+		};
+		A352735DD4DB4548A826E6E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Release;
+		};
+		A3B2075AC04E45E286C97ED0 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/MinSizeRel;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"'YAB_WANT_SSF=1'",
+					"'HAVE_GETTIMEOFDAY=1'",
+					"'HAVE_FLOORF=1'",
+					"'HAVE_STRCASECMP=1'",
+					"'HAVE_BUILTIN_BSWAP16=1'",
+					"'HAVE_BUILTIN_BSWAP32=1'",
+					"'HAVE_SYS_TIME_H=1'",
+					"'HAVE_STDINT_H=1'",
+					"'HAVE_LIBGL=1'",
+					"'HAVE_LIBGLUT=1'",
+					_OGL3_,
+					_USEGLEW_,
+					GLEW_STATIC,
+					"'HAVE_LIBAL=1'",
+					"'HAVE_FBO=1'",
+					"'HAVE_MUSASHI=1'",
+					"'ARCH_IS_MACOSX=1'",
+					"'PACKAGE=\"yabause\"'",
+					"'VERSION=\"0.9.15\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GLUT.framework/Headers,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/gllibs/include,
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi,
+					"$(inherited)",
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"$(inherited)",
+				);
+				OTHER_LIBTOOLFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = yabause;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/build/yabause.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = MinSizeRel;
+		};
+		B1EB195D22774749A409865A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/RelWithDebInfo;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"'YAB_WANT_SSF=1'",
+					"'HAVE_GETTIMEOFDAY=1'",
+					"'HAVE_FLOORF=1'",
+					"'HAVE_STRCASECMP=1'",
+					"'HAVE_BUILTIN_BSWAP16=1'",
+					"'HAVE_BUILTIN_BSWAP32=1'",
+					"'HAVE_SYS_TIME_H=1'",
+					"'HAVE_STDINT_H=1'",
+					"'HAVE_LIBGL=1'",
+					"'HAVE_LIBGLUT=1'",
+					_OGL3_,
+					_USEGLEW_,
+					GLEW_STATIC,
+					"'HAVE_LIBAL=1'",
+					"'HAVE_FBO=1'",
+					"'HAVE_MUSASHI=1'",
+					"'ARCH_IS_MACOSX=1'",
+					"'PACKAGE=\"yabause\"'",
+					"'VERSION=\"0.9.15\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GLUT.framework/Headers,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/gllibs/include,
+					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi,
+					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi,
+					"$(inherited)",
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-DNDEBUG",
+					"$(inherited)",
+				);
+				OTHER_LIBTOOLFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = yabause;
+				SECTORDER_FLAGS = "";
+				TARGET_TEMP_DIR = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/build/yabause.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = RelWithDebInfo;
+		};
+		C30E16680BC34D20A166EB57 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = MinSizeRel;
+		};
+		C411278C37B64713AD311FC2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = m68kmake;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Debug;
+		};
+		C7EE726DE19E4D1EB09C96BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Release;
+		};
+		D13095BD4CA848C79111EA02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = doc;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Debug;
+		};
+		D5A170FD46824B57BE7E48C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Debug;
+		};
+		D5CD5843E7E048639EC67848 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/build;
+			};
+			name = Release;
+		};
+		F5B44BAE409B4F5ABBC99154 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/build;
+			};
+			name = RelWithDebInfo;
+		};
+		F79850B80B574F4787F0CF8E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = doc;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Release;
+		};
+		FB4D6C9541DE4B38AD21A2C4 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = m68kmake;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = RelWithDebInfo;
+		};
+		FB5837154CE14640AD4C3B60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = Debug;
+		};
+		FC21983A2A12401DA90741B0 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = " $(inherited)";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = m68kmake;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = "$(inherited)";
+			};
+			name = MinSizeRel;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		455531F0E2CE4FBB906D8BFF /* Build configuration list for PBXAggregateTarget "m68kmake" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C411278C37B64713AD311FC2 /* Debug */,
+				7131A3EEAD5B4E9F858E97EB /* Release */,
+				FC21983A2A12401DA90741B0 /* MinSizeRel */,
+				FB4D6C9541DE4B38AD21A2C4 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5136694986974E9B96D9A855 /* Build configuration list for PBXAggregateTarget "package" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5A170FD46824B57BE7E48C3 /* Debug */,
+				856963D28DAB4C9889EA48ED /* Release */,
+				C30E16680BC34D20A166EB57 /* MinSizeRel */,
+				42E5CD90BF18483FBCDA9A28 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5967174799FC4078A7DE87E5 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9684FE2A205F409EBF8C5585 /* Debug */,
+				88CF12DCD8EB4B87B2BF76B1 /* Release */,
+				10CC14E8C89D4280A550AF9B /* MinSizeRel */,
+				7F494F0B844048DF8E506AB0 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		87945DD8E6914EBEBBCCFC35 /* Build configuration list for PBXNativeTarget "yabause" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				27E3BEC7BB0C4D279D3ECDC6 /* Debug */,
+				7A16CDAC429A4B87A8ED467F /* Release */,
+				A3B2075AC04E45E286C97ED0 /* MinSizeRel */,
+				B1EB195D22774749A409865A /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CEABB60CD7F443AEA8A6160F /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				40468274594546C2A24A8481 /* Debug */,
+				A352735DD4DB4548A826E6E3 /* Release */,
+				9FEAC9881BE443FCBD6A72A8 /* MinSizeRel */,
+				76623265D2164D0694EF2A77 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E5EAEEF4AB40413A910A4B23 /* Build configuration list for PBXProject "yabause" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				308CB6B089D5469E9F63B219 /* Debug */,
+				D5CD5843E7E048639EC67848 /* Release */,
+				041A0BEC503A4545852D3EEB /* MinSizeRel */,
+				F5B44BAE409B4F5ABBC99154 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E74A8685F9654A1D97334FC7 /* Build configuration list for PBXAggregateTarget "doc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D13095BD4CA848C79111EA02 /* Debug */,
+				F79850B80B574F4787F0CF8E /* Release */,
+				5736B22065574E1C8CBCB8CA /* MinSizeRel */,
+				63130D647A044DB2B872D037 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FFB51EE515BD4A809577ABB5 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FB5837154CE14640AD4C3B60 /* Debug */,
+				C7EE726DE19E4D1EB09C96BE /* Release */,
+				062F68F0A85C4F268250DB2D /* MinSizeRel */,
+				879E0168BD4F4C2380A80227 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 45040E8FE55248489B168786 /* Project object */;
+}
