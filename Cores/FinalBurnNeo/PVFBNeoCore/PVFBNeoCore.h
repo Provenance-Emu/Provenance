@@ -41,3 +41,24 @@ __attribute__((visibility("default")))
 //- (void) SetScreenSize:(int)width :(int)height;
 
 @end
+
+@protocol FBVideoDelegate<NSObject>
+
+@optional
+- (void) screenSizeDidChange:(CGSize) newSize;
+- (void) initTextureOfWidth:(int) width
+                     height:(int) height
+                  isRotated:(BOOL) rotated
+                  isFlipped:(BOOL) flipped
+              bytesPerPixel:(int) bytesPerPixel;
+- (void) renderFrame:(unsigned char *) bitmap;
+
+@end
+
+@interface FBVideo : NSObject
+
+@property (nonatomic, weak) id<FBVideoDelegate> delegate;
+
+- (CGSize) gameScreenSize;
+
+@end
