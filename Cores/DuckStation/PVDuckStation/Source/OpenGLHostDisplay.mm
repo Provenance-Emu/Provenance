@@ -356,6 +356,7 @@ bool PVOpenGLHostDisplay::CreateDevice(const WindowInfo& wi, bool vsync)
 
 bool PVOpenGLHostDisplay::SetupDevice()
 {
+
     glGetIntegerv(GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT, reinterpret_cast<GLint*>(&m_uniform_buffer_alignment));
 
     if (!CreateResources()) {
@@ -692,13 +693,20 @@ bool PVOpenGLHostDisplay::UpdateImGuiFontTexture()
 }
 
 #pragma mark -
-
+#define IOS
 ContextGL::ContextGL(const WindowInfo& wi) : Context(wi)
 {
+#ifdef IOS
+//    m_opengl_module_handle = dlopen("/System/Library/Frameworks/OpenGLES.framework/Versions/Current/OpenGLES", RTLD_NOW);
+//    if (!m_opengl_module_handle) {
+//        os_log_fault(OE_CORE_LOG, "Could not open OpenGLES.framework, function lookups will probably fail");
+//    }
+#else
     m_opengl_module_handle = dlopen("/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL", RTLD_NOW);
     if (!m_opengl_module_handle) {
         os_log_fault(OE_CORE_LOG, "Could not open OpenGL.framework, function lookups will probably fail");
     }
+#endif
 }
 
 ContextGL::~ContextGL() = default;
@@ -712,12 +720,22 @@ std::unique_ptr<GL::Context> ContextGL::Create(const WindowInfo& wi, const Versi
 
 void* ContextGL::GetProcAddress(const char* name)
 {
+#ifdef IOS
+    return dlsym(RTLD_DEFAULT, name);
+//    void* addr = m_opengl_module_handle ? dlsym(m_opengl_module_handle, name) : nullptr;
+//    if (addr) {
+//        return addr;
+//    }
+//
+//    return dlsym(RTLD_NEXT, name);
+#else
     void* addr = m_opengl_module_handle ? dlsym(m_opengl_module_handle, name) : nullptr;
     if (addr) {
         return addr;
     }
 
     return dlsym(RTLD_NEXT, name);
+#endif
 }
 
 bool ContextGL::ChangeSurface(const WindowInfo& new_wi)

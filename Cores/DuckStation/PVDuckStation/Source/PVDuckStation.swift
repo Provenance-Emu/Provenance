@@ -57,9 +57,11 @@ extension PVDuckStationCore: GameWithCheat {
     public var cheatCodeTypes: [String] {
         return CheatCodeTypesMakeStringArray([.gameShark])
     }
-    
+
+    @objc
     public var supportsCheatCode: Bool {
-        return self.getCheatSupport();
+        return false;
+//        return self.getCheatSupport();
     }
 }
 

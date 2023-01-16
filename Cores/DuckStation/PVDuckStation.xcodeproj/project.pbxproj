@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B30408762970C08B00180897 /* libfmtd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4F296F9819005D110B /* libfmtd.a */; platformFilters = (ios, maccatalyst, ); };
-		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (Weak, ); }; };
+		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
 		B34C2BF4296F9B24002146BB /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
 		B34C2C11296FBDAC002146BB /* libduckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8A54026BE55780096A354 /* libduckstation.a */; };
@@ -44,11 +43,14 @@
 		B373CD93296F9983005D110B /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD77296F9819005D110B /* libzstd.a */; };
 		B373CD98296F99B6005D110B /* PVDuckStation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */; };
 		B373CD99296F99B6005D110B /* PVDuckStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */; };
+		B37DA9CE297170F6008EECAF /* libfmt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4F296F9819005D110B /* libfmt.a */; platformFilters = (ios, maccatalyst, ); };
+		B37DA9D829718521008EECAF /* duck_resources in Resources */ = {isa = PBXBuildFile; fileRef = B37DA9CF29717C41008EECAF /* duck_resources */; };
 		B392F761296F6B2B008BAEF1 /* EAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = B392F75F296F6B2B008BAEF1 /* EAGL.h */; };
-		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilter = ios; settings = {ATTRIBUTES = (Weak, ); }; };
+		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924526DEFFD8003CB9D4 /* GLKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2924C26DEFFE8003CB9D4 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924826DEFFE7003CB9D4 /* MetalKit.framework */; };
 		B3C2924E26DEFFE8003CB9D4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924A26DEFFE8003CB9D4 /* Metal.framework */; };
+		B3C47F122970F1A30040C177 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C47F112970F1A30040C177 /* MoltenVK.xcframework */; };
 		B3D0143A26E05F6500860FF9 /* OEOverrides.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3D0143926E05F6500860FF9 /* OEOverrides.ini */; };
 		B3D8A52B26BE48CA0096A354 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52226BE48C90096A354 /* InfoPlist.strings */; };
 		B3D8A52D26BE48CA0096A354 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52426BE48C90096A354 /* Core.plist */; };
@@ -58,13 +60,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B30408742970C08300180897 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D13422B1CF6E467997EEF928;
-			remoteInfo = "common-tests";
-		};
 		B373CD42296F9819005D110B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
@@ -247,13 +242,6 @@
 			remoteGlobalIDString = FB4296A2DFE5445E9D9CED66;
 			remoteInfo = zstd;
 		};
-		B373CD78296F9948005D110B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5E7F7554D3AE463A8152F8B4;
-			remoteInfo = ALL_BUILD;
-		};
 		B3D8AD4E26BE55E20096A354 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 02695358143169EA003A07D4 /* Project object */;
@@ -365,6 +353,7 @@
 		B373CCA9296F8DAA005D110B /* ARB_viewport_array.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ARB_viewport_array.h; sourceTree = "<group>"; };
 		B373CCAB296F8DAA005D110B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		B373CD21296F9818005D110B /* duckstation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = duckstation.xcodeproj; path = cmake/duckstation.xcodeproj; sourceTree = "<group>"; };
+		B37DA9CF29717C41008EECAF /* duck_resources */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; name = duck_resources; path = duckstation/data/duck_resources; sourceTree = SOURCE_ROOT; };
 		B38526A72108264D00434945 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B392F75F296F6B2B008BAEF1 /* EAGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EAGL.h; path = PVDuckStation/EAGL.h; sourceTree = SOURCE_ROOT; };
 		B392F760296F6B2B008BAEF1 /* EAGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EAGL.mm; path = PVDuckStation/EAGL.mm; sourceTree = SOURCE_ROOT; };
@@ -376,6 +365,7 @@
 		B3C2924826DEFFE7003CB9D4 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3C2924926DEFFE8003CB9D4 /* MetalPerformanceShaders.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalPerformanceShaders.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/MetalPerformanceShaders.framework; sourceTree = DEVELOPER_DIR; };
 		B3C2924A26DEFFE8003CB9D4 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
+		B3C47F112970F1A30040C177 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "../Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
 		B3D0140A26DF155800860FF9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3D0143926E05F6500860FF9 /* OEOverrides.ini */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OEOverrides.ini; sourceTree = "<group>"; };
 		B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenGLHostDisplay.mm; sourceTree = "<group>"; };
@@ -397,6 +387,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3C47F122970F1A30040C177 /* MoltenVK.xcframework in Frameworks */,
 				B34C2C11296FBDAC002146BB /* libduckstation.a in Frameworks */,
 				B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */,
 				B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */,
@@ -414,7 +405,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B30408762970C08B00180897 /* libfmtd.a in Frameworks */,
+				B37DA9CE297170F6008EECAF /* libfmt.a in Frameworks */,
 				B373CD7A296F9983005D110B /* libclog.a in Frameworks */,
 				B373CD7B296F9983005D110B /* libcommon.a in Frameworks */,
 				B373CD7C296F9983005D110B /* libcore.a in Frameworks */,
@@ -469,6 +460,7 @@
 		02695363143169EB003A07D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C47F112970F1A30040C177 /* MoltenVK.xcframework */,
 				B39F685D295D9A230048CEAD /* PVLibrary.framework */,
 				B30A2009278FC9FF009E08C9 /* OpenGL.framework */,
 				B30172C0274A33C600B0E695 /* Metal.framework */,
@@ -612,11 +604,10 @@
 			children = (
 				B373CD43296F9819005D110B /* libclog.a */,
 				B373CD45296F9819005D110B /* libcommon.a */,
-				B30408752970C08300180897 /* common-tests */,
 				B373CD49296F9819005D110B /* libcore.a */,
 				B373CD4B296F9819005D110B /* libcpuinfo.a */,
 				B373CD4D296F9819005D110B /* libcpuinfo_internals.a */,
-				B373CD4F296F9819005D110B /* libfmtd.a */,
+				B373CD4F296F9819005D110B /* libfmt.a */,
 				B373CD51296F9819005D110B /* libfrontend-common.a */,
 				B373CD53296F9819005D110B /* libglad.a */,
 				B373CD55296F9819005D110B /* libglslang.a */,
@@ -647,6 +638,7 @@
 				B3D8A52726BE48C90096A354 /* Source */,
 				B373CC5C296F8DAA005D110B /* Compatibility */,
 				B3D8A52226BE48C90096A354 /* InfoPlist.strings */,
+				B37DA9CF29717C41008EECAF /* duck_resources */,
 				B3D8A52426BE48C90096A354 /* Core.plist */,
 				B3D8A52526BE48C90096A354 /* PVDuckStation.h */,
 				B3D8A52626BE48C90096A354 /* DuckStation-Info.plist */,
@@ -718,7 +710,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B373CD79296F9948005D110B /* PBXTargetDependency */,
 			);
 			name = duckstation;
 			productName = duckstation;
@@ -770,14 +761,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B30408752970C08300180897 /* common-tests */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = "common-tests";
-			path = "common-tests.app";
-			remoteRef = B30408742970C08300180897 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		B373CD43296F9819005D110B /* libclog.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -813,10 +796,10 @@
 			remoteRef = B373CD4C296F9819005D110B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD4F296F9819005D110B /* libfmtd.a */ = {
+		B373CD4F296F9819005D110B /* libfmt.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libfmtd.a;
+			path = libfmt.a;
 			remoteRef = B373CD4E296F9819005D110B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -971,6 +954,7 @@
 				B3D8A52B26BE48CA0096A354 /* InfoPlist.strings in Resources */,
 				B3D8A52D26BE48CA0096A354 /* Core.plist in Resources */,
 				B3D8A53126BE48CA0096A354 /* DuckStation-Info.plist in Resources */,
+				B37DA9D829718521008EECAF /* duck_resources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -999,11 +983,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B373CD79296F9948005D110B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ALL_BUILD;
-			targetProxy = B373CD78296F9948005D110B /* PBXContainerItemProxy */;
-		};
 		B3D8AD4F26BE55E20096A354 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3D8A53F26BE55780096A354 /* duckstation */;
@@ -1216,9 +1195,11 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1279,6 +1260,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
@@ -1299,9 +1281,11 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1363,6 +1347,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
@@ -1382,9 +1367,11 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1445,6 +1432,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
