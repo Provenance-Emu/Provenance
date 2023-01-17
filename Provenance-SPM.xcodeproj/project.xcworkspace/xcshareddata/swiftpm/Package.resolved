@@ -1,0 +1,61 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "AltKit",
+        "repositoryURL": "https://github.com/rileytestut/AltKit",
+        "state": {
+          "branch": null,
+          "revision": "f799f60ef6fa8b9676b4102b7dfa169fb40b6c92",
+          "version": "0.0.2"
+        }
+      },
+      {
+        "package": "AppCenter",
+        "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
+        "state": {
+          "branch": null,
+          "revision": "25f64229373de97ff3920941cd52203193e5d8be",
+          "version": "4.3.0"
+        }
+      },
+      {
+        "package": "PLCrashReporter",
+        "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
+        "state": {
+          "branch": null,
+          "revision": "6b27393cad517c067dceea85fadf050e70c4ceaa",
+          "version": "1.10.1"
+        }
+      },
+      {
+        "package": "RxDataSources",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxDataSources.git",
+        "state": {
+          "branch": null,
+          "revision": "90c29b48b628479097fe775ed1966d75ac374518",
+          "version": "5.0.2"
+        }
+      },
+      {
+        "package": "RxSwift",
+        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "b4307ba0b6425c0ba4178e138799946c3da594f8",
+          "version": "6.5.0"
+        }
+      },
+      {
+        "package": "SteamController",
+        "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
+        "state": {
+          "branch": "master",
+          "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

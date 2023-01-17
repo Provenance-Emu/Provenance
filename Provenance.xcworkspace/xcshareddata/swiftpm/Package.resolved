@@ -11,30 +11,12 @@
         }
       },
       {
-        "package": "CocoaLumberjack",
-        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
-        "state": {
-          "branch": null,
-          "revision": "0188d31089b5881a269e01777be74c7316924346",
-          "version": "3.8.0"
-        }
-      },
-      {
         "package": "KeychainAccess",
         "repositoryURL": "https://github.com/kishikawakatsumi/KeychainAccess.git",
         "state": {
           "branch": null,
           "revision": "84e546727d66f1adc5439debad16270d0fdd04e7",
           "version": "4.2.2"
-        }
-      },
-      {
-        "package": "NSLogger",
-        "repositoryURL": "https://github.com/fpillet/NSLogger",
-        "state": {
-          "branch": "master",
-          "revision": "e8c453142da7051462cca189d3fcee74de0500ea",
-          "version": null
         }
       },
       {
@@ -107,15 +89,6 @@
           "branch": "master",
           "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
           "version": null
-        }
-      },
-      {
-        "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log.git",
-        "state": {
-          "branch": null,
-          "revision": "6fe203dc33195667ce1759bf0182975e4653ba1c",
-          "version": "1.4.4"
         }
       },
       {

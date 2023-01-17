@@ -1,0 +1,70 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "AppCenter",
+        "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
+        "state": {
+          "branch": null,
+          "revision": "88e65475ffd3a7cf2bbde07df9e62159a1fd60a8",
+          "version": "5.0.0"
+        }
+      },
+      {
+        "package": "CocoaLumberjack",
+        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
+        "state": {
+          "branch": null,
+          "revision": "0188d31089b5881a269e01777be74c7316924346",
+          "version": "3.8.0"
+        }
+      },
+      {
+        "package": "NSLogger",
+        "repositoryURL": "https://github.com/fpillet/NSLogger",
+        "state": {
+          "branch": "master",
+          "revision": "e8c453142da7051462cca189d3fcee74de0500ea",
+          "version": null
+        }
+      },
+      {
+        "package": "PLCrashReporter",
+        "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
+        "state": {
+          "branch": null,
+          "revision": "b1a342da19ed9b3af61ea2efa7656c2af30aeb7c",
+          "version": "1.11.0"
+        }
+      },
+      {
+        "package": "SteamController",
+        "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
+        "state": {
+          "branch": "master",
+          "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "6fe203dc33195667ce1759bf0182975e4653ba1c",
+          "version": "1.4.4"
+        }
+      },
+      {
+        "package": "Introspect",
+        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
+        "state": {
+          "branch": "master",
+          "revision": "d3cbf32788250741d397cfb5bcd532c37aa1096d",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "9BFB396087D0BDD1A8684EEE49B51DFD3A478D5C",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "9BFB396087D0BDD1A8684EEE49B51DFD3A478D5C" : 0,
+    "B3DAFA4E8DC41169A7FC9D30D8420929A5ED0B16" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "03DB5459-2398-4B60-A32B-86D2E12A6302",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "9BFB396087D0BDD1A8684EEE49B51DFD3A478D5C" : "Provenance-jmattiello\/",
+    "B3DAFA4E8DC41169A7FC9D30D8420929A5ED0B16" : "OpenEmu\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Provenance",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Provenance.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "ssh:\/\/github.com\/jasarien\/Provenance.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9BFB396087D0BDD1A8684EEE49B51DFD3A478D5C"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/OpenEmu\/OpenEmu.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "B3DAFA4E8DC41169A7FC9D30D8420929A5ED0B16"
+    }
+  ]
+}

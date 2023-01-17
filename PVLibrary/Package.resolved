@@ -1,88 +1,113 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "CocoaLumberjack",
-        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
-        "state": {
-          "branch": null,
-          "revision": "80ada1f753b0d53d9b57c465936a7c4169375002",
-          "version": "3.7.4"
-        }
-      },
-      {
-        "package": "Reachability",
-        "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
-        "state": {
-          "branch": null,
-          "revision": "c01bbdf2d633cf049ae1ed1a68a2020a8bda32e2",
-          "version": "5.1.0"
-        }
-      },
-      {
-        "package": "Realm",
-        "repositoryURL": "https://github.com/realm/realm-cocoa",
-        "state": {
-          "branch": null,
-          "revision": "39177714b95bb5b1b29fffe28f1c7da77eef8e8b",
-          "version": "10.21.1"
-        }
-      },
-      {
-        "package": "RealmDatabase",
-        "repositoryURL": "https://github.com/realm/realm-core",
-        "state": {
-          "branch": null,
-          "revision": "f1976f0d96d9b06fbe0afbd60090b1c3966b1e23",
-          "version": "11.8.0"
-        }
-      },
-      {
-        "package": "RxRealm",
-        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm",
-        "state": {
-          "branch": null,
-          "revision": "d9e612a1bc3788c910b307e49093dec788d102df",
-          "version": "5.0.3"
-        }
-      },
-      {
-        "package": "RxSwift",
-        "repositoryURL": "https://github.com/ReactiveX/RxSwift",
-        "state": {
-          "branch": null,
-          "revision": "b4307ba0b6425c0ba4178e138799946c3da594f8",
-          "version": "6.5.0"
-        }
-      },
-      {
-        "package": "SQLite.swift",
-        "repositoryURL": "https://github.com/stephencelis/SQLite.swift",
-        "state": {
-          "branch": null,
-          "revision": "60a65015f6402b7c34b9a924f755ca0a73afeeaa",
-          "version": "0.13.1"
-        }
-      },
-      {
-        "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log.git",
-        "state": {
-          "branch": null,
-          "revision": "5d66f7ba25daf4f94100e7022febf3c75e37a6c7",
-          "version": "1.4.2"
-        }
-      },
-      {
-        "package": "ZipArchive",
-        "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
-        "state": {
-          "branch": null,
-          "revision": "825ff12a74a94c54e737e279604c27e6740e8a2c",
-          "version": "2.4.2"
-        }
+  "pins" : [
+    {
+      "identity" : "bitbytedata",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tsolomko/BitByteData",
+      "state" : {
+        "revision" : "b4b41619522aacd7aae7b02fa8360833e796a03d",
+        "version" : "2.0.2"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "cocoalumberjack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
+      "state" : {
+        "revision" : "0188d31089b5881a269e01777be74c7316924346",
+        "version" : "3.8.0"
+      }
+    },
+    {
+      "identity" : "nslogger",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/fpillet/NSLogger",
+      "state" : {
+        "branch" : "master",
+        "revision" : "e8c453142da7051462cca189d3fcee74de0500ea"
+      }
+    },
+    {
+      "identity" : "plzmasdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/OlehKulykov/PLzmaSDK.git",
+      "state" : {
+        "branch" : "1.2.5",
+        "revision" : "3305f8807d1bc679ab8a4930f4bb46ceb1120ed3"
+      }
+    },
+    {
+      "identity" : "realm-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-core",
+      "state" : {
+        "revision" : "b77443ca7fa25407869ca537bf3ae912b1427bff",
+        "version" : "12.13.0"
+      }
+    },
+    {
+      "identity" : "realm-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-swift.git",
+      "state" : {
+        "revision" : "b442ee3e9caa1abab26fd9b23f060f6f0815ff48",
+        "version" : "10.33.0"
+      }
+    },
+    {
+      "identity" : "rxrealm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/RxSwiftCommunity/RxRealm",
+      "state" : {
+        "revision" : "a7de576348d48286d8b100a501f757a1c531f1dd",
+        "version" : "5.0.5"
+      }
+    },
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift",
+      "state" : {
+        "revision" : "b4307ba0b6425c0ba4178e138799946c3da594f8",
+        "version" : "6.5.0"
+      }
+    },
+    {
+      "identity" : "sqlite.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stephencelis/SQLite.swift",
+      "state" : {
+        "revision" : "7a2e3cd27de56f6d396e84f63beefd0267b55ccb",
+        "version" : "0.14.1"
+      }
+    },
+    {
+      "identity" : "swcompression",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tsolomko/SWCompression.git",
+      "state" : {
+        "revision" : "bca9a664eb9361d41a87d3e376a1e7db9ea2c287",
+        "version" : "4.8.4"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "6fe203dc33195667ce1759bf0182975e4653ba1c",
+        "version" : "1.4.4"
+      }
+    },
+    {
+      "identity" : "ziparchive",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ZipArchive/ZipArchive",
+      "state" : {
+        "revision" : "38e0ce0598e06b034271f296a8e15b149c91aa19",
+        "version" : "2.4.3"
+      }
+    }
+  ],
+  "version" : 2
 }

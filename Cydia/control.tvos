@@ -1,0 +1,12 @@
+Package: org.provenance-emu.provenance
+Depends:
+Name: Provenance
+Version: 2.2.0
+Architecture: appletv-arm
+Description: Provenance is a multi-system emulator for tvOS. It supports a wide variety of systems, including the original
+Maintainer: Joe Mattiello <joe@provenance.com>
+Author: Joe Mattiello <joe@provenance.com>
+Section: Games
+dev: Joe Mattiello
+Depiction: https://provenance-emu.com/depiction/
+Installed-Size:

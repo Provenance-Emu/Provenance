@@ -6,6 +6,7 @@
 
 #ifdef __OBJC__
 	#import <Foundation/Foundation.h>
-    @import PVLogging;
-    @import PVLoggingObjC;
+    #import <PVLogging/PVLogging.h>
+//    @import PVLogging;
+//    @import PVLoggingObjC;
 #endif

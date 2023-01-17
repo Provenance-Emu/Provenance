@@ -1,0 +1,2699 @@
+// !$*UTF8*$!
+{
+   archiveVersion = "1";
+   objectVersion = "46";
+   objects = {
+      "OBJ_1" = {
+         isa = "PBXProject";
+         attributes = {
+            LastSwiftMigration = "9999";
+            LastUpgradeCheck = "9999";
+         };
+         buildConfigurationList = "OBJ_2";
+         compatibilityVersion = "Xcode 3.2";
+         developmentRegion = "en";
+         hasScannedForEncodings = "0";
+         knownRegions = (
+            "en"
+         );
+         mainGroup = "OBJ_5";
+         productRefGroup = "OBJ_95";
+         projectDirPath = ".";
+         targets = (
+            "cocoalumberjack::CocoaLumberjack",
+            "cocoalumberjack::SwiftPMPackageDescription",
+            "cocoalumberjack::CocoaLumberjackSwift",
+            "cocoalumberjack::CocoaLumberjackSwiftLogBackend",
+            "cocoalumberjack::CocoaLumberjackSwiftSupport",
+            "swift-log::Logging",
+            "nslogger::NSLogger",
+            "nslogger::NSLoggerLibObjC",
+            "nslogger::SwiftPMPackageDescription",
+            "pvlogging::PVLogging",
+            "pvlogging::PVLogging-Static::ProductTarget",
+            "pvlogging::SwiftPMPackageDescription",
+            "pvlogging::PVLoggingPackageTests::ProductTarget",
+            "pvlogging::PVLoggingTests",
+            "swift-log::SwiftPMPackageDescription"
+         );
+      };
+      "OBJ_10" = {
+         isa = "PBXFileReference";
+         path = "PVLoggingObjC.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_105" = {
+         isa = "PBXFileReference";
+         path = "Supporting Files";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_107" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_108",
+            "OBJ_109"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_108" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DEFINES_MODULE = "NO";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/CocoaLumberjack_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "CocoaLumberjack";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            TARGET_NAME = "CocoaLumberjack";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_109" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DEFINES_MODULE = "NO";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/CocoaLumberjack_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "CocoaLumberjack";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            TARGET_NAME = "CocoaLumberjack";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Release";
+      };
+      "OBJ_11" = {
+         isa = "PBXFileReference";
+         path = "PVLoggingBridge.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_110" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_111",
+            "OBJ_112",
+            "OBJ_113",
+            "OBJ_114",
+            "OBJ_115",
+            "OBJ_116",
+            "OBJ_117",
+            "OBJ_118",
+            "OBJ_119",
+            "OBJ_120",
+            "OBJ_121",
+            "OBJ_122",
+            "OBJ_123",
+            "OBJ_124"
+         );
+      };
+      "OBJ_111" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_41";
+      };
+      "OBJ_112" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_42";
+      };
+      "OBJ_113" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_43";
+      };
+      "OBJ_114" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_44";
+      };
+      "OBJ_115" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_45";
+      };
+      "OBJ_116" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_46";
+      };
+      "OBJ_117" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_47";
+      };
+      "OBJ_118" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_48";
+      };
+      "OBJ_119" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_49";
+      };
+      "OBJ_12" = {
+         isa = "PBXFileReference";
+         path = "CocoaLumberExtensions.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_120" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_51";
+      };
+      "OBJ_121" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_52";
+      };
+      "OBJ_122" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_53";
+      };
+      "OBJ_123" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_54";
+      };
+      "OBJ_124" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_55";
+      };
+      "OBJ_125" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+         );
+      };
+      "OBJ_127" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_128",
+            "OBJ_129"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_128" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/ManifestAPI",
+               "-sdk",
+               "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk",
+               "-package-description-version",
+               "5.7.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_129" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/ManifestAPI",
+               "-sdk",
+               "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk",
+               "-package-description-version",
+               "5.7.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Release";
+      };
+      "OBJ_13" = {
+         isa = "PBXFileReference";
+         path = "CocoaLumberjack+NSLogger.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_130" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_131"
+         );
+      };
+      "OBJ_131" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_88";
+      };
+      "OBJ_133" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_134",
+            "OBJ_135"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_134" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwiftSupport/include",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/CocoaLumberjackSwift_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport/module.modulemap",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack/module.modulemap"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "CocoaLumberjackSwift";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "CocoaLumberjackSwift";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_135" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwiftSupport/include",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/CocoaLumberjackSwift_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport/module.modulemap",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack/module.modulemap"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "CocoaLumberjackSwift";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "CocoaLumberjackSwift";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Release";
+      };
+      "OBJ_136" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_137",
+            "OBJ_138",
+            "OBJ_139"
+         );
+      };
+      "OBJ_137" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_77";
+      };
+      "OBJ_138" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_78";
+      };
+      "OBJ_139" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_79";
+      };
+      "OBJ_14" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_15",
+            "OBJ_16"
+         );
+         name = "Models";
+         path = "Models";
+         sourceTree = "<group>";
+      };
+      "OBJ_140" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+            "OBJ_141",
+            "OBJ_142"
+         );
+      };
+      "OBJ_141" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjackSwiftSupport::Product";
+      };
+      "OBJ_142" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjack::Product";
+      };
+      "OBJ_143" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjackSwiftSupport";
+      };
+      "OBJ_145" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjack";
+      };
+      "OBJ_147" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_148",
+            "OBJ_149"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_148" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/CocoaLumberjackSwiftLogBackend_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack/module.modulemap"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "CocoaLumberjackSwiftLogBackend";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "CocoaLumberjackSwiftLogBackend";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_149" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/CocoaLumberjackSwiftLogBackend_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack/module.modulemap"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "CocoaLumberjackSwiftLogBackend";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "CocoaLumberjackSwiftLogBackend";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Release";
+      };
+      "OBJ_15" = {
+         isa = "PBXFileReference";
+         path = "LevelString.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_150" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_151"
+         );
+      };
+      "OBJ_151" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_81";
+      };
+      "OBJ_152" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+            "OBJ_153",
+            "OBJ_154"
+         );
+      };
+      "OBJ_153" = {
+         isa = "PBXBuildFile";
+         fileRef = "swift-log::Logging::Product";
+      };
+      "OBJ_154" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjack::Product";
+      };
+      "OBJ_155" = {
+         isa = "PBXTargetDependency";
+         target = "swift-log::Logging";
+      };
+      "OBJ_157" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjack";
+      };
+      "OBJ_158" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_159",
+            "OBJ_160"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_159" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DEFINES_MODULE = "NO";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwiftSupport/include",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/CocoaLumberjackSwiftSupport_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "CocoaLumberjackSwiftSupport";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            TARGET_NAME = "CocoaLumberjackSwiftSupport";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_16" = {
+         isa = "PBXFileReference";
+         path = "PVLogLevel.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_160" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DEFINES_MODULE = "NO";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwiftSupport/include",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/CocoaLumberjackSwiftSupport_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "CocoaLumberjackSwiftSupport";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            TARGET_NAME = "CocoaLumberjackSwiftSupport";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Release";
+      };
+      "OBJ_161" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_162"
+         );
+      };
+      "OBJ_162" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_83";
+      };
+      "OBJ_163" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+            "OBJ_164"
+         );
+      };
+      "OBJ_164" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjack::Product";
+      };
+      "OBJ_165" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjack";
+      };
+      "OBJ_166" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_167",
+            "OBJ_168"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_167" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/Logging_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "Logging";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "Logging";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_168" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/Logging_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "Logging";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "Logging";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Release";
+      };
+      "OBJ_169" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_170",
+            "OBJ_171",
+            "OBJ_172"
+         );
+      };
+      "OBJ_17" = {
+         isa = "PBXFileReference";
+         path = "PVCocoaLumberJackLogging.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_170" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_91";
+      };
+      "OBJ_171" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_92";
+      };
+      "OBJ_172" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_93";
+      };
+      "OBJ_173" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+         );
+      };
+      "OBJ_175" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_176",
+            "OBJ_177"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_176" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/NSLogger/Client/iOS/PublicHeaders",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/NSLogger_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC/module.modulemap"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "NSLogger";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)",
+               "SPMBuild"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "NSLogger";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_177" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/NSLogger/Client/iOS/PublicHeaders",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/NSLogger_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC/module.modulemap"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "NSLogger";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)",
+               "SPMBuild"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "NSLogger";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Release";
+      };
+      "OBJ_178" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_179"
+         );
+      };
+      "OBJ_179" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_31";
+      };
+      "OBJ_18" = {
+         isa = "PBXFileReference";
+         path = "PVLogEntry.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_180" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+            "OBJ_181"
+         );
+      };
+      "OBJ_181" = {
+         isa = "PBXBuildFile";
+         fileRef = "nslogger::NSLoggerLibObjC::Product";
+      };
+      "OBJ_182" = {
+         isa = "PBXTargetDependency";
+         target = "nslogger::NSLoggerLibObjC";
+      };
+      "OBJ_184" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_185",
+            "OBJ_186"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_185" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DEFINES_MODULE = "NO";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/NSLogger/Client/iOS/PublicHeaders"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/NSLoggerLibObjC_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)",
+               "-fno-objc-arc"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "NSLoggerLibObjC";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            TARGET_NAME = "NSLoggerLibObjC";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_186" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DEFINES_MODULE = "NO";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/NSLogger/Client/iOS/PublicHeaders"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/NSLoggerLibObjC_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.13";
+            OTHER_CFLAGS = (
+               "$(inherited)",
+               "-fno-objc-arc"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "NSLoggerLibObjC";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            TARGET_NAME = "NSLoggerLibObjC";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "4.0";
+         };
+         name = "Release";
+      };
+      "OBJ_187" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_188"
+         );
+      };
+      "OBJ_188" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_32";
+      };
+      "OBJ_189" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+         );
+      };
+      "OBJ_19" = {
+         isa = "PBXFileReference";
+         path = "PVLogging.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_191" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_192",
+            "OBJ_193"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_192" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/ManifestAPI",
+               "-sdk",
+               "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk",
+               "-package-description-version",
+               "5.2.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_193" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/ManifestAPI",
+               "-sdk",
+               "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk",
+               "-package-description-version",
+               "5.2.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Release";
+      };
+      "OBJ_194" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_195"
+         );
+      };
+      "OBJ_195" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_37";
+      };
+      "OBJ_197" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_198",
+            "OBJ_199"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_198" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/NSLogger/Client/iOS/PublicHeaders",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwiftSupport/include",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/PVLogging_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "11.0";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC/module.modulemap",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport/module.modulemap",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack/module.modulemap"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "PVLogging";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "PVLogging";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "7.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_199" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            ENABLE_TESTABILITY = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/NSLogger/Client/iOS/PublicHeaders",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwiftSupport/include",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/PVLogging_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "11.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "11.0";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC/module.modulemap",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport/module.modulemap",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack/module.modulemap"
+            );
+            PRODUCT_BUNDLE_IDENTIFIER = "PVLogging";
+            PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+            PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+            SKIP_INSTALL = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "PVLogging";
+            TVOS_DEPLOYMENT_TARGET = "11.0";
+            WATCHOS_DEPLOYMENT_TARGET = "7.0";
+         };
+         name = "Release";
+      };
+      "OBJ_2" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_3",
+            "OBJ_4"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_20" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_21",
+            "OBJ_22",
+            "OBJ_23"
+         );
+         name = "Protocols";
+         path = "Protocols";
+         sourceTree = "<group>";
+      };
+      "OBJ_200" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_201",
+            "OBJ_202",
+            "OBJ_203",
+            "OBJ_204",
+            "OBJ_205",
+            "OBJ_206",
+            "OBJ_207",
+            "OBJ_208",
+            "OBJ_209",
+            "OBJ_210",
+            "OBJ_211"
+         );
+      };
+      "OBJ_201" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_12";
+      };
+      "OBJ_202" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_13";
+      };
+      "OBJ_203" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_15";
+      };
+      "OBJ_204" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_16";
+      };
+      "OBJ_205" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_17";
+      };
+      "OBJ_206" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_18";
+      };
+      "OBJ_207" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_19";
+      };
+      "OBJ_208" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_21";
+      };
+      "OBJ_209" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_22";
+      };
+      "OBJ_21" = {
+         isa = "PBXFileReference";
+         path = "DDLogLevel+CustomStringConvertable.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_210" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_23";
+      };
+      "OBJ_211" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_24";
+      };
+      "OBJ_212" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+            "OBJ_213",
+            "OBJ_214",
+            "OBJ_215",
+            "OBJ_216",
+            "OBJ_217",
+            "OBJ_218",
+            "OBJ_219"
+         );
+      };
+      "OBJ_213" = {
+         isa = "PBXBuildFile";
+         fileRef = "nslogger::NSLogger::Product";
+      };
+      "OBJ_214" = {
+         isa = "PBXBuildFile";
+         fileRef = "nslogger::NSLoggerLibObjC::Product";
+      };
+      "OBJ_215" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjackSwiftLogBackend::Product";
+      };
+      "OBJ_216" = {
+         isa = "PBXBuildFile";
+         fileRef = "swift-log::Logging::Product";
+      };
+      "OBJ_217" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjackSwift::Product";
+      };
+      "OBJ_218" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjackSwiftSupport::Product";
+      };
+      "OBJ_219" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjack::Product";
+      };
+      "OBJ_22" = {
+         isa = "PBXFileReference";
+         path = "PVLoggingEntity.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_220" = {
+         isa = "PBXTargetDependency";
+         target = "nslogger::NSLogger";
+      };
+      "OBJ_221" = {
+         isa = "PBXTargetDependency";
+         target = "nslogger::NSLoggerLibObjC";
+      };
+      "OBJ_222" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjackSwiftLogBackend";
+      };
+      "OBJ_223" = {
+         isa = "PBXTargetDependency";
+         target = "swift-log::Logging";
+      };
+      "OBJ_224" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjackSwift";
+      };
+      "OBJ_225" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjackSwiftSupport";
+      };
+      "OBJ_226" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjack";
+      };
+      "OBJ_228" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_229",
+            "OBJ_230"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_229" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+         };
+         name = "Debug";
+      };
+      "OBJ_23" = {
+         isa = "PBXFileReference";
+         path = "PVLoggingEventProtocol.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_230" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+         };
+         name = "Release";
+      };
+      "OBJ_231" = {
+         isa = "PBXTargetDependency";
+         target = "pvlogging::PVLogging";
+      };
+      "OBJ_233" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_234",
+            "OBJ_235"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_234" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/ManifestAPI",
+               "-sdk",
+               "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk",
+               "-package-description-version",
+               "5.7.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_235" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/ManifestAPI",
+               "-sdk",
+               "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk",
+               "-package-description-version",
+               "5.7.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Release";
+      };
+      "OBJ_236" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_237"
+         );
+      };
+      "OBJ_237" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_6";
+      };
+      "OBJ_239" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_240",
+            "OBJ_241"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_24" = {
+         isa = "PBXFileReference";
+         path = "ProvenanceLogging.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_240" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+         };
+         name = "Debug";
+      };
+      "OBJ_241" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+         };
+         name = "Release";
+      };
+      "OBJ_242" = {
+         isa = "PBXTargetDependency";
+         target = "pvlogging::PVLoggingTests";
+      };
+      "OBJ_244" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_245",
+            "OBJ_246"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_245" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CLANG_ENABLE_MODULES = "YES";
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            EMBEDDED_CONTENT_CONTAINS_SWIFT = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/NSLogger/Client/iOS/PublicHeaders",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwiftSupport/include",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/PVLoggingTests_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "14.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "@loader_path/../Frameworks",
+               "@loader_path/Frameworks"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "11.0";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC/module.modulemap",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport/module.modulemap",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack/module.modulemap"
+            );
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "PVLoggingTests";
+            TVOS_DEPLOYMENT_TARGET = "14.0";
+            WATCHOS_DEPLOYMENT_TARGET = "7.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_246" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CLANG_ENABLE_MODULES = "YES";
+            CURRENT_PROJECT_VERSION = "1";
+            DRIVERKIT_DEPLOYMENT_TARGET = "19.0";
+            EMBEDDED_CONTENT_CONTAINS_SWIFT = "YES";
+            FRAMEWORK_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(PLATFORM_DIR)/Developer/Library/Frameworks"
+            );
+            HEADER_SEARCH_PATHS = (
+               "$(inherited)",
+               "$(SRCROOT)/.build/checkouts/NSLogger/Client/iOS/PublicHeaders",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwiftSupport/include",
+               "$(SRCROOT)/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport",
+               "$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack"
+            );
+            INFOPLIST_FILE = "PVLogging.xcodeproj/PVLoggingTests_Info.plist";
+            IPHONEOS_DEPLOYMENT_TARGET = "14.0";
+            LD_RUNPATH_SEARCH_PATHS = (
+               "$(inherited)",
+               "@loader_path/../Frameworks",
+               "@loader_path/Frameworks"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "11.0";
+            OTHER_CFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_LDFLAGS = (
+               "$(inherited)"
+            );
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC/module.modulemap",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport/module.modulemap",
+               "-Xcc",
+               "-fmodule-map-file=$(SRCROOT)/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack/module.modulemap"
+            );
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)"
+            );
+            SWIFT_VERSION = "5.0";
+            TARGET_NAME = "PVLoggingTests";
+            TVOS_DEPLOYMENT_TARGET = "14.0";
+            WATCHOS_DEPLOYMENT_TARGET = "7.0";
+         };
+         name = "Release";
+      };
+      "OBJ_247" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_248"
+         );
+      };
+      "OBJ_248" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_26";
+      };
+      "OBJ_249" = {
+         isa = "PBXFrameworksBuildPhase";
+         files = (
+            "OBJ_250",
+            "OBJ_251",
+            "OBJ_252",
+            "OBJ_253",
+            "OBJ_254",
+            "OBJ_255",
+            "OBJ_256",
+            "OBJ_257"
+         );
+      };
+      "OBJ_25" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_26"
+         );
+         name = "Tests";
+         path = "Tests";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_250" = {
+         isa = "PBXBuildFile";
+         fileRef = "pvlogging::PVLogging::Product";
+      };
+      "OBJ_251" = {
+         isa = "PBXBuildFile";
+         fileRef = "nslogger::NSLogger::Product";
+      };
+      "OBJ_252" = {
+         isa = "PBXBuildFile";
+         fileRef = "nslogger::NSLoggerLibObjC::Product";
+      };
+      "OBJ_253" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjackSwiftLogBackend::Product";
+      };
+      "OBJ_254" = {
+         isa = "PBXBuildFile";
+         fileRef = "swift-log::Logging::Product";
+      };
+      "OBJ_255" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjackSwift::Product";
+      };
+      "OBJ_256" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjackSwiftSupport::Product";
+      };
+      "OBJ_257" = {
+         isa = "PBXBuildFile";
+         fileRef = "cocoalumberjack::CocoaLumberjack::Product";
+      };
+      "OBJ_258" = {
+         isa = "PBXTargetDependency";
+         target = "pvlogging::PVLogging";
+      };
+      "OBJ_259" = {
+         isa = "PBXTargetDependency";
+         target = "nslogger::NSLogger";
+      };
+      "OBJ_26" = {
+         isa = "PBXFileReference";
+         path = "PVLoggingTests.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_260" = {
+         isa = "PBXTargetDependency";
+         target = "nslogger::NSLoggerLibObjC";
+      };
+      "OBJ_261" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjackSwiftLogBackend";
+      };
+      "OBJ_262" = {
+         isa = "PBXTargetDependency";
+         target = "swift-log::Logging";
+      };
+      "OBJ_263" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjackSwift";
+      };
+      "OBJ_264" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjackSwiftSupport";
+      };
+      "OBJ_265" = {
+         isa = "PBXTargetDependency";
+         target = "cocoalumberjack::CocoaLumberjack";
+      };
+      "OBJ_267" = {
+         isa = "XCConfigurationList";
+         buildConfigurations = (
+            "OBJ_268",
+            "OBJ_269"
+         );
+         defaultConfigurationIsVisible = "0";
+         defaultConfigurationName = "Release";
+      };
+      "OBJ_268" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/ManifestAPI",
+               "-sdk",
+               "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk",
+               "-package-description-version",
+               "5.6.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Debug";
+      };
+      "OBJ_269" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            LD = "/usr/bin/true";
+            OTHER_SWIFT_FLAGS = (
+               "-swift-version",
+               "5",
+               "-I",
+               "$(TOOLCHAIN_DIR)/usr/lib/swift/pm/ManifestAPI",
+               "-sdk",
+               "/Applications/Xcode-14.2.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk",
+               "-package-description-version",
+               "5.6.0"
+            );
+            SWIFT_VERSION = "5.0";
+         };
+         name = "Release";
+      };
+      "OBJ_27" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_28",
+            "OBJ_38",
+            "OBJ_89"
+         );
+         name = "Dependencies";
+         path = "";
+         sourceTree = "<group>";
+      };
+      "OBJ_270" = {
+         isa = "PBXSourcesBuildPhase";
+         files = (
+            "OBJ_271"
+         );
+      };
+      "OBJ_271" = {
+         isa = "PBXBuildFile";
+         fileRef = "OBJ_94";
+      };
+      "OBJ_28" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_29",
+            "OBJ_30",
+            "OBJ_37"
+         );
+         name = "NSLogger";
+         path = "";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_29" = {
+         isa = "PBXGroup";
+         children = (
+         );
+         name = "NSLogger";
+         path = ".build/checkouts/NSLogger/Client/iOS";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_3" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CLANG_ENABLE_OBJC_ARC = "YES";
+            COMBINE_HIDPI_IMAGES = "YES";
+            COPY_PHASE_STRIP = "NO";
+            DEBUG_INFORMATION_FORMAT = "dwarf";
+            DYLIB_INSTALL_NAME_BASE = "@rpath";
+            ENABLE_NS_ASSERTIONS = "YES";
+            GCC_OPTIMIZATION_LEVEL = "0";
+            GCC_PREPROCESSOR_DEFINITIONS = (
+               "$(inherited)",
+               "SWIFT_PACKAGE=1",
+               "DEBUG=1"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.10";
+            ONLY_ACTIVE_ARCH = "YES";
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-DXcode"
+            );
+            PRODUCT_NAME = "$(TARGET_NAME)";
+            SDKROOT = "macosx";
+            SUPPORTED_PLATFORMS = (
+               "$(AVAILABLE_PLATFORMS)"
+            );
+            SUPPORTS_MACCATALYST = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)",
+               "SWIFT_PACKAGE",
+               "DEBUG"
+            );
+            SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+            USE_HEADERMAP = "NO";
+         };
+         name = "Debug";
+      };
+      "OBJ_30" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_31",
+            "OBJ_32",
+            "OBJ_33"
+         );
+         name = "NSLoggerLibObjC";
+         path = ".build/checkouts/NSLogger/Client/iOS";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_31" = {
+         isa = "PBXFileReference";
+         path = "NSLogger.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_32" = {
+         isa = "PBXFileReference";
+         path = "LoggerClient.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_33" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_34",
+            "OBJ_35",
+            "OBJ_36"
+         );
+         name = "PublicHeaders";
+         path = "PublicHeaders";
+         sourceTree = "<group>";
+      };
+      "OBJ_34" = {
+         isa = "PBXFileReference";
+         path = "LoggerClient.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_35" = {
+         isa = "PBXFileReference";
+         path = "NSLogger.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_36" = {
+         isa = "PBXFileReference";
+         name = "module.modulemap";
+         path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLogging/PVLogging.xcodeproj/GeneratedModuleMap/NSLoggerLibObjC/module.modulemap";
+         sourceTree = "<group>";
+      };
+      "OBJ_37" = {
+         isa = "PBXFileReference";
+         explicitFileType = "sourcecode.swift";
+         name = "Package.swift";
+         path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLogging/.build/checkouts/NSLogger/Package.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_38" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_39",
+            "OBJ_76",
+            "OBJ_80",
+            "OBJ_82",
+            "OBJ_88"
+         );
+         name = "CocoaLumberjack 3.8.0";
+         path = "";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_39" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_40",
+            "OBJ_42",
+            "OBJ_43",
+            "OBJ_44",
+            "OBJ_45",
+            "OBJ_46",
+            "OBJ_47",
+            "OBJ_48",
+            "OBJ_49",
+            "OBJ_50",
+            "OBJ_56"
+         );
+         name = "CocoaLumberjack";
+         path = ".build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_4" = {
+         isa = "XCBuildConfiguration";
+         buildSettings = {
+            CLANG_ENABLE_OBJC_ARC = "YES";
+            COMBINE_HIDPI_IMAGES = "YES";
+            COPY_PHASE_STRIP = "YES";
+            DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+            DYLIB_INSTALL_NAME_BASE = "@rpath";
+            GCC_OPTIMIZATION_LEVEL = "s";
+            GCC_PREPROCESSOR_DEFINITIONS = (
+               "$(inherited)",
+               "SWIFT_PACKAGE=1"
+            );
+            MACOSX_DEPLOYMENT_TARGET = "10.10";
+            OTHER_SWIFT_FLAGS = (
+               "$(inherited)",
+               "-DXcode"
+            );
+            PRODUCT_NAME = "$(TARGET_NAME)";
+            SDKROOT = "macosx";
+            SUPPORTED_PLATFORMS = (
+               "$(AVAILABLE_PLATFORMS)"
+            );
+            SUPPORTS_MACCATALYST = "YES";
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
+               "$(inherited)",
+               "SWIFT_PACKAGE"
+            );
+            SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+            USE_HEADERMAP = "NO";
+         };
+         name = "Release";
+      };
+      "OBJ_40" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_41"
+         );
+         name = "CLI";
+         path = "CLI";
+         sourceTree = "<group>";
+      };
+      "OBJ_41" = {
+         isa = "PBXFileReference";
+         path = "CLIColor.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_42" = {
+         isa = "PBXFileReference";
+         path = "DDASLLogCapture.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_43" = {
+         isa = "PBXFileReference";
+         path = "DDASLLogger.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_44" = {
+         isa = "PBXFileReference";
+         path = "DDAbstractDatabaseLogger.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_45" = {
+         isa = "PBXFileReference";
+         path = "DDFileLogger.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_46" = {
+         isa = "PBXFileReference";
+         path = "DDLog.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_47" = {
+         isa = "PBXFileReference";
+         path = "DDLoggerNames.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_48" = {
+         isa = "PBXFileReference";
+         path = "DDOSLogger.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_49" = {
+         isa = "PBXFileReference";
+         path = "DDTTYLogger.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_5" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_6",
+            "OBJ_7",
+            "OBJ_25",
+            "OBJ_27",
+            "OBJ_95",
+            "OBJ_105"
+         );
+         path = "";
+         sourceTree = "<group>";
+      };
+      "OBJ_50" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_51",
+            "OBJ_52",
+            "OBJ_53",
+            "OBJ_54",
+            "OBJ_55"
+         );
+         name = "Extensions";
+         path = "Extensions";
+         sourceTree = "<group>";
+      };
+      "OBJ_51" = {
+         isa = "PBXFileReference";
+         path = "DDContextFilterLogFormatter+Deprecated.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_52" = {
+         isa = "PBXFileReference";
+         path = "DDContextFilterLogFormatter.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_53" = {
+         isa = "PBXFileReference";
+         path = "DDDispatchQueueLogFormatter.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_54" = {
+         isa = "PBXFileReference";
+         path = "DDFileLogger+Buffering.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_55" = {
+         isa = "PBXFileReference";
+         path = "DDMultiFormatter.m";
+         sourceTree = "<group>";
+      };
+      "OBJ_56" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_57",
+            "OBJ_75"
+         );
+         name = "include";
+         path = "include";
+         sourceTree = "<group>";
+      };
+      "OBJ_57" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_58",
+            "OBJ_59",
+            "OBJ_60",
+            "OBJ_61",
+            "OBJ_62",
+            "OBJ_63",
+            "OBJ_64",
+            "OBJ_65",
+            "OBJ_66",
+            "OBJ_67",
+            "OBJ_68",
+            "OBJ_69",
+            "OBJ_70",
+            "OBJ_71",
+            "OBJ_72",
+            "OBJ_73",
+            "OBJ_74"
+         );
+         name = "CocoaLumberjack";
+         path = "CocoaLumberjack";
+         sourceTree = "<group>";
+      };
+      "OBJ_58" = {
+         isa = "PBXFileReference";
+         path = "DDLog.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_59" = {
+         isa = "PBXFileReference";
+         path = "DDMultiFormatter.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_6" = {
+         isa = "PBXFileReference";
+         explicitFileType = "sourcecode.swift";
+         path = "Package.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_60" = {
+         isa = "PBXFileReference";
+         path = "DDContextFilterLogFormatter+Deprecated.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_61" = {
+         isa = "PBXFileReference";
+         path = "DDAbstractDatabaseLogger.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_62" = {
+         isa = "PBXFileReference";
+         path = "DDLoggerNames.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_63" = {
+         isa = "PBXFileReference";
+         path = "DDLogMacros.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_64" = {
+         isa = "PBXFileReference";
+         path = "DDASLLogCapture.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_65" = {
+         isa = "PBXFileReference";
+         path = "DDFileLogger.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_66" = {
+         isa = "PBXFileReference";
+         path = "DDContextFilterLogFormatter.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_67" = {
+         isa = "PBXFileReference";
+         path = "DDTTYLogger.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_68" = {
+         isa = "PBXFileReference";
+         path = "DDAssertMacros.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_69" = {
+         isa = "PBXFileReference";
+         path = "DDFileLogger+Buffering.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_7" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_8"
+         );
+         name = "Sources";
+         path = "";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_70" = {
+         isa = "PBXFileReference";
+         path = "DDDispatchQueueLogFormatter.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_71" = {
+         isa = "PBXFileReference";
+         path = "DDOSLogger.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_72" = {
+         isa = "PBXFileReference";
+         path = "DDLog+LOGV.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_73" = {
+         isa = "PBXFileReference";
+         path = "CLIColor.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_74" = {
+         isa = "PBXFileReference";
+         path = "DDASLLogger.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_75" = {
+         isa = "PBXFileReference";
+         name = "module.modulemap";
+         path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLogging/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjack/module.modulemap";
+         sourceTree = "<group>";
+      };
+      "OBJ_76" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_77",
+            "OBJ_78",
+            "OBJ_79"
+         );
+         name = "CocoaLumberjackSwift";
+         path = ".build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwift";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_77" = {
+         isa = "PBXFileReference";
+         path = "CocoaLumberjack.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_78" = {
+         isa = "PBXFileReference";
+         path = "DDAssert.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_79" = {
+         isa = "PBXFileReference";
+         path = "DDLog+Combine.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_8" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_9",
+            "OBJ_10",
+            "OBJ_11",
+            "OBJ_12",
+            "OBJ_13",
+            "OBJ_14",
+            "OBJ_17",
+            "OBJ_18",
+            "OBJ_19",
+            "OBJ_20",
+            "OBJ_24"
+         );
+         name = "PVLogging";
+         path = "Sources/PVLogging";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_80" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_81"
+         );
+         name = "CocoaLumberjackSwiftLogBackend";
+         path = ".build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwiftLogBackend";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_81" = {
+         isa = "PBXFileReference";
+         path = "DDLogHandler.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_82" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_83",
+            "OBJ_84"
+         );
+         name = "CocoaLumberjackSwiftSupport";
+         path = ".build/checkouts/CocoaLumberjack/Sources/CocoaLumberjackSwiftSupport";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_83" = {
+         isa = "PBXFileReference";
+         path = "empty.c";
+         sourceTree = "<group>";
+      };
+      "OBJ_84" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_85",
+            "OBJ_87"
+         );
+         name = "include";
+         path = "include";
+         sourceTree = "<group>";
+      };
+      "OBJ_85" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_86"
+         );
+         name = "CocoaLumberjackSwiftSupport";
+         path = "CocoaLumberjackSwiftSupport";
+         sourceTree = "<group>";
+      };
+      "OBJ_86" = {
+         isa = "PBXFileReference";
+         path = "SwiftLogLevel.h";
+         sourceTree = "<group>";
+      };
+      "OBJ_87" = {
+         isa = "PBXFileReference";
+         name = "module.modulemap";
+         path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLogging/PVLogging.xcodeproj/GeneratedModuleMap/CocoaLumberjackSwiftSupport/module.modulemap";
+         sourceTree = "<group>";
+      };
+      "OBJ_88" = {
+         isa = "PBXFileReference";
+         explicitFileType = "sourcecode.swift";
+         name = "Package.swift";
+         path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLogging/.build/checkouts/CocoaLumberjack/Package.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_89" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_90",
+            "OBJ_94"
+         );
+         name = "swift-log 1.4.4";
+         path = "";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_9" = {
+         isa = "PBXFileReference";
+         path = "module.modulemap.bak";
+         sourceTree = "<group>";
+      };
+      "OBJ_90" = {
+         isa = "PBXGroup";
+         children = (
+            "OBJ_91",
+            "OBJ_92",
+            "OBJ_93"
+         );
+         name = "Logging";
+         path = ".build/checkouts/swift-log/Sources/Logging";
+         sourceTree = "SOURCE_ROOT";
+      };
+      "OBJ_91" = {
+         isa = "PBXFileReference";
+         path = "Locks.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_92" = {
+         isa = "PBXFileReference";
+         path = "LogHandler.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_93" = {
+         isa = "PBXFileReference";
+         path = "Logging.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_94" = {
+         isa = "PBXFileReference";
+         explicitFileType = "sourcecode.swift";
+         name = "Package.swift";
+         path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLogging/.build/checkouts/swift-log/Package.swift";
+         sourceTree = "<group>";
+      };
+      "OBJ_95" = {
+         isa = "PBXGroup";
+         children = (
+            "cocoalumberjack::CocoaLumberjack::Product",
+            "cocoalumberjack::CocoaLumberjackSwift::Product",
+            "cocoalumberjack::CocoaLumberjackSwiftLogBackend::Product",
+            "cocoalumberjack::CocoaLumberjackSwiftSupport::Product",
+            "swift-log::Logging::Product",
+            "nslogger::NSLogger::Product",
+            "nslogger::NSLoggerLibObjC::Product",
+            "pvlogging::PVLogging::Product",
+            "pvlogging::PVLoggingTests::Product"
+         );
+         name = "Products";
+         path = "";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "cocoalumberjack::CocoaLumberjack" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_107";
+         buildPhases = (
+            "OBJ_110",
+            "OBJ_125"
+         );
+         dependencies = (
+         );
+         name = "CocoaLumberjack";
+         productName = "CocoaLumberjack";
+         productReference = "cocoalumberjack::CocoaLumberjack::Product";
+         productType = "com.apple.product-type.framework";
+      };
+      "cocoalumberjack::CocoaLumberjack::Product" = {
+         isa = "PBXFileReference";
+         path = "CocoaLumberjack.framework";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "cocoalumberjack::CocoaLumberjackSwift" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_133";
+         buildPhases = (
+            "OBJ_136",
+            "OBJ_140"
+         );
+         dependencies = (
+            "OBJ_143",
+            "OBJ_145"
+         );
+         name = "CocoaLumberjackSwift";
+         productName = "CocoaLumberjackSwift";
+         productReference = "cocoalumberjack::CocoaLumberjackSwift::Product";
+         productType = "com.apple.product-type.framework";
+      };
+      "cocoalumberjack::CocoaLumberjackSwift::Product" = {
+         isa = "PBXFileReference";
+         path = "CocoaLumberjackSwift.framework";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "cocoalumberjack::CocoaLumberjackSwiftLogBackend" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_147";
+         buildPhases = (
+            "OBJ_150",
+            "OBJ_152"
+         );
+         dependencies = (
+            "OBJ_155",
+            "OBJ_157"
+         );
+         name = "CocoaLumberjackSwiftLogBackend";
+         productName = "CocoaLumberjackSwiftLogBackend";
+         productReference = "cocoalumberjack::CocoaLumberjackSwiftLogBackend::Product";
+         productType = "com.apple.product-type.framework";
+      };
+      "cocoalumberjack::CocoaLumberjackSwiftLogBackend::Product" = {
+         isa = "PBXFileReference";
+         path = "CocoaLumberjackSwiftLogBackend.framework";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "cocoalumberjack::CocoaLumberjackSwiftSupport" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_158";
+         buildPhases = (
+            "OBJ_161",
+            "OBJ_163"
+         );
+         dependencies = (
+            "OBJ_165"
+         );
+         name = "CocoaLumberjackSwiftSupport";
+         productName = "CocoaLumberjackSwiftSupport";
+         productReference = "cocoalumberjack::CocoaLumberjackSwiftSupport::Product";
+         productType = "com.apple.product-type.framework";
+      };
+      "cocoalumberjack::CocoaLumberjackSwiftSupport::Product" = {
+         isa = "PBXFileReference";
+         path = "CocoaLumberjackSwiftSupport.framework";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "cocoalumberjack::SwiftPMPackageDescription" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_127";
+         buildPhases = (
+            "OBJ_130"
+         );
+         dependencies = (
+         );
+         name = "CocoaLumberjackPackageDescription";
+         productName = "CocoaLumberjackPackageDescription";
+         productType = "com.apple.product-type.framework";
+      };
+      "nslogger::NSLogger" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_175";
+         buildPhases = (
+            "OBJ_178",
+            "OBJ_180"
+         );
+         dependencies = (
+            "OBJ_182"
+         );
+         name = "NSLogger";
+         productName = "NSLogger";
+         productReference = "nslogger::NSLogger::Product";
+         productType = "com.apple.product-type.framework";
+      };
+      "nslogger::NSLogger::Product" = {
+         isa = "PBXFileReference";
+         path = "NSLogger.framework";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "nslogger::NSLoggerLibObjC" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_184";
+         buildPhases = (
+            "OBJ_187",
+            "OBJ_189"
+         );
+         dependencies = (
+         );
+         name = "NSLoggerLibObjC";
+         productName = "NSLoggerLibObjC";
+         productReference = "nslogger::NSLoggerLibObjC::Product";
+         productType = "com.apple.product-type.framework";
+      };
+      "nslogger::NSLoggerLibObjC::Product" = {
+         isa = "PBXFileReference";
+         path = "NSLoggerLibObjC.framework";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "nslogger::SwiftPMPackageDescription" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_191";
+         buildPhases = (
+            "OBJ_194"
+         );
+         dependencies = (
+         );
+         name = "NSLoggerPackageDescription";
+         productName = "NSLoggerPackageDescription";
+         productType = "com.apple.product-type.framework";
+      };
+      "pvlogging::PVLogging" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_197";
+         buildPhases = (
+            "OBJ_200",
+            "OBJ_212"
+         );
+         dependencies = (
+            "OBJ_220",
+            "OBJ_221",
+            "OBJ_222",
+            "OBJ_223",
+            "OBJ_224",
+            "OBJ_225",
+            "OBJ_226"
+         );
+         name = "PVLogging";
+         productName = "PVLogging";
+         productReference = "pvlogging::PVLogging::Product";
+         productType = "com.apple.product-type.framework";
+      };
+      "pvlogging::PVLogging-Static::ProductTarget" = {
+         isa = "PBXAggregateTarget";
+         buildConfigurationList = "OBJ_228";
+         buildPhases = (
+         );
+         dependencies = (
+            "OBJ_231"
+         );
+         name = "PVLogging-Static";
+         productName = "PVLogging-Static";
+      };
+      "pvlogging::PVLogging::Product" = {
+         isa = "PBXFileReference";
+         path = "PVLogging.framework";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "pvlogging::PVLoggingPackageTests::ProductTarget" = {
+         isa = "PBXAggregateTarget";
+         buildConfigurationList = "OBJ_239";
+         buildPhases = (
+         );
+         dependencies = (
+            "OBJ_242"
+         );
+         name = "PVLoggingPackageTests";
+         productName = "PVLoggingPackageTests";
+      };
+      "pvlogging::PVLoggingTests" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_244";
+         buildPhases = (
+            "OBJ_247",
+            "OBJ_249"
+         );
+         dependencies = (
+            "OBJ_258",
+            "OBJ_259",
+            "OBJ_260",
+            "OBJ_261",
+            "OBJ_262",
+            "OBJ_263",
+            "OBJ_264",
+            "OBJ_265"
+         );
+         name = "PVLoggingTests";
+         productName = "PVLoggingTests";
+         productReference = "pvlogging::PVLoggingTests::Product";
+         productType = "com.apple.product-type.bundle.unit-test";
+      };
+      "pvlogging::PVLoggingTests::Product" = {
+         isa = "PBXFileReference";
+         path = "PVLoggingTests.xctest";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "pvlogging::SwiftPMPackageDescription" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_233";
+         buildPhases = (
+            "OBJ_236"
+         );
+         dependencies = (
+         );
+         name = "PVLoggingPackageDescription";
+         productName = "PVLoggingPackageDescription";
+         productType = "com.apple.product-type.framework";
+      };
+      "swift-log::Logging" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_166";
+         buildPhases = (
+            "OBJ_169",
+            "OBJ_173"
+         );
+         dependencies = (
+         );
+         name = "Logging";
+         productName = "Logging";
+         productReference = "swift-log::Logging::Product";
+         productType = "com.apple.product-type.framework";
+      };
+      "swift-log::Logging::Product" = {
+         isa = "PBXFileReference";
+         path = "Logging.framework";
+         sourceTree = "BUILT_PRODUCTS_DIR";
+      };
+      "swift-log::SwiftPMPackageDescription" = {
+         isa = "PBXNativeTarget";
+         buildConfigurationList = "OBJ_267";
+         buildPhases = (
+            "OBJ_270"
+         );
+         dependencies = (
+         );
+         name = "swift-logPackageDescription";
+         productName = "swift-logPackageDescription";
+         productType = "com.apple.product-type.framework";
+      };
+   };
+   rootObject = "OBJ_1";
+}

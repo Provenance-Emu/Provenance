@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>03DB5459-2398-4B60-A32B-86D2E12A6302</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Provenance</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>9BFB396087D0BDD1A8684EEE49B51DFD3A478D5C</key>
+		<string>ssh://github.com/jasarien/Provenance.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Provenance.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>9BFB396087D0BDD1A8684EEE49B51DFD3A478D5C</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/jasarien/Provenance.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>9BFB396087D0BDD1A8684EEE49B51DFD3A478D5C</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>9BFB396087D0BDD1A8684EEE49B51DFD3A478D5C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Provenance</string>
+		</dict>
+	</array>
+</dict>
+</plist>

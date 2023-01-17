@@ -1,0 +1,12 @@
+Package: org.provenance-emu.provenance
+Depends:
+Name: Provenance
+Version: 2.2.0
+Architecture: iphoneos-arm
+Description: Provenance is a multi-system emulator for iOS. It supports a wide variety of systems, including the original
+Maintainer: Joe Mattiello
+Author: Joe Mattiello
+Section: Games
+dev: Joe Mattiello
+Depiction: https://provenance-emu.com/depiction/
+Installed-Size:

@@ -1,7 +1,0 @@
-module PVSupport {
-//    umbrella header "include/PVSupport/PVSupport.h"
-    header "include/PVSupport/PVSupport.h"
-    requires objc
-    export *
-//    module * { export * }
-}

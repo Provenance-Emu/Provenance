@@ -94,7 +94,7 @@
  */
 
 #if __has_include(<UIKit/UIKit.h>)
-@import PVLogging;
+@import PVLoggingObjC;
 #import "UIImage+ImageEffects.h"
 
 @import Accelerate;
@@ -151,15 +151,15 @@
 {
     // Check pre-conditions.
     if (self.size.width < 1 || self.size.height < 1) {
-        DLog (@"*** error: invalid size: (%.2f x %.2f). Both dimensions must be >= 1: %@", self.size.width, self.size.height, self);
+        DLOG(@"*** error: invalid size: (%.2f x %.2f). Both dimensions must be >= 1: %@", self.size.width, self.size.height, self);
         return nil;
     }
     if (!self.CGImage) {
-        DLog (@"*** error: image must be backed by a CGImage: %@", self);
+        DLOG(@"*** error: image must be backed by a CGImage: %@", self);
         return nil;
     }
     if (maskImage && !maskImage.CGImage) {
-        DLog (@"*** error: maskImage must be backed by a CGImage: %@", maskImage);
+        DLOG(@"*** error: maskImage must be backed by a CGImage: %@", maskImage);
         return nil;
     }
 

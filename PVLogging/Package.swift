@@ -5,21 +5,24 @@ import PackageDescription
 let package = Package(
     name: "PVLogging",
     platforms: [
-        .iOS(.v11),
-        .tvOS(.v11),
-         .watchOS(.v7),
-         .macOS(.v11)
+        .iOS(.v13),
+        .tvOS(.v13),
+        .watchOS(.v7),
+        .macOS(.v11)
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "PVLogging",
+            targets: ["PVLogging", "PVLoggingObjC"]),
+        .library(
+            name: "PVLogging-Dynamic",
             type: .dynamic,
             targets: ["PVLogging", "PVLoggingObjC"]),
         .library(
             name: "PVLogging-Static",
             type: .static,
-            targets: ["PVLogging", "PVLoggingObjC"]),
+            targets: ["PVLogging", "PVLoggingObjC"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -32,29 +35,31 @@ let package = Package(
          .target(
              name: "PVLoggingObjC",
              dependencies: [
+                "PVLogging",
                 .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
                  .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
                  .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
                  "NSLogger"
              ],
-             path: "Sources/ObjC",
              publicHeadersPath: "include"),
 
         .target(
             name: "PVLogging",
             dependencies: [
-                "PVLoggingObjC",
                 .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
                 .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
                 "NSLogger"
             ],
-            path: "Sources/Swift",
             publicHeadersPath: "include"),
+
         // MARK: SwiftPM tests
         .testTarget(
             name: "PVLoggingTests",
             dependencies: ["PVLogging"],
             path: "Tests")
-    ]
+    ],
+    swiftLanguageVersions: [.v5],
+    cLanguageStandard: .c11,
+    cxxLanguageStandard: .cxx14
 )

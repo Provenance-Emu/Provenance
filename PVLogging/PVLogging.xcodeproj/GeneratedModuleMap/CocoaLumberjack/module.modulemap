@@ -1,0 +1,4 @@
+module CocoaLumberjack {
+    umbrella "/Users/jmattiello/Workspace/Provenance/Provenance/PVLogging/.build/checkouts/CocoaLumberjack/Sources/CocoaLumberjack/include"
+    export *
+}

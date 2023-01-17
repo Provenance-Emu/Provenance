@@ -1,0 +1,15 @@
+//framework module PVLogging {
+//    umbrella header "include/PVLogging.h"
+//    header "include/PVLoggingObjC.h"
+//    requires objc
+//    export *
+//    module * { export * }
+//}
+
+framework module PVLogging {
+    header "PVLoggingObjC.h"
+    header "PVLogging.h"
+//    requires objc
+//    export *
+//    module * { export * }
+}

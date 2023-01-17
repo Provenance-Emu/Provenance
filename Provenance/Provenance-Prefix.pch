@@ -11,5 +11,5 @@
     #import <AppKit/AppKit.h>
 #endif
 	#import <Foundation/Foundation.h>
-	#import <PVSupport/DebugUtils.h>
+	#import <PVObjCUtils/DebugUtils.h>
 #endif

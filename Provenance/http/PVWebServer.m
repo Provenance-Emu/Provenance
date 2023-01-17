@@ -8,7 +8,7 @@
 
 #import "PVWebServer.h"
 @import PVSupport;
-@import PVLogging;
+@import PVLoggingObjC;
 
 // Web Server
 #import "GCDWebUploader.h"

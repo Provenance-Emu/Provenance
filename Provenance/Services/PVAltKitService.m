@@ -11,6 +11,7 @@
 @import PVSupport;
 @import AltKit;
 @import PVLogging;
+@import PVLoggingObjC;
 
 @implementation PVAltKitService
 

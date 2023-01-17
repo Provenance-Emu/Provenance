@@ -11,9 +11,10 @@
 #else
 @import AppKit;
 #endif
-@import PVSupport;
 @import CocoaLumberjack;
 @import PVLoggingObjC;
+@import PVLogging;
+#error TODO: Add search paths for modules?
 //#import <UIForLumberJack/UIForLumberJack.h>
 #define kSPUILoggerMessageMargin 10
 
