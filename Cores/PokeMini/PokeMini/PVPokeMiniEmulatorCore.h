@@ -28,6 +28,6 @@
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 
-__attribute__((visibility("default")))
+PVCORE_DIRECT_MEMBERS
 @interface PVPokeMiniEmulatorCore : PVEmulatorCore <PVPokeMiniSystemResponderClient>
 @end

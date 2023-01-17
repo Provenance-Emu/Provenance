@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B304087D2970E76700180897 /* assem_arm64.c in Sources */ = {isa = PBXBuildFile; fileRef = B36EF442279C5AB1005C7ED4 /* assem_arm64.c */; };
 		B30BF1AE2775320F00FF9E07 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B30BF1AD2775320F00FF9E07 /* libz.tbd */; };
 		B316B4E9219275A800693472 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
 		B316B4EA219275A800693472 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
@@ -2248,8 +2247,8 @@
 				B3055A6B2072FEE9001212D2 /* instr_counters.c */,
 				B3055A632072FEE9001212D2 /* interrupt.c */,
 				B3055A612072FEE9001212D2 /* pure_interp.c */,
-				B3055A652072FEE9001212D2 /* r4300_core.c */,
 				B3055A6C2072FEE9001212D2 /* recomp.c */,
+				B3055A652072FEE9001212D2 /* r4300_core.c */,
 				B3055A8A2072FEE9001212D2 /* tlb.c */,
 				B3055A672072FEE9001212D2 /* mips_instructions.def */,
 				B3055A702072FEE9001212D2 /* cached_interp.h */,
@@ -4428,7 +4427,6 @@
 				B39C29E027A12DA30078D028 /* MupenGameCore+Saves.m in Sources */,
 				B3AE1D7D207311E900AD06D4 /* cp1.c in Sources */,
 				B3AE1DC6207311E900AD06D4 /* transferpak.c in Sources */,
-				B304087D2970E76700180897 /* assem_arm64.c in Sources */,
 				B3AE1DB7207311E900AD06D4 /* clock_ctime_plus_delta.c in Sources */,
 				B3AE1D80207311E900AD06D4 /* n64_cic_nus_6105.c in Sources */,
 				B3AE1DC3207311E900AD06D4 /* r4300_core.c in Sources */,

@@ -621,7 +621,6 @@
 		93E74193295B38140028EB94 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = DEVELOPER_DIR; };
 		93E74196295B386C0028EB94 /* libz.1.2.11.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.11.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.1.2.11.tbd; sourceTree = DEVELOPER_DIR; };
 		93E741A0295B3E1E0028EB94 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ppsspp/assets; sourceTree = "<group>"; };
-		93E741DC295B5A630028EB94 /* ppsspp */ = {isa = PBXFileReference; lastKnownFileType = folder; path = ppsspp; sourceTree = "<group>"; };
 		93E741DE295B5B0A0028EB94 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib; sourceTree = "<group>"; };
 		93E741E0295B5B240028EB94 /* libMoltenVK_PPSSPP.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_PPSSPP.dylib; path = lib/libMoltenVK_PPSSPP.dylib; sourceTree = "<group>"; };
 		93E74216295B67C70028EB94 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -814,7 +813,6 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
-				93E741DC295B5A630028EB94 /* ppsspp */,
 				93E741A0295B3E1E0028EB94 /* assets */,
 				B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,

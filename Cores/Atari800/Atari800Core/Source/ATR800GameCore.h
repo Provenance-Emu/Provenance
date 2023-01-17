@@ -31,6 +31,6 @@
 
 @class OERingBuffer;
 
-PVCORE
+PVCORE_DIRECT_MEMBERS
 @interface ATR800GameCore : PVEmulatorCore <PV5200SystemResponderClient>
 @end

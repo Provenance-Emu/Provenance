@@ -6,6 +6,20 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		9396AEF12973073000B1EA1C /* MiniVMacRetroArchCore */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9396AEF52973073100B1EA1C /* Build configuration list for PBXAggregateTarget "MiniVMacRetroArchCore" */;
+			buildPhases = (
+				9396AEF62973074100B1EA1C /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = MiniVMacRetroArchCore;
+			productName = MiniVMacRetroArchCore;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		B301797F207C909E0051B93D /* libminivmac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libminivmac.a */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
@@ -48,6 +62,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9396AEF72973077800B1EA1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9396AEF12973073000B1EA1C;
+			remoteInfo = MiniVMacRetroArchCore;
+		};
 		B39768F92859E23200558958 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -759,6 +780,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9396AEF82973077800B1EA1C /* PBXTargetDependency */,
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
 			name = PVMiniVMac;
@@ -777,6 +799,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					9396AEF12973073000B1EA1C = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -813,6 +838,7 @@
 				B3C7620F20783162009950E4 /* PVMiniVMac */,
 				B3344B522859E088006E6B3A /* minivmac-libretro */,
 				B30178D2207C901D0051B93D /* minivmac */,
+				9396AEF12973073000B1EA1C /* MiniVMacRetroArchCore */,
 			);
 		};
 /* End PBXProject section */
@@ -827,6 +853,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9396AEF62973074100B1EA1C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\ncp -pR ${SRCROOT}/libretro-minivmac/* ${SRCROOT}/cmake/build/\ncp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd ${SRCROOT}/cmake/build/\n#make clean\nmake -j5\ncp minivmac_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/minivmac_libretro_ios.dylib\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B30178CF207C901D0051B93D /* Sources */ = {
@@ -876,6 +922,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9396AEF82973077800B1EA1C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9396AEF12973073000B1EA1C /* MiniVMacRetroArchCore */;
+			targetProxy = 9396AEF72973077800B1EA1C /* PBXContainerItemProxy */;
+		};
 		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3344B522859E088006E6B3A /* minivmac-libretro */;
@@ -884,6 +935,30 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		9396AEF22973073100B1EA1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9396AEF32973073100B1EA1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		9396AEF42973073100B1EA1C /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1352,6 +1427,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9396AEF52973073100B1EA1C /* Build configuration list for PBXAggregateTarget "MiniVMacRetroArchCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9396AEF22973073100B1EA1C /* Debug */,
+				9396AEF32973073100B1EA1C /* Release */,
+				9396AEF42973073100B1EA1C /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "minivmac" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

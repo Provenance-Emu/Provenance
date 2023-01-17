@@ -14,6 +14,7 @@ TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/CMakeLists.txt))
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/CMakeLists.txt))
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/cpuinfo/deps/clog/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fast_float/CMakeLists.txt))
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/CMakeLists.txt))
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/support/cmake/JoinPaths.cmake))
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/duckstation/dep/fmt/support/cmake/cxx14.cmake))

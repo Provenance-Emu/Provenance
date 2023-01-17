@@ -151,3 +151,15 @@
 [submodule "Dependencies/MoltenVK"]
 	path = Dependencies/MoltenVK
 	url = https://github.com/Provenance-Emu/MoltenVK.git
+[submodule "CoresRetro/RetroArch/RetroArch"]
+        path = CoresRetro/RetroArch/RetroArch
+        url = https://github.com/libretro/RetroArch.git
+[submodule "CoresRetro/RetroArch/libretro-super"]
+        path = CoresRetro/RetroArch/libretro-super
+        url = https://github.com/libretro/libretro-super.git
+[submodule "Cores/BeetlePSX/beetle-psx"]
+	path = Cores/BeetlePSX/beetle-psx
+	url = https://github.com/libretro/beetle-psx-libretro.git
+[submodule "Cores/DosBox/dosbox"]
+	path = Cores/DosBox/dosbox
+	url = https://github.com/schellingb/dosbox-pure.git

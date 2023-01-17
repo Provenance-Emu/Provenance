@@ -37,11 +37,9 @@ public extension PVEmulatorConfiguration {
         let classListPointer = objc_copyClassList(&count)!
         let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
+        let superclasses = ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]
         for i in 0 ..< Int(count) {
-            if
-                let classInfo = ClassInfo(classList[i], withSuperclass: ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]),
-                let superclassesInfo = classInfo.superclassesInfo,
-                motherClassInfo.intersects(with: motherClassInfo) {
+            if let classInfo = ClassInfo(classList[i], withSuperclass: superclasses), let superclassesInfo = classInfo.superclassesInfo, motherClassInfo.intersects(with: motherClassInfo) {
                 subclassList.append(classInfo)
             }
         }
@@ -76,6 +74,18 @@ public extension PVEmulatorConfiguration {
                     let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion, disabled: core.PVDisabled ?? false)
                     database.refresh()
                     try newCore.add(update: true)
+                }
+                if let cores=core.PVCores {
+                    try cores.forEach {
+                        core in do {
+                            let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
+                            let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion, disabled: core.PVDisabled ?? false)
+                            database.refresh()
+                            try newCore.add(update: true)
+                        } catch let error as DecodingError {
+                            ELOG("Failed to parse plist \(plist.path) : \(error)")
+                        }
+                    }
                 }
             } catch let error as DecodingError {
                 switch error {

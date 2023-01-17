@@ -97,4 +97,16 @@ public struct CorePlistEntry: Codable, Equatable, Hashable {
     public let PVProjectURL: String
     public let PVProjectVersion: String
     public let PVDisabled: Bool?
+    public let PVCores: [SubCoreEntry]?
 }
+
+public struct SubCoreEntry: Codable, Equatable, Hashable {
+    public let PVCoreIdentifier: String
+    public let PVPrincipleClass: String
+    public let PVSupportedSystems: [String]
+    public let PVProjectName: String
+    public let PVProjectURL: String
+    public let PVProjectVersion: String
+    public let PVDisabled: Bool?
+}
+

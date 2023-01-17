@@ -15,6 +15,7 @@
 #define NUMBER_OF_PADS       2
 #define NUMBER_OF_PAD_INPUTS 16
 
+PVCORE
 @interface PVTGBDualCore : PVEmulatorCore <PVGBSystemResponderClient> {
   
   uint16_t _gb_pad[NUMBER_OF_PADS][NUMBER_OF_PAD_INPUTS];

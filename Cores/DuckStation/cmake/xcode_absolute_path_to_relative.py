@@ -11,17 +11,17 @@ MOLTEN_DIR = '/Users/jmattiello/VulkanSDK/1.3.204.1/MoltenVK'
 DIRECTORY_TO_READ = os.getcwd() #+ '/build-release' # Process current directory
 
 # This should be the absolute path to the Core / Vulkan directory
-CORE_DIR = PROVENANCE_DIR + '/Cores/Play'
+CORE_DIR = PROVENANCE_DIR + '/Cores/DuckStation'
 VULKAN_DIR = PROVENANCE_DIR + '/MoltenVK'
 
 # Relative path to Core Lib Project Directory
-CORE_LIB_DIR = "../Play-"
+CORE_LIB_DIR = "../duckstation"
 
 # Places built library binaries under dolphin-ios/dolphin-build
-BUILD_DIR = "../lib"
+BUILD_DIR = "./lib"
 
 LIBS_TO_RENAME = []
-#LIBS_TO_RENAME.append([' = fmt;', ' = fmtd;'])
+LIBS_TO_RENAME.append([' = fmtd;', ' = fmt;'])
 
 # Paths to convert to relative path in XCode
 SRCROOT_PATH_TO_FIND = CORE_DIR + '/'
@@ -102,7 +102,7 @@ def get_files(path):
   for file in files:
     if path != '.':
       file=f'{path}/{file}'
-    if os.path.isdir(file):  
+    if os.path.isdir(file):
       get_files(file)
     elif os.path.isfile(file):
       process_file(file)

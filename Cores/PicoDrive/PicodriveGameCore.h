@@ -28,7 +28,7 @@
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
 
-__attribute__((visibility("default")))
+PVCORE
 @interface PicodriveGameCore : PVEmulatorCore <PVSega32XSystemResponderClient>
 - (void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;
 - (void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player;

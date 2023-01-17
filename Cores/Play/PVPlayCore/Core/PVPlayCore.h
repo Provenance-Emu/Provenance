@@ -16,6 +16,7 @@
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
+PVCORE
 @interface PVPlayCore : PVEmulatorCore <PVPS2SystemResponderClient>
 {
 	uint8_t padData[4][PVPS2ButtonCount];

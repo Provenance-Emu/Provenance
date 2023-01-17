@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
                BuildableName = "PVYabause.framework"
-               BlueprintName = "PVYabause-iOS"
+               BlueprintName = "PVYabause"
                ReferencedContainer = "container:PVYabause.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
             BuildableName = "PVYabause.framework"
-            BlueprintName = "PVYabause-iOS"
+            BlueprintName = "PVYabause"
             ReferencedContainer = "container:PVYabause.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

@@ -77,6 +77,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         _gameSpeed               = GameSpeedNormal;
         _isDoubleBufferedCached = [self isDoubleBuffered];
         _skipEmulationLoop       = NO;
+        _alwaysUseMetal          = NO;
 	}
 	
 	return self;
@@ -202,15 +203,22 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 
 
 - (void)stopEmulation {
+    [self stopEmulationWithMessage:nil];
+}
+
+-(void)stopEmulationWithMessage:(NSString *_Nullable)message {
     [self stopHaptic];
-	shouldStop = YES;
-	self.isRunning  = NO;
+    shouldStop = YES;
+    self.isRunning  = NO;
 
     [self setIsFrontBufferReady:NO];
     [self.frontBufferCondition signal];
-    
-//    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
-//    [self.emulationLoopThreadLock unlock];
+
+    if(message) {
+        // TODO: Show the message to the user.
+    }
+        //    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
+        //    [self.emulationLoopThreadLock unlock];
 }
 
 - (void)updateControllers {
@@ -556,4 +564,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 	return YES;
 }
 
+- (void)sendEvent:(UIEvent *)event {
+}
 @end

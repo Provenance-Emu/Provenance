@@ -122,6 +122,7 @@ namespace OpenEmu {
         void RenderSoftwareCursor(s32 left, s32 bottom, s32 width, s32 height, GPUTexture* texture_handle);
 
         std::unique_ptr<GL::Context> m_gl_context;
+//        std::unique_ptr<Vulkan::Context> m_vk_context;
 
         GL::Program m_display_program;
         GL::Program m_cursor_program;

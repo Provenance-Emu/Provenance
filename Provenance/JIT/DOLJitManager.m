@@ -4,7 +4,9 @@
 
 #import "DOLJitManager.h"
 
+#if !TARGET_OS_TV
 @import AltKit;
+#endif
 
 #import <dlfcn.h>
 
@@ -220,6 +222,7 @@ NSString* const DOLJitAltJitFailureNotification = @"org.provenance-emu.provenanc
 }
 
 - (void)attemptToAcquireJitByAltJIT {
+#if !TARGET_OS_TV
     if (self->_m_jit_type != DOLJitTypeDebugger) {
         return;
     }
@@ -263,6 +266,9 @@ NSString* const DOLJitAltJitFailureNotification = @"org.provenance-emu.provenanc
             self->_m_is_discovering_altserver = false;
         }];
     }];
+#else
+    return;
+#endif
 }
 
 - (void)attemptToAcquireJitByJitStreamer {

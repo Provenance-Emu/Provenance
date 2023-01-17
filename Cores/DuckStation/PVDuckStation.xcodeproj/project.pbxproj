@@ -3,13 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B30408762970C08B00180897 /* libfmtd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4F296F9819005D110B /* libfmtd.a */; platformFilters = (ios, maccatalyst, ); };
 		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (Weak, ); }; };
 		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
+		B34120552975F8AA00F5F351 /* libfmt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B34120542975F87A00F5F351 /* libfmt.a */; };
 		B34C2BF4296F9B24002146BB /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
 		B34C2C11296FBDAC002146BB /* libduckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8A54026BE55780096A354 /* libduckstation.a */; };
 		B34C2C13296FBEDA002146BB /* duckstation_null.c in Sources */ = {isa = PBXBuildFile; fileRef = B34C2C12296FBEDA002146BB /* duckstation_null.c */; };
@@ -19,20 +19,16 @@
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
 		B373CD7A296F9983005D110B /* libclog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD43296F9819005D110B /* libclog.a */; };
 		B373CD7B296F9983005D110B /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD45296F9819005D110B /* libcommon.a */; };
-		B373CD7C296F9983005D110B /* libcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD49296F9819005D110B /* libcore.a */; };
 		B373CD7D296F9983005D110B /* libcpuinfo_internals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4D296F9819005D110B /* libcpuinfo_internals.a */; };
 		B373CD7E296F9983005D110B /* libcpuinfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4B296F9819005D110B /* libcpuinfo.a */; };
 		B373CD80296F9983005D110B /* libfrontend-common.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD51296F9819005D110B /* libfrontend-common.a */; };
 		B373CD81296F9983005D110B /* libglad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD53296F9819005D110B /* libglad.a */; };
 		B373CD82296F9983005D110B /* libglslang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD55296F9819005D110B /* libglslang.a */; };
-		B373CD83296F9983005D110B /* libgtest_main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD59296F9819005D110B /* libgtest_main.a */; };
-		B373CD84296F9983005D110B /* libgtest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD57296F9819005D110B /* libgtest.a */; };
 		B373CD85296F9983005D110B /* libimgui.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD5B296F9819005D110B /* libimgui.a */; };
 		B373CD86296F9983005D110B /* liblibchdr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD5D296F9819005D110B /* liblibchdr.a */; };
 		B373CD87296F9983005D110B /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD5F296F9819005D110B /* liblzma.a */; };
 		B373CD88296F9983005D110B /* libminizip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD61296F9819005D110B /* libminizip.a */; };
 		B373CD89296F9983005D110B /* librcheevos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD63296F9819005D110B /* librcheevos.a */; };
-		B373CD8A296F9983005D110B /* libscmversion.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD65296F9819005D110B /* libscmversion.a */; };
 		B373CD8B296F9983005D110B /* libsimpleini.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD67296F9819005D110B /* libsimpleini.a */; };
 		B373CD8C296F9983005D110B /* libsoundtouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD69296F9819005D110B /* libsoundtouch.a */; };
 		B373CD8D296F9983005D110B /* libstb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD6B296F9819005D110B /* libstb.a */; };
@@ -55,15 +51,16 @@
 		B3D8A52F26BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52526BE48C90096A354 /* PVDuckStation.h */; };
 		B3D8A53126BE48CA0096A354 /* DuckStation-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52626BE48C90096A354 /* DuckStation-Info.plist */; };
 		B3D8A53326BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52826BE48C90096A354 /* PVDuckStation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3F8DFCC2975F0D600C24FD1 /* libcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD49296F9819005D110B /* libcore.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B30408742970C08300180897 /* PBXContainerItemProxy */ = {
+		B34120532975F87A00F5F351 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = D13422B1CF6E467997EEF928;
-			remoteInfo = "common-tests";
+			remoteGlobalIDString = 12F5D46B26654ED5AD250D70;
+			remoteInfo = fmtd;
 		};
 		B373CD42296F9819005D110B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -99,13 +96,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 6397764A1D5141FA96337E95;
 			remoteInfo = cpuinfo_internals;
-		};
-		B373CD4E296F9819005D110B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A61DD5E6EF794206BCE9FFFE;
-			remoteInfo = fmt;
 		};
 		B373CD50296F9819005D110B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -247,19 +237,166 @@
 			remoteGlobalIDString = FB4296A2DFE5445E9D9CED66;
 			remoteInfo = zstd;
 		};
-		B373CD78296F9948005D110B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5E7F7554D3AE463A8152F8B4;
-			remoteInfo = ALL_BUILD;
-		};
 		B3D8AD4E26BE55E20096A354 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 02695358143169EA003A07D4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B3D8A53F26BE55780096A354;
 			remoteInfo = duckstation;
+		};
+		B3F8DF972975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E8E2535F5424CABA027573F;
+			remoteInfo = clog;
+		};
+		B3F8DF992975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 75FA30DD63C04BF2A2448D49;
+			remoteInfo = common;
+		};
+		B3F8DF9B2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 244A17668611473AB19B5BF5;
+			remoteInfo = core;
+		};
+		B3F8DF9D2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E2A774B159364460AC24E39B;
+			remoteInfo = cpuinfo;
+		};
+		B3F8DF9F2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3211640BED084B21BDB35192;
+			remoteInfo = cpuinfo_internals;
+		};
+		B3F8DFA32975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 6D255B0D69F542B6BDDA5074;
+			remoteInfo = "frontend-common";
+		};
+		B3F8DFA52975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 80E7BFAF8EE34EECB9E30C22;
+			remoteInfo = glad;
+		};
+		B3F8DFA72975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8BA24853EB47437D8324CA7D;
+			remoteInfo = glslang;
+		};
+		B3F8DFAD2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 7ECF1ED040A545AFB4E4C34C;
+			remoteInfo = imgui;
+		};
+		B3F8DFAF2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5296A89E016A4718AA226D85;
+			remoteInfo = libchdr;
+		};
+		B3F8DFB12975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BA17DBD409614D8C9CC7724B;
+			remoteInfo = lzma;
+		};
+		B3F8DFB32975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F2FB3078DD5B4EAF95B4A19B;
+			remoteInfo = minizip;
+		};
+		B3F8DFB52975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B621125D0D2245F880AC192B;
+			remoteInfo = rcheevos;
+		};
+		B3F8DFB92975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B33B9A70F7B4499B71C41B3;
+			remoteInfo = simpleini;
+		};
+		B3F8DFBB2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 46FD74744C1446F19C253DC3;
+			remoteInfo = soundtouch;
+		};
+		B3F8DFBD2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = BA12F9A6815346E7994B237F;
+			remoteInfo = stb;
+		};
+		B3F8DFBF2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9ADB9CD17A1B4201AAE6137C;
+			remoteInfo = tinyxml2;
+		};
+		B3F8DFC12975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D42A93AC530C487BA726CDD5;
+			remoteInfo = util;
+		};
+		B3F8DFC32975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 3A85A43CEFD746F3AB4F100D;
+			remoteInfo = vixl;
+		};
+		B3F8DFC52975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0BB499B40F9445E0920DDE69;
+			remoteInfo = xxhash;
+		};
+		B3F8DFC72975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B1CB54C27877414EBDA67287;
+			remoteInfo = zlib;
+		};
+		B3F8DFC92975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 93A9D9192B344435BBD44F48;
+			remoteInfo = zstd;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -414,23 +551,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B30408762970C08B00180897 /* libfmtd.a in Frameworks */,
+				B34120552975F8AA00F5F351 /* libfmt.a in Frameworks */,
+				B3F8DFCC2975F0D600C24FD1 /* libcore.a in Frameworks */,
 				B373CD7A296F9983005D110B /* libclog.a in Frameworks */,
 				B373CD7B296F9983005D110B /* libcommon.a in Frameworks */,
-				B373CD7C296F9983005D110B /* libcore.a in Frameworks */,
 				B373CD7D296F9983005D110B /* libcpuinfo_internals.a in Frameworks */,
 				B373CD7E296F9983005D110B /* libcpuinfo.a in Frameworks */,
 				B373CD80296F9983005D110B /* libfrontend-common.a in Frameworks */,
 				B373CD81296F9983005D110B /* libglad.a in Frameworks */,
 				B373CD82296F9983005D110B /* libglslang.a in Frameworks */,
-				B373CD83296F9983005D110B /* libgtest_main.a in Frameworks */,
-				B373CD84296F9983005D110B /* libgtest.a in Frameworks */,
 				B373CD85296F9983005D110B /* libimgui.a in Frameworks */,
 				B373CD86296F9983005D110B /* liblibchdr.a in Frameworks */,
 				B373CD87296F9983005D110B /* liblzma.a in Frameworks */,
 				B373CD88296F9983005D110B /* libminizip.a in Frameworks */,
 				B373CD89296F9983005D110B /* librcheevos.a in Frameworks */,
-				B373CD8A296F9983005D110B /* libscmversion.a in Frameworks */,
 				B373CD8B296F9983005D110B /* libsimpleini.a in Frameworks */,
 				B373CD8C296F9983005D110B /* libsoundtouch.a in Frameworks */,
 				B373CD8D296F9983005D110B /* libstb.a in Frameworks */,
@@ -612,11 +746,10 @@
 			children = (
 				B373CD43296F9819005D110B /* libclog.a */,
 				B373CD45296F9819005D110B /* libcommon.a */,
-				B30408752970C08300180897 /* common-tests */,
 				B373CD49296F9819005D110B /* libcore.a */,
 				B373CD4B296F9819005D110B /* libcpuinfo.a */,
 				B373CD4D296F9819005D110B /* libcpuinfo_internals.a */,
-				B373CD4F296F9819005D110B /* libfmtd.a */,
+				B34120542975F87A00F5F351 /* libfmt.a */,
 				B373CD51296F9819005D110B /* libfrontend-common.a */,
 				B373CD53296F9819005D110B /* libglad.a */,
 				B373CD55296F9819005D110B /* libglslang.a */,
@@ -718,7 +851,28 @@
 			buildRules = (
 			);
 			dependencies = (
-				B373CD79296F9948005D110B /* PBXTargetDependency */,
+				B3F8DF982975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DF9A2975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DF9C2975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DF9E2975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFA02975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFA42975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFA62975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFA82975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFAE2975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFB02975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFB22975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFB42975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFB62975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFBA2975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFBC2975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFBE2975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFC02975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFC22975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFC42975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFC62975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFC82975EFEB00C24FD1 /* PBXTargetDependency */,
+				B3F8DFCA2975EFEB00C24FD1 /* PBXTargetDependency */,
 			);
 			name = duckstation;
 			productName = duckstation;
@@ -770,12 +924,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B30408752970C08300180897 /* common-tests */ = {
+		B34120542975F87A00F5F351 /* libfmt.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = "common-tests";
-			path = "common-tests.app";
-			remoteRef = B30408742970C08300180897 /* PBXContainerItemProxy */;
+			fileType = archive.ar;
+			path = libfmt.a;
+			remoteRef = B34120532975F87A00F5F351 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B373CD43296F9819005D110B /* libclog.a */ = {
@@ -811,13 +964,6 @@
 			fileType = archive.ar;
 			path = libcpuinfo_internals.a;
 			remoteRef = B373CD4C296F9819005D110B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B373CD4F296F9819005D110B /* libfmtd.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libfmtd.a;
-			remoteRef = B373CD4E296F9819005D110B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B373CD51296F9819005D110B /* libfrontend-common.a */ = {
@@ -999,15 +1145,120 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B373CD79296F9948005D110B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ALL_BUILD;
-			targetProxy = B373CD78296F9948005D110B /* PBXContainerItemProxy */;
-		};
 		B3D8AD4F26BE55E20096A354 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B3D8A53F26BE55780096A354 /* duckstation */;
 			targetProxy = B3D8AD4E26BE55E20096A354 /* PBXContainerItemProxy */;
+		};
+		B3F8DF982975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = clog;
+			targetProxy = B3F8DF972975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DF9A2975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = common;
+			targetProxy = B3F8DF992975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DF9C2975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = core;
+			targetProxy = B3F8DF9B2975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DF9E2975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = cpuinfo;
+			targetProxy = B3F8DF9D2975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFA02975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = cpuinfo_internals;
+			targetProxy = B3F8DF9F2975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFA42975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "frontend-common";
+			targetProxy = B3F8DFA32975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFA62975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = glad;
+			targetProxy = B3F8DFA52975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFA82975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = glslang;
+			targetProxy = B3F8DFA72975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFAE2975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = imgui;
+			targetProxy = B3F8DFAD2975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFB02975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libchdr;
+			targetProxy = B3F8DFAF2975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFB22975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = lzma;
+			targetProxy = B3F8DFB12975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFB42975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = minizip;
+			targetProxy = B3F8DFB32975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFB62975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = rcheevos;
+			targetProxy = B3F8DFB52975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFBA2975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = simpleini;
+			targetProxy = B3F8DFB92975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFBC2975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = soundtouch;
+			targetProxy = B3F8DFBB2975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFBE2975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = stb;
+			targetProxy = B3F8DFBD2975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFC02975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = tinyxml2;
+			targetProxy = B3F8DFBF2975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFC22975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = util;
+			targetProxy = B3F8DFC12975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFC42975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = vixl;
+			targetProxy = B3F8DFC32975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFC62975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = xxhash;
+			targetProxy = B3F8DFC52975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFC82975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = zlib;
+			targetProxy = B3F8DFC72975EFEB00C24FD1 /* PBXContainerItemProxy */;
+		};
+		B3F8DFCA2975EFEB00C24FD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = zstd;
+			targetProxy = B3F8DFC92975EFEB00C24FD1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

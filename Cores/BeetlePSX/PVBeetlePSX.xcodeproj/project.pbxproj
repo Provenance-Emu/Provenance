@@ -3,11 +3,25 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		937EAAF2296C2022003D89EB /* BuildBeetlePSXRetroArchModule */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 937EAAF6296C2023003D89EB /* Build configuration list for PBXAggregateTarget "BuildBeetlePSXRetroArchModule" */;
+			buildPhases = (
+				937EAAF7296C203D003D89EB /* Build */,
+				B322A986297145AD00F0D876 /* Copy */,
+			);
+			dependencies = (
+			);
+			name = BuildBeetlePSXRetroArchModule;
+			productName = BuildBeetlePSXRetroArchModule;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
-		B301797F207C909E0051B93D /* libbeetle_psx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libbeetle_psx.a */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
@@ -95,9 +109,7 @@
 		B3607B3F28922FC700509A68 /* regcache.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0482872978C00EAEB37 /* regcache.c */; };
 		B3607B4828922FFC00509A68 /* jit_memory.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF032872978B00EAEB37 /* jit_memory.c */; };
 		B3607B4928922FFC00509A68 /* lightning.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF302872978B00EAEB37 /* lightning.c */; };
-		B3607B4A28922FFC00509A68 /* jit_print.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF242872978B00EAEB37 /* jit_print.c */; };
 		B3607B4B28922FFC00509A68 /* jit_note.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF1C2872978B00EAEB37 /* jit_note.c */; };
-		B3607B4C28922FFC00509A68 /* jit_disasm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF0A2872978B00EAEB37 /* jit_disasm.c */; };
 		B3607B4D28922FFC00509A68 /* jit_names.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF2D2872978B00EAEB37 /* jit_names.c */; };
 		B3607B4E28922FFC00509A68 /* jit_size.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAF072872978B00EAEB37 /* jit_size.c */; };
 		B3607B562892310A00509A68 /* vorbisfile.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0A92872978C00EAEB37 /* vorbisfile.c */; };
@@ -128,13 +140,15 @@
 		B3681B932874167800C0136F /* pgxp_mem.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0752872978C00EAEB37 /* pgxp_mem.c */; };
 		B3681B952874167A00C0136F /* pgxp_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0782872978C00EAEB37 /* pgxp_cpu.c */; };
 		B3681B972874168A00C0136F /* pgxp_gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0792872978C00EAEB37 /* pgxp_gpu.c */; };
-		B37022C82872553E00B3F6DA /* PVBeetlePSXCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVBeetlePSXCore.mm */; };
 		B37022C92872554300B3F6DA /* PVBeetlePSXCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVBeetlePSXCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVBeetlePSX.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVBeetlePSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B39768F82859E23200558958 /* libbeetle_psx-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libbeetle_psx-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
+		B3AB13D52949B57E005DCCDE /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AB13D42949B57E005DCCDE /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B3AB13D82949B9CE005DCCDE /* glsym_es3.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE6C2872978A00EAEB37 /* glsym_es3.c */; };
+		B3AB13DB2949BA15005DCCDE /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAEC52872978B00EAEB37 /* glsm.c */; };
+		B3AB13DC2949BB4D005DCCDE /* rsx_lib_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0652872978C00EAEB37 /* rsx_lib_gl.cpp */; };
+		B3AB13DD2949BBA0005DCCDE /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE702872978A00EAEB37 /* rglgen.c */; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3CE8003287404B200B6BB5A /* LzmaDec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0292872978C00EAEB37 /* LzmaDec.c */; };
@@ -157,22 +171,18 @@
 		B3CE80222874050000B6BB5A /* zutil.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFFE2872978C00EAEB37 /* zutil.c */; };
 		B3CE80232874050000B6BB5A /* crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAFFC2872978C00EAEB37 /* crc32.c */; };
 		B3CE80242874050000B6BB5A /* adler32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB00B2872978C00EAEB37 /* adler32.c */; };
-		B3CE802B2874052A00B6BB5A /* glsym_es2.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE6F2872978A00EAEB37 /* glsym_es2.c */; };
-		B3CE802D2874055800B6BB5A /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAE702872978A00EAEB37 /* rglgen.c */; };
-		B3CE802F2874056100B6BB5A /* glsm.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAEC52872978B00EAEB37 /* glsm.c */; };
-		B3CE80312874057400B6BB5A /* rsx_lib_gl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EBB0652872978C00EAEB37 /* rsx_lib_gl.cpp */; };
 		B3CE80332874059500B6BB5A /* ugui.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBAED42872978B00EAEB37 /* ugui.c */; };
 		B3CE8039287405DC00B6BB5A /* liblzma.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CE8037287405DC00B6BB5A /* liblzma.tbd */; };
 		B3CE803A287405DC00B6BB5A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CE8038287405DC00B6BB5A /* libz.tbd */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B39768F92859E23200558958 /* PBXContainerItemProxy */ = {
+		937EAAF8296C2152003D89EB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3344B522859E088006E6B3A;
-			remoteInfo = "dos-box-libretro-iOS";
+			remoteGlobalIDString = 937EAAF2296C2022003D89EB;
+			remoteInfo = BuildBeetlePSXRetroArchModule;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -222,6 +232,7 @@
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3AB13D42949B57E005DCCDE /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -600,7 +611,6 @@
 		B3EBAF072872978B00EAEB37 /* jit_size.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jit_size.c; sourceTree = "<group>"; };
 		B3EBAF082872978B00EAEB37 /* jit_mips.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jit_mips.c; sourceTree = "<group>"; };
 		B3EBAF092872978B00EAEB37 /* jit_ppc-fpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "jit_ppc-fpu.c"; sourceTree = "<group>"; };
-		B3EBAF0A2872978B00EAEB37 /* jit_disasm.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jit_disasm.c; sourceTree = "<group>"; };
 		B3EBAF0B2872978B00EAEB37 /* jit_s390-fpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "jit_s390-fpu.c"; sourceTree = "<group>"; };
 		B3EBAF0C2872978B00EAEB37 /* jit_sparc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jit_sparc.c; sourceTree = "<group>"; };
 		B3EBAF0D2872978B00EAEB37 /* jit_ppc-cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "jit_ppc-cpu.c"; sourceTree = "<group>"; };
@@ -626,7 +636,6 @@
 		B3EBAF212872978B00EAEB37 /* jit_aarch64-fpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "jit_aarch64-fpu.c"; sourceTree = "<group>"; };
 		B3EBAF222872978B00EAEB37 /* jit_x86-cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "jit_x86-cpu.c"; sourceTree = "<group>"; };
 		B3EBAF232872978B00EAEB37 /* jit_s390.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jit_s390.c; sourceTree = "<group>"; };
-		B3EBAF242872978B00EAEB37 /* jit_print.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jit_print.c; sourceTree = "<group>"; };
 		B3EBAF252872978B00EAEB37 /* jit_riscv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jit_riscv.c; sourceTree = "<group>"; };
 		B3EBAF262872978B00EAEB37 /* jit_mips-cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "jit_mips-cpu.c"; sourceTree = "<group>"; };
 		B3EBAF272872978B00EAEB37 /* jit_x86-sse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "jit_x86-sse.c"; sourceTree = "<group>"; };
@@ -809,7 +818,7 @@
 		B3EBAFE52872978B00EAEB37 /* configure */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = configure; sourceTree = "<group>"; };
 		B3EBAFE62872978B00EAEB37 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B3EBAFE72872978B00EAEB37 /* mman.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mman.h; sourceTree = "<group>"; };
-		B3EBAFEB2872978C00EAEB37 /* .suo */ = {isa = PBXFileReference; lastKnownFileType = file; path = .suo; sourceTree = "<group>"; };
+		B3EBAFEB2872978C00EAEB37 /* .suo */ = {isa = PBXFileReference; lastKnownFileType = text; path = .suo; sourceTree = "<group>"; };
 		B3EBAFEC2872978C00EAEB37 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		B3EBAFED2872978C00EAEB37 /* mman.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = mman.vcxproj; sourceTree = "<group>"; };
 		B3EBAFEE2872978C00EAEB37 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
@@ -1134,11 +1143,10 @@
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libbeetle_psx.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B39768F82859E23200558958 /* libbeetle_psx-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
+				B3AB13D52949B57E005DCCDE /* OpenGL.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
@@ -1194,6 +1202,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3AB13D42949B57E005DCCDE /* OpenGL.framework */,
 				B3CE8037287405DC00B6BB5A /* liblzma.tbd */,
 				B3CE8038287405DC00B6BB5A /* libz.tbd */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
@@ -2056,7 +2065,6 @@
 				B3EBAF282872978B00EAEB37 /* jit_arm-sz.c */,
 				B3EBAF2A2872978B00EAEB37 /* jit_arm-vfp.c */,
 				B3EBAF292872978B00EAEB37 /* jit_arm.c */,
-				B3EBAF0A2872978B00EAEB37 /* jit_disasm.c */,
 				B3EBAF142872978B00EAEB37 /* jit_hppa-cpu.c */,
 				B3EBAF042872978B00EAEB37 /* jit_hppa-fpu.c */,
 				B3EBAF0E2872978B00EAEB37 /* jit_hppa-sz.c */,
@@ -2076,7 +2084,6 @@
 				B3EBAF092872978B00EAEB37 /* jit_ppc-fpu.c */,
 				B3EBAF2E2872978B00EAEB37 /* jit_ppc-sz.c */,
 				B3EBAEFF2872978B00EAEB37 /* jit_ppc.c */,
-				B3EBAF242872978B00EAEB37 /* jit_print.c */,
 				B3EBAF1F2872978B00EAEB37 /* jit_rewind.c */,
 				B3EBAF202872978B00EAEB37 /* jit_riscv-cpu.c */,
 				B3EBAF192872978B00EAEB37 /* jit_riscv-fpu.c */,
@@ -2876,7 +2883,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B39768FA2859E23200558958 /* PBXTargetDependency */,
+				937EAAF9296C2152003D89EB /* PBXTargetDependency */,
 			);
 			name = PVBeetlePSX;
 			productName = PVReicast;
@@ -2894,6 +2901,9 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
+					937EAAF2296C2022003D89EB = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -2930,6 +2940,7 @@
 				B3C7620F20783162009950E4 /* PVBeetlePSX */,
 				B3344B522859E088006E6B3A /* beetle_psx-libretro */,
 				B30178D2207C901D0051B93D /* beetle_psx */,
+				937EAAF2296C2022003D89EB /* BuildBeetlePSXRetroArchModule */,
 			);
 		};
 /* End PBXProject section */
@@ -2939,11 +2950,51 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37022CB2872556600B3F6DA /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		937EAAF7296C203D003D89EB /* Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Build;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\n#cd ${SRCROOT}/beetle-psx\n#git pull origin master\n#git checkout origin/master\n#git submodule update --init --recursive\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\ncp -pR ${SRCROOT}/beetle-psx/* ${SRCROOT}/cmake/build/\ncp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd ${SRCROOT}/cmake/build/\n#make clean\nmake -j5\n#cp mednafen_psx_hw_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib\n";
+		};
+		B322A986297145AD00F0D876 /* Copy */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/cmake/build/mednafen_psx_hw_libretro_ios.dylib",
+			);
+			name = Copy;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# copy\ncd ${SRCROOT}/cmake/build/\ncp mednafen_psx_hw_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B30178CF207C901D0051B93D /* Sources */ = {
@@ -2954,7 +3005,6 @@
 				B3607B2528922E1800509A68 /* kirk_engine.c in Sources */,
 				B3681B912874165100C0136F /* cpu.cpp in Sources */,
 				B3607B3828922FC700509A68 /* optimizer.c in Sources */,
-				B3607B4C28922FFC00509A68 /* jit_disasm.c in Sources */,
 				B3CE80222874050000B6BB5A /* zutil.c in Sources */,
 				B3607AFE28922C8500509A68 /* frontio.cpp in Sources */,
 				B3607AFF28922C8500509A68 /* mdec.cpp in Sources */,
@@ -2983,7 +3033,6 @@
 				B3607AD928922BCE00509A68 /* cdromif.cpp in Sources */,
 				B3607AA828922A9900509A68 /* general.cpp in Sources */,
 				B3607B1E28922E0E00509A68 /* aes.c in Sources */,
-				B3CE80312874057400B6BB5A /* rsx_lib_gl.cpp in Sources */,
 				B3607B4828922FFC00509A68 /* jit_memory.c in Sources */,
 				B3681B932874167800C0136F /* pgxp_mem.c in Sources */,
 				B3607B0C28922C9C00509A68 /* negcon.cpp in Sources */,
@@ -2991,10 +3040,8 @@
 				B3607B0428922C9C00509A68 /* justifier.cpp in Sources */,
 				B3607B4D28922FFC00509A68 /* jit_names.c in Sources */,
 				B3607AD628922BCE00509A68 /* CDAccess_Image.cpp in Sources */,
-				B3CE802B2874052A00B6BB5A /* glsym_es2.c in Sources */,
 				B3681B7E2874130B00C0136F /* gpu.cpp in Sources */,
 				B3CE8009287404B200B6BB5A /* LzFind.c in Sources */,
-				B3CE802D2874055800B6BB5A /* rglgen.c in Sources */,
 				B3681B972874168A00C0136F /* pgxp_gpu.c in Sources */,
 				B3607B0628922C9C00509A68 /* multitap.cpp in Sources */,
 				B3607B2428922E1800509A68 /* amctrl.c in Sources */,
@@ -3010,7 +3057,6 @@
 				B3607B2328922E1800509A68 /* sha1.c in Sources */,
 				B3607B6E2892348400509A68 /* floor1.c in Sources */,
 				B3607B3928922FC700509A68 /* reaper.c in Sources */,
-				B3CE802F2874056100B6BB5A /* glsm.c in Sources */,
 				B3607B2D28922E3300509A68 /* pgxp_value.c in Sources */,
 				B3607AE028922BCE00509A68 /* misc.cpp in Sources */,
 				B3607B2128922E1800509A68 /* bn.c in Sources */,
@@ -3044,7 +3090,6 @@
 				B3607B702892349600509A68 /* synthesis.c in Sources */,
 				B3607B2F28922E3300509A68 /* pgxp_main.c in Sources */,
 				B3607ADB28922BCE00509A68 /* recover-raw.c in Sources */,
-				B3607B4A28922FFC00509A68 /* jit_print.c in Sources */,
 				B3607B682892343900509A68 /* registry.c in Sources */,
 				B3607B2028922E1800509A68 /* des.c in Sources */,
 				B3607B0928922C9C00509A68 /* memcard.cpp in Sources */,
@@ -3080,8 +3125,10 @@
 				B3607AC728922B0B00509A68 /* compat_posix_string.c in Sources */,
 				B3607AD128922B0B00509A68 /* memalign.c in Sources */,
 				B3607AF528922C0300509A68 /* ugui_tools.c in Sources */,
+				B3AB13DD2949BBA0005DCCDE /* rglgen.c in Sources */,
 				B3607ACF28922B0B00509A68 /* file_path.c in Sources */,
 				B3607AC628922B0B00509A68 /* stdstring.c in Sources */,
+				B3AB13DC2949BB4D005DCCDE /* rsx_lib_gl.cpp in Sources */,
 				B3607ACD28922B0B00509A68 /* compat_strcasestr.c in Sources */,
 				B3607AD428922B3900509A68 /* rthreads.c in Sources */,
 				B3607B1A28922D3600509A68 /* input.cpp in Sources */,
@@ -3089,9 +3136,11 @@
 				B3681B81287413CE00C0136F /* libretro.cpp in Sources */,
 				B3607AD228922B0B00509A68 /* vfs_implementation.c in Sources */,
 				B3607AC828922B0B00509A68 /* rhash.c in Sources */,
+				B3AB13DB2949BA15005DCCDE /* glsm.c in Sources */,
 				B3681B7C287412DC00C0136F /* beetle_psx_globals.c in Sources */,
 				B3607B582892327600509A68 /* dma.cpp in Sources */,
 				B3607ACB28922B0B00509A68 /* compat_strl.c in Sources */,
+				B3AB13D82949B9CE005DCCDE /* glsym_es3.c in Sources */,
 				B3607ACC28922B0B00509A68 /* fopen_utf8.c in Sources */,
 				B3607AF228922BEF00509A68 /* libretro_cbs.c in Sources */,
 				B3607ACA28922B0B00509A68 /* retro_dirent.c in Sources */,
@@ -3103,21 +3152,44 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37022C82872553E00B3F6DA /* PVBeetlePSXCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
+		937EAAF9296C2152003D89EB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* beetle_psx-libretro */;
-			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
+			target = 937EAAF2296C2022003D89EB /* BuildBeetlePSXRetroArchModule */;
+			targetProxy = 937EAAF8296C2152003D89EB /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		937EAAF3296C2023003D89EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		937EAAF4296C2023003D89EB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		937EAAF5296C2023003D89EB /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 		B30178DA207C901D0051B93D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3126,13 +3198,12 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = beetle_psx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
 		};
@@ -3144,13 +3215,12 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = beetle_psx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
 		};
@@ -3263,9 +3333,9 @@
 				PRODUCT_NAME = PVBeetlePSX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Archive;
 		};
@@ -3277,13 +3347,12 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = beetle_psx;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Archive;
 		};
@@ -3295,13 +3364,12 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "beetle_psx-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
 		};
@@ -3313,13 +3381,12 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "beetle_psx-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
 		};
@@ -3331,13 +3398,12 @@
 				CODE_SIGN_STYLE = Manual;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "beetle_psx-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Archive;
 		};
@@ -3537,9 +3603,9 @@
 				PRODUCT_NAME = PVBeetlePSX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
 		};
@@ -3568,15 +3634,25 @@
 				PRODUCT_NAME = PVBeetlePSX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		937EAAF6296C2023003D89EB /* Build configuration list for PBXAggregateTarget "BuildBeetlePSXRetroArchModule" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				937EAAF3296C2023003D89EB /* Debug */,
+				937EAAF4296C2023003D89EB /* Release */,
+				937EAAF5296C2023003D89EB /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "beetle_psx" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B37EFF371C72F43300857158"
                BuildableName = "PVMupen64Plus-NX.framework"
-               BlueprintName = "PVMupen64Plus-NX-iOS"
+               BlueprintName = "PVMupen64Plus-NX"
                ReferencedContainer = "container:PVMupen64Plus-NX.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -52,7 +52,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B37EFF371C72F43300857158"
             BuildableName = "PVMupen64Plus-NX.framework"
-            BlueprintName = "PVMupen64Plus-NX-iOS"
+            BlueprintName = "PVMupen64Plus-NX"
             ReferencedContainer = "container:PVMupen64Plus-NX.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

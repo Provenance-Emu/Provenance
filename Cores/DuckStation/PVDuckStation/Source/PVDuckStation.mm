@@ -27,6 +27,8 @@
 #import "PVDuckStation.h"
 #import <PVDuckStation/PVDuckStation-Swift.h>
 #import <PVSupport/PVSupport.h>
+//#import <PVLibrary/PVLibrary.h>
+
 //#import <PVSupport/OERingBuffer.h>
 //#import <PVSupport/DebugUtils.h>
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -69,6 +71,9 @@
 #include <memory>
 #include <os/log.h>
 
+#define USE_THREADS 0
+#define USE_DOUBLE_BUFFER NO
+
 #define OEGameCoreErrorDomain @"org.provenance.core"
 #define OEGameCoreCouldNotLoadStateError 420
 #define OEGameCoreCouldNotLoadROMError 69
@@ -93,6 +98,7 @@ struct OpenEmuChangeSettings {
 };
 
 static void ChangeSettings(OpenEmuChangeSettings new_settings);
+static void ApplyGameSettings(bool display_osd_messages);
 
 class OpenEmuAudioStream final : public AudioStream
 {
@@ -119,23 +125,23 @@ static void OELogFunc(void* pUserParam, const char* channelName, const char* fun
 {
     switch (level) {
         case LOGLEVEL_ERROR:
-            ELOG(@"%{public}s: %{public}s", channelName, message);
+            ELOG(@"%s: %s", channelName, message);
             break;
             
         case LOGLEVEL_WARNING:
         case LOGLEVEL_PERF:
-            DLOG(@"%{public}s: %{public}s", channelName, message);
+            DLOG(@"%s: %s", channelName, message);
             break;
             
         case LOGLEVEL_INFO:
         case LOGLEVEL_VERBOSE:
-            ILOG(@"%{public}s: %{public}s", channelName, message);
+            ILOG(@"%s: %s", channelName, message);
             break;
             
         case LOGLEVEL_DEV:
         case LOGLEVEL_DEBUG:
         case LOGLEVEL_PROFILE:
-            DLOG(@"%{public}s: %{public}s", channelName, message);
+            DLOG(@"%s: %s", channelName, message);
             break;
             
         default:
@@ -179,36 +185,6 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
             //        Log::SetFilterLevel(LOGLEVEL_TRACE);
         Log::RegisterCallback(OELogFunc, NULL);
-        if(self.gs == 1) {
-            g_settings.gpu_renderer = GPURenderer::HardwareVulkan;
-        } else {
-            g_settings.gpu_renderer = GPURenderer::HardwareOpenGL;
-        }
-        g_settings.controller_types[0] = ControllerType::AnalogController;
-        g_settings.controller_types[1] = ControllerType::AnalogController;
-        g_settings.display_crop_mode = DisplayCropMode::Overscan;
-        g_settings.gpu_disable_interlacing = true;
-            // match PS2's speed-up
-        g_settings.cdrom_read_speedup = 4;
-        g_settings.gpu_multisamples = 4;
-        g_settings.gpu_pgxp_enable = true;
-        g_settings.gpu_pgxp_vertex_cache = true;
-        g_settings.gpu_24bit_chroma_smoothing = true;
-        g_settings.gpu_texture_filter = GPUTextureFilter::Nearest;
-        g_settings.gpu_resolution_scale = 0;
-        g_settings.memory_card_types[0] = MemoryCardType::PerGameTitle;
-        g_settings.memory_card_types[1] = MemoryCardType::PerGameTitle;
-        g_settings.cpu_execution_mode = CPUExecutionMode::Recompiler;
-        _displayModes = [[NSMutableDictionary alloc] init];
-        NSURL *gameSettingsURL = [[NSBundle bundleForClass:[PVDuckStationCore class]] URLForResource:@"gamesettings" withExtension:@"ini"];
-        if (gameSettingsURL) {
-            bool success = LoadCompatibilitySettings(gameSettingsURL);
-            if (!success) {
-                os_log_fault(OE_CORE_LOG, "OpenEmu-specific overrides for particular discs didn't load, name %{public}@ at path %{private}@", gameSettingsURL.lastPathComponent, gameSettingsURL.path);
-            }
-        } else {
-            os_log_fault(OE_CORE_LOG, "OpenEmu-specific overrides for particular discs wasn't found.");
-        }
     }
     return self;
 }
@@ -226,39 +202,30 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
 - (const void *)videoBuffer {
     return NULL;
-        //    if ( frontBufferSurf == NULL )
-        //    {
-        //        return NULL;
-        //    }
-        //    else
-        //    {
-        //        return frontBufferSurf->pixels;
-        //    }
 }
 
-    //- (CGSize)bufferSize {
-    ////    if ( game == NULL )
-    ////    {
-    ////        return CGSizeMake(0, 0);
-    ////    }
-    ////    else
-    ////    {
-    ////        return CGSizeMake(game->fb_width, game->fb_height);
-    ////    }
-    //    return self.screenRect.size;
-    //}
+//- (CGSize)bufferSize {
+////    if ( game == NULL )
+////    {
+////        return CGSizeMake(0, 0);
+////    }
+////    else
+////    {
+////        return CGSizeMake(game->fb_width, game->fb_height);
+////    }
+//    return self.screenRect.size;
+//}
 
 - (CGRect)screenRect {
     return CGRectMake(0, 0, 640, 480);
-        //    return CGRectMake(24, 0, Screen_WIDTH, Screen_HEIGHT);
 }
 
-    //- (CGSize)aspectSize
-    //{
-    //    // TODO: fix PAR
-    //    //return CGSizeMake(336 * (6.0 / 7.0), 240);
-    //    return CGSizeMake(640, 480);
-    //}
+//- (CGSize)aspectSize
+//{
+//    // TODO: fix PAR
+//    //return CGSizeMake(336 * (6.0 / 7.0), 240);
+//    return CGSizeMake(640, 480);
+//}
 
 - (GLenum)pixelFormat {
     return GL_RGBA;
@@ -276,10 +243,9 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     return YES;
 }
 
-    //- (BOOL)isDoubleBuffered {
-    //    return YES;
-    //}
-
+- (BOOL)isDoubleBuffered {
+    return USE_DOUBLE_BUFFER;
+}
 
 - (dispatch_time_t)frameTime {
     float frameTime = 1.0/[self frameInterval];
@@ -287,42 +253,6 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     dispatch_time_t killTime = dispatch_time(DISPATCH_TIME_NOW, frameTime * NSEC_PER_SEC);
     return killTime;
 }
-
-
-- (void)videoInterrupt
-{
-    dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
-
-    dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, [self frameTime]);
-}
-
-
-- (void)swapBuffers {
-    [self.renderDelegate didRenderFrameOnAlternateThread];
-}
-
-    //- (BOOL)isDoubleBuffered {
-    //    return YES;
-    //}
-    //
-    //- (void)swapBuffers
-    //{
-    ////    Mednafen::MDFN_Surface *tempSurf = backBufferSurf;
-    ////    backBufferSurf = frontBufferSurf;
-    ////    frontBufferSurf = tempSurf;
-    //}
-
-#pragma mark - Audio
-
-    //- (double)audioSampleRate
-    //{
-    //    return 44100;
-    //}
-    //
-    //- (NSUInteger)channelCount
-    //{
-    //    return 1;
-    //}
 
 #pragma mark - Save States
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
@@ -420,6 +350,58 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
             //                }
             //            }
             //        }
+    }
+}
+
+#pragma mark - Settings
+
+- (void)initializeSettings {
+        // GLES == 0, Vulkan == 1
+    if(self.gs == 1) {
+        DLOG(@"Set `gpu_renderer` = HardwareVulkan");
+        g_settings.gpu_renderer = GPURenderer::HardwareVulkan;
+    } else {
+        DLOG(@"Set `gpu_renderer` = HardwareOpenGL");
+        g_settings.gpu_renderer = GPURenderer::HardwareOpenGL;
+    }
+    g_settings.controller_types[0] = ControllerType::AnalogController;
+    g_settings.controller_types[1] = ControllerType::AnalogController;
+    g_settings.display_crop_mode = DisplayCropMode::Overscan;
+    g_settings.gpu_disable_interlacing = true;
+        // match PS2's speed-up
+    g_settings.cdrom_read_speedup = 4;
+    g_settings.gpu_multisamples = 4;
+    g_settings.gpu_pgxp_enable = true;
+//    g_settings.gpu_pgxp_cpu = true;
+    g_settings.gpu_pgxp_vertex_cache = true;
+    g_settings.gpu_24bit_chroma_smoothing = true;
+    g_settings.gpu_texture_filter = GPUTextureFilter::Nearest;
+    g_settings.gpu_resolution_scale = 0;
+    g_settings.gpu_use_thread = true;
+    // TODO: Settings for this
+//    g_settings.gpu_widescreen_hack = true;
+    g_settings.display_show_fps = true;
+    g_settings.display_show_resolution = true;
+    g_settings.display_show_gpu = true;
+    g_settings.display_show_frame_times = true;
+    g_settings.display_show_enhancements = true;
+    g_settings.display_show_status_indicators = true;
+
+    g_settings.memory_card_types[0] = MemoryCardType::PerGameTitle;
+    g_settings.memory_card_types[1] = MemoryCardType::PerGameTitle;
+    // TODO: Add Core Option for this.
+    // {CachedInterpreter, Interpreter, Recompiler}
+    g_settings.cpu_execution_mode = CPUExecutionMode::CachedInterpreter;
+    _displayModes = [[NSMutableDictionary alloc] init];
+    NSURL *gameSettingsURL = [[NSBundle bundleForClass:[PVDuckStationCore class]] URLForResource:@"gamesettings"
+                                                                                   withExtension:@"ini"];
+    if (gameSettingsURL) {
+        bool success = LoadCompatibilitySettings(gameSettingsURL);
+        if (!success) {
+            ELOG(@"OpenEmu-specific overrides for particular discs didn't load, name %@ at path %{private}@", gameSettingsURL.lastPathComponent, gameSettingsURL.path);
+        }
+    } else {
+        ILOG(@"OpenEmu-specific overrides for particular discs wasn't found.");
     }
 }
 
@@ -571,9 +553,6 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
 - (void)stopEmulation {
     System::ShutdownSystem(false);
-        //
-        //    duckInterface->Shutdown();
-    
     [super stopEmulation];
 }
 
@@ -840,7 +819,6 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     }
 }
 
-
 - (oneway void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSUInteger)player {
     player -= 1;
     
@@ -882,6 +860,8 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
     }
 }
 
+#pragma mark - Audio
+
 - (NSUInteger)channelCount {
     return 2;
 }
@@ -892,23 +872,35 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 
 - (double)audioSampleRate {
     return 44100;
-        //    return AudioStream::DefaultOutputSampleRate;
+//    return AudioStream::DefaultOutputSampleRate;
 }
+
+#pragma mark - Video
 
 - (CGSize)bufferSize {
         //    return self.screenRect.size;
     return (CGSize){ 640, 480 };
 }
 
-- (void)startEmulation
-{
+#if USE_THREADS
+
+- (void)videoInterrupt {
+    dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
+
+    dispatch_semaphore_wait(mupenWaitToBeginFrameSemaphore, [self frameTime]);
+}
+
+- (void)swapBuffers {
+    [self.renderDelegate didRenderFrameOnAlternateThread];
+}
+
+- (void)startEmulation {
     if(!self.isRunning)
     {
         [super startEmulation];
         [NSThread detachNewThreadSelector:@selector(runDuckstationEmuThread) toTarget:self withObject:nil];
     }
 }
-
 
 - (void)runDuckstationEmuThread
 {
@@ -928,15 +920,15 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
         }
         [self.renderDelegate startRenderingOnAlternateThread];
 
-#if 0
+        #if 0
         System::Execute()
-#else
+        #else
         do {
             System::RunFrames();
 //            Host::RenderDisplay(skip);
             Host::RenderDisplay(false);
         }while(!shouldStop);
-#endif
+        #endif
 
 
             // Unlock rendering thread
@@ -947,42 +939,88 @@ static NSString * const DuckStationCPUOverclockKey = @"duckstation/CPU/Overclock
 }
 
 - (void)executeFrameSkippingFrame:(BOOL)skip {
-    if (!isInitialized) {
-        EmuFolders::AppRoot = [NSBundle bundleForClass:[PVDuckStationCore class]].resourceURL.fileSystemRepresentation;
+    dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
+
+    dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
+}
+
+#else // NOT USE_THREADS
+
+//- (void)startEmulation {
+//   [self parseOptions];
+//    [super startEmulation];
+//}
+
+- (void)executeFrame {
+    [self executeFrameSkippingFrame:NO];
+}
+
+- (void)executeFrameSkippingFrame:(BOOL)skip {
+    if (UNLIKELY(!isInitialized)) {
+        [self initializeSettings];
+
+        NSBundle *coreBundle = [NSBundle bundleForClass:[PVDuckStationCore class]];
+        NSString *duck_resourcesPath = [coreBundle.bundlePath stringByAppendingPathComponent:@"/duck_resources"];
+        NSString *cachePath = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, true).firstObject
+                               stringByAppendingPathComponent:@"/ShaderCache.nobackup"];
+        NSString *shadersPath = [self.BIOSPath stringByAppendingPathComponent:@"/shaders"];
+        NSString *texturesPath = [self.BIOSPath stringByAppendingPathComponent:@"/textures"];
+
+        EmuFolders::AppRoot = self.BIOSPath.fileSystemRepresentation;
+        EmuFolders::DataRoot = self.BIOSPath.fileSystemRepresentation;
         EmuFolders::Bios = self.BIOSPath.fileSystemRepresentation;
-        EmuFolders::Cache = [self.BIOSPath stringByAppendingPathComponent:@"ShaderCache.nobackup"].fileSystemRepresentation;
+        EmuFolders::Cache = cachePath.fileSystemRepresentation;
         EmuFolders::MemoryCards = self.batterySavesPath.fileSystemRepresentation;
+        EmuFolders::Resources = duck_resourcesPath.fileSystemRepresentation;
+        EmuFolders::SaveStates = self.saveStatesPath.fileSystemRepresentation;
+        EmuFolders::Shaders = shadersPath.fileSystemRepresentation;
+        EmuFolders::Textures = texturesPath.fileSystemRepresentation;
+
+        NSFileManager *fm = [NSFileManager defaultManager];
+
+        NSArray<NSString*> *pathsToCreate = @[shadersPath, texturesPath, cachePath];
+
+        for(NSString *path in pathsToCreate) {
+            if(![fm fileExistsAtPath:path]) {
+                NSError *error;
+                BOOL successs = [fm createDirectoryAtPath:path
+                              withIntermediateDirectories:true
+                                               attributes:nil
+                                                    error:&error];
+                if(!successs) {
+                    ELOG(@"Failed to make ShaderCache dir <%@>", error.localizedDescription);
+                } else {
+                    ILOG(@"Made directory: <%@>", path);
+                }
+            }
+        }
+
         auto params = SystemBootParameters(bootPath.fileSystemRepresentation);
         if (saveStatePath) {
             params.save_state = std::string(saveStatePath.fileSystemRepresentation);
             saveStatePath = nil;
         }
-        isInitialized = System::BootSystem(params);
+
+        MAKEWEAK(self);
+//        Host::RunOnCPUThread([params = std::move(params), weakself]() {
+            MAKESTRONG_RETURN_IF_NIL(self);
+            BOOL isInitialized = System::BootSystem(params);
+            strongself->isInitialized = isInitialized;
+
+            if(!isInitialized) {
+                ELOG(@"Duckstaion didn't initialize");
+                NAssert(@"Duckstaion didn't initialize");
+                [strongself stopEmulation];
+                return;
+            }
+//        });
     }
 
     System::RunFrame();
 
     Host::RenderDisplay(skip);
 }
-
-#if 0
-- (void)executeFrameSkippingFrame:(BOOL)skip {
-	dispatch_semaphore_signal(mupenWaitToBeginFrameSemaphore);
-
-	dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
-//#error either this, or emuThread
-//    System::RunFrame();
-//
-//    if (!skip) {
-//        duckInterface->Render();
-//    }
-}
-#endif
-
-
-- (void)executeFrame {
-    [self executeFrameSkippingFrame:NO];
-}
+#endif // USE_THREADS
 
 - (NSDictionary<NSString *,id> *)displayModeInfo {
     return [_displayModes copy];
@@ -1290,14 +1328,17 @@ NS_INLINE NSString *OEDisplayModeListGetPrefKeyFromModeName(
 #include "common/assert.h"
 #include "common/byte_stream.h"
 #include "common/file_system.h"
+#include "common/threading.h"
 #include "common/log.h"
-#include "common/string_util.h"
+//#include "common/string_util.h"
 #include "core/analog_controller.h"
 #include "core/bus.h"
 #include "core/cheats.h"
 #include "core/digital_controller.h"
 #include "core/gpu.h"
 #include "core/system.h"
+#include "frontend-common/vulkan_host_display.h"
+#import "core/host_display.h"
 #undef TickCount
 #include <array>
 #include <cstring>
@@ -1306,11 +1347,55 @@ NS_INLINE NSString *OEDisplayModeListGetPrefKeyFromModeName(
 #include <vector>
 
 #pragma mark - Host Mapping
-
+namespace Host {
+    static Threading::Thread s_cpu_thread;
+    static std::mutex s_cpu_thread_events_mutex;
+    static std::condition_variable s_cpu_thread_event_done;
+    static std::condition_variable s_cpu_thread_event_posted;
+    static std::deque<std::pair<std::function<void()>, bool>> s_cpu_thread_events;
+    static u32 s_blocking_cpu_events_pending = 0;
+    void OnAchievementsRefreshed() {
+    }
+    void RunOnCPUThread(std::function<void()> function, bool block /* = false */) {
+        std::unique_lock lock(s_cpu_thread_events_mutex);
+        s_cpu_thread_events.emplace_back(std::move(function), block);
+        s_cpu_thread_event_posted.notify_one();
+        if (block)
+            s_cpu_thread_event_done.wait(lock, []() { return s_blocking_cpu_events_pending == 0; });
+    }
+}
+namespace FullscreenUI {
+    bool IsInitialized() {
+        return true;
+    }
+}
 bool Host::AcquireHostDisplay(RenderAPI api)
 {
     GET_CURRENT_OR_RETURN(false);
-    std::unique_ptr<HostDisplay> display = std::make_unique<OpenEmu::PVOpenGLHostDisplay>(current);
+
+    BOOL useVulkan = current.gs == 1;
+
+    std::unique_ptr<HostDisplay> display;
+
+    if(useVulkan) {
+        NSBundle *bundle = [NSBundle mainBundle];
+
+        // Use `libMoltenVK.dylib`
+        // Needs Vulkan 1.1+
+        const char * filename = [NSString stringWithFormat:@"%@/libMoltenVK.dylib", bundle.sharedFrameworksPath].cString;
+
+            // Set vulkan path to molktenVK
+        setenv("LIBVULKAN_PATH", filename, 1);
+
+            // Alloc vulkan host
+        display = std::make_unique<VulkanHostDisplay>();
+    } else {
+#if TARGET_OS_OSX
+        display = std::make_unique<OpenGLHostDisplay>(current);
+#else
+        display = std::make_unique<OpenEmu::PVOpenGLHostDisplay>(current);
+#endif
+    }
     WindowInfo wi = WindowInfoFromGameCore(current);
     if (!display->CreateDevice(wi, false) ||
         !display->SetupDevice()) {
@@ -1482,17 +1567,17 @@ std::string Host::TranslateStdString(const char* context, const char* str, const
 
 void Host::AddOSDMessage(std::string message, float duration)
 {
-    ILOG(@"DuckStation OSD: %{public}s", message.c_str());
+    ILOG(@"DuckStation OSD: %s", message.c_str());
 }
 
 void Host::AddKeyedOSDMessage(std::string key, std::string message, float duration)
 {
-    ILOG(@"DuckStation OSD: %{public}s", message.c_str());
+    ILOG(@"DuckStation OSD: %s", message.c_str());
 }
 
 void Host::AddIconOSDMessage(std::string key, const char* icon, std::string message, float duration)
 {
-    ILOG(@"DuckStation OSD: %{public}s", message.c_str());
+    ILOG(@"DuckStation OSD: %s", message.c_str());
 }
 
 void Host::AddFormattedOSDMessage(float duration, const char* format, ...)
@@ -1519,12 +1604,14 @@ void Host::LoadSettings(SettingsInterface& si, std::unique_lock<std::mutex>& loc
 {
     GET_CURRENT_OR_RETURN();
     [current loadConfiguration];
+    [current initializeSettings];
 }
 
 void Host::OnGameChanged(const std::string& disc_path, const std::string& game_serial, const std::string& game_name)
 {
     const Settings old_settings = g_settings;
-        //    ApplyGameSettings(false);
+    ApplyGameSettings(false);
+
     do {
         const std::string &type = System::GetRunningSerial();
         NSString *nsType = [@(type.c_str()) uppercaseString];
@@ -1575,7 +1662,7 @@ void Host::OnGameChanged(const std::string& disc_path, const std::string& game_s
 bool Host::ConfirmMessage(const std::string_view& title, const std::string_view& message)
 {
     auto fullStr = std::string(message);
-    DLOG(@"DuckStation asking for confirmation about '%{public}s', assuming true", fullStr.c_str());
+    DLOG(@"DuckStation asking for confirmation about '%s', assuming true", fullStr.c_str());
     return true;
 }
 
@@ -1583,13 +1670,13 @@ void Host::ReportErrorAsync(const std::string_view& title, const std::string_vie
 {
     auto fullStr = std::string(message);
     auto strTitle = std::string(title);
-    ELOG(@"%{public}s: %{public}s", strTitle.c_str(), fullStr.c_str());
+    ELOG(@"%s: %s", strTitle.c_str(), fullStr.c_str());
 }
 
 void Host::ReportDebuggerMessage(const std::string_view& message)
 {
     auto fullStr = std::string(message);
-    DLOG(@"%{public}s", fullStr.c_str());
+    DLOG(@"%s", fullStr.c_str());
 }
 
 std::unique_ptr<AudioStream> Host::CreateAudioStream(AudioBackend backend, u32 sample_rate, u32 channels, u32 buffer_ms,
@@ -1642,7 +1729,7 @@ void ApplyGameSettings(bool display_osd_messages)
     if (gs) {
         gs->ApplySettings(g_settings, display_osd_messages);
     } else {
-        ILOG(@"Unable to find game-specific settings for %{public}s.", System::GetRunningSerial().c_str());
+        ILOG(@"Unable to find game-specific settings for %s.", System::GetRunningSerial().c_str());
     }
 }
 
@@ -1788,7 +1875,7 @@ static WindowInfo WindowInfoFromGameCore(PVDuckStationCore *core)
 {
     WindowInfo wi = WindowInfo();
 //    wi.type = WindowInfo::Type::Android;
-//    wi.type = WindowInfo::Type::MacOS;
+    wi.type = WindowInfo::Type::MacOS;
     wi.surface_width = core.bufferSize.width;
     wi.surface_height = core.bufferSize.height;
 //    wi.surface_width = 640;

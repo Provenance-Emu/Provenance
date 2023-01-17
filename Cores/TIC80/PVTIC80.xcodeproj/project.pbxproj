@@ -6,6 +6,20 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B3D63B07297139C000C95EA7 /* tic80-libretro-dylib */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3D63B0B297139C100C95EA7 /* Build configuration list for PBXAggregateTarget "tic80-libretro-dylib" */;
+			buildPhases = (
+				B3D63B0C297139C800C95EA7 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "tic80-libretro-dylib";
+			productName = "tic80-libretro-dylib";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
@@ -25,12 +39,9 @@
 		B367030E28962E3600F75595 /* core.c in Sources */ = {isa = PBXBuildFile; fileRef = B36702B528962DFA00F75595 /* core.c */; };
 		B367030F28962E3600F75595 /* draw.c in Sources */ = {isa = PBXBuildFile; fileRef = B36702B328962DFA00F75595 /* draw.c */; };
 		B367031028962E3600F75595 /* draw_dep.c in Sources */ = {isa = PBXBuildFile; fileRef = B36702B728962DFA00F75595 /* draw_dep.c */; };
-		B367031728962E8E00F75595 /* libTIC80.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libTIC80.a */; };
-		B37022C82872553E00B3F6DA /* PVTIC80Core.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVTIC80Core.mm */; };
 		B37022C92872554300B3F6DA /* PVTIC80Core.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVTIC80Core.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVTIC80.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVTIC80.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B39768F82859E23200558958 /* libTIC80-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libTIC80-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
@@ -39,19 +50,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B367031828962E8E00F75595 /* PBXContainerItemProxy */ = {
+		B322A96429713E1200F0D876 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B30178D2207C901D0051B93D;
-			remoteInfo = "TIC80-iOS";
-		};
-		B39768F92859E23200558958 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3344B522859E088006E6B3A;
-			remoteInfo = "dos-box-libretro-iOS";
+			remoteGlobalIDString = B3D63B07297139C000C95EA7;
+			remoteInfo = "tic80-libretro-dylib";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -433,11 +437,9 @@
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
-				B367031728962E8E00F75595 /* libTIC80.a in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B39768F82859E23200558958 /* libTIC80-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
@@ -1592,6 +1594,23 @@
 		};
 /* End PBXHeadersBuildPhase section */
 
+/* Begin PBXLegacyTarget section */
+		B322A95D29713D5B00F0D876 /* tic80-cmake */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "-DCMAKE_BUILD_TYPE=MinSizeRel-DBUILD_SDLGPU=On -DBUILD_PRO=On";
+			buildConfigurationList = B322A95E29713D5B00F0D876 /* Build configuration list for PBXLegacyTarget "tic80-cmake" */;
+			buildPhases = (
+			);
+			buildToolPath = cmake;
+			buildWorkingDirectory = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/TIC80/TIC-80/build";
+			dependencies = (
+			);
+			name = "tic80-cmake";
+			passBuildSettingsInEnvironment = 1;
+			productName = "tic80-cmake";
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		B30178D2207C901D0051B93D /* TIC80 */ = {
 			isa = PBXNativeTarget;
@@ -1639,8 +1658,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B39768FA2859E23200558958 /* PBXTargetDependency */,
-				B367031928962E8E00F75595 /* PBXTargetDependency */,
+				B322A96529713E1200F0D876 /* PBXTargetDependency */,
 			);
 			name = PVTIC80;
 			productName = PVReicast;
@@ -1662,8 +1680,14 @@
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
 					};
+					B322A95D29713D5B00F0D876 = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+					};
+					B3D63B07297139C000C95EA7 = {
+						CreatedOnToolsVersion = 14.2;
 					};
 				};
 			};
@@ -1694,6 +1718,8 @@
 				B3C7620F20783162009950E4 /* PVTIC80 */,
 				B3344B522859E088006E6B3A /* TIC80-libretro */,
 				B30178D2207C901D0051B93D /* TIC80 */,
+				B3D63B07297139C000C95EA7 /* tic80-libretro-dylib */,
+				B322A95D29713D5B00F0D876 /* tic80-cmake */,
 			);
 		};
 /* End PBXProject section */
@@ -1708,6 +1734,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B3D63B0C297139C800C95EA7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "# Create Build Environment\n#if [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n#    mkdir ${SRCROOT}/cmake/build\n#fi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\n#cp -pR \"${SRCROOT}/TIC-80/*\" ${SRCROOT}/cmake/build/\n#cp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\nsource  ~/.profile\ncd \"${SRCROOT}/TIC-80/build/\"\n\n#local BUILD_TYPE=MinSizeRel\n\ncmake -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_SDLGPU=Off -DBUILD_STUB=On DBUILD_PRO=On ..\ncmake --build . --config MinSizeRel --parallel\n\n# Build\n#cd ${SRCROOT}/cmake/build/\n#make clean\n#make -j4\n#cp mednafen_psx_hw_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B30178CF207C901D0051B93D /* Sources */ = {
@@ -1739,22 +1785,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37022C82872553E00B3F6DA /* PVTIC80Core.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B367031928962E8E00F75595 /* PBXTargetDependency */ = {
+		B322A96529713E1200F0D876 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B30178D2207C901D0051B93D /* TIC80 */;
-			targetProxy = B367031828962E8E00F75595 /* PBXContainerItemProxy */;
-		};
-		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* TIC80-libretro */;
-			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
+			target = B3D63B07297139C000C95EA7 /* tic80-libretro-dylib */;
+			targetProxy = B322A96429713E1200F0D876 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1792,6 +1832,56 @@
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
+		};
+		B322A95F29713D5B00F0D876 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B322A96029713D5B00F0D876 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B322A96129713D5B00F0D876 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
 		};
 		B324C5012191A2A2009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
@@ -2263,6 +2353,30 @@
 			};
 			name = Release;
 		};
+		B3D63B08297139C100C95EA7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3D63B09297139C100C95EA7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B3D63B0A297139C100C95EA7 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2272,6 +2386,16 @@
 				B30178DA207C901D0051B93D /* Debug */,
 				B30178DB207C901D0051B93D /* Release */,
 				B324C5042191A2A2009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B322A95E29713D5B00F0D876 /* Build configuration list for PBXLegacyTarget "tic80-cmake" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B322A95F29713D5B00F0D876 /* Debug */,
+				B322A96029713D5B00F0D876 /* Release */,
+				B322A96129713D5B00F0D876 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -2302,6 +2426,16 @@
 				B3C7621920783162009950E4 /* Debug */,
 				B3C7621A20783162009950E4 /* Release */,
 				B324C5022191A2A2009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3D63B0B297139C100C95EA7 /* Build configuration list for PBXAggregateTarget "tic80-libretro-dylib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3D63B08297139C100C95EA7 /* Debug */,
+				B3D63B09297139C100C95EA7 /* Release */,
+				B3D63B0A297139C100C95EA7 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

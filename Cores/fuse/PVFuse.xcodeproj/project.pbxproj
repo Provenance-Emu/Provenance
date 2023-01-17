@@ -6,6 +6,21 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		B3EC3BAC297134D200CE0BDE /* fuse_dylib */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B3EC3BB0297134D300CE0BDE /* Build configuration list for PBXAggregateTarget "fuse_dylib" */;
+			buildPhases = (
+				B3EC3BB1297134E200CE0BDE /* make */,
+				B3EC3BB22971357B00CE0BDE /* copy */,
+			);
+			dependencies = (
+			);
+			name = fuse_dylib;
+			productName = fuse_dylib;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
@@ -14,11 +29,9 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B37022C82872553E00B3F6DA /* PVFuseCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVFuseCore.mm */; };
 		B37022C92872554300B3F6DA /* PVFuseCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVFuseCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVFuse.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVFuse.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B39768F82859E23200558958 /* libFuse-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libFuse-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3AEE2F6293F35CD0050BDB6 /* scalers32.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AEE2E6293F35B10050BDB6 /* scalers32.c */; };
 		B3AEE2F7293F35CD0050BDB6 /* utils.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AEE2E8293F35B10050BDB6 /* utils.c */; };
@@ -53,12 +66,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B39768F92859E23200558958 /* PBXContainerItemProxy */ = {
+		B3EC3BB32971361C00CE0BDE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B3344B522859E088006E6B3A;
-			remoteInfo = "dos-box-libretro-iOS";
+			remoteGlobalIDString = B3EC3BAC297134D200CE0BDE;
+			remoteInfo = fuse_dylib;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1228,6 +1241,7 @@
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3DE9ADC2971324A00CE7168 /* libretro.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libretro.a; path = "../../../../../Library/Developer/Xcode/DerivedData/Provenance-fmnqyejnhdyaeteisvwsdqchzshl/Build/Products/Debug-iphoneos/libretro.a"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1256,7 +1270,6 @@
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B39768F82859E23200558958 /* libFuse-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
@@ -3276,6 +3289,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3DE9ADC2971324A00CE7168 /* libretro.a */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
 				B39769172859E3AD00558958 /* CoreFoundation.framework */,
@@ -3311,6 +3325,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
+
+/* Begin PBXLegacyTarget section */
+		B379CEB3297130DE00AF0621 /* fuse_make */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = B379CEB7297130DF00AF0621 /* Build configuration list for PBXLegacyTarget "fuse_make" */;
+			buildPhases = (
+			);
+			buildToolPath = make;
+			buildWorkingDirectory = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/fuse/fuse-libretro";
+			dependencies = (
+			);
+			name = fuse_make;
+			passBuildSettingsInEnvironment = 1;
+			productName = fuse_make;
+		};
+/* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
 		B30178D2207C901D0051B93D /* Fuse */ = {
@@ -3359,7 +3390,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B39768FA2859E23200558958 /* PBXTargetDependency */,
+				B3EC3BB42971361C00CE0BDE /* PBXTargetDependency */,
 			);
 			name = PVFuse;
 			productName = PVReicast;
@@ -3381,8 +3412,14 @@
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
 					};
+					B379CEB3297130DE00AF0621 = {
+						CreatedOnToolsVersion = 14.2;
+					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+					};
+					B3EC3BAC297134D200CE0BDE = {
+						CreatedOnToolsVersion = 14.2;
 					};
 				};
 			};
@@ -3413,6 +3450,8 @@
 				B3C7620F20783162009950E4 /* PVFuse */,
 				B3344B522859E088006E6B3A /* Fuse-libretro */,
 				B30178D2207C901D0051B93D /* Fuse */,
+				B379CEB3297130DE00AF0621 /* fuse_make */,
+				B3EC3BAC297134D200CE0BDE /* fuse_dylib */,
 			);
 		};
 /* End PBXProject section */
@@ -3427,6 +3466,47 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B3EC3BB1297134E200CE0BDE /* make */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = make;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\n#cd ${SRCROOT}/beetle-psx\n#git pull origin master\n#git checkout origin/master\n#git submodule update --init --recursive\n\n# Create Build Environment\n#if [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n#    mkdir ${SRCROOT}/cmake/build\n#fi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\n#cp -pR ${SRCROOT}/beetle-psx/* ${SRCROOT}/cmake/build/\n#cp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd ${SRCROOT}/fuse-libretro #/cmake/build/\n#make clean\nmake -j5\n";
+		};
+		B3EC3BB22971357B00CE0BDE /* copy */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/fuse-libretro/fuse_libretro.dylib",
+			);
+			name = copy;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/fuse_libretro.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd ${SRCROOT}/fuse-libretro #/cmake/build/\n\ncp fuse_libretro.dylib \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B30178CF207C901D0051B93D /* Sources */ = {
@@ -3473,17 +3553,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37022C82872553E00B3F6DA /* PVFuseCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		B39768FA2859E23200558958 /* PBXTargetDependency */ = {
+		B3EC3BB42971361C00CE0BDE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3344B522859E088006E6B3A /* Fuse-libretro */;
-			targetProxy = B39768F92859E23200558958 /* PBXContainerItemProxy */;
+			target = B3EC3BAC297134D200CE0BDE /* fuse_dylib */;
+			targetProxy = B3EC3BB32971361C00CE0BDE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -3613,11 +3692,18 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-Wl,-all_load",
+					"-all_load",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVFuse";
 				PRODUCT_NAME = PVFuse;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -3688,6 +3774,59 @@
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
+			};
+			name = Archive;
+		};
+		B379CEB4297130DF00AF0621 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B379CEB5297130DF00AF0621 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B379CEB6297130DF00AF0621 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Archive;
 		};
@@ -3856,11 +3995,18 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-Wl,-all_load",
+					"-all_load",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVFuse";
 				PRODUCT_NAME = PVFuse;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -3886,15 +4032,49 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "${BUILT_PRODUCTS_DIR}";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-Wl,-all_load",
+					"-all_load",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVFuse";
 				PRODUCT_NAME = PVFuse;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
+		};
+		B3EC3BAD297134D300CE0BDE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B3EC3BAE297134D300CE0BDE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B3EC3BAF297134D300CE0BDE /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
 		};
 /* End XCBuildConfiguration section */
 
@@ -3919,6 +4099,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B379CEB7297130DF00AF0621 /* Build configuration list for PBXLegacyTarget "fuse_make" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B379CEB4297130DF00AF0621 /* Debug */,
+				B379CEB5297130DF00AF0621 /* Release */,
+				B379CEB6297130DF00AF0621 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVFuse" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -3935,6 +4125,16 @@
 				B3C7621920783162009950E4 /* Debug */,
 				B3C7621A20783162009950E4 /* Release */,
 				B324C5022191A2A2009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3EC3BB0297134D300CE0BDE /* Build configuration list for PBXAggregateTarget "fuse_dylib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3EC3BAD297134D300CE0BDE /* Debug */,
+				B3EC3BAE297134D300CE0BDE /* Release */,
+				B3EC3BAF297134D300CE0BDE /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

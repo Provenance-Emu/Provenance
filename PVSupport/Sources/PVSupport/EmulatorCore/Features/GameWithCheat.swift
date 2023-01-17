@@ -47,22 +47,14 @@ public extension Collection where Self.Element == CheatCodeTypes {
 
 @objc public protocol GameWithCheat {
     @objc(setCheatWithCode:type:enabled:)
-    optional func setCheat(
-        code: String,
-        type: String,
-        enabled: Bool
-    ) -> Bool
+    optional func setCheat(code: String, type: String, enabled: Bool ) -> Bool
+
     @objc(setCheatWithCode:type:codeType:cheatIndex:enabled:)
-    func setCheat(
-        code: String,
-        type: String,
-        codeType: String,
-        cheatIndex: UInt8,
-        enabled: Bool
-    ) -> Bool
+    func setCheat(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool) -> Bool
+
     @objc(supportsCheatCode)
     var supportsCheatCode: Bool { get }
+
     @objc(cheatCodeTypes)
     var cheatCodeTypes: [String] { get }
 }
-

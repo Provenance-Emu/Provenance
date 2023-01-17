@@ -1280,3 +1280,7 @@ import Foundation
 	 func leftMouseDown(at point: CGPoint)
 	 func leftMouseUp()
  }
+
+
+@objc public protocol PVRetroArchCoreResponderClient: ResponderClient, ButtonResponder, KeyboardResponder, MouseResponder, JoystickResponder {
+}
