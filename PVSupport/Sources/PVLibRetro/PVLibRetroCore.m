@@ -1459,7 +1459,7 @@ static void core_log(enum retro_log_level level, const char * fmt, ...) {
  */
 static bool environment_callback(unsigned cmd, void *data) {
     __strong PVLibRetroCore *strongCurrent = _current;
-    
+
     switch(cmd) {
         case RETRO_ENVIRONMENT_SET_ROTATION:
                                                         /* const unsigned * --
@@ -1703,8 +1703,12 @@ static bool environment_callback(unsigned cmd, void *data) {
             struct retro_variable *var = (struct retro_variable*)data;
 
            void *value = [strongCurrent getVariable:var->key];
-            var->value = value;
-            return true;
+            if(value) {
+                var->value = value;
+                return true;
+            } else {
+                return false;
+            }
             break;
         }
         case RETRO_ENVIRONMENT_SET_MINIMUM_AUDIO_LATENCY:
