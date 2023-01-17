@@ -504,7 +504,7 @@ PV_OBJC_DIRECT_MEMBERS
     {
         return MTLPixelFormatBGRA8Unorm; // MTLPixelFormatBGRA8Unorm_sRGB
     }
-    else if (pixelFormat == GL_BGRA && (pixelType == GL_UNSIGNED_INT))
+    else if (pixelFormat == GL_BGRA && (pixelType == GL_UNSIGNED_INT | pixelType == GL_UNSIGNED_BYTE))
     {
         return MTLPixelFormatBGRA8Unorm;
 //        return MTLPixelFormatBGRA10_XR;
