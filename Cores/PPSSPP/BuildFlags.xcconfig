@@ -18,3 +18,8 @@
 //OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DDRC_SH2 -D_USE_CZ80
 //OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited) -D_USE_CZ80
 OTHER_CFLAGS = $(inherited) -DXXH_VECTOR=XXH_SCALAR -DMASKED_PSP_MEMORY=TRUE
+// Skip Simulator Build
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = *
+INCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = PVDebug.m
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
+INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.m

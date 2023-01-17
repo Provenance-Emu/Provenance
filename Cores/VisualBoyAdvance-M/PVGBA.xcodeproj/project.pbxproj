@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		938E5BB3298B308700F8596C /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 938E5BB2298B308700F8596C /* PVDebug.c */; };
 		B324C63921920DAC009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63821920DAC009F4EDC /* PVSupport.framework */; };
 		B3547B542058587300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B532058587300CFF7D8 /* Core.plist */; };
 		B3AF47E121072B63002211EE /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47E021072B63002211EE /* vba-over.ini */; };
@@ -136,6 +137,8 @@
 		1A9FBE0A1ABD1289004E778B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A9FBE141ABD1B41004E778B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1A9FBE161ABD1B46004E778B /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		938E5BB1298B306A00F8596C /* BuildConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildConfig.xcconfig; sourceTree = "<group>"; };
+		938E5BB2298B308700F8596C /* PVDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PVDebug.c; path = ../../Debug/PVDebug.c; sourceTree = "<group>"; };
 		B324C63821920DAC009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C63B21920DCD009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B532058587300CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
@@ -167,6 +170,7 @@
 		1A9FBC111ABD0DA7004E778B = {
 			isa = PBXGroup;
 			children = (
+				938E5BB1298B306A00F8596C /* BuildConfig.xcconfig */,
 				1A9FBC1C1ABD0DA7004E778B /* PVGBA */,
 				B3C9D4B91DEA77DF0068D057 /* PVGBA */,
 				1A9FBE131ABD133E004E778B /* Frameworks */,
@@ -201,6 +205,7 @@
 		1A9FBC351ABD0EF1004E778B /* GBA */ = {
 			isa = PBXGroup;
 			children = (
+				938E5BB2298B308700F8596C /* PVDebug.c */,
 				1A9FBC371ABD0FE2004E778B /* PVGBAEmulatorCore.h */,
 				1A9FBC381ABD0FE2004E778B /* PVGBAEmulatorCore.mm */,
 				1A9FBC3A1ABD0FEF004E778B /* GBACore */,
@@ -437,6 +442,7 @@
 				B3C9D4DE1DEA78550068D057 /* EEprom.cpp in Sources */,
 				B3C9D4DF1DEA78550068D057 /* Gb_Apu.cpp in Sources */,
 				B3C9D4E01DEA78550068D057 /* GBA-arm.cpp in Sources */,
+				938E5BB3298B308700F8596C /* PVDebug.c in Sources */,
 				B3C9D4E11DEA78550068D057 /* Globals.cpp in Sources */,
 				B3C9D4E21DEA78550068D057 /* Util.cpp in Sources */,
 				B3C9D4E31DEA78550068D057 /* Multi_Buffer.cpp in Sources */,
@@ -474,6 +480,7 @@
 /* Begin XCBuildConfiguration section */
 		1A9FBC2C1ABD0DA7004E778B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 938E5BB1298B306A00F8596C /* BuildConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
@@ -530,6 +537,7 @@
 		};
 		1A9FBC2D1ABD0DA7004E778B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 938E5BB1298B306A00F8596C /* BuildConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
@@ -580,6 +588,7 @@
 		};
 		B324C5172191A3CF009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 938E5BB1298B306A00F8596C /* BuildConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;

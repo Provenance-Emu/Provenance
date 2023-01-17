@@ -9,7 +9,9 @@
 	<key>PVProjectName</key>
 	<string>RetroArch</string>
 	<key>PVSupportedSystems</key>
-	<array/>
+	<array>
+		<string>com.provenance.retroarch</string>
+	</array>
 	<key>PVProjectURL</key>
 	<string>https://github.com/libretro/RetroArch</string>
 	<key>PVProjectVersion</key>
@@ -97,53 +99,103 @@
 			<string>1.6.0</string>
 		</dict>
 		<dict>
-				<key>PVCoreIdentifier</key>
-				<string>minivmac_libretro_ios.dylib</string>
-				<key>PVPrincipleClass</key>
-				<string>PVRetroArchCore</string>
-				<key>PVSupportedSystems</key>
-				<array>
-						<string>com.provenance.macintosh</string>
-				</array>
-				<key>PVProjectName</key>
-				<string>RetroArch - Mini vMac</string>
-				<key>PVProjectURL</key>
-				<string>https://www.gryphel.com/c/minivmac/</string>
-				<key>PVProjectVersion</key>
-				<string>36.04</string>
+			<key>PVCoreIdentifier</key>
+			<string>minivmac_libretro_ios.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.macintosh</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Mini vMac</string>
+			<key>PVProjectURL</key>
+			<string>https://www.gryphel.com/c/minivmac/</string>
+			<key>PVProjectVersion</key>
+			<string>36.04</string>
 		</dict>
 		<dict>
-				<key>PVCoreIdentifier</key>
-				<string>dosbox_pure_libretro_ios.dylib</string>
-				<key>PVPrincipleClass</key>
-				<string>PVRetroArchCore</string>
-				<key>PVSupportedSystems</key>
-				<array>
-						<string>com.provenance.dos</string>
-				</array>
-				<key>PVProjectName</key>
-				<string>RetroArch - DosBox Pure</string>
-				<key>PVProjectURL</key>
-				<string>https://github.com/schellingb/dosbox-pure</string>
-				<key>PVProjectVersion</key>
-				<string>0.9.2</string>
+			<key>PVCoreIdentifier</key>
+			<string>dosbox_pure_libretro_ios.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.dos</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - DosBox Pure</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/schellingb/dosbox-pure</string>
+			<key>PVProjectVersion</key>
+			<string>0.9.2</string>
 		</dict>
 		<dict>
-				<key>PVCoreIdentifier</key>
-				<string>melonds_libretro_ios.dylib</string>
-				<key>PVPrincipleClass</key>
-				<string>PVRetroArchCore</string>
-				<key>PVSupportedSystems</key>
-				<array>
-						<string>com.provenance.ds</string>
-				</array>
-				<key>PVProjectName</key>
-				<string>RetroArch - MelonDS</string>
-				<key>PVProjectURL</key>
-				<string>https://melonds.kuribo64.net</string>
-				<key>PVProjectVersion</key>
-				<string>0.9.4</string>
+			<key>PVCoreIdentifier</key>
+			<string>melonds_libretro_ios.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.ds</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - MelonDS</string>
+			<key>PVProjectURL</key>
+			<string>https://melonds.kuribo64.net</string>
+			<key>PVProjectVersion</key>
+			<string>0.9.4</string>
 		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>opera_libretro_ios.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.3DO</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Opera</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/opera-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>1.0.0</string>
+		</dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>np2kai_libretro_ios.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.pc98</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - NP2Kai (PC-98)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/AZO234/NP2kai</string>
+			<key>PVProjectVersion</key>
+			<string>rev.22-145</string>
+		</dict>
+                <dict>
+                        <key>PVCoreIdentifier</key>
+                        <string>mednafen_supergrafx_libretro_ios.dylib</string>
+                        <key>PVPrincipleClass</key>
+                        <string>PVRetroArchCore</string>
+                        <key>PVSupportedSystems</key>
+                        <array>
+				<string>com.provenance.sgfx</string>
+                                <string>com.provenance.pce</string>
+                                <string>com.provenance.pcecd</string>
+                        </array>
+                        <key>PVProjectName</key>
+                        <string>RetroArch - Beetle Supergrafx (PC Engine)</string>
+                        <key>PVProjectURL</key>
+                        <string>https://github.com/libretro/beetle-supergrafx-libretro</string>
+                        <key>PVProjectVersion</key>
+                        <string>v1.29.0</string>
+                </dict>
 	</array>
 </dict>
 </plist>

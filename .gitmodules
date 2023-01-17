@@ -163,3 +163,15 @@
 [submodule "Cores/DosBox/dosbox"]
 	path = Cores/DosBox/dosbox
 	url = https://github.com/schellingb/dosbox-pure.git
+[submodule "Cores/NP2Kai/libretro-np2kai"]
+	path = Cores/NP2Kai/libretro-np2kai
+	url = https://github.com/AZO234/NP2kai.git
+[submodule "Cores/snes9x/libretro-snes9x"]
+	path = Cores/snes9x/libretro-snes9x
+	url = https://github.com/libretro/snes9x.git
+[submodule "Cores/supergrafx/libretro-supergrafx"]
+	path = Cores/supergrafx/libretro-supergrafx
+	url = https://github.com/libretro/beetle-supergrafx-libretro.git
+[submodule "Cores/melonDS/melonds-libretro"]
+	path = Cores/melonDS/melonds-libretro
+	url = https://github.com/libretro/melonDS.git

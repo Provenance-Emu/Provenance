@@ -28,6 +28,8 @@ PVCORE
     int videoBitDepth;
     int8_t gsPreference;
     int8_t resFactor;
+    BOOL limitFPS;
+    int8_t spuCount;
 
 	float sampleRate;
 
@@ -42,6 +44,8 @@ PVCORE
 @property (nonatomic, assign) int8_t resFactor;
 
 @property (nonatomic, assign) int8_t gsPreference;
+@property (nonatomic, assign) int8_t spuCount;
+@property (nonatomic, assign) bool limitFPS;
 
 -(void)setupControllers;
 -(void)executeFrameSkippingFrame:(BOOL)skip;

@@ -1,18 +1,6 @@
-/*  RetroArch - A frontend for libretro.
- *  Copyright (C) 2016-2017 - Hans-Kristian Arntzen
- *
- *  RetroArch is free software: you can redistribute it and/or modify it under the terms
- *  of the GNU General Public License as published by the Free Software Found-
- *  ation, either version 3 of the License, or (at your option) any later version.
- *
- *  RetroArch is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License along with RetroArch.
- *  If not, see <http://www.gnu.org/licenses/>.
- */
-
+// Local Changes:
+// * Add VULKAN_WSI_MVK_IOS,
+// * Add VULKAN_WSI_MVK_IOS_METAL_EXT
 #ifndef VULKAN_COMMON_H__
 #define VULKAN_COMMON_H__
 
@@ -32,7 +20,7 @@
 #define VULKAN_DIRTY_DYNAMIC_BIT                0x0001
 
 #define VULKAN_HDR_SWAPCHAIN
-#include "../include/vulkan/vulkan.h"
+
 #include "vksym.h"
 
 #include <boolean.h>
@@ -50,6 +38,7 @@
 #include "../video_defines.h"
 #include "../font_driver.h"
 #include "../drivers_shader/shader_vulkan.h"
+#include "../include/vulkan/vulkan.h"
 
 RETRO_BEGIN_DECLS
 
@@ -91,9 +80,15 @@ enum vulkan_wsi_type
 
 #ifdef VULKAN_HDR_SWAPCHAIN
 
-#define ALIGN(x) __attribute__((aligned(x)))
+#ifndef VKALIGN
+#ifdef _MSC_VER
+#define VKALIGN(x) __declspec(align(x))
+#else
+#define VKALIGN(x) __attribute__((aligned(x)))
+#endif
+#endif
 
-typedef struct ALIGN(16)
+typedef struct VKALIGN(16)
 {
    math_matrix_4x4   mvp;
    float             contrast;         /* 2.0f    */
@@ -112,7 +107,7 @@ enum vulkan_context_flags
    /* Used by screenshot to get blits with correct colorspace. */
    VK_CTX_FLAG_SWAPCHAIN_IS_SRGB            = (1 << 2),
    VK_CTX_FLAG_SWAP_INTERVAL_EMULATION_LOCK = (1 << 3),
-   VK_CTX_FLAG_HAS_ACQUIRED_SWAPCHAIN       = (1 << 4)
+   VK_CTX_FLAG_HAS_ACQUIRED_SWAPCHAIN       = (1 << 4),
 };
 
 typedef struct vulkan_context
@@ -133,7 +128,7 @@ typedef struct vulkan_context
    VkFormat swapchain_format;
 #ifdef VULKAN_HDR_SWAPCHAIN
    VkColorSpaceKHR swapchain_colour_space;
-#endif /* VULKAN_HDR_SWAPCHAIN */  
+#endif /* VULKAN_HDR_SWAPCHAIN */
 
    VkSemaphore swapchain_semaphores[VULKAN_MAX_SWAPCHAIN_IMAGES];
    VkSemaphore swapchain_acquire_semaphore;
@@ -202,6 +197,7 @@ typedef struct gfx_ctx_vulkan_data
    VkSwapchainKHR swapchain;     /* ptr alignment */
    struct vulkan_emulated_mailbox mailbox;
    uint8_t flags;
+   enum vulkan_wsi_type wsi_type;
 } gfx_ctx_vulkan_data_t;
 
 struct vulkan_display_surface_info
@@ -415,6 +411,7 @@ typedef struct vk
    {
       VkPipeline alpha_blend;
       VkPipeline font;
+      VkPipeline rgb565_to_rgba8888;
 #ifdef VULKAN_HDR_SWAPCHAIN
       VkPipeline hdr;
 #endif /* VULKAN_HDR_SWAPCHAIN */
@@ -660,49 +657,8 @@ void vulkan_destroy_texture(
 /* Dynamic texture type should be set to : VULKAN_TEXTURE_DYNAMIC
  * Staging texture type should be set to : VULKAN_TEXTURE_STAGING
  */
-#define VULKAN_COPY_STAGING_TO_DYNAMIC(vk, cmd, dynamic, staging) \
-{ \
-   VkBufferImageCopy region; \
-   VULKAN_IMAGE_LAYOUT_TRANSITION( \
-         cmd, \
-         dynamic->image, \
-         VK_IMAGE_LAYOUT_UNDEFINED, \
-         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, \
-         0, \
-         VK_ACCESS_TRANSFER_WRITE_BIT, \
-         VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, \
-         VK_PIPELINE_STAGE_TRANSFER_BIT); \
-   region.bufferOffset                    = 0; \
-   region.bufferRowLength                 = 0; \
-   region.bufferImageHeight               = 0; \
-   region.imageSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT; \
-   region.imageSubresource.mipLevel       = 0; \
-   region.imageSubresource.baseArrayLayer = 0; \
-   region.imageSubresource.layerCount     = 1; \
-   region.imageOffset.x                   = 0; \
-   region.imageOffset.y                   = 0; \
-   region.imageOffset.z                   = 0; \
-   region.imageExtent.width               = dynamic->width; \
-   region.imageExtent.height              = dynamic->height; \
-   region.imageExtent.depth               = 1; \
-   vkCmdCopyBufferToImage( \
-         cmd, \
-         staging->buffer, \
-         dynamic->image, \
-         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, \
-         1, \
-         &region); \
-   VULKAN_IMAGE_LAYOUT_TRANSITION( \
-         cmd, \
-         dynamic->image, \
-         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, \
-         VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, \
-         VK_ACCESS_TRANSFER_WRITE_BIT, \
-         VK_ACCESS_SHADER_READ_BIT, \
-         VK_PIPELINE_STAGE_TRANSFER_BIT, \
-         VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT); \
-   dynamic->layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL; \
-}
+void vulkan_copy_staging_to_dynamic(vk_t *vk, VkCommandBuffer cmd,
+      struct vk_texture *dynamic, struct vk_texture *staging);
 
 /* We don't have to sync against previous TRANSFER,
  * since we observed the completion by fences.
@@ -721,35 +677,19 @@ void vulkan_destroy_texture(
    if (((tex).flags & VK_TEX_FLAG_NEED_MANUAL_CACHE_MANAGEMENT) && (tex).memory != VK_NULL_HANDLE) \
       VULKAN_SYNC_TEXTURE_TO_GPU(vk->context->device, (tex).memory) \
 
-/* VBO will be written to here. */
-void vulkan_draw_quad(vk_t *vk, const struct vk_draw_quad *quad);
+void vulkan_write_quad_descriptors(
+      VkDevice device,
+      VkDescriptorSet set,
+      VkBuffer buffer,
+      VkDeviceSize offset,
+      VkDeviceSize range,
+      const struct vk_texture *texture,
+      VkSampler sampler);
 
 /* The VBO needs to be written to before calling this.
  * Use vulkan_buffer_chain_alloc.
  */
 void vulkan_draw_triangles(vk_t *vk, const struct vk_draw_triangles *call);
-
-static INLINE unsigned vulkan_format_to_bpp(VkFormat format)
-{
-   switch (format)
-   {
-      case VK_FORMAT_B8G8R8A8_UNORM:
-         return 4;
-
-      case VK_FORMAT_R4G4B4A4_UNORM_PACK16:
-      case VK_FORMAT_B4G4R4A4_UNORM_PACK16:
-      case VK_FORMAT_R5G6B5_UNORM_PACK16:
-         return 2;
-
-      case VK_FORMAT_R8_UNORM:
-         return 1;
-
-      default: /* Unknown format */
-	 break;
-   }
-
-   return 0;
-}
 
 struct vk_buffer vulkan_create_buffer(
       const struct vulkan_context *context,
@@ -764,7 +704,7 @@ VkDescriptorSet vulkan_descriptor_manager_alloc(
       struct vk_descriptor_manager *manager);
 
 bool vulkan_context_init(gfx_ctx_vulkan_data_t *vk,
-      enum vulkan_wsi_type type, const char *vulkan_path);
+      enum vulkan_wsi_type type);
 
 void vulkan_context_destroy(gfx_ctx_vulkan_data_t *vk,
       bool destroy_surface);
@@ -791,9 +731,16 @@ void vulkan_set_uniform_buffer(
       VkDeviceSize offset,
       VkDeviceSize range);
 
-void vulkan_debug_mark_buffer(VkDevice device, VkBuffer buffer);
 void vulkan_debug_mark_image(VkDevice device, VkImage image);
 void vulkan_debug_mark_memory(VkDevice device, VkDeviceMemory memory);
+
+static inline VkFormat vulkan_remap_to_texture_format(VkFormat fmt)
+{
+   if (fmt == VK_FORMAT_R5G6B5_UNORM_PACK16)
+      return VK_FORMAT_R8G8B8A8_UNORM;
+   else
+      return fmt;
+}
 
 RETRO_END_DECLS
 

@@ -35,6 +35,7 @@ NSString *autoLoadStatefileName;
 	if( _isInitialized)
 		State::SaveAs([fileName UTF8String]);
 	//block(dol_host->SaveState([fileName UTF8String]),nil);
+    return true;
 }
 
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
@@ -55,6 +56,7 @@ NSString *autoLoadStatefileName;
 		State::LoadAs([fileName UTF8String]);
 		//block(dol_host->LoadState([fileName UTF8String]),nil);
 	}
+    return true;
 }
 
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {

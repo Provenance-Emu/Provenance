@@ -229,24 +229,24 @@ import Foundation
     case wiiShakeY
     case wiiShakeZ
     // nunchuk
-    case nunchunkC
-    case nunchunkZ
-    case nunchunkStickUp
-    case nunchunkStickDown
-    case nunchunkStickLeft
-    case nunchunkStickRight
-    case nunchunkSwingUp
-    case nunchunkSwingDown
-    case nunchunkSwingLeft
-    case nunchunkSwingRight
-    case nunchunkTiltForward
-    case nunchunkTiltBackward
-    case nunchunkTiltLeft
-    case nunchunkTiltRight
-    case nunchunkTiltModifier
-    case nunchunkShakeX
-    case nunchunkShakeY
-    case nunchunkShakeZ
+    case nunchukC
+    case nunchukZ
+    case nunchukStickUp
+    case nunchukStickDown
+    case nunchukStickLeft
+    case nunchukStickRight
+    case nunchukSwingUp
+    case nunchukSwingDown
+    case nunchukSwingLeft
+    case nunchukSwingRight
+    case nunchukTiltForward
+    case nunchukTiltBackward
+    case nunchukTiltLeft
+    case nunchukTiltRight
+    case nunchukTiltModifier
+    case nunchukShakeX
+    case nunchukShakeY
+    case nunchukShakeZ
     // classic
     case classicA
     case classicB
@@ -562,6 +562,7 @@ import Foundation
     case r
     case start
     case select
+    case screenSwap
     case count
 }
 

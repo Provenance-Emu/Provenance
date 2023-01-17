@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		93124977298CECEA002DE0C2 /* SNES9x RetroArch TV */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9312497A298CECEA002DE0C2 /* Build configuration list for PBXAggregateTarget "SNES9x RetroArch TV" */;
+			buildPhases = (
+				93124978298CECEA002DE0C2 /* Build */,
+				93124979298CECEA002DE0C2 /* Copy */,
+			);
+			dependencies = (
+			);
+			name = "SNES9x RetroArch TV";
+			productName = "SNES9x RetroArch";
+		};
 		934BE99D296F080300FB9933 /* SNES9x RetroArch */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 934BE9A1296F080500FB9933 /* Build configuration list for PBXAggregateTarget "SNES9x RetroArch" */;
@@ -89,6 +101,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9312497E298CEE2A002DE0C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1ACEA8DC17F75F350031B1C9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 93124977298CECEA002DE0C2;
+			remoteInfo = "SNES9x RetroArch TV";
+		};
 		934BE9A3296F094900FB9933 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1ACEA8DC17F75F350031B1C9 /* Project object */;
@@ -205,6 +224,7 @@
 		1ACEA98D17F760390031B1C9 /* tile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tile.cpp; sourceTree = "<group>"; };
 		1ACEA98E17F760390031B1C9 /* tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tile.h; sourceTree = "<group>"; };
 		1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SNESOESupport.mm; sourceTree = "<group>"; };
+		938E5C5C298B445000F8596C /* BuildConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildConfig.xcconfig; sourceTree = "<group>"; };
 		B34AB5672106D60400C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB5832106DEA000C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B622058591000CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
@@ -273,6 +293,7 @@
 		1ACEA8DB17F75F350031B1C9 = {
 			isa = PBXGroup;
 			children = (
+				938E5C5C298B445000F8596C /* BuildConfig.xcconfig */,
 				1ACEA8E917F75F350031B1C9 /* PVSNES */,
 				B3C9D5331DEA83DE0068D057 /* PVSNES */,
 				1ACEA8E617F75F350031B1C9 /* Frameworks */,
@@ -562,6 +583,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9312497F298CEE2A002DE0C2 /* PBXTargetDependency */,
 				934BE9A4296F094900FB9933 /* PBXTargetDependency */,
 			);
 			name = PVSNES;
@@ -607,6 +629,7 @@
 			targets = (
 				B3C9D5311DEA83DE0068D057 /* PVSNES */,
 				934BE99D296F080300FB9933 /* SNES9x RetroArch */,
+				93124977298CECEA002DE0C2 /* SNES9x RetroArch TV */,
 			);
 		};
 /* End PBXProject section */
@@ -623,6 +646,45 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		93124978298CECEA002DE0C2 /* Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Build;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/cmake/buildTV/libretro/snes9x_libretro_tvos.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n\n# Create buildTV Environment\nif [ ! -d \"${SRCROOT}/cmake/buildTV\" ]; then\n    mkdir \"${SRCROOT}/cmake/buildTV\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-snes9x | head -n1 | awk '{print $1;}'`tvOS\nexport LOCAL_LATEST=\"v1_000_0005\"\nif [[ ! -f \"${SRCROOT}/cmake/${LATEST}\" || ! -f \"${SRCROOT}/cmake/${LOCAL_LATEST}\" ]]; then\n    rm -fr \"${SRCROOT}/cmake/buildTV/\"*\n    cp -pR \"${SRCROOT}/libretro-snes9x/\"* \"${SRCROOT}/cmake/buildTV/\"\n    cp \"${SRCROOT}/cmake/Makefile.TV\" \"${SRCROOT}/cmake/buildTV/libretro/Makefile\"\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    touch \"${SRCROOT}/cmake/${LOCAL_LATEST}\"\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/buildTV/libretro\"\n#make clean\nmake -j5\n";
+		};
+		93124979298CECEA002DE0C2 /* Copy */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/cmake/buildTV/libretro/snes9x_libretro_tvos.dylib",
+			);
+			name = Copy;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/snes9x_libretro_tvos.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n\ncd \"${SRCROOT}/cmake/buildTV/libretro\"\ncp snes9x_libretro_tvos.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules\"\n\n";
+		};
 		934BE9A2296F081B00FB9933 /* Build */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -636,11 +698,11 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(SRCROOT)/dist/ios-arm64/snes9x_libretro_ios.dylib",
+				"$(SRCROOT)/cmake/build/libretro//snes9x_libretro_ios.dylib",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\ncp -pR ${SRCROOT}/../../CoresRetro/RetroArch/libretro-super/* ${SRCROOT}/cmake/build/\ncd ${SRCROOT}/cmake/build\nsh libretro-fetch.sh snes9x\nsh libretro-build-ios-arm64.sh snes9x\n\n";
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-snes9x | head -n1 | awk '{print $1;}'`\nexport LOCAL_LATEST=\"v1_000_0006\"\nif [[ ! -f \"${SRCROOT}/cmake/${LATEST}\" || ! -f \"${SRCROOT}/cmake/${LOCAL_LATEST}\" ]]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    cp -pR \"${SRCROOT}/libretro-snes9x/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/Makefile\" \"${SRCROOT}/cmake/build/libretro\"\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    touch \"${SRCROOT}/cmake/${LOCAL_LATEST}\"\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build/libretro\"\n#make clean\nmake -j5\n#cp snes9x_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/snes9x_libretro_ios.dylib\"\n";
 		};
 		B346AEDE297616710090E014 /* Copy */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -650,17 +712,17 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/dist/ios-arm64/snes9x_libretro_ios.dylib",
+				"$(SRCROOT)/cmake/build/libretro/snes9x_libretro_ios.dylib",
 			);
 			name = Copy;
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${SRCROOT}/../../CoresRetro/RetroArch/modules",
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/snes9x_libretro_ios.dylib",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd ${SRCROOT}/cmake/build\ncp dist/ios-arm64/snes9x_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules\n\n";
+			shellScript = "if [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\ncd \"${SRCROOT}/cmake/build/libretro\"\ncp snes9x_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules\"\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -730,8 +792,23 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9312497F298CEE2A002DE0C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				tvos,
+			);
+			target = 93124977298CECEA002DE0C2 /* SNES9x RetroArch TV */;
+			targetProxy = 9312497E298CEE2A002DE0C2 /* PBXContainerItemProxy */;
+		};
 		934BE9A4296F094900FB9933 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				driverkit,
+				ios,
+				maccatalyst,
+				macos,
+				watchos,
+			);
 			target = 934BE99D296F080300FB9933 /* SNES9x RetroArch */;
 			targetProxy = 934BE9A3296F094900FB9933 /* PBXContainerItemProxy */;
 		};
@@ -740,6 +817,7 @@
 /* Begin XCBuildConfiguration section */
 		1ACEA90517F75F350031B1C9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 938E5C5C298B445000F8596C /* BuildConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -800,6 +878,7 @@
 		};
 		1ACEA90617F75F350031B1C9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 938E5C5C298B445000F8596C /* BuildConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -854,6 +933,30 @@
 			};
 			name = Release;
 		};
+		9312497B298CECEA002DE0C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9312497C298CECEA002DE0C2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		9312497D298CECEA002DE0C2 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Archive;
+		};
 		934BE99E296F080500FB9933 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -880,6 +983,7 @@
 		};
 		B324C5062191A2CB009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 938E5C5C298B445000F8596C /* BuildConfig.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -1083,6 +1187,16 @@
 				1ACEA90517F75F350031B1C9 /* Debug */,
 				1ACEA90617F75F350031B1C9 /* Release */,
 				B324C5062191A2CB009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9312497A298CECEA002DE0C2 /* Build configuration list for PBXAggregateTarget "SNES9x RetroArch TV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9312497B298CECEA002DE0C2 /* Debug */,
+				9312497C298CECEA002DE0C2 /* Release */,
+				9312497D298CECEA002DE0C2 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

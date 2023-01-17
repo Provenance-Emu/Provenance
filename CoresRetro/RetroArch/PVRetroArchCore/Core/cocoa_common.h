@@ -13,7 +13,8 @@
  *  You should have received a copy of the GNU General Public License along with RetroArch.
  *  If not, see <http://www.gnu.org/licenses/>.
  */
-
+// Local Changes:
+// Add PVRetroArchCore.h
 #ifndef __COCOA_COMMON_SHARED_H
 #define __COCOA_COMMON_SHARED_H
 

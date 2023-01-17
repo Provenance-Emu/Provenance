@@ -66,7 +66,6 @@ final class PVN64ControllerViewController2: PVControllerViewController<PVN64Syst
 		}
 		return elements
 	}()
-
 	var virtualController: GCVirtualController? {
 		didSet {
 			if let virtualController = virtualController {
@@ -166,7 +165,11 @@ final class PVN64ControllerViewController: PVControllerViewController<PVN64Syste
             emulatorCore.didMoveJoystick(.analogRight, withValue: right, forPlayer: 0)
         }
     }
-
+    override func prelayoutSettings() {
+        lrAtBottom = true
+        joyPadScale = 0.8
+        joyPad2Scale = 0.8
+    }
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
 //        if false {
 //            // OLD non joystick way

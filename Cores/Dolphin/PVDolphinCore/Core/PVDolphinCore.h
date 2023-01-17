@@ -20,31 +20,32 @@
 @interface PVDolphinCore : PVEmulatorCore
 <PVGameCubeSystemResponderClient, PVWiiSystemResponderClient>
 {
-	uint8_t padData[4][PVDreamcastButtonCount];
-	int8_t xAxis[4];
-	int8_t yAxis[4];
-	int videoWidth;
-	int videoHeight;
-	int videoBitDepth;
-	int videoDepthBitDepth; // eh
-	int8_t gsPreference;
-	int8_t resFactor;
-	int8_t cpuType;
-	int8_t cpuOClock;
-	int8_t msaa;
-	BOOL ssaa;
-	BOOL fastMemory;
-	float sampleRate;
-	BOOL isNTSC;
-	BOOL isBilinear;
-	BOOL isWii;
+    uint8_t padData[4][PVDreamcastButtonCount];
+    int8_t xAxis[4];
+    int8_t yAxis[4];
+    int videoWidth;
+    int videoHeight;
+    int videoBitDepth;
+    int videoDepthBitDepth; // eh
+    int8_t gsPreference;
+    int8_t resFactor;
+    int8_t cpuType;
+    int8_t cpuOClock;
+    int8_t msaa;
+    BOOL ssaa;
+    BOOL fastMemory;
+    float sampleRate;
+    BOOL isNTSC;
+    BOOL isBilinear;
+    BOOL isWii;
     BOOL enableCheatCode;
+    BOOL multiPlayer;
     UIView *m_view;
     UIViewController *m_view_controller;
     CAMetalLayer* m_metal_layer;
     CAEAGLLayer *m_gl_layer;
 @public
-	dispatch_queue_t _callbackQueue;
+    dispatch_queue_t _callbackQueue;
 }
 @property (nonatomic, assign) bool isWii;
 @property (nonatomic, assign) int videoWidth;
@@ -59,6 +60,7 @@
 @property (nonatomic, assign) bool ssaa;
 @property (nonatomic, assign) bool fastMemory;
 @property (nonatomic, assign) bool enableCheatCode;
+@property (nonatomic, assign) bool multiPlayer;
 - (void) refreshScreenSize;
 - (void) startVM:(UIView *)view;
 - (void) setupControllers;
@@ -66,5 +68,11 @@
 - (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;
 - (void) gamepadEventIrRecenter:(int)action;
 - (BOOL) setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
+-(void)controllerConnected:(NSNotification *)notification;
+-(void)controllerDisconnected:(NSNotification *)notification;
+-(void)optionUpdated:(NSNotification *)notification;
 @end
 extern __weak PVDolphinCore *_current;
+
+// Options
+#define MAP_MULTIPLAYER "Assign Controllers to Multiple Players"

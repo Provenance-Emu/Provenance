@@ -70,8 +70,29 @@ s8 joyx[4], joyy[4];
 }
 
 #pragma mark - Control
+-(void)controllerConnected:(NSNotification *)notification {
+    [self setupControllers];
+}
+-(void)controllerDisconnected:(NSNotification *)notification {
+}
 -(void)setupControllers {
-    for (NSInteger player = 0; player < 4; player++)
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(controllerConnected:)
+                                                 name:GCKeyboardDidConnectNotification
+                                               object:nil
+    ];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(controllerDisconnected:)
+                                                 name:GCKeyboardDidDisconnectNotification
+                                               object:nil
+    ];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(controllerConnected:)
+                                                 name:GCControllerDidConnectNotification
+                                               object:nil
+    ];
+     for (NSInteger player = 0; player < 4; player++)
     {
         GCController *controller = nil;
         if (self.controller1 && player == 0)
@@ -128,10 +149,10 @@ s8 joyx[4], joyy[4];
             controller.extendedGamepad.dpad.down.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 padHandler->SetButtonState(PS2::CControllerInfo::DPAD_DOWN, pressed);
             };
-            controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+            controller.extendedGamepad.buttonOptions.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 padHandler->SetButtonState(PS2::CControllerInfo::SELECT, pressed);
             };
-            controller.extendedGamepad.buttonMenu.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+            controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 padHandler->SetButtonState(PS2::CControllerInfo::START, pressed);
             };
             controller.extendedGamepad.leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput* xAxis, float value) {
@@ -392,28 +413,28 @@ s8 joyx[4], joyy[4];
             padHandler->SetButtonState(PS2::CControllerInfo::R3, pressed);
             break;
         case(PVPS2ButtonLeftAnalogLeft):
-            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_LEFT_X, value);
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_LEFT_X, -value);
             break;
         case(PVPS2ButtonLeftAnalogRight):
-            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_LEFT_X, value);
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_LEFT_X, value);
             break;
         case(PVPS2ButtonLeftAnalogUp):
-            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_LEFT_Y, value);
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_LEFT_Y, -value);
             break;
         case(PVPS2ButtonLeftAnalogDown):
-            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_LEFT_Y, value);
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_LEFT_Y, value);
             break;
         case(PVPS2ButtonRightAnalogLeft):
-            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_RIGHT_X, value);
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_RIGHT_X, -value);
             break;
         case(PVPS2ButtonRightAnalogRight):
-            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_RIGHT_X, value);
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_RIGHT_X, value);
             break;
         case(PVPS2ButtonRightAnalogUp):
-            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_RIGHT_Y, value);
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_RIGHT_Y, -value);
             break;
         case(PVPS2ButtonRightAnalogDown):
-            padHandler->SetButtonState(PS2::CControllerInfo::ANALOG_RIGHT_Y, value);
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_RIGHT_Y, value * 3);
             break;
         default:
             break;
@@ -452,19 +473,6 @@ s8 joyx[4], joyy[4];
 
 - (void)didMovePS2JoystickDirection:(enum PVPS2Button)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
     [self sendButtonInput:button isPressed:true withValue:value forPlayer:player];
-    // FIXME: Player 2 is not yet supported.
-    if (player != 1) {
-        return;
-    }
-    //TODO: find real scale value
-//    uint32 val = value * 0x7f;
-//    for(auto bindingIterator(std::begin(_bindings));
-//        bindingIterator != std::end(_bindings); bindingIterator++)
-//    {
-//        const auto& binding = (*bindingIterator);
-//        if(!binding) continue;
-//        binding->ProcessEvent(button, val);
-//    }
 }
 
 -(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {

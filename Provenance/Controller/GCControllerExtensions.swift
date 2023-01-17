@@ -23,6 +23,7 @@ extension GCController {
 // MARK: Pause/Home
 extension GCController {
     func setupPauseHandler(onPause: @escaping () -> Void) {
+        var hasHandler = false
         // Use buttonHome for iOS/tvOS14 and later
         if let buttonHome = buttonHome {
             buttonHome.pressedChangedHandler = { _, _, isPressed in
@@ -30,15 +31,19 @@ extension GCController {
                     onPause()
                 }
             }
+            hasHandler = true
         }
         // Using buttonMenu is the recommended way for iOS/tvOS13 and later
-        else if let buttonMenu = buttonMenu {
+        // Binding both Home / Menu to support controllers with only Menu button
+        if let buttonMenu = buttonMenu {
             buttonMenu.pressedChangedHandler = { _, _, isPressed in
                 if isPressed {
                     onPause()
                 }
             }
-        } else {
+            hasHandler = true
+        }
+        if (!hasHandler) {
             // Fallback to the old method
             controllerPausedHandler = { _ in
                 onPause()
@@ -54,10 +59,8 @@ extension GCController {
 		// Using buttonMenu is the recommended way for iOS/tvOS13 and later
 		if let buttonMenu = buttonMenu {
 			buttonMenu.pressedChangedHandler = nil
-		} else {
-			// Fallback to the old method
-			controllerPausedHandler = nil
 		}
+        controllerPausedHandler = nil
 	}
 
     private var buttonMenu: GCControllerButtonInput? {

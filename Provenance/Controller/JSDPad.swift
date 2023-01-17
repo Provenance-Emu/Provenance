@@ -27,14 +27,24 @@ typealias JoystickValue = (x: Float, y: Float)
 protocol JSDPadDelegate: AnyObject {
     func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection)
     func dPad(_ dPad: JSDPad, joystick value: JoystickValue)
+    func dPad(_ dPad: JSDPad, joystick2 value: JoystickValue)
     func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection)
 }
 
 final class JSDPad: MovableButtonView {
 
-    public class func JoyPad(frame: CGRect) -> JSDPad {
+    public class func JoyPad(frame: CGRect, scale: CGFloat? = 0.5) -> JSDPad {
         let dpad = JSDPad.init(frame: frame)
         dpad.analogMode = true
+        dpad.scale = scale ?? 0.5
+        return dpad
+    }
+    
+    public class func JoyPad2(frame: CGRect, scale: CGFloat? = 0.5) -> JSDPad {
+        let dpad = JSDPad.init(frame: frame)
+        dpad.analogMode = true
+        dpad.joyPad2 = true
+        dpad.scale = scale ?? 0.5
         return dpad
     }
 
@@ -43,6 +53,9 @@ final class JSDPad: MovableButtonView {
             dPadImageView.isHidden = analogMode
         }
     }
+    
+    var joyPad2: Bool = false
+    var scale:CGFloat = 1.0
 
     lazy var centerPoint: CGPoint = CGPoint(x: bounds.midX, y: bounds.midY)
     lazy var analogPoint: CGPoint = centerPoint {
@@ -205,7 +218,11 @@ final class JSDPad: MovableButtonView {
         }
         let x: CGFloat = (point.x / self.bounds.width)
         let y: CGFloat = (point.y / self.bounds.height)
-        delegate.dPad(self, joystick: (x: Float(x), y: Float(y)))
+        if (joyPad2) {
+            delegate.dPad(self, joystick2: (x: Float(x), y: Float(y)))
+        } else {
+            delegate.dPad(self, joystick: (x: Float(x), y: Float(y)))
+        }
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -285,14 +302,14 @@ final class JSDPad: MovableButtonView {
             context.clear(rect)
 
             // Set the circle outerline-width
-            context.setLineWidth(5.0)
+            context.setLineWidth(5.0 * self.scale)
 
             // Set the circle outerline-colour
             let tintColor = self.tintColor ?? .white
             tintColor.set()
 
             // Create Circle
-            let radius = (frame.size.width - 10)/2
+            let radius = (frame.size.width - 10)/2 * self.scale
             context.addArc(center: centerPoint, radius: radius, startAngle: 0.0, endAngle: .pi * 2.0, clockwise: true)
 
             // Draw

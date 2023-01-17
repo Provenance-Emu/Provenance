@@ -203,17 +203,23 @@ extension PVEmulatorViewController {
         let quitTitle = shouldSave ? "Quit (without saving)" : "Quit"
         actionSheet.addAction(UIAlertAction(title: quitTitle, style: .destructive, handler: {[weak self] action in
             guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.quit(optionallySave: false)
-            }
+            self.quit(optionallySave: false)
         }))
 
             // If save and quit is an option, add it last with different style
         if shouldSave {
             actionSheet.addAction(UIAlertAction(title: "Save & Quit", style: .destructive, handler: {[weak self] action in
                 guard let self = self else { return }
-                DispatchQueue.main.async {
-                    self.quit(optionallySave: true)
+                let image = self.captureScreenshot()
+                self.createNewSaveState(auto: true, screenshot: image) { result in
+                    switch result {
+                    case .success:
+                        sleep(3);
+                        self.quit(optionallySave: false)
+                        break
+                    case let .error(error):
+                        ELOG("Autosave timer failed to make save state: \(error.localizedDescription)")
+                    }
                 }
             }))
         }

@@ -31,12 +31,16 @@ final class PVDSControllerViewController: PVControllerViewController<PVDSSystemR
                 button.buttonTag = .a
             } else if button.titleLabel?.text == "B" {
                 button.buttonTag = .b
+            } else if button.titleLabel?.text == "X" {
+                button.buttonTag = .x
+            } else if button.titleLabel?.text == "Y" {
+                button.buttonTag = .y
             }
         }
 
         leftShoulderButton?.buttonTag = .l
         rightShoulderButton?.buttonTag = .r
-
+        rightShoulderButton2?.buttonTag = .screenSwap
         startButton?.buttonTag = .start
         selectButton?.buttonTag = .select
     }

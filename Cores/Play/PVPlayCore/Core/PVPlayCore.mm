@@ -321,6 +321,7 @@ private:
 - (void)setupEmulation
 {
     [self initView];
+    [self parseOptions];
     _current = self;
     
     CAppConfig::GetInstance().SetPreferencePath(PREF_PS2_CDROM0_PATH, [_romPath fileSystemRepresentation]);
@@ -344,7 +345,6 @@ private:
     CAppConfig::GetInstance().SetPreferencePath(PREF_PS2_ROM0_DIRECTORY, self.BIOSPath.fileSystemRepresentation);
     CAppConfig::GetInstance().SetPreferenceInteger(PREF_CGSHANDLER_PRESENTATION_MODE, CGSHandler::PRESENTATION_MODE_FILL);
     CAppConfig::GetInstance().SetPreferenceInteger(PREF_CGSH_OPENGL_RESOLUTION_FACTOR, self.resFactor);
-    CAppConfig::GetInstance().SetPreferenceInteger(PREF_AUDIO_SPUBLOCKCOUNT, 22);
     
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_SHOWFPS, false);
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_SHOWVIRTUALPAD, false);
@@ -352,11 +352,14 @@ private:
     CAppConfig::GetInstance().RegisterPreferenceInteger(PREFERENCE_UI_VIRTUALPADOPACITY, 100);
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_HIDEVIRTUALPAD_CONTROLLER_CONNECTED, true);
     CAppConfig::GetInstance().RegisterPreferenceBoolean(PREFERENCE_UI_VIRTUALPAD_HAPTICFEEDBACK, false);
+    //
+    CAppConfig::GetInstance().SetPreferenceInteger(PREF_AUDIO_SPUBLOCKCOUNT, self.spuCount);
+    CAppConfig::GetInstance().SetPreferenceBoolean(PREF_PS2_LIMIT_FRAMERATE, self.limitFPS);
     
     CAppConfig::GetInstance().Save();
     _ps2VM->Initialize();
-    //CAppConfig::GetInstance().SetPreferenceBoolean(PREF_PS2_LIMIT_FRAMERATE, false);
-    //_ps2VM->ReloadFrameRateLimit();
+    _ps2VM->ReloadFrameRateLimit();
+    _ps2VM->ReloadSpuBlockCount();
     //
     //	_bindings[PS2::CControllerInfo::START] = std::make_shared<CSimpleBinding>(PVPS2ButtonStart);
     //	_bindings[PS2::CControllerInfo::SELECT] = std::make_shared<CSimpleBinding>(PVPS2ButtonSelect);
@@ -397,6 +400,7 @@ private:
     shouldStop=true;
     [super stopEmulation];
     if (_ps2VM) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
         _ps2VM->Pause();
         _ps2VM->DestroyGSHandler();
         _ps2VM->DestroyPadHandler();

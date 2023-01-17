@@ -41,19 +41,17 @@
 #include "../../input/drivers/cocoa_input.h"
 #include "../../input/drivers_keyboard/keyboard_event_apple.h"
 
-extern __weak PVRetroArchCore *_current;
+
 #if defined(HAVE_COCOA_METAL) || defined(HAVE_COCOATOUCH)
 id<ApplePlatform> apple_platform;
 #else
 id apple_platform;
 #endif
 
-CocoaView* g_instance;
+static CocoaView* g_instance;
 
 #ifdef HAVE_COCOATOUCH
 void *glkitview_init(void);
-void handle_click_event(CGPoint click, bool pressed);
-void handle_touch_event(NSArray* touches);
 
 @interface CocoaView()<GCDWebUploaderDelegate, UIGestureRecognizerDelegate
 #ifdef HAVE_IOS_TOUCHMOUSE
@@ -75,13 +73,13 @@ void handle_touch_event(NSArray* touches);
 
 + (CocoaView*)get
 {
-   CocoaView *view_controller = (BRIDGE CocoaView*)nsview_get_ptr();
-   if (!view_controller)
+   CocoaView *view = (BRIDGE CocoaView*)nsview_get_ptr();
+   if (!view)
    {
-	  view_controller = [CocoaView new];
-      nsview_set_ptr(view_controller);
+      view = [CocoaView new];
+      nsview_set_ptr(view);
    }
-   return view_controller;
+   return view;
 }
 
 - (id)init
@@ -98,11 +96,11 @@ void handle_touch_event(NSArray* touches);
    ui_window_cocoa_t cocoa_view;
    cocoa_view.data = (CocoaView*)self;
 #endif
-
+    
 #if defined(OSX)
-	video_driver_display_type_set(RARCH_DISPLAY_OSX);
-	video_driver_display_set(0);
-	video_driver_display_userdata_set((uintptr_t)self);
+    video_driver_display_type_set(RARCH_DISPLAY_OSX);
+    video_driver_display_set(0);
+    video_driver_display_userdata_set((uintptr_t)self);
 #endif
 
    return self;
@@ -126,30 +124,30 @@ void handle_touch_event(NSArray* touches);
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-	NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
-	NSPasteboard           *pboard = [sender draggingPasteboard];
+    NSDragOperation sourceDragMask = [sender draggingSourceOperationMask];
+    NSPasteboard           *pboard = [sender draggingPasteboard];
 
-	if ( [[pboard types] containsObject:NSFilenamesPboardType] )
-	{
-		if (sourceDragMask & NSDragOperationCopy)
-			return NSDragOperationCopy;
-	}
+    if ( [[pboard types] containsObject:NSFilenamesPboardType] )
+    {
+        if (sourceDragMask & NSDragOperationCopy)
+            return NSDragOperationCopy;
+    }
 
-	return NSDragOperationNone;
+    return NSDragOperationNone;
 }
 
 - (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
 {
 #if 0
-	NSPasteboard *pboard = [sender draggingPasteboard];
+    NSPasteboard *pboard = [sender draggingPasteboard];
 
-	if ( [[pboard types] containsObject:NSURLPboardType])
-	{
-		NSURL *fileURL = [NSURL URLFromPasteboard:pboard];
-		NSString    *s = [fileURL path];
-	}
+    if ( [[pboard types] containsObject:NSURLPboardType])
+    {
+        NSURL *fileURL = [NSURL URLFromPasteboard:pboard];
+        NSString    *s = [fileURL path];
+    }
 #endif
-	return YES;
+    return YES;
 }
 
 - (void)draggingExited:(id <NSDraggingInfo>)sender { [self setNeedsDisplay: YES]; }
@@ -157,83 +155,83 @@ void handle_touch_event(NSArray* touches);
 #elif TARGET_OS_IOS
 -(void) showNativeMenu
 {
-	dispatch_async(dispatch_get_main_queue(), ^{
-		command_event(CMD_EVENT_MENU_TOGGLE, NULL);
-	});
+    dispatch_async(dispatch_get_main_queue(), ^{
+        command_event(CMD_EVENT_MENU_TOGGLE, NULL);
+    });
 }
 
 #ifdef HAVE_IOS_CUSTOMKEYBOARD
 -(void)toggleCustomKeyboardUsingSwipe:(id)sender {
-	UISwipeGestureRecognizer *gestureRecognizer = (UISwipeGestureRecognizer*)sender;
-	[self.keyboardController.view setHidden:gestureRecognizer.direction == UISwipeGestureRecognizerDirectionDown];
-	[self updateOverlayAndFocus];
+    UISwipeGestureRecognizer *gestureRecognizer = (UISwipeGestureRecognizer*)sender;
+    [self.keyboardController.view setHidden:gestureRecognizer.direction == UISwipeGestureRecognizerDirectionDown];
+    [self updateOverlayAndFocus];
 }
 
 -(void)toggleCustomKeyboard {
-	[self.keyboardController.view setHidden:!self.keyboardController.view.isHidden];
-	[self updateOverlayAndFocus];
+    [self.keyboardController.view setHidden:!self.keyboardController.view.isHidden];
+    [self updateOverlayAndFocus];
 }
 #endif
 
 -(void) updateOverlayAndFocus
 {
 #ifdef HAVE_IOS_CUSTOMKEYBOARD
-	int cmdData = self.keyboardController.view.isHidden ? 0 : 1;
-	command_event(CMD_EVENT_GAME_FOCUS_TOGGLE, &cmdData);
-	if (self.keyboardController.view.isHidden)
-		command_event(CMD_EVENT_OVERLAY_INIT, NULL);
-	else
-		command_event(CMD_EVENT_OVERLAY_DEINIT, NULL);
+    int cmdData = self.keyboardController.view.isHidden ? 0 : 1;
+    command_event(CMD_EVENT_GAME_FOCUS_TOGGLE, &cmdData);
+    if (self.keyboardController.view.isHidden)
+        command_event(CMD_EVENT_OVERLAY_INIT, NULL);
+    else
+        command_event(CMD_EVENT_OVERLAY_DEINIT, NULL);
 #endif
 }
 
 -(BOOL)prefersHomeIndicatorAutoHidden { return YES; }
 -(void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
-	[super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-	if (@available(iOS 11, *))
-	{
-		[coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-			[self adjustViewFrameForSafeArea];
-		} completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
-		}];
-	}
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    if (@available(iOS 11, *))
+    {
+        [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+            [self adjustViewFrameForSafeArea];
+        } completion:^(id<UIViewControllerTransitionCoordinatorContext>  _Nonnull context) {
+        }];
+    }
 }
 
 -(void)adjustViewFrameForSafeArea
 {
    /* This is for adjusting the view frame to account for
-	* the notch in iPhone X phones */
+    * the notch in iPhone X phones */
    if (@available(iOS 11, *))
    {
-	  RAScreen *screen                   = (BRIDGE RAScreen*)cocoa_screen_get_chosen();
-	  CGRect screenSize                  = [screen bounds];
-	  UIEdgeInsets inset                 = [[UIApplication sharedApplication] delegate].window.safeAreaInsets;
-	  UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-	  switch (orientation)
-	  {
-		 case UIInterfaceOrientationPortrait:
-			self.view.frame = CGRectMake(screenSize.origin.x,
-				  screenSize.origin.y + inset.top,
-				  screenSize.size.width,
-				  screenSize.size.height - inset.top);
-			break;
-		 case UIInterfaceOrientationLandscapeLeft:
-			self.view.frame = CGRectMake(screenSize.origin.x + inset.right,
-				  screenSize.origin.y,
-				  screenSize.size.width - inset.right * 2,
-				  screenSize.size.height);
-			break;
-		 case UIInterfaceOrientationLandscapeRight:
-			self.view.frame = CGRectMake(screenSize.origin.x + inset.left,
-				  screenSize.origin.y,
-				  screenSize.size.width - inset.left * 2,
-				  screenSize.size.height);
-			break;
-		 default:
-			self.view.frame = screenSize;
-			break;
-	  }
+      RAScreen *screen                   = (BRIDGE RAScreen*)cocoa_screen_get_chosen();
+      CGRect screenSize                  = [screen bounds];
+      UIEdgeInsets inset                 = [[UIApplication sharedApplication] delegate].window.safeAreaInsets;
+      UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+      switch (orientation)
+      {
+         case UIInterfaceOrientationPortrait:
+            self.view.frame = CGRectMake(screenSize.origin.x,
+                  screenSize.origin.y + inset.top,
+                  screenSize.size.width,
+                  screenSize.size.height - inset.top);
+            break;
+         case UIInterfaceOrientationLandscapeLeft:
+            self.view.frame = CGRectMake(screenSize.origin.x + inset.right,
+                  screenSize.origin.y,
+                  screenSize.size.width - inset.right * 2,
+                  screenSize.size.height);
+            break;
+         case UIInterfaceOrientationLandscapeRight:
+            self.view.frame = CGRectMake(screenSize.origin.x + inset.left,
+                  screenSize.origin.y,
+                  screenSize.size.width - inset.left * 2,
+                  screenSize.size.height);
+            break;
+         default:
+            self.view.frame = screenSize;
+            break;
+      }
    }
 }
 
@@ -244,7 +242,7 @@ void handle_touch_event(NSArray* touches);
    [self.view bringSubviewToFront:self.keyboardController.view];
 #endif
 #if HAVE_IOS_SWIFT
-	[self.view bringSubviewToFront:self.helperBarView];
+    [self.view bringSubviewToFront:self.helperBarView];
 #endif
 }
 
@@ -258,28 +256,28 @@ void handle_touch_event(NSArray* touches);
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
    unsigned orientation_flags = apple_frontend_settings.orientation_flags;
-
+   
    switch (interfaceOrientation)
    {
-	  case UIInterfaceOrientationPortrait:
-		 return (orientation_flags
-			   & UIInterfaceOrientationMaskPortrait);
-	  case UIInterfaceOrientationPortraitUpsideDown:
-		 return (orientation_flags
-			   & UIInterfaceOrientationMaskPortraitUpsideDown);
-	  case UIInterfaceOrientationLandscapeLeft:
-		 return (orientation_flags
-			   & UIInterfaceOrientationMaskLandscapeLeft);
-	  case UIInterfaceOrientationLandscapeRight:
-		 return (orientation_flags
-			   & UIInterfaceOrientationMaskLandscapeRight);
+      case UIInterfaceOrientationPortrait:
+         return (orientation_flags
+               & UIInterfaceOrientationMaskPortrait);
+      case UIInterfaceOrientationPortraitUpsideDown:
+         return (orientation_flags
+               & UIInterfaceOrientationMaskPortraitUpsideDown);
+      case UIInterfaceOrientationLandscapeLeft:
+         return (orientation_flags
+               & UIInterfaceOrientationMaskLandscapeLeft);
+      case UIInterfaceOrientationLandscapeRight:
+         return (orientation_flags
+               & UIInterfaceOrientationMaskLandscapeRight);
 
-	  default:
-		 break;
+      default:
+         break;
    }
 
    return (orientation_flags
-			& UIInterfaceOrientationMaskAll);
+            & UIInterfaceOrientationMaskAll);
 }
 #endif
 
@@ -296,55 +294,54 @@ void handle_touch_event(NSArray* touches);
 }
 
 -(void)viewDidLoad {
-	[super viewDidLoad];
-    NSLog(@"Set:METAL VULKAN:View Loaded\n");
+    [super viewDidLoad];
 #if TARGET_OS_IOS
-	UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showNativeMenu)];
-	swipe.numberOfTouchesRequired   = 4;
-	swipe.delegate                  = self;
-	swipe.direction                 = UISwipeGestureRecognizerDirectionDown;
-	[self.view addGestureRecognizer:swipe];
+    UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showNativeMenu)];
+    swipe.numberOfTouchesRequired   = 4;
+    swipe.delegate                  = self;
+    swipe.direction                 = UISwipeGestureRecognizerDirectionDown;
+    [self.view addGestureRecognizer:swipe];
 #ifdef HAVE_IOS_TOUCHMOUSE
-	[self setupMouseSupport];
+    [self setupMouseSupport];
 #endif
 #ifdef HAVE_IOS_CUSTOMKEYBOARD
-	[self setupEmulatorKeyboard];
-	UISwipeGestureRecognizer *showKeyboardSwipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleCustomKeyboardUsingSwipe:)];
-	showKeyboardSwipe.numberOfTouchesRequired   = 3;
-	showKeyboardSwipe.direction                 = UISwipeGestureRecognizerDirectionUp;
-	showKeyboardSwipe.delegate                  = self;
-	[self.view addGestureRecognizer:showKeyboardSwipe];
-	UISwipeGestureRecognizer *hideKeyboardSwipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleCustomKeyboardUsingSwipe:)];
-	hideKeyboardSwipe.numberOfTouchesRequired   = 3;
-	hideKeyboardSwipe.direction                 = UISwipeGestureRecognizerDirectionDown;
-	hideKeyboardSwipe.delegate                  = self;
-	[self.view addGestureRecognizer:hideKeyboardSwipe];
+    [self setupEmulatorKeyboard];
+    UISwipeGestureRecognizer *showKeyboardSwipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleCustomKeyboardUsingSwipe:)];
+    showKeyboardSwipe.numberOfTouchesRequired   = 3;
+    showKeyboardSwipe.direction                 = UISwipeGestureRecognizerDirectionUp;
+    showKeyboardSwipe.delegate                  = self;
+    [self.view addGestureRecognizer:showKeyboardSwipe];
+    UISwipeGestureRecognizer *hideKeyboardSwipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleCustomKeyboardUsingSwipe:)];
+    hideKeyboardSwipe.numberOfTouchesRequired   = 3;
+    hideKeyboardSwipe.direction                 = UISwipeGestureRecognizerDirectionDown;
+    hideKeyboardSwipe.delegate                  = self;
+    [self.view addGestureRecognizer:hideKeyboardSwipe];
 #endif
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 130000
-	[self setupHelperBar];
+    [self setupHelperBar];
 #endif
 #endif
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-	return YES;
+    return YES;
 }
 
 
 - (void)viewDidAppear:(BOOL)animated
 {
 #if TARGET_OS_IOS
-	if (@available(iOS 11.0, *))
-		[self setNeedsUpdateOfHomeIndicatorAutoHidden];
+    if (@available(iOS 11.0, *))
+        [self setNeedsUpdateOfHomeIndicatorAutoHidden];
 #endif
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
-	[super viewWillAppear:animated];
+    [super viewWillAppear:animated];
 #if TARGET_OS_TV
-	[[WebServer sharedInstance] startUploader];
-	[WebServer sharedInstance].webUploader.delegate = self;
+    [[WebServer sharedInstance] startUploader];
+    [WebServer sharedInstance].webUploader.delegate = self;
 #endif
 }
 
@@ -354,37 +351,37 @@ void handle_touch_event(NSArray* touches);
 
 -(void)handleMouseClickWithIsLeftClick:(BOOL)isLeftClick isPressed:(BOOL)isPressed
 {
-	cocoa_input_data_t *apple = (cocoa_input_data_t*) input_state_get_ptr()->current_data;
-	if (!apple)
-		return;
-	NSUInteger buttonIndex = isLeftClick ? 0 : 1;
-	if (isPressed)
-		apple->mouse_buttons |= (1 << buttonIndex);
-	else
-		apple->mouse_buttons &= ~(1 << buttonIndex);
+    cocoa_input_data_t *apple = (cocoa_input_data_t*) input_state_get_ptr()->current_data;
+    if (!apple)
+        return;
+    NSUInteger buttonIndex = isLeftClick ? 0 : 1;
+    if (isPressed)
+        apple->mouse_buttons |= (1 << buttonIndex);
+    else
+        apple->mouse_buttons &= ~(1 << buttonIndex);
 }
 
 -(void)handleMouseMoveWithX:(CGFloat)x y:(CGFloat)y
 {
    cocoa_input_data_t *apple = (cocoa_input_data_t*) input_state_get_ptr()->current_data;
    if (!apple)
-	  return;
+      return;
    apple->mouse_rel_x = (int16_t)x;
    apple->mouse_rel_y = (int16_t)y;
    /* use location position to track pointer */
    if (@available(iOS 13.4, *))
    {
-	  apple->window_pos_x = 0;
-	  apple->window_pos_y = 0;
+      apple->window_pos_x = 0;
+      apple->window_pos_y = 0;
    }
 }
 
 -(void)handlePointerMoveWithX:(CGFloat)x y:(CGFloat)y
 {
    cocoa_input_data_t *apple = (cocoa_input_data_t*)
-	  input_state_get_ptr()->current_data;
+      input_state_get_ptr()->current_data;
    if (!apple)
-	  return;
+      return;
    apple->window_pos_x = (int16_t)x;
    apple->window_pos_y = (int16_t)y;
 }
@@ -394,28 +391,28 @@ void handle_touch_event(NSArray* touches);
 #pragma mark GCDWebServerDelegate
 - (void)webServerDidCompleteBonjourRegistration:(GCDWebServer*)server
 {
-	NSMutableString *servers = [[NSMutableString alloc] init];
-	if (server.serverURL != nil)
-		[servers appendString:[NSString stringWithFormat:@"%@",server.serverURL]];
-	if (servers.length > 0)
-		[servers appendString:@"\n\n"];
-	if (server.bonjourServerURL != nil)
-		[servers appendString:[NSString stringWithFormat:@"%@",server.bonjourServerURL]];
-
+    NSMutableString *servers = [[NSMutableString alloc] init];
+    if (server.serverURL != nil)
+        [servers appendString:[NSString stringWithFormat:@"%@",server.serverURL]];
+    if (servers.length > 0)
+        [servers appendString:@"\n\n"];
+    if (server.bonjourServerURL != nil)
+        [servers appendString:[NSString stringWithFormat:@"%@",server.bonjourServerURL]];
+    
 #if TARGET_OS_TV || TARGET_OS_IOS
-	UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Welcome to RetroArch" message:[NSString stringWithFormat:@"To transfer files from your computer, go to one of these addresses on your web browser:\n\n%@",servers] preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Welcome to RetroArch" message:[NSString stringWithFormat:@"To transfer files from your computer, go to one of these addresses on your web browser:\n\n%@",servers] preferredStyle:UIAlertControllerStyleAlert];
 #if TARGET_OS_TV
-	[alert addAction:[UIAlertAction actionWithTitle:@"OK"
-		style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-	}]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK"
+        style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    }]];
 #elif TARGET_OS_IOS
-	[alert addAction:[UIAlertAction actionWithTitle:@"Stop Server" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-		[[WebServer sharedInstance] webUploader].delegate = nil;
-		[[WebServer sharedInstance] stopUploader];
-	}]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Stop Server" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [[WebServer sharedInstance] webUploader].delegate = nil;
+        [[WebServer sharedInstance] stopUploader];
+    }]];
 #endif
-	[self presentViewController:alert animated:YES completion:^{
-	}];
+    [self presentViewController:alert animated:YES completion:^{
+    }];
 #endif
 }
 
@@ -425,36 +422,36 @@ void handle_touch_event(NSArray* touches);
 
 void *cocoa_screen_get_chosen(void)
 {
-	unsigned monitor_index;
-	settings_t *settings = config_get_ptr();
-	NSArray *screens     = [RAScreen screens];
-	if (!screens || !settings)
-		return NULL;
-
-	monitor_index        = settings->uints.video_monitor_index;
-
-	if (monitor_index >= screens.count)
-		return (BRIDGE void*)screens;
-	return ((BRIDGE void*)[screens objectAtIndex:monitor_index]);
+    unsigned monitor_index;
+    settings_t *settings = config_get_ptr();
+    NSArray *screens     = [RAScreen screens];
+    if (!screens || !settings)
+        return NULL;
+    
+    monitor_index        = settings->uints.video_monitor_index;
+    
+    if (monitor_index >= screens.count)
+        return (BRIDGE void*)screens;
+    return ((BRIDGE void*)[screens objectAtIndex:monitor_index]);
 }
 
 bool cocoa_has_focus(void *data)
 {
 #if defined(HAVE_COCOATOUCH)
-	return ([[UIApplication sharedApplication] applicationState]
-			== UIApplicationStateActive);
+    return ([[UIApplication sharedApplication] applicationState]
+            == UIApplicationStateActive);
 #else
-	return [NSApp isActive];
+    return [NSApp isActive];
 #endif
 }
 
 void cocoa_show_mouse(void *data, bool state)
 {
 #ifdef OSX
-	if (state)
-		[NSCursor unhide];
-	else
-		[NSCursor hide];
+    if (state)
+        [NSCursor unhide];
+    else
+        [NSCursor hide];
 #endif
 }
 
@@ -463,71 +460,71 @@ void cocoa_show_mouse(void *data, bool state)
 /* NOTE: backingScaleFactor only available on MacOS X 10.7 and up. */
 float cocoa_screen_get_backing_scale_factor(void)
 {
-	static float
-	backing_scale_def        = 0.0f;
-	if (backing_scale_def == 0.0f)
-	{
-		RAScreen *screen      = (BRIDGE RAScreen*)cocoa_screen_get_chosen();
-		if (!screen)
-			return 1.0f;
-		backing_scale_def     = [screen backingScaleFactor];
-	}
-	return backing_scale_def;
+    static float
+    backing_scale_def        = 0.0f;
+    if (backing_scale_def == 0.0f)
+    {
+        RAScreen *screen      = (BRIDGE RAScreen*)cocoa_screen_get_chosen();
+        if (!screen)
+            return 1.0f;
+        backing_scale_def     = [screen backingScaleFactor];
+    }
+    return backing_scale_def;
 }
 #else
 float cocoa_screen_get_backing_scale_factor(void) { return 1.0f; }
 #endif
 #else
 static float get_from_selector(
-	  Class obj_class, id obj_id, SEL selector, CGFloat *ret)
+      Class obj_class, id obj_id, SEL selector, CGFloat *ret)
 {
-	NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:
-								[obj_class instanceMethodSignatureForSelector:selector]];
-	[invocation setSelector:selector];
-	[invocation setTarget:obj_id];
-	[invocation invoke];
-	[invocation getReturnValue:ret];
-	RELEASE(invocation);
-	return *ret;
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:
+                                [obj_class instanceMethodSignatureForSelector:selector]];
+    [invocation setSelector:selector];
+    [invocation setTarget:obj_id];
+    [invocation invoke];
+    [invocation getReturnValue:ret];
+    RELEASE(invocation);
+    return *ret;
 }
 
 /* NOTE: nativeScale only available on iOS 8.0 and up. */
 float cocoa_screen_get_native_scale(void)
 {
-	SEL selector;
-	static CGFloat ret   = 0.0f;
-	RAScreen *screen     = NULL;
-
-	if (ret != 0.0f)
-		return ret;
-	if (!(screen = (BRIDGE RAScreen*)cocoa_screen_get_chosen()))
-		return 0.0f;
-
-	selector            = NSSelectorFromString(BOXSTRING("nativeScale"));
-
-	if ([screen respondsToSelector:selector])
-		ret                 = (float)get_from_selector(
-			  [screen class], screen, selector, &ret);
-	else
-	{
-		ret                 = 1.0f;
-		selector            = NSSelectorFromString(BOXSTRING("scale"));
-		if ([screen respondsToSelector:selector])
-			ret              = screen.scale;
-	}
-
-	return ret;
+    SEL selector;
+    static CGFloat ret   = 0.0f;
+    RAScreen *screen     = NULL;
+    
+    if (ret != 0.0f)
+        return ret;
+    if (!(screen = (BRIDGE RAScreen*)cocoa_screen_get_chosen()))
+        return 0.0f;
+    
+    selector            = NSSelectorFromString(BOXSTRING("nativeScale"));
+    
+    if ([screen respondsToSelector:selector])
+        ret                 = (float)get_from_selector(
+              [screen class], screen, selector, &ret);
+    else
+    {
+        ret                 = 1.0f;
+        selector            = NSSelectorFromString(BOXSTRING("scale"));
+        if ([screen respondsToSelector:selector])
+            ret              = screen.scale;
+    }
+    
+    return ret;
 }
 #endif
 
 void *nsview_get_ptr(void)
 {
 #if defined(OSX)
-	video_driver_display_type_set(RARCH_DISPLAY_OSX);
-	video_driver_display_set(0);
-	video_driver_display_userdata_set((uintptr_t)g_instance);
+    video_driver_display_type_set(RARCH_DISPLAY_OSX);
+    video_driver_display_set(0);
+    video_driver_display_userdata_set((uintptr_t)g_instance);
 #endif
-	return (BRIDGE void *)g_instance;
+    return (BRIDGE void *)g_instance;
 }
 
 void nsview_set_ptr(CocoaView *p) { g_instance = p; }
@@ -535,12 +532,12 @@ void nsview_set_ptr(CocoaView *p) { g_instance = p; }
 CocoaView *cocoaview_get(void)
 {
 #if defined(HAVE_COCOA_METAL)
-	return (CocoaView*)apple_platform.renderView;
+    return (CocoaView*)apple_platform.renderView;
 #elif defined(HAVE_COCOA)
-	return g_instance;
+    return g_instance;
 #else
-	/* TODO/FIXME - implement */
-	return NULL;
+    /* TODO/FIXME - implement */
+    return NULL;
 #endif
 }
 
@@ -551,58 +548,58 @@ void cocoa_update_title(void *data)
 
    if (window)
    {
-	  char title[128];
+      char title[128];
 
-	  title[0] = '\0';
+      title[0] = '\0';
 
-	  video_driver_get_window_title(title, sizeof(title));
+      video_driver_get_window_title(title, sizeof(title));
 
-	  if (title[0])
-		 window->set_title((void*)video_driver_display_userdata_get(), title);
+      if (title[0])
+         window->set_title((void*)video_driver_display_userdata_get(), title);
    }
 }
 
 bool cocoa_get_metrics(
-	  void *data, enum display_metric_types type,
-	  float *value)
+      void *data, enum display_metric_types type,
+      float *value)
 {
    RAScreen *screen              = (BRIDGE RAScreen*)cocoa_screen_get_chosen();
    NSDictionary *desc            = [screen deviceDescription];
    CGSize  display_physical_size = CGDisplayScreenSize(
-		 [[desc objectForKey:@"NSScreenNumber"] unsignedIntValue]);
+         [[desc objectForKey:@"NSScreenNumber"] unsignedIntValue]);
 
    float   physical_width        = display_physical_size.width;
    float   physical_height       = display_physical_size.height;
 
    switch (type)
    {
-	  case DISPLAY_METRIC_MM_WIDTH:
-		 *value = physical_width;
-		 break;
-	  case DISPLAY_METRIC_MM_HEIGHT:
-		 *value = physical_height;
-		 break;
-	  case DISPLAY_METRIC_DPI:
-		 {
-			NSSize disp_pixel_size = [[desc objectForKey:NSDeviceSize] sizeValue];
-			float dispwidth = disp_pixel_size.width;
-			float   scale   = cocoa_screen_get_backing_scale_factor();
-			float   dpi     = (dispwidth / physical_width) * 25.4f * scale;
-			*value          = dpi;
-		 }
-		 break;
-	  case DISPLAY_METRIC_NONE:
-	  default:
-		 *value = 0;
-		 return false;
+      case DISPLAY_METRIC_MM_WIDTH:
+         *value = physical_width;
+         break;
+      case DISPLAY_METRIC_MM_HEIGHT:
+         *value = physical_height;
+         break;
+      case DISPLAY_METRIC_DPI:
+         {
+            NSSize disp_pixel_size = [[desc objectForKey:NSDeviceSize] sizeValue];
+            float dispwidth = disp_pixel_size.width;
+            float   scale   = cocoa_screen_get_backing_scale_factor();
+            float   dpi     = (dispwidth / physical_width) * 25.4f * scale;
+            *value          = dpi;
+         }
+         break;
+      case DISPLAY_METRIC_NONE:
+      default:
+         *value = 0;
+         return false;
    }
 
    return true;
 }
 #else
 bool cocoa_get_metrics(
-	  void *data, enum display_metric_types type,
-	  float *value)
+      void *data, enum display_metric_types type,
+      float *value)
 {
    RAScreen *screen              = (BRIDGE RAScreen*)cocoa_screen_get_chosen();
    float   scale                 = cocoa_screen_get_native_scale();
@@ -614,43 +611,43 @@ bool cocoa_get_metrics(
 
    switch (idiom_type)
    {
-	  case -1: /* UIUserInterfaceIdiomUnspecified */
-		 /* TODO */
-		 break;
-	  case UIUserInterfaceIdiomPad:
-		 dpi = 132 * scale;
-		 break;
-	  case UIUserInterfaceIdiomPhone:
-		 {
-			CGFloat maxSize = fmaxf(physical_width, physical_height);
-			/* Larger iPhones: iPhone Plus, X, XR, XS, XS Max, 11, 11 Pro Max */
-			if (maxSize >= 2208.0)
-			   dpi = 81 * scale;
-			else
-			   dpi = 163 * scale;
-		 }
-		 break;
-	  case UIUserInterfaceIdiomTV:
-	  case UIUserInterfaceIdiomCarPlay:
-		 /* TODO */
-		 break;
+      case -1: /* UIUserInterfaceIdiomUnspecified */
+         /* TODO */
+         break;
+      case UIUserInterfaceIdiomPad:
+         dpi = 132 * scale;
+         break;
+      case UIUserInterfaceIdiomPhone:
+         {
+            CGFloat maxSize = fmaxf(physical_width, physical_height);
+            /* Larger iPhones: iPhone Plus, X, XR, XS, XS Max, 11, 11 Pro Max */
+            if (maxSize >= 2208.0)
+               dpi = 81 * scale;
+            else
+               dpi = 163 * scale;
+         }
+         break;
+      case UIUserInterfaceIdiomTV:
+      case UIUserInterfaceIdiomCarPlay:
+         /* TODO */
+         break;
    }
 
    switch (type)
    {
-	  case DISPLAY_METRIC_MM_WIDTH:
-		 *value = physical_width;
-		 break;
-	  case DISPLAY_METRIC_MM_HEIGHT:
-		 *value = physical_height;
-		 break;
-	  case DISPLAY_METRIC_DPI:
-		 *value = dpi;
-		 break;
-	  case DISPLAY_METRIC_NONE:
-	  default:
-		 *value = 0;
-		 return false;
+      case DISPLAY_METRIC_MM_WIDTH:
+         *value = physical_width;
+         break;
+      case DISPLAY_METRIC_MM_HEIGHT:
+         *value = physical_height;
+         break;
+      case DISPLAY_METRIC_DPI:
+         *value = dpi;
+         break;
+      case DISPLAY_METRIC_NONE:
+      default:
+         *value = 0;
+         return false;
    }
 
    return true;

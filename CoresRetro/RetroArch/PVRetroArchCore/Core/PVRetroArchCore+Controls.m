@@ -39,10 +39,9 @@ enum
 {
 	GCCONTROLLER_PLAYER_INDEX_UNSET = -1,
 };
-static uint32_t mfi_buttons[MAX_USERS];
-static int16_t  mfi_axes[MAX_USERS][4];
-static uint32_t mfi_controllers[MAX_MFI_CONTROLLERS];
-static NSMutableArray *mfiControllers;
+uint32_t mfi_buttons[MAX_USERS];
+int16_t  mfi_axes[MAX_USERS][4];
+uint32_t mfi_controllers[MAX_MFI_CONTROLLERS];
 typedef unsigned char  u8;
 typedef signed char    s8;
 typedef unsigned short u16;
@@ -51,13 +50,219 @@ extern bool _isInitialized;
 extern __weak PVRetroArchCore *_current;
 void handle_touch_event(NSArray* touches);
 void handle_click_event(CGPoint click, bool pressed);
+GCController *touch_controller;
+static NSMutableArray *mfiControllers;
+void apple_gamecontroller_joypad_connect(GCController *controller);
+void refresh_gamecontrollers();
+void apple_gamecontroller_joypad_disconnect(GCController* controller);
 
 @implementation PVRetroArchCore (Controls)
 - (void)initControllBuffers {}
 #pragma mark - Control
--(void)setupControllers {
-	[self initControllBuffers];
+-(void)controllerConnected:(NSNotification *)notification {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        apple_gamecontroller_joypad_connect([notification object]);
+        [self refresh_gamecontrollers];
+        [self useRetroArchController:self.retroArchControls];
+        ELOG(@"Binding Controls\n");
+    });
 }
+-(void)controllerDisconnected:(NSNotification *)notification {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        apple_gamecontroller_joypad_disconnect([notification object]);
+        [self refresh_gamecontrollers];
+        [self useRetroArchController:self.retroArchControls];
+    });
+}
+
+-(void)keyboardConnected:(NSNotification *)notification {
+    [self useRetroArchController:self.retroArchControls];
+}
+-(void)keyboardDisconnected:(NSNotification *)notification {
+    [self useRetroArchController:self.retroArchControls];
+}
+- (void)processKeyPress:(int)key pressed:(bool)pressed {
+    if (!self.bindAnalogKeys)
+        return;
+    switch (key) {
+        static float leftXAxis=0;
+        static float leftYAxis=0;
+        static float rightXAxis=0;
+        static float rightYAxis=0;
+        case(22): // s
+            leftYAxis=pressed?-1.0:0;
+            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
+            break;
+        case(26): // w
+            leftYAxis=pressed?1.0:0;
+            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
+            break;
+        case(7):  // d
+            leftXAxis=pressed?1.0:0;
+            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
+            break;
+        case(4):  // a
+            leftXAxis=pressed?-1.0:0;
+            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
+            break;
+        case(11): // h
+            rightYAxis=pressed?-1.0:0;
+            [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+            break;
+        case(28): // y
+            rightYAxis=pressed?1.0:0;
+            [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+            break;
+        case(13):  // j
+            rightXAxis=pressed?1.0:0;
+            [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+            break;
+        case(10):  // g
+            rightXAxis=pressed?-1.0:0;
+            [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+            break;
+        default:
+            break;
+    }
+}
+-(void)refresh_gamecontrollers {
+    apple_gamecontroller_joypad_connect(touch_controller);
+    for (NSInteger player = 0; player < 4; player++) {
+        GCController *controller = nil;
+        if (_current.controller1 && player == 0)
+        {
+            controller = _current.controller1;
+        }
+        else if (_current.controller2 && player == 1)
+        {
+            controller = _current.controller2;
+        }
+        else if (_current.controller3 && player == 2)
+        {
+            controller = _current.controller3;
+        }
+        else if (_current.controller4 && player == 3)
+        {
+            controller = _current.controller4;
+        }
+        if (controller) {
+            apple_gamecontroller_joypad_connect(controller);
+        }
+        [self bindControls];
+    }
+}
+-(void)setupControllers {
+    _current=self;
+    ELOG(@"Setting up Controller Notification Listeners\n");
+    [self initControllBuffers];
+    [self useRetroArchController:self.retroArchControls];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(controllerConnected:)
+                                                 name:GCControllerDidConnectNotification
+                                               object:nil
+    ];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(controllerDisconnected:)
+                                                 name:GCControllerDidDisconnectNotification
+                                               object:nil
+    ];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardConnected:)
+                                                 name:GCKeyboardDidConnectNotification
+                                               object:nil
+    ];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardDisconnected:)
+                                                 name:GCKeyboardDidDisconnectNotification
+                                               object:nil
+    ];
+}
+-(void)bindControls {
+    for (NSInteger player = 0; player < 4; player++)
+    {
+        GCController *controller = nil;
+        if (self.controller1 && player == 0)
+        {
+            controller = self.controller1;
+        }
+        else if (self.controller2 && player == 1)
+        {
+            controller = self.controller2;
+        }
+        else if (self.controller3 && player == 2)
+        {
+            controller = self.controller3;
+        }
+        else if (self.controller4 && player == 3)
+        {
+            controller = self.controller4;
+        }
+        ELOG(@"Controller Vendor Name: %s\n",controller.vendorName.UTF8String);
+        if (controller.extendedGamepad != nil && ![controller.vendorName containsString:@"Keyboard"])
+        {
+            controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.buttonA setValue:value];
+            };
+            controller.extendedGamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.buttonB setValue:value];
+            };
+            controller.extendedGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.buttonX setValue:value];
+            };
+            controller.extendedGamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.buttonY setValue:value];
+            };
+            controller.extendedGamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.leftShoulder setValue:value];
+            };
+            controller.extendedGamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.rightShoulder setValue:value];
+            };
+            controller.extendedGamepad.leftTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.leftTrigger setValue:value];
+            };
+            controller.extendedGamepad.rightTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.rightTrigger setValue:value];
+            };
+            controller.extendedGamepad.dpad.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
+                [touch_controller.extendedGamepad.dpad setValueForXAxis:xValue yAxis:yValue];
+            };
+            controller.extendedGamepad.leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput* xAxis, float value) {
+                [touch_controller.extendedGamepad.leftThumbstick.xAxis setValue:value];
+            };
+            controller.extendedGamepad.leftThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput* yAxis, float value) {
+                [touch_controller.extendedGamepad.leftThumbstick.yAxis setValue:value];
+            };
+            controller.extendedGamepad.rightThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput* xAxis, float value) {
+                [touch_controller.extendedGamepad.rightThumbstick.xAxis setValue:value];
+            };
+            controller.extendedGamepad.rightThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput* yAxis, float value) {
+                [touch_controller.extendedGamepad.rightThumbstick.yAxis setValue:value];
+            };
+            controller.extendedGamepad.leftThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.leftThumbstickButton setValue:value];
+            };
+            controller.extendedGamepad.rightThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.rightThumbstickButton setValue:value];
+            };
+            controller.extendedGamepad.buttonOptions.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.buttonOptions setValue:value];
+                if (pressed) {
+                    command_event(CMD_EVENT_MENU_TOGGLE, NULL);
+                }
+            };
+            #if defined(__IPHONE_14_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_14_0
+            controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                [touch_controller.extendedGamepad.buttonHome setValue:value];
+            };
+            //controller.extendedGamepad.buttonMenu.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+            //    [[NSNotificationCenter defaultCenter] postNotificationName:@"PauseGame" object:nil userInfo:nil];
+            //};
+            #endif
+        }
+    }
+}
+
 - (void)sendEvent:(UIEvent *)event {
     [super sendEvent:event];
     if (@available(iOS 13.4, *)) {
@@ -67,15 +272,57 @@ void handle_click_event(CGPoint click, bool pressed);
     if (event.allTouches.count)
         handle_touch_event(event.allTouches.allObjects);
 }
+
+-(void)useRetroArchController:(BOOL)flag {
+    self.retroArchControls=flag;
+    bool should_update=false;
+    settings_t *settings            = config_get_ptr();
+    input_driver_state_t  *input_st = input_state_get_ptr();
+    input_overlay_t       *ol       = input_st->overlay_ptr;
+    input_overlay_state_t *ol_state = &ol->overlay_state;
+
+    NSString *original_overlay = [NSString stringWithUTF8String:settings->paths.path_overlay];
+    if (flag) {
+        ELOG(@"Option: Use Retro arch controller\n");
+        if ([original_overlay
+             containsString:@RETROARCH_PVOVERLAY]) {
+            NSString *overlay=@RETROARCH_DEFAULT_OVERLAY;
+            NSString *new_overlay=[overlay stringByReplacingOccurrencesOfString:@"/RetroArch"
+             withString:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch" ]];
+            if (![new_overlay isEqualToString:original_overlay]) {
+                configuration_set_string(settings,
+                        settings->paths.path_overlay,
+                        new_overlay.UTF8String
+                );
+                should_update=true;
+                ELOG(@"Updating %s to %s\n", original_overlay.UTF8String, new_overlay.UTF8String);
+            }
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"HideTouchControls" object:nil userInfo:nil];
+    } else {
+        ELOG(@"Option: Don't Use Retro arch controller\n");
+        settings_t *settings                     = config_get_ptr();
+        NSString *overlay=@RETROARCH_PVOVERLAY;
+        NSString *new_overlay =  [overlay stringByReplacingOccurrencesOfString:@"/RetroArch"
+         withString:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch" ]];
+        if (![new_overlay isEqualToString:original_overlay]) {
+            configuration_set_string(settings,
+                    settings->paths.path_overlay,
+                    new_overlay.UTF8String
+            );
+            should_update=true;
+            ELOG(@"Updating %s to %s\n", original_overlay.UTF8String, new_overlay.UTF8String);
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"ShowTouchControls" object:nil userInfo:nil];
+    }
+    if (should_update) {
+        ELOG(@"Option: Updating Overlay\n");
+        command_event(CMD_EVENT_OVERLAY_INIT, NULL);
+    }
+
+}
 @end
-static bool apple_gamecontroller_available(void)
-{
-	int major, minor;
-	get_ios_version(&major, &minor);
-
-	if (major <= 6)
-		return false;
-
+static bool apple_gamecontroller_available(void) {
 	return true;
 }
 
@@ -88,7 +335,7 @@ static void apple_gamecontroller_joypad_poll_internal(GCController *controller)
 
 	slot               = (uint32_t)controller.playerIndex;
 	/* If we have not assigned a slot to this controller yet, ignore it. */
-	if (slot >= MAX_USERS)
+    if (slot >= MAX_USERS)
 		return;
 	buttons            = &mfi_buttons[slot];
 
@@ -110,8 +357,7 @@ static void apple_gamecontroller_joypad_poll_internal(GCController *controller)
 		*buttons           = 0 | pause | select | l3 | r3;
 	}
 	memset(mfi_axes[slot], 0, sizeof(mfi_axes[0]));
-
-	if (controller.extendedGamepad)
+    if (controller.extendedGamepad)
 	{
 		GCExtendedGamepad *gp = (GCExtendedGamepad *)controller.extendedGamepad;
 
@@ -127,6 +373,7 @@ static void apple_gamecontroller_joypad_poll_internal(GCController *controller)
 		*buttons             |= gp.rightShoulder.pressed   ? (1 << RETRO_DEVICE_ID_JOYPAD_R)     : 0;
 		*buttons             |= gp.leftTrigger.pressed     ? (1 << RETRO_DEVICE_ID_JOYPAD_L2)    : 0;
 		*buttons             |= gp.rightTrigger.pressed    ? (1 << RETRO_DEVICE_ID_JOYPAD_R2)    : 0;
+        //printf("slot %d button %d extended\n", slot, *buttons);
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 120100 || __TV_OS_VERSION_MAX_ALLOWED >= 120100
 		if (@available(iOS 12.1, *))
 		{
@@ -165,6 +412,8 @@ static void apple_gamecontroller_joypad_poll_internal(GCController *controller)
 		mfi_axes[slot][1]     = gp.leftThumbstick.yAxis.value * 32767.0f;
 		mfi_axes[slot][2]     = gp.rightThumbstick.xAxis.value * 32767.0f;
 		mfi_axes[slot][3]     = gp.rightThumbstick.yAxis.value * 32767.0f;
+        //printf("slot %d axes %d extended\n", slot, mfi_axes[slot][0]);
+
 
 	}
 
@@ -185,6 +434,8 @@ static void apple_gamecontroller_joypad_poll_internal(GCController *controller)
 		*buttons |= gp.buttonY.pressed       ? (1 << RETRO_DEVICE_ID_JOYPAD_X)     : 0;
 		*buttons |= gp.leftShoulder.pressed  ? (1 << RETRO_DEVICE_ID_JOYPAD_L)     : 0;
 		*buttons |= gp.rightShoulder.pressed ? (1 << RETRO_DEVICE_ID_JOYPAD_R)     : 0;
+        //printf("slot %d button %d gamepad\n", slot, *buttons);
+
 	}
 #pragma clang diagnostic pop
 }
@@ -193,15 +444,16 @@ static void apple_gamecontroller_joypad_poll(void)
 {
 	if (!apple_gamecontroller_available())
 		return;
-
 	for (GCController *controller in [GCController controllers])
 		apple_gamecontroller_joypad_poll_internal(controller);
+    if (touch_controller)
+        apple_gamecontroller_joypad_poll_internal(touch_controller);
 }
 
 /* GCGamepad is deprecated */
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated"
-static void apple_gamecontroller_joypad_register(GCGamepad *gamepad)
+static void apple_gamecontroller_joypad_register(GCExtendedGamepad *gamepad)
 {
 #ifdef __IPHONE_14_0
 	/* Don't let tvOS or iOS do anything with **our** buttons!!
@@ -216,7 +468,7 @@ static void apple_gamecontroller_joypad_register(GCGamepad *gamepad)
 	}
 #endif
 
-	gamepad.valueChangedHandler = ^(GCGamepad *updateGamepad, GCControllerElement *element)
+	gamepad.valueChangedHandler = ^(GCExtendedGamepad *updateGamepad, GCControllerElement *element)
 	{
 		apple_gamecontroller_joypad_poll_internal(updateGamepad.controller);
 	};
@@ -285,21 +537,23 @@ static void apple_gamecontroller_joypad_register(GCGamepad *gamepad)
 	}
 }
 #pragma clang diagnostic pop
-
+int auto_incr_id=0;
 static void mfi_joypad_autodetect_add(unsigned autoconf_pad)
 {
-	input_autoconfigure_connect("mFi Controller", NULL, mfi_joypad.ident, autoconf_pad, 0, 0);
+    auto_incr_id+=1;    
+	input_autoconfigure_connect("mFi Controller", NULL, mfi_joypad.ident, autoconf_pad, auto_incr_id, 0);
 }
 
-static void apple_gamecontroller_joypad_connect(GCController *controller)
+void apple_gamecontroller_joypad_connect(GCController *controller)
 {
 	signed desired_index = (int32_t)controller.playerIndex;
 	desired_index        = (desired_index >= 0 && desired_index < MAX_MFI_CONTROLLERS)
 	? desired_index : 0;
-
-	/* prevent same controller getting set twice */
+    /* prevent same controller getting set twice */
 	if ([mfiControllers containsObject:controller])
 		return;
+    if ([controller.vendorName containsString:@"Keyboard"])
+        return;
 
 	if (mfi_controllers[desired_index] != (uint32_t)controller.hash)
 	{
@@ -324,10 +578,6 @@ static void apple_gamecontroller_joypad_connect(GCController *controller)
 				break;
 			}
 		}
-
-/* GCGamepad is deprecated */
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated"
 		[mfiControllers addObject:controller];
 		/* Move any non-game controllers (like the siri remote) to the end */
 		if (mfiControllers.count > 1)
@@ -353,13 +603,15 @@ static void apple_gamecontroller_joypad_connect(GCController *controller)
 		   for (GCController *gc in mfiControllers)
 			  gc.playerIndex = newPlayerIndex++;
 		}
-		apple_gamecontroller_joypad_register(controller.gamepad);
+        if (controller.extendedGamepad)
+            apple_gamecontroller_joypad_register(controller.extendedGamepad);
+        else
+            apple_gamecontroller_joypad_register(controller.gamepad);
 		mfi_joypad_autodetect_add((unsigned)controller.playerIndex);
 	}
-#pragma clang diagnostic pop
 }
 
-static void apple_gamecontroller_joypad_disconnect(GCController* controller)
+void apple_gamecontroller_joypad_disconnect(GCController* controller)
 {
 	signed pad = (int32_t)controller.playerIndex;
 
@@ -374,60 +626,35 @@ static void apple_gamecontroller_joypad_disconnect(GCController* controller)
 	}
 }
 
-void refresh_gamecontrollers() {
-    if (_current) {
-        for (NSInteger player = 0; player < 4; player++) {
-            GCController *controller = nil;
-            if (_current.controller1 && player == 0)
-            {
-                controller = _current.controller1;
-            }
-            else if (_current.controller2 && player == 1)
-            {
-                controller = _current.controller2;
-            }
-            else if (_current.controller3 && player == 2)
-            {
-                controller = _current.controller3;
-            }
-            else if (_current.controller4 && player == 3)
-            {
-                controller = _current.controller4;
-            }
-            if (controller) {
-                apple_gamecontroller_joypad_connect(controller);
-            }
-        }
-    }
-}
 void *apple_gamecontroller_joypad_init(void *data) {
-    static bool inited = false;
-    if (inited)
-      return (void*)-1;
     if (!apple_gamecontroller_available())
       return NULL;
-    mfiControllers = [[NSMutableArray alloc] initWithCapacity:MAX_MFI_CONTROLLERS];
-    refresh_gamecontrollers();
-    [[NSNotificationCenter defaultCenter] addObserverForName:GCControllerDidConnectNotification
-                                                     object:nil
-                                                      queue:[NSOperationQueue mainQueue]
-                                                 usingBlock:^(NSNotification *note)
-                                                 {
-                                                    apple_gamecontroller_joypad_connect([note object]);
-                                                    refresh_gamecontrollers();
-                                                 }];
-    [[NSNotificationCenter defaultCenter] addObserverForName:GCControllerDidDisconnectNotification
-                                                     object:nil
-                                                      queue:[NSOperationQueue mainQueue]
-                                                 usingBlock:^(NSNotification *note)
-                                                 {
-                                                    apple_gamecontroller_joypad_disconnect([note object]);
-                                                    refresh_gamecontrollers();
-                                                 } ];
+    
+    mfiControllers=[[NSMutableArray alloc] initWithCapacity:MAX_MFI_CONTROLLERS];
+    
+    for (int i=0; i < MAX_MFI_CONTROLLERS; i++) {
+        mfi_controllers[i]=0;
+    }
+    if (!touch_controller) {
+        touch_controller=[[GCController controllerWithExtendedGamepad] init];
+        touch_controller.playerIndex=0;
+        apple_gamecontroller_joypad_connect(touch_controller);
+    }
+    [_current refresh_gamecontrollers];
     return (void*)-1;
 }
 
-static void apple_gamecontroller_joypad_destroy(void) { }
+void apple_gamecontroller_joypad_destroy(void) {
+    printf("Controller: Disconnecting Controllers\n");
+    /*
+    if (touch_controller) {
+        apple_gamecontroller_joypad_disconnect(touch_controller);
+    }
+    for (GCController *gc in mfiControllers)
+        apple_gamecontroller_joypad_disconnect(gc);
+     */
+    touch_controller=nil;
+}
 
 static int32_t apple_gamecontroller_joypad_button(
 	  unsigned port, uint16_t joykey)
@@ -508,7 +735,6 @@ static int16_t apple_gamecontroller_joypad_state(
 			 / 0x8000) > joypad_info->axis_threshold)
 		 ret |= (1 << i);
    }
-
    return ret;
 }
 
@@ -576,7 +802,7 @@ bool dragging=false;
 }
 
 - (void)pressesBegan:(NSSet<UIPress *> *)touches withEvent:(UIPressesEvent *)event {
-	  for (int i = 0; i < touches.allObjects.count; i++) {
+	for (int i = 0; i < touches.allObjects.count; i++) {
 		UIKey *key = touches.allObjects[i].key;
 		NSUInteger mods = key.modifierFlags;
 		uint32_t mod       = 0;
@@ -592,16 +818,17 @@ bool dragging=false;
 			mod |= RETROKMOD_META;
 		if (mods & NSNumericPadKeyMask)
 			mod |= RETROKMOD_NUMLOCK;
-	   apple_input_keyboard_event(true,
-		(uint32_t)key.keyCode,
-		key.characters.length > 0 ? (uint32_t)[key.characters characterAtIndex:0] : 0,
-		mod,
-		RETRO_DEVICE_KEYBOARD);
+        [_current processKeyPress:key.keyCode pressed:true];
+        apple_input_keyboard_event(true,
+		 (uint32_t)key.keyCode,
+		 key.characters.length > 0 ? (uint32_t)[key.characters characterAtIndex:0] : 0,
+		 mod,
+		 RETRO_DEVICE_KEYBOARD);
 	}
 }
 
 - (void)pressesEnded:(NSSet<UIPress *> *)touches withEvent:(UIPressesEvent *)event {
-	  for (int i = 0; i < touches.allObjects.count; i++) {
+    for (int i = 0; i < touches.allObjects.count; i++) {
 		UIKey *key = touches.allObjects[i].key;
 		NSUInteger mods = key.modifierFlags;
 		uint32_t mod       = 0;
@@ -617,7 +844,8 @@ bool dragging=false;
 			mod |= RETROKMOD_META;
 		if (mods & NSNumericPadKeyMask)
 			mod |= RETROKMOD_NUMLOCK;
-		  apple_input_keyboard_event(false,
+        [_current processKeyPress:key.keyCode pressed:false];
+        apple_input_keyboard_event(false,
 		   (uint32_t)key.keyCode,
 		   key.characters.length > 0 ? (uint32_t)[key.characters characterAtIndex:0] : 0,
 		   mod,

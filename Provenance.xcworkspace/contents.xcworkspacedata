@@ -92,6 +92,9 @@
    <Group
       location = "group:"
       name = "Cores Libretro">
+      <FileRef
+         location = "group:Cores/supergrafx/PVSupergrafx.xcodeproj">
+      </FileRef>
       <Group
          location = "container:"
          name = "Broken">
@@ -111,6 +114,9 @@
             location = "group:Cores/TIC80/PVTIC80.xcodeproj">
          </FileRef>
       </Group>
+      <FileRef
+         location = "group:Cores/NP2Kai/PVNP2Kai.xcodeproj">
+      </FileRef>
       <FileRef
          location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
       </FileRef>

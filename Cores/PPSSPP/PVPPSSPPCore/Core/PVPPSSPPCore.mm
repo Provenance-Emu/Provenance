@@ -248,6 +248,7 @@
 	self->shouldStop = true;
 	[self stopGame:true];
 	[super stopEmulation];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 	g_threadManager.Teardown();
 	Memory::MemoryMap_Shutdown(0);
 }

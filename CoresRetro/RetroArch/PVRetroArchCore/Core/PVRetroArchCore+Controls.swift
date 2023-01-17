@@ -472,11 +472,12 @@ class HelperBarViewController: UIViewController {
 	}
 
 	private func setupViews() {
+        let scale = UIScreen.main.scale
 		indicatorImageView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(indicatorImageView)
-		indicatorImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4).isActive = true
-		indicatorImageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -30).isActive = true
-		indicatorImageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+		indicatorImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 6 * scale).isActive = true
+		indicatorImageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -6 * scale).isActive = true
+		indicatorImageView.heightAnchor.constraint(equalToConstant: 15 * scale).isActive = true
 		indicatorImageView.widthAnchor.constraint(equalTo: indicatorImageView.heightAnchor).isActive = true
 		view.addSubview(navigationBar)
 		navigationBar.translatesAutoresizingMaskIntoConstraints = false
@@ -532,20 +533,16 @@ class HelperBarViewController: UIViewController {
 	var tappedIndicator = false
 
 	@objc func didTap(_ sender: UITapGestureRecognizer) {
+        	let scale = UIScreen.main.scale
 		let point = sender.location(in: view)
-		NSLog("Tapped %d %d\n", point.x, point.y);
-		guard point.y <= 100 else { return }   // detect top portion of view only
-		 let bounds = UIScreen.main.bounds;
-		 if point.x >= bounds.width - 100 {
-			indicatorImageView.layer.removeAllAnimations()
-			indicatorImageView.alpha = 1.0
-			tappedIndicator = false
-			DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-				if !(self?.tappedIndicator ?? false) {
-					self?.showIndicatorAndFadeAway()
-				}
-			}
-		}
+        	indicatorImageView.layer.removeAllAnimations()
+        	indicatorImageView.alpha = 1.0
+        	tappedIndicator = false
+        	DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            		if !(self?.tappedIndicator ?? false) {
+                		self?.showIndicatorAndFadeAway()
+            		}
+        	}
 	}
 
 	@objc func didTapIndicator(_ sender: UITapGestureRecognizer) {

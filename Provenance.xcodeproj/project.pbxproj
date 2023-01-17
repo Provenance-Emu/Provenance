@@ -161,8 +161,20 @@
 		934855C929708D5A00A5BBC6 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.m */; };
 		934BE9B4296F178400FB9933 /* modules in Resources */ = {isa = PBXBuildFile; fileRef = 934BE9B3296F178400FB9933 /* modules */; };
 		93599B4B2955F2850049DAC8 /* PVWiiControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93599B4A2955F2850049DAC8 /* PVWiiControllerViewController.swift */; };
+		935BB05929854A8700AA68DC /* PVNP2Kai.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 935BB05829854A8700AA68DC /* PVNP2Kai.framework */; };
+		935BB05A29854A8700AA68DC /* PVNP2Kai.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 935BB05829854A8700AA68DC /* PVNP2Kai.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		93654F76298F400B0046503F /* PVSupergrafx.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93654F75298F400B0046503F /* PVSupergrafx.framework */; };
+		93654F77298F400B0046503F /* PVSupergrafx.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93654F75298F400B0046503F /* PVSupergrafx.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		936BFD852986A6CA001FF097 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; };
+		936BFD862986A6CA001FF097 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		936BFD872986A719001FF097 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; };
+		936BFD882986A719001FF097 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		936FDBEB295855670073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; };
 		936FDBEC295855A50073628A /* libMoltenVK_Play.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		93CB27D2297CE664006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; };
+		93CB27D3297CE666006A940B /* libMoltenVK_Dolphin.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		93CB27DA297CF017006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; };
+		93CB27DB297CF019006A940B /* libMoltenVK_Dolphin.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; };
 		93F28DCA295E2F5100E4D464 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B300DEC1295FEA9B0049F2AB /* DOLJitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */; };
@@ -202,8 +214,6 @@
 		B305F089276B5243003AE510 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F087276B5242003AE510 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B305F08B276B5248003AE510 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305F08A276B5248003AE510 /* PVSupport.framework */; };
 		B305F08C276B5248003AE510 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F08A276B5248003AE510 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3062B1E2971A60D00686D31 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */; };
-		B3062B1F2971A61000686D31 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B306E0CF2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
 		B306E0D02769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
 		B307830628924D69007E7A2D /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
@@ -666,8 +676,6 @@
 		B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
 		B3B104D6218F2F2800210C39 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
 		B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
-		B3BA902229583A1600142E32 /* PVDolphin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3BA902129583A1600142E32 /* PVDolphin.framework */; };
-		B3BA902329583A1600142E32 /* PVDolphin.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3BA902129583A1600142E32 /* PVDolphin.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3C8A6C02878238C0037A946 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270FB727DCB62C00E83180 /* libz.dylib */; };
 		B3C8A6C52878238C0037A946 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
 		B3C8A6CE2878238C0037A946 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
@@ -1222,7 +1230,6 @@
 		B3F7E511297736C200362B92 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		B3F7E512297736C200362B92 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; };
 		B3F7E513297736C200362B92 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B306E1412769FE65001DC52E /* PVO2EM.framework */; };
-		B3F7E514297736C200362B92 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */; };
 		B3F7E515297736C200362B92 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
 		B3F7E516297736C200362B92 /* PVPotator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296DD2878385E00585AD8 /* PVPotator.framework */; };
 		B3F7E517297736C200362B92 /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; };
@@ -1353,7 +1360,6 @@
 		B3F7E599297736C200362B92 /* PVProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE24293F34740050BDB6 /* PVProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E59A297736C200362B92 /* PVMelonDS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6632877DE280037A946 /* PVMelonDS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E59B297736C200362B92 /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B306E1412769FE65001DC52E /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F7E59C297736C200362B92 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3F7E59D297736C200362B92 /* PVOpera.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3231BEE28966661003CC116 /* PVOpera.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E59E297736C200362B92 /* PVFreeIntv.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E59F297736C200362B92 /* PVFreeDO.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C6293F29AB0010B746 /* PVFreeDO.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1643,7 +1649,6 @@
 				B3FAC9A7292B477A005E8B11 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B3AEDE2C293F34CB0050BDB6 /* PVPicoDrive.framework in Embed Frameworks */,
 				B3FAC99D292B4770005E8B11 /* PVMednafen.framework in Embed Frameworks */,
-				B3BA902329583A1600142E32 /* PVDolphin.framework in Embed Frameworks */,
 				B3FAC9AF292B4780005E8B11 /* PVPokeMini.framework in Embed Frameworks */,
 				B3FAC9B1292B4781005E8B11 /* PVPotator.framework in Embed Frameworks */,
 				B3FAC97F292B4750005E8B11 /* PVVirtualJaguar.framework in Embed Frameworks */,
@@ -1698,14 +1703,15 @@
 				B3FAC936292B451F005E8B11 /* PVGME.framework in Embed Frameworks */,
 				B34CFF5E295F2BE90014C8AF /* PVFlycast.framework in Embed Frameworks */,
 				B3FAC944292B4596005E8B11 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
+				936BFD882986A719001FF097 /* libMoltenVK.dylib in Embed Frameworks */,
 				B3FAC956292B45B7005E8B11 /* PVTGBDual.framework in Embed Frameworks */,
 				B3AEDE26293F34760050BDB6 /* PVProSystem.framework in Embed Frameworks */,
-				B3062B1F2971A61000686D31 /* libMoltenVK.dylib in Embed Frameworks */,
 				B36B853629599A9700FDEA29 /* PVOpera.framework in Embed Frameworks */,
 				B37CE7C2293F287D0010B746 /* PVFreeIntv.framework in Embed Frameworks */,
 				B37CE7C9293F29AD0010B746 /* PVFreeDO.framework in Embed Frameworks */,
 				B3FAC95A292B45C1005E8B11 /* PVVirtualJaguar.framework in Embed Frameworks */,
 				B3FAC954292B45AC005E8B11 /* PVStella.framework in Embed Frameworks */,
+				93CB27DB297CF019006A940B /* libMoltenVK_Dolphin.dylib in Embed Frameworks */,
 				B3FAC946292B4599005E8B11 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B3FAC930292B4511005E8B11 /* PVGBA.framework in Embed Frameworks */,
 				B3FAC948292B459C005E8B11 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
@@ -1870,6 +1876,7 @@
 				B3F7E592297736C200362B92 /* PVPokeMini.framework in Embed Frameworks */,
 				B3F7E593297736C200362B92 /* PVGME.framework in Embed Frameworks */,
 				B3F7E594297736C200362B92 /* PVFlycast.framework in Embed Frameworks */,
+				936BFD862986A6CA001FF097 /* libMoltenVK.dylib in Embed Frameworks */,
 				B3F7E595297736C200362B92 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B3F7E596297736C200362B92 /* PVMupen64Plus-NX.framework in Embed Frameworks */,
 				B3F7E597297736C200362B92 /* PVSnesticle.framework in Embed Frameworks */,
@@ -1877,18 +1884,20 @@
 				B3F7E599297736C200362B92 /* PVProSystem.framework in Embed Frameworks */,
 				B3F7E59A297736C200362B92 /* PVMelonDS.framework in Embed Frameworks */,
 				B3F7E59B297736C200362B92 /* PVO2EM.framework in Embed Frameworks */,
-				B3F7E59C297736C200362B92 /* libMoltenVK.dylib in Embed Frameworks */,
 				B3F7E59D297736C200362B92 /* PVOpera.framework in Embed Frameworks */,
+				935BB05A29854A8700AA68DC /* PVNP2Kai.framework in Embed Frameworks */,
 				B3F7E59E297736C200362B92 /* PVFreeIntv.framework in Embed Frameworks */,
 				B3F7E59F297736C200362B92 /* PVFreeDO.framework in Embed Frameworks */,
 				B3F7E5A0297736C200362B92 /* PVVirtualJaguar.framework in Embed Frameworks */,
 				B3F7E5A1297736C200362B92 /* PVStella.framework in Embed Frameworks */,
 				B3F7E5A2297736C200362B92 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
+				93654F77298F400B0046503F /* PVSupergrafx.framework in Embed Frameworks */,
 				B3F7E5A3297736C200362B92 /* PVGBA.framework in Embed Frameworks */,
 				B3F7E5A4297736C200362B92 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3F7E5A5297736C200362B92 /* PVBliss.framework in Embed Frameworks */,
 				B3F7E5A6297736C200362B92 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3F7E5A7297736C200362B92 /* PVYabause.framework in Embed Frameworks */,
+				93CB27D3297CE666006A940B /* libMoltenVK_Dolphin.dylib in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2018,8 +2027,12 @@
 		934BE9B3296F178400FB9933 /* modules */ = {isa = PBXFileReference; lastKnownFileType = folder; name = modules; path = CoresRetro/RetroArch/modules; sourceTree = "<group>"; };
 		934BE9B5296F17A900FB9933 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93599B4A2955F2850049DAC8 /* PVWiiControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVWiiControllerViewController.swift; sourceTree = "<group>"; };
+		935BB05829854A8700AA68DC /* PVNP2Kai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVNP2Kai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		93654F75298F400B0046503F /* PVSupergrafx.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupergrafx.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		936BFD802986A5B4001FF097 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules/libMoltenVK.dylib; sourceTree = "<group>"; };
 		936FDBEA295855670073628A /* libMoltenVK_Play.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Play.dylib; path = Cores/Play/lib/libMoltenVK_Play.dylib; sourceTree = "<group>"; };
 		93C792242954E869001212D2 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
+		93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Dolphin.dylib; path = Cores/Dolphin/lib/libMoltenVK_Dolphin.dylib; sourceTree = "<group>"; };
 		93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B300DEC6295FEC710049F2AB /* JitWaitScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitWaitScreenViewController.swift; sourceTree = "<group>"; };
 		B300DEC7295FEC710049F2AB /* JitWaitScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = JitWaitScreen.xib; sourceTree = "<group>"; };
@@ -2684,8 +2697,8 @@
 				1A3D432C17B2FDFE004DFFFC /* libz.dylib in Frameworks */,
 				1A2A95AA17F7682400F1CB0D /* libstdc++.dylib in Frameworks */,
 				B3FAC94F292B45A6005E8B11 /* PVRSPCXD4.framework in Frameworks */,
-				B3062B1E2971A60D00686D31 /* libMoltenVK.dylib in Frameworks */,
 				1A2B0E8E1AD18961005FB77C /* libc++.dylib in Frameworks */,
+				936BFD872986A719001FF097 /* libMoltenVK.dylib in Frameworks */,
 				B3FAC94D292B45A3005E8B11 /* PVPotator.framework in Frameworks */,
 				936FDBEB295855670073628A /* libMoltenVK_Play.dylib in Frameworks */,
 				1AECF4A91966D76100F8704E /* libsqlite3.dylib in Frameworks */,
@@ -2720,6 +2733,7 @@
 				B37CE7C1293F287D0010B746 /* PVFreeIntv.framework in Frameworks */,
 				B3E88CB82977AB4400C90E86 /* Reachability in Frameworks */,
 				B3AAFB562949F9B800CC8234 /* PVDolphin.framework in Frameworks */,
+				93CB27DA297CF017006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */,
 				B3FAC943292B4596005E8B11 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3FAC945292B4598005E8B11 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
 				B3AEE312293F3BA30050BDB6 /* PVMu.framework in Frameworks */,
@@ -2753,7 +2767,6 @@
 				B3FAC97A292B474E005E8B11 /* PVTGBDual.framework in Frameworks */,
 				B3FAC99A292B476E005E8B11 /* PVLibRetro.framework in Frameworks */,
 				B324C619219203A5009F4EDC /* libsqlite3.tbd in Frameworks */,
-				B3BA902229583A1600142E32 /* PVDolphin.framework in Frameworks */,
 				B3E88CBE2977AB7C00C90E86 /* Reachability in Frameworks */,
 				B3FAC9B4292B4784005E8B11 /* PVSNES.framework in Frameworks */,
 				B3CE94B7293446AC0053B891 /* Introspect in Frameworks */,
@@ -3014,6 +3027,7 @@
 				B3F7E509297736C200362B92 /* PVDesmume2015.framework in Frameworks */,
 				B3F7E50A297736C200362B92 /* GameController.framework in Frameworks */,
 				B3F7E50B297736C200362B92 /* libxml2.dylib in Frameworks */,
+				93654F76298F400B0046503F /* PVSupergrafx.framework in Frameworks */,
 				B3F7E50C297736C200362B92 /* MetalKit.framework in Frameworks */,
 				B3F7E50D297736C200362B92 /* PVVirtualJaguar.framework in Frameworks */,
 				B3F7E50E297736C200362B92 /* CoreServices.framework in Frameworks */,
@@ -3022,7 +3036,6 @@
 				B3F7E511297736C200362B92 /* libstdc++.dylib in Frameworks */,
 				B3F7E512297736C200362B92 /* PVRSPCXD4.framework in Frameworks */,
 				B3F7E513297736C200362B92 /* PVO2EM.framework in Frameworks */,
-				B3F7E514297736C200362B92 /* libMoltenVK.dylib in Frameworks */,
 				B3F7E515297736C200362B92 /* libc++.dylib in Frameworks */,
 				B3F7E516297736C200362B92 /* PVPotator.framework in Frameworks */,
 				B3F7E517297736C200362B92 /* libMoltenVK_Play.dylib in Frameworks */,
@@ -3034,6 +3047,7 @@
 				B3F7E51D297736C200362B92 /* PVMupen64Plus.framework in Frameworks */,
 				B3F7E51E297736C200362B92 /* PVMiniVMac.framework in Frameworks */,
 				B3F7E51F297736C200362B92 /* PVMupen64Plus-NX.framework in Frameworks */,
+				93CB27D2297CE664006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */,
 				B3F7E520297736C200362B92 /* CFNetwork.framework in Frameworks */,
 				B3F7E521297736C200362B92 /* PVBeetlePSX.framework in Frameworks */,
 				B3F7E522297736C200362B92 /* PVMupen64PlusVideoRice.framework in Frameworks */,
@@ -3059,6 +3073,7 @@
 				B3F7E536297736C200362B92 /* PVGenesis.framework in Frameworks */,
 				B3F7E537297736C200362B92 /* PVSNES.framework in Frameworks */,
 				B3F7E538297736C200362B92 /* PVSupport.framework in Frameworks */,
+				935BB05929854A8700AA68DC /* PVNP2Kai.framework in Frameworks */,
 				B3F7E539297736C200362B92 /* PVProSystem.framework in Frameworks */,
 				B3F7E53A297736C200362B92 /* UIKit.framework in Frameworks */,
 				B3F7E53B297736C200362B92 /* PVFreeIntv.framework in Frameworks */,
@@ -3070,6 +3085,7 @@
 				B3F7E540297736C200362B92 /* SteamController in Frameworks */,
 				B3F7E541297736C200362B92 /* Metal.framework in Frameworks */,
 				B3F7E542297736C200362B92 /* OpenGLES.framework in Frameworks */,
+				936BFD852986A6CA001FF097 /* libMoltenVK.dylib in Frameworks */,
 				B3F7E543297736C200362B92 /* PVLibRetro.framework in Frameworks */,
 				B3F7E544297736C200362B92 /* Foundation.framework in Frameworks */,
 				B3F7E545297736C200362B92 /* OpenGL.framework in Frameworks */,
@@ -3203,6 +3219,9 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				93654F75298F400B0046503F /* PVSupergrafx.framework */,
+				936BFD802986A5B4001FF097 /* libMoltenVK.dylib */,
+				935BB05829854A8700AA68DC /* PVNP2Kai.framework */,
 				B33155E62971D360008767C5 /* PVMupen64Plus-NX.framework */,
 				B33155E32971D34D008767C5 /* PVFuse.framework */,
 				B322A98F2971670B00F0D876 /* PVDuckStation.framework */,
@@ -3284,6 +3303,7 @@
 				B32296CB2878381C00585AD8 /* PVFBNeo.framework */,
 				B3C8A702287826EB0037A946 /* PVVecXGL.framework */,
 				B3C8A6FF287824670037A946 /* PVMelonDS.framework */,
+				93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */,
 				B3C8A6B8287820860037A946 /* PVDesmume2015.framework */,
 				B3C8A6B228781EB00037A946 /* PVDosBox.framework */,
 				B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */,
@@ -7205,6 +7225,8 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
 					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/Cores/Dolphin/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-Wno-deprecated-declarations";
@@ -7265,6 +7287,8 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
 					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/Cores/Dolphin/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -9041,6 +9065,8 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
 					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/Cores/Dolphin/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -10238,6 +10264,8 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
 					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/Cores/Dolphin/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-Wno-deprecated-declarations";
@@ -10299,6 +10327,8 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
 					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/Cores/Dolphin/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -10361,6 +10391,8 @@
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/macOS",
 					"$(PROJECT_DIR)/Cores/Play/lib",
 					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/Frameworks/MoltenVK/dylib/iOS",
+					"$(PROJECT_DIR)/Cores/Dolphin/lib",
+					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (

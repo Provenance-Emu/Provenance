@@ -11,7 +11,10 @@ import PVSupport
 
 extension PVEmulatorViewController {
     func showCoreOptions() {
-        let optionsVC = CoreOptionsViewController(withCore: type(of: core) as! CoreOptional.Type)
+        let coreClass = type(of: core) as! CoreOptional.Type
+        coreClass.className = core.coreIdentifier ?? ""
+        coreClass.systemName = core.systemIdentifier ?? ""
+        let optionsVC = CoreOptionsViewController(withCore: coreClass)
         optionsVC.title = "Core Options"
         let nav = UINavigationController(rootViewController: optionsVC)
         #if os(iOS)

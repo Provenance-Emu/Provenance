@@ -83,10 +83,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.screenType = game.system.screenType.rawValue
 
         super.init(nibName: nil, bundle: nil)
-        
         let app = UIApplication.shared as! PVApplication
         app.core=core
-                
+        if let coreClass = type(of: core) as? CoreOptional.Type {
+            coreClass.className = core.coreIdentifier ?? ""
+            coreClass.systemName = core.systemIdentifier ?? ""
+        }
+        PVControllerManager.shared.hasLayout=false
         if core.alwaysUseMetal {
             gpuViewController = PVMetalViewController(emulatorCore: core)
         }
@@ -164,6 +167,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidConnect(_:)), name: UIScreen.didConnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.screenDidDisconnect(_:)), name: UIScreen.didDisconnectNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handleControllerManagerControllerReassigned(_:)), name: .PVControllerManagerControllerReassigned, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.handlePause(_:)), name: Notification.Name("PauseGame"), object: nil)
     }
 
     private func initCore() {
@@ -187,6 +191,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         if let aView = controllerViewController?.view {
             view.addSubview(aView)
+            core.touchViewController = controllerViewController
         }
         controllerViewController?.didMove(toParent: self)
     }
@@ -362,7 +367,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             return
         }
 
-        if UIScreen.screens.count > 1 {
+        if UIScreen.screens.count > 1 && !core.skipLayout {
             secondaryScreen = UIScreen.screens[1]
             if let aBounds = secondaryScreen?.bounds {
                 secondaryWindow = UIWindow(frame: aBounds)
@@ -412,10 +417,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         #endif
         PVControllerManager.shared.controllers().forEach {
-			$0.setupPauseHandler(onPause: { [weak self] in
-				guard let self = self else { return }
-				self.controllerPauseButtonPressed()
-			})
+            $0.setupPauseHandler(onPause: {
+                NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
+            })
 		}
         enableControllerInput(false)
     }
@@ -607,12 +611,16 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
     func captureScreenshot() -> UIImage? {
         fpsLabel.alpha = 0.0
-        let width: CGFloat? = gpuViewController.view.frame.size.width
-        let height: CGFloat? = gpuViewController.view.frame.size.height
+        let width: CGFloat? = gpuViewController.view.frame.size.width > 0 ? gpuViewController.view.frame.size.width : UIScreen.main.bounds.width
+        let height: CGFloat? = gpuViewController.view.frame.size.height > 0 ? gpuViewController.view.frame.size.height : UIScreen.main.bounds.height
         let size = CGSize(width: width ?? 0.0, height: height ?? 0.0)
         UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
         let rec = CGRect(x: 0, y: 0, width: width ?? 0.0, height: height ?? 0.0)
-        gpuViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
+        if (core.skipLayout && core.touchViewController != nil) {
+            try? core.touchViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
+        } else {
+            gpuViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
+        }
         let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         fpsLabel.alpha = 1.0

@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		93124960298CE62D002DE0C2 /* MiniVMacTV */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 93124962298CE62D002DE0C2 /* Build configuration list for PBXAggregateTarget "MiniVMacTV" */;
+			buildPhases = (
+				93124961298CE62D002DE0C2 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = MiniVMacTV;
+			productName = MiniVMacRetroArchCore;
+		};
 		9396AEF12973073000B1EA1C /* MiniVMacRetroArchCore */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 9396AEF52973073100B1EA1C /* Build configuration list for PBXAggregateTarget "MiniVMacRetroArchCore" */;
@@ -62,6 +73,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9312496D298CE90D002DE0C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 93124960298CE62D002DE0C2;
+			remoteInfo = MiniVMacTV;
+		};
 		9396AEF72973077800B1EA1C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -780,6 +798,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9312496E298CE90D002DE0C2 /* PBXTargetDependency */,
 				9396AEF82973077800B1EA1C /* PBXTargetDependency */,
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
@@ -839,6 +858,7 @@
 				B3344B522859E088006E6B3A /* minivmac-libretro */,
 				B30178D2207C901D0051B93D /* minivmac */,
 				9396AEF12973073000B1EA1C /* MiniVMacRetroArchCore */,
+				93124960298CE62D002DE0C2 /* MiniVMacTV */,
 			);
 		};
 /* End PBXProject section */
@@ -855,6 +875,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		93124961298CE62D002DE0C2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n\n# Create buildTV Environment\nif [ ! -d \"${SRCROOT}/cmake/buildTV\" ]; then\n    mkdir \"${SRCROOT}/cmake/buildTV\"\nfi\n\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-minivmac | head -n1 | awk '{print $1;}'`TVBuild2\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/buildTV/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-minivmac/\"* \"${SRCROOT}/cmake/buildTV/\"\n    cp \"${SRCROOT}/cmake/Makefile.TV\" \"${SRCROOT}/cmake/buildTV/Makefile\"\nfi\n\n# buildTV\ncd \"${SRCROOT}/cmake/buildTV/\"\n#make clean\nmake -j5\ncp minivmac_libretro_tvos.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/minivmac_libretro_tvos.dylib\"\n";
+		};
 		9396AEF62973074100B1EA1C /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -870,7 +907,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Update Repository\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\ncp -pR ${SRCROOT}/libretro-minivmac/* ${SRCROOT}/cmake/build/\ncp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd ${SRCROOT}/cmake/build/\n#make clean\nmake -j5\ncp minivmac_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/minivmac_libretro_ios.dylib\n";
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\n\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-minivmac | head -n1 | awk '{print $1;}'`iOS\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-minivmac/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/Makefile\" \"${SRCROOT}/cmake/build/Makefile\"\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build/\"\n#make clean\nmake -j5\ncp minivmac_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/minivmac_libretro_ios.dylib\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -922,8 +959,23 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9312496E298CE90D002DE0C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				tvos,
+			);
+			target = 93124960298CE62D002DE0C2 /* MiniVMacTV */;
+			targetProxy = 9312496D298CE90D002DE0C2 /* PBXContainerItemProxy */;
+		};
 		9396AEF82973077800B1EA1C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				driverkit,
+				ios,
+				maccatalyst,
+				macos,
+				watchos,
+			);
 			target = 9396AEF12973073000B1EA1C /* MiniVMacRetroArchCore */;
 			targetProxy = 9396AEF72973077800B1EA1C /* PBXContainerItemProxy */;
 		};
@@ -935,11 +987,51 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		93124963298CE62D002DE0C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LD_MAP_FILE_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SHARED_PRECOMPS_DIR = "";
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Debug;
+		};
+		93124964298CE62D002DE0C2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LD_MAP_FILE_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SHARED_PRECOMPS_DIR = "";
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Release;
+		};
+		93124965298CE62D002DE0C2 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LD_MAP_FILE_PATH = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SHARED_PRECOMPS_DIR = "";
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Archive;
+		};
 		9396AEF22973073100B1EA1C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Debug;
 		};
@@ -948,6 +1040,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Release;
 		};
@@ -956,6 +1050,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Archive;
 		};
@@ -1009,6 +1105,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1067,7 +1164,9 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -1106,6 +1205,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMiniVMac";
 				PRODUCT_NAME = PVMiniVMac;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -1209,6 +1309,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1270,7 +1371,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1282,6 +1385,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1341,7 +1445,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -1380,6 +1486,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMiniVMac";
 				PRODUCT_NAME = PVMiniVMac;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -1417,6 +1524,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMiniVMac";
 				PRODUCT_NAME = PVMiniVMac;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -1427,6 +1535,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		93124962298CE62D002DE0C2 /* Build configuration list for PBXAggregateTarget "MiniVMacTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93124963298CE62D002DE0C2 /* Debug */,
+				93124964298CE62D002DE0C2 /* Release */,
+				93124965298CE62D002DE0C2 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9396AEF52973073100B1EA1C /* Build configuration list for PBXAggregateTarget "MiniVMacRetroArchCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

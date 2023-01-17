@@ -7541,7 +7541,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Update Repository\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\nexport LATEST=`git submodule status ${SRCROOT}/mupen64plus-libretro-nx | head -n1 | awk '{print $1;}'`\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/*\"\n    touch \"${SRCROOT}/cmake/${LATEST}\"\nfi\ncp -pR ${SRCROOT}/mupen64plus-libretro-nx/* ${SRCROOT}/cmake/build/\ncp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd ${SRCROOT}/cmake/build/\n#make clean\nmake -j5 platform=ios-arm64\n";
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\nexport LATEST=`git submodule status ${SRCROOT}/mupen64plus-libretro-nx | head -n1 | awk '{print $1;}'`\nexport LOCAL_LATEST=\"v1_000_0001\"\nif [[ ! -f \"${SRCROOT}/cmake/${LATEST}\" || ! -f \"${SRCROOT}/cmake/${LOCAL_LATEST}\" ]]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    touch \"${SRCROOT}/cmake/${LOCAL_LATEST}\"\n    cp -pR \"${SRCROOT}/mupen64plus-libretro-nx/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/Makefile\" \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/libretro.c\" \"${SRCROOT}/cmake/build/libretro/libretro.c\"\n    cd \"${SRCROOT}/cmake/build/\"\n    make clean\nfi\n# Build\ncd \"${SRCROOT}/cmake/build/\"\nmake -j5 platform=ios-arm64\n";
 		};
 		B322A96C29713FA000F0D876 /* Copy */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -7561,7 +7561,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp ${SRCROOT}/cmake/build/mupen64plus_next_libretro_ios.dylib \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "if [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\ncp ${SRCROOT}/cmake/build/mupen64plus_next_libretro_ios.dylib \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -7893,6 +7893,11 @@
 		};
 		B322A96E2971403B00F0D876 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				macos,
+			);
 			target = B322A96629713F9300F0D876 /* mupen64plus-dylib */;
 			targetProxy = B322A96D2971403B00F0D876 /* PBXContainerItemProxy */;
 		};

@@ -300,7 +300,8 @@ PV_OBJC_DIRECT_MEMBERS
 - (void)viewDidLayoutSubviews
 {
     [super viewDidLayoutSubviews];
-
+    if (self.emulatorCore.skipLayout)
+        return;
     UIEdgeInsets parentSafeAreaInsets = self.parentViewController.view.safeAreaInsets;
 
     if (!CGRectIsEmpty([self.emulatorCore screenRect]))

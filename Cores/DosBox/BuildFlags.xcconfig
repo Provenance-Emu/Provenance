@@ -22,6 +22,9 @@ OTHER_CFLAGS[sdk=iphoneos*] = $(inherited)
 
 // Simulator
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = * ***.a
+INCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = PVDebug.c
+
 
 // tvOS Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) TARGET_IPHONE=1
@@ -29,3 +32,5 @@ OTHER_CFLAGS[sdk=appletvos*] = $(inherited)
 
 // tvOS Simulator
 GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = * ***.a
+INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.c

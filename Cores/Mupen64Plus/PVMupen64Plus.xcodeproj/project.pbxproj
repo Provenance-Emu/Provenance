@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		93BC04FD298AE9D600BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC04FC298AE9D600BA5157 /* PVDebug.c */; };
+		93BC04FE298AE9EB00BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC04FC298AE9D600BA5157 /* PVDebug.c */; };
+		93BC04FF298AE9EF00BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC04FC298AE9D600BA5157 /* PVDebug.c */; };
+		93BC0500298AE9F200BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC04FC298AE9D600BA5157 /* PVDebug.c */; };
+		93BC0501298AE9F600BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC04FC298AE9D600BA5157 /* PVDebug.c */; };
 		B30BF1AE2775320F00FF9E07 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B30BF1AD2775320F00FF9E07 /* libz.tbd */; };
 		B316B4E9219275A800693472 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
 		B316B4EA219275A800693472 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
@@ -632,6 +637,7 @@
 		3DC2145E166C6D7F0014251E /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
 		3DCABDC7166C524C002F2066 /* SDL_opengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_opengl.h; sourceTree = "<group>"; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		93BC04FC298AE9D600BA5157 /* PVDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PVDebug.c; path = ../Debug/PVDebug.c; sourceTree = "<group>"; };
 		B304087B2970E4D700180897 /* asm_defines_gas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = asm_defines_gas.h; sourceTree = "<group>"; };
 		B304087C2970E4D800180897 /* asm_defines_nasm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = asm_defines_nasm.h; sourceTree = "<group>"; };
 		B30557712072FEBC001212D2 /* PVMupen64Plus_core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64Plus_core.h; sourceTree = "<group>"; };
@@ -1731,6 +1737,7 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				93BC04FC298AE9D600BA5157 /* PVDebug.c */,
 				3D208F801182B00300BEAA42 /* MupenGameCore.h */,
 				3D208F811182B00300BEAA42 /* MupenGameCore.m */,
 				B39C29E227A12E690078D028 /* MupenGameCore+Mupen.h */,
@@ -4301,6 +4308,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93BC0500298AE9F200BA5157 /* PVDebug.c in Sources */,
 				B3AE1F6A2073420500AD06D4 /* divide.c in Sources */,
 				B3AE1F6B2073420500AD06D4 /* logical.c in Sources */,
 				B3AE1F712073420500AD06D4 /* su.c in Sources */,
@@ -4317,6 +4325,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93BC04FE298AE9EB00BA5157 /* PVDebug.c in Sources */,
 				B3A303092073F2F2008C1955 /* RSP_S2DEX.cpp in Sources */,
 				B3A303012073F2F2008C1955 /* OGLRender.cpp in Sources */,
 				B3A303072073F2F2008C1955 /* RenderTexture.cpp in Sources */,
@@ -4360,6 +4369,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93BC04FD298AE9D600BA5157 /* PVDebug.c in Sources */,
 				B3AE1DC7207312BB00AD06D4 /* screenshot.m in Sources */,
 				B3963E61279E835300B00117 /* MupenGameCore+Audio.swift in Sources */,
 				B3AE1DC1207311E900AD06D4 /* vidext.m in Sources */,
@@ -4471,6 +4481,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93BC04FF298AE9EF00BA5157 /* PVDebug.c in Sources */,
 				B3C83E21279618AD0020824C /* hvqm.c in Sources */,
 				B3AE1F4420733D6000AD06D4 /* alist_audio.c in Sources */,
 				B3AE1F4520733D6000AD06D4 /* alist_naudio.c in Sources */,
@@ -4493,6 +4504,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93BC0501298AE9F600BA5157 /* PVDebug.c in Sources */,
 				B3C3F44121A9CBAA00EFB09C /* T3DUX.cpp in Sources */,
 				B3C3F46B21A9CBAA00EFB09C /* F3DBETA.cpp in Sources */,
 				DFB6048C2038BB47001E70F1 /* GLFunctions.cpp in Sources */,

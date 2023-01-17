@@ -56,10 +56,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
-               BuildableName = "Provenance.app"
-               BlueprintName = "Provenance"
-               ReferencedContainer = "container:Provenance.xcodeproj">
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport"
+               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -70,10 +70,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
-               BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport"
-               ReferencedContainer = "container:PVSupport/PVSupport.xcodeproj">
+               BlueprintIdentifier = "1A3D409317B2DCE4004DFFFC"
+               BuildableName = "Provenance.app"
+               BlueprintName = "Provenance"
+               ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -159,7 +159,7 @@
       buildConfiguration = "Release">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Archive"
+      buildConfiguration = "Release"
       customArchiveName = "Provenance"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
