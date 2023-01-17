@@ -10,6 +10,22 @@
 		112E7E2F247EF3840050431C /* PVGameLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112E7E2E247EF3840050431C /* PVGameLibrary.swift */; };
 		1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31D2492A9B400636C8A /* CoreServices.framework */; };
 		11AFB2B324867482000A3922 /* PVGameLibrary+Migration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */; };
+		B3016F3729764BA4002D82F4 /* Consts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2229764BA4002D82F4 /* Consts.swift */; };
+		B3016F3829764BA4002D82F4 /* Identifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2429764BA4002D82F4 /* Identifiable.swift */; };
+		B3016F3929764BA4002D82F4 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2629764BA4002D82F4 /* DataManager.swift */; };
+		B3016F3A29764BA4002D82F4 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2729764BA4002D82F4 /* Keychain.swift */; };
+		B3016F3B29764BA4002D82F4 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2829764BA4002D82F4 /* DatabaseManager.swift */; };
+		B3016F3C29764BA4002D82F4 /* PatreonAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2A29764BA4002D82F4 /* PatreonAPI.swift */; };
+		B3016F3D29764BA4002D82F4 /* Benefit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2C29764BA4002D82F4 /* Benefit.swift */; };
+		B3016F3E29764BA4002D82F4 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2D29764BA4002D82F4 /* Campaign.swift */; };
+		B3016F3F29764BA4002D82F4 /* Patron.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2E29764BA4002D82F4 /* Patron.swift */; };
+		B3016F4029764BA4002D82F4 /* Tier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F2F29764BA4002D82F4 /* Tier.swift */; };
+		B3016F4129764BA4002D82F4 /* PatreonAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3029764BA4002D82F4 /* PatreonAccount.swift */; };
+		B3016F4229764BA4002D82F4 /* PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3129764BA4002D82F4 /* PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift */; };
+		B3016F4329764BA4002D82F4 /* NSXPCConnection+MachServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3329764BA4002D82F4 /* NSXPCConnection+MachServices.swift */; };
+		B3016F4429764BA4002D82F4 /* Bundle+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3429764BA4002D82F4 /* Bundle+AltStore.swift */; };
+		B3016F4529764BA4002D82F4 /* Result+Conveniences.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3529764BA4002D82F4 /* Result+Conveniences.swift */; };
+		B3016F4629764BA4002D82F4 /* NSError+AltStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3016F3629764BA4002D82F4 /* NSError+AltStore.swift */; };
 		B305EF9F276B50E2003AE510 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF9E276B50DF003AE510 /* SwiftUI.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3067F4A2106B5A20091437F /* Foundation.framework */; };
 		B3067F5D2106B8590091437F /* OESQLiteDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = B3579D1E2106B4D600DDEBD6 /* OESQLiteDatabase.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -215,15 +231,8 @@
 		B3CDEEB321D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
 		B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
 		B3FAC8DE292B1DDD005E8B11 /* PVPatreon.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3FAC8E9292B1E1B005E8B11 /* Patron.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E3292B1E17005E8B11 /* Patron.swift */; };
-		B3FAC8EA292B1E1B005E8B11 /* Campaign.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E4292B1E17005E8B11 /* Campaign.swift */; };
-		B3FAC8EB292B1E1B005E8B11 /* Benefit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E5292B1E18005E8B11 /* Benefit.swift */; };
-		B3FAC8EC292B1E1B005E8B11 /* PatreonAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E6292B1E18005E8B11 /* PatreonAccount.swift */; };
-		B3FAC8ED292B1E1B005E8B11 /* PatreonAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E7292B1E18005E8B11 /* PatreonAPI.swift */; };
-		B3FAC8EE292B1E1B005E8B11 /* Tier.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8E8292B1E1A005E8B11 /* Tier.swift */; };
 		B3FAC8EF292B1E1C005E8B11 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; };
 		B3FAC8F0292B1E1C005E8B11 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3FAC8F6292B2551005E8B11 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8F5292B2551005E8B11 /* Keychain.swift */; };
 		B3FAC8F9292B26EA005E8B11 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = B3FAC8F8292B26EA005E8B11 /* KeychainAccess */; };
 		B3FAC8FB292B3155005E8B11 /* PVUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8FA292B3155005E8B11 /* PVUser.swift */; };
 		B3FAC8FD292B3240005E8B11 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8FC292B3240005E8B11 /* User.swift */; };
@@ -278,6 +287,22 @@
 		1180B31D2492A9B400636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		1180B31F2492A9C200636C8A /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreServices.framework; sourceTree = DEVELOPER_DIR; };
 		11AFB2B224867482000A3922 /* PVGameLibrary+Migration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVGameLibrary+Migration.swift"; sourceTree = "<group>"; };
+		B3016F2229764BA4002D82F4 /* Consts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Consts.swift; path = ../../../PVPatreon/Consts.swift; sourceTree = "<group>"; };
+		B3016F2429764BA4002D82F4 /* Identifiable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identifiable.swift; sourceTree = "<group>"; };
+		B3016F2629764BA4002D82F4 /* DataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		B3016F2729764BA4002D82F4 /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		B3016F2829764BA4002D82F4 /* DatabaseManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		B3016F2A29764BA4002D82F4 /* PatreonAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatreonAPI.swift; sourceTree = "<group>"; };
+		B3016F2C29764BA4002D82F4 /* Benefit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Benefit.swift; sourceTree = "<group>"; };
+		B3016F2D29764BA4002D82F4 /* Campaign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Campaign.swift; sourceTree = "<group>"; };
+		B3016F2E29764BA4002D82F4 /* Patron.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Patron.swift; sourceTree = "<group>"; };
+		B3016F2F29764BA4002D82F4 /* Tier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tier.swift; sourceTree = "<group>"; };
+		B3016F3029764BA4002D82F4 /* PatreonAccount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatreonAccount.swift; sourceTree = "<group>"; };
+		B3016F3129764BA4002D82F4 /* PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift"; sourceTree = "<group>"; };
+		B3016F3329764BA4002D82F4 /* NSXPCConnection+MachServices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSXPCConnection+MachServices.swift"; sourceTree = "<group>"; };
+		B3016F3429764BA4002D82F4 /* Bundle+AltStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+AltStore.swift"; sourceTree = "<group>"; };
+		B3016F3529764BA4002D82F4 /* Result+Conveniences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Result+Conveniences.swift"; sourceTree = "<group>"; };
+		B3016F3629764BA4002D82F4 /* NSError+AltStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSError+AltStore.swift"; sourceTree = "<group>"; };
 		B305EF9E276B50DF003AE510 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/iOSSupport/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		B305EFA0276B5112003AE510 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/SwiftUI.framework; sourceTree = DEVELOPER_DIR; };
 		B305F082276B5152003AE510 /* PVLibrary-tvOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVLibrary-tvOS copy-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/PVLibrary/PVLibrary-tvOS copy-Info.plist"; sourceTree = "<absolute>"; };
@@ -684,13 +709,6 @@
 		B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectoryWatcher.swift; sourceTree = "<group>"; };
 		B3FAC8DB292B1DDD005E8B11 /* PVPatreon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPatreon.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPatreon.h; sourceTree = "<group>"; };
-		B3FAC8E3292B1E17005E8B11 /* Patron.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Patron.swift; path = ../../../PVPatreon/Patron.swift; sourceTree = "<group>"; };
-		B3FAC8E4292B1E17005E8B11 /* Campaign.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Campaign.swift; path = ../../../PVPatreon/Campaign.swift; sourceTree = "<group>"; };
-		B3FAC8E5292B1E18005E8B11 /* Benefit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Benefit.swift; path = ../../../PVPatreon/Benefit.swift; sourceTree = "<group>"; };
-		B3FAC8E6292B1E18005E8B11 /* PatreonAccount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatreonAccount.swift; path = ../../../PVPatreon/PatreonAccount.swift; sourceTree = "<group>"; };
-		B3FAC8E7292B1E18005E8B11 /* PatreonAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PatreonAPI.swift; path = ../../../PVPatreon/PatreonAPI.swift; sourceTree = "<group>"; };
-		B3FAC8E8292B1E1A005E8B11 /* Tier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Tier.swift; path = ../../../PVPatreon/Tier.swift; sourceTree = "<group>"; };
-		B3FAC8F5292B2551005E8B11 /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		B3FAC8FA292B3155005E8B11 /* PVUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PVUser.swift; path = PVLibrary/RealmPlatform/Entities/PVUser.swift; sourceTree = SOURCE_ROOT; };
 		B3FAC8FC292B3240005E8B11 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CF17109C2585F97000258602 /* PVCheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVCheats.swift; sourceTree = "<group>"; };
@@ -736,6 +754,61 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B3016F2329764BA4002D82F4 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				B3016F2429764BA4002D82F4 /* Identifiable.swift */,
+			);
+			name = Protocols;
+			path = ../../../PVPatreon/Protocols;
+			sourceTree = "<group>";
+		};
+		B3016F2529764BA4002D82F4 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				B3016F2829764BA4002D82F4 /* DatabaseManager.swift */,
+				B3016F2629764BA4002D82F4 /* DataManager.swift */,
+				B3016F2729764BA4002D82F4 /* Keychain.swift */,
+			);
+			name = Delegates;
+			path = ../../../PVPatreon/Delegates;
+			sourceTree = "<group>";
+		};
+		B3016F2929764BA4002D82F4 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				B3016F2B29764BA4002D82F4 /* Models */,
+				B3016F2A29764BA4002D82F4 /* PatreonAPI.swift */,
+				B3016F3129764BA4002D82F4 /* PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift */,
+			);
+			name = API;
+			path = ../../../PVPatreon/API;
+			sourceTree = "<group>";
+		};
+		B3016F2B29764BA4002D82F4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B3016F2C29764BA4002D82F4 /* Benefit.swift */,
+				B3016F2D29764BA4002D82F4 /* Campaign.swift */,
+				B3016F2E29764BA4002D82F4 /* Patron.swift */,
+				B3016F2F29764BA4002D82F4 /* Tier.swift */,
+				B3016F3029764BA4002D82F4 /* PatreonAccount.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B3016F3229764BA4002D82F4 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B3016F3429764BA4002D82F4 /* Bundle+AltStore.swift */,
+				B3016F3629764BA4002D82F4 /* NSError+AltStore.swift */,
+				B3016F3329764BA4002D82F4 /* NSXPCConnection+MachServices.swift */,
+				B3016F3529764BA4002D82F4 /* Result+Conveniences.swift */,
+			);
+			name = Extensions;
+			path = ../../../PVPatreon/Extensions;
+			sourceTree = "<group>";
+		};
 		B3067F492106B5A20091437F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1495,25 +1568,14 @@
 		B3FAC8DC292B1DDD005E8B11 /* PVPatreon */ = {
 			isa = PBXGroup;
 			children = (
-				B3FAC8F4292B2551005E8B11 /* Keychain */,
-				B3FAC8E5292B1E18005E8B11 /* Benefit.swift */,
-				B3FAC8E4292B1E17005E8B11 /* Campaign.swift */,
-				B3FAC8E6292B1E18005E8B11 /* PatreonAccount.swift */,
-				B3FAC8E7292B1E18005E8B11 /* PatreonAPI.swift */,
-				B3FAC8E3292B1E17005E8B11 /* Patron.swift */,
-				B3FAC8E8292B1E1A005E8B11 /* Tier.swift */,
 				B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */,
+				B3016F2229764BA4002D82F4 /* Consts.swift */,
+				B3016F2929764BA4002D82F4 /* API */,
+				B3016F2529764BA4002D82F4 /* Delegates */,
+				B3016F3229764BA4002D82F4 /* Extensions */,
+				B3016F2329764BA4002D82F4 /* Protocols */,
 			);
 			path = PVPatreon;
-			sourceTree = "<group>";
-		};
-		B3FAC8F4292B2551005E8B11 /* Keychain */ = {
-			isa = PBXGroup;
-			children = (
-				B3FAC8F5292B2551005E8B11 /* Keychain.swift */,
-			);
-			name = Keychain;
-			path = ../../../PVPatreon/Keychain;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1641,7 +1703,7 @@
 					};
 					B3FAC8DA292B1DDD005E8B11 = {
 						CreatedOnToolsVersion = 14.1;
-						LastSwiftMigration = 1410;
+						LastSwiftMigration = 1420;
 					};
 				};
 			};
@@ -1899,13 +1961,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3FAC8E9292B1E1B005E8B11 /* Patron.swift in Sources */,
-				B3FAC8ED292B1E1B005E8B11 /* PatreonAPI.swift in Sources */,
-				B3FAC8EC292B1E1B005E8B11 /* PatreonAccount.swift in Sources */,
-				B3FAC8EE292B1E1B005E8B11 /* Tier.swift in Sources */,
-				B3FAC8EA292B1E1B005E8B11 /* Campaign.swift in Sources */,
-				B3FAC8EB292B1E1B005E8B11 /* Benefit.swift in Sources */,
-				B3FAC8F6292B2551005E8B11 /* Keychain.swift in Sources */,
+				B3016F4229764BA4002D82F4 /* PatreonAPI+ASWebAuthenticationPresentationContextProviding.swift in Sources */,
+				B3016F4129764BA4002D82F4 /* PatreonAccount.swift in Sources */,
+				B3016F4529764BA4002D82F4 /* Result+Conveniences.swift in Sources */,
+				B3016F3D29764BA4002D82F4 /* Benefit.swift in Sources */,
+				B3016F3E29764BA4002D82F4 /* Campaign.swift in Sources */,
+				B3016F4629764BA4002D82F4 /* NSError+AltStore.swift in Sources */,
+				B3016F3C29764BA4002D82F4 /* PatreonAPI.swift in Sources */,
+				B3016F4329764BA4002D82F4 /* NSXPCConnection+MachServices.swift in Sources */,
+				B3016F3729764BA4002D82F4 /* Consts.swift in Sources */,
+				B3016F3A29764BA4002D82F4 /* Keychain.swift in Sources */,
+				B3016F3F29764BA4002D82F4 /* Patron.swift in Sources */,
+				B3016F3B29764BA4002D82F4 /* DatabaseManager.swift in Sources */,
+				B3016F4029764BA4002D82F4 /* Tier.swift in Sources */,
+				B3016F3929764BA4002D82F4 /* DataManager.swift in Sources */,
+				B3016F3829764BA4002D82F4 /* Identifiable.swift in Sources */,
+				B3016F4429764BA4002D82F4 /* Bundle+AltStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

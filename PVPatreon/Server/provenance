@@ -1,0 +1,5 @@
+<script>
+    var uri = 'provenance://patreon';
+    uri = uri + document.location.search; 
+    window.location = uri;
+</script>
