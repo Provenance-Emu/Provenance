@@ -11,6 +11,8 @@ gem 'xcode-install'
 # gem 'net-ssh'
 # gem "net-scp"
 
+gem 'badge'
+
 # group :documentation do
 #   gem 'jazzy'
 # end

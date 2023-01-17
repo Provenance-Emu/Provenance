@@ -233,6 +233,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  badge
   dotenv
   fastlane
   fastlane-plugin-aws_s3
