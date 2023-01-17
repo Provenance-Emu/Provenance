@@ -5848,7 +5848,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				SYMROOT = "$(SRCROOT)/../cmake/build";
 			};
 			name = Debug;
 		};
@@ -6350,7 +6350,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				SYMROOT = "$(SRCROOT)/../cmake/build";
 			};
 			name = RelWithDebInfo;
 		};
@@ -8772,7 +8772,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				SYMROOT = "$(SRCROOT)/../cmake/build";
 			};
 			name = MinSizeRel;
 		};
@@ -10148,7 +10148,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				SYMROOT = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/DuckStation/cmake/build;
+				SYMROOT = "$(SRCROOT)/../cmake/build";
 			};
 			name = Release;
 		};

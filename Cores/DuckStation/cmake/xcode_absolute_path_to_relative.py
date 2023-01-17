@@ -15,7 +15,7 @@ CORE_DIR = PROVENANCE_DIR + '/Cores/DuckStation'
 VULKAN_DIR = PROVENANCE_DIR + '/MoltenVK'
 
 # Relative path to Core Lib Project Directory
-CORE_LIB_DIR = "../duckstation"
+CORE_LIB_DIR = "../duckStation"
 
 # Places built library binaries under dolphin-ios/dolphin-build
 BUILD_DIR = "./lib"
