@@ -30,6 +30,8 @@
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/DebugUtils.h>
 
+#import <PVStella/PVStella-Swift.h>
+
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
@@ -74,6 +76,9 @@ const NSUInteger A2600EmulatorValues[] = {
     stellabuffer_t *_videoBuffer;
     int _videoWidth, _videoHeight;
     int16_t _pad[NUMBER_OF_PADS][NUMBER_OF_PAD_INPUTS];
+
+    // RETRO_REGION_NTSC, RETRO_REGION_PAL
+    unsigned region;
 }
 @property (nonatomic, strong) NSMutableArray<NSString*>* cheats;
 @end
@@ -160,11 +165,23 @@ static bool environment_callback(unsigned cmd, void *data) {
             
             *(const char **)data = [appSupportPath UTF8String];
             DLOG(@"Environ SYSTEM_DIRECTORY: \"%@\".\n", appSupportPath);
-            break;
+            return true;
         }
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
 //            *(retro_pixel_format *)data = RETRO_PIXEL_FORMAT_0RGB1555;
-            break;
+            return false;
+        }
+        case RETRO_ENVIRONMENT_GET_VARIABLE: {
+            struct retro_variable *var = (struct retro_variable*)data;
+            NSString *varS = [NSString stringWithUTF8String:var->key];
+            id _Nullable oValue = [strongCurrent getVariable:varS];
+            NSString *value = [oValue string];
+            if(oValue && value && value.length) {
+                var->value = value.cString;
+                return true;
+            } else {
+                return false;
+            }
         }
         default : {
             DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
@@ -238,8 +255,7 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (void)stopEmulation {
-    if ([self.batterySavesPath length])
-    {
+    if ([self.batterySavesPath length]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
         NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
         [self writeSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
@@ -253,6 +269,7 @@ static void writeSaveFile(const char* path, int type) {
         retro_unload_game();
         retro_deinit();
     });
+    self->region = 0;
 }
 
 - (void)dealloc {
@@ -310,10 +327,8 @@ static void writeSaveFile(const char* path, int type) {
     info.size = size;
     info.meta = meta;
     
-    if (retro_load_game(&info))
-    {
-        if ([self.batterySavesPath length])
-        {
+    if (retro_load_game(&info)) {
+        if ([self.batterySavesPath length]) {
             [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
             
             NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
@@ -327,7 +342,8 @@ static void writeSaveFile(const char* path, int type) {
         _frameInterval = info.timing.fps;
         _sampleRate = info.timing.sample_rate;
         
-        retro_get_region();
+        self->region = retro_get_region();
+
         retro_run();
         
         return YES;
@@ -475,6 +491,7 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (CGSize)aspectSize {
+//    return CGSizeMake(4, 3);
     return CGSizeMake(_videoWidth * (12.0/7.0), _videoHeight);
 //    return CGSizeMake(STELLA_WIDTH * 2, STELLA_HEIGHT);
 }
