@@ -42,6 +42,10 @@ public final class PVCore: Object {
     public override static func primaryKey() -> String? {
         return "identifier"
     }
+
+    public override class func ignoredProperties() -> [String] {
+        ["hasCoreClass"]
+    }
 }
 
 // MARK: - Conversions
