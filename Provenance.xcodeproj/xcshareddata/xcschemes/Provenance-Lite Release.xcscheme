@@ -14,16 +14,16 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-               BuildableName = "Provenance.app"
-               BlueprintName = "ProvenanceTV"
+               BlueprintIdentifier = "B3F7E295297736BE00362B92"
+               BuildableName = "Provenance-Lite.app"
+               BlueprintName = "Provenance-Lite"
                ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -31,7 +31,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -44,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-            BuildableName = "Provenance.app"
-            BlueprintName = "ProvenanceTV"
+            BlueprintIdentifier = "B3F7E295297736BE00362B92"
+            BuildableName = "Provenance-Lite.app"
+            BlueprintName = "Provenance-Lite"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,15 +61,15 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-            BuildableName = "Provenance.app"
-            BlueprintName = "ProvenanceTV"
+            BlueprintIdentifier = "B3F7E295297736BE00362B92"
+            BuildableName = "Provenance-Lite.app"
+            BlueprintName = "Provenance-Lite"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug">
+      buildConfiguration = "Release">
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Archive"

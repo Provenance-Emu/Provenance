@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-               BuildableName = "Provenance.app"
-               BlueprintName = "ProvenanceTV"
+               BlueprintIdentifier = "B3F7E422297736C200362B92"
+               BuildableName = "Provenance-XL.app"
+               BlueprintName = "Provenance-XL"
                ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -44,9 +44,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-            BuildableName = "Provenance.app"
-            BlueprintName = "ProvenanceTV"
+            BlueprintIdentifier = "B3F7E422297736C200362B92"
+            BuildableName = "Provenance-XL.app"
+            BlueprintName = "Provenance-XL"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -61,9 +61,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "1AD481B31BA350A400FDA50A"
-            BuildableName = "Provenance.app"
-            BlueprintName = "ProvenanceTV"
+            BlueprintIdentifier = "B3F7E422297736C200362B92"
+            BuildableName = "Provenance-XL.app"
+            BlueprintName = "Provenance-XL"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

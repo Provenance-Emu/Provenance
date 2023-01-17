@@ -13,6 +13,9 @@
    <FileRef
       location = "group:PVSupport/PVSupport.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:PVLogging/PVLogging.xcodeproj">
+   </FileRef>
    <Group
       location = "container:"
       name = "Cores">
