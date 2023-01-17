@@ -398,12 +398,16 @@ extension GameLaunchingViewController where Self: UIViewController {
                 guard !$0.disabled else {
                     return PVSettingsModel.shared.debugOptions.unsupportedCores
                 }
+                guard $0.hasCoreClass else { return false }
                 return true
             })
 //            .distinct(by: #keyPath(\PVSystem.name))
-            .sorted { $0.supportedSystems.count <= $1.supportedSystems.count }
+            .sorted { $0.projectName > $1.projectName }
+//            .sorted { $0.supportedSystems.count <= $1.supportedSystems.count }
 
-        let coreChoiceAlert = UIAlertController(title: "Multiple cores found", message: "Select which core to use with this game. If not sure, select the 1st option.", preferredStyle: .actionSheet)
+        let coreChoiceAlert = UIAlertController(title: "Multiple cores found",
+                                                message: "Select which core to use with this game. If not sure, select the 1st option.",
+                                                preferredStyle: .actionSheet)
 #if os(macOS) || targetEnvironment(macCatalyst)
         if let senderView = sender as? UIView ?? self.view {
             coreChoiceAlert.popoverPresentationController?.sourceView = senderView
@@ -504,6 +508,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                 guard !$0.disabled else {
                     return PVSettingsModel.shared.debugOptions.unsupportedCores
                 }
+                guard $0.hasCoreClass else { return false }
                 return true
             })
 

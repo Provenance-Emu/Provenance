@@ -20,6 +20,10 @@ public final class PVCore: Object {
     public dynamic var projectVersion = ""
     public dynamic var disabled = false
 
+    public lazy var hasCoreClass: Bool = {
+        return NSClassFromString(principleClass) != nil
+    }()
+
     // Reverse links
     public var saveStates = LinkingObjects(fromType: PVSaveState.self, property: "core")
 
