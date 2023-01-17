@@ -41,7 +41,7 @@
 				en,
 			);
 			mainGroup = 08FB7794FE84155DC02AAC07;
-			projectDirPath = "../duckstation";
+			projectDirPath = "../duckStation";
 			projectRoot = "";
 			targets = (
 				8DD76FA90486AB0100D96B5E,
