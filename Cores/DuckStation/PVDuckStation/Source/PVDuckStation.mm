@@ -29,7 +29,7 @@
 #import <PVSupport/PVSupport.h>
 //#import <PVLibrary/PVLibrary.h>
 
-//#import <PVSupport/OERingBuffer.h>
+//#import <PVAudio/OERingBuffer.h>
 //#import <PVObjCUtils/DebugUtils.h>
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>

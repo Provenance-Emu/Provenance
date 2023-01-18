@@ -27,7 +27,7 @@
 
 #import "ProSystemGameCore.h"
 
-#import <PVSupport/OERingBuffer.h>
+#import <PVAudio/OERingBuffer.h>
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>

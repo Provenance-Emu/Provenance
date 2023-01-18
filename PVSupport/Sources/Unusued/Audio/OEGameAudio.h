@@ -1,6 +1,6 @@
 /*
  Copyright (c) 2009, OpenEmu Team
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
      * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
      * Neither the name of the OpenEmu Team nor the
        names of its contributors may be used to endorse or promote products
        derived from this software without specific prior written permission.
-
+ 
  THIS SOFTWARE IS PROVIDED BY OpenEmu Team ''AS IS'' AND ANY
  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -25,27 +25,33 @@
  */
 
 #import <Foundation/Foundation.h>
-#if SWIFT_PACKAGE
-#import <PVAudio/TPCircularBuffer.h>
-#else
-#import <PVAudio/TPCircularBuffer.h>
-#endif
+#import <AudioToolbox/AudioToolbox.h>
+#import <AudioUnit/AudioUnit.h>
 
-@interface OERingBuffer : NSObject
+#define AudioDeviceID unsigned
+
+@class PVEmulatorCore;
+
+@interface OEGameAudio : NSObject
 {
-@public
-    TPCircularBuffer buffer;
+    PVEmulatorCore *gameCore;
+    AUGraph     mGraph;
+    AUNode      mConverterNode, mMixerNode, mOutputNode;
+    AudioUnit   mConverterUnit, mMixerUnit, mOutputUnit;
+    
+    float       volume;
 }
+@property (readonly, nonatomic, assign) BOOL running;
+@property float volume;
+@property AudioDeviceID outputDeviceID;
 
-- (id)initWithLength:(uint32_t)length;
+- (id)initWithCore:(PVEmulatorCore *)core;
 
-@property           uint32_t length;
-@property(readonly) uint32_t availableBytes;
-@property(readonly) uint32_t usedBytes;
-@property(readonly) uint32_t bytesWritten;
-@property(readonly) uint32_t bytesRead;
-
-- (uint32_t)read:(void *)buffer maxLength:(uint32_t)len;
-- (uint32_t)write:(const void *)buffer maxLength:(uint32_t)length;
+- (void)createGraph;
+- (void)startAudio;
+- (void)stopAudio;
+- (void)pauseAudio;
+- (void)volumeUp;
+- (void)volumeDown;
 
 @end

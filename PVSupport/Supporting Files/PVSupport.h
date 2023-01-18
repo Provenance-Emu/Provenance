@@ -48,13 +48,13 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
     #import <PVSupport/NSFileManager+OEHashingAdditions.h>
 
     # pragma mark - Audio
-    #import <PVSupport/TPCircularBuffer.h>
-    #import <PVSupport/OERingBuffer.h>
+    #import <PVAudio/TPCircularBuffer.h>
+    #import <PVAudio/OERingBuffer.h>
     #import <PVSupport/OEGameAudio.h>
     #ifdef __cplusplus
-        #import <PVSupport/CARingBuffer.h>
+        #import <PVAudio/CARingBuffer.hpp>
         //#import <PVSupport/CAAtomic.h>
-        #import <PVSupport/CAAudioTimeStamp.h>
+        #import <PVAudio/CAAudioTimeStamp.hpp>
     #endif
 //#endif
 

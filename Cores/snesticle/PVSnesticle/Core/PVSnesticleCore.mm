@@ -1,5 +1,5 @@
 #import "PVSnesticleCore.h"
-#import <PVSupport/OERingBuffer.h>
+#import <PVAudio/OERingBuffer.h>
 #import <PVLogging/PVLogging.h>
 #import <PVSupport/PVSupport-Swift.h>
 

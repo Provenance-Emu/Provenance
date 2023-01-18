@@ -27,7 +27,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         .package(name: "PVLogging", path: "../PVLogging/"),
-        .package(name: "PVSupport", path: "../PVSupport/"),
+//        .package(name: "PVSupport", path: "../PVSupport/"),
         .package(name: "PVObjCUtils", path: "../PVObjCUtils/")
     ],
 
@@ -37,7 +37,7 @@ let package = Package(
         .target(
             name: "PVAudio",
             dependencies: [
-                .product(name: "PVSupport", package: "PVSupport"),
+//                .product(name: "PVSupport", package: "PVSupport"),
                 .product(name: "PVLogging", package: "PVLogging"),
                 .product(name: "PVObjCUtils", package: "PVObjCUtils")
             ],
@@ -55,10 +55,10 @@ let package = Package(
                 ])
             ],
             linkerSettings: [
-                .linkedFramework("GameController", .when(platforms: [.iOS, .tvOS])),
-                .linkedFramework("CoreGraphics", .when(platforms: [.iOS, .tvOS])),
-                .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS])),
-                .linkedFramework("WatchKit", .when(platforms: [.watchOS]))
+//                .linkedFramework("GameController", .when(platforms: [.iOS, .tvOS])),
+//                .linkedFramework("CoreGraphics", .when(platforms: [.iOS, .tvOS])),
+//                .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS])),
+//                .linkedFramework("WatchKit", .when(platforms: [.watchOS]))
             ])],
     cLanguageStandard: .c11,
     cxxLanguageStandard: .cxx17

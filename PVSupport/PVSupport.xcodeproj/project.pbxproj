@@ -32,16 +32,8 @@
 		B33FB30D279BE2710013AAD8 /* CoreOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB30C279BE2710013AAD8 /* CoreOptional.swift */; };
 		B342325B286EB4060033EFA5 /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6452867202D00B60497 /* dylib.c */; };
 		B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
-		B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
-		B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */; };
-		B3447E8C218B7E4B00557ACE /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */; };
-		B3447E8E218B7E4B00557ACE /* CAAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E83218B7E4B00557ACE /* CAAtomic.h */; };
-		B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */; };
-		B3447E92218B7E4B00557ACE /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E85218B7E4B00557ACE /* CARingBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B3447F9B218C1CD200557ACE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
 		B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */; };
-		B34AB5792106DC5300C45F09 /* TPCircularBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69517F748F80031B1C9 /* TPCircularBuffer.m */; };
 		B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
 		B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
@@ -60,8 +52,6 @@
 		B3928499286703CD003BAC21 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3928498286703CD003BAC21 /* PVLibRetroCore.m */; };
 		B392849B286703F2003BAC21 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
-		B39C29C727A0FADF0078D028 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D5A1D6B908300060D71 /* OERingBuffer.m */; };
-		B39C29CE27A10EE50078D028 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
 		B3A41BCF286E5E660054E9A5 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
 		B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378B2187F9A9009D9244 /* iCadeState.swift */; };
 		B3AB37BD218812BB009D9244 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */; };
@@ -79,9 +69,7 @@
 		B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD92191616C000FA7F9 /* Foundation.framework */; };
 		B3B1A740279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
 		B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
-		B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3CDEEBC21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBB21D4C3E6000C55F7 /* ArchiveSupport.swift */; };
 		B3CDEEBF21D4C41D000C55F7 /* DiscSwappable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEBE21D4C41D000C55F7 /* DiscSwappable.swift */; };
 		B3CDEEC221D4C454000C55F7 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEC121D4C454000C55F7 /* Controls.swift */; };
@@ -98,9 +86,11 @@
 		B3E5BDBF29777D6C0011CCBF /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E5BDBE29777D6C0011CCBF /* PVLogging */; };
 		B3E88CC92977B9FD00C90E86 /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CC82977B9FD00C90E86 /* PVObjCUtils */; };
 		B3E88CCB2977BA0300C90E86 /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CCA2977BA0300C90E86 /* PVObjCUtils */; };
+		B3E88CD12978424F00C90E86 /* PVAudio in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CD02978424F00C90E86 /* PVAudio */; };
+		B3E88CD52978541200C90E86 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E88CD32978541200C90E86 /* OEGameAudio.m */; };
+		B3E88CD62978541200C90E86 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3E88CD42978541200C90E86 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3EA6C91292617F300010224 /* libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B322512D286C4728001FDF42 /* libretro.a */; };
 		B3F7E5BD29775B8D00362B92 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3F7E5BC29775B8D00362B92 /* PVLogging */; };
-		B3FA5D5B1D6B908300060D71 /* OERingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D591D6B908300060D71 /* OERingBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FA5D631D6B90BD00060D71 /* PVEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FFF02D26E9E65800A33143 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FFF02C26E9E65800A33143 /* AVFoundation.framework */; };
 		CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87D332258AB6B300838AF8 /* GameWithCheat.swift */; };
@@ -167,10 +157,6 @@
 		0592894D1DC194FD0012644D /* RealTimeThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RealTimeThread.h; sourceTree = "<group>"; };
 		0592894E1DC194FD0012644D /* RealTimeThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RealTimeThread.m; sourceTree = "<group>"; };
 		1ACEA64B17F7467D0031B1C9 /* PVSupport-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVSupport-Prefix.pch"; sourceTree = "<group>"; };
-		1ACEA69117F748F80031B1C9 /* OEGameAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEGameAudio.h; sourceTree = "<group>"; };
-		1ACEA69217F748F80031B1C9 /* OEGameAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEGameAudio.m; sourceTree = "<group>"; };
-		1ACEA69517F748F80031B1C9 /* TPCircularBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPCircularBuffer.m; sourceTree = "<group>"; };
-		1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPCircularBuffer.h; sourceTree = "<group>"; };
 		1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+PVAbstractAdditions.h"; sourceTree = "<group>"; };
 		1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PVAbstractAdditions.m"; sourceTree = "<group>"; };
 		557DCAB0292A91E000045B02 /* ThemeOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeOption.swift; sourceTree = "<group>"; };
@@ -268,13 +254,6 @@
 		B33FB303279BE21C0013AAD8 /* CoreOptionRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionRange.swift; sourceTree = "<group>"; };
 		B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionValue.swift; sourceTree = "<group>"; };
 		B33FB30C279BE2710013AAD8 /* CoreOptional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptional.swift; sourceTree = "<group>"; };
-		B3447E7F218B7E4B00557ACE /* CABitOperations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CABitOperations.h; sourceTree = "<group>"; };
-		B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAudioTimeStamp.h; sourceTree = "<group>"; };
-		B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CARingBuffer.cpp; sourceTree = "<group>"; };
-		B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAutoDisposer.h; sourceTree = "<group>"; };
-		B3447E83218B7E4B00557ACE /* CAAtomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CAAtomic.h; sourceTree = "<group>"; };
-		B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CAAudioTimeStamp.cpp; sourceTree = "<group>"; };
-		B3447E85218B7E4B00557ACE /* CARingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CARingBuffer.h; sourceTree = "<group>"; };
 		B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVSettingsModel.swift; sourceTree = "<group>"; };
 		B34DC364286717AD00B60497 /* core_info.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core_info.h; sourceTree = "<group>"; };
 		B34DC365286717AD00B60497 /* driver.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = driver.c; sourceTree = "<group>"; };
@@ -1035,10 +1014,11 @@
 		B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLibRetroGLESCore.m; sourceTree = "<group>"; };
 		B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDeviceExtension.swift; sourceTree = "<group>"; };
 		B3E88CC72977B9DF00C90E86 /* PVObjCUtils */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = PVObjCUtils; path = ../PVObjCUtils; sourceTree = "<group>"; };
+		B3E88CCF29783CFC00C90E86 /* PVAudio */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = PVAudio; path = ../PVAudio; sourceTree = "<group>"; };
+		B3E88CD32978541200C90E86 /* OEGameAudio.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OEGameAudio.m; sourceTree = "<group>"; };
+		B3E88CD42978541200C90E86 /* OEGameAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OEGameAudio.h; sourceTree = "<group>"; };
 		B3F7E5B529775B8000362B92 /* PVLogging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVLogging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F7E5B629775B8000362B92 /* PVLoggingObjC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVLoggingObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3FA5D591D6B908300060D71 /* OERingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OERingBuffer.h; sourceTree = "<group>"; };
-		B3FA5D5A1D6B908300060D71 /* OERingBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OERingBuffer.m; sourceTree = "<group>"; };
 		B3FA5D5F1D6B90BD00060D71 /* PVEmulatorCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVEmulatorCore.h; sourceTree = "<group>"; };
 		B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVEmulatorCore.m; sourceTree = "<group>"; };
 		B3FFF02C26E9E65800A33143 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -1086,6 +1066,7 @@
 				B3D0EE2A277FE8E1002DC0A5 /* CoreHaptics.framework in Frameworks */,
 				B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */,
 				B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */,
+				B3E88CD12978424F00C90E86 /* PVAudio in Frameworks */,
 				B3FFF02D26E9E65800A33143 /* AVFoundation.framework in Frameworks */,
 				B3E88CC92977B9FD00C90E86 /* PVObjCUtils in Frameworks */,
 				B3E5BDBF29777D6C0011CCBF /* PVLogging in Frameworks */,
@@ -1149,31 +1130,17 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		1ACEA69017F748F80031B1C9 /* Audio */ = {
-			isa = PBXGroup;
-			children = (
-				1ACEA69517F748F80031B1C9 /* TPCircularBuffer.m */,
-				1ACEA69117F748F80031B1C9 /* OEGameAudio.h */,
-				B3FA5D591D6B908300060D71 /* OERingBuffer.h */,
-				1ACEA69617F748F80031B1C9 /* TPCircularBuffer.h */,
-				1ACEA69217F748F80031B1C9 /* OEGameAudio.m */,
-				B3FA5D5A1D6B908300060D71 /* OERingBuffer.m */,
-				B3447E7E218B7E2C00557ACE /* CARingBuffer */,
-			);
-			path = Audio;
-			sourceTree = "<group>";
-		};
 		B30E94892793C77700871E57 /* PVSupport */ = {
 			isa = PBXGroup;
 			children = (
-				B30F80112905169A00F21217 /* System */,
-				1ACEA69017F748F80031B1C9 /* Audio */,
+				B3E88CD22978541200C90E86 /* Audio */,
 				B3AB36DC2187F4C4009D9244 /* Controller */,
 				B3AB37F721882119009D9244 /* CoreOptions */,
 				B3CDEEB821D4C394000C55F7 /* EmulatorCore */,
 				B3A4FB57278FE2B700A65248 /* NSExtensions */,
 				B3C83E25279621080020824C /* Performance */,
 				B3447F99218C1CBE00557ACE /* Settings */,
+				B30F80112905169A00F21217 /* System */,
 				B3A4FB56278FE2A700A65248 /* Threads */,
 			);
 			path = PVSupport;
@@ -1324,20 +1291,6 @@
 				B33FB30C279BE2710013AAD8 /* CoreOptional.swift */,
 			);
 			path = Protocols;
-			sourceTree = "<group>";
-		};
-		B3447E7E218B7E2C00557ACE /* CARingBuffer */ = {
-			isa = PBXGroup;
-			children = (
-				B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */,
-				B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */,
-				B3447E83218B7E4B00557ACE /* CAAtomic.h */,
-				B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */,
-				B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */,
-				B3447E7F218B7E4B00557ACE /* CABitOperations.h */,
-				B3447E85218B7E4B00557ACE /* CARingBuffer.h */,
-			);
-			path = CARingBuffer;
 			sourceTree = "<group>";
 		};
 		B3447F99218C1CBE00557ACE /* Settings */ = {
@@ -3088,6 +3041,7 @@
 			children = (
 				B37643F92977698600711230 /* PVLogging */,
 				B3E88CC72977B9DF00C90E86 /* PVObjCUtils */,
+				B3E88CCF29783CFC00C90E86 /* PVAudio */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -3252,6 +3206,15 @@
 			path = Features;
 			sourceTree = "<group>";
 		};
+		B3E88CD22978541200C90E86 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				B3E88CD32978541200C90E86 /* OEGameAudio.m */,
+				B3E88CD42978541200C90E86 /* OEGameAudio.h */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -3273,17 +3236,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				B34AB8642106F2F200C45F09 /* PVSupport.h in Headers */,
-				B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */,
-				B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */,
-				B3FA5D5B1D6B908300060D71 /* OERingBuffer.h in Headers */,
+				B3E88CD62978541200C90E86 /* OEGameAudio.h in Headers */,
 				B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */,
-				B3447E92218B7E4B00557ACE /* CARingBuffer.h in Headers */,
-				B3447E8E218B7E4B00557ACE /* CAAtomic.h in Headers */,
-				B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */,
 				B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
 				B3FA5D631D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
-				B3447E8C218B7E4B00557ACE /* CAAutoDisposer.h in Headers */,
-				B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3386,6 +3342,7 @@
 			packageProductDependencies = (
 				B3E5BDBE29777D6C0011CCBF /* PVLogging */,
 				B3E88CC82977B9FD00C90E86 /* PVObjCUtils */,
+				B3E88CD02978424F00C90E86 /* PVAudio */,
 			);
 			productName = "PVSupportTV Framework";
 			productReference = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */;
@@ -3527,7 +3484,6 @@
 				B34AB57F2106DC6100C45F09 /* PVEmulatorCore.swift in Sources */,
 				B3AB37EB21881B7A009D9244 /* PViCadeSteelSeriesController.swift in Sources */,
 				B3CDEEBC21D4C3E6000C55F7 /* ArchiveSupport.swift in Sources */,
-				B39C29CE27A10EE50078D028 /* OEGameAudio.m in Sources */,
 				B33FB30D279BE2710013AAD8 /* CoreOptional.swift in Sources */,
 				B3AB37E921881B7A009D9244 /* PViCade8BitdoController.swift in Sources */,
 				B3AB37DC21881869009D9244 /* PViCadeInputAxis.swift in Sources */,
@@ -3541,7 +3497,6 @@
 				B3CDEEC821D4C4E5000C55F7 /* SaveStateSupport.swift in Sources */,
 				B3AB37E721881B6D009D9244 /* iCadeControllerSetting.swift in Sources */,
 				B3AB37E021881955009D9244 /* PViCadeController.swift in Sources */,
-				B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */,
 				B3CDEEC221D4C454000C55F7 /* Controls.swift in Sources */,
 				B3AB37DE21881873009D9244 /* PViCadeGamepadDirectionPad.swift in Sources */,
 				B33FB308279BE2460013AAD8 /* CoreOptionValue.swift in Sources */,
@@ -3554,16 +3509,14 @@
 				B3CDEEC521D4C490000C55F7 /* CoreActions.swift in Sources */,
 				B3CEC5BC2794E9FD004A7CC1 /* PVGameControllerUtilities.swift in Sources */,
 				B33FB2EB279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */,
-				B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */,
 				B3AB37BF218814A7009D9244 /* PViCadeReader.swift in Sources */,
 				B34AB57D2106DC6100C45F09 /* RealTimeThread.m in Sources */,
 				B3CDEEBF21D4C41D000C55F7 /* DiscSwappable.swift in Sources */,
+				B3E88CD52978541200C90E86 /* OEGameAudio.m in Sources */,
 				B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */,
 				B3D0EE20277FE85F002DC0A5 /* HapticsManager.swift in Sources */,
 				B34AB57E2106DC6100C45F09 /* PVEmulatorCore.m in Sources */,
-				B34AB5792106DC5300C45F09 /* TPCircularBuffer.m in Sources */,
 				B33FB2FC279BE18F0013AAD8 /* CoreOptionEnumValue.swift in Sources */,
-				B39C29C727A0FADF0078D028 /* OERingBuffer.m in Sources */,
 				B33FB300279BE1E40013AAD8 /* OptionDependency.swift in Sources */,
 				B3AB37EA21881B7A009D9244 /* PViCadeMocuteController.swift in Sources */,
 				B3AB37BD218812BB009D9244 /* iCadeReaderView.swift in Sources */,
@@ -4538,6 +4491,10 @@
 		B3E88CCA2977BA0300C90E86 /* PVObjCUtils */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVObjCUtils;
+		};
+		B3E88CD02978424F00C90E86 /* PVAudio */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVAudio;
 		};
 		B3F7E5BC29775B8D00362B92 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;

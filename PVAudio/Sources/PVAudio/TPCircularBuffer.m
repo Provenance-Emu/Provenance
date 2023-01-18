@@ -28,14 +28,14 @@
 //
 
 #include "TPCircularBuffer.h"
-#import <CoreGraphics/CoreGraphics.h>
 #include <mach/mach.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-//#import <PVObjCUtils/DebugUtils.h>
-#define UNLIKELY(n) __builtin_expect((n) != 0, 0)
-#define LIKELY(n) __builtin_expect((n) != 0, 1)
+#if SWIFT_PACKAGE
+#import <PVObjCUtils/DebugUtils.h>
+#else
+#import <PVObjCUtils/DebugUtils.h>
+#endif
 
 #define reportResult(result,operation) (_reportResult((result),(operation),strrchr(__FILE__, '/')+1,__LINE__))
 static inline bool _reportResult(kern_return_t result, const char *operation, const char* file, int line) {

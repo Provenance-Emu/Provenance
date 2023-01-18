@@ -84,7 +84,6 @@
 		B354E7C9219A7E470041F971 /* System.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C8219A7E470041F971 /* System.swift */; };
 		B354E7CC219A7E620041F971 /* SystemProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CB219A7E620041F971 /* SystemProtocol.swift */; };
 		B354E7CF219A8EAF0041F971 /* LibrarySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7CE219A8EAF0041F971 /* LibrarySerializer.swift */; };
-		B364D4BF2870E80100B93A4B /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B364D4BE2870E80100B93A4B /* PVLibRetro.framework */; };
 		B378227A21D41E1C0077E86F /* SavePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227921D41E1C0077E86F /* SavePackage.swift */; };
 		B378227D21D41E310077E86F /* GamePackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227C21D41E310077E86F /* GamePackage.swift */; };
 		B378228021D41E460077E86F /* PackageResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378227F21D41E460077E86F /* PackageResult.swift */; };
@@ -738,7 +737,6 @@
 				B3067F742106B9130091437F /* CoreGraphics.framework in Frameworks */,
 				1180B31E2492A9BB00636C8A /* CoreServices.framework in Frameworks */,
 				B3067F4B2106B5A30091437F /* Foundation.framework in Frameworks */,
-				B364D4BF2870E80100B93A4B /* PVLibRetro.framework in Frameworks */,
 				B37B4DF227B2292F0068F8D1 /* RxDataSources in Frameworks */,
 				B336B90626B39ABA00960A81 /* RxRealm in Frameworks */,
 				B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */,

@@ -8,7 +8,8 @@
 
 #import "PVEmulatorCore.h"
 #import "NSObject+PVAbstractAdditions.h"
-#import "OERingBuffer.h"
+@import PVAudio;
+//#import "OERingBuffer.h"
 #import "RealTimeThread.h"
 @import PVLoggingObjC;
 #import <PVObjCUtils/DebugUtils.h>

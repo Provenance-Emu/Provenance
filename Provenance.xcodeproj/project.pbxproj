@@ -704,6 +704,8 @@
 		B3E88CBA2977AB5900C90E86 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CB92977AB5900C90E86 /* Reachability */; };
 		B3E88CBC2977AB6C00C90E86 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CBB2977AB6C00C90E86 /* Reachability */; };
 		B3E88CBE2977AB7C00C90E86 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CBD2977AB7C00C90E86 /* Reachability */; };
+		B3E88CCD297836A300C90E86 /* PVFCEU.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3E88CCC297836A300C90E86 /* PVFCEU.framework */; };
+		B3E88CCE297836A300C90E86 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3E88CCC297836A300C90E86 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EEED8A2920B006008E2603 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
@@ -1815,6 +1817,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B3F7E3F8297736BE00362B92 /* PVSupport.framework in Embed Frameworks */,
+				B3E88CCE297836A300C90E86 /* PVFCEU.framework in Embed Frameworks */,
 				B3F7E3FB297736BE00362B92 /* PVLibrary.framework in Embed Frameworks */,
 				B3F7E414297736BE00362B92 /* PVStella.framework in Embed Frameworks */,
 			);
@@ -2601,6 +2604,7 @@
 		B3E5DA1B2959841000907CFB /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E6DADA20B7AD1500454DD4 /* PVLogViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLogViewController.h; sourceTree = "<group>"; };
 		B3E6DADB20B7AD1500454DD4 /* PVLogViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLogViewController.m; sourceTree = "<group>"; };
+		B3E88CCC297836A300C90E86 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSaveStateInfoViewController.swift; sourceTree = "<group>"; };
 		B3EEED5F2920AEB6008E2603 /* DeviceActivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DeviceActivity.framework; path = System/Library/Frameworks/DeviceActivity.framework; sourceTree = SDKROOT; };
 		B3EEED622920AEBA008E2603 /* DeviceActivityMonitorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceActivityMonitorExtension.swift; sourceTree = "<group>"; };
@@ -2995,6 +2999,7 @@
 				B3F7E3BB297736BE00362B92 /* CoreGraphics.framework in Frameworks */,
 				B3E88CBA2977AB5900C90E86 /* Reachability in Frameworks */,
 				B3F7E3BC297736BE00362B92 /* AltKit in Frameworks */,
+				B3E88CCD297836A300C90E86 /* PVFCEU.framework in Frameworks */,
 				B3F7E3BE297736BE00362B92 /* Introspect in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3203,6 +3208,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3E88CCC297836A300C90E86 /* PVFCEU.framework */,
 				B33155E62971D360008767C5 /* PVMupen64Plus-NX.framework */,
 				B33155E32971D34D008767C5 /* PVFuse.framework */,
 				B322A98F2971670B00F0D876 /* PVDuckStation.framework */,
