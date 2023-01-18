@@ -359,132 +359,6 @@
 			remoteGlobalIDString = 0424D5B451D54E0A9CBB3EF1;
 			remoteInfo = xxhash;
 		};
-		B3AAFA8C2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E449D1CC998F479899984D08;
-			remoteInfo = BitFieldTest;
-		};
-		B3AAFA8E2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2F61ACB12F2544F38B36AC74;
-			remoteInfo = BitSetTest;
-		};
-		B3AAFA902949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C968170A7D39415ABF53325A;
-			remoteInfo = BitUtilsTest;
-		};
-		B3AAFA922949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D09B294247B347C69B6056C5;
-			remoteInfo = BlockingLoopTest;
-		};
-		B3AAFA942949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 999E6F71031540A294ED10AD;
-			remoteInfo = BusyLoopTest;
-		};
-		B3AAFA962949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 0DA33A3C1ADC4DD9B03532F8;
-			remoteInfo = CommonFuncsTest;
-		};
-		B3AAFA982949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EFB9D51FA9034A38B9F73B9C;
-			remoteInfo = CoreTimingTest;
-		};
-		B3AAFA9A2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1111BB4F63D94D658F81B740;
-			remoteInfo = CryptoEcTest;
-		};
-		B3AAFA9C2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 46F7DA2E87E043B4B24A077B;
-			remoteInfo = DSPAcceleratorTest;
-		};
-		B3AAFA9E2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E20B2AE1290D4797851DCB20;
-			remoteInfo = DSPAssemblyTest;
-		};
-		B3AAFAA02949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8BFB82AF96E24C7DB24BA1C8;
-			remoteInfo = ESFormatsTest;
-		};
-		B3AAFAA22949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 97AE98159ED84948A87D92A1;
-			remoteInfo = EnumFormatterTest;
-		};
-		B3AAFAA42949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F9460EB91E2645F6A1A9E9B2;
-			remoteInfo = EventTest;
-		};
-		B3AAFAA62949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3667081458CB4BD7847EBA70;
-			remoteInfo = FileSystemTest;
-		};
-		B3AAFAA82949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 578F8EFC108849F694A63F5C;
-			remoteInfo = FileUtilTest;
-		};
-		B3AAFAAA2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 063D3264BEF047229A08D3E6;
-			remoteInfo = FixedSizeQueueTest;
-		};
-		B3AAFAAC2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 336D9CECBBD34B888198360F;
-			remoteInfo = FlagTest;
-		};
-		B3AAFAAE2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1A9893033830441097A65CEC;
-			remoteInfo = FloatUtilsTest;
-		};
 		B3AAFAB02949E94400CC8234 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
@@ -492,75 +366,12 @@
 			remoteGlobalIDString = 4BB39C731E2447D7AC8FDEFE;
 			remoteInfo = FreeSurround;
 		};
-		B3AAFAB22949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EA05D19C36424210AD696CBE;
-			remoteInfo = MMIOTest;
-		};
-		B3AAFAB42949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 279038446885432B9A0334B1;
-			remoteInfo = MathUtilTest;
-		};
-		B3AAFAB62949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1FECF898B33D476CB3DA2737;
-			remoteInfo = NandPathsTest;
-		};
-		B3AAFAB82949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 37976FF96B4E45E0AE6F8A49;
-			remoteInfo = PageFaultTest;
-		};
-		B3AAFABA2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A4C49CB45DCC4B1C9EED5D0E;
-			remoteInfo = PowerPCTest;
-		};
-		B3AAFABC2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5D3922F1953C443683235594;
-			remoteInfo = SPSCQueueTest;
-		};
 		B3AAFABE2949E94400CC8234 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = E6922D69AF9748DE8DA73888;
 			remoteInfo = SoundTouch;
-		};
-		B3AAFAC02949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 572513C0DD194608AF410050;
-			remoteInfo = StringUtilTest;
-		};
-		B3AAFAC22949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D4E1696AE2FC404FB96E7B55;
-			remoteInfo = SwapTest;
-		};
-		B3AAFAC42949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9EAE6985868B4F619D463534;
-			remoteInfo = VertexLoaderTest;
 		};
 		B3AAFAC62949E94400CC8234 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -39086,35 +38897,8 @@
 		B3AAFA442949E94300CC8234 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3AAFA8D2949E94400CC8234 /* BitFieldTest */,
-				B3AAFA8F2949E94400CC8234 /* BitSetTest */,
-				B3AAFA912949E94400CC8234 /* BitUtilsTest */,
-				B3AAFA932949E94400CC8234 /* BlockingLoopTest */,
-				B3AAFA952949E94400CC8234 /* BusyLoopTest */,
-				B3AAFA972949E94400CC8234 /* CommonFuncsTest */,
-				B3AAFA992949E94400CC8234 /* CoreTimingTest */,
-				B3AAFA9B2949E94400CC8234 /* CryptoEcTest */,
-				B3AAFA9D2949E94400CC8234 /* DSPAcceleratorTest */,
-				B3AAFA9F2949E94400CC8234 /* DSPAssemblyTest */,
-				B3AAFAA12949E94400CC8234 /* ESFormatsTest */,
-				B3AAFAA32949E94400CC8234 /* EnumFormatterTest */,
-				B3AAFAA52949E94400CC8234 /* EventTest */,
-				B3AAFAA72949E94400CC8234 /* FileSystemTest */,
-				B3AAFAA92949E94400CC8234 /* FileUtilTest */,
-				B3AAFAAB2949E94400CC8234 /* FixedSizeQueueTest */,
-				B3AAFAAD2949E94400CC8234 /* FlagTest */,
-				B3AAFAAF2949E94400CC8234 /* FloatUtilsTest */,
 				B3AAFAB12949E94400CC8234 /* libFreeSurround.a */,
-				B3AAFAB32949E94400CC8234 /* MMIOTest */,
-				B3AAFAB52949E94400CC8234 /* MathUtilTest */,
-				B3AAFAB72949E94400CC8234 /* NandPathsTest */,
-				B3AAFAB92949E94400CC8234 /* PageFaultTest */,
-				B3AAFABB2949E94400CC8234 /* PowerPCTest */,
-				B3AAFABD2949E94400CC8234 /* SPSCQueueTest */,
 				B3AAFABF2949E94400CC8234 /* libSoundTouch.a */,
-				B3AAFAC12949E94400CC8234 /* StringUtilTest */,
-				B3AAFAC32949E94400CC8234 /* SwapTest */,
-				B3AAFAC52949E94400CC8234 /* VertexLoaderTest */,
 				B3AAFAC72949E94400CC8234 /* libaudiocommon.a */,
 				B3AAFAC92949E94400CC8234 /* libcommon.a */,
 				B3AAFACB2949E94400CC8234 /* libcore.a */,
@@ -39387,150 +39171,6 @@
 			remoteRef = 933CC5E02951BB8A0070CF1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA8D2949E94400CC8234 /* BitFieldTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = BitFieldTest;
-			path = BitFieldTest.app;
-			remoteRef = B3AAFA8C2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA8F2949E94400CC8234 /* BitSetTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = BitSetTest;
-			path = BitSetTest.app;
-			remoteRef = B3AAFA8E2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA912949E94400CC8234 /* BitUtilsTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = BitUtilsTest;
-			path = BitUtilsTest.app;
-			remoteRef = B3AAFA902949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA932949E94400CC8234 /* BlockingLoopTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = BlockingLoopTest;
-			path = BlockingLoopTest.app;
-			remoteRef = B3AAFA922949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA952949E94400CC8234 /* BusyLoopTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = BusyLoopTest;
-			path = BusyLoopTest.app;
-			remoteRef = B3AAFA942949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA972949E94400CC8234 /* CommonFuncsTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = CommonFuncsTest;
-			path = CommonFuncsTest.app;
-			remoteRef = B3AAFA962949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA992949E94400CC8234 /* CoreTimingTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = CoreTimingTest;
-			path = CoreTimingTest.app;
-			remoteRef = B3AAFA982949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA9B2949E94400CC8234 /* CryptoEcTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = CryptoEcTest;
-			path = CryptoEcTest.app;
-			remoteRef = B3AAFA9A2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA9D2949E94400CC8234 /* DSPAcceleratorTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = DSPAcceleratorTest;
-			path = DSPAcceleratorTest.app;
-			remoteRef = B3AAFA9C2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA9F2949E94400CC8234 /* DSPAssemblyTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = DSPAssemblyTest;
-			path = DSPAssemblyTest.app;
-			remoteRef = B3AAFA9E2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAA12949E94400CC8234 /* ESFormatsTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = ESFormatsTest;
-			path = ESFormatsTest.app;
-			remoteRef = B3AAFAA02949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAA32949E94400CC8234 /* EnumFormatterTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = EnumFormatterTest;
-			path = EnumFormatterTest.app;
-			remoteRef = B3AAFAA22949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAA52949E94400CC8234 /* EventTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = EventTest;
-			path = EventTest.app;
-			remoteRef = B3AAFAA42949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAA72949E94400CC8234 /* FileSystemTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = FileSystemTest;
-			path = FileSystemTest.app;
-			remoteRef = B3AAFAA62949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAA92949E94400CC8234 /* FileUtilTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = FileUtilTest;
-			path = FileUtilTest.app;
-			remoteRef = B3AAFAA82949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAAB2949E94400CC8234 /* FixedSizeQueueTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = FixedSizeQueueTest;
-			path = FixedSizeQueueTest.app;
-			remoteRef = B3AAFAAA2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAAD2949E94400CC8234 /* FlagTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = FlagTest;
-			path = FlagTest.app;
-			remoteRef = B3AAFAAC2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAAF2949E94400CC8234 /* FloatUtilsTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = FloatUtilsTest;
-			path = FloatUtilsTest.app;
-			remoteRef = B3AAFAAE2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		B3AAFAB12949E94400CC8234 /* libFreeSurround.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -39538,83 +39178,11 @@
 			remoteRef = B3AAFAB02949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAB32949E94400CC8234 /* MMIOTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = MMIOTest;
-			path = MMIOTest.app;
-			remoteRef = B3AAFAB22949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAB52949E94400CC8234 /* MathUtilTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = MathUtilTest;
-			path = MathUtilTest.app;
-			remoteRef = B3AAFAB42949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAB72949E94400CC8234 /* NandPathsTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = NandPathsTest;
-			path = NandPathsTest.app;
-			remoteRef = B3AAFAB62949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAB92949E94400CC8234 /* PageFaultTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = PageFaultTest;
-			path = PageFaultTest.app;
-			remoteRef = B3AAFAB82949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFABB2949E94400CC8234 /* PowerPCTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = PowerPCTest;
-			path = PowerPCTest.app;
-			remoteRef = B3AAFABA2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFABD2949E94400CC8234 /* SPSCQueueTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = SPSCQueueTest;
-			path = SPSCQueueTest.app;
-			remoteRef = B3AAFABC2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		B3AAFABF2949E94400CC8234 /* libSoundTouch.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libSoundTouch.a;
 			remoteRef = B3AAFABE2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAC12949E94400CC8234 /* StringUtilTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = StringUtilTest;
-			path = StringUtilTest.app;
-			remoteRef = B3AAFAC02949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAC32949E94400CC8234 /* SwapTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = SwapTest;
-			path = SwapTest.app;
-			remoteRef = B3AAFAC22949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAC52949E94400CC8234 /* VertexLoaderTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = VertexLoaderTest;
-			path = VertexLoaderTest.app;
-			remoteRef = B3AAFAC42949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3AAFAC72949E94400CC8234 /* libaudiocommon.a */ = {
@@ -40477,7 +40045,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "$(inherited)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphoneos appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -40633,7 +40201,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DTARGET_NO_NIXPROF";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphoneos appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -40711,7 +40279,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "$(inherited)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphoneos appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
