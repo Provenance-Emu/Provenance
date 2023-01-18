@@ -28,7 +28,7 @@
 #import "PVStellaGameCore.h"
 
 #import <PVSupport/OERingBuffer.h>
-#import <PVSupport/DebugUtils.h>
+#import <PVObjCUtils/DebugUtils.h>
 #import <PVLogging/PVLogging.h>
 
 #import <PVStella/PVStella-Swift.h>

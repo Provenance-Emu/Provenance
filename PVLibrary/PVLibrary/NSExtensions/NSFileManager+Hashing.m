@@ -8,7 +8,7 @@
 
 #import "NSFileManager+Hashing.h"
 #import <CommonCrypto/CommonDigest.h>
-#import <PVSupport/DebugUtils.h>
+#import <PVObjCUtils/DebugUtils.h>
 
 #define HASH_READ_CHUNK_SIZE (1024 * 32)
 

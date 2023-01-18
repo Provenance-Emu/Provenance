@@ -11,7 +11,7 @@
 #import <PVGenesis/PVGenesis-Swift.h>
 
 //#import <PVSupport/OERingBuffer.h>
-//#import <PVSupport/DebugUtils.h>
+//#import <PVObjCUtils/DebugUtils.h>
 //#import <PVLogging/PVLogging.h>
 #import <PVGenesis/libretro.h>
 //#import <OpenGLES/EAGL.h>

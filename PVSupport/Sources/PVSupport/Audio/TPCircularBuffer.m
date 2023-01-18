@@ -34,7 +34,7 @@
 #if SWIFT_PACKAGE
 #import <DebugUtils.h>
 #else
-#import <PVSupport/DebugUtils.h>
+#import <PVObjCUtils/DebugUtils.h>
 #endif
 
 #define reportResult(result,operation) (_reportResult((result),(operation),strrchr(__FILE__, '/')+1,__LINE__))

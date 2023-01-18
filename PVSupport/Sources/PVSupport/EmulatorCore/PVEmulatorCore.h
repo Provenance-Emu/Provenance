@@ -21,7 +21,7 @@
 #if SWIFT_PACKAGE
 #import <DebugUtils.h>
 #else
-#import <PVSupport/DebugUtils.h>
+#import <PVObjCUtils/DebugUtils.h>
 #endif
 
 #if TARGET_OS_OSX

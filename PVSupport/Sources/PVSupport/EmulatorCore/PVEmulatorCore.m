@@ -11,7 +11,7 @@
 #import "OERingBuffer.h"
 #import "RealTimeThread.h"
 @import PVLoggingObjC;
-#import "DebugUtils.h"
+#import <PVObjCUtils/DebugUtils.h>
 @import AVFoundation;
 
 #if !TARGET_OS_OSX

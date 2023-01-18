@@ -25,6 +25,11 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <CoreGraphics/CoreGraphics.h>
+#import <Foundation/Foundation.h>
+
+#pragma once
+
 #ifndef _OEGeometry_
 #define _OEGeometry_
 typedef struct OEIntPoint {

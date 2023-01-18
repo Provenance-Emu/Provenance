@@ -28,7 +28,7 @@
 
 @import PVSupport;
 //#import <PVSupport/OERingBuffer.h>
-//#import <PVSupport/DebugUtils.h>
+//#import <PVObjCUtils/DebugUtils.h>
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>

@@ -9,6 +9,8 @@
 #ifndef PVSupport_DebugUtils_h
 #define PVSupport_DebugUtils_h
 
+#import <Foundation/Foundation.h>
+
 //MARK: Strong/Weak
 #define MAKEWEAK(x)\
 __weak __typeof(x)weak##x = x

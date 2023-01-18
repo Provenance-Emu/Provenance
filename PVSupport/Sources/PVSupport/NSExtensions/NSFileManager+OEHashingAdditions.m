@@ -26,7 +26,7 @@
 
 #import "NSFileManager+OEHashingAdditions.h"
 #import <CommonCrypto/CommonDigest.h>
-#import "DebugUtils.h"
+#import <PVObjCUtils/DebugUtils.h>
 #define HASH_READ_CHUNK_SIZE (1024 * 32)
 
 @implementation NSFileManager (OEHashingAdditions)
