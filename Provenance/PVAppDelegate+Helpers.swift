@@ -8,6 +8,7 @@
 
 import Foundation
 import PVSupport
+import PVLogging
 
 // MARK: - Helpers
 extension PVAppDelegate {
@@ -30,20 +31,20 @@ extension PVAppDelegate {
 
     func _initLogging() {
         // Initialize logging
-        PVLogging.sharedInstance()
+        PVLogging.shared
 
-        fileLogger.maximumFileSize = (1024 * 64) // 64 KByte
-        fileLogger.logFileManager.maximumNumberOfLogFiles = 1
-        fileLogger.rollLogFile(withCompletion: nil)
-        DDLog.add(fileLogger)
+//        fileLogger.maximumFileSize = (1024 * 64) // 64 KByte
+//        fileLogger.logFileManager.maximumNumberOfLogFiles = 1
+//        fileLogger.rollLogFile(withCompletion: nil)
+//        DDLog.add(fileLogger)
 
         #if os(iOS)
             // Debug view logger
-            DDLog.add(PVUIForLumberJack.sharedInstance(), with: .info)
-            window?.addLogViewerGesture()
+//            DDLog.add(PVUIForLumberJack.sharedInstance(), with: .info)
+//            window?.addLogViewerGesture()
         #endif
 
-        DDOSLogger.sharedInstance.logFormatter = PVTTYFormatter()
+//        DDOSLogger.sharedInstance.logFormatter = PVTTYFormatter()
     }
 
     func setDefaultsFromSettingsBundle() {

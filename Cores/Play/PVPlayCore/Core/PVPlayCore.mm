@@ -8,9 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+#import <PVLogging/PVLogging.h>
+
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 #import <PVPlay/PVPlay-Swift.h>
+
 #import "PVPlayCore.h"
 #import "PVPlayCore+Controls.h"
 #import "PVPlayCore+Audio.h"

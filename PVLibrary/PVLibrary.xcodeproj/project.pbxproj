@@ -230,6 +230,7 @@
 		B3CDEEB021D493AC000C55F7 /* GameImporter2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEAF21D493AC000C55F7 /* GameImporter2.swift */; };
 		B3CDEEB321D497CD000C55F7 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEEB221D497CD000C55F7 /* Package.swift */; };
 		B3CDEECB21D4CF61000C55F7 /* DirectoryWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CDEECA21D4CF61000C55F7 /* DirectoryWatcher.swift */; };
+		B3E5BDC1297788E20011CCBF /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E5BDC0297788E20011CCBF /* PVLogging */; };
 		B3FAC8DE292B1DDD005E8B11 /* PVPatreon.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FAC8EF292B1E1C005E8B11 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; };
 		B3FAC8F0292B1E1C005E8B11 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -267,6 +268,16 @@
 				B3C04B6F21078D2500E7AF79 /* PVLibrary.framework in Copy Framework */,
 			);
 			name = "Copy Framework";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3E5BDB92977716B0011CCBF /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3FAC8F3292B1E1C005E8B11 /* Embed Frameworks */ = {
@@ -731,6 +742,7 @@
 				B37B4DF227B2292F0068F8D1 /* RxDataSources in Frameworks */,
 				B336B90626B39ABA00960A81 /* RxRealm in Frameworks */,
 				B3A3204127209B4300F338F6 /* ZipArchive in Frameworks */,
+				B3E5BDC1297788E20011CCBF /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1621,6 +1633,7 @@
 				B3579D0B2106B11D00DDEBD6 /* Sources */,
 				B3579D0C2106B11D00DDEBD6 /* Frameworks */,
 				B3579D0D2106B11D00DDEBD6 /* Resources */,
+				B3E5BDB92977716B0011CCBF /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1633,6 +1646,7 @@
 				B3A3204027209B4300F338F6 /* ZipArchive */,
 				B37B4DEF27B2292F0068F8D1 /* Differentiator */,
 				B37B4DF127B2292F0068F8D1 /* RxDataSources */,
+				B3E5BDC0297788E20011CCBF /* PVLogging */,
 			);
 			productName = PVLibrary;
 			productReference = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */;
@@ -2077,6 +2091,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",
 					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2327,6 +2342,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"LZMASDKOBJC=1",
 					"LZMASDKOBJC_OMIT_UNUSED_CODE=1",
+					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2637,6 +2653,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */;
 			productName = ZipArchive;
+		};
+		B3E5BDC0297788E20011CCBF /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
 		};
 		B3FAC8F8292B26EA005E8B11 /* KeychainAccess */ = {
 			isa = XCSwiftPackageProductDependency;

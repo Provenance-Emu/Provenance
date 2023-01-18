@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVSupport
 
 final class PVSettingsSliderRow<T>: SliderRow<PVSliderCell> where T: BinaryFloatingPoint {
     let keyPath: ReferenceWritableKeyPath<PVSettingsModel, T>

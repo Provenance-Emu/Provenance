@@ -12,7 +12,7 @@
 #import <PVPPSSPP/PVPPSSPP-Swift.h>
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLogging.h>
 #import "OGLGraphicsContext.h"
 #import "VulkanGraphicsContext.h"
 

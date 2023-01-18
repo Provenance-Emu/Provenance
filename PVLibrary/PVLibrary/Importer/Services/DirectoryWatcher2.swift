@@ -10,6 +10,7 @@ import Foundation
 @_exported import PVSupport
 @_exported import RxCocoa
 @_exported import RxSwift
+import PVLogging
 
 public struct ExtractionProgress {
     let path: URL

@@ -12,7 +12,7 @@
 
 //#import <PVSupport/OERingBuffer.h>
 //#import <PVSupport/DebugUtils.h>
-//#import <PVSupport/PVLogging.h>
+//#import <PVLogging/PVLogging.h>
 #import <PVGenesis/libretro.h>
 //#import <OpenGLES/EAGL.h>
 

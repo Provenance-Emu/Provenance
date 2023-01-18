@@ -64,6 +64,7 @@
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
+		B3AFCF942977A7EA00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF932977A7EA00A01010 /* PVLogging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -191,6 +192,7 @@
 				B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */,
 				B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */,
 				B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */,
+				B3AFCF942977A7EA00A01010 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -412,6 +414,9 @@
 			dependencies = (
 			);
 			name = PVAtari800;
+			packageProductDependencies = (
+				B3AFCF932977A7EA00A01010 /* PVLogging */,
+			);
 			productName = PVAtari800;
 			productReference = B36DE7481D6AB19C002EE3ED /* PVAtari800.framework */;
 			productType = "com.apple.product-type.framework";
@@ -837,6 +842,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF932977A7EA00A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 02695358143169EA003A07D4 /* Project object */;
 }

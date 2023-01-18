@@ -8,6 +8,7 @@
 
 import Foundation
 import PVSupport
+import PVLogging
 
 public struct LocalFile: LocalFileProvider, Codable, Equatable {
     public let url: URL

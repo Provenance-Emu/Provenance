@@ -27,7 +27,7 @@
 #include "api/m64p_vidext.h"
 #include "api/vidext.h"
 #import "../MupenGameCore.h"
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLogging.h>
 #import <Foundation/Foundation.h>
 
 #if __has_include(<UIKit/UIKit.h>)

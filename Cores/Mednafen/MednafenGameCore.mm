@@ -52,6 +52,7 @@
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/PVSupport-Swift.h>
 #import <PVSupport/PVEmulatorCore.h>
+#import <PVLogging/PVLogging.h>
 
 #import <mednafen/mempatcher.h>
 #import <PVMednafen/PVMednafen-Swift.h>

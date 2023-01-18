@@ -6,6 +6,7 @@
 import Foundation
 import PVSupport
 import RealmSwift
+import PVLogging
 
 public protocol CheatFile {
     associatedtype LocalFileProviderType: LocalFileProvider

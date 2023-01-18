@@ -29,7 +29,7 @@
 #import "OERingBuffer.h"
 #import "PVEmulatorCore.h"
 #import "DebugUtils.h"
-#import "PVLogging.h"
+@import PVLoggingObjC;
 
 @import AVFoundation;
 

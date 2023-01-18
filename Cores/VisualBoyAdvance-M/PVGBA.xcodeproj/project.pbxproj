@@ -10,6 +10,7 @@
 		B324C63921920DAC009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63821920DAC009F4EDC /* PVSupport.framework */; };
 		B3547B542058587300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B532058587300CFF7D8 /* Core.plist */; };
 		B3AF47E121072B63002211EE /* vba-over.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3AF47E021072B63002211EE /* vba-over.ini */; };
+		B3AFCF802977A71200A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF7F2977A71200A01010 /* PVLogging */; };
 		B3C9D4BC1DEA77DF0068D057 /* PVGBA.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D4BA1DEA77DF0068D057 /* PVGBA.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4DA1DEA782C0068D057 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A9FBE0A1ABD1289004E778B /* Foundation.framework */; };
 		B3C9D4DC1DEA78550068D057 /* GBA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9FBC9A1ABD0FEF004E778B /* GBA.cpp */; };
@@ -155,6 +156,7 @@
 			files = (
 				B324C63921920DAC009F4EDC /* PVSupport.framework in Frameworks */,
 				B3C9D5271DEA7C410068D057 /* libz.tbd in Frameworks */,
+				B3AFCF802977A71200A01010 /* PVLogging in Frameworks */,
 				B3C9D4DA1DEA782C0068D057 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -372,6 +374,9 @@
 			dependencies = (
 			);
 			name = PVGBA;
+			packageProductDependencies = (
+				B3AFCF7F2977A71200A01010 /* PVLogging */,
+			);
 			productName = PVGBA;
 			productReference = B3C9D4B81DEA77DF0068D057 /* PVGBA.framework */;
 			productType = "com.apple.product-type.framework";
@@ -800,6 +805,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF7F2977A71200A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A9FBC121ABD0DA7004E778B /* Project object */;
 }

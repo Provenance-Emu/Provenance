@@ -98,6 +98,7 @@
 		93E74243295B70280028EB94 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		93E7427B295C53890028EB94 /* OGLGraphicsContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 93E7427A295C53890028EB94 /* OGLGraphicsContext.h */; };
 		93F28DC3295E264700E4D464 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC2295E264600E4D464 /* MediaPlayer.framework */; };
+		B3AFCF9E2977A86400A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF9D2977A86400A01010 /* PVLogging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -674,6 +675,7 @@
 			files = (
 				93928447295DFFA900F2AD12 /* CoreMedia.framework in Frameworks */,
 				93E741F4295B67C70028EB94 /* libMoltenVK_PPSSPP.dylib in Frameworks */,
+				B3AFCF9E2977A86400A01010 /* PVLogging in Frameworks */,
 				93E741F5295B67C70028EB94 /* libz.1.2.11.tbd in Frameworks */,
 				93E741F6295B67C70028EB94 /* CoreAudio.framework in Frameworks */,
 				93AEC060295E7FEB00F9381C /* GLKit.framework in Frameworks */,
@@ -930,6 +932,9 @@
 				93E741E5295B67C70028EB94 /* PBXTargetDependency */,
 			);
 			name = PVPPSSPP;
+			packageProductDependencies = (
+				B3AFCF9D2977A86400A01010 /* PVLogging */,
+			);
 			productName = PVReicast;
 			productReference = 93E74216295B67C70028EB94 /* PVPPSSPP.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2041,6 +2046,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF9D2977A86400A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

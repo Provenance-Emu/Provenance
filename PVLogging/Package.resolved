@@ -1,0 +1,34 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "CocoaLumberjack",
+        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
+        "state": {
+          "branch": null,
+          "revision": "0188d31089b5881a269e01777be74c7316924346",
+          "version": "3.8.0"
+        }
+      },
+      {
+        "package": "NSLogger",
+        "repositoryURL": "https://github.com/fpillet/NSLogger",
+        "state": {
+          "branch": "master",
+          "revision": "e8c453142da7051462cca189d3fcee74de0500ea",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "6fe203dc33195667ce1759bf0182975e4653ba1c",
+          "version": "1.4.4"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

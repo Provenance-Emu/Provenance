@@ -6,7 +6,7 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
-import CocoaLumberjackSwift
+import PVLogging
 import CoreSpotlight
 import PVLibrary
 import PVSupport

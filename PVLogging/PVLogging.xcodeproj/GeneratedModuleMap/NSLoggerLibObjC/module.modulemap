@@ -1,0 +1,4 @@
+module NSLoggerLibObjC {
+    umbrella "/Users/jmattiello/Workspace/Provenance/Provenance/PVLogging/.build/checkouts/NSLogger/Client/iOS/PublicHeaders"
+    export *
+}

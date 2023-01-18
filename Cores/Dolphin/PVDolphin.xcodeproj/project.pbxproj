@@ -11,7 +11,7 @@
 		930899DA29508B7100E145C8 /* libcpp-optparse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACD2949E94400CC8234 /* libcpp-optparse.a */; };
 		930899DB29508B7100E145C8 /* libed25519.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD32949E94400CC8234 /* libed25519.a */; };
 		930899E029508B7100E145C8 /* libpugixml.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF52949E94400CC8234 /* libpugixml.a */; };
-		933CC5E42951BF680070CF1D /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5E12951BB8A0070CF1D /* libpng.a */; };
+		933CC5E42951BF680070CF1D /* libpng-dolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5E12951BB8A0070CF1D /* libpng-dolphin.a */; };
 		933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5FE2951FB9F0070CF1D /* GLKit.framework */; platformFilters = (ios, tvos, watchos, ); };
 		933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */; };
 		933CC6032952034E0070CF1D /* PVDolphinCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC6022952034E0070CF1D /* PVDolphinCore.swift */; };
@@ -65,20 +65,21 @@
 		B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB382949F2DC00CC8234 /* GameController.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		B3AAFB3B2949F30E00CC8234 /* libdiscio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD12949E94400CC8234 /* libdiscio.a */; };
 		B3AAFB3C2949F31300CC8234 /* libimgui.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE12949E94400CC8234 /* libimgui.a */; };
-		B3AAFB3D2949F32700CC8234 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE52949E94400CC8234 /* liblzma.a */; };
+		B3AAFB3D2949F32700CC8234 /* liblzma-dolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE52949E94400CC8234 /* liblzma-dolphin.a */; };
 		B3AAFB3E2949F34400CC8234 /* libsfml-network.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF72949E94400CC8234 /* libsfml-network.a */; };
-		B3AAFB3F2949F35900CC8234 /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB092949E94400CC8234 /* libxxhash.a */; };
-		B3AAFB412949F38F00CC8234 /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB0B2949E94400CC8234 /* libzstd.a */; };
+		B3AAFB3F2949F35900CC8234 /* libxxhash-dolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB092949E94400CC8234 /* libxxhash-dolphin.a */; };
+		B3AAFB412949F38F00CC8234 /* libzstd-dolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB0B2949E94400CC8234 /* libzstd-dolphin.a */; };
 		B3AAFB462949F41D00CC8234 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB442949F41C00CC8234 /* libz.tbd */; };
 		B3AAFB472949F41D00CC8234 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB452949F41D00CC8234 /* libbz2.tbd */; };
 		B3AAFB482949F45B00CC8234 /* libuicommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAFB2949E94400CC8234 /* libuicommon.a */; };
 		B3AAFB492949F52E00CC8234 /* libsfml-system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF92949E94400CC8234 /* libsfml-system.a */; };
 		B3AAFB4B2949F58100CC8234 /* libFreeSurround.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAB12949E94400CC8234 /* libFreeSurround.a */; };
-		B3AAFB4C2949F59800CC8234 /* libglslang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD92949E94400CC8234 /* libglslang.a */; };
+		B3AAFB4C2949F59800CC8234 /* libglslang-dolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD92949E94400CC8234 /* libglslang-dolphin.a */; };
 		B3AAFB4D2949F5BB00CC8234 /* liblzo2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE72949E94400CC8234 /* liblzo2.a */; };
 		B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB502949F72800CC8234 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
 		B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB522949F73C00CC8234 /* MetalKit.framework */; };
 		B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB532949F73C00CC8234 /* Metal.framework */; };
+		B3AFCF2F29779CBE00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF2E29779CBE00A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
@@ -15489,7 +15490,7 @@
 				93480AFD2953810E00C61651 /* libmain.a in Frameworks */,
 				933CFC26295335B600217F45 /* libvideovulkan.a in Frameworks */,
 				93C33A952952192200CC86C5 /* libcore.a in Frameworks */,
-				933CC5E42951BF680070CF1D /* libpng.a in Frameworks */,
+				933CC5E42951BF680070CF1D /* libpng-dolphin.a in Frameworks */,
 				9308994B2950752400E145C8 /* libminizip.a in Frameworks */,
 				B3AAFB2E2949EBAE00CC8234 /* libaudiocommon.a in Frameworks */,
 				B3AAFB222949EA6900CC8234 /* libcommon.a in Frameworks */,
@@ -15499,11 +15500,11 @@
 				930899DB29508B7100E145C8 /* libed25519.a in Frameworks */,
 				B3AAFB252949EB8100CC8234 /* libenet.a in Frameworks */,
 				B3AAFB4B2949F58100CC8234 /* libFreeSurround.a in Frameworks */,
-				B3AAFB4C2949F59800CC8234 /* libglslang.a in Frameworks */,
+				B3AAFB4C2949F59800CC8234 /* libglslang-dolphin.a in Frameworks */,
 				B3AAFB272949EB8100CC8234 /* libiconv.a in Frameworks */,
 				B3AAFB3C2949F31300CC8234 /* libimgui.a in Frameworks */,
 				B3AAFB352949F2B300CC8234 /* libinputcommon.a in Frameworks */,
-				B3AAFB3D2949F32700CC8234 /* liblzma.a in Frameworks */,
+				B3AAFB3D2949F32700CC8234 /* liblzma-dolphin.a in Frameworks */,
 				B3AAFB4D2949F5BB00CC8234 /* liblzo2.a in Frameworks */,
 				B3AAFB282949EB8100CC8234 /* libmbedcrypto.a in Frameworks */,
 				B3AAFB292949EB8100CC8234 /* libmbedtls.a in Frameworks */,
@@ -15517,8 +15518,8 @@
 				B3AAFB2F2949EBD000CC8234 /* libvideonull.a in Frameworks */,
 				B3AAFB302949EBD000CC8234 /* libvideoogl.a in Frameworks */,
 				B3AAFB312949EBD000CC8234 /* libvideosoftware.a in Frameworks */,
-				B3AAFB3F2949F35900CC8234 /* libxxhash.a in Frameworks */,
-				B3AAFB412949F38F00CC8234 /* libzstd.a in Frameworks */,
+				B3AAFB3F2949F35900CC8234 /* libxxhash-dolphin.a in Frameworks */,
+				B3AAFB412949F38F00CC8234 /* libzstd-dolphin.a in Frameworks */,
 				B3AAFB472949F41D00CC8234 /* libbz2.tbd in Frameworks */,
 				B3AAFB462949F41D00CC8234 /* libz.tbd in Frameworks */,
 			);
@@ -15542,6 +15543,7 @@
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
+				B3AFCF2F29779CBE00A01010 /* PVLogging in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */,
@@ -39122,20 +39124,20 @@
 				B3AAFAD32949E94400CC8234 /* libed25519.a */,
 				B3AAFAD52949E94400CC8234 /* libenet.a */,
 				B3AAFAD72949E94400CC8234 /* libfmtd.a */,
-				B3AAFAD92949E94400CC8234 /* libglslang.a */,
+				B3AAFAD92949E94400CC8234 /* libglslang-dolphin.a */,
 				B3AAFADB2949E94400CC8234 /* libgtestd.a */,
 				B3AAFADD2949E94400CC8234 /* libgtest_maind.a */,
 				B3AAFADF2949E94400CC8234 /* libiconv.a */,
 				B3AAFAE12949E94400CC8234 /* libimgui.a */,
 				B3AAFAE32949E94400CC8234 /* libinputcommon.a */,
-				B3AAFAE52949E94400CC8234 /* liblzma.a */,
+				B3AAFAE52949E94400CC8234 /* liblzma-dolphin.a */,
 				B3AAFAE72949E94400CC8234 /* liblzo2.a */,
 				B3AAFAE92949E94400CC8234 /* libmain.a */,
 				B3AAFAEB2949E94400CC8234 /* libmbedcrypto.a */,
 				B3AAFAED2949E94400CC8234 /* libmbedtls.a */,
 				B3AAFAEF2949E94400CC8234 /* libmbedx509.a */,
 				B3AAFAF12949E94400CC8234 /* libminizip.a */,
-				933CC5E12951BB8A0070CF1D /* libpng.a */,
+				933CC5E12951BB8A0070CF1D /* libpng-dolphin.a */,
 				B3AAFAF52949E94400CC8234 /* libpugixml.a */,
 				B3AAFAF72949E94400CC8234 /* libsfml-network.a */,
 				B3AAFAF92949E94400CC8234 /* libsfml-system.a */,
@@ -39146,8 +39148,8 @@
 				B3AAFB032949E94400CC8234 /* libvideoogl.a */,
 				B3AAFB052949E94400CC8234 /* libvideosoftware.a */,
 				B3AAFB072949E94400CC8234 /* libvideovulkan.a */,
-				B3AAFB092949E94400CC8234 /* libxxhash.a */,
-				B3AAFB0B2949E94400CC8234 /* libzstd.a */,
+				B3AAFB092949E94400CC8234 /* libxxhash-dolphin.a */,
+				B3AAFB0B2949E94400CC8234 /* libzstd-dolphin.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -39314,6 +39316,9 @@
 				930899D929508B0400E145C8 /* PBXTargetDependency */,
 			);
 			name = PVDolphin;
+			packageProductDependencies = (
+				B3AFCF2E29779CBE00A01010 /* PVLogging */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVDolphin.framework */;
 			productType = "com.apple.product-type.framework";
@@ -39375,10 +39380,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		933CC5E12951BB8A0070CF1D /* libpng.a */ = {
+		933CC5E12951BB8A0070CF1D /* libpng-dolphin.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libpng.a;
+			path = "libpng-dolphin.a";
 			remoteRef = 933CC5E02951BB8A0070CF1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -39675,10 +39680,10 @@
 			remoteRef = B3AAFAD62949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAD92949E94400CC8234 /* libglslang.a */ = {
+		B3AAFAD92949E94400CC8234 /* libglslang-dolphin.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libglslang.a;
+			path = "libglslang-dolphin.a";
 			remoteRef = B3AAFAD82949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -39717,10 +39722,10 @@
 			remoteRef = B3AAFAE22949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAE52949E94400CC8234 /* liblzma.a */ = {
+		B3AAFAE52949E94400CC8234 /* liblzma-dolphin.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = liblzma.a;
+			path = "liblzma-dolphin.a";
 			remoteRef = B3AAFAE42949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -39836,17 +39841,17 @@
 			remoteRef = B3AAFB062949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFB092949E94400CC8234 /* libxxhash.a */ = {
+		B3AAFB092949E94400CC8234 /* libxxhash-dolphin.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libxxhash.a;
+			path = "libxxhash-dolphin.a";
 			remoteRef = B3AAFB082949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFB0B2949E94400CC8234 /* libzstd.a */ = {
+		B3AAFB0B2949E94400CC8234 /* libzstd-dolphin.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libzstd.a;
+			path = "libzstd-dolphin.a";
 			remoteRef = B3AAFB0A2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -40847,6 +40852,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF2E29779CBE00A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

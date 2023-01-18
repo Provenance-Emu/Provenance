@@ -20,6 +20,7 @@
 		B37022CD2872558F00B3F6DA /* PVPotator.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVPotator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libpotator-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libpotator-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
+		B3AFCF862977A73500A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF852977A73500A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
@@ -159,6 +160,7 @@
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
+				B3AFCF862977A73500A01010 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +410,9 @@
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
 			name = PVPotator;
+			packageProductDependencies = (
+				B3AFCF852977A73500A01010 /* PVLogging */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVPotator.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1028,6 +1033,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF852977A73500A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

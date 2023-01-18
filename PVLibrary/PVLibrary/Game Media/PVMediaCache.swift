@@ -11,6 +11,7 @@ import PVSupport
 import UIKit
 #else
 import AppKit
+import PVLogging
 
 extension NSImage {
     func scaled(withMaxResolution maxResolution: Int) -> NSImage? {

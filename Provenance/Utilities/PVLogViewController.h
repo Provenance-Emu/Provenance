@@ -12,11 +12,12 @@
 @import AppKit;
 #endif
 @import PVSupport;
-@import CocoaLumberjack;
+@import PVLoggingObjC;
+
 //#import <UIForLumberJack/UIForLumberJack.h>
 #define kSPUILoggerMessageMargin 10
 
-@interface UIForLumberjack : NSObject <UITableViewDataSource, UITableViewDelegate, DDLogger>
+@interface UIForLumberjack : NSObject <UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 
@@ -30,7 +31,7 @@
 @interface PVUIForLumberJack : UIForLumberjack
 @end
 
-@interface PVLogViewController : UIViewController <PVLoggingEventProtocol, UITableViewDelegate, UITableViewDataSource>
+@interface PVLogViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) IBOutlet UITextView *textView;
 #if TARGET_OS_IOS
@@ -49,9 +50,6 @@
 - (IBAction)segmentedControlValueChanged:(id)sender;
 
 - (void)hideDoneButton;
-
-#pragma mark - BootupHistory Protocol
-- (void)updateHistory:(PVLogging *)sender;
 
 @end
 

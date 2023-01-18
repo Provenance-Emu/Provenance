@@ -15,6 +15,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+#import <PVLogging/PVLogging.h>
 
 // Desmume2015 imports
 //#include "types.h"

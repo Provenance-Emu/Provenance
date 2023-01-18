@@ -29,6 +29,7 @@
 
 //#import "MupenGameCore.h"
 #import <PVMupen64Plus/PVMupen64Plus-Swift.h>
+#import <PVLogging/PVLogging.h>
 
 #import "MupenGameCore+Resources.h"
 #import "MupenGameCore+Controls.h"

@@ -1,0 +1,607 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B34551B0296AC8E600EDA1F8 /* PVObjCUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B34551AE296AC8E600EDA1F8 /* PVObjCUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B34551B1296AC8E600EDA1F8 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = B34551AF296AC8E600EDA1F8 /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B3E548672966517F009BFDB9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		B305EF99276B4F0A003AE510 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/GameKit.framework; sourceTree = DEVELOPER_DIR; };
+		B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
+		B3173802278419A2002D3ACD /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Build.xcconfig; path = ../Build.xcconfig; sourceTree = "<group>"; };
+		B324C3152191963B009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B34551AE296AC8E600EDA1F8 /* PVObjCUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PVObjCUtils.h; path = PVObjCUtils/include/PVSupport/PVObjCUtils.h; sourceTree = "<group>"; };
+		B34551AF296AC8E600EDA1F8 /* DebugUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugUtils.h; path = PVObjCUtils/include/PVSupport/DebugUtils.h; sourceTree = "<group>"; };
+		B392848E28670348003BAC21 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3AB7E502966487F005799D6 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = DEVELOPER_DIR; };
+		B3AB7E512966487F005799D6 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/iOSSupport/System/Library/Frameworks/CoreAudioKit.framework; sourceTree = DEVELOPER_DIR; };
+		B3AB7E5229664880005799D6 /* CoreAudioTypes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioTypes.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.1.sdk/System/Library/Frameworks/CoreAudioTypes.framework; sourceTree = DEVELOPER_DIR; };
+		B3AB7E5629664A33005799D6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
+		B3AF6FD721916168000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
+		B3AF6FD92191616C000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B3AF6FDC219161BC000FA7F9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3AF6FDE219161C0000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/GameController.framework; sourceTree = DEVELOPER_DIR; };
+		B3D0EE27277FE8C9002DC0A5 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
+		B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/CoreHaptics.framework; sourceTree = DEVELOPER_DIR; };
+		B3E5496F296658EE009BFDB9 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B3FFF02C26E9E65800A33143 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B392848B28670348003BAC21 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1ACEA63B17F7467D0031B1C9 = {
+			isa = PBXGroup;
+			children = (
+				B3173802278419A2002D3ACD /* Build.xcconfig */,
+				B3A4FB58278FE2F200A65248 /* Sources */,
+				1ACEA64617F7467D0031B1C9 /* Frameworks */,
+				1ACEA64517F7467D0031B1C9 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1ACEA64517F7467D0031B1C9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B392848E28670348003BAC21 /* PVLibRetro.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1ACEA64617F7467D0031B1C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B3E5496F296658EE009BFDB9 /* CoreFoundation.framework */,
+				B3AB7E5629664A33005799D6 /* AudioToolbox.framework */,
+				B3AB7E502966487F005799D6 /* CoreAudio.framework */,
+				B3AB7E512966487F005799D6 /* CoreAudioKit.framework */,
+				B3AB7E5229664880005799D6 /* CoreAudioTypes.framework */,
+				B3D0EE27277FE8C9002DC0A5 /* CoreHaptics.framework */,
+				B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */,
+				B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */,
+				B305EF99276B4F0A003AE510 /* GameKit.framework */,
+				B3FFF02C26E9E65800A33143 /* AVFoundation.framework */,
+				B3AF6FE0219161C4000FA7F9 /* tvOS */,
+				B3AF6FDB21916177000FA7F9 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B3A4FB58278FE2F200A65248 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B34551AF296AC8E600EDA1F8 /* DebugUtils.h */,
+				B34551AE296AC8E600EDA1F8 /* PVObjCUtils.h */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		B3AF6FDB21916177000FA7F9 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				B3AF6FD92191616C000FA7F9 /* Foundation.framework */,
+				B3AF6FD721916168000FA7F9 /* GameController.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		B3AF6FE0219161C4000FA7F9 /* tvOS */ = {
+			isa = PBXGroup;
+			children = (
+				B324C3152191963B009F4EDC /* AVFoundation.framework */,
+				B3AF6FDE219161C0000FA7F9 /* GameController.framework */,
+				B3AF6FDC219161BC000FA7F9 /* Foundation.framework */,
+			);
+			name = tvOS;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		B392848928670348003BAC21 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B34551B1296AC8E600EDA1F8 /* DebugUtils.h in Headers */,
+				B34551B0296AC8E600EDA1F8 /* PVObjCUtils.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		B392848D28670348003BAC21 /* PVObjCUtils */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVObjCUtils" */;
+			buildPhases = (
+				B392848928670348003BAC21 /* Headers */,
+				B392848A28670348003BAC21 /* Sources */,
+				B392848B28670348003BAC21 /* Frameworks */,
+				B392848C28670348003BAC21 /* Resources */,
+				B3E548672966517F009BFDB9 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PVObjCUtils;
+			packageProductDependencies = (
+			);
+			productName = PVLibRetro;
+			productReference = B392848E28670348003BAC21 /* PVLibRetro.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1ACEA63C17F7467D0031B1C9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = NO;
+				CLASSPREFIX = PV;
+				DefaultBuildSystemTypeForWorkspace = Latest;
+				LastSwiftUpdateCheck = 1010;
+				LastUpgradeCheck = 1300;
+				ORGANIZATIONNAME = "Provenance Emu";
+				TargetAttributes = {
+					B392848D28670348003BAC21 = {
+						CreatedOnToolsVersion = 13.4.1;
+					};
+				};
+			};
+			buildConfigurationList = 1ACEA63F17F7467D0031B1C9 /* Build configuration list for PBXProject "PVObjCUtils" */;
+			compatibilityVersion = "Xcode 12.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1ACEA63B17F7467D0031B1C9;
+			packageReferences = (
+			);
+			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B392848D28670348003BAC21 /* PVObjCUtils */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B392848C28670348003BAC21 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B392848A28670348003BAC21 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1ACEA66517F7467D0031B1C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3173802278419A2002D3ACD /* Build.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Debug;
+		};
+		1ACEA66617F7467D0031B1C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3173802278419A2002D3ACD /* Build.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VALIDATE_PRODUCT = YES;
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Release;
+		};
+		B324C5392191A7A8009F4EDC /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3173802278419A2002D3ACD /* Build.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VALIDATE_PRODUCT = YES;
+				VALIDATE_WORKSPACE = YES;
+			};
+			name = Archive;
+		};
+		B392849228670348003BAC21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					HAVE_DYNAMIC,
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
+					NEED_DYNAMIC,
+					HAVE_DYNAMIC,
+					__MACH__,
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro\"",
+					"$(inherited)",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
+				PRODUCT_NAME = PVLibRetro;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B392849328670348003BAC21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					HAVE_DYNAMIC,
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
+					NEED_DYNAMIC,
+					HAVE_DYNAMIC,
+					__MACH__,
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro\"",
+					"$(inherited)",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
+				PRODUCT_NAME = PVLibRetro;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B392849428670348003BAC21 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					HAVE_DYNAMIC,
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
+					NEED_DYNAMIC,
+					HAVE_DYNAMIC,
+					__MACH__,
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro\"",
+					"$(inherited)",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
+				PRODUCT_NAME = PVLibRetro;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1ACEA63F17F7467D0031B1C9 /* Build configuration list for PBXProject "PVObjCUtils" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1ACEA66517F7467D0031B1C9 /* Debug */,
+				1ACEA66617F7467D0031B1C9 /* Release */,
+				B324C5392191A7A8009F4EDC /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B392849528670348003BAC21 /* Build configuration list for PBXNativeTarget "PVObjCUtils" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B392849228670348003BAC21 /* Debug */,
+				B392849328670348003BAC21 /* Release */,
+				B392849428670348003BAC21 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1ACEA63C17F7467D0031B1C9 /* Project object */;
+}

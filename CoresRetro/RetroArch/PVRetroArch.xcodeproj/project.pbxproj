@@ -147,6 +147,7 @@
 		B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB502949F72800CC8234 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3E88CC02977B4E300C90E86 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CBF2977B4E300C90E86 /* PVLogging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -493,6 +494,7 @@
 				93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
+				B3E88CC02977B4E300C90E86 /* PVLogging in Frameworks */,
 				B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */,
 				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
 				B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */,
@@ -869,6 +871,9 @@
 				93B66BC82967F44300A621DD /* PBXTargetDependency */,
 			);
 			name = PVRetroArch;
+			packageProductDependencies = (
+				B3E88CBF2977B4E300C90E86 /* PVLogging */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVRetroArch.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2131,6 +2136,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3E88CBF2977B4E300C90E86 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

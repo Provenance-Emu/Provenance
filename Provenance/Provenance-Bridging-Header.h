@@ -11,8 +11,8 @@
 #endif
 
 #if TARGET_OS_IOS
+    #import <PVLogging/PVLogging.h>
     #import "UIDevice+Hardware.h"
     #import "MBProgressHUD.h"
-    #import "PVLogViewController.h"
     #import "DOLJitManager.h"
 #endif

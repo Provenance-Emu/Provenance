@@ -12,6 +12,7 @@ import Foundation
 @_exported import PVSupport
 @_exported import RealmSwift
 @_exported import SQLite
+import PVLogging
 
 #if canImport(UIKit)
 import UIKit

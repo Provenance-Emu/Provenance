@@ -8,6 +8,7 @@
 import Foundation
 import PVSupport
 import RealmSwift
+import PVLogging
 
 public struct SystemDictionaryKeys {
     public static let BIOSEntries = "PVBIOSNames"

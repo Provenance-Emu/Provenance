@@ -9,6 +9,7 @@
 import Foundation
 import PVSupport
 import RealmSwift
+import PVLogging
 #if canImport(UIKit)
 import UIKit
 #endif

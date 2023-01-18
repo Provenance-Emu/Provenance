@@ -275,6 +275,7 @@
 		B3AAF67427C0AA43001CAE1F /* scalebit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB37427C09C5B0012118D /* scalebit.cpp */; };
 		B3AAF67527C0AA43001CAE1F /* scale2x.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB37027C09C5B0012118D /* scale2x.cpp */; };
 		B3AAF67627C0AA43001CAE1F /* config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB38127C09C5B0012118D /* config.cpp */; };
+		B3AFCF822977A71C00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF812977A71C00A01010 /* PVLogging */; };
 		B3BCA6F227C098C00012118D /* emufile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77301ABF16A4002274A3 /* emufile.cpp */; };
 		B3BCA6F327C098C00012118D /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77DE1ABF16A5002274A3 /* md5.cpp */; };
 		B3BCA6F427C098C00012118D /* powerpad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A77641ABF16A4002274A3 /* powerpad.cpp */; };
@@ -1893,6 +1894,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AFCF822977A71C00A01010 /* PVLogging in Frameworks */,
 				B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */,
 				B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */,
 				B3341F7E27C1B2CF00E001C6 /* libfceux-netplay-server.a in Frameworks */,
@@ -3665,6 +3667,9 @@
 				B3341F8027C1B2CF00E001C6 /* PBXTargetDependency */,
 			);
 			name = PVFCEU;
+			packageProductDependencies = (
+				B3AFCF812977A71C00A01010 /* PVLogging */,
+			);
 			productName = PVNES;
 			productReference = B3A9F4361DE877B4008450F5 /* PVFCEU.framework */;
 			productType = "com.apple.product-type.framework";
@@ -5153,6 +5158,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF812977A71C00A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1A3A74E01ABF11AC002274A3 /* Project object */;
 }

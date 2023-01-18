@@ -21,6 +21,7 @@
 		B37022CD2872558F00B3F6DA /* PVfMSX.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVfMSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libfMSX-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libfMSX-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
+		B3AFCFB32977A87D00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCFB22977A87D00A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
@@ -294,6 +295,7 @@
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B3AFCFB32977A87D00A01010 /* PVLogging in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
@@ -799,6 +801,9 @@
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
 			name = PVfMSX;
+			packageProductDependencies = (
+				B3AFCFB22977A87D00A01010 /* PVLogging */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVfMSX.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1094,9 +1099,10 @@
 				PRODUCT_NAME = PVfMSX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 			};
 			name = Archive;
 		};
@@ -1368,9 +1374,10 @@
 				PRODUCT_NAME = PVfMSX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 			};
 			name = Debug;
 		};
@@ -1405,9 +1412,10 @@
 				PRODUCT_NAME = PVfMSX;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 			};
 			name = Release;
 		};
@@ -1455,6 +1463,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCFB22977A87D00A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

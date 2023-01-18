@@ -12,16 +12,23 @@
 #import "Provenance-Swift.h"
 @import PVSupport;
 @import CocoaLumberjack;
+@import PVLogging;
+@import PVLoggingObjC;
 
 //#import <UIForLumberJack/UIForLumberJack.h>
-//@import CocoaLumberjack.DDFileLogger;
+//@import CocoaLumberjack.PVFileLogger;
 
 /* Subclass to get rid of the prominent header we don't need */
-@interface UIForLumberjack ()
-//@property (nonatomic, strong) id<DDLogFormatter> logFormatter;
+@interface UIForLumberjack () <PVLoggingEventProtocol>
+//@property (nonatomic, strong) id<PVLogFormatter> logFormatter;
 @property (nonatomic, strong) NSMutableArray *messages;
 @property (nonatomic, strong) NSMutableSet *messagesExpanded;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
+
+
+#pragma mark - BootupHistory Protocol
+- (void)updateHistory:(PVLogging *)sender;
+
 @end
 
 @interface PVUIForLumberJack ()
@@ -84,14 +91,14 @@
     NSUInteger estimatedNumberOflines = 1;
     NSInteger row = indexPath.row;
     if (row < self.messages.count) {
-        DDLogMessage *line = self.messages[row];
+        PVLogEntry *line = self.messages[row];
         estimatedNumberOflines = ceil(line->_message.length / 150);
     }
 
     return 20 * estimatedNumberOflines;
 }
 
-- (void)logMessage:(DDLogMessage *)logMessage {
+- (void)logMessage:(PVLogEntry *)logMessage {
     [self.messages addObject:logMessage];
 
     __weak typeof(self) weakself = self;
@@ -186,7 +193,7 @@
 @implementation PVLogViewController
 
 - (void)dealloc {
-    [[PVLogging sharedInstance] removeListner:self];
+    [[PVLogging sharedInstance] removeListener:self];
 }
 
 - (UIBarPosition)positionForBar:(id <UIBarPositioning>)bar {
@@ -279,7 +286,7 @@
                 // Fill in text
             [self updateText:[self logTextForIndex:0]];
                 // Register for updates
-            [[PVLogging sharedInstance] registerListner:self];
+            [[PVLogging sharedInstance] registerListener:self];
 
             break;
         }
@@ -343,7 +350,7 @@
 					   animated:YES
 					 completion:nil];
 }
-#define ADD_FLOG_ATTACHMENTS_TO_SUPPORT_EMAILS 1
+#define APV_FLOG_ATTACHMENTS_TO_SUPPORT_EMAILS 1
 
 #if TARGET_OS_IOS || TARGET_OS_MACCATALYST
 - (void)createAndShareZip {
@@ -529,22 +536,22 @@
     NSArray *infos = [[PVLogging sharedInstance] logFileInfos];
 
     if (indexPath.row < infos.count) {
-        DDLogFileInfo *info = infos[indexPath.row];
-
-        cell.textLabel.textColor = info.isArchived ?
-        [UIColor colorWithRed:.6
-                        green:.88
-                         blue:.6
-                        alpha:1] :
-        [UIColor colorWithRed:.88
-                        green:.6
-                         blue:.6
-                        alpha:1];
-
-        cell.textLabel.text = [NSDateFormatter localizedStringFromDate:info.creationDate
-                                                             dateStyle:NSDateFormatterShortStyle
-                                                             timeStyle:NSDateFormatterShortStyle];
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"Size: %.2fkb", info.fileSize/1024.];
+//        PVLogFileInfo *info = infos[indexPath.row];
+//
+//        cell.textLabel.textColor = info.isArchived ?
+//        [UIColor colorWithRed:.6
+//                        green:.88
+//                         blue:.6
+//                        alpha:1] :
+//        [UIColor colorWithRed:.88
+//                        green:.6
+//                         blue:.6
+//                        alpha:1];
+//
+//        cell.textLabel.text = [NSDateFormatter localizedStringFromDate:info.creationDate
+//                                                             dateStyle:NSDateFormatterShortStyle
+//                                                             timeStyle:NSDateFormatterShortStyle];
+//        cell.detailTextLabel.text = [NSString stringWithFormat:@"Size: %.2fkb", info.fileSize/1024.];
     } else {
         cell.textLabel.text = @"Error";
     }
@@ -592,8 +599,8 @@
     return sharedInstance;
 }
 
-#pragma mark - DDLogger
-- (void)logMessage:(DDLogMessage *)logMessage
+#pragma mark - PVLogger
+- (void)logMessage:(PVLogEntry *)logMessage
 {
 	MAKEWEAK(self);
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -634,25 +641,25 @@
 
 - (void)configureCell:(UITableViewCell*)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    DDLogMessage *message = _messages[indexPath.row];
+    PVLogEntry *message = _messages[indexPath.row];
     
     switch (message->_flag) {
-        case DDLogFlagError:
+        case PVLogFlagError:
             cell.textLabel.textColor = [UIColor redColor];
             break;
             
-        case DDLogFlagWarning:
+        case PVLogFlagWarning:
             cell.textLabel.textColor = [UIColor orangeColor];
             break;
             
-        case DDLogFlagDebug:
+        case PVLogFlagDebug:
             cell.textLabel.textColor = [UIColor greenColor];
             break;
             
-        case DDLogFlagVerbose:
+        case PVLogFlagVerbose:
             cell.textLabel.textColor = [UIColor blueColor];
             break;
-        case DDLogFlagInfo:
+        case PVLogFlagInfo:
         default:
             cell.textLabel.textColor = [UIColor labelColor];
             break;
@@ -666,7 +673,7 @@
 
 - (NSString*)textOfMessageForIndexPath:(NSIndexPath*)indexPath
 {
-    DDLogMessage *message = _messages[indexPath.row];
+    PVLogEntry *message = _messages[indexPath.row];
     if ([_messagesExpanded containsObject:@(indexPath.row)]) {
         return [NSString stringWithFormat:@"[%@] %@:%lu [%@]", [_dateFormatter stringFromDate:message->_timestamp], message->_fileName, (unsigned long)message->_line, message->_function];
     } else {

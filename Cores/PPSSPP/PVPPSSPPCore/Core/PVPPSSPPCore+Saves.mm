@@ -8,6 +8,7 @@
 
 #import "PVPPSSPPCore+Saves.h"
 #import "PVPPSSPPCore.h"
+#import <PVLogging/PVLogging.h>
 
 /* PPSSPP Includes */
 #import <dlfcn.h>

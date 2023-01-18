@@ -9,6 +9,7 @@ The class that manages the app's haptics playback.
 import Foundation
 import GameController
 import CoreHaptics
+import PVLogging
 
 @available(iOS 14.0, tvOS 14.0, *)
 public protocol HapticsManagerDelegate: AnyObject {

@@ -8,6 +8,7 @@
 
 import Foundation
 import PVSupport
+import PVLogging
 
 public protocol Packageable {
     associatedtype PackageType: Package

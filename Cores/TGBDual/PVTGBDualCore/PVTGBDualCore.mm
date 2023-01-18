@@ -11,7 +11,7 @@
 #import "PVTGBDualCore+Controls.h"
 #import "PVTGBDualCore+Saves.h"
 #import "PVTGBDualCore+Video.h"
-
+#import <PVLogging/PVLogging.h>
 #include "libretro.h"
 
 void log(retro_log_level level, const char *fmt, ...) {

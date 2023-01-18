@@ -15,6 +15,7 @@
 #import <PVSupport/PVSupport-Swift.h>
 #include "core.h"
 #include "runloop.h"
+@import PVLoggingObjC;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"

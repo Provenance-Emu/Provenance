@@ -116,6 +116,7 @@
 		B393134A2870FB8F00372EBB /* dlditool.c in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DEE272E2C9800FF72B9 /* dlditool.c */; };
 		B39313802870FB9A00372EBB /* libdesmume2015.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdesmume2015.a */; };
 		B393138628710F9100372EBB /* arm_gen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E46272E2C9800FF72B9 /* arm_gen.cpp */; };
+		B3AFCF922977A7B100A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF912977A7B100A01010 /* PVLogging */; };
 		B3C7621520783162009950E4 /* PVDesmume2015.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVDesmume2015.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
@@ -710,6 +711,7 @@
 			files = (
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B3AFCF922977A7B100A01010 /* PVLogging in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39313802870FB9A00372EBB /* libdesmume2015.a in Frameworks */,
@@ -2323,6 +2325,9 @@
 				B39313822870FB9A00372EBB /* PBXTargetDependency */,
 			);
 			name = PVDesmume2015;
+			packageProductDependencies = (
+				B3AFCF912977A7B100A01010 /* PVLogging */,
+			);
 			productName = PVDesmume2015;
 			productReference = B3C7621020783162009950E4 /* PVDesmume2015.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2518,7 +2523,7 @@
 				PRODUCT_NAME = desmume2015;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2544,7 +2549,7 @@
 				PRODUCT_NAME = desmume2015;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2662,7 +2667,7 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2688,7 +2693,7 @@
 				PRODUCT_NAME = desmume2015;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2884,7 +2889,7 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2927,7 +2932,7 @@
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2967,6 +2972,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF912977A7B100A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVLogging
 
 @objc
 public enum ThemeOptions: UInt, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable {

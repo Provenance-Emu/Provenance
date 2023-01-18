@@ -2,7 +2,7 @@
 #import <PVRetroArch/RetroArch-Swift.h>
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLogging.h>
 #import <UIKit/UIKit.h>
 @interface TestRunner : UIApplication<UIApplicationDelegate>
 @property (nonatomic) UIWindow* window;

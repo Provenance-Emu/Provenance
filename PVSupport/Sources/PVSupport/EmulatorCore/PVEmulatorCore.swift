@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreHaptics
+import PVLogging
 
 #if os(iOS) && !targetEnvironment(macCatalyst)
 // @_silgen_name("AudioServicesStopSystemSound")

@@ -23,6 +23,7 @@
 		B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B380C2682894EB37007B76FD /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B39768F82859E23200558958 /* libvecx-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libvecx-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
+		B3AFCF842977A72900A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF832977A72900A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
@@ -183,6 +184,7 @@
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B380C2692894EB37007B76FD /* OpenGL.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
+				B3AFCF842977A72900A01010 /* PVLogging in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libvecx.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
@@ -476,6 +478,9 @@
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
 			name = PVVecX;
+			packageProductDependencies = (
+				B3AFCF832977A72900A01010 /* PVLogging */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVVecX.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1038,6 +1043,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF832977A72900A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

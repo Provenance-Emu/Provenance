@@ -7,7 +7,7 @@
 //
 
 #import "NSObject+PVAbstractAdditions.h"
-#import "PVLogging.h"
+#import <PVLogging/PVLogging.h>
 
 @implementation NSObject (PVAbstractAdditions)
 

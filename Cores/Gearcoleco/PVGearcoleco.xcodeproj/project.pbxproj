@@ -36,6 +36,7 @@
 		B37022CD2872558F00B3F6DA /* PVGearcoleco.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVGearcoleco.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libGearcoleco-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libGearcoleco-libretro.a */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
+		B3AFCF8A2977A76900A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF892977A76900A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
@@ -419,6 +420,7 @@
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
+				B3AFCF8A2977A76900A01010 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1154,6 +1156,9 @@
 				B30F1421289673D7004D40BF /* PBXTargetDependency */,
 			);
 			name = PVGearcoleco;
+			packageProductDependencies = (
+				B3AFCF892977A76900A01010 /* PVLogging */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVGearcoleco.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1733,6 +1738,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF892977A76900A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

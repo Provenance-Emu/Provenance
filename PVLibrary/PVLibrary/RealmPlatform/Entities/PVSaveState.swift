@@ -9,6 +9,7 @@
 import Foundation
 import PVSupport
 import RealmSwift
+import PVLogging
 
 public protocol Filed {
     associatedtype LocalFileProviderType: LocalFileProvider

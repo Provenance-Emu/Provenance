@@ -13,7 +13,7 @@
 #import <PVRetroArch/RetroArch-Swift.h>
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLogging.h>
 #import <PVSupport/PVEmulatorCore.h>
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>

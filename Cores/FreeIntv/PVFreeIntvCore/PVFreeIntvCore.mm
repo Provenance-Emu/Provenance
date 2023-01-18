@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+#import <PVLogging/PVLogging.h>
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4

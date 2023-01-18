@@ -473,6 +473,7 @@
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
 		B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
 		B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
+		B3AFCF7A2977A6EA00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF792977A6EA00A01010 /* PVLogging */; };
 		B3B8C3BF290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */; };
 		B3FBDF01207FF13400E661D1 /* interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8F20736EE90097D86F /* interface.cpp */; };
 		B3FBDF02207FF19800E661D1 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9820736EE90097D86F /* generic.cpp */; };
@@ -3123,6 +3124,7 @@
 				B3335281207B02EB0036A448 /* libneogeopocket.a in Frameworks */,
 				B3335282207B02EB0036A448 /* libpce.a in Frameworks */,
 				B3335283207B02EB0036A448 /* libpcefast.a in Frameworks */,
+				B3AFCF7A2977A6EA00A01010 /* PVLogging in Frameworks */,
 				B3335284207B02EB0036A448 /* libpcfx.a in Frameworks */,
 				B333519F207B01230036A448 /* libgb.a in Frameworks */,
 				B33350AE207B00080036A448 /* libnes.a in Frameworks */,
@@ -6744,6 +6746,9 @@
 				C6E1B69725AAC5A3007C3CF1 /* PBXTargetDependency */,
 			);
 			name = PVMednafen;
+			packageProductDependencies = (
+				B3AFCF792977A6EA00A01010 /* PVLogging */,
+			);
 			productName = PVMednafen;
 			productReference = B340E4621E08887600AD0E8B /* PVMednafen.framework */;
 			productType = "com.apple.product-type.framework";
@@ -11354,6 +11359,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF792977A6EA00A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 089C1669FE841209C02AAC07 /* Project object */;
 }

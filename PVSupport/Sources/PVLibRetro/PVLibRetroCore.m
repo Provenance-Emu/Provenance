@@ -10,6 +10,7 @@
 #import "PVLibretro.h"
 
 #import <PVSupport/PVSupport-Swift.h>
+@import PVLoggingObjC;
 
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H

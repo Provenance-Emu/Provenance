@@ -1,3 +1,5 @@
+import PVSupport
+
 extension PVEmulatorViewController {
     func showSwapDiscsMenu() {
         guard let core = self.core as? (PVEmulatorCore & DiscSwappable) else {

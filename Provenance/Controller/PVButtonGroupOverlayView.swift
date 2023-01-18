@@ -11,6 +11,7 @@ import UIKit
 #else
 import AppKit
 #endif
+import PVLogging
 
 final class PVButtonGroupOverlayView: MovableButtonView {
     var buttons = [JSButton]()

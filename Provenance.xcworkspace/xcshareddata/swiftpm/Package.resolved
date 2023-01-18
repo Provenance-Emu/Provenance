@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
         "state": {
           "branch": null,
-          "revision": "88e65475ffd3a7cf2bbde07df9e62159a1fd60a8",
-          "version": "5.0.0"
+          "revision": "0c38cfb756f86673991d51f273b7bbcbaa28f94d",
+          "version": "5.0.1"
         }
       },
       {
@@ -48,11 +48,11 @@
       },
       {
         "package": "Reachability",
-        "repositoryURL": "https://github.com/ashleymills/Reachability.swift.git",
+        "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
         "state": {
-          "branch": null,
-          "revision": "c01bbdf2d633cf049ae1ed1a68a2020a8bda32e2",
-          "version": "5.1.0"
+          "branch": "master",
+          "revision": "a81b7367f2c46875f29577e03a60c39cdfad0c8d",
+          "version": null
         }
       },
       {
@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/realm/realm-swift.git",
         "state": {
           "branch": null,
-          "revision": "b442ee3e9caa1abab26fd9b23f060f6f0815ff48",
-          "version": "10.33.0"
+          "revision": "d63923f1c912b564f2c16e04ddc280cdb71dbbdd",
+          "version": "10.34.0"
         }
       },
       {

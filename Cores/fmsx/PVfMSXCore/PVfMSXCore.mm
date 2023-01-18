@@ -16,6 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+#import <PVLogging/PVLogging.h>
 
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
 #import <OpenGL/gl3.h>

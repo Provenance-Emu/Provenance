@@ -218,6 +218,7 @@
 		B3AE1F702073420500AD06D4 /* osal_dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AE1EF620733D3500AD06D4 /* osal_dynamiclib_unix.c */; };
 		B3AE1F712073420500AD06D4 /* su.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AE1EED20733D3500AD06D4 /* su.c */; };
 		B3AF47E321072BCB002211EE /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B30559E42072FEE9001212D2 /* mupen64plus.ini */; };
+		B3AFCF782977A6E100A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF772977A6E100A01010 /* PVLogging */; };
 		B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D208F801182B00300BEAA42 /* MupenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B8641DECEA9100602746 /* PVMupen64PlusRspHLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B8A01DED04CE00602746 /* PVMupen64Plus.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1647,6 +1648,7 @@
 				B37263BE26EA1EF000E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
 				B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */,
 				B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */,
+				B3AFCF782977A6E100A01010 /* PVLogging in Frameworks */,
 				B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */,
 				B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */,
 				B37263CA26EA1EF000E95488 /* PVRSPCXD4.framework in Frameworks */,
@@ -4101,6 +4103,9 @@
 				B37263CD26EA1EF000E95488 /* PBXTargetDependency */,
 			);
 			name = PVMupen64Plus;
+			packageProductDependencies = (
+				B3AFCF772977A6E100A01010 /* PVLogging */,
+			);
 			productName = PVMupen64PlusDynamic;
 			productReference = B37EFF381C72F43300857158 /* PVMupen64Plus.framework */;
 			productType = "com.apple.product-type.framework";
@@ -6476,6 +6481,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF772977A6E100A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 089C1669FE841209C02AAC07 /* Project object */;
 }

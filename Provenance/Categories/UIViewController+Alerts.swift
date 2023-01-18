@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PVLogging
 
 extension UIViewController {
     func presentMessage(_ message: String, title: String, completion _: (() -> Swift.Void)? = nil) {

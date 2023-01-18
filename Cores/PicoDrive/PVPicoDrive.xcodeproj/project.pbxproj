@@ -79,6 +79,7 @@
 		B37937FB1D6BDF5A00EBAE81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */; };
 		B37937FD1D6BDF5F00EBAE81 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FC1D6BDF5F00EBAE81 /* libz.tbd */; };
 		B3A3E9871D6BFF6F00CCD7C8 /* PicodriveGameCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 82287C34101E9DB40072172D /* PicodriveGameCore.m */; };
+		B3AFCF762977A6D400A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF752977A6D400A01010 /* PVLogging */; };
 		B3D2E38A1D6E7E5C0058544D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D2E3891D6E7E5C0058544D /* PVSupport.framework */; };
 		C604DF5225C7C7E500E1FBE5 /* eeprom_spi.h in Headers */ = {isa = PBXBuildFile; fileRef = C604DF5025C7C7E500E1FBE5 /* eeprom_spi.h */; };
 		C604DF8525C7CB6B00E1FBE5 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = C604DF7525C7CB6B00E1FBE5 /* libretro.h */; };
@@ -551,6 +552,7 @@
 				B3411BA6276B315E00D85327 /* libpicodrive.a in Frameworks */,
 				B37937FD1D6BDF5F00EBAE81 /* libz.tbd in Frameworks */,
 				B37937FB1D6BDF5A00EBAE81 /* Foundation.framework in Frameworks */,
+				B3AFCF762977A6D400A01010 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1455,6 +1457,9 @@
 				B3411BA8276B315E00D85327 /* PBXTargetDependency */,
 			);
 			name = PVPicoDrive;
+			packageProductDependencies = (
+				B3AFCF752977A6D400A01010 /* PVLogging */,
+			);
 			productName = PicoDrive;
 			productReference = B37937AC1D6BCF8100EBAE81 /* PVPicoDrive.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2134,6 +2139,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF752977A6D400A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 089C1669FE841209C02AAC07 /* Project object */;
 }

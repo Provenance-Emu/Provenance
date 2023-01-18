@@ -29,6 +29,7 @@
 
 #import <PVSupport/OERingBuffer.h>
 #import <PVSupport/DebugUtils.h>
+#import <PVLogging/PVLogging.h>
 
 #import <PVStella/PVStella-Swift.h>
 

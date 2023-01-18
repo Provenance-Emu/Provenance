@@ -15,6 +15,7 @@ import UIKit
 import AppKit
 import CoreGraphics
 #endif
+import PVLogging
 
 @objcMembers
 public final class PVImageFile: PVFile {

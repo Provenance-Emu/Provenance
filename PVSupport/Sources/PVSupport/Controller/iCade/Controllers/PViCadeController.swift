@@ -8,6 +8,8 @@
 //
 #if canImport(UIKit)
 import GameController
+import PVLogging
+
 
 public class PViCadeController: GCController {
     internal private(set) var iCadeGamepad: PViCadeGamepad = PViCadeGamepad()

@@ -20,6 +20,7 @@
 		B380C2712894F63C007B76FD /* PVGMECore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVGMECore+Saves.m */; };
 		B381A27A292637CD00305322 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C12B2894D28700CF98C7 /* encoding_utf.c */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
+		B3AFCF8C2977A77B00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF8B2977A77B00A01010 /* PVLogging */; };
 		B3C2CCAC2894D78E00DE3B94 /* player.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1972894D28800CF98C7 /* player.c */; };
 		B3C2CCAD2894D78E00DE3B94 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1902894D28700CF98C7 /* libretro.c */; };
 		B3C2CCAE2894D78E00DE3B94 /* playlist.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1932894D28800CF98C7 /* playlist.c */; };
@@ -421,6 +422,7 @@
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
+				B3AFCF8C2977A77B00A01010 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -990,6 +992,9 @@
 				B3D3E7572894DC890016EB85 /* PBXTargetDependency */,
 			);
 			name = PVGME;
+			packageProductDependencies = (
+				B3AFCF8B2977A77B00A01010 /* PVLogging */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVGME.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1642,6 +1647,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF8B2977A77B00A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

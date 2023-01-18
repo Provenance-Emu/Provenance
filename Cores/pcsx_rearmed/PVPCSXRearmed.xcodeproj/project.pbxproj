@@ -92,6 +92,7 @@
 		B3980D7C2923922200A82429 /* cdrcimg.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1E22872967500EAEB37 /* cdrcimg.c */; };
 		B3980D7E2923937400A82429 /* gpuPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1C42872967500EAEB37 /* gpuPlugin.m */; };
 		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
+		B3AFCF882977A75000A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF872977A75000A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
@@ -894,6 +895,7 @@
 				B301797F207C909E0051B93D /* libpcsx_rearmed.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39768F82859E23200558958 /* libpcsx_rearmed-libretro.a in Frameworks */,
+				B3AFCF882977A75000A01010 /* PVLogging in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
@@ -2365,6 +2367,9 @@
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
 			name = PVPCSXRearmed;
+			packageProductDependencies = (
+				B3AFCF872977A75000A01010 /* PVLogging */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVPCSXRearmed.framework */;
 			productType = "com.apple.product-type.framework";
@@ -3164,6 +3169,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF872977A75000A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

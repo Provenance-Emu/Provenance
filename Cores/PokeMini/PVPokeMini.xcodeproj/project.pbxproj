@@ -80,6 +80,7 @@
 		B3532C2E21A91B46006CDA0F /* Joystick.c in Sources */ = {isa = PBXBuildFile; fileRef = B3532B8021A919F1006CDA0F /* Joystick.c */; };
 		B3532C3321A91C26006CDA0F /* NoUI.c in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3221A91C25006CDA0F /* NoUI.c */; };
 		B3547B692058593700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B682058593700CFF7D8 /* Core.plist */; };
+		B3AFCF582977A64900A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF572977A64900A01010 /* PVLogging */; };
 		B3CB854D1E9BECBF009155A6 /* PVPokeMini.h in Headers */ = {isa = PBXBuildFile; fileRef = B3CB854B1E9BECBF009155A6 /* PVPokeMini.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3CB85601E9BF153009155A6 /* PVPokeMiniEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 081A45981B95604700565444 /* PVPokeMiniEmulatorCore.m */; };
 		B3CB857E1E9BF153009155A6 /* freebios.c in Sources */ = {isa = PBXBuildFile; fileRef = 081A46191B95660100565444 /* freebios.c */; };
@@ -185,6 +186,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AFCF582977A64900A01010 /* PVLogging in Frameworks */,
 				B34AB5642106D5EB00C45F09 /* PVSupport.framework in Frameworks */,
 				B3CB85CA1E9C1BB0009155A6 /* AudioToolbox.framework in Frameworks */,
 			);
@@ -414,6 +416,9 @@
 			dependencies = (
 			);
 			name = PVPokeMini;
+			packageProductDependencies = (
+				B3AFCF572977A64900A01010 /* PVLogging */,
+			);
 			productName = PVPokeMini;
 			productReference = B3CB85491E9BECBF009155A6 /* PVPokeMini.framework */;
 			productType = "com.apple.product-type.framework";
@@ -845,6 +850,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF572977A64900A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 081A45841B955FA800565444 /* Project object */;
 }

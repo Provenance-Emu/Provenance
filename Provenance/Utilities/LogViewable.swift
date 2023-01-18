@@ -6,7 +6,7 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
-import CocoaLumberjackSwift
+import PVLogging
 import Foundation
 
 #if os(iOS)

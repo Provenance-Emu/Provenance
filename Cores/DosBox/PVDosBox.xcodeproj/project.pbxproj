@@ -146,6 +146,7 @@
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3C8A65F2877D6350037A946 /* PVDosBoxCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDosBoxCore+Controls.mm */; };
 		B3C8A6612877D6B30037A946 /* PVDosBoxCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDosBoxCore+Audio.m */; };
+		B3E88CC42977B53F00C90E86 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CC32977B53F00C90E86 /* PVLogging */; };
 		B3EBB2032872B65700EAEB37 /* PVDosBoxCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDosBoxCore+Video.m */; };
 /* End PBXBuildFile section */
 
@@ -523,6 +524,7 @@
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
+				B3E88CC42977B53F00C90E86 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1151,6 +1153,9 @@
 				B39768FA2859E23200558958 /* PBXTargetDependency */,
 			);
 			name = PVDosBox;
+			packageProductDependencies = (
+				B3E88CC32977B53F00C90E86 /* PVLogging */,
+			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVDosBox.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1927,6 +1932,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3E88CC32977B53F00C90E86 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

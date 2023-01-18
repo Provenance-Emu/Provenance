@@ -1,6 +1,6 @@
 #import "PVSnesticleCore.h"
 #import <PVSupport/OERingBuffer.h>
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLogging.h>
 #import <PVSupport/PVSupport-Swift.h>
 
 //#import <PVSupport/PVGameControllerUtilities.h>

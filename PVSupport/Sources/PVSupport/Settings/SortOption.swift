@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVLogging
 
 @objc
 public enum SortOptions: UInt, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable {

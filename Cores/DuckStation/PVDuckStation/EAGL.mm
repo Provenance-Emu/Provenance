@@ -10,7 +10,7 @@
 #import <OpenGLES/EAGL.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLogging.h>
 
 GLContextEAGL::~GLContextEAGL()
 {

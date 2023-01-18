@@ -17,7 +17,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVLogging.h>
+#import <PVLogging/PVLogging.h>
 
 /* Dolphin Includes */
 #include "AudioCommon/AudioCommon.h"

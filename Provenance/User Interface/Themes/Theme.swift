@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVSupport
 
 import UIKit
 
@@ -39,6 +40,7 @@ public enum Themes: String {
     }
 }
 
+@_marker
 protocol tvOSTheme {}
 
 public protocol iOSTheme {

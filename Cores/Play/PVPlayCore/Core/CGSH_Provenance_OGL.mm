@@ -3,6 +3,7 @@
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 #import "PVPlayCore.h"
+#import <PVLogging/PVLogging.h>
 
 CGSH_Provenance_OGL::CGSH_Provenance_OGL(
 	CAEAGLLayer *layer,

@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import PVSupport
+import PVLogging
 
 extension PVGameLibrary {
     public enum MigrationEvent {

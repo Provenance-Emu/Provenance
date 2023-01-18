@@ -9,6 +9,7 @@
 //
 
 import UIKit
+import PVLogging
 
 // these are the defaults assuming Dark mode, etc.
 private let _fullscreenColor = UIColor.black.withAlphaComponent(0.8)

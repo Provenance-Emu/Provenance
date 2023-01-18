@@ -5,7 +5,6 @@
 //  Copyright (c) 2013 James Addyman. All rights reserved.
 //
 
-import CocoaLumberjackSwift
 import CoreSpotlight
 import PVLibrary
 import PVSupport
@@ -31,13 +30,8 @@ final class PVApplication: UIApplication {
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     internal var window: UIWindow?
     var shortcutItemGame: PVGame?
-    var fileLogger: DDFileLogger = DDFileLogger()
     let disposeBag = DisposeBag()
 
-    #if os(iOS) && !targetEnvironment(macCatalyst)
-        var _logViewController: PVLogViewController?
-    #endif
-    
     #if os(iOS)
     weak var jitScreenDelegate: JitScreenDelegate?
     weak var jitWaitScreenVC: JitWaitScreenViewController?

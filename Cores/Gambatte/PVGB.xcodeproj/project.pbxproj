@@ -10,6 +10,7 @@
 		B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB55B2106D58F00C45F09 /* PVSupport.framework */; };
 		B3547B4E205857E300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4D205857E300CFF7D8 /* Core.plist */; };
 		B35E6C42207F09CC0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C41207F09CC0040709A /* CoreOptions.swift */; };
+		B3AFCF9C2977A84500A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF9B2977A84500A01010 /* PVLogging */; };
 		B3C9D43E1DEA6AFB0068D057 /* PVGB.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D43C1DEA6AFB0068D057 /* PVGB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4531DEA6DE80068D057 /* interrupter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0511ABE373800FF6AEF /* interrupter.cpp */; };
 		B3C9D4541DEA6DE80068D057 /* video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE08B1ABE373800FF6AEF /* video.cpp */; };
@@ -215,6 +216,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3AFCF9C2977A84500A01010 /* PVLogging in Frameworks */,
 				B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */,
 				B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */,
 			);
@@ -563,6 +565,9 @@
 			dependencies = (
 			);
 			name = PVGB;
+			packageProductDependencies = (
+				B3AFCF9B2977A84500A01010 /* PVLogging */,
+			);
 			productName = PVGB;
 			productReference = B3C9D43A1DEA6AFB0068D057 /* PVGB.framework */;
 			productType = "com.apple.product-type.framework";
@@ -996,6 +1001,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B3AFCF9B2977A84500A01010 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1AABDFD41ABE366000FF6AEF /* Project object */;
 }
