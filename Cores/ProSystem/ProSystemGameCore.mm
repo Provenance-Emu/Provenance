@@ -39,7 +39,7 @@
 #import <GLUT/GLUT.h>
 #endif
 
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 
 #include "ProSystem.h"
 #include "Database.h"

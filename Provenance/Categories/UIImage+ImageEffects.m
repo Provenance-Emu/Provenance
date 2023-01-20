@@ -95,6 +95,7 @@
 
 #if __has_include(<UIKit/UIKit.h>)
 #import "UIImage+ImageEffects.h"
+@import PVLoggingObjC;
 
 @import Accelerate;
 @import PVSupport;

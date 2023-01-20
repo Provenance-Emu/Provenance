@@ -26,7 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 
 //#import "OEGCSystemResponderClient.h"
 //#import "Wii/OEWiiSystemResponderClient.h"

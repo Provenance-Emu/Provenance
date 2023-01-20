@@ -11,15 +11,6 @@
         }
       },
       {
-        "package": "KeychainAccess",
-        "repositoryURL": "https://github.com/kishikawakatsumi/KeychainAccess.git",
-        "state": {
-          "branch": null,
-          "revision": "84e546727d66f1adc5439debad16270d0fdd04e7",
-          "version": "4.2.2"
-        }
-      },
-      {
         "package": "PLCrashReporter",
         "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
         "state": {
@@ -38,60 +29,6 @@
         }
       },
       {
-        "package": "RealmDatabase",
-        "repositoryURL": "https://github.com/realm/realm-core.git",
-        "state": {
-          "branch": null,
-          "revision": "b77443ca7fa25407869ca537bf3ae912b1427bff",
-          "version": "12.13.0"
-        }
-      },
-      {
-        "package": "Realm",
-        "repositoryURL": "https://github.com/realm/realm-swift.git",
-        "state": {
-          "branch": null,
-          "revision": "d63923f1c912b564f2c16e04ddc280cdb71dbbdd",
-          "version": "10.34.0"
-        }
-      },
-      {
-        "package": "RxDataSources",
-        "repositoryURL": "https://github.com/RxSwiftCommunity/RxDataSources.git",
-        "state": {
-          "branch": null,
-          "revision": "90c29b48b628479097fe775ed1966d75ac374518",
-          "version": "5.0.2"
-        }
-      },
-      {
-        "package": "RxRealm",
-        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm.git",
-        "state": {
-          "branch": null,
-          "revision": "a7de576348d48286d8b100a501f757a1c531f1dd",
-          "version": "5.0.5"
-        }
-      },
-      {
-        "package": "RxSwift",
-        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "b4307ba0b6425c0ba4178e138799946c3da594f8",
-          "version": "6.5.0"
-        }
-      },
-      {
-        "package": "SQLite.swift",
-        "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
-        "state": {
-          "branch": null,
-          "revision": "7a2e3cd27de56f6d396e84f63beefd0267b55ccb",
-          "version": "0.14.1"
-        }
-      },
-      {
         "package": "SteamController",
         "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
         "state": {
@@ -107,15 +44,6 @@
           "branch": "master",
           "revision": "d3cbf32788250741d397cfb5bcd532c37aa1096d",
           "version": null
-        }
-      },
-      {
-        "package": "ZipArchive",
-        "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
-        "state": {
-          "branch": null,
-          "revision": "3016df0730fb7daa85d73e29ec9d02851db831ae",
-          "version": "2.5.3"
         }
       }
     ]

@@ -2,6 +2,7 @@
 import PVLogging
 import GameController
 import PVSupport
+import PVEmulatorCore
 
 extension PVEmulatorViewController {
     func controllerPauseButtonPressed() {

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct AppearanceStyle {
+@frozen public struct AppearanceStyle {
     public let name: String
 
     public init(_ name: String) {

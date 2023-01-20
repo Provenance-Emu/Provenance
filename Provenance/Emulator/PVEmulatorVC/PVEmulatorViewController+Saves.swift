@@ -10,6 +10,8 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import UIKit
+import PVEmulatorCore
+
 
 public enum SaveStateError: Error {
     case coreSaveError(Error?)

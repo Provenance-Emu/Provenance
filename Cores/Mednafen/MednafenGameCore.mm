@@ -50,7 +50,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVAudio/OERingBuffer.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVLogging/PVLogging.h>
 #import <PVObjCUtils/OEGeometry.h>

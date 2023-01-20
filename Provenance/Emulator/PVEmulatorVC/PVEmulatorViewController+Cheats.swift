@@ -7,6 +7,7 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import UIKit
+import PVEmulatorCore
 
 public enum CheatsStateError: Error {
     case coreCheatsError(Error?)

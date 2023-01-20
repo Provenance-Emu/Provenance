@@ -18,6 +18,7 @@ let ISO_TIMEZONE_UTC_FORMAT: String = "Z"
 let ISO_TIMEZONE_OFFSET_FORMAT: String = "%+02d%02d"
 
 @objcMembers
+@_objc_non_lazy_realization
 public final class PVLogging: NSObject {
     @objc(sharedInstance)
     public static let shared = PVLogging()

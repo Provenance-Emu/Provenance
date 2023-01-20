@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>

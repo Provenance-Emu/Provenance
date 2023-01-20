@@ -27,7 +27,8 @@
 #import "ATR800GameCore.h"
 
 @import PVSupport;
-//#import <PVAudio/OERingBuffer.h>
+@import PVLoggingObjC;
+#import <PVAudio/OERingBuffer.h>
 //#import <PVObjCUtils/DebugUtils.h>
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>

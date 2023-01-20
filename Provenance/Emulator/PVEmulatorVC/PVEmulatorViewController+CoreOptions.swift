@@ -8,6 +8,7 @@
 
 import Foundation
 import PVSupport
+import PVEmulatorCore
 
 extension PVEmulatorViewController {
     func showCoreOptions() {

@@ -10,6 +10,7 @@
 @import PVSupport;
 #import "Provenance-Swift.h"
 #import <QuartzCore/QuartzCore.h>
+@import PVLoggingObjC;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B30614EC218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h */; };
+		B30614EC218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.hpp */; };
 		B30614ED218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B30614EB218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm */; };
 		B30614F7218D60CB0041AD4F /* PVFCEU+Swift.h in Headers */ = {isa = PBXBuildFile; fileRef = B30614F6218D60CB0041AD4F /* PVFCEU+Swift.h */; };
 		B30C093827C0AB5A009F25D0 /* asm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB53427C09C5B0012118D /* asm.cpp */; };
@@ -49,6 +49,8 @@
 		B30C097B27C0ABC4009F25D0 /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3E827C09C5B0012118D /* guid.cpp */; };
 		B30C097C27C0ABC4009F25D0 /* general.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3D627C09C5B0012118D /* general.cpp */; };
 		B30C098827C0ADD1009F25D0 /* ppu.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BCB43827C09C5B0012118D /* ppu.h */; };
+		B31DC5E02978EC0B00135D0C /* PVFCEUEmulatorCore.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
+		B322DE6D29790EC30093AEEF /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B322DE6C29790EC30093AEEF /* PVEmulatorCore */; };
 		B3341F5427C1B18C00E001C6 /* fceux_netplay_server.m in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5327C1B18C00E001C6 /* fceux_netplay_server.m */; };
 		B3341F5527C1B18C00E001C6 /* fceux_netplay_server.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B3341F5227C1B18C00E001C6 /* fceux_netplay_server.h */; };
 		B3341F6D27C1B1E600E001C6 /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5B27C1B1CC00E001C6 /* md5.cpp */; };
@@ -60,7 +62,6 @@
 		B3341F9327C1B39A00E001C6 /* throttle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F6A27C1B1CD00E001C6 /* throttle.cpp */; };
 		B3341F9427C1B39A00E001C6 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F6C27C1B1CD00E001C6 /* server.cpp */; };
 		B3341F9527C1B39A00E001C6 /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5B27C1B1CC00E001C6 /* md5.cpp */; };
-		B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5592106D57B00C45F09 /* PVSupport.framework */; };
 		B3547B4B205857B900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4A205857B900CFF7D8 /* Core.plist */; };
 		B391F2D427C1695700730B53 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B391F2D227C1695700730B53 /* CoreFoundation.framework */; };
 		B391F2D527C1695700730B53 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B391F2D327C1695700730B53 /* Foundation.framework */; };
@@ -92,7 +93,6 @@
 		B3A9F43A1DE877B4008450F5 /* PVFCEU.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVFCEU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AE1ABF1D41002274A3 /* Foundation.framework */; };
 		B3A9F4931DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */; };
-		B3A9F6311DE883FC008450F5 /* PVFCEUEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F6321DE88425008450F5 /* libz.tbd */; };
 		B3AAF51627C0A94B001CAE1F /* 15.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB4E727C09C5B0012118D /* 15.cpp */; };
 		B3AAF51727C0A94B001CAE1F /* 80.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB48D27C09C5B0012118D /* 80.cpp */; };
@@ -675,11 +675,11 @@
 		1A3A77F01ABF16A5002274A3 /* x6502.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x6502.h; sourceTree = "<group>"; };
 		1A3A77F11ABF16A5002274A3 /* x6502abbrev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x6502abbrev.h; sourceTree = "<group>"; };
 		1A3A77F21ABF16A5002274A3 /* x6502struct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = x6502struct.h; sourceTree = "<group>"; };
-		1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVFCEUEmulatorCore.h; sourceTree = "<group>"; };
+		1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = PVFCEUEmulatorCore.hpp; sourceTree = "<group>"; };
 		1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVFCEUEmulatorCore.mm; sourceTree = "<group>"; };
 		1A3A79AE1ABF1D41002274A3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1A3A79AF1ABF1D41002274A3 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVFCEUEmulatorCore+Controls.h"; sourceTree = "<group>"; };
+		B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = "PVFCEUEmulatorCore+Controls.hpp"; sourceTree = "<group>"; };
 		B30614EB218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVFCEUEmulatorCore+Controls.mm"; sourceTree = "<group>"; };
 		B30614F6218D60CB0041AD4F /* PVFCEU+Swift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVFCEU+Swift.h"; sourceTree = "<group>"; };
 		B3341F5027C1B18C00E001C6 /* libfceux-netplay-server.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libfceux-netplay-server.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1895,8 +1895,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3AFCF822977A71C00A01010 /* PVLogging in Frameworks */,
-				B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */,
 				B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */,
+				B322DE6D29790EC30093AEEF /* PVEmulatorCore in Frameworks */,
 				B3341F7E27C1B2CF00E001C6 /* libfceux-netplay-server.a in Frameworks */,
 				B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */,
 				B3AAF66827C0A95C001CAE1F /* libfceux.a in Frameworks */,
@@ -1955,9 +1955,9 @@
 			children = (
 				B3BCAAAD27C09C580012118D /* fceux */,
 				1A3A75051ABF16A3002274A3 /* FCEU-2.2.3 */,
-				1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.h */,
+				1A3A79AB1ABF1CE8002274A3 /* PVFCEUEmulatorCore.hpp */,
 				1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */,
-				B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h */,
+				B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.hpp */,
 				B30614EB218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm */,
 				B30614F6218D60CB0041AD4F /* PVFCEU+Swift.h */,
 				B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */,
@@ -3606,10 +3606,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B30614EC218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h in Headers */,
+				B30614EC218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.hpp in Headers */,
+				B31DC5E02978EC0B00135D0C /* PVFCEUEmulatorCore.hpp in Headers */,
 				B30C098827C0ADD1009F25D0 /* ppu.h in Headers */,
 				B3A9F43A1DE877B4008450F5 /* PVFCEU.h in Headers */,
-				B3A9F6311DE883FC008450F5 /* PVFCEUEmulatorCore.h in Headers */,
 				B30614F7218D60CB0041AD4F /* PVFCEU+Swift.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3669,6 +3669,7 @@
 			name = PVFCEU;
 			packageProductDependencies = (
 				B3AFCF812977A71C00A01010 /* PVLogging */,
+				B322DE6C29790EC30093AEEF /* PVEmulatorCore */,
 			);
 			productName = PVNES;
 			productReference = B3A9F4361DE877B4008450F5 /* PVFCEU.framework */;
@@ -4547,7 +4548,7 @@
 				PRODUCT_NAME = PVFCEU;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
@@ -4742,7 +4743,7 @@
 				PRODUCT_NAME = PVFCEU;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -4805,7 +4806,7 @@
 				PRODUCT_NAME = PVFCEU;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
@@ -5160,6 +5161,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B322DE6C29790EC30093AEEF /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
 		B3AFCF812977A71C00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

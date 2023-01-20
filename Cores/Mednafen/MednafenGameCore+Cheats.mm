@@ -3,7 +3,7 @@
 #include <mednafen/mempatcher.h>
 #import "MednafenGameCore.h"
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 #import <PVSupport/PVEmulatorCore.h>
 #import <PVMednafen/PVMednafen-Swift.h>
 #import <PVLogging/PVLogging.h>

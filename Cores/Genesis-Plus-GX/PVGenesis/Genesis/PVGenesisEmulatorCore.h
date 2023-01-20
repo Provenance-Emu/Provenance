@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 
 PVCORE_DIRECT_MEMBERS
 @interface PVGenesisEmulatorCore : PVEmulatorCore <PVGenesisSystemResponderClient>

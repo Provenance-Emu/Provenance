@@ -26,7 +26,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 
 PVCORE
 @interface PVGBEmulatorCore : PVEmulatorCore <PVGBSystemResponderClient>

@@ -25,13 +25,13 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "PVStellaGameCore.h"
-
+#import "PVStellaGameCore.hpp"
+#import <PVStella/PVStella-Swift.h>
 #import <PVAudio/OERingBuffer.h>
 #import <PVObjCUtils/DebugUtils.h>
 #import <PVLogging/PVLogging.h>
-
-#import <PVStella/PVStella-Swift.h>
+#import <PVEmulatorCore/PVEmulatorCore.h>
+@import PVEmulatorCoreSwift;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -73,7 +73,7 @@ const NSUInteger A2600EmulatorValues[] = {
 #define NUMBER_OF_PADS 2
 #define NUMBER_OF_PAD_INPUTS 16
 
-@interface PVStellaGameCore () <GameWithCheat> {
+@interface PVStellaGameCore () <GameWithCheat, PV2600SystemResponderClient> {
     stellabuffer_t *_videoBuffer;
     int _videoWidth, _videoHeight;
     int16_t _pad[NUMBER_OF_PADS][NUMBER_OF_PAD_INPUTS];
@@ -81,6 +81,11 @@ const NSUInteger A2600EmulatorValues[] = {
     // RETRO_REGION_NTSC, RETRO_REGION_PAL
     unsigned region;
 }
+@property (nonatomic) stellabuffer_t* videoBuffer;
+@property (nonatomic) int videoWidth;
+@property (nonatomic) int videoHeight;
+@property (nonatomic) unsigned region;
+
 @property (nonatomic, strong) NSMutableArray<NSString*>* cheats;
 @end
 

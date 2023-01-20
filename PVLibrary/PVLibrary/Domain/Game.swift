@@ -8,6 +8,7 @@
 
 import Foundation
 
+@frozen
 public struct Game: Codable {
     public let id: String
     public let title: String

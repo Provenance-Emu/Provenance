@@ -18,6 +18,7 @@ public struct LocalFile: LocalFileProvider, Codable, Equatable {
 
     private var md5Cache: String?
 
+    @_hasStorage
     public var md5: String? {
         mutating get {
             guard online else {

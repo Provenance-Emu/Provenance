@@ -10,6 +10,7 @@ import Foundation
 import PVLibrary
 import PVSupport
 import UIKit
+import PVEmulatorCore
 
 extension PVEmulatorViewController {
     @objc func showMenu(_ sender: AnyObject?) {

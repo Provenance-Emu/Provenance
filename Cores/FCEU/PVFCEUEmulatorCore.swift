@@ -8,6 +8,7 @@
 
 import Foundation
 import PVSupport
+import PVEmulatorCore
 
 // extension PVFCEUEmulatorCore: PVNESSystemResponderClient {
 //	func didPush(_ button: PVNESButton, forPlayer player: Int) {

@@ -10,6 +10,7 @@
 @import PVSupport;
 @import QuartzCore;
 @import ReplayKit;
+@import PVLoggingObjC;
 #import "Provenance-Swift.h"
 
 #ifndef USE_EFFECT
