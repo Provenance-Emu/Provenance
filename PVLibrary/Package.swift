@@ -2,6 +2,55 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
+let cxxSettings: [CXXSetting] = [
+    .headerSearchPath("."),
+    .headerSearchPath("include"),
+    .headerSearchPath("$GENERATED_MODULEMAP_DIR"),
+    .headerSearchPath("../PVSupport/Sources/PVSupport/include"),
+    .headerSearchPath("../PVEmulatorCore/Sources/PVEmulatorCoreObjC/include")
+]
+
+let cSettings: [CSetting] = [
+    .headerSearchPath("."),
+    .headerSearchPath("include"),
+    .headerSearchPath("$GENERATED_MODULEMAP_DIR"),
+    .headerSearchPath("../PVSupport/Sources/PVSupport/include"),
+    .headerSearchPath("../PVEmulatorCore/Sources/PVEmulatorCoreObjC/include")
+]
+
+let unsafeFlags: SwiftSetting = .unsafeFlags([
+//    "-enable-experimental-cxx-interop", // Note, this breaks a bunch of Swift OptionSet and Enums for some reason
+    "-enable-objc-interop"
+    //    "-Xfrontend", "-enable-experimental-cxx-interop",
+    //    "-Xfrontend", "-enable-experimental-cxx-interop-in-clang-header"
+    //    "-enable-experimental-cxx-interop-in-clang-header",
+    //    "-Xfrontend", "-enable-cxx-interop",
+    //    "-Xfrontend", "-Xcc",
+    //    "-enable-cxx-interop",
+    //    "-Xfrontend", "-enable-cxx-interop",
+    //    "-Xfrontend", "-validate-tbd-against-ir=none",
+    //    "-I", "Sources/CXX/include",
+    //    "-I", "\(sdkRoot)/usr/include",
+    //    "-I", "\(cPath)",
+    //    "-lc++",
+    //    "-Xfrontend", "-disable-implicit-concurrency-module-import",
+    //    "-Xcc", "-nostdinc++"
+])
+
+let swiftSettings: [SwiftSetting] = [
+    .define("LIBRETRO"),
+    unsafeFlags
+]
+
+let linkerSettings: [LinkerSetting] = [
+    .linkedFramework("Foundation"),
+    .linkedFramework("CoreGraphics"),
+    .linkedFramework("CoreSpotlight"),
+    .linkedFramework("GameController", .when(platforms: [.iOS, .tvOS])),
+    .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .watchOS])),
+    .linkedFramework("WatchKit", .when(platforms: [.watchOS]))
+]
+
 let package = Package(
     name: "PVLibrary",
     platforms: [
@@ -22,7 +71,11 @@ let package = Package(
         .library(
             name: "PVLibrary-Dynamic",
             type: .dynamic,
-            targets: ["PVLibrary"])
+            targets: ["PVLibrary"]),
+
+            .library(
+                name: "PVHashing",
+                targets: ["PVHashing"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -32,6 +85,9 @@ let package = Package(
         .package(
             name: "PVLogging",
             path: "../PVLogging"),
+        .package(
+            name: "PVObjCUtils",
+            path: "../PVObjCUtils"),
         .package(
             name: "PVEmulatorCore",
             path: "../PVEmulatorCore"),
@@ -69,6 +125,7 @@ let package = Package(
                 "SWCompression",
                 "PVLogging",
                 "Checksum",
+                "PVHashing", // Use the objC or Swift version, when it's tested @JoeMatt
                 .product(name: "GRDB", package: "GRDB.swift"),
                 .product(name: "SQLite", package: "SQLite.swift"),
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
@@ -85,31 +142,22 @@ let package = Package(
                 .copy("Resources/cheatbase.sqlite"),
                 .copy("Resources/openvgdb.sqlite"),
                 .copy("Resources/systems.plist"),
-//                .process("Resources/")
+                //                .process("Resources/")
             ],
-            cSettings: [
-                .headerSearchPath("include"),
-                .headerSearchPath("../PVSupport/Sources/PVSupport/include"),
-                .headerSearchPath("../PVEmulatorCore/Sources/PVEmulatorCoreObjC/include")
-            ],
-//            swiftSettings: [
-//                .unsafeFlags([
-//                    "-Xfrontend", "-enable-cxx-interop",
-//                    //                    "-Xfrontend", "-validate-tbd-against-ir=none",
-//                    //                    "-I", "Sources/CXX/include",
-//                    //                    "-I", "\(sdkRoot)/usr/include",
-//                    //                    "-I", "\(cPath)",
-//                    //                    "-lc++",
-//                    //                    "-Xfrontend", "-disable-implicit-concurrency-module-import",
-//                    //                    "-Xcc", "-nostdinc++"
-//                ])
-//            ],
-            linkerSettings: [
-                .linkedFramework("GameController", .when(platforms: [.iOS, .tvOS])),
-                .linkedFramework("CoreGraphics", .when(platforms: [.iOS, .tvOS])),
-                .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS])),
-                .linkedFramework("WatchKit", .when(platforms: [.watchOS]))
-            ]
+            cSettings: cSettings,
+            cxxSettings: cxxSettings,
+            swiftSettings: swiftSettings,
+            linkerSettings: linkerSettings
+        ),
+
+        .target(
+            name: "PVHashing",
+            dependencies: ["PVObjCUtils", "PVSupport"]
+        ),
+
+        .target(
+            name: "PVHashingSwift",
+            dependencies: ["PVObjCUtils", "PVSupport"]
         ),
         
         // MARK: SwiftPM tests

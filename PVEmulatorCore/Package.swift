@@ -23,6 +23,7 @@ let cSettings: [CSetting] = [
 
 let unsafeFlags: SwiftSetting = .unsafeFlags([
     "-enable-experimental-cxx-interop",
+    "-enable-objc-interop"
 //    "-Xfrontend", "-enable-experimental-cxx-interop",
 //    "-Xfrontend", "-enable-experimental-cxx-interop-in-clang-header"
 //    "-enable-experimental-cxx-interop-in-clang-header",

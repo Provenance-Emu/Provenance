@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "c3cc998fc14efa356259e5d01d8910e82de080ad",
-        "version" : "6.6.0"
+        "revision" : "ba68e3b02d9ed953a0c9ff43183f856f20c9b7ce",
+        "version" : "6.6.1"
       }
     },
     {
@@ -33,13 +33,13 @@
       "location" : "https://github.com/OlehKulykov/PLzmaSDK.git",
       "state" : {
         "branch" : "1.2.5",
-        "revision" : "3305f8807d1bc679ab8a4930f4bb46ceb1120ed3"
+        "revision" : "ee2666a06aa1f6632d5060d1cf316520ed8aecbd"
       }
     },
     {
       "identity" : "realm-core",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/realm/realm-core",
+      "location" : "https://github.com/realm/realm-core.git",
       "state" : {
         "revision" : "b77443ca7fa25407869ca537bf3ae912b1427bff",
         "version" : "12.13.0"
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "b442ee3e9caa1abab26fd9b23f060f6f0815ff48",
-        "version" : "10.33.0"
+        "revision" : "b1072f3ef733108dfcc62c2001781e5d65605fbf",
+        "version" : "10.34.1"
       }
     },
     {

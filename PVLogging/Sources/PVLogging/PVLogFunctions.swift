@@ -42,7 +42,7 @@ public func ELOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defa
 
 //@_cdecl("cName")
 //@usableFromInline
-@_implementationOnly import PVLoggingObjC
+@_exported import PVLoggingObjC
 @_transparent
 @_effects(readonly)
 public func PVLog(level: UInt, flag: PVLogFlag, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, format: String, _ args: String? ...) {
