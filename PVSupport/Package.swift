@@ -36,7 +36,7 @@ let package = Package(
         .target(
             name: "PVSupport",
             dependencies: [
-                .product(name: "PVLogging", package: "PVLogging")
+                "PVLogging"
             ],
             resources: [
                 .process("Controller/AHAP/")

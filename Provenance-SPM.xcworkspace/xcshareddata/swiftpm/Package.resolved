@@ -1,0 +1,151 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "AppCenter",
+        "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
+        "state": {
+          "branch": null,
+          "revision": "0c38cfb756f86673991d51f273b7bbcbaa28f94d",
+          "version": "5.0.1"
+        }
+      },
+      {
+        "package": "BitByteData",
+        "repositoryURL": "https://github.com/tsolomko/BitByteData",
+        "state": {
+          "branch": null,
+          "revision": "b4b41619522aacd7aae7b02fa8360833e796a03d",
+          "version": "2.0.2"
+        }
+      },
+      {
+        "package": "Checksum",
+        "repositoryURL": "https://github.com/JoeMatt/Checksum.git",
+        "state": {
+          "branch": null,
+          "revision": "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+          "version": "1.1.1"
+        }
+      },
+      {
+        "package": "GRDB",
+        "repositoryURL": "https://github.com/groue/GRDB.swift.git",
+        "state": {
+          "branch": null,
+          "revision": "ba68e3b02d9ed953a0c9ff43183f856f20c9b7ce",
+          "version": "6.6.1"
+        }
+      },
+      {
+        "package": "PLCrashReporter",
+        "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
+        "state": {
+          "branch": null,
+          "revision": "b1a342da19ed9b3af61ea2efa7656c2af30aeb7c",
+          "version": "1.11.0"
+        }
+      },
+      {
+        "package": "PLzmaSDK",
+        "repositoryURL": "https://github.com/OlehKulykov/PLzmaSDK.git",
+        "state": {
+          "branch": "1.2.5",
+          "revision": "ee2666a06aa1f6632d5060d1cf316520ed8aecbd",
+          "version": null
+        }
+      },
+      {
+        "package": "Reachability",
+        "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
+        "state": {
+          "branch": "master",
+          "revision": "a81b7367f2c46875f29577e03a60c39cdfad0c8d",
+          "version": null
+        }
+      },
+      {
+        "package": "RealmDatabase",
+        "repositoryURL": "https://github.com/realm/realm-core.git",
+        "state": {
+          "branch": null,
+          "revision": "b77443ca7fa25407869ca537bf3ae912b1427bff",
+          "version": "12.13.0"
+        }
+      },
+      {
+        "package": "Realm",
+        "repositoryURL": "https://github.com/realm/realm-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "b1072f3ef733108dfcc62c2001781e5d65605fbf",
+          "version": "10.34.1"
+        }
+      },
+      {
+        "package": "RxRealm",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm",
+        "state": {
+          "branch": null,
+          "revision": "a7de576348d48286d8b100a501f757a1c531f1dd",
+          "version": "5.0.5"
+        }
+      },
+      {
+        "package": "RxSwift",
+        "repositoryURL": "https://github.com/ReactiveX/RxSwift",
+        "state": {
+          "branch": null,
+          "revision": "b4307ba0b6425c0ba4178e138799946c3da594f8",
+          "version": "6.5.0"
+        }
+      },
+      {
+        "package": "SQLite.swift",
+        "repositoryURL": "https://github.com/stephencelis/SQLite.swift",
+        "state": {
+          "branch": null,
+          "revision": "7a2e3cd27de56f6d396e84f63beefd0267b55ccb",
+          "version": "0.14.1"
+        }
+      },
+      {
+        "package": "SteamController",
+        "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
+        "state": {
+          "branch": "master",
+          "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
+          "version": null
+        }
+      },
+      {
+        "package": "SWCompression",
+        "repositoryURL": "https://github.com/tsolomko/SWCompression.git",
+        "state": {
+          "branch": null,
+          "revision": "bca9a664eb9361d41a87d3e376a1e7db9ea2c287",
+          "version": "4.8.4"
+        }
+      },
+      {
+        "package": "Introspect",
+        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
+        "state": {
+          "branch": "master",
+          "revision": "d3cbf32788250741d397cfb5bcd532c37aa1096d",
+          "version": null
+        }
+      },
+      {
+        "package": "ZipArchive",
+        "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
+        "state": {
+          "branch": null,
+          "revision": "38e0ce0598e06b034271f296a8e15b149c91aa19",
+          "version": "2.4.3"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
