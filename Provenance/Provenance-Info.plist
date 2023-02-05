@@ -285,11 +285,12 @@
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
         <key>UTExportedTypeDeclarations</key>
+	<array>
+	    <dict>
         <key>public.filename-extension</key>
 				<array>
 					<string>svs</string>
 				</array>
-			</dict>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.data</string>
