@@ -53,7 +53,7 @@ let package = Package(
         .testTarget(
             name: "PVAppTests",
             dependencies: ["PVApp"])
-    ],
-    cLanguageStandard: .c17,
-    cxxLanguageStandard: .cxx17
+    ]
+//    cLanguageStandard: .c17,
+//    cxxLanguageStandard: .cxx17
 )

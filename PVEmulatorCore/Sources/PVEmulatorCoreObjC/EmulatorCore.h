@@ -12,6 +12,7 @@
 #import <MetalKit/MTKView.h>
 #else
 @import Foundation;
+@import UIKit;
 #if !TARGET_OS_WATCH
 @import GameController;
 @import MetalKit.MTKView;

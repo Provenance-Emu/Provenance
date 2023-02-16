@@ -516,8 +516,8 @@
 		B36C50DB296F4D1200921F85 /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B306E1412769FE65001DC52E /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
 		B36D9DFD203605BC00D583C4 /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
-		B36DB409298C98DB00A59BBD /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B36DB408298C98DB00A59BBD /* PVLibrary */; };
 		B36DB40B298C995A00A59BBD /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B36DB40A298C995A00A59BBD /* PVLibrary */; };
+		B36DB413298CAAB000A59BBD /* PVApp in Frameworks */ = {isa = PBXBuildFile; productRef = B36DB412298CAAB000A59BBD /* PVApp */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B378224A21D329EC0077E86F /* SettingsRowSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224921D329EC0077E86F /* SettingsRowSwitch.swift */; };
 		B378224B21D329FB0077E86F /* SettingsRowSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224921D329EC0077E86F /* SettingsRowSwitch.swift */; };
@@ -2689,6 +2689,7 @@
 		B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVControllerViewController.swift; sourceTree = "<group>"; };
 		B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoreFactory.swift; sourceTree = "<group>"; };
 		B36DB407298C987600A59BBD /* PVLibrary */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PVLibrary; sourceTree = "<group>"; };
+		B36DB411298CAA7E00A59BBD /* PVApp */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PVApp; sourceTree = "<group>"; };
 		B37021F22872537E00B3F6DA /* PVMiniVMac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMiniVMac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37021F52872538400B3F6DA /* PVFBNeo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFBNeo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37263A026EA04E700E95488 /* ProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3215,12 +3216,12 @@
 				B378881B297A4FE700F9F062 /* libc++.dylib in Frameworks */,
 				B378881C297A4FE700F9F062 /* libsqlite3.dylib in Frameworks */,
 				B378881D297A4FE700F9F062 /* AVFoundation.framework in Frameworks */,
+				B36DB413298CAAB000A59BBD /* PVApp in Frameworks */,
 				B378881F297A4FE700F9F062 /* AppCenterAnalytics in Frameworks */,
 				B3788820297A4FE700F9F062 /* CFNetwork.framework in Frameworks */,
 				B3788821297A4FE700F9F062 /* Security.framework in Frameworks */,
 				B3788822297A4FE700F9F062 /* SystemConfiguration.framework in Frameworks */,
 				B3788823297A4FE700F9F062 /* CoreData.framework in Frameworks */,
-				B36DB409298C98DB00A59BBD /* PVLibrary in Frameworks */,
 				B3788825297A4FE700F9F062 /* AudioToolbox.framework in Frameworks */,
 				B3788826297A4FE700F9F062 /* UIKit.framework in Frameworks */,
 				B3788828297A4FE700F9F062 /* SteamController in Frameworks */,
@@ -4342,6 +4343,7 @@
 			children = (
 				B3441260297A834900368CFF /* PVSupport */,
 				B36DB407298C987600A59BBD /* PVLibrary */,
+				B36DB411298CAA7E00A59BBD /* PVApp */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -5172,7 +5174,7 @@
 				B378873C297A4FE700F9F062 /* SteamController */,
 				B378873E297A4FE700F9F062 /* Introspect */,
 				B3788741297A4FE700F9F062 /* Reachability */,
-				B36DB408298C98DB00A59BBD /* PVLibrary */,
+				B36DB412298CAAB000A59BBD /* PVApp */,
 			);
 			productName = Provenance;
 			productReference = B3788862297A4FE700F9F062 /* Provenance (No Cores).app */;
@@ -11782,13 +11784,13 @@
 			package = B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */;
 			productName = AppCenterCrashes;
 		};
-		B36DB408298C98DB00A59BBD /* PVLibrary */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLibrary;
-		};
 		B36DB40A298C995A00A59BBD /* PVLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLibrary;
+		};
+		B36DB412298CAAB000A59BBD /* PVApp */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVApp;
 		};
 		B3788737297A4FE700F9F062 /* AppCenterAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

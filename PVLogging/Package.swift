@@ -53,25 +53,6 @@ let package = Package(
                 "PVLoggingObjC"
             ],
             publicHeadersPath: "include/"
-            //            ,
-            //            cSettings: [
-            //                .headerSearchPath("."),
-            //                .headerSearchPath("include"),
-            //                .headerSearchPath("include/PVLogging"),
-            //            ]
-            // This breaks ObjC Cocoalumberjack to Swift bindings for option types
-            //                swiftSettings: [
-            //                    .unsafeFlags([
-            //                        "-Xfrontend", "-enable-cxx-interop",
-            //                        //                    "-Xfrontend", "-validate-tbd-against-ir=none",
-            //                        //                    "-I", "Sources/CXX/include",
-            //                        //                    "-I", "\(sdkRoot)/usr/include",
-            //                        //                    "-I", "\(cPath)",
-            //                        //                    "-lc++",
-            //                        //                    "-Xfrontend", "-disable-implicit-concurrency-module-import",
-            //                        //                    "-Xcc", "-nostdinc++"
-            //                    ])
-            //                ]
         ),
 
         // MARK: SwiftPM tests

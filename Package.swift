@@ -40,3 +40,10 @@ let package = Package(
         //     ])
     ]
 )
+
+/*
+Swift Format
+swift package plugin --allow-writing-to-package-directory swiftformat
+swift package plugin --allow-writing-to-package-directory swiftformat --target MyLibrary --swiftversion 5.6 --verbose
+
+*/

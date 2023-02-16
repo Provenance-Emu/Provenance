@@ -83,6 +83,15 @@
         }
       },
       {
+        "package": "RxDataSources",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxDataSources.git",
+        "state": {
+          "branch": null,
+          "revision": "90c29b48b628479097fe775ed1966d75ac374518",
+          "version": "5.0.2"
+        }
+      },
+      {
         "package": "RxRealm",
         "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm",
         "state": {

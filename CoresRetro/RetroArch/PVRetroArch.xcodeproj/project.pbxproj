@@ -43,7 +43,6 @@
 		9340203F296A2910005742C2 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9340203D296A2910005742C2 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93402040296A2976005742C2 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93D6B0F5296A16FB00D5EE11 /* CFNetwork.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93402041296A37D3005742C2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F66EE229672D9000203EB3 /* IOKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
-		934DFA94296B8F5100E7D1DE /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934DFA93296B8F5100E7D1DE /* PVSupport.framework */; };
 		93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93599B4C2955FD520049DAC8 /* QuartzCore.framework */; };
 		936B47EF296969F200C7D2A3 /* modules in Resources */ = {isa = PBXBuildFile; fileRef = 932A5CC92968710B0032C168 /* modules */; };
 		936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */ = {isa = PBXBuildFile; fileRef = 936B47F92969798B00C7D2A3 /* platform_darwin.m */; };
@@ -141,6 +140,7 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B378EC85298CAE8A009ED160 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B378EC84298CAE8A009ED160 /* PVSupport */; };
 		B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB322949F26800CC8234 /* CoreGraphics.framework */; };
 		B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB362949F2D500CC8234 /* CoreHaptics.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB382949F2DC00CC8234 /* GameController.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
@@ -472,7 +472,6 @@
 			files = (
 				93AA1255296DCF01007C9808 /* libiconv.tbd in Frameworks */,
 				93AA1251296DCED9007C9808 /* VideoToolbox.framework in Frameworks */,
-				934DFA94296B8F5100E7D1DE /* PVSupport.framework in Frameworks */,
 				93B66E3C2968551C00A621DD /* libretroarch.a in Frameworks */,
 				93F671352967BF8800203EB3 /* Metal.framework in Frameworks */,
 				93F671362967BF8800203EB3 /* MetalKit.framework in Frameworks */,
@@ -492,6 +491,7 @@
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */,
 				93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */,
+				B378EC85298CAE8A009ED160 /* PVSupport in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3E88CC02977B4E300C90E86 /* PVLogging in Frameworks */,
@@ -873,6 +873,7 @@
 			name = PVRetroArch;
 			packageProductDependencies = (
 				B3E88CBF2977B4E300C90E86 /* PVLogging */,
+				B378EC84298CAE8A009ED160 /* PVSupport */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVRetroArch.framework */;
@@ -2138,6 +2139,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B378EC84298CAE8A009ED160 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
 		B3E88CBF2977B4E300C90E86 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
