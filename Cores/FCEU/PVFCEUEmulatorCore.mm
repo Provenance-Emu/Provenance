@@ -24,8 +24,10 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import "PVFCEUEmulatorCore.h"
-#import <PVSupport/PVSupport-Swift.h>
+#import "PVFCEUEmulatorCore.hpp"
+@import PVSupport;
+@import PVEmulatorCoreSwift;
+#import <PVEmulatorCore/PVEmulatorCore.h>
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -64,6 +66,8 @@ static uint32_t palette[256];
     int32_t soundSize;
     
     NSUInteger currentDisc;
+
+    uint32_t pad[2][PVNESButtonCount];
 }
 
 @end

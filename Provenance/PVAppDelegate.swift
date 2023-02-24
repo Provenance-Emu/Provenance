@@ -10,6 +10,7 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
+import PVEmulatorCore
 #if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
 import SteamController
 import UIKit

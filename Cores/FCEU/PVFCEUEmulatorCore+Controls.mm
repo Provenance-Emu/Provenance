@@ -6,7 +6,7 @@
 //  Copyright © 2018 Provenance Emu. All rights reserved.
 //
 
-#import "PVFCEUEmulatorCore+Controls.h"
+#import "PVFCEUEmulatorCore+Controls.hpp"
 #import "PVFCEUEmulatorCore.h"
 
 #include "fceux/src/fceu.h"

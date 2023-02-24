@@ -8,6 +8,8 @@
 
 import Foundation
 import PVSupport
+import PVEmulatorCore
+
 /*
  { "stella_console", "Console display; auto|ntsc|pal|secam|ntsc50|pal60|secam60" },
  { "stella_palette", "Palette colors; standard|z26|user|custom" },

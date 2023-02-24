@@ -1,64 +1,64 @@
-// swift-tools-version:5.4
+// swift-tools-version:5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
-
 import PackageDescription
 
-let cxxSettings: [CXXSetting] = [
-	// .define("STEAMCONTROLLER_NO_PRIVATE_API", .when(platforms: [.macOS])),
-]
-
-let cSettings: [CSetting] = [
-	// .define("STEAMCONTROLLER_NO_PRIVATE_API", .when(platforms: [.macOS])),
-	// .define("STEAMCONTROLLER_NO_SWIZZLING")
-]
-
 let package = Package(
-	name: "Provenance",
-	platforms: [
-		.iOS(.v11),
-		.tvOS(.v11),
+    name: "Provenance",
+    platforms: [
+        .iOS(.v13),
+        .tvOS(.v13),
         .watchOS(.v7),
-		.macOS(.v10_13)
-	],
-	products: [
-		// Products define the executables and libraries produced by a package, and make them visible to other packages.
-		.library(
-			name: "PVLibrary",
-			targets: ["PVLibrary"]),
-		.library(
-			name: "PVLibrary-ObjC",
-			targets: ["PVLibrary-ObjC"])
-		// .library(
-		// 	name: "PVSupport",
-		// 	targets: ["PVSupport"]),
-		// .library(
-		// 	name: "PVSupport-ObjC",
-		// 	targets: ["PVSupport-ObjC"])
-	],
-	dependencies: [
-    //     .package(
-	// 		name: "RxSwift",
-	// 		url: "https://github.com/ReactiveX/RxSwift.git")
+        .macOS(.v11)
     ],
-	targets: [
-		.target(
-			name: "PVLibrary",
-			// dependencies: [
-			// 	.product(name: "RxSwift", package: "RxSwift")
-			// ],
-			path: "PVLibrary",
-			exclude: ["Info.plist", "*.m"],
-			cSettings: cSettings,
-			cxxSettings: cxxSettings),
+    products: [
+        // Products define the executables and libraries a package produces, and make them visible to other packages.
+        // .library(
+        //     name: "Provenance",
+        //     targets: ["Provenance"])
+    ],
 
-		.target(
-			name: "PVLibrary-ObjC",
-			// dependencies: [
-			// 	.product(name: "RxSwift", package: "RxSwift")
-			// ],
-			path: "PVLibrary",
-			exclude: ["Info.plist", "*.swift"],
-			cSettings: cSettings,
-			cxxSettings: cxxSettings)
-	]
+    dependencies: [
+        // Dependencies declare other packages that this package depends on.
+        // .package(name: "PVLogging", path: "../PVLogging/"),
+        .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.50.4"),
+        .package(url: "https://github.com/tuist/XcodeProj.git", .upToNextMajor(from: "8.9.0")),
+        .package(url: "https://github.com/apple/swift-format.git", .upToNextMajor(from: "0.50700.1")),
+    ],
+
+    // MARK: - Targets
+    targets: [
+        // // MARK: - PVSupport
+        // .target(
+        //     name: "PVSupport",
+        //     dependencies: [
+        //         .product(name: "PVLogging", package: "PVLogging")
+        //     ],
+        //     resources: [
+        //         .process("Controller/AHAP/")
+        //     ],
+        //     linkerSettings: [
+        //         .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
+        //         .linkedFramework("WatchKit", .when(platforms: [.watchOS]))
+        //     ])
+    .plugin(
+      name: "Lint Source Code",
+      capability: .command(
+        intent: .custom(
+          verb: "lint-source-code",
+          description: "Lint source code for a specified target."
+        )
+      ),
+      dependencies: [
+        .target(name: "swift-format")
+      ],
+      path: "Plugins/LintPlugin"
+    ),
+    ]
 )
+
+/*
+Swift Format
+swift package plugin --allow-writing-to-package-directory swiftformat
+swift package plugin --allow-writing-to-package-directory swiftformat --target MyLibrary --swiftversion 5.6 --verbose
+
+*/

@@ -15,4 +15,4 @@ FOUNDATION_EXPORT double StellaVersionNumber;
 FOUNDATION_EXPORT const unsigned char StellaVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVStella/PublicHeader.h>
-#import <PVStella/PVStellaGameCore.h>
+#import <PVStella/PVStellaGameCore.hpp>

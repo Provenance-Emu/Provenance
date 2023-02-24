@@ -26,7 +26,7 @@
  */
 
 #import "PicodriveGameCore.h"
-#import <PVSupport/OERingBuffer.h>
+#import <PVAudio/OERingBuffer.h>
 
 #import <TargetConditionals.h>
 

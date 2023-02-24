@@ -26,8 +26,7 @@
 
 #import <Foundation/Foundation.h>
 @import PVSupport;
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVEmulatorCore;
 
 @class OERingBuffer;
 

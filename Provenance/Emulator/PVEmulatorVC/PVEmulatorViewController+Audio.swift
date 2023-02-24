@@ -1,4 +1,5 @@
 // MARK: - PVAudioDelegate
+import PVEmulatorCore
 
 extension PVEmulatorViewController {
     func audioSampleRateDidChange() {

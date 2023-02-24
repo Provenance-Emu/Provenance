@@ -51,7 +51,7 @@ extension CocoaView: HelperBarActionDelegate {
 }
 
 
-@objc public class EmulatorKeyboardController: UIViewController {
+@objc public final class EmulatorKeyboardController: UIViewController {
 
 	class EmulatorKeyboardPassthroughView: UIView {
 		override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {

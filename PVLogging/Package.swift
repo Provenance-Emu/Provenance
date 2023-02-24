@@ -26,19 +26,22 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(
-            url: "https://github.com/CocoaLumberjack/CocoaLumberjack",
-            .upToNextMajor(from: "3.8.0")),
-        .package(url: "https://github.com/fpillet/NSLogger", branch: "master")
+        // .package(
+        //     url: "https://github.com/immobiliare/Glider.git",
+        //     .upToNextMajor(from: "2.0.0"))
+//        .package(
+//            url: "https://github.com/CocoaLumberjack/CocoaLumberjack",
+//            .upToNextMajor(from: "3.8.0")),
+//        .package(url: "https://github.com/fpillet/NSLogger", branch: "master")
     ],
     targets: [
         .target(
             name: "PVLoggingObjC",
             dependencies: [
-                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
-                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
-                .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
-                "NSLogger"
+//                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
+//                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
+//                .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
+//                "NSLogger"
             ],
             publicHeadersPath: "include/"
         ),
@@ -46,32 +49,13 @@ let package = Package(
         .target(
             name: "PVLogging",
             dependencies: [
-                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
-                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
-                .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
-                "NSLogger",
+//                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
+//                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
+//                .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
+//                "NSLogger",
                 "PVLoggingObjC"
             ],
             publicHeadersPath: "include/"
-            //            ,
-            //            cSettings: [
-            //                .headerSearchPath("."),
-            //                .headerSearchPath("include"),
-            //                .headerSearchPath("include/PVLogging"),
-            //            ]
-            // This breaks ObjC Cocoalumberjack to Swift bindings for option types
-            //                swiftSettings: [
-            //                    .unsafeFlags([
-            //                        "-Xfrontend", "-enable-cxx-interop",
-            //                        //                    "-Xfrontend", "-validate-tbd-against-ir=none",
-            //                        //                    "-I", "Sources/CXX/include",
-            //                        //                    "-I", "\(sdkRoot)/usr/include",
-            //                        //                    "-I", "\(cPath)",
-            //                        //                    "-lc++",
-            //                        //                    "-Xfrontend", "-disable-implicit-concurrency-module-import",
-            //                        //                    "-Xcc", "-nostdinc++"
-            //                    ])
-            //                ]
         ),
 
         // MARK: SwiftPM tests

@@ -27,7 +27,7 @@
 
 #import "ProSystemGameCore.h"
 
-#import <PVSupport/OERingBuffer.h>
+#import <PVAudio/OERingBuffer.h>
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -39,7 +39,7 @@
 #import <GLUT/GLUT.h>
 #endif
 
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 
 #include "ProSystem.h"
 #include "Database.h"

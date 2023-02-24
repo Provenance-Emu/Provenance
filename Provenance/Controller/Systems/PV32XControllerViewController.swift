@@ -8,6 +8,7 @@
 //
 
 import PVSupport
+import PVEmulatorCore
 
 private extension JSButton {
     var buttonTag: PVSega32XButton {

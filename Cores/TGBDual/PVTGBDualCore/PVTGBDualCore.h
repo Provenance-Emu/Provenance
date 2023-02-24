@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 
 #define TGBDUAL_PITCH_SHIFT  1
 #define NUMBER_OF_PADS       2

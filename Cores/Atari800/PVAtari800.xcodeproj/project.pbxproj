@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
 		B35469341DECD70A0018B6F3 /* ATR800GameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 0269544614317D34003A07D4 /* ATR800GameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3547B512058581E00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B502058581E00CFF7D8 /* Core.plist */; };
 		B36DE74B1D6AB19C002EE3ED /* PVAtari800.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE74A1D6AB19C002EE3ED /* PVAtari800.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -65,6 +64,8 @@
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
 		B3AFCF942977A7EA00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF932977A7EA00A01010 /* PVLogging */; };
+		B3C3968F2978895300C24238 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C3968E2978895300C24238 /* PVSupport */; };
+		B3C396912978895900C24238 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3C396902978895900C24238 /* PVEmulatorCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -188,9 +189,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */,
 				B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */,
 				B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */,
+				B3C396912978895900C24238 /* PVEmulatorCore in Frameworks */,
+				B3C3968F2978895300C24238 /* PVSupport in Frameworks */,
 				B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */,
 				B3AFCF942977A7EA00A01010 /* PVLogging in Frameworks */,
 			);
@@ -416,6 +418,8 @@
 			name = PVAtari800;
 			packageProductDependencies = (
 				B3AFCF932977A7EA00A01010 /* PVLogging */,
+				B3C3968E2978895300C24238 /* PVSupport */,
+				B3C396902978895900C24238 /* PVEmulatorCore */,
 			);
 			productName = PVAtari800;
 			productReference = B36DE7481D6AB19C002EE3ED /* PVAtari800.framework */;
@@ -847,6 +851,14 @@
 		B3AFCF932977A7EA00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B3C3968E2978895300C24238 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B3C396902978895900C24238 /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

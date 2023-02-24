@@ -15,6 +15,7 @@ import PVLibrary
 import PVSupport
 import QuartzCore
 import UIKit
+import PVEmulatorCore
 
 protocol JSButtonDisplayer {
 	var dPad: JSDPad? { get set }
@@ -188,6 +189,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     var alwaysJoypadOverDpad = false
 #if os(iOS)
 	private var _feedbackGenerator: AnyObject?
+    @_hasStorage @_hasInitialValue
 	var feedbackGenerator: UISelectionFeedbackGenerator? {
 		get {
 			return _feedbackGenerator as? UISelectionFeedbackGenerator

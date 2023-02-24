@@ -7,8 +7,10 @@
 //
 
 import PVSupport
+import PVEmulatorCore
 
 private extension JSButton {
+    @_hasStorage @_hasInitialValue
     var buttonTag: PV3DOButton {
         get {
             return PV3DOButton(rawValue: tag)!

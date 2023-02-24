@@ -10,7 +10,7 @@
 #if canImport(UIKit)
 import Foundation
 
-public final class PViCade8BitdoController: PViCadeController {
+public class PViCade8BitdoController: PViCadeController {
     override func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
         switch button {
         case iCadeControllerState.buttonA:

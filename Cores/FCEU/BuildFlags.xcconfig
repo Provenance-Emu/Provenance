@@ -8,14 +8,17 @@
 
 // All
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
-OTHER_CFLAGS = $(inherited) -DHAVE_ASPRINTF -DPSS_STYLE=1 -DLSB_FIRST -ObjC
+OTHER_CFLAGS = $(inherited) -DHAVE_ASPRINTF -DPSS_STYLE=1 -DLSB_FIRST -ObjC -fcxx-modules -fmodules
+OTHER_CXXFLAGS = $(inherited) -DHAVE_ASPRINTF -DPSS_STYLE=1 -DLSB_FIRST -ObjC -fcxx-modules -fmodules
+
 GCC_C_LANGUAGE_STANDARD = c99
 //GCC_C_LANGUAGE_STANDARD = gnu99
 CLANG_CXX_LANGUAGE_STANDARD = gnu++0x
 CLANG_CXX_LIBRARY = libc++
 WARNING_CFLAGS = $(inherited) -Wno-write-strings
 //:configuration = Archive
-HEADER_SEARCH_PATHS = $(inherited) "$(SRCROOT)/fceux/src/drivers" "$(SRCROOT)/fceux/src/boards" "$(SRCROOT)/fceux/src/attic" "$(SRCROOT)/fceux/src" "$(SRCROOT)/fceux/drivers/sdl"
+HEADER_SEARCH_PATHS = $(inherited) "$(SRCROOT)/fceux/src/drivers" "$(SRCROOT)/fceux/src/boards" "$(SRCROOT)/fceux/src/attic" "$(SRCROOT)/fceux/src" "$(SRCROOT)/fceux/drivers/sdl" $(GENERATED_MODULEMAP_DIR)
+
 
 //
 //    // Device

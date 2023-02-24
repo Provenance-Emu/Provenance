@@ -9,6 +9,7 @@
 import Foundation
 
 import PVSupport
+import PVEmulatorCore
 
 private extension JSButton {
     var buttonTag: PVPCFXButton {

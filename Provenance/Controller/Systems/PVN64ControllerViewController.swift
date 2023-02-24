@@ -8,6 +8,7 @@
 //
 
 import PVSupport
+import PVEmulatorCore
 import GameController
 
 private extension JSButton {

@@ -9,7 +9,7 @@
 #import "PVMelonDSCore.h"
 #import "PVMelonDSCore+Controls.h"
 #import "PVMelonDSCore+Video.h"
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 
 #import "PVMelonDS+Audio.h"
 

@@ -25,7 +25,11 @@
  */
 
 #import <Foundation/Foundation.h>
+#if SWIFT_PACKAGE
 #import <PVAudio/TPCircularBuffer.h>
+#else
+#import <PVAudio/TPCircularBuffer.h>
+#endif
 
 @interface OERingBuffer : NSObject
 {

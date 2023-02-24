@@ -40,21 +40,21 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
 //    #endif
 //    #import <PVSupportObjC/OEGeometry.h>
 //#else
-    #import <PVSupport/DebugUtils.h>
+
+    #import <PVLogging/PVLogging.h>
+
     #import <PVSupport/PVEmulatorCore.h>
     #import <PVSupport/NSObject+PVAbstractAdditions.h>
     #import <PVSupport/NSFileManager+OEHashingAdditions.h>
-    #import <PVLogging/PVLogging.h>
 
     # pragma mark - Audio
-    #import <PVSupport/TPCircularBuffer.h>
-    #import <PVSupport/OERingBuffer.h>
+    #import <PVAudio/TPCircularBuffer.h>
+    #import <PVAudio/OERingBuffer.h>
     #import <PVSupport/OEGameAudio.h>
     #ifdef __cplusplus
-        #import <PVSupport/CARingBuffer.h>
+        #import <PVAudio/CARingBuffer.hpp>
         //#import <PVSupport/CAAtomic.h>
-        #import <PVSupport/CAAudioTimeStamp.h>
+        #import <PVAudio/CAAudioTimeStamp.hpp>
     #endif
-    #import <PVSupport/OEGeometry.h>
 //#endif
 

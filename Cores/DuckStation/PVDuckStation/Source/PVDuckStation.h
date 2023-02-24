@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+@import PVSupport;
 
 #include <os/log.h>
 

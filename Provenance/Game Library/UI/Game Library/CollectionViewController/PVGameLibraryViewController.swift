@@ -22,6 +22,7 @@ import RxCocoa
 import RxDataSources
 import RxSwift
 import UIKit
+import PVEmulatorCore
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"

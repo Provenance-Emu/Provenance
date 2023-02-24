@@ -9,6 +9,7 @@
 import Foundation
 import PVSupport
 import UIKit
+import PVEmulatorCore
 
 final class CoreOptionsViewController: QuickTableViewController {
     let core: CoreOptional.Type

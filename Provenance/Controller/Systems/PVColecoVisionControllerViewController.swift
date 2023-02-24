@@ -7,6 +7,7 @@
 //
 
 import PVSupport
+import PVEmulatorCore
 
 private extension JSButton {
     var buttonTag: PVColecoVisionButton {
