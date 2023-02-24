@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Realm
 import RealmSwift
 
 // Hack for game library having eitehr PVGame or PVRecentGame in containers
@@ -36,7 +37,7 @@ public final class PVGame: Object, Identifiable, PVLibraryEntry {
 
     public dynamic var romSerial: String?
     public dynamic var romHeader: String?
-    public private(set) dynamic var importDate: Date = Date()
+    public private(set) dynamic var importDate: Date = .init()
 
     public dynamic var systemIdentifier: String = ""
     public dynamic var system: PVSystem!
@@ -62,7 +63,7 @@ public final class PVGame: Object, Identifiable, PVLibraryEntry {
     public dynamic var timeSpentInGame: Int = 0
     public dynamic var rating: Int = -1 {
         willSet {
-            assert(-1 ... 5 ~= newValue, "Setting rating out of range -1 to 5")
+            assert(-1...5 ~= newValue, "Setting rating out of range -1 to 5")
         }
         didSet {
             if rating > 5 || rating < -1 {
@@ -102,11 +103,11 @@ public final class PVGame: Object, Identifiable, PVLibraryEntry {
      Seems sane enough since it's on the serial queue. Could always use
      an async dispatch if it's an issue. - jm
      */
-    public override static func primaryKey() -> String? {
+    override public static func primaryKey() -> String? {
         return "md5Hash"
     }
 
-    public override static func indexedProperties() -> [String] {
+    override public static func indexedProperties() -> [String] {
         return ["systemIdentifier"]
     }
 }
@@ -121,7 +122,7 @@ public extension PVGame {
 
     var discCount: Int {
         if isCD {
-            return relatedFiles.filter({ PVEmulatorConfiguration.supportedCDFileExtensions.contains($0.pathExtension.lowercased()) }).count
+            return relatedFiles.filter { PVEmulatorConfiguration.supportedCDFileExtensions.contains($0.pathExtension.lowercased()) }.count
         } else {
             return 0
         }

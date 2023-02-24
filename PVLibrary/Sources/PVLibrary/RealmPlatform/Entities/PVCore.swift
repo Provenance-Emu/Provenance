@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Realm
 import RealmSwift
 
 @objcMembers
@@ -20,14 +21,12 @@ public final class PVCore: Object {
     public dynamic var projectVersion = ""
     public dynamic var disabled = false
 
-    public lazy var hasCoreClass: Bool = {
-        return NSClassFromString(principleClass) != nil
-    }()
+    public lazy var hasCoreClass: Bool = NSClassFromString(principleClass) != nil
 
     // Reverse links
     public var saveStates = LinkingObjects(fromType: PVSaveState.self, property: "core")
 
-    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool =  false) {
+    public convenience init(withIdentifier identifier: String, principleClass: String, supportedSystems: [PVSystem], name: String, url: String, version: String, disabled: Bool = false) {
         self.init()
         self.identifier = identifier
         self.principleClass = principleClass
@@ -39,11 +38,11 @@ public final class PVCore: Object {
         self.disabled = disabled
     }
 
-    public override static func primaryKey() -> String? {
+    override public static func primaryKey() -> String? {
         return "identifier"
     }
 
-    public override class func ignoredProperties() -> [String] {
+    override public class func ignoredProperties() -> [String] {
         ["hasCoreClass"]
     }
 }
@@ -74,7 +73,7 @@ internal extension Core {
         disabled = core.disabled
         // TODO: Supported systems
         let url = URL(string: core.projectURL) ?? URL(string: "https://provenance-emu.com")!
-		print("loadcore: \(core.projectName) class: \(core.principleClass) identifier: \(identifier) disable: \(disabled)")
+        print("loadcore: \(core.projectName) class: \(core.principleClass) identifier: \(identifier) disable: \(disabled)")
         project = CoreProject(name: core.projectName, url: url, version: core.projectVersion)
     }
 }
@@ -98,7 +97,7 @@ extension Core: RealmRepresentable {
             return existing
         }
 
-        return PVCore.build({ object in
+        return PVCore.build { object in
             object.identifier = identifier
             object.principleClass = principleClass
             let realm = try! Realm()
@@ -108,6 +107,6 @@ extension Core: RealmRepresentable {
             object.projectVersion = project.version
             object.projectURL = project.url.absoluteString
             object.disabled = disabled
-        })
+        }
     }
 }

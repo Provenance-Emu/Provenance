@@ -6,21 +6,21 @@
 //
 
 import Foundation
-import PVSupport
-import RealmSwift
 import PVLogging
-import PVEmulatorCoreObjC
+import PVSupport
+import Realm
+import RealmSwift
+import PVEmulatorCore
 
 #if canImport(UIKit)
 import UIKit
 #endif
 
-extension Sequence where Iterator.Element : Hashable {
-
-    func intersects<S : Sequence>(with sequence: S) -> Bool
+extension Sequence where Iterator.Element: Hashable {
+    func intersects<S: Sequence>(with sequence: S) -> Bool
         where S.Iterator.Element == Iterator.Element {
         let sequenceSet = Set(sequence)
-        return self.contains(where: sequenceSet.contains)
+        return contains(where: sequenceSet.contains)
     }
 }
 
@@ -41,8 +41,10 @@ public extension PVEmulatorConfiguration {
         let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
         let superclasses = ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]
-        for i in 0 ..< Int(count) {
-            if let classInfo = ClassInfo(classList[i], withSuperclass: superclasses), let superclassesInfo = classInfo.superclassesInfo, motherClassInfo.intersects(with: motherClassInfo) {
+        for i in 0..<Int(count) {
+            if let classInfo = ClassInfo(classList[i], withSuperclass: superclasses),
+				let superclassesInfo = classInfo.superclassesInfo,
+			   motherClassInfo.intersects(with: superclassesInfo) {
                 subclassList.append(classInfo)
             }
         }
@@ -69,7 +71,7 @@ public extension PVEmulatorConfiguration {
                 let data = try Data(contentsOf: plist)
                 let core = try decoder.decode(CorePlistEntry.self, from: data)
                 let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
-				if let disabled = core.PVDisabled, disabled, !PVSettingsModel.shared.debugOptions.unsupportedCores {
+                if let disabled = core.PVDisabled, disabled, !PVSettingsModel.shared.debugOptions.unsupportedCores {
                     // Do nothing
                     ILOG("Skipping disabled core \(core.PVCoreIdentifier)")
                 } else {
@@ -78,7 +80,7 @@ public extension PVEmulatorConfiguration {
                     database.refresh()
                     try newCore.add(update: true)
                 }
-                if let cores=core.PVCores {
+                if let cores = core.PVCores {
                     try cores.forEach {
                         core in do {
                             let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
@@ -159,10 +161,10 @@ public extension PVEmulatorConfiguration {
         pvSystem.bit = Int(system.PVBit) ?? 0
         pvSystem.releaseYear = Int(system.PVReleaseYear)!
         pvSystem.name = system.PVSystemName
-        #if os(tvOS)    // Show full system names on tvOS
-            pvSystem.shortName = system.PVSystemName
-        #else           // And short names on iOS???
-            pvSystem.shortName = system.PVSystemShortName
+        #if os(tvOS) // Show full system names on tvOS
+        pvSystem.shortName = system.PVSystemName
+        #else // And short names on iOS???
+        pvSystem.shortName = system.PVSystemShortName
         #endif
         pvSystem.shortNameAlt = system.PVSystemShortNameAlt
         pvSystem.controllerLayout = system.PVControlLayout

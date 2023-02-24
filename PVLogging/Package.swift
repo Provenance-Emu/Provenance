@@ -25,34 +25,32 @@ let package = Package(
             targets: ["PVLogging"])
     ],
     dependencies: [
+        .package(
+			url: "https://github.com/fpillet/NSLogger",
+				 revision: "e8c453142da7051462cca189d3fcee74de0500ea"
+		),
+		.package(
+			url: "https://github.com/apple/swift-log.git",
+			from: "1.5.2"
+		),
         // Dependencies declare other packages that this package depends on.
         // .package(
         //     url: "https://github.com/immobiliare/Glider.git",
         //     .upToNextMajor(from: "2.0.0"))
-//        .package(
-//            url: "https://github.com/CocoaLumberjack/CocoaLumberjack",
-//            .upToNextMajor(from: "3.8.0")),
-//        .package(url: "https://github.com/fpillet/NSLogger", branch: "master")
     ],
     targets: [
         .target(
             name: "PVLoggingObjC",
             dependencies: [
-//                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
-//                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
-//                .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
-//                "NSLogger"
+                "NSLogger",
+				.product(name: "Logging", package: "swift-log")
             ],
             publicHeadersPath: "include/"
         ),
-
         .target(
             name: "PVLogging",
             dependencies: [
-//                .product(name: "CocoaLumberjack", package: "CocoaLumberjack"),
-//                .product(name: "CocoaLumberjackSwift", package: "CocoaLumberjack"),
-//                .product(name: "CocoaLumberjackSwiftLogBackend", package: "CocoaLumberjack"),
-//                "NSLogger",
+                "NSLogger",
                 "PVLoggingObjC"
             ],
             publicHeadersPath: "include/"

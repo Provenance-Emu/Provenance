@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Realm
 import RealmSwift
 
 // MARK: - Convenience Accessors
@@ -22,11 +23,11 @@ public extension PVObject where Self: Object {
     }
 
     func delete() throws {
-        try RomDatabase.sharedInstance.delete(self.warmUp())
+        try RomDatabase.sharedInstance.delete(warmUp())
     }
 
     func warmUp() -> Self {
-        if self.isFrozen, let thawed = self.thaw() {
+        if isFrozen, let thawed = thaw() {
             return thawed
         }
         return self

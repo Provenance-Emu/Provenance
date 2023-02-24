@@ -53,6 +53,7 @@ class TheGamesDBService {
          return gamesList;
          */
     }
+
     func getGame(id: String) {
         /*
          auto url = string_format(g_getGameUrl, id);
@@ -79,7 +80,7 @@ class TheGamesDBService {
          return gamesList.at(0);
          */
     }
-    
+
     func getGamesList(platformID: String, name: String) {
         /*
          auto encodedName = Framework::UrlEncode(name);
@@ -109,7 +110,7 @@ class TheGamesDBService {
          return gamesList;
          */
     }
-    
+
     func populateGamesList(json: String) {
         /*
          GamesList list;

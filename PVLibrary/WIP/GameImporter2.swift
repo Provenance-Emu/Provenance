@@ -82,25 +82,25 @@ extension URL {
 //        }
 //    }
 
-    /*
-     Flow:
+/*
+ Flow:
 
-     File Scanning:
-     1. Detect file
+ File Scanning:
+ 1. Detect file
 
-     1. Is file archive
-     a. contains sub zips?
-     a. Move to processing folder
-     b. Does arvhcie support CRCs
-     i. Does CRC match
+ 1. Is file archive
+ a. contains sub zips?
+ a. Move to processing folder
+ b. Does arvhcie support CRCs
+ i. Does CRC match
 
-     2. Is file single
-     a. Is preseleted system
-     match(filtered):
-     i. match by MD5 / SHA1
-     ii. match by extension
-     z. single match, move system
-     y. multi-match, move to conflicts
+ 2. Is file single
+ a. Is preseleted system
+ match(filtered):
+ i. match by MD5 / SHA1
+ ii. match by extension
+ z. single match, move system
+ y. multi-match, move to conflicts
 
-     */
+ */
 // }b

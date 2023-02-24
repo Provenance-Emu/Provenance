@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Realm
 import RealmSwift
 
 @objcMembers
@@ -18,7 +19,7 @@ public final class PVUser: Object {
     public dynamic var isPatron: Bool = false
     public dynamic var savesAccess: Bool = false
 
-    public dynamic var lastSeen: Date = Date()
+    public dynamic var lastSeen: Date = .init()
 }
 
 // PVLibrary - Network

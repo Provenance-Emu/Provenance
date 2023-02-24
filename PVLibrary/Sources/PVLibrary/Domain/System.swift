@@ -78,10 +78,10 @@ public struct System: Codable, SystemProtocol {
         self.openvgDatabaseID = openvgDatabaseID
         self.requiresBIOS = requiresBIOS
         self.options = options
-        self.BIOSes = bioses
+        BIOSes = bioses
         self.extensions = extensions
-        self.gameStructs = games
-        self.coreStructs = cores
+        gameStructs = games
+        coreStructs = cores
         self.userPreferredCore = userPreferredCore
         self.usesCDs = usesCDs
         self.portableSystem = portableSystem

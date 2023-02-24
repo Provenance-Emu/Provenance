@@ -71,9 +71,7 @@ public enum VGRegion: Int, CaseIterable {
         }
     }
 
-    static let allCountries: Set<VGRegion> = {
-        Set(VGRegion.allCases.filter { c in c.isCountry })
-    }()
+    static let allCountries: Set<VGRegion> = Set(VGRegion.allCases.filter { c in c.isCountry })
 }
 
 public struct RegionOptions: OptionSet, Codable, Equatable {
@@ -123,22 +121,18 @@ public struct RegionOptions: OptionSet, Codable, Equatable {
     //	static let usaAndBrazil    = RegionOptions(rawValue: 1 << VGRegion.usaAndAustralia.rawValue)
     static let poland = RegionOptions(rawValue: 1 << VGRegion.poland.rawValue)
 
-    static let allCountries: RegionOptions = {
-        RegionOptions(regions: VGRegion.allCountries)
-    }()
+    static let allCountries: RegionOptions = .init(regions: VGRegion.allCountries)
 
-    static let all: RegionOptions = {
-        RegionOptions(regions: VGRegion.allCases)
-    }()
+    static let all: RegionOptions = .init(regions: VGRegion.allCases)
 }
 
-extension RegionOptions {
-    public init<C: Collection>(regions: C) where C.Iterator.Element == VGRegion {
-        let allBits = regions.reduce(Int64(0), { $0 & 1 << $1.rawValue })
+public extension RegionOptions {
+    init<C: Collection>(regions: C) where C.Iterator.Element == VGRegion {
+        let allBits = regions.reduce(Int64(0)) { $0 & 1 << $1.rawValue }
         self = RegionOptions(rawValue: allBits)
     }
 
-    public init(region: VGRegion) {
+    init(region: VGRegion) {
         switch region {
         case .asia, .australia, .brazil, .canada, .china, .denmark, .europe, .finland, .france, .germany, .hongKong,
              .italy, .japan, .korea, .netherlands, .russia, .spain, .sweden, .taiwan, .unknown, .usa, .world, .greece,

@@ -163,3 +163,6 @@
 [submodule "Cores/DosBox/dosbox"]
 	path = Cores/DosBox/dosbox
 	url = https://github.com/schellingb/dosbox-pure.git
+[submodule "Cores/SkyEmu/SkyEmu"]
+	path = Cores/SkyEmu/SkyEmu
+	url = https://github.com/Provenance-Emu/SkyEmu.git

@@ -28,6 +28,14 @@
       }
     },
     {
+      "identity" : "nslogger",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/fpillet/NSLogger",
+      "state" : {
+        "revision" : "e8c453142da7051462cca189d3fcee74de0500ea"
+      }
+    },
+    {
       "identity" : "plzmasdk",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/OlehKulykov/PLzmaSDK.git",
@@ -88,6 +96,15 @@
       "state" : {
         "revision" : "bca9a664eb9361d41a87d3e376a1e7db9ea2c287",
         "version" : "4.8.4"
+      }
+    },
+    {
+      "identity" : "swiftgenplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftGen/SwiftGenPlugin",
+      "state" : {
+        "revision" : "879b85a470cacd70c19e22eb7e11a3aed66f4068",
+        "version" : "6.6.2"
       }
     },
     {

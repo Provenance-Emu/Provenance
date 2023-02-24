@@ -8,14 +8,14 @@ public protocol DomainConvertibleType {
 
 // MARK: - Default implimentations
 
-extension LocalFileProvider where Self: DomainConvertibleType {
-    public func asDomain() -> LocalFile {
+public extension LocalFileProvider where Self: DomainConvertibleType {
+    func asDomain() -> LocalFile {
         return LocalFile(url: url)!
     }
 }
 
-extension DomainConvertibleType where Self: LocalFileInfoProvider {
-    public func asDomain() -> LocalFile {
+public extension DomainConvertibleType where Self: LocalFileInfoProvider {
+    func asDomain() -> LocalFile {
         return LocalFile(url: url)!
     }
 }

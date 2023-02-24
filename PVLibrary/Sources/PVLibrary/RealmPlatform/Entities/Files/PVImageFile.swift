@@ -8,6 +8,7 @@
 
 import Foundation
 import PVSupport
+import Realm
 import RealmSwift
 #if canImport(UIKit)
 import UIKit
@@ -54,12 +55,12 @@ public final class PVImageFile: PVFile {
         #endif
 
         let size = image.size
-#if !os(macOS)
+        #if !os(macOS)
         cgsize = size
-#endif
+        #endif
     }
 
-#if !os(macOS)
+    #if !os(macOS)
     public private(set) var cgsize: CGSize {
         get {
             return NSCoder.cgSize(for: _cgsize)
@@ -72,5 +73,5 @@ public final class PVImageFile: PVFile {
             _cgsize = NSCoder.string(for: newValue)
         }
     }
-#endif
+    #endif
 }

@@ -40,7 +40,7 @@ public struct BIOS: BIOSFileProvider, Codable {
 }
 
 extension BIOS: Equatable {
-    public static func == (lhs: BIOS, rhs: BIOS) -> Bool {
+    public static func ==(lhs: BIOS, rhs: BIOS) -> Bool {
         return lhs.expectedMD5 == rhs.expectedMD5
     }
 }

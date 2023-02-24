@@ -4,18 +4,19 @@
 //
 
 import Foundation
-import PVSupport
-import RealmSwift
 import PVLogging
+import PVSupport
+import Realm
+import RealmSwift
 
 public protocol CheatFile {
     associatedtype LocalFileProviderType: LocalFileProvider
     var file: LocalFileProviderType! { get }
 }
 
-extension LocalFileProvider where Self: CheatFile {
-    public var url: URL { return file.url }
-    public var fileInfo: Self.LocalFileProviderType? { return file }
+public extension LocalFileProvider where Self: CheatFile {
+    var url: URL { return file.url }
+    var fileInfo: Self.LocalFileProviderType? { return file }
 }
 
 @objcMembers
@@ -25,14 +26,14 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
     public dynamic var core: PVCore!
     public dynamic var code: String!
     public dynamic var file: PVFile!
-    public dynamic var date: Date = Date()
+    public dynamic var date: Date = .init()
     public dynamic var lastOpened: Date?
     public dynamic var type: String!
     public dynamic var enabled: Bool = false
 
     public dynamic var createdWithCoreVersion: String!
 
-    public convenience init(withGame game: PVGame, core: PVCore, code: String, type: String, enabled: Bool = false, file: PVFile ) {
+    public convenience init(withGame game: PVGame, core: PVCore, code: String, type: String, enabled: Bool = false, file: PVFile) {
         self.init()
         self.game = game
         self.code = code
@@ -54,11 +55,11 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
         }
     }
 
-    public static func == (lhs: PVCheats, rhs: PVCheats) -> Bool {
+    public static func ==(lhs: PVCheats, rhs: PVCheats) -> Bool {
         return lhs.code == rhs.code && lhs.type == rhs.type && lhs.enabled == rhs.enabled
     }
 
-    public override static func primaryKey() -> String? {
+    override public static func primaryKey() -> String? {
         return "id"
     }
 }
@@ -74,7 +75,7 @@ private extension Cheats {
         type = saveState.type
         date = saveState.date
         lastOpened = saveState.lastOpened
-        enabled=saveState.enabled
+        enabled = saveState.enabled
         file = FileInfo(fileName: saveState.file.fileName, size: saveState.file.size, md5: saveState.file.md5, online: saveState.file.online, local: true)
     }
 }
@@ -104,9 +105,9 @@ extension Cheats: RealmRepresentable {
             let path = PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName).appendingPathComponent(file.fileName)
             object.file = PVFile(withURL: path)
             object.lastOpened = lastOpened
-            object.code=code
-            object.type=type
-            object.enabled=enabled
+            object.code = code
+            object.type = type
+            object.enabled = enabled
         }
     }
 }

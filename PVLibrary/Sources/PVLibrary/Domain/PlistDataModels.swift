@@ -26,7 +26,7 @@ public struct ControlGroupButton: Codable, Equatable, Hashable {
 }
 
 public struct ControlLayoutEntry: Codable, Equatable, Hashable, Comparable {
-    public static func < (lhs: ControlLayoutEntry, rhs: ControlLayoutEntry) -> Bool {
+    public static func <(lhs: ControlLayoutEntry, rhs: ControlLayoutEntry) -> Bool {
         if lhs.PVControlType < rhs.PVControlType {
             return true
         } else if lhs.PVControlType == rhs.PVControlType {
@@ -109,4 +109,3 @@ public struct SubCoreEntry: Codable, Equatable, Hashable {
     public let PVProjectVersion: String
     public let PVDisabled: Bool?
 }
-

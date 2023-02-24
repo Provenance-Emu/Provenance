@@ -7,10 +7,10 @@
 //
 
 import Foundation
+import PVLogging
 @_exported import PVSupport
 @_exported import RxCocoa
 @_exported import RxSwift
-import PVLogging
 
 public struct ExtractionProgress {
     let path: URL
@@ -84,7 +84,7 @@ public final class DirectoryWatcher2 {
     }
 
     fileprivate var dispatch_sources = [URL: WatchedDir]()
-    fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
+    fileprivate let serialQueue: DispatchQueue = .init(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     private func initialScan(_ url: URL) throws {
         let exts = PVEmulatorConfiguration.archiveExtensions
@@ -121,8 +121,8 @@ public final class DirectoryWatcher2 {
         dispatch_sources[url] = WatchedDir(url: url, dispatchSource: dispatch_source, previousContents: nil)
 
         dispatch_source.setRegistrationHandler {
-            dispatch_source.setEventHandler(handler: {[weak self] in
-				guard let self = self else { ELOG("nil self"); return}
+            dispatch_source.setEventHandler(handler: { [weak self] in
+                guard let self = self else { ELOG("nil self"); return }
                 let contents = try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
                 let watchedDir = self.dispatch_sources[url]
                 let previousContentsSet = watchedDir?.previousContents ?? Set<URL>()
@@ -130,10 +130,10 @@ public final class DirectoryWatcher2 {
                 var contentsSet = Set(contents ?? [URL]())
                 contentsSet.subtract(previousContentsSet)
 
-                contentsSet = contentsSet.filter({ (url) -> Bool in
+                contentsSet = contentsSet.filter { url -> Bool in
                     // Ignore special files
                     url.lastPathComponent != "0" && !url.lastPathComponent.starts(with: ".") && !url.path.contains("_MACOSX")
-                })
+                }
 
                 contentsSet.forEach { file in
                     self.watchFile(at: file)
@@ -168,7 +168,7 @@ public final class DirectoryWatcher2 {
     private func _stopMonitoring(_ url: URL) {
         DLOG("Stop Monitoring \(url.path)")
 
-        if let dispatch_source = self.dispatch_sources[url]?.dispatchSource {
+        if let dispatch_source = dispatch_sources[url]?.dispatchSource {
             dispatch_source.cancel()
             dispatch_sources[url] = nil
         }
@@ -184,7 +184,7 @@ public final class DirectoryWatcher2 {
             let immutable: Bool = attributes[FileAttributeKey.immutable] as? Bool ?? false
             print("immutable \(immutable)")
 
-            DispatchQueue.main.async { [weak self] () -> Void in
+            DispatchQueue.main.async { [weak self] () in
                 if let weakSelf = self {
                     Timer.scheduledTimer(timeInterval: 2.0, target: weakSelf, selector: #selector(DirectoryWatcher2.checkFileProgress(_:)), userInfo: ["path": path, "filesize": filesize, "wasZeroBefore": false], repeats: false)
                 }
@@ -217,18 +217,18 @@ public final class DirectoryWatcher2 {
 
         let sizeHasntChanged = previousFilesize == currentFilesize
 
-        if sizeHasntChanged, (currentFilesize > 0 || wasZeroBefore) {
+        if sizeHasntChanged, currentFilesize > 0 || wasZeroBefore {
             newFileDetected(path)
             return
         }
 
-        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(DirectoryWatcher2.checkFileProgress(_:)), userInfo: ["path": path, "filesize": currentFilesize, "wasZeroBefore": (currentFilesize == 0)], repeats: false)
+        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(DirectoryWatcher2.checkFileProgress(_:)), userInfo: ["path": path, "filesize": currentFilesize, "wasZeroBefore": currentFilesize == 0], repeats: false)
     }
 
     // Delay start so we have a moment to move files and stuff
     fileprivate func delayedStartMonitoring() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {[weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
             self?.startMonitoring()
-        })
+        }
     }
 }

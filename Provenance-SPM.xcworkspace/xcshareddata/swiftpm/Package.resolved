@@ -38,6 +38,24 @@
         }
       },
       {
+        "package": "KeychainAccess",
+        "repositoryURL": "https://github.com/kishikawakatsumi/KeychainAccess.git",
+        "state": {
+          "branch": null,
+          "revision": "84e546727d66f1adc5439debad16270d0fdd04e7",
+          "version": "4.2.2"
+        }
+      },
+      {
+        "package": "NSLogger",
+        "repositoryURL": "https://github.com/fpillet/NSLogger",
+        "state": {
+          "branch": null,
+          "revision": "e8c453142da7051462cca189d3fcee74de0500ea",
+          "version": null
+        }
+      },
+      {
         "package": "PLCrashReporter",
         "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
         "state": {
@@ -134,6 +152,24 @@
           "branch": null,
           "revision": "bca9a664eb9361d41a87d3e376a1e7db9ea2c287",
           "version": "4.8.4"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "32e8d724467f8fe623624570367e3d50c5638e46",
+          "version": "1.5.2"
+        }
+      },
+      {
+        "package": "SwiftGenPlugin",
+        "repositoryURL": "https://github.com/SwiftGen/SwiftGenPlugin",
+        "state": {
+          "branch": null,
+          "revision": "879b85a470cacd70c19e22eb7e11a3aed66f4068",
+          "version": "6.6.2"
         }
       },
       {

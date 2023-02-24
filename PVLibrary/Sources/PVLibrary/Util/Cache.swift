@@ -7,9 +7,6 @@
 //
 
 import Foundation
-#if os(macOS)
-import AppKit
-#endif
 
 private class ObjectWrapper {
     let value: Any

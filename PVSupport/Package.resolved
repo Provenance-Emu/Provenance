@@ -1,0 +1,31 @@
+{
+  "pins" : [
+    {
+      "identity" : "nslogger",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/fpillet/NSLogger",
+      "state" : {
+        "revision" : "e8c453142da7051462cca189d3fcee74de0500ea"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "32e8d724467f8fe623624570367e3d50c5638e46",
+        "version" : "1.5.2"
+      }
+    },
+    {
+      "identity" : "swiftgenplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftGen/SwiftGenPlugin",
+      "state" : {
+        "revision" : "879b85a470cacd70c19e22eb7e11a3aed66f4068",
+        "version" : "6.6.2"
+      }
+    }
+  ],
+  "version" : 2
+}

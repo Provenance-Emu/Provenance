@@ -9,10 +9,11 @@
 
 import CoreSpotlight
 import Foundation
-@_exported import PVSupport
-@_exported import RealmSwift
-@_exported import SQLite
 import PVLogging
+@_exported import PVSupport
+@_exported import Realm
+import RealmSwift
+@_exported import SQLite
 
 #if canImport(UIKit)
 import UIKit
@@ -21,10 +22,10 @@ import AppKit
 #endif
 
 struct Constants {
-    struct iCloud {
+    enum iCloud {
 //        static let containerIdentifier = "iCloud.org.provenance-emu.provenance"
         // Dynamic version based off of bundle Identifier
-		static let containerIdentifier =  (Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject])?.keys.first ?? "iCloud.org.provenance-emu.provenance"
+        static let containerIdentifier = (Bundle.main.infoDictionary?["NSUbiquitousContainers"] as? [String: AnyObject])?.keys.first ?? "iCloud.org.provenance-emu.provenance"
     }
 }
 
@@ -38,8 +39,8 @@ public func + <K, V>(lhs: [K: V], rhs: [K: V]) -> [K: V] {
     return combined
 }
 
-extension URLSession {
-    public func synchronousDataTask(urlrequest: URLRequest) throws -> (data: Data?, response: HTTPURLResponse?) {
+public extension URLSession {
+    func synchronousDataTask(urlrequest: URLRequest) throws -> (data: Data?, response: HTTPURLResponse?) {
         var data: Data?
         var response: HTTPURLResponse?
         var error: Error?
@@ -77,7 +78,7 @@ public final class GameImporter {
     public var finishedArtworkHandler: GameImporterFinishedGettingArtworkHandler?
     public private(set) var encounteredConflicts = false
 
-    public static let shared: GameImporter = GameImporter()
+    public static let shared: GameImporter = .init()
 
     let workQueue: OperationQueue = {
         let q = OperationQueue()
@@ -101,7 +102,7 @@ public final class GameImporter {
 
     public let documentsPath: URL = PVEmulatorConfiguration.documentsPath
     public let romsImportPath: URL = PVEmulatorConfiguration.Paths.romsImportPath
-	public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
+    public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
 
     public func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
@@ -120,7 +121,7 @@ public final class GameImporter {
     }
 
     lazy var openVGDB: OESQLiteDatabase = {
-		let bundle = ThisBundle
+        let bundle = ThisBundle
         let sqlURL = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
         let _openVGDB = try! OESQLiteDatabase(withURL: sqlURL)
         return _openVGDB
@@ -128,12 +129,12 @@ public final class GameImporter {
 
     lazy var sqldb: Connection = {
         let bundle = ThisBundle
-		let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
+        let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
         let sqldb = try! Connection(sqlFile.path, readonly: true)
         return sqldb
     }()
 
-	fileprivate let ThisBundle: Bundle = Bundle(for: GameImporter.self)
+    fileprivate let ThisBundle: Bundle = .init(for: GameImporter.self)
 
     public var conflictedFiles: [URL]? {
         guard FileManager.default.fileExists(atPath: conflictPath.path),
@@ -141,9 +142,9 @@ public final class GameImporter {
                                                                        includingPropertiesForKeys: nil,
                                                                        options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
         else {
-			DLOG("")
-			return nil
-		}
+            DLOG("")
+            return nil
+        }
         return files
     }
 
@@ -154,7 +155,7 @@ public final class GameImporter {
         // Scane all subclasses of  PVEmulator core, and get their metadata
         // like their subclass name and the bundle the belong to
         let coreClasses = PVEmulatorConfiguration.coreClasses
-        let corePlists = coreClasses.compactMap { (classInfo) -> URL? in
+        let corePlists = coreClasses.compactMap { classInfo -> URL? in
             classInfo.bundle.url(forResource: "Core", withExtension: "plist")
         }
 
@@ -166,7 +167,7 @@ public final class GameImporter {
     fileprivate init() {
         initialized.enter()
 
-		let fm = FileManager.default
+        let fm = FileManager.default
         if !FileManager.default.fileExists(atPath: conflictPath.path, isDirectory: nil) {
             ILOG("Path <\(conflictPath)> doesn't exist. Creating.")
             do {
@@ -216,12 +217,12 @@ public final class GameImporter {
             return nil
         }
 
-        return fm.md5ForFile(atPath: romPath.path, fromOffset: offset)
+        return fm.md5ForFile(atPath: romPath.path, fromOffset: Int64(offset))
     }
 
     public func importFiles(atPaths paths: [URL]) -> [URL] {
         // If directory, map out sub directories if folder
-        let paths: [URL] = paths.compactMap { (url) -> [URL]? in
+        let paths: [URL] = paths.compactMap { url -> [URL]? in
             if url.hasDirectoryPath {
                 return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             } else {
@@ -233,7 +234,7 @@ public final class GameImporter {
 
         // Make ImportCandidateFile structs to hold temporary metadata for import and matching
         // This is just the path and a lazy loaded md5
-        let candidateFiles = sortedPaths.map { (path) -> ImportCandidateFile in
+        let candidateFiles = sortedPaths.map { path -> ImportCandidateFile in
             ImportCandidateFile(filePath: path)
         }
 
@@ -285,7 +286,7 @@ public final class GameImporter {
 
     @discardableResult
     private func deleteIfJunk(_ filePath: URL) -> Bool {
-		if filePath.lastPathComponent != "0", filePath.path.contains(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent), !PVEmulatorConfiguration.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
+        if filePath.lastPathComponent != "0", filePath.path.contains(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent), !PVEmulatorConfiguration.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
             ILOG("\(filePath.lastPathComponent) doesn't matching any known possible extensions and is in \(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent) directory. Deleting.")
             do {
                 if FileManager.default.fileExists(atPath: filePath.path) {
@@ -311,9 +312,9 @@ public final class GameImporter {
 
         let completionOperation = BlockOperation {
             if self.completionHandler != nil {
-                DispatchQueue.main.sync(execute: { () -> Void in
+                DispatchQueue.main.sync { () in
                     self.completionHandler?(self.encounteredConflicts)
-                })
+                }
             }
         }
 
@@ -405,9 +406,9 @@ public final class GameImporter {
 
         let completionOperation = BlockOperation {
             if self.completionHandler != nil {
-                DispatchQueue.main.async(execute: { () -> Void in
+                DispatchQueue.main.async { () in
                     self.completionHandler?(false)
-                })
+                }
             }
         }
 
@@ -419,7 +420,7 @@ public final class GameImporter {
 
 public extension GameImporter {
     func updateSystemToPathMap() -> [String: URL] {
-        let map = PVSystem.all.reduce([String: URL]()) { (dict, system) -> [String: URL] in
+        let map = PVSystem.all.reduce([String: URL]()) { dict, system -> [String: URL] in
             var dict = dict
             dict[system.identifier] = system.romsDirectory
             return dict
@@ -429,19 +430,18 @@ public extension GameImporter {
     }
 
     func updateromExtensionToSystemsMap() -> [String: [String]] {
-        return PVSystem.all.reduce([String: [String]](), { (dict, system) -> [String: [String]] in
+        return PVSystem.all.reduce([String: [String]]()) { dict, system -> [String: [String]] in
             let extensionsForSystem = system.supportedExtensions
             // Make a new dict of [ext : systemID] for each ext in extions for that ID, then merge that dictionary with the current one,
             // if the dictionary already has that key, the arrays are joined so you end up with a ext mapping to multpiple systemIDs
-            let extsToCurrentSystemID = extensionsForSystem.reduce([String: [String]](), { (dict, ext) -> [String: [String]] in
+            let extsToCurrentSystemID = extensionsForSystem.reduce([String: [String]]()) { dict, ext -> [String: [String]] in
                 var dict = dict
                 dict[ext] = [system.identifier]
                 return dict
-            })
+            }
 
             return dict.merging(extsToCurrentSystemID, uniquingKeysWith: { var newArray = $0; newArray.append(contentsOf: $1); return newArray })
-
-        })
+        }
     }
 }
 
@@ -651,7 +651,7 @@ public extension GameImporter {
 //        }
         #endif
 
-#if canImport(UIKit)
+        #if canImport(UIKit)
         // Create new Data from scaled image
         guard let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85) else {
             ELOG("Failed to create data respresentation of scaled image")
@@ -661,7 +661,7 @@ public extension GameImporter {
         let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85)
         #endif
         // Hash the image and save to cache
-        let hash: String = (coverArtScaledData as NSData).md5Hash
+		let hash: String = coverArtScaledData.md5
 
         do {
             let destinationURL = try PVMediaCache.writeData(toDisk: coverArtScaledData, withKey: hash)
@@ -692,7 +692,7 @@ public extension GameImporter {
 
     func getRomInfoForFiles(atPaths paths: [URL], userChosenSystem chosenSystem: System? = nil) {
         // If directory, map out sub directories if folder
-        let paths: [URL] = paths.compactMap { (url) -> [URL]? in
+        let paths: [URL] = paths.compactMap { url -> [URL]? in
             if url.hasDirectoryPath {
                 return try? FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             } else {
@@ -783,13 +783,13 @@ public extension GameImporter {
             // No system found to match this file
             guard var systems = systemsMaybe else {
                 ELOG("No system matched extension {\(fileExtensionLower)}")
-				do {
-					try FileManager.default.moveItem(at: path, to: conflictPath)
-					ILOG("It's a new game, so we moved \(filename) to conflicts dir")
-					self.encounteredConflicts = true
-				} catch {
-					ELOG("Failed to move \(urlPath.path) to conflicts dir")
-				}
+                do {
+                    try FileManager.default.moveItem(at: path, to: conflictPath)
+                    ILOG("It's a new game, so we moved \(filename) to conflicts dir")
+                    self.encounteredConflicts = true
+                } catch {
+                    ELOG("Failed to move \(urlPath.path) to conflicts dir")
+                }
                 return
             }
 
@@ -802,7 +802,7 @@ public extension GameImporter {
                     DLOG("Matched \(urlPath.path) by MD5 to system \(systemIDMatch)")
                 } else {
                     // We have a conflict, multiple systems matched and couldn't find anything by MD5 match
-                    let s = systems.map({ $0.identifier }).joined(separator: ",")
+                    let s = systems.map { $0.identifier }.joined(separator: ",")
                     WLOG("\(filename) matched with multiple systems (or none?): \(s). Going to do my best to figure out where it belons")
 
                     // NOT WHAT WHAT TO DO HERE. -jm
@@ -891,7 +891,7 @@ public extension GameImporter {
 
             let romFullPath = PVEmulatorConfiguration.documentsPath.appendingPathComponent(game.romPath).path
 
-            if let md5Hash = FileManager.default.md5ForFile(atPath: romFullPath, fromOffset: offset) {
+            if let md5Hash = FileManager.default.md5ForFile(atPath: romFullPath, fromOffset: Int64(offset)) {
                 do {
                     try database.writeTransaction {
                         game.md5Hash = md5Hash
@@ -951,13 +951,13 @@ public extension GameImporter {
 
         var chosenResultMaybe: [String: Any]? =
             // Search by region id
-            results.first { (dict) -> Bool in
+            results.first { dict -> Bool in
                 print("region id: \(dict["regionID"] as? Int ?? 0)")
                 // Region ids USA = 21, Japan = 13
                 return (dict["regionID"] as? Int) == 21
             }
             ?? // If nothing, search by region string, could be a comma sepearted list
-            results.first { (dict) -> Bool in
+            results.first { dict -> Bool in
                 print("region: \(dict["region"] ?? "nil")")
                 // Region ids USA = 21, Japan = 13
                 return (dict["region"] as? String)?.uppercased().contains("USA") ?? false
@@ -1112,6 +1112,7 @@ public extension GameImporter {
 
         return try searchDatabase(usingFilename: filename, systemID: systemIDInt)
     }
+
     func searchDatabase(usingFilename filename: String, systemIDs: [String]) throws -> [[String: NSObject]]? {
         let systemIDsInts: [Int] = systemIDs.compactMap { PVEmulatorConfiguration.databaseID(forSystemID: $0) }
         guard !systemIDsInts.isEmpty else {
@@ -1120,6 +1121,7 @@ public extension GameImporter {
 
         return try searchDatabase(usingFilename: filename, systemIDs: systemIDsInts)
     }
+
     func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [[String: NSObject]]? {
         let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
 
@@ -1142,13 +1144,14 @@ public extension GameImporter {
             return nil
         }
     }
+
     func searchDatabase(usingFilename filename: String, systemID: Int? = nil) throws -> [[String: NSObject]]? {
         let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
 
         let queryString: String
         if let systemID = systemID {
             let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
-            let dbSystemID: String = String(systemID)
+            let dbSystemID = String(systemID)
             queryString = String(format: likeQuery, filename, dbSystemID, filename)
         } else {
             let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
@@ -1182,7 +1185,7 @@ public extension GameImporter {
 
         let queryString: String
         if let systemID = systemID {
-            let dbSystemID: String = String(systemID)
+            let dbSystemID = String(systemID)
             queryString = String(format: likeQuery, key, value, dbSystemID, key, value)
         } else {
             queryString = String(format: exactQuery, key, value)
@@ -1211,7 +1214,7 @@ public extension GameImporter {
 
 // MARK: - Movers
 
-extension GameImporter {
+public extension GameImporter {
     /**
      Looks at a candidate file (should be a cue). Tries to find .bin files that match the filename by pattern
      matching the filename up to the .cue to other files in the same directory.
@@ -1220,7 +1223,7 @@ extension GameImporter {
 
      - returns: Returns the paths of the .bins and .cue in the new directory they were moved to. Should be a system diretory. Returns nil if a match wasn't found or an error in the process
      */
-    public func moveCDROM(toAppropriateSubfolder candidateFile: ImportCandidateFile) -> [URL]? {
+    func moveCDROM(toAppropriateSubfolder candidateFile: ImportCandidateFile) -> [URL]? {
         guard let systemsForExtension = systemIDsForRom(at: candidateFile.filePath) else {
             WLOG("No sytem found for import candidate file \(candidateFile.filePath.lastPathComponent)")
             return nil
@@ -1232,7 +1235,7 @@ extension GameImporter {
 
         if systemsForExtension.count > 1 {
             // Try to match by MD5 or filename
-            if let systemID = self.systemId(forROMCandidate: candidateFile) {
+            if let systemID = systemId(forROMCandidate: candidateFile) {
                 subfolderPathMaybe = systemToPathMap[systemID]
                 matchedSystemID = systemID
             } else {
@@ -1302,7 +1305,7 @@ extension GameImporter {
         let destinationDir = (system.identifier as NSString)
 //        let partialPath: String = destinationDir.appendingPathComponent("\(filenameSansExtension)/\(filename)")
         let partialPath: String = destinationDir.appendingPathComponent(filename)
-        
+
         let file = PVFile(withURL: path)
 
         let game = PVGame(withFile: file, system: system)
@@ -1347,9 +1350,9 @@ extension GameImporter {
         if game.requiresSync {
             if importStartedHandler != nil {
                 let fullpath = PVEmulatorConfiguration.path(forGame: game)
-                DispatchQueue.main.async(execute: { () -> Void in
+                DispatchQueue.main.async { () in
                     self.importStartedHandler?(fullpath.path)
-                })
+                }
             }
             lookupInfo(for: game, overwrite: true)
             modified = true
@@ -1357,14 +1360,14 @@ extension GameImporter {
 
         if finishedImportHandler != nil {
             let md5: String = game.md5Hash
-            DispatchQueue.main.async(execute: { () -> Void in
+            DispatchQueue.main.async { () in
                 self.finishedImportHandler?(md5, modified)
-            })
+            }
         }
         getArtwork(forGame: game)
     }
 
-    public func biosEntryMatcing(candidateFile: ImportCandidateFile) -> PVBIOS? {
+    func biosEntryMatcing(candidateFile: ImportCandidateFile) -> PVBIOS? {
         // Check if BIOS by filename - should possibly just only check MD5?
         if let bios = PVEmulatorConfiguration.biosEntry(forFilename: candidateFile.filePath.lastPathComponent) {
             return bios
@@ -1379,7 +1382,7 @@ extension GameImporter {
     }
 
     // TODO: Make async?
-    public func getArtwork(forGame game: PVGame) {
+    func getArtwork(forGame game: PVGame) {
         var url = game.originalArtworkURL
         if url.isEmpty || PVMediaCache.fileExists(forKey: url) {
             return
@@ -1387,8 +1390,8 @@ extension GameImporter {
 
         DLOG("Starting Artwork download for \(url)")
 
-		#warning("Evil hack for bad domain in DB")
-		url = url.replacingOccurrences(of: "gamefaqs1.cbsistatic.com/box/", with: "gamefaqs.gamespot.com/a/box/")
+        #warning("Evil hack for bad domain in DB")
+        url = url.replacingOccurrences(of: "gamefaqs1.cbsistatic.com/box/", with: "gamefaqs.gamespot.com/a/box/")
 
         guard let artworkURL = URL(string: url) else {
             ELOG("url is invalid url <\(url)>")
@@ -1411,10 +1414,10 @@ extension GameImporter {
         let task = URLSession.shared.dataTask(with: request) { dataMaybe, urlResponseMaybe, error in
             func artworkCompletion(artworkURL: String) {
                 if self.finishedArtworkHandler != nil {
-                    DispatchQueue.main.sync(execute: { () -> Void in
+                    DispatchQueue.main.sync { () in
                         ILOG("Calling finishedArtworkHandler \(artworkURL)")
                         self.finishedArtworkHandler!(artworkURL)
-                    })
+                    }
                 } else {
                     ELOG("finishedArtworkHandler == nil")
                 }
@@ -1460,7 +1463,7 @@ extension GameImporter {
         task.resume()
     }
 
-    public func moveROM(toAppropriateSubfolder candidateFile: ImportCandidateFile) -> URL? {
+    func moveROM(toAppropriateSubfolder candidateFile: ImportCandidateFile) -> URL? {
         let filePath = candidateFile.filePath
         var subfolderPathMaybe: URL?
 
@@ -1560,13 +1563,13 @@ extension GameImporter {
         let fileMD5 = candidateFile.md5?.uppercased()
 
         if let fileMD5 = fileMD5,
-            !fileMD5.isEmpty,
-            let searchResults = try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5),
-            let gotit = searchResults.first,
-            let sid: Int = gotit["systemID"] as? Int,
-            let system = RomDatabase.sharedInstance.all(PVSystem.self, where: "openvgDatabaseID", value: sid).first,
-            let subfolderPath = self.path(forSystemID: system.identifier),
-            let subPath = _moveRomFoundSubpath(subfolderPath: subfolderPath, filePath: filePath) {
+           !fileMD5.isEmpty,
+           let searchResults = try? searchDatabase(usingKey: "romHashMD5", value: fileMD5),
+           let gotit = searchResults.first,
+           let sid: Int = gotit["systemID"] as? Int,
+           let system = RomDatabase.sharedInstance.all(PVSystem.self, where: "openvgDatabaseID", value: sid).first,
+           let subfolderPath = path(forSystemID: system.identifier),
+           let subPath = _moveRomFoundSubpath(subfolderPath: subfolderPath, filePath: filePath) {
             ILOG("MD5 matched, moved to subPath <\(subPath.path)>")
             return subPath
         }
@@ -1595,10 +1598,10 @@ extension GameImporter {
             // TODO: test if search by name works
             #if false
             // TODO: test if search by system array works
-            results =  try? self.searchDatabase(usingFilename: filename, systemIDs: [systemsForExtension])
+            results = try? searchDatabase(usingFilename: filename, systemIDs: [systemsForExtension])
             #else
             for currentSystem: String in systemsForExtension {
-                if let gotit = try? self.searchDatabase(usingFilename: filename, systemID: currentSystem) {
+                if let gotit = try? searchDatabase(usingFilename: filename, systemID: currentSystem) {
                     foundSystemIDMaybe = currentSystem
                     results = gotit
                     DLOG("Got it by filename: \(gotit.debugDescription)")
@@ -1610,10 +1613,10 @@ extension GameImporter {
             if results == nil {
                 #if false
                 // TODO: test if search by array works
-                results =  try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5, systemIDs: [systemsForExtension])
+                results = try? searchDatabase(usingKey: "romHashMD5", value: fileMD5, systemIDs: [systemsForExtension])
                 #else
                 for currentSystem: String in systemsForExtension {
-                    if let gotit = try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5, systemID: currentSystem) {
+                    if let gotit = try? searchDatabase(usingKey: "romHashMD5", value: fileMD5, systemID: currentSystem) {
                         foundSystemIDMaybe = currentSystem
                         results = gotit
                         DLOG("Got it: \(gotit.debugDescription)")
@@ -1669,7 +1672,7 @@ extension GameImporter {
         }
     }
 
-    public func _moveRomFoundSubpath(subfolderPath: URL, filePath: URL) -> URL? {
+    func _moveRomFoundSubpath(subfolderPath: URL, filePath: URL) -> URL? {
         let fm = FileManager.default
         var newPath: URL?
 
@@ -1692,14 +1695,14 @@ extension GameImporter {
         DLOG("'destination' == <\(destination.path)>")
         // Try to move the file to it's home
         do {
-			guard fm.fileExists(atPath: filePath.path) else {
-				ELOG("No file exists at source path: <\(filePath)>")
-				return nil
-			}
-			if fm.fileExists(atPath: destination.path) {
-				#warning("What to do? overwrite? Prompt user?") // Can use a new FileManager with a deleagte to get callbacks for this
-				try fm.removeItem(at: destination)
-			}
+            guard fm.fileExists(atPath: filePath.path) else {
+                ELOG("No file exists at source path: <\(filePath)>")
+                return nil
+            }
+            if fm.fileExists(atPath: destination.path) {
+                #warning("What to do? overwrite? Prompt user?") // Can use a new FileManager with a deleagte to get callbacks for this
+                try fm.removeItem(at: destination)
+            }
 
             try fm.moveItem(at: filePath, to: destination)
             ILOG("Moved file \(filePath.path) to directory \(destination.path)")
@@ -1728,7 +1731,7 @@ extension GameImporter {
         return newPath
     }
 
-    public func moveFiles(similiarToFile inputFile: URL, toDirectory: URL, cuesheet cueSheetPath: URL) -> [URL]? {
+    func moveFiles(similiarToFile inputFile: URL, toDirectory: URL, cuesheet cueSheetPath: URL) -> [URL]? {
         ILOG("Move files files similiar to \(inputFile.lastPathComponent) to directory \(toDirectory.lastPathComponent) from cue sheet \(cueSheetPath.lastPathComponent)")
         let relatedFileName: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: inputFile.deletingPathExtension().lastPathComponent)
 
@@ -1827,7 +1830,7 @@ extension GameImporter {
     }
 
     // Helper
-    public func systemId(forROMCandidate rom: ImportCandidateFile) -> String? {
+    func systemId(forROMCandidate rom: ImportCandidateFile) -> String? {
         guard let md5 = rom.md5 else {
             ELOG("MD5 was blank")
             return nil
@@ -1842,7 +1845,8 @@ extension GameImporter {
             if
                 let match = results.first,
                 let databaseID = match["systemID"] as? Int,
-                let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
+                let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID)
+            {
                 return systemID
             } else {
                 ILOG("Could't match \(rom.filePath.lastPathComponent) based off of MD5 {\(md5)}")

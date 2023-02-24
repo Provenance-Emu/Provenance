@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import Realm
 import RealmSwift
 
-import CoreSpotlight
 import CoreServices
+import CoreSpotlight
 // import UIKit
 
 public extension PVGame {
@@ -20,65 +21,65 @@ public extension PVGame {
 
     #if os(iOS)
     var spotlightContentSet: CSSearchableItemAttributeSet {
-            let systemName = self.systemName
+        let systemName = self.systemName
 
-            var description = "\(systemName ?? "")"
+        var description = "\(systemName ?? "")"
 
-            // Determine if any of these have a value, and if so, seperate them by a space
-            let optionalEntries: [String?] = [isFavorite ? "⭐" : nil,
-                                              developer,
-                                              publishDate != nil ? "(\(publishDate!)" : nil,
-                                              regionName != nil ? "(\(regionName!))" : nil]
+        // Determine if any of these have a value, and if so, seperate them by a space
+        let optionalEntries: [String?] = [isFavorite ? "⭐" : nil,
+                                          developer,
+                                          publishDate != nil ? "(\(publishDate!)" : nil,
+                                          regionName != nil ? "(\(regionName!))" : nil]
 
-        let secondLine = optionalEntries.compactMap { (maybeString) -> String? in
+        let secondLine = optionalEntries.compactMap { maybeString -> String? in
             maybeString
         }.joined(separator: " ")
-            if !secondLine.isEmpty {
-                description += "\n\(secondLine)"
-            }
-
-            if let g = genres, !g.isEmpty, !md5Hash.isEmpty {
-                let genresWithSpaces = g.components(separatedBy: ",").joined(separator: ", ")
-                description += "\n\(genresWithSpaces)"
-            }
-
-            // Maybe should use kUTTypeData?
-            let contentSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeImage as String)
-            contentSet.title = title
-            contentSet.relatedUniqueIdentifier = md5Hash
-            contentSet.contentDescription = description
-            contentSet.rating = NSNumber(value: isFavorite)
-            contentSet.thumbnailURL = pathOfCachedImage
-            var keywords = ["rom"]
-            if let systemName = systemName {
-                keywords.append(systemName)
-            }
-            if let genres = genres {
-                keywords.append(contentsOf: genres.components(separatedBy: ","))
-            }
-
-            contentSet.keywords = keywords
-
-            //            contentSet.authorNames             = [data.authorName]
-            // Could generate small thumbnail here
-            if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
-                contentSet.thumbnailData = s.jpegData(compressionQuality: 0.85)
-            }
-            return contentSet
+        if !secondLine.isEmpty {
+            description += "\n\(secondLine)"
         }
+
+        if let g = genres, !g.isEmpty, !md5Hash.isEmpty {
+            let genresWithSpaces = g.components(separatedBy: ",").joined(separator: ", ")
+            description += "\n\(genresWithSpaces)"
+        }
+
+        // Maybe should use kUTTypeData?
+        let contentSet = CSSearchableItemAttributeSet(itemContentType: kUTTypeImage as String)
+        contentSet.title = title
+        contentSet.relatedUniqueIdentifier = md5Hash
+        contentSet.contentDescription = description
+        contentSet.rating = NSNumber(value: isFavorite)
+        contentSet.thumbnailURL = pathOfCachedImage
+        var keywords = ["rom"]
+        if let systemName = systemName {
+            keywords.append(systemName)
+        }
+        if let genres = genres {
+            keywords.append(contentsOf: genres.components(separatedBy: ","))
+        }
+
+        contentSet.keywords = keywords
+
+        //            contentSet.authorNames             = [data.authorName]
+        // Could generate small thumbnail here
+        if let p = pathOfCachedImage?.path, let t = UIImage(contentsOfFile: p), let s = t.scaledImage(withMaxResolution: 270) {
+            contentSet.thumbnailData = s.jpegData(compressionQuality: 0.85)
+        }
+        return contentSet
+    }
 
     var pathOfCachedImage: URL? {
-            let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
-            if !PVMediaCache.fileExists(forKey: artworkKey) {
-                return nil
-            }
-            let artworkURL = PVMediaCache.filePath(forKey: artworkKey)
-            return artworkURL
+        let artworkKey = customArtworkURL.isEmpty ? originalArtworkURL : customArtworkURL
+        if !PVMediaCache.fileExists(forKey: artworkKey) {
+            return nil
         }
+        let artworkURL = PVMediaCache.filePath(forKey: artworkKey)
+        return artworkURL
+    }
 
     var spotlightUniqueIdentifier: String {
-            return "org.provenance-emu.game.\(md5Hash)"
-        }
+        return "org.provenance-emu.game.\(md5Hash)"
+    }
     #endif
 
     var spotlightActivity: NSUserActivity {
@@ -91,7 +92,7 @@ public extension PVGame {
         activity.isEligibleForHandoff = false
 
         #if os(iOS)
-            activity.contentAttributeSet = spotlightContentSet
+        activity.contentAttributeSet = spotlightContentSet
         #endif
         activity.requiredUserInfoKeys = ["md5"]
         //            activity.expirationDate       =

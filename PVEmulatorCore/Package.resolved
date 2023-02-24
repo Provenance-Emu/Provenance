@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "nslogger",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/fpillet/NSLogger",
+      "state" : {
+        "branch" : "master",
+        "revision" : "e8c453142da7051462cca189d3fcee74de0500ea"
+      }
+    }
+  ],
+  "version" : 2
+}

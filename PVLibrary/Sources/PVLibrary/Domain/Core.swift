@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Realm
 import RealmSwift
 
 @frozen
@@ -34,8 +35,9 @@ public struct Core: Codable {
 }
 
 // MARK: Realm
+
 public extension Core {
-    public var systems: [System] {
+    var systems: [System] {
         let realm = try! Realm()
         let systems = realm.objects(PVSystem.self).filter { $0.cores.contains(where: {
             $0.identifier == self.identifier
@@ -47,7 +49,7 @@ public extension Core {
 }
 
 extension Core: Equatable {
-    public static func == (lhs: Core, rhs: Core) -> Bool {
+    public static func ==(lhs: Core, rhs: Core) -> Bool {
         return lhs.identifier == rhs.identifier
     }
 }

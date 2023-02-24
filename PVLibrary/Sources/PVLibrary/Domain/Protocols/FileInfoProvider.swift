@@ -84,8 +84,8 @@ private let md5Cache: Cache<URL, String> = {
     return c
 }()
 
-extension LocalFileInfoProvider {
-    public var size: UInt64 {
+public extension LocalFileInfoProvider {
+    var size: UInt64 {
         let fileSize: UInt64
 
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
@@ -96,23 +96,23 @@ extension LocalFileInfoProvider {
         return fileSize
     }
 
-    public var online: Bool {
+    var online: Bool {
         return FileManager.default.fileExists(atPath: url.path)
     }
 
-    public var pathExtension: String {
+    var pathExtension: String {
         return url.pathExtension
     }
 
-    public var fileName: String {
+    var fileName: String {
         return url.lastPathComponent
     }
 
-    public var fileNameWithoutExtension: String {
+    var fileNameWithoutExtension: String {
         return url.deletingPathExtension().lastPathComponent
     }
 
-    public var md5: String? {
+    var md5: String? {
         if let md5 = md5Cache.object(forKey: url) {
             return md5
         }

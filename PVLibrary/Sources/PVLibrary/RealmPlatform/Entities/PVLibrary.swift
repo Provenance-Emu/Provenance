@@ -7,8 +7,9 @@
 //
 
 import Foundation
-import RealmSwift
 @_exported import PVLogging
+import Realm
+import RealmSwift
 
 // Should use PVLibrary for all or make a PVRemoteLibrary?
 // realm doesn't support subclasses, but we could use protocols
@@ -27,7 +28,7 @@ public final class PVLibrary: Object {
     public dynamic var bonjourName: String = ""
     public dynamic var port: Int = 7769 // prov on phone pad
 
-    public dynamic var lastSeen: Date = Date()
+    public dynamic var lastSeen: Date = .init()
 
     public private(set) var games = List<PVGame>()
 }

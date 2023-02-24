@@ -7,9 +7,10 @@
 //
 
 import Foundation
-import PVSupport
-import RealmSwift
 import PVLogging
+import PVSupport
+import Realm
+import RealmSwift
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -25,19 +26,19 @@ public extension Notification.Name {
 
 public final class RealmConfiguration {
     public class var supportsAppGroups: Bool {
-		#if targetEnvironment(macCatalyst)
-		return false
-		#else
+        #if targetEnvironment(macCatalyst)
+        return false
+        #else
         return !PVAppGroupId.isEmpty && RealmConfiguration.appGroupContainer != nil
-		#endif
+        #endif
     }
 
     public class var appGroupContainer: URL? {
-		#if targetEnvironment(macCatalyst)
-		return nil
-		#else
+        #if targetEnvironment(macCatalyst)
+        return nil
+        #else
         return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: PVAppGroupId)
-		#endif
+        #endif
     }
 
     public class var appGroupPath: URL? {
@@ -49,9 +50,9 @@ public final class RealmConfiguration {
         ILOG("appGroupContainer => (\(appGroupContainer.absoluteString))")
 
         #if os(tvOS)
-            let appGroupPath = appGroupContainer.appendingPathComponent("Library/Caches/")
+        let appGroupPath = appGroupContainer.appendingPathComponent("Library/Caches/")
         #else
-            let appGroupPath = appGroupContainer
+        let appGroupPath = appGroupContainer
         #endif
         return appGroupPath
     }
@@ -115,7 +116,7 @@ public final class RealmConfiguration {
                         return
                     }
 
-                    if let md5 = FileManager.default.md5ForFile(atPath: fullPath.path, fromOffset: offset), !md5.isEmpty {
+					if let md5 = FileManager.default.md5ForFile(atPath: fullPath.path, fromOffset: Int64(offset)), !md5.isEmpty {
                         newObject!["md5Hash"] = md5
                         counter += 1
                     } else {
@@ -133,21 +134,21 @@ public final class RealmConfiguration {
                 ILOG("Migration complete of \(counter) roms. Removed \(deletions) bad entries.")
             }
             if oldSchemaVersion < 10 {
-                migration.enumerateObjects(ofType: PVCore.className()) { oldObject, newObject in
+                migration.enumerateObjects(ofType: PVCore.className()) { _, newObject in
                     newObject!["disabled"] = false
                 }
             }
             if oldSchemaVersion < 11 {
-                migration.enumerateObjects(ofType: PVSystem.className()) { oldObject, newObject in
+                migration.enumerateObjects(ofType: PVSystem.className()) { _, newObject in
                     newObject!["supported"] = true
                 }
             }
         }
 
         #if DEBUG
-            let deleteIfMigrationNeeded = true
+        let deleteIfMigrationNeeded = true
         #else
-            let deleteIfMigrationNeeded = false
+        let deleteIfMigrationNeeded = false
         #endif
         let config = Realm.Configuration(
             fileURL: realmURL,
@@ -490,7 +491,7 @@ public extension RomDatabase {
 
         // Delete from Spotlight search
         #if os(iOS)
-            deleteFromSpotlight(game: game)
+        deleteFromSpotlight(game: game)
         #endif
 
         do {
@@ -548,29 +549,29 @@ public extension RomDatabase {
 // MARK: - Spotlight
 
 #if os(iOS)
-    import CoreSpotlight
+import CoreSpotlight
 
-    extension RomDatabase {
-        private func deleteFromSpotlight(game: PVGame) {
-            CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { error in
-                if let error = error {
-                    print("Error deleting game spotlight item: \(error)")
-                } else {
-                    print("Game indexing deleted.")
-                }
-            })
-        }
+extension RomDatabase {
+    private func deleteFromSpotlight(game: PVGame) {
+        CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { error in
+            if let error = error {
+                print("Error deleting game spotlight item: \(error)")
+            } else {
+                print("Game indexing deleted.")
+            }
+        })
+    }
 
-        private func deleteAllGamesFromSpotlight() {
-            CSSearchableIndex.default().deleteAllSearchableItems { error in
-                if let error = error {
-                    print("Error deleting all games spotlight index: \(error)")
-                } else {
-                    print("Game indexing deleted.")
-                }
+    private func deleteAllGamesFromSpotlight() {
+        CSSearchableIndex.default().deleteAllSearchableItems { error in
+            if let error = error {
+                print("Error deleting all games spotlight index: \(error)")
+            } else {
+                print("Game indexing deleted.")
             }
         }
     }
+}
 #endif
 
 public extension RomDatabase {

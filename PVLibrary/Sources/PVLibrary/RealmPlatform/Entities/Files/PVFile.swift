@@ -7,9 +7,10 @@
 //
 
 import Foundation
-import PVSupport
-import RealmSwift
 import PVLogging
+import PVSupport
+import Realm
+import RealmSwift
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -20,9 +21,9 @@ public enum RelativeRoot: Int {
     case iCloud
 
     #if os(tvOS)
-        public static let platformDefault = RelativeRoot.caches
+    public static let platformDefault = RelativeRoot.caches
     #else
-        public static let platformDefault = RelativeRoot.documents
+    public static let platformDefault = RelativeRoot.documents
     #endif
 
     static let documentsDirectory: URL = PVEmulatorConfiguration.documentsPath
@@ -118,7 +119,7 @@ public extension PVFile {
 
             // Lazy make MD5
             guard let calculatedMD5 = FileManager.default.md5ForFile(atPath: url.path, fromOffset: 0) else {
-				ELOG("calculatedMD5 nil")
+                ELOG("calculatedMD5 nil")
                 return nil
             }
 
@@ -171,7 +172,7 @@ public extension PVFile {
         if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
             fileSize = attr.fileSize()
         } else {
-			ELOG("No attributesOfItem at path: \(url.path)")
+            ELOG("No attributesOfItem at path: \(url.path)")
             fileSize = 0
         }
         return fileSize

@@ -80,6 +80,7 @@ public extension FileManager {
             throw error
         }
 
+		#warning ("Finish me")
         // md5Init(&md5Ctx)
         // crc32Init(&crc32Ctx)
 

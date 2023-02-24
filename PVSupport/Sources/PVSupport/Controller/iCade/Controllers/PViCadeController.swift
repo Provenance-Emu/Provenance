@@ -94,7 +94,8 @@ public class PViCadeController: GCController {
 
     public override var controllerPausedHandler: ((GCController) -> Void)? {
         get {
-            return super.controllerPausedHandler
+			return super.controllerPausedHandler
+//			return super.extendedGamepad?.buttonMenu.valueChangedHandler
         }
         set(controllerPausedHandler) {
             // dummy method to avoid NSInternalInconsistencyException

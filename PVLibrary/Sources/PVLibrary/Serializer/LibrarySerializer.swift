@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import PVSupport
 import PVLogging
+import PVSupport
 
 public protocol Packageable {
     associatedtype PackageType: Package
@@ -19,7 +19,7 @@ public protocol Packageable {
 public typealias JSONMetadataSerialable = DomainConvertibleType & LocalFileInfoProvider & DataProvider
 
 extension Packageable where Self: JSONMetadataSerialable {
-    internal func packageParts() throws -> (Data, Self.DomainType) {
+    func packageParts() throws -> (Data, Self.DomainType) {
         let data = try readData()
         return (data, asDomain())
     }

@@ -1,7 +1,7 @@
 
 #import <PVAudio/OERingBuffer.h>
 #import <PVAudio/TPCircularBuffer.h>
-#ifdef __cplusplus
+#if defined(__cplusplus) || defined(SWIFT_MODULE)
     #import <PVAudio/CAAtomic.hpp>
     #import <PVAudio/CAAutoDisposer.hpp>
     #import <PVAudio/CABitOperations.hpp>

@@ -39,11 +39,11 @@ public final class UTI: RawRepresentable, Equatable {
 
         #if os(macOS)
 
-            /// Equivalent to kUTTagClassNSPboardType
-            case pbType = "com.apple.nspboard-type"
+        /// Equivalent to kUTTagClassNSPboardType
+        case pbType = "com.apple.nspboard-type"
 
-            /// Equivalent to kUTTagClassOSType
-            case osType = "com.apple.ostype"
+        /// Equivalent to kUTTagClassOSType
+        case osType = "com.apple.ostype"
         #endif
 
         /// Convenience variable for internal use.
@@ -139,35 +139,35 @@ public final class UTI: RawRepresentable, Equatable {
 
     #if os(macOS)
 
-        /**
+    /**
 
-         Initialize an UTI with a pasteboard type.
+     Initialize an UTI with a pasteboard type.
 
-         - Parameters:
-         - pbType: The pasteboard type (e.g. NSPDFPboardType).
-         - conformingTo: If specified, the returned UTI must conform to this UTI. If nil is specified, this parameter is ignored. The default is nil.
-         - Returns:
-         An UTI corresponding to the specified values.
-         */
-        public convenience init(withPBType pbType: String, conformingTo conforming: UTI? = nil) {
-            self.init(withTagClass: .pbType, value: pbType, conformingTo: conforming)
-        }
+     - Parameters:
+     - pbType: The pasteboard type (e.g. NSPDFPboardType).
+     - conformingTo: If specified, the returned UTI must conform to this UTI. If nil is specified, this parameter is ignored. The default is nil.
+     - Returns:
+     An UTI corresponding to the specified values.
+     */
+    public convenience init(withPBType pbType: String, conformingTo conforming: UTI? = nil) {
+        self.init(withTagClass: .pbType, value: pbType, conformingTo: conforming)
+    }
 
-        /**
-         Initialize an UTI with a OSType.
+    /**
+     Initialize an UTI with a OSType.
 
-         - Parameters:
-         - osType: The OSType type as a string (e.g. "PDF ").
-         - conformingTo: If specified, the returned UTI must conform to this UTI. If nil is specified, this parameter is ignored. The default is nil.
-         - Returns:
-         An UTI corresponding to the specified values.
-         - Note:
-         You can use the variable ```OSType.string``` to get a string from an actual OSType.
-         */
+     - Parameters:
+     - osType: The OSType type as a string (e.g. "PDF ").
+     - conformingTo: If specified, the returned UTI must conform to this UTI. If nil is specified, this parameter is ignored. The default is nil.
+     - Returns:
+     An UTI corresponding to the specified values.
+     - Note:
+     You can use the variable ```OSType.string``` to get a string from an actual OSType.
+     */
 
-        public convenience init(withOSType osType: String, conformingTo conforming: UTI? = nil) {
-            self.init(withTagClass: .osType, value: osType, conformingTo: conforming)
-        }
+    public convenience init(withOSType osType: String, conformingTo conforming: UTI? = nil) {
+        self.init(withTagClass: .osType, value: osType, conformingTo: conforming)
+    }
 
     #endif
 
@@ -207,18 +207,18 @@ public final class UTI: RawRepresentable, Equatable {
 
     #if os(macOS)
 
-        /// Return the pasteboard type that corresponds the the UTI. Returns nil if not available.
+    /// Return the pasteboard type that corresponds the the UTI. Returns nil if not available.
 
-        public var pbType: String? {
-            return tag(with: .pbType)
-        }
+    public var pbType: String? {
+        return tag(with: .pbType)
+    }
 
-        /// Return the OSType as a string that corresponds the the UTI. Returns nil if not available.
-        /// - Note: you can use the ```init(with string: String)``` initializer to construct an actual OSType from the returnes string.
+    /// Return the OSType as a string that corresponds the the UTI. Returns nil if not available.
+    /// - Note: you can use the ```init(with string: String)``` initializer to construct an actual OSType from the returnes string.
 
-        public var osType: String? {
-            return tag(with: .osType)
-        }
+    public var osType: String? {
+        return tag(with: .osType)
+    }
 
     #endif
 
@@ -281,7 +281,7 @@ public final class UTI: RawRepresentable, Equatable {
         return UTTypeConformsTo(rawCFValue, otherUTI.rawCFValue) as Bool
     }
 
-    public static func == (lhs: UTI, rhs: UTI) -> Bool {
+    public static func ==(lhs: UTI, rhs: UTI) -> Bool {
         return UTTypeEqual(lhs.rawCFValue, rhs.rawCFValue) as Bool
     }
 
@@ -465,22 +465,22 @@ public extension UTI {
 
 #if os(OSX)
 
-    extension OSType {
-        /// Returns the OSType encoded as a String.
+extension OSType {
+    /// Returns the OSType encoded as a String.
 
-        var string: String {
-            let unmanagedString = UTCreateStringForOSType(self)
+    var string: String {
+        let unmanagedString = UTCreateStringForOSType(self)
 
-            return unmanagedString.takeRetainedValue() as String
-        }
-
-        /// Initializes a OSType from a String.
-        ///
-        /// - Parameter string: A String representing an OSType.
-
-        init(with string: String) {
-            self = UTGetOSTypeFromString(string as CFString)
-        }
+        return unmanagedString.takeRetainedValue() as String
     }
+
+    /// Initializes a OSType from a String.
+    ///
+    /// - Parameter string: A String representing an OSType.
+
+    init(with string: String) {
+        self = UTGetOSTypeFromString(string as CFString)
+    }
+}
 
 #endif

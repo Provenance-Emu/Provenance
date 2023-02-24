@@ -7,11 +7,12 @@
 //
 
 import Foundation
+import PVLogging
 import PVSupport
-import RxSwift
+import Realm
 import RealmSwift
 import RxRealm
-import PVLogging
+import RxSwift
 
 public struct PVGameLibrary {
     public let saveStates: Observable<[PVSaveState]>
@@ -30,27 +31,27 @@ public struct PVGameLibrary {
     public init(database: RomDatabase) {
         self.database = database
 
-        self.saveStatesResults = database.all(PVSaveState.self).filter("game != nil && game.system != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
-        self.saveStates = Observable
-            .collection(from: self.saveStatesResults)
+        saveStatesResults = database.all(PVSaveState.self).filter("game != nil && game.system != nil").sorted(byKeyPath: #keyPath(PVSaveState.lastOpened), ascending: false).sorted(byKeyPath: #keyPath(PVSaveState.date), ascending: false)
+        saveStates = Observable
+            .collection(from: saveStatesResults)
             .mapMany { $0 }
 
-        self.favoritesResults = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
-        self.favorites = Observable
-            .collection(from: self.favoritesResults)
+        favoritesResults = database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
+        favorites = Observable
+            .collection(from: favoritesResults)
             .mapMany { $0 }
 
-        self.recentsResults = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
-        self.recents = Observable
+        recentsResults = database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+        recents = Observable
             .collection(from: recentsResults)
             .mapMany { $0 }
 
-        self.mostPlayedResults = database.all(PVGame.self).sorted(byKeyPath: #keyPath(PVGame.playCount), ascending: false)
-        self.mostPlayed = Observable
-            .collection(from: self.mostPlayedResults)
+        mostPlayedResults = database.all(PVGame.self).sorted(byKeyPath: #keyPath(PVGame.playCount), ascending: false)
+        mostPlayed = Observable
+            .collection(from: mostPlayedResults)
             .mapMany { $0 }
 
-        self.activeSystems = database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(PVSystem.name), ascending: true)
+        activeSystems = database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(PVSystem.name), ascending: true)
     }
 
     public func search(for searchText: String) -> Observable<[PVGame]> {
@@ -59,10 +60,10 @@ public struct PVGameLibrary {
 
     public func searchResults(for searchText: String) -> Results<PVGame> {
         // Search first by title, and a broader search if that one's empty
-        let titleResults = self.database.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText]))
+        let titleResults = database.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText]))
         let results = !titleResults.isEmpty ?
             titleResults :
-            self.database.all(PVGame.self, filter: NSPredicate(format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@", argumentArray: [searchText, searchText, searchText, searchText, searchText]))
+            database.all(PVGame.self, filter: NSPredicate(format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@", argumentArray: [searchText, searchText, searchText, searchText, searchText]))
 
         return results.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
     }
@@ -72,9 +73,9 @@ public struct PVGameLibrary {
         let unsuppotedIDs: [SystemIdentifier] = SystemIdentifier.unsupported
 
         return Observable.collection(from: database.all(PVSystem.self))
-            .flatMapLatest({ systems -> Observable<[System]> in
+            .flatMapLatest { systems -> Observable<[System]> in
                 // Here we actualy observe on the games for each system, since we want to update this when games are added or removed from a system
-                Observable.combineLatest(systems.map({ (pvSystem: PVSystem) -> Observable<System> in
+                Observable.combineLatest(systems.map { (pvSystem: PVSystem) -> Observable<System> in
                     // We read all the values from the realm-object here, and not in the `Observable.collection` below
                     // Not doing this makes the game crash when using refreshGameLibrary, since the pvSystem goes out of scope inside the closure, and thus we crash
                     let identifier = pvSystem.identifier
@@ -85,7 +86,7 @@ public struct PVGameLibrary {
                     let sortedGames = pvSystem.games.sorted(by: sortOptions)
                     return Observable.collection(from: sortedGames)
                         .mapMany { $0 }
-                        .map({ games in
+                        .map { games in
                             System(
                                 identifier: identifier,
                                 manufacturer: manufacturer,
@@ -94,9 +95,9 @@ public struct PVGameLibrary {
                                 unsupported: unsupported,
                                 sortedGames: games
                             )
-                        })
-                }))
-            })
+                        }
+                })
+            }
             .map { systems in systems.sorted(by: sortOptions) }
     }
 
@@ -207,7 +208,7 @@ extension LinkingObjects where Element: PVGame {
 
 extension Array where Element == PVGameLibrary.System {
     func sorted(by sortOptions: SortOptions) -> [Element] {
-        let titleSort: (Element, Element) -> Bool = { (s1, s2) -> Bool in
+        let titleSort: (Element, Element) -> Bool = { s1, s2 -> Bool in
             let mc = s1.manufacturer.compare(s2.manufacturer)
             if mc == .orderedSame {
                 return s1.shortName.compare(s2.shortName) == .orderedAscending
@@ -220,7 +221,7 @@ extension Array where Element == PVGameLibrary.System {
         case .title:
             return sorted(by: titleSort)
         case .lastPlayed:
-            return sorted(by: { (s1, s2) -> Bool in
+            return sorted(by: { s1, s2 -> Bool in
                 let l1 = s1.sortedGames.first?.lastPlayed
                 let l2 = s2.sortedGames.first?.lastPlayed
 
@@ -235,7 +236,7 @@ extension Array where Element == PVGameLibrary.System {
                 }
             })
         case .importDate:
-            return sorted(by: { (s1, s2) -> Bool in
+            return sorted(by: { s1, s2 -> Bool in
                 let l1 = s1.sortedGames.first?.importDate
                 let l2 = s2.sortedGames.first?.importDate
 
@@ -250,7 +251,7 @@ extension Array where Element == PVGameLibrary.System {
                 }
             })
         case .mostPlayed:
-            return sorted(by: { (s1, s2) -> Bool in
+            return sorted(by: { s1, s2 -> Bool in
                 let l1 = s1.sortedGames.first?.playCount
                 let l2 = s2.sortedGames.first?.playCount
 

@@ -7,18 +7,19 @@
 //
 
 import Foundation
-import PVSupport
-import RealmSwift
 import PVLogging
+import PVSupport
+import Realm
+import RealmSwift
 
 public protocol Filed {
     associatedtype LocalFileProviderType: LocalFileProvider
     var file: LocalFileProviderType! { get }
 }
 
-extension LocalFileProvider where Self: Filed {
-    public var url: URL { return file.url }
-    public var fileInfo: Self.LocalFileProviderType? { return file }
+public extension LocalFileProvider where Self: Filed {
+    var url: URL { return file.url }
+    var fileInfo: Self.LocalFileProviderType? { return file }
 }
 
 @objcMembers
@@ -27,7 +28,7 @@ public final class PVSaveState: Object, Identifiable, Filed, LocalFileProvider {
     public dynamic var game: PVGame!
     public dynamic var core: PVCore!
     public dynamic var file: PVFile!
-    public dynamic var date: Date = Date()
+    public dynamic var date: Date = .init()
     public dynamic var lastOpened: Date?
     public dynamic var image: PVImageFile?
     public dynamic var isAutosave: Bool = false
@@ -72,11 +73,11 @@ public final class PVSaveState: Object, Identifiable, Filed, LocalFileProvider {
         return isNewest
     }
 
-    public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {
+    public static func ==(lhs: PVSaveState, rhs: PVSaveState) -> Bool {
         return lhs.file.url == rhs.file.url
     }
 
-    public override static func primaryKey() -> String? {
+    override public static func primaryKey() -> String? {
         return "id"
     }
 }

@@ -6,11 +6,12 @@
 //
 
 import Foundation
-import PVSupport
-import RealmSwift
 import PVLogging
+import PVSupport
+import Realm
+import RealmSwift
 
-public struct SystemDictionaryKeys {
+public enum SystemDictionaryKeys {
     public static let BIOSEntries = "PVBIOSNames"
     public static let ControlLayout = "PVControlLayout"
     public static let DatabaseID = "PVDatabaseID"
@@ -27,7 +28,7 @@ public struct SystemDictionaryKeys {
     public static let ScreenType = "PVScreenType"
     public static let Portable = "PVPortable"
 
-    public struct ControllerLayoutKeys {
+    public enum ControllerLayoutKeys {
         public static let Button = "PVButton"
         public static let ButtonGroup = "PVButtonGroup"
         public static let ControlFrame = "PVControlFrame"
@@ -111,35 +112,36 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
 
     case Unknown
 
-    static public let betas: [SystemIdentifier] =
-    [
-        ._3DO,
-        .Atari8bit,
-        .AtariJaguarCD,
-        .AtariST,
-        .C64,
-        .ColecoVision,
-        .DOS,
-        .Dreamcast,
-        .DS,
-        .EP128,
-        .GameCube,
-        .Intellivision,
-        .Macintosh,
-        .MSX,
-        .MSX2,
-        .Odyssey2,
-	.Wii,
-	.PSP,
-        .Supervision,
-        .Vectrex,
-        .ZXSpectrum
-    ]
+    public static let betas: [SystemIdentifier] =
+        [
+            ._3DO,
+            .Atari8bit,
+            .AtariJaguarCD,
+            .AtariST,
+            .C64,
+            .ColecoVision,
+            .DOS,
+            .Dreamcast,
+            .DS,
+            .EP128,
+            .GameCube,
+            .Intellivision,
+            .Macintosh,
+            .MSX,
+            .MSX2,
+            .Odyssey2,
+            .Wii,
+            .PSP,
+            .Supervision,
+            .Vectrex,
+            .ZXSpectrum
+        ]
 
-    static public let unsupported: [SystemIdentifier] =
-    [
-        .PS3
-    ]
+    public static let unsupported: [SystemIdentifier] =
+        [
+            .PS3
+        ]
+
     // MARK: Assistance accessors for properties
 
     public var system: PVSystem? {
@@ -221,46 +223,38 @@ public final class PVEmulatorConfiguration: NSObject {
     }
 
     @objc
-    public static let availableSystemIdentifiers: [String] = {
-        systems.map({ (system) -> String in
-            system.identifier
-        })
-    }()
+    public static let availableSystemIdentifiers: [String] = systems.map { system -> String in
+        system.identifier
+    }
 
     // MARK: ROM IOS etc
 
-    public static let supportedROMFileExtensions: [String] = {
-        systems.map({ (system) -> List<String> in
-            system.supportedExtensions
-        }).joined().map { $0 }
-    }()
+    public static let supportedROMFileExtensions: [String] = systems.map { system -> List<String> in
+        system.supportedExtensions
+    }.joined().map { $0 }
 
-    public static let supportedCDFileExtensions: Set<String> = {
-        return Set(systems.compactMap({ (system) -> [String]? in
-            guard system.usesCDs else {
-                return nil
-            }
+    public static let supportedCDFileExtensions: Set<String> = Set(systems.compactMap { system -> [String]? in
+        guard system.usesCDs else {
+            return nil
+        }
 
-            return Array(system.supportedExtensions)
-        }).joined())
-    }()
+        return Array(system.supportedExtensions)
+    }.joined())
 
     public static var cdBasedSystems: [PVSystem] {
-        return systems.compactMap({ (system) -> PVSystem? in
+        return systems.compactMap { system -> PVSystem? in
             guard system.usesCDs else {
                 return nil
             }
             return system
-        })
+        }
     }
 
     // MARK: BIOS
 
-    public static let supportedBIOSFileExtensions: [String] = {
-        biosEntries.map({ (bios) -> String in
-            bios.expectedFilename.components(separatedBy: ".").last!.lowercased()
-        })
-    }()
+    public static let supportedBIOSFileExtensions: [String] = biosEntries.map { bios -> String in
+        bios.expectedFilename.components(separatedBy: ".").last!.lowercased()
+    }
 
     public static var biosEntries: Results<PVBIOS> {
         return PVBIOS.all
@@ -270,10 +264,10 @@ public final class PVEmulatorConfiguration: NSObject {
 
     public static let documentsPath: URL = {
         #if os(tvOS)
-            return cachesPath
+        return cachesPath
         #else
-            let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-            return URL(fileURLWithPath: paths.first!, isDirectory: true)
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        return URL(fileURLWithPath: paths.first!, isDirectory: true)
         #endif
     }()
 
@@ -305,9 +299,7 @@ public final class PVEmulatorConfiguration: NSObject {
 
     /// This should be called on a background thread
     static var iCloudContainerDirectory: URL? {
-        get {
-            return iCloudContainerDirectoryCached
-        }
+        return iCloudContainerDirectoryCached
     }
 
     /// This should be called on a background thread
@@ -336,23 +328,15 @@ public final class PVEmulatorConfiguration: NSObject {
         return iCloudDocumentsDirectory ?? documentsPath
     }
 
-    public struct Paths {
-        public struct Legacy {
-            public static let batterySavesPath: URL = {
-                documentsPath.appendingPathComponent("Battery States", isDirectory: true)
-            }()
+    public enum Paths {
+        public enum Legacy {
+            public static let batterySavesPath: URL = documentsPath.appendingPathComponent("Battery States", isDirectory: true)
 
-            public static let saveSavesPath: URL = {
-                documentsPath.appendingPathComponent("Save States", isDirectory: true)
-            }()
+            public static let saveSavesPath: URL = documentsPath.appendingPathComponent("Save States", isDirectory: true)
 
-            public static let screenShotsPath: URL = {
-                documentsPath.appendingPathComponent("Screenshots", isDirectory: true)
-            }()
+            public static let screenShotsPath: URL = documentsPath.appendingPathComponent("Screenshots", isDirectory: true)
 
-            public static let biosesPath: URL = {
-                documentsPath.appendingPathComponent("BIOS", isDirectory: true)
-            }()
+            public static let biosesPath: URL = documentsPath.appendingPathComponent("BIOS", isDirectory: true)
         }
 
         public static var romsImportPath: URL {
@@ -383,9 +367,7 @@ public final class PVEmulatorConfiguration: NSObject {
     public static let archiveExtensions: [String] = ["zip", "7z", "rar", "7zip", "gz", "gzip"]
     public static let artworkExtensions: [String] = ["png", "jpg", "jpeg"]
     public static let specialExtensions: [String] = ["cue", "m3u", "svs", "mcr", "plist", "ccd", "img", "iso", "sub", "bin"]
-    public static let allKnownExtensions: [String] = {
-        archiveExtensions + supportedROMFileExtensions + artworkExtensions + supportedBIOSFileExtensions + Array(supportedCDFileExtensions) + specialExtensions
-    }()
+    public static let allKnownExtensions: [String] = archiveExtensions + supportedROMFileExtensions + artworkExtensions + supportedBIOSFileExtensions + Array(supportedCDFileExtensions) + specialExtensions
 
     @objc
     public class func systemIDWantsStartAndSelectInMenu(_ systemID: String) -> Bool {
@@ -406,13 +388,13 @@ public final class PVEmulatorConfiguration: NSObject {
 
     @objc
     public class func systemIdentifiers(forFileExtension fileExtension: String) -> [String]? {
-        return systems(forFileExtension: fileExtension)?.compactMap({ (system) -> String? in
+        return systems(forFileExtension: fileExtension)?.compactMap { system -> String? in
             system.identifier
-        })
+        }
     }
 
     public class func systems(forFileExtension fileExtension: String) -> [PVSystem]? {
-        return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
+        return systems.reduce(nil as [PVSystem]?) { systems, system -> [PVSystem]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
                 var newSystems: [PVSystem] = systems ?? [PVSystem]() // Create initial if doesn't exist
                 newSystems.append(system)
@@ -420,7 +402,7 @@ public final class PVEmulatorConfiguration: NSObject {
             } else {
                 return systems
             }
-        })
+        }
     }
 
     public class func biosEntry(forMD5 md5: String) -> PVBIOS? {
@@ -457,8 +439,8 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
         className = classString
 
         if let superclass = superclass,
-            let superclassName = ClassInfo.superClassName(forClass: classObject),
-            !superclass.contains(superclassName) {
+           let superclassName = ClassInfo.superClassName(forClass: classObject),
+           !superclass.contains(superclassName) {
             return nil
         }
 
@@ -469,7 +451,7 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
         var classInfos = [ClassInfo]()
         var superClass: ClassInfo? = superclassInfo
 
-        while(superClass != nil) {
+        while superClass != nil {
             if let classInfo = ClassInfo(superClass?.classObject) {
                 classInfos.append(classInfo)
                 superClass = classInfo.superclassInfo
@@ -482,7 +464,7 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
     }
 
     public var superclassInfo: ClassInfo? {
-        if let superclassObject: AnyClass = class_getSuperclass(self.classObject) {
+        if let superclassObject: AnyClass = class_getSuperclass(classObject) {
             return ClassInfo(superclassObject)
         } else {
             return nil
@@ -493,7 +475,7 @@ public struct ClassInfo: CustomStringConvertible, Equatable {
         return className
     }
 
-    public static func == (lhs: ClassInfo, rhs: ClassInfo) -> Bool {
+    public static func ==(lhs: ClassInfo, rhs: ClassInfo) -> Bool {
         return lhs.className == rhs.className
     }
 
@@ -692,9 +674,9 @@ public extension PVEmulatorConfiguration {
             let m3uFile = try FileManager.default.contentsOfDirectory(at: gameDirectory,
                                                                       includingPropertiesForKeys: nil,
                                                                       options: [
-                                                                        .skipsHiddenFiles,
-                                                                        .skipsSubdirectoryDescendants]
-            ).first { (url) -> Bool in
+                                                                          .skipsHiddenFiles,
+                                                                          .skipsSubdirectoryDescendants
+                                                                      ]).first { url -> Bool in
                 if url.pathExtension.lowercased() == "m3u" {
                     return url.lastPathComponent.contains(filenameWithoutExtension)
                 } else {
@@ -726,7 +708,7 @@ public extension PVEmulatorConfiguration {
     }
 
     class func sortImportURLs(urls: [URL]) -> [URL] {
-        let sortedPaths = urls.sorted { (obj1, obj2) -> Bool in
+        let sortedPaths = urls.sorted { obj1, obj2 -> Bool in
 
             let obj1Filename = obj1.lastPathComponent
             let obj2Filename = obj2.lastPathComponent

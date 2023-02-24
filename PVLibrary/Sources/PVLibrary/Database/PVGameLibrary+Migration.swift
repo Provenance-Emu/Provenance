@@ -7,38 +7,38 @@
 //
 
 import Foundation
-import RxSwift
-import PVSupport
 import PVLogging
+import PVSupport
+import RxSwift
 
-extension PVGameLibrary {
-    public enum MigrationEvent {
+public extension PVGameLibrary {
+    enum MigrationEvent {
         case starting
         case pathsToImport(paths: [URL])
     }
 
-    public enum MigrationError: Error {
+    enum MigrationError: Error {
         case unableToCreateRomsDirectory(error: Error)
         case unableToGetContentsOfDocuments(error: Error)
         case unableToGetRomPaths(error: Error)
     }
-    // This method is probably outdated
-    public func migrate(fileManager: FileManager = .default) -> Observable<MigrationEvent> {
 
+    // This method is probably outdated
+    func migrate(fileManager: FileManager = .default) -> Observable<MigrationEvent> {
         let libraryPath: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let libraryURL = URL(fileURLWithPath: libraryPath)
         let toDelete = ["PVGame.sqlite", "PVGame.sqlite-shm", "PVGame.sqlite-wal"].map { libraryURL.appendingPathComponent($0) }
 
         let deleteDatabase = Completable
             .concat(toDelete
-                        .map { path in
-                            fileManager.rx
-                                .removeItem(at: path)
-                                .catch { error in
-                                    ILOG("Unable to delete \(path) because \(error.localizedDescription)")
-                                    return .empty()
-                                }
-                        })
+                .map { path in
+                    fileManager.rx
+                        .removeItem(at: path)
+                        .catch { error in
+                            ILOG("Unable to delete \(path) because \(error.localizedDescription)")
+                            return .empty()
+                        }
+                })
 
         let createDirectory = fileManager.rx
             .createDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, withIntermediateDirectories: true, attributes: nil)
@@ -48,39 +48,39 @@ extension PVGameLibrary {
         let moveFiles: Completable = fileManager.rx
             .contentsOfDirectory(at: PVEmulatorConfiguration.documentsPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
             .catch { Single<[URL]>.error(MigrationError.unableToGetContentsOfDocuments(error: $0)) }
-            .map({ contents -> [URL] in
+            .map { contents -> [URL] in
                 let ignoredExtensions = ["jpg", "png", "gif", "jpeg"]
-                return contents.filter { (url) -> Bool in
+                return contents.filter { url -> Bool in
                     let dbFile = url.path.lowercased().contains("realm")
                     let ignoredExtension = ignoredExtensions.contains(url.pathExtension)
                     var isDir: ObjCBool = false
                     let exists: Bool = fileManager.fileExists(atPath: url.path, isDirectory: &isDir)
                     return exists && !dbFile && !ignoredExtension && !isDir.boolValue
                 }
-            })
-            .flatMapCompletable({ filesToMove -> Completable in
+            }
+            .flatMapCompletable { filesToMove -> Completable in
                 let moves = filesToMove
-                    .map { ($0, PVEmulatorConfiguration.Paths.romsImportPath.appendingPathComponent($0.lastPathComponent))}
+                    .map { ($0, PVEmulatorConfiguration.Paths.romsImportPath.appendingPathComponent($0.lastPathComponent)) }
                     .map { path, toPath in
                         fileManager.rx.moveItem(at: path, to: toPath)
-                            .catch({ error in
+                            .catch { error in
                                 ELOG("Unable to move \(path.path) to \(toPath.path) because \(error.localizedDescription)")
                                 return .empty()
-                            })
-                }
+                            }
+                    }
                 return Completable.concat(moves)
-            })
+            }
 
         let getRomPaths: Observable<MigrationEvent> = fileManager.rx
             .contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
             .catch { Single<[URL]>.error(MigrationError.unableToGetRomPaths(error: $0)) }
-            .flatMapMaybe({ paths in
+            .flatMapMaybe { paths in
                 if paths.isEmpty {
                     return .empty()
                 } else {
                     return .just(.pathsToImport(paths: paths))
                 }
-            })
+            }
             .asObservable()
 
         return deleteDatabase
@@ -94,11 +94,11 @@ extension PVGameLibrary {
 extension PVGameLibrary.MigrationError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .unableToCreateRomsDirectory(let error):
+        case let .unableToCreateRomsDirectory(error):
             return "Unable to create roms directory, error: \(error.localizedDescription)"
-        case .unableToGetContentsOfDocuments(let error):
+        case let .unableToGetContentsOfDocuments(error):
             return "Unable to get contents of directory, error: \(error.localizedDescription)"
-        case .unableToGetRomPaths(let error):
+        case let .unableToGetRomPaths(error):
             return "Unable to get rom paths, error: \(error.localizedDescription)"
         }
     }

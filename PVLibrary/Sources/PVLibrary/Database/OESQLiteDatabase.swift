@@ -6,10 +6,10 @@
 //
 
 import Foundation
-//import SQLite3
+// import SQLite3
 import SQLite
 
-public typealias SQLQueryDict = [String:AnyObject]
+public typealias SQLQueryDict = [String: AnyObject]
 public typealias SQLQueryResponse = [SQLQueryDict]
 public protocol SQLQueryable {
     func execute(query: String) throws -> SQLQueryResponse
@@ -28,13 +28,13 @@ public struct OESQLiteDatabase {
 
 extension OESQLiteDatabase: SQLQueryable {
     public func execute(query: String) throws -> SQLQueryResponse {
-        var result: SQLQueryResponse = SQLQueryResponse()
+        var result = SQLQueryResponse()
 
         // prepare connection, sql, inout statement
         // try connection.execute(query)
         let stmt = try connection.prepare(query)
         for row in stmt {
-            var dict: SQLQueryDict = SQLQueryDict()
+            var dict = SQLQueryDict()
             for (index, name) in stmt.columnNames.enumerated() {
                 dict[name] = row[index] as AnyObject
             }

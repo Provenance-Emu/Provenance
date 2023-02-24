@@ -1,0 +1,30 @@
+//
+//  BuildFlags.xcconfig
+//  PVReicast
+//
+//  Created by Joseph Mattiello on 11/1/18.
+//
+//
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) REICAST_VERSION=15.0 TARGET_NO_WEBUI=1 TARGET_NO_REC=1 NO_ASM=1
+OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fno-operator-names -fsingle-precision-constant
+
+// MacOS Catalyst
+GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) TARGET_OSX=1
+OTHER_CFLAGS[sdk=macosx*] = $(inherited)
+
+
+    // Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1 GLES=1
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -fomit-frame-pointer
+
+// Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1 GLES=1
+
+// tvOS Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) TARGET_IPHONE=1 GLES=1
+OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -fomit-frame-pointer
+
+// tvOS Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1 GLES=1

@@ -58,7 +58,7 @@ extension SWCompression.CompressionMethod {
 /// unclear how to decompress containers with mutliple files. It's very manual in compresspressing
 /// and decompressing single instances of Data.
 public final class Extractor {
-    static let shared: Extractor = Extractor()
+    static let shared: Extractor = .init()
 
     let dispatchQueue = DispatchQueue(label: "com.provenance.extractor", qos: .utility)
     let queue: OperationQueueScheduler = {
@@ -70,9 +70,9 @@ public final class Extractor {
     }()
 
     private func data(at path: URL) -> Promise<Data> {
-        return Promise(on: dispatchQueue, { () -> Data in
+        return Promise(on: dispatchQueue) { () -> Data in
             try Data(contentsOf: path, options: .mappedIfSafe)
-        })
+        }
     }
 
     // MAR: - 7Zip
@@ -98,9 +98,9 @@ public final class Extractor {
     // MARK: - Zip
 
     private func openZip(with data: Data) -> Promise<[ZipEntry]> {
-        return Promise(on: dispatchQueue, { () -> [ZipEntry] in
+        return Promise(on: dispatchQueue) { () -> [ZipEntry] in
             try ZipContainer.open(container: data)
-        })
+        }
     }
 
     private func decompress(entries: [ZipEntry]) -> Promise<[DecompressedEntry]> {

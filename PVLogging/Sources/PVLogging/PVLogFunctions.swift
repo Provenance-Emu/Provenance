@@ -46,11 +46,12 @@ public func ELOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defa
 @_transparent
 @_effects(readonly)
 public func PVLog(level: UInt, flag: PVLogFlag, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, format: String, _ args: String? ...) {
-    var async: Bool = true
-
-    if flag == .error {
-        async = false
-    }
+//    var async: Bool = true
+//
+//    if flag == .error {
+//        async = false
+//    }
+	fatalError("Unfinished")
 //    va_list args;
 //    va_start(args, format);
 //    // TODO: This, i dunno.

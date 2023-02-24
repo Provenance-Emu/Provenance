@@ -7,11 +7,12 @@
 //
 
 import Foundation
-import PVSupport
-import RealmSwift
 import PVLogging
+import PVSupport
+import Realm
+import RealmSwift
 #if os(tvOS)
-    import TVServices
+import TVServices
 #endif
 
 public struct SystemOptions: OptionSet, Codable {
@@ -67,7 +68,7 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     }
 
     public var extensions: [String] {
-		return supportedExtensions.map { $0 }
+        return supportedExtensions.map { $0 }
     }
 
     // Reverse Links
@@ -85,8 +86,9 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
 
     public var userPreferredCore: Core? {
         guard let userPreferredCoreID = userPreferredCoreID,
-            let realm = try? Realm(),
-            let preferredCore = realm.object(ofType: PVCore.self, forPrimaryKey: userPreferredCoreID) else {
+              let realm = try? Realm(),
+              let preferredCore = realm.object(ofType: PVCore.self, forPrimaryKey: userPreferredCoreID)
+        else {
             return nil
         }
         return Core(with: preferredCore)
@@ -96,7 +98,7 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
 
     public dynamic var identifier: String = ""
 
-    public override static func primaryKey() -> String? {
+    override public static func primaryKey() -> String? {
         return "identifier"
     }
 
@@ -133,7 +135,7 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
         }
     }
 
-    public override static func ignoredProperties() -> [String] {
+    override public static func ignoredProperties() -> [String] {
         return ["controllerLayout"]
     }
 }
@@ -141,7 +143,7 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
 public extension PVSystem {
     var screenType: ScreenType {
         get {
-			return ScreenType(rawValue: _screenType) ?? .unknown
+            return ScreenType(rawValue: _screenType) ?? .unknown
         }
         set {
             //            try? realm?.write {
@@ -155,17 +157,17 @@ public extension PVSystem {
     }
 
     var biosesHave: [PVBIOS]? {
-        let have = bioses.filter({ (bios) -> Bool in
+        let have = bioses.filter { bios -> Bool in
             bios.online
-        })
+        }
 
         return !have.isEmpty ? Array(have) : nil
     }
 
     var missingBIOSes: [PVBIOS]? {
-        let missing = bioses.filter({ (bios) -> Bool in
+        let missing = bioses.filter { bios -> Bool in
             !bios.online
-        })
+        }
 
         return !missing.isEmpty ? Array(missing) : nil
     }
@@ -175,16 +177,16 @@ public extension PVSystem {
     }
 
     #if os(tvOS)
-        var imageType: TVContentItemImageShape {
-            switch enumValue {
-            case .NES, .Dreamcast, .GameCube, .Genesis, .Saturn, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .AtariJaguarCD, .Lynx, .WonderSwan, .WonderSwanColor, .PS2, .PS3, .PSP, .Intellivision, .ColecoVision, ._3DO, .Odyssey2, .Atari8bit, .Vectrex, .DOS, .AtariST, .EP128, .Macintosh, .MSX, .MSX2, .Supervision, .ZXSpectrum, .C64, .Wii, .PalmOS, .TIC80:
-                return .poster
-            case .GameGear, .GB, .GBC, .GBA, .NeoGeo, .NGP, .NGPC, .PSX, .VirtualBoy, .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini, .DS, .Unknown, .Music, ._3DS, .MegaDuck:
-                return .square
-            case .N64, .SNES:
-                return .HDTV
-            }
+    var imageType: TVContentItemImageShape {
+        switch enumValue {
+        case .NES, .Dreamcast, .GameCube, .Genesis, .Saturn, .SegaCD, .MasterSystem, .SG1000, .Sega32X, .Atari2600, .Atari5200, .Atari7800, .AtariJaguar, .AtariJaguarCD, .Lynx, .WonderSwan, .WonderSwanColor, .PS2, .PS3, .PSP, .Intellivision, .ColecoVision, ._3DO, .Odyssey2, .Atari8bit, .Vectrex, .DOS, .AtariST, .EP128, .Macintosh, .MSX, .MSX2, .Supervision, .ZXSpectrum, .C64, .Wii, .PalmOS, .TIC80:
+            return .poster
+        case .GameGear, .GB, .GBC, .GBA, .NeoGeo, .NGP, .NGPC, .PSX, .VirtualBoy, .PCE, .PCECD, .PCFX, .SGFX, .FDS, .PokemonMini, .DS, .Unknown, .Music, ._3DS, .MegaDuck:
+            return .square
+        case .N64, .SNES:
+            return .HDTV
         }
+    }
     #endif
 }
 
@@ -202,7 +204,7 @@ extension System: RealmRepresentable {
     }
 
     public func asRealm() -> PVSystem {
-        return PVSystem.build({ object in
+        return PVSystem.build { object in
             object.name = name
             object.shortName = shortName
             object.shortNameAlt = shortNameAlt
@@ -228,13 +230,13 @@ extension System: RealmRepresentable {
                     if database.realm.isInWriteTransaction {
                         existingBIOS.system = object
                     } else {
-						do {
-							try database.writeTransaction {
-								existingBIOS.system = object
-							}
-						} catch {
-							ELOG("\(error.localizedDescription)")
-						}
+                        do {
+                            try database.writeTransaction {
+                                existingBIOS.system = object
+                            }
+                        } catch {
+                            ELOG("\(error.localizedDescription)")
+                        }
                     }
                 } else {
                     let newBIOS = PVBIOS(withSystem: object, descriptionText: entry.descriptionText, optional: entry.optional, expectedMD5: entry.expectedMD5, expectedSize: entry.expectedSize, expectedFilename: entry.expectedFilename)
@@ -242,11 +244,11 @@ extension System: RealmRepresentable {
                     if database.realm.isInWriteTransaction {
                         database.realm.add(newBIOS)
                     } else {
-						do {
-							try database.add(newBIOS)
-						} catch {
-							ELOG("\(error.localizedDescription)")
-						}
+                        do {
+                            try database.add(newBIOS)
+                        } catch {
+                            ELOG("\(error.localizedDescription)")
+                        }
                     }
                 }
             }
@@ -259,6 +261,6 @@ extension System: RealmRepresentable {
             object.supportsRumble = supportsRumble
             object.supported = supported
             object.headerByteSize = headerByteSize
-        })
+        }
     }
 }

@@ -7,10 +7,10 @@
 //
 
 import Foundation
-@_exported import PVSupport
-import ZipArchive
-import SWCompression
 import PVLogging
+@_exported import PVSupport
+import SWCompression
+import ZipArchive
 
 public typealias PVExtractionStartedHandler = (_ path: URL) -> Void
 public typealias PVExtractionUpdatedHandler = (_ path: URL, _ entryNumber: Int, _ total: Int, _ progress: Float) -> Void
@@ -28,7 +28,7 @@ public final class DirectoryWatcher: NSObject {
     private let extractionCompleteHandler: PVExtractionCompleteHandler?
 
     fileprivate var dispatch_source: DispatchSourceFileSystemObject?
-    fileprivate let serialQueue: DispatchQueue = DispatchQueue(label: "org.provenance-emu.provenance.serialExtractorQueue")
+    fileprivate let serialQueue: DispatchQueue = .init(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     fileprivate var previousContents: [URL]?
     private var unzippedFiles = [URL]()
@@ -94,10 +94,10 @@ public final class DirectoryWatcher: NSObject {
                 var contentsSet = Set(contents ?? [URL]())
                 contentsSet.subtract(previousContentsSet)
 
-                contentsSet = contentsSet.filter({ (url) -> Bool in
+                contentsSet = contentsSet.filter { url -> Bool in
                     // Ignore special files
                     url.lastPathComponent != "0" && !url.lastPathComponent.starts(with: ".") && !url.path.contains("_MACOSX")
-                })
+                }
 
                 contentsSet.forEach { file in
                     self.watchFile(at: file)
@@ -131,7 +131,7 @@ public final class DirectoryWatcher: NSObject {
     }
 
     private func _stopMonitoring() {
-        if let dispatch_source = self.dispatch_source {
+        if let dispatch_source = dispatch_source {
             dispatch_source.cancel()
             self.dispatch_source = nil
         }
@@ -147,9 +147,13 @@ public final class DirectoryWatcher: NSObject {
             let immutable: Bool = attributes[FileAttributeKey.immutable] as? Bool ?? false
             print("immutable \(immutable)")
 
-            DispatchQueue.main.async { [weak self] () -> Void in
+            DispatchQueue.main.async { [weak self] () in
                 if let weakSelf = self {
-                    Timer.scheduledTimer(timeInterval: 2.0, target: weakSelf, selector: #selector(DirectoryWatcher.checkFileProgress(_:)), userInfo: ["path": path, "filesize": filesize, "wasZeroBefore": false], repeats: false)
+                    Timer.scheduledTimer(timeInterval: 2.0,
+										 target: weakSelf,
+										 selector: #selector(DirectoryWatcher.checkFileProgress(_:)),
+										 userInfo: ["path": path, "filesize": filesize, "wasZeroBefore": false] as [String:Any],
+										 repeats: false)
                 }
             }
         } catch {
@@ -160,8 +164,11 @@ public final class DirectoryWatcher: NSObject {
 
     @objc
     func checkFileProgress(_ timer: Timer) {
-        guard let userInfo = timer.userInfo as? [String: Any], let path = userInfo["path"] as? URL, let previousFilesize = userInfo["filesize"] as? UInt64 else {
-            ELOG("Timer missing userInfo or elements of it.")
+        guard
+			let userInfo = timer.userInfo as? [String: Any],
+			let path = userInfo["path"] as? URL,
+			let previousFilesize = userInfo["filesize"] as? UInt64 else {
+			ELOG("Timer missing userInfo or elements of it.")
             return
         }
 
@@ -180,7 +187,7 @@ public final class DirectoryWatcher: NSObject {
 
         let sizeHasntChanged = previousFilesize == currentFilesize
 
-        if sizeHasntChanged, (currentFilesize > 0 || wasZeroBefore) {
+        if sizeHasntChanged, currentFilesize > 0 || wasZeroBefore {
             let compressedExtensions = PVEmulatorConfiguration.archiveExtensions
             let ext = path.pathExtension
 
@@ -190,15 +197,23 @@ public final class DirectoryWatcher: NSObject {
                 }
             } else {
                 if extractionCompleteHandler != nil {
-                    DirectoryWatcher.handlerQueue.async(execute: { () -> Void in
+                    DirectoryWatcher.handlerQueue.async { () in
                         self.extractionCompleteHandler?([path])
-                    })
+                    }
                 }
             }
             return
         }
-
-        Timer.scheduledTimer(timeInterval: 2.0, target: self, selector: #selector(DirectoryWatcher.checkFileProgress(_:)), userInfo: ["path": path, "filesize": currentFilesize, "wasZeroBefore": (currentFilesize == 0)], repeats: false)
+		let newUserInfo: [String:Any] = [
+			"path": path,
+			"filesize": currentFilesize,
+			"wasZeroBefore": currentFilesize == 0
+		]
+        Timer.scheduledTimer(timeInterval: 2.0,
+							 target: self,
+							 selector: #selector(DirectoryWatcher.checkFileProgress(_:)),
+							 userInfo: newUserInfo,
+							 repeats: false)
     }
 
     static var handlerQueue: DispatchQueue {
@@ -211,9 +226,9 @@ public final class DirectoryWatcher: NSObject {
             return
         }
 
-        DirectoryWatcher.handlerQueue.async(execute: { [weak self]() -> Void in
+        DirectoryWatcher.handlerQueue.async { [weak self] () in
             self?.extractionStartedHandler?(filePath)
-        })
+        }
 
         if !FileManager.default.fileExists(atPath: filePath.path) {
             WLOG("No file at \(filePath.path)")
@@ -254,10 +269,10 @@ public final class DirectoryWatcher: NSObject {
                     }
                 } else if let error = error {
                     ELOG("Unable to unzip file: \(filePath) because: \(error.localizedDescription)")
-                    DirectoryWatcher.handlerQueue.async(execute: { () -> Void in
+                    DirectoryWatcher.handlerQueue.async { () in
                         self.extractionCompleteHandler?(nil)
                         NotificationCenter.default.post(name: NSNotification.Name.PVArchiveInflationFailed, object: self)
-                    })
+                    }
                 }
                 self.unzippedFiles.removeAll()
                 self.delayedStartMonitoring()
@@ -277,10 +292,10 @@ public final class DirectoryWatcher: NSObject {
                 }
 
                 // TODO: Support natively using 7zips by matching crcs
-                let crcs = Set(entries.filter({
+                let crcs = Set(entries.filter {
                     guard let crc = $0.info.crc, crc != 0 else { return false }
                     return true
-                }).map { String($0.info.crc!, radix: 16, uppercase: true) })
+                }.map { String($0.info.crc!, radix: 16, uppercase: true) })
                 if let releaseID = GameImporter.shared.releaseID(forCRCs: crcs) {
                     ILOG("Found a release ID \(releaseID) inside this 7Zip")
                 }
@@ -288,7 +303,7 @@ public final class DirectoryWatcher: NSObject {
                 stopMonitoring()
                 let length = entries.count
                 var progress: Float = 0.0
-                try entries.enumerated().forEach { (index, entry) in
+                try entries.enumerated().forEach { index, entry in
                     guard let data = entry.data else {
                         ELOG("7zip entry \(entry.info.name) data is nil.")
                         return
@@ -298,18 +313,18 @@ public final class DirectoryWatcher: NSObject {
                     // Send update info
                     if extractionUpdatedHandler != nil {
                         progress = Float(index) / Float(length)
-                        DirectoryWatcher.handlerQueue.async(execute: {[weak self]() -> Void in
+                        DirectoryWatcher.handlerQueue.async { [weak self] () in
                             self?.extractionUpdatedHandler?(filePath, index, Int(length), progress)
-                        })
+                        }
                     }
                 }
 
                 try FileManager.default.removeItem(at: filePath)
                 let unzippedItems = unzippedFiles
-                DirectoryWatcher.handlerQueue.async(execute: {[weak self] () -> Void in
+                DirectoryWatcher.handlerQueue.async { [weak self] () in
                     self?.extractionCompleteHandler?(unzippedItems)
-                })
-                self.unzippedFiles.removeAll()
+                }
+                unzippedFiles.removeAll()
                 delayedStartMonitoring()
             } catch {
                 ELOG("7z open error: \(error.localizedDescription)")
@@ -323,8 +338,8 @@ public final class DirectoryWatcher: NSObject {
 
     // Delay start so we have a moment to move files and stuff
     fileprivate func delayedStartMonitoring() {
-        DirectoryWatcher.handlerQueue.asyncAfter(deadline: .now() + 2, execute: {
+        DirectoryWatcher.handlerQueue.asyncAfter(deadline: .now() + 2) {
             self.startMonitoring()
-        })
+        }
     }
 }

@@ -50,9 +50,9 @@ let package = Package(
             ],
             swiftSettings: [
                 .define("LIBRETRO"),
-                .unsafeFlags([
-                    "-Xfrontend", "-enabled-cxx-interop"
-                ])
+//                .unsafeFlags([
+//                    "-Xfrontend", "-enabled-cxx-interop"
+//                ])
             ],
             linkerSettings: [
 //                .linkedFramework("GameController", .when(platforms: [.iOS, .tvOS])),

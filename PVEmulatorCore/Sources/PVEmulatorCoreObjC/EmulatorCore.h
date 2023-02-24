@@ -12,7 +12,6 @@
 #import <MetalKit/MTKView.h>
 #else
 @import Foundation;
-@import UIKit;
 #if !TARGET_OS_WATCH
 @import GameController;
 @import MetalKit.MTKView;
@@ -187,13 +186,5 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (void)loadStateFromFileAtPath:(NSString *_Nonnull )fileName
               completionHandler:(nonnull SaveStateCompletion)block;
 
-- (void)sendEvent:(UIEvent *)event;
-
-// Swift using @_objcImplementation
-//- (void)rumble;
-//- (void)rumblePhone;
-//- (void)rumble:(NSInteger)player;
-//- (GCController* _Nullable)controllerFor:(NSInteger)player;
-//- (CHHapticEngine* _Nullable)hapticEngineFor:(NSInteger)player;
-
+- (void)sendEvent:(UIEvent *_Nullable)event;
 @end

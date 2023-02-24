@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Realm
 import RealmSwift
 
 @objcMembers
@@ -35,7 +36,7 @@ public final class PVBIOS: Object, BIOSFileProvider {
         self.expectedFilename = expectedFilename
     }
 
-    public override static func primaryKey() -> String? {
+    override public static func primaryKey() -> String? {
         return "expectedFilename"
     }
 }
@@ -46,8 +47,8 @@ public extension PVBIOS {
     }
 }
 
-extension PVBIOS {
-    public var status: BIOSStatus {
+public extension PVBIOS {
+    var status: BIOSStatus {
         return BIOSStatus(withBios: self)
     }
 }
@@ -82,12 +83,12 @@ extension BIOS: RealmRepresentable {
     }
 
     public func asRealm() -> PVBIOS {
-        return PVBIOS.build({ object in
+        return PVBIOS.build { object in
             object.descriptionText = descriptionText
             object.optional = optional
             object.expectedMD5 = expectedMD5
             object.expectedSize = expectedSize
             object.expectedFilename = expectedFilename
-        })
+        }
     }
 }

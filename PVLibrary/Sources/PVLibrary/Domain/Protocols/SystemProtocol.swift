@@ -43,8 +43,8 @@ public protocol SystemProtocol {
 
 // MARK: Default Implimentations
 
-extension SystemProtocol {
-    public var options: SystemOptions {
+public extension SystemProtocol {
+    var options: SystemOptions {
         var systemOptions = [SystemOptions]()
         if usesCDs { systemOptions.append(.cds) }
         if portableSystem { systemOptions.append(.portable) }
