@@ -20,7 +20,9 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(name: "PVLogging", path: "../PVLogging/"),
-        .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.50.4")
+        .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.50.4"),
+        .package(url: "https://github.com/tuist/XcodeProj.git", .upToNextMajor(from: "8.9.0")),
+        .package(url: "https://github.com/apple/swift-format.git", .upToNextMajor(from: "0.50700.1")),
     ],
 
     // MARK: - Targets
@@ -38,6 +40,19 @@ let package = Package(
         //         .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
         //         .linkedFramework("WatchKit", .when(platforms: [.watchOS]))
         //     ])
+    .plugin(
+      name: "Lint Source Code",
+      capability: .command(
+        intent: .custom(
+          verb: "lint-source-code",
+          description: "Lint source code for a specified target."
+        )
+      ),
+      dependencies: [
+        .target(name: "swift-format")
+      ],
+      path: "Plugins/LintPlugin"
+    ),
     ]
 )
 

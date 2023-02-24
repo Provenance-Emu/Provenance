@@ -26,6 +26,9 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
+        // .package(
+        //     url: "https://github.com/immobiliare/Glider.git",
+        //     .upToNextMajor(from: "2.0.0"))
 //        .package(
 //            url: "https://github.com/CocoaLumberjack/CocoaLumberjack",
 //            .upToNextMajor(from: "3.8.0")),
