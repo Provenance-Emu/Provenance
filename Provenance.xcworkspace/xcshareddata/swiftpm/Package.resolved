@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "NSLogger",
+        "repositoryURL": "https://github.com/fpillet/NSLogger",
+        "state": {
+          "branch": null,
+          "revision": "e8c453142da7051462cca189d3fcee74de0500ea",
+          "version": null
+        }
+      },
+      {
         "package": "PLCrashReporter",
         "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
         "state": {
@@ -35,6 +44,24 @@
           "branch": "master",
           "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
           "version": null
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "32e8d724467f8fe623624570367e3d50c5638e46",
+          "version": "1.5.2"
+        }
+      },
+      {
+        "package": "SwiftGenPlugin",
+        "repositoryURL": "https://github.com/SwiftGen/SwiftGenPlugin",
+        "state": {
+          "branch": null,
+          "revision": "879b85a470cacd70c19e22eb7e11a3aed66f4068",
+          "version": "6.6.2"
         }
       },
       {

@@ -164,25 +164,8 @@
 		936FDBEC295855A50073628A /* libMoltenVK_Play.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; };
 		93F28DCA295E2F5100E4D464 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B300DEC1295FEA9B0049F2AB /* DOLJitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */; };
-		B300DEC2295FEA9D0049F2AB /* DOLJitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */; };
-		B300DEC3295FEC320049F2AB /* CodeSignatureUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */; };
-		B300DEC4295FEC340049F2AB /* CodeSignatureUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */; };
-		B300DECC295FECB50049F2AB /* DebuggerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */; };
-		B300DECD295FECB50049F2AB /* DebuggerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */; };
-		B300DECE295FECC30049F2AB /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */; };
-		B300DECF295FECC40049F2AB /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */; };
-		B300DED0295FECC70049F2AB /* JitAcquisitionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */; };
-		B300DED1295FECC70049F2AB /* JitAcquisitionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */; };
-		B300DED2295FECDC0049F2AB /* LocalizerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */; };
-		B300DED3295FECDC0049F2AB /* LocalizerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */; };
 		B300DED5295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */; };
 		B300DED6295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */; };
-		B300DED7295FEF450049F2AB /* JitWaitScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DEC6295FEC710049F2AB /* JitWaitScreenViewController.swift */; };
-		B300DED8295FEF5C0049F2AB /* JitWaitScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B300DEC7295FEC710049F2AB /* JitWaitScreen.xib */; };
-		B300DED9295FEFF40049F2AB /* JitFailedJailbreakScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B300DECA295FEC740049F2AB /* JitFailedJailbreakScreen.xib */; };
-		B300DEDA295FEFF40049F2AB /* JitFailedJailbreakScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DEC9295FEC740049F2AB /* JitFailedJailbreakScreenViewController.swift */; };
-		B300DEDB295FEFF40049F2AB /* JitScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */; };
 		B302F31421713AFD000322B9 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B302F31521713B17000322B9 /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
 		B305EEFB276B4C71003AE510 /* Provenance Watch WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -506,16 +489,13 @@
 		B3788748297A4FE700F9F062 /* PVSaveStatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB108206EE8A700A1F942 /* PVSaveStatesViewController.swift */; };
 		B3788749297A4FE700F9F062 /* QuickTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFB276B470B00D85327 /* QuickTableViewController.swift */; };
 		B378874A297A4FE700F9F062 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
-		B378874C297A4FE700F9F062 /* JitWaitScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DEC6295FEC710049F2AB /* JitWaitScreenViewController.swift */; };
 		B378874F297A4FE700F9F062 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
 		B3788750297A4FE700F9F062 /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
 		B3788751297A4FE700F9F062 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE2287EA0CE0054C1B5 /* ulTron.metal */; };
-		B3788752297A4FE700F9F062 /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */; };
 		B3788753297A4FE700F9F062 /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B3788755297A4FE700F9F062 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.m */; };
 		B3788756297A4FE700F9F062 /* RxTableViewRealmDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AC218EC1AD0015C690 /* RxTableViewRealmDataSource.swift */; };
 		B3788757297A4FE700F9F062 /* ViewControllerResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29227BC7E610070E222 /* ViewControllerResolver.swift */; };
-		B3788758297A4FE700F9F062 /* JitFailedJailbreakScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DEC9295FEC740049F2AB /* JitFailedJailbreakScreenViewController.swift */; };
 		B378875A297A4FE700F9F062 /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		B378875B297A4FE700F9F062 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B378875C297A4FE700F9F062 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
@@ -533,7 +513,6 @@
 		B378876B297A4FE700F9F062 /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E71B63D7CD0065FA39 /* GCDWebServerRequest.m */; };
 		B378876C297A4FE700F9F062 /* RowCompatible.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C01276B470B00D85327 /* RowCompatible.swift */; };
 		B378876E297A4FE700F9F062 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
-		B378876F297A4FE700F9F062 /* CodeSignatureUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */; };
 		B3788770297A4FE700F9F062 /* PVAppDelegate+VolumeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */; };
 		B3788772297A4FE700F9F062 /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C09276B470B00D85327 /* Icon.swift */; };
 		B3788773297A4FE700F9F062 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
@@ -552,9 +531,7 @@
 		B3788784297A4FE700F9F062 /* UICollectionView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */; };
 		B3788785297A4FE700F9F062 /* PVGameLibraryViewController+PeekPop.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */; };
 		B3788787297A4FE700F9F062 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28E27BC7E610070E222 /* Extensions.swift */; };
-		B3788788297A4FE700F9F062 /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
 		B3788789297A4FE700F9F062 /* PVGPUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C648278E626D007E61FE /* PVGPUViewController.m */; };
-		B378878A297A4FE700F9F062 /* DOLJitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */; };
 		B378878C297A4FE700F9F062 /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F71B63D7CD0065FA39 /* GCDWebServerErrorResponse.m */; };
 		B3788790297A4FE700F9F062 /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE7287EA0CE0054C1B5 /* MameShaders.metal */; };
 		B3788791297A4FE700F9F062 /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
@@ -575,13 +552,11 @@
 		B37887A4297A4FE700F9F062 /* PVSaveStateCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB10B206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift */; };
 		B37887A6297A4FE700F9F062 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B37887A7297A4FE700F9F062 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
-		B37887A8297A4FE700F9F062 /* LocalizerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */; };
 		B37887A9297A4FE700F9F062 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B37887AA297A4FE700F9F062 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29327BC7E610070E222 /* SearchBar.swift */; };
 		B37887AB297A4FE700F9F062 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
 		B37887AC297A4FE700F9F062 /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B37887AD297A4FE700F9F062 /* PVCheatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */; };
-		B37887AF297A4FE700F9F062 /* JitAcquisitionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */; };
 		B37887B0297A4FE700F9F062 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B37887B1297A4FE700F9F062 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		B37887B3297A4FE700F9F062 /* UIDevice+Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */; };
@@ -596,7 +571,6 @@
 		B37887BF297A4FE700F9F062 /* SettingsOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38D02332884D03A008FBED8 /* SettingsOptionRow.swift */; };
 		B37887C0297A4FE700F9F062 /* UIAppearanceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C19207ED7040040709A /* UIAppearanceExtensions.swift */; };
 		B37887C1297A4FE700F9F062 /* AppearanceStyleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1C207ED7040040709A /* AppearanceStyleExtensions.swift */; };
-		B37887C2297A4FE700F9F062 /* JitScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */; };
 		B37887C4297A4FE700F9F062 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0C276B470B00D85327 /* Section.swift */; };
 		B37887C5297A4FE700F9F062 /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225321D32AD60077E86F /* SliderCell.swift */; };
 		B37887C6297A4FE700F9F062 /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
@@ -625,7 +599,6 @@
 		B37887E1297A4FE700F9F062 /* RealmBindObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AA218EC1AB0015C690 /* RealmBindObserver.swift */; };
 		B37887E2297A4FE700F9F062 /* PVGameLibraryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */; };
 		B37887E4297A4FE700F9F062 /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0B276B470B00D85327 /* Deprecated.swift */; };
-		B37887E5297A4FE700F9F062 /* DebuggerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */; };
 		B37887E8297A4FE700F9F062 /* GameItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29127BC7E610070E222 /* GameItemView.swift */; };
 		B37887E9297A4FE700F9F062 /* GCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49EC1B63D7CD0065FA39 /* GCDWebServerDataRequest.m */; };
 		B37887EB297A4FE700F9F062 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
@@ -702,7 +675,6 @@
 		B3788842297A4FE700F9F062 /* OmniScale.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703552896314200F75595 /* OmniScale.fsh */; };
 		B3788843297A4FE700F9F062 /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703512896314100F75595 /* MasterShader.fsh */; };
 		B3788844297A4FE700F9F062 /* AAScale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703572896314200F75595 /* AAScale4x.fsh */; };
-		B3788845297A4FE700F9F062 /* JitFailedJailbreakScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B300DECA295FEC740049F2AB /* JitFailedJailbreakScreen.xib */; };
 		B3788846297A4FE700F9F062 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE426CAC2B10088AC32 /* Default.xib */; platformFilters = (ios, maccatalyst, ); };
 		B3788847297A4FE700F9F062 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB126CABEA80088AC32 /* SaveStates.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3788848297A4FE700F9F062 /* SmoothBilinear.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703502896314100F75595 /* SmoothBilinear.fsh */; };
@@ -718,7 +690,6 @@
 		B3788852297A4FE700F9F062 /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
 		B3788853297A4FE700F9F062 /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
 		B3788854297A4FE700F9F062 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
-		B3788855297A4FE700F9F062 /* JitWaitScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B300DEC7295FEC710049F2AB /* JitWaitScreen.xib */; };
 		B3788856297A4FE700F9F062 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B378885D297A4FE700F9F062 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B37B71AD278E3198005FB278 /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
@@ -833,9 +804,6 @@
 		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
-		B3E61EFA295FF168003249F7 /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
-		B3E61EFB295FF16C003249F7 /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
-		B3E61EFC295FF197003249F7 /* JitScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */; };
 		B3E88CB82977AB4400C90E86 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CB72977AB4400C90E86 /* Reachability */; };
 		B3E88CBA2977AB5900C90E86 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CB92977AB5900C90E86 /* Reachability */; };
 		B3E88CBC2977AB6C00C90E86 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CBB2977AB6C00C90E86 /* Reachability */; };
@@ -865,16 +833,13 @@
 		B3F7E2A8297736BE00362B92 /* PVSaveStatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB108206EE8A700A1F942 /* PVSaveStatesViewController.swift */; };
 		B3F7E2A9297736BE00362B92 /* QuickTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFB276B470B00D85327 /* QuickTableViewController.swift */; };
 		B3F7E2AA297736BE00362B92 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
-		B3F7E2AC297736BE00362B92 /* JitWaitScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DEC6295FEC710049F2AB /* JitWaitScreenViewController.swift */; };
 		B3F7E2AF297736BE00362B92 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
 		B3F7E2B0297736BE00362B92 /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
 		B3F7E2B1297736BE00362B92 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE2287EA0CE0054C1B5 /* ulTron.metal */; };
-		B3F7E2B2297736BE00362B92 /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */; };
 		B3F7E2B3297736BE00362B92 /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B3F7E2B5297736BE00362B92 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.m */; };
 		B3F7E2B6297736BE00362B92 /* RxTableViewRealmDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AC218EC1AD0015C690 /* RxTableViewRealmDataSource.swift */; };
 		B3F7E2B7297736BE00362B92 /* ViewControllerResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29227BC7E610070E222 /* ViewControllerResolver.swift */; };
-		B3F7E2B8297736BE00362B92 /* JitFailedJailbreakScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DEC9295FEC740049F2AB /* JitFailedJailbreakScreenViewController.swift */; };
 		B3F7E2BA297736BE00362B92 /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		B3F7E2BB297736BE00362B92 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B3F7E2BC297736BE00362B92 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
@@ -892,7 +857,6 @@
 		B3F7E2CB297736BE00362B92 /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E71B63D7CD0065FA39 /* GCDWebServerRequest.m */; };
 		B3F7E2CC297736BE00362B92 /* RowCompatible.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C01276B470B00D85327 /* RowCompatible.swift */; };
 		B3F7E2CE297736BE00362B92 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
-		B3F7E2CF297736BE00362B92 /* CodeSignatureUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */; };
 		B3F7E2D0297736BE00362B92 /* PVAppDelegate+VolumeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */; };
 		B3F7E2D2297736BE00362B92 /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C09276B470B00D85327 /* Icon.swift */; };
 		B3F7E2D3297736BE00362B92 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
@@ -911,9 +875,7 @@
 		B3F7E2E4297736BE00362B92 /* UICollectionView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */; };
 		B3F7E2E5297736BE00362B92 /* PVGameLibraryViewController+PeekPop.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */; };
 		B3F7E2E8297736BE00362B92 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28E27BC7E610070E222 /* Extensions.swift */; };
-		B3F7E2E9297736BE00362B92 /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
 		B3F7E2EA297736BE00362B92 /* PVGPUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C648278E626D007E61FE /* PVGPUViewController.m */; };
-		B3F7E2EB297736BE00362B92 /* DOLJitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */; };
 		B3F7E2ED297736BE00362B92 /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F71B63D7CD0065FA39 /* GCDWebServerErrorResponse.m */; };
 		B3F7E2F1297736BE00362B92 /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE7287EA0CE0054C1B5 /* MameShaders.metal */; };
 		B3F7E2F2297736BE00362B92 /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
@@ -934,13 +896,11 @@
 		B3F7E305297736BE00362B92 /* PVSaveStateCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB10B206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift */; };
 		B3F7E307297736BE00362B92 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B3F7E308297736BE00362B92 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
-		B3F7E309297736BE00362B92 /* LocalizerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */; };
 		B3F7E30A297736BE00362B92 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B3F7E30B297736BE00362B92 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29327BC7E610070E222 /* SearchBar.swift */; };
 		B3F7E30C297736BE00362B92 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
 		B3F7E30D297736BE00362B92 /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B3F7E30E297736BE00362B92 /* PVCheatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */; };
-		B3F7E310297736BE00362B92 /* JitAcquisitionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */; };
 		B3F7E311297736BE00362B92 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B3F7E312297736BE00362B92 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		B3F7E314297736BE00362B92 /* UIDevice+Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */; };
@@ -955,7 +915,6 @@
 		B3F7E320297736BE00362B92 /* SettingsOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38D02332884D03A008FBED8 /* SettingsOptionRow.swift */; };
 		B3F7E321297736BE00362B92 /* UIAppearanceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C19207ED7040040709A /* UIAppearanceExtensions.swift */; };
 		B3F7E322297736BE00362B92 /* AppearanceStyleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1C207ED7040040709A /* AppearanceStyleExtensions.swift */; };
-		B3F7E323297736BE00362B92 /* JitScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */; };
 		B3F7E325297736BE00362B92 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0C276B470B00D85327 /* Section.swift */; };
 		B3F7E326297736BE00362B92 /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225321D32AD60077E86F /* SliderCell.swift */; };
 		B3F7E327297736BE00362B92 /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
@@ -984,7 +943,6 @@
 		B3F7E343297736BE00362B92 /* RealmBindObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AA218EC1AB0015C690 /* RealmBindObserver.swift */; };
 		B3F7E344297736BE00362B92 /* PVGameLibraryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */; };
 		B3F7E346297736BE00362B92 /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0B276B470B00D85327 /* Deprecated.swift */; };
-		B3F7E347297736BE00362B92 /* DebuggerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */; };
 		B3F7E34A297736BE00362B92 /* GameItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29127BC7E610070E222 /* GameItemView.swift */; };
 		B3F7E34B297736BE00362B92 /* GCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49EC1B63D7CD0065FA39 /* GCDWebServerDataRequest.m */; };
 		B3F7E34D297736BE00362B92 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
@@ -1061,7 +1019,6 @@
 		B3F7E3D1297736BE00362B92 /* OmniScale.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703552896314200F75595 /* OmniScale.fsh */; };
 		B3F7E3D2297736BE00362B92 /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703512896314100F75595 /* MasterShader.fsh */; };
 		B3F7E3D3297736BE00362B92 /* AAScale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703572896314200F75595 /* AAScale4x.fsh */; };
-		B3F7E3D4297736BE00362B92 /* JitFailedJailbreakScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B300DECA295FEC740049F2AB /* JitFailedJailbreakScreen.xib */; };
 		B3F7E3D5297736BE00362B92 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE426CAC2B10088AC32 /* Default.xib */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E3D6297736BE00362B92 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB126CABEA80088AC32 /* SaveStates.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E3D7297736BE00362B92 /* SmoothBilinear.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703502896314100F75595 /* SmoothBilinear.fsh */; };
@@ -1077,7 +1034,6 @@
 		B3F7E3E1297736BE00362B92 /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
 		B3F7E3E2297736BE00362B92 /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
 		B3F7E3E3297736BE00362B92 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
-		B3F7E3E4297736BE00362B92 /* JitWaitScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B300DEC7295FEC710049F2AB /* JitWaitScreen.xib */; };
 		B3F7E3E5297736BE00362B92 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B3F7E3FB297736BE00362B92 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E41C297736BE00362B92 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -1086,16 +1042,13 @@
 		B3F7E435297736C200362B92 /* PVSaveStatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB108206EE8A700A1F942 /* PVSaveStatesViewController.swift */; };
 		B3F7E436297736C200362B92 /* QuickTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFB276B470B00D85327 /* QuickTableViewController.swift */; };
 		B3F7E437297736C200362B92 /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
-		B3F7E439297736C200362B92 /* JitWaitScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DEC6295FEC710049F2AB /* JitWaitScreenViewController.swift */; };
 		B3F7E43C297736C200362B92 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
 		B3F7E43D297736C200362B92 /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
 		B3F7E43E297736C200362B92 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE2287EA0CE0054C1B5 /* ulTron.metal */; };
-		B3F7E43F297736C200362B92 /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */; };
 		B3F7E440297736C200362B92 /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B3F7E442297736C200362B92 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.m */; };
 		B3F7E443297736C200362B92 /* RxTableViewRealmDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AC218EC1AD0015C690 /* RxTableViewRealmDataSource.swift */; };
 		B3F7E444297736C200362B92 /* ViewControllerResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29227BC7E610070E222 /* ViewControllerResolver.swift */; };
-		B3F7E445297736C200362B92 /* JitFailedJailbreakScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DEC9295FEC740049F2AB /* JitFailedJailbreakScreenViewController.swift */; };
 		B3F7E447297736C200362B92 /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
 		B3F7E448297736C200362B92 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B3F7E449297736C200362B92 /* PVAltKitService.m in Sources */ = {isa = PBXBuildFile; fileRef = B31A464E26B4C5060084A1D6 /* PVAltKitService.m */; };
@@ -1113,7 +1066,6 @@
 		B3F7E458297736C200362B92 /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E71B63D7CD0065FA39 /* GCDWebServerRequest.m */; };
 		B3F7E459297736C200362B92 /* RowCompatible.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C01276B470B00D85327 /* RowCompatible.swift */; };
 		B3F7E45B297736C200362B92 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
-		B3F7E45C297736C200362B92 /* CodeSignatureUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */; };
 		B3F7E45D297736C200362B92 /* PVAppDelegate+VolumeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */; };
 		B3F7E45F297736C200362B92 /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C09276B470B00D85327 /* Icon.swift */; };
 		B3F7E460297736C200362B92 /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
@@ -1132,9 +1084,7 @@
 		B3F7E471297736C200362B92 /* UICollectionView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */; };
 		B3F7E472297736C200362B92 /* PVGameLibraryViewController+PeekPop.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BE320B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift */; };
 		B3F7E475297736C200362B92 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28E27BC7E610070E222 /* Extensions.swift */; };
-		B3F7E476297736C200362B92 /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
 		B3F7E477297736C200362B92 /* PVGPUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C648278E626D007E61FE /* PVGPUViewController.m */; };
-		B3F7E478297736C200362B92 /* DOLJitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */; };
 		B3F7E47A297736C200362B92 /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F71B63D7CD0065FA39 /* GCDWebServerErrorResponse.m */; };
 		B3F7E47E297736C200362B92 /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE7287EA0CE0054C1B5 /* MameShaders.metal */; };
 		B3F7E47F297736C200362B92 /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
@@ -1155,13 +1105,11 @@
 		B3F7E492297736C200362B92 /* PVSaveStateCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB10B206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift */; };
 		B3F7E494297736C200362B92 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B3F7E495297736C200362B92 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
-		B3F7E496297736C200362B92 /* LocalizerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */; };
 		B3F7E497297736C200362B92 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B3F7E498297736C200362B92 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29327BC7E610070E222 /* SearchBar.swift */; };
 		B3F7E499297736C200362B92 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
 		B3F7E49A297736C200362B92 /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B3F7E49B297736C200362B92 /* PVCheatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */; };
-		B3F7E49D297736C200362B92 /* JitAcquisitionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */; };
 		B3F7E49E297736C200362B92 /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
 		B3F7E49F297736C200362B92 /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
 		B3F7E4A1297736C200362B92 /* UIDevice+Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5665081D96A18A006EAE01 /* UIDevice+Hardware.m */; };
@@ -1176,7 +1124,6 @@
 		B3F7E4AD297736C200362B92 /* SettingsOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38D02332884D03A008FBED8 /* SettingsOptionRow.swift */; };
 		B3F7E4AE297736C200362B92 /* UIAppearanceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C19207ED7040040709A /* UIAppearanceExtensions.swift */; };
 		B3F7E4AF297736C200362B92 /* AppearanceStyleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1C207ED7040040709A /* AppearanceStyleExtensions.swift */; };
-		B3F7E4B0297736C200362B92 /* JitScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */; };
 		B3F7E4B2297736C200362B92 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0C276B470B00D85327 /* Section.swift */; };
 		B3F7E4B3297736C200362B92 /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225321D32AD60077E86F /* SliderCell.swift */; };
 		B3F7E4B4297736C200362B92 /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
@@ -1205,7 +1152,6 @@
 		B3F7E4D0297736C200362B92 /* RealmBindObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AA218EC1AB0015C690 /* RealmBindObserver.swift */; };
 		B3F7E4D1297736C200362B92 /* PVGameLibraryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */; };
 		B3F7E4D3297736C200362B92 /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0B276B470B00D85327 /* Deprecated.swift */; };
-		B3F7E4D4297736C200362B92 /* DebuggerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */; };
 		B3F7E4D7297736C200362B92 /* GameItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29127BC7E610070E222 /* GameItemView.swift */; };
 		B3F7E4D8297736C200362B92 /* GCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49EC1B63D7CD0065FA39 /* GCDWebServerDataRequest.m */; };
 		B3F7E4DA297736C200362B92 /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
@@ -1332,7 +1278,6 @@
 		B3F7E55E297736C200362B92 /* OmniScale.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703552896314200F75595 /* OmniScale.fsh */; };
 		B3F7E55F297736C200362B92 /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703512896314100F75595 /* MasterShader.fsh */; };
 		B3F7E560297736C200362B92 /* AAScale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703572896314200F75595 /* AAScale4x.fsh */; };
-		B3F7E561297736C200362B92 /* JitFailedJailbreakScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B300DECA295FEC740049F2AB /* JitFailedJailbreakScreen.xib */; };
 		B3F7E562297736C200362B92 /* Default.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE426CAC2B10088AC32 /* Default.xib */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E563297736C200362B92 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB126CABEA80088AC32 /* SaveStates.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B3F7E564297736C200362B92 /* SmoothBilinear.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703502896314100F75595 /* SmoothBilinear.fsh */; };
@@ -1348,7 +1293,6 @@
 		B3F7E56E297736C200362B92 /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
 		B3F7E56F297736C200362B92 /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
 		B3F7E570297736C200362B92 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
-		B3F7E571297736C200362B92 /* JitWaitScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B300DEC7295FEC710049F2AB /* JitWaitScreen.xib */; };
 		B3F7E572297736C200362B92 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B3F7E575297736C200362B92 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E576297736C200362B92 /* PVBeetlePSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9B5296F17A900FB9933 /* PVBeetlePSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2063,11 +2007,6 @@
 		936FDBEA295855670073628A /* libMoltenVK_Play.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Play.dylib; path = Cores/Play/lib/libMoltenVK_Play.dylib; sourceTree = "<group>"; };
 		93C792242954E869001212D2 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
 		93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B300DEC6295FEC710049F2AB /* JitWaitScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitWaitScreenViewController.swift; sourceTree = "<group>"; };
-		B300DEC7295FEC710049F2AB /* JitWaitScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = JitWaitScreen.xib; sourceTree = "<group>"; };
-		B300DEC9295FEC740049F2AB /* JitFailedJailbreakScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitFailedJailbreakScreenViewController.swift; sourceTree = "<group>"; };
-		B300DECA295FEC740049F2AB /* JitFailedJailbreakScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = JitFailedJailbreakScreen.xib; sourceTree = "<group>"; };
-		B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JitScreenDelegate.swift; sourceTree = "<group>"; };
 		B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+JIT.swift"; sourceTree = "<group>"; };
 		B30172C9274A34FA00B0E695 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2405,20 +2344,6 @@
 		B36703572896314200F75595 /* AAScale4x.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = AAScale4x.fsh; sourceTree = "<group>"; };
 		B36703582896314200F75595 /* Scale4x.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = Scale4x.fsh; sourceTree = "<group>"; };
 		B36703592896314200F75595 /* OmniScaleLegacy.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = OmniScaleLegacy.fsh; sourceTree = "<group>"; };
-		B36AE7EB295EFE0A00CC9D4F /* DOLJitManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOLJitManager.h; sourceTree = "<group>"; };
-		B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DOLJitManager.m; sourceTree = "<group>"; };
-		B36AE7EF295EFE3000CC9D4F /* CodeSignatureUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CodeSignatureUtils.h; sourceTree = "<group>"; };
-		B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CodeSignatureUtils.m; sourceTree = "<group>"; };
-		B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DebuggerUtils.m; sourceTree = "<group>"; };
-		B36AE7F4295EFE4300CC9D4F /* DebuggerUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebuggerUtils.h; sourceTree = "<group>"; };
-		B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FastmemUtil.m; sourceTree = "<group>"; };
-		B36AE7F6295EFE4900CC9D4F /* JitAcquisitionUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JitAcquisitionUtils.h; sourceTree = "<group>"; };
-		B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalizerUtils.m; sourceTree = "<group>"; };
-		B36AE7F8295EFE5000CC9D4F /* FastmemUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastmemUtil.h; sourceTree = "<group>"; };
-		B36AE7F9295EFE5300CC9D4F /* LocalizerUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizerUtils.h; sourceTree = "<group>"; };
-		B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JitAcquisitionUtils.m; sourceTree = "<group>"; };
-		B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DOLCancellationToken.swift; sourceTree = "<group>"; };
-		B36AE802295EFE5F00CC9D4F /* StringUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
 		B36B84D429598F6600FDEA29 /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36B84D529598F6600FDEA29 /* PVSnesticle.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSnesticle.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36C7D5627AE2CF400715677 /* PVAtari800-tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = "PVAtari800-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3436,7 +3361,6 @@
 				1A1237F417CA27B700CEC788 /* Emulator */,
 				1A48696917C8C0C60019F6D2 /* Game Library */,
 				378F49DB1B63D7CD0065FA39 /* http */,
-				B36AE7EA295EFE0A00CC9D4F /* JIT */,
 				1A4869BB17C8CA2C0019F6D2 /* Resources */,
 				B3532C3A21A9AC71006CDA0F /* Services */,
 				1A1237F317CA27AD00CEC788 /* Settings */,
@@ -3791,24 +3715,6 @@
 				934BE9B2296F177B00FB9933 /* PVRetroArch_Test.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		B300DEC5295FEC710049F2AB /* JitWaitScreen */ = {
-			isa = PBXGroup;
-			children = (
-				B300DEC6295FEC710049F2AB /* JitWaitScreenViewController.swift */,
-				B300DEC7295FEC710049F2AB /* JitWaitScreen.xib */,
-			);
-			path = JitWaitScreen;
-			sourceTree = "<group>";
-		};
-		B300DEC8295FEC740049F2AB /* JitFailedJailbreakScreen */ = {
-			isa = PBXGroup;
-			children = (
-				B300DEC9295FEC740049F2AB /* JitFailedJailbreakScreenViewController.swift */,
-				B300DECA295FEC740049F2AB /* JitFailedJailbreakScreen.xib */,
-			);
-			path = JitFailedJailbreakScreen;
 			sourceTree = "<group>";
 		};
 		B305EEFE276B4C71003AE510 /* WatchKit App */ = {
@@ -4181,30 +4087,6 @@
 				B3296ED126CABFDE0088AC32 /* Cheats.storyboard */,
 			);
 			path = "Story Boards";
-			sourceTree = "<group>";
-		};
-		B36AE7EA295EFE0A00CC9D4F /* JIT */ = {
-			isa = PBXGroup;
-			children = (
-				B300DEC8295FEC740049F2AB /* JitFailedJailbreakScreen */,
-				B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */,
-				B300DEC5295FEC710049F2AB /* JitWaitScreen */,
-				B36AE7EF295EFE3000CC9D4F /* CodeSignatureUtils.h */,
-				B36AE7F4295EFE4300CC9D4F /* DebuggerUtils.h */,
-				B36AE7EB295EFE0A00CC9D4F /* DOLJitManager.h */,
-				B36AE7F8295EFE5000CC9D4F /* FastmemUtil.h */,
-				B36AE7F6295EFE4900CC9D4F /* JitAcquisitionUtils.h */,
-				B36AE7F9295EFE5300CC9D4F /* LocalizerUtils.h */,
-				B36AE802295EFE5F00CC9D4F /* StringUtils.h */,
-				B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */,
-				B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */,
-				B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */,
-				B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */,
-				B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */,
-				B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */,
-				B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */,
-			);
-			path = JIT;
 			sourceTree = "<group>";
 		};
 		B378224C21D32A080077E86F /* Custom Rows */ = {
@@ -5224,7 +5106,6 @@
 				B367036E2896314200F75595 /* OmniScale.fsh in Resources */,
 				B36703662896314200F75595 /* MasterShader.fsh in Resources */,
 				B36703722896314200F75595 /* AAScale4x.fsh in Resources */,
-				B300DED9295FEFF40049F2AB /* JitFailedJailbreakScreen.xib in Resources */,
 				B3296EE226CAC2B10088AC32 /* Default.xib in Resources */,
 				B3296EAF26CABEA80088AC32 /* SaveStates.storyboard in Resources */,
 				B36703642896314200F75595 /* SmoothBilinear.fsh in Resources */,
@@ -5240,7 +5121,6 @@
 				B36703622896314200F75595 /* Scale2x.fsh in Resources */,
 				B36703742896314300F75595 /* Scale4x.fsh in Resources */,
 				B36703762896314300F75595 /* OmniScaleLegacy.fsh in Resources */,
-				B300DED8295FEF5C0049F2AB /* JitWaitScreen.xib in Resources */,
 				B307830628924D69007E7A2D /* GLES in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5376,7 +5256,6 @@
 				B3788842297A4FE700F9F062 /* OmniScale.fsh in Resources */,
 				B3788843297A4FE700F9F062 /* MasterShader.fsh in Resources */,
 				B3788844297A4FE700F9F062 /* AAScale4x.fsh in Resources */,
-				B3788845297A4FE700F9F062 /* JitFailedJailbreakScreen.xib in Resources */,
 				B3788846297A4FE700F9F062 /* Default.xib in Resources */,
 				B3788847297A4FE700F9F062 /* SaveStates.storyboard in Resources */,
 				B3788848297A4FE700F9F062 /* SmoothBilinear.fsh in Resources */,
@@ -5392,7 +5271,6 @@
 				B3788852297A4FE700F9F062 /* Scale2x.fsh in Resources */,
 				B3788853297A4FE700F9F062 /* Scale4x.fsh in Resources */,
 				B3788854297A4FE700F9F062 /* OmniScaleLegacy.fsh in Resources */,
-				B3788855297A4FE700F9F062 /* JitWaitScreen.xib in Resources */,
 				B3788856297A4FE700F9F062 /* GLES in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5445,7 +5323,6 @@
 				B3F7E3D1297736BE00362B92 /* OmniScale.fsh in Resources */,
 				B3F7E3D2297736BE00362B92 /* MasterShader.fsh in Resources */,
 				B3F7E3D3297736BE00362B92 /* AAScale4x.fsh in Resources */,
-				B3F7E3D4297736BE00362B92 /* JitFailedJailbreakScreen.xib in Resources */,
 				B3F7E3D5297736BE00362B92 /* Default.xib in Resources */,
 				B3F7E3D6297736BE00362B92 /* SaveStates.storyboard in Resources */,
 				B3F7E3D7297736BE00362B92 /* SmoothBilinear.fsh in Resources */,
@@ -5461,7 +5338,6 @@
 				B3F7E3E1297736BE00362B92 /* Scale2x.fsh in Resources */,
 				B3F7E3E2297736BE00362B92 /* Scale4x.fsh in Resources */,
 				B3F7E3E3297736BE00362B92 /* OmniScaleLegacy.fsh in Resources */,
-				B3F7E3E4297736BE00362B92 /* JitWaitScreen.xib in Resources */,
 				B3F7E3E5297736BE00362B92 /* GLES in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5485,7 +5361,6 @@
 				B3F7E55E297736C200362B92 /* OmniScale.fsh in Resources */,
 				B3F7E55F297736C200362B92 /* MasterShader.fsh in Resources */,
 				B3F7E560297736C200362B92 /* AAScale4x.fsh in Resources */,
-				B3F7E561297736C200362B92 /* JitFailedJailbreakScreen.xib in Resources */,
 				B3F7E562297736C200362B92 /* Default.xib in Resources */,
 				B3F7E563297736C200362B92 /* SaveStates.storyboard in Resources */,
 				B3F7E564297736C200362B92 /* SmoothBilinear.fsh in Resources */,
@@ -5501,7 +5376,6 @@
 				B3F7E56E297736C200362B92 /* Scale2x.fsh in Resources */,
 				B3F7E56F297736C200362B92 /* Scale4x.fsh in Resources */,
 				B3F7E570297736C200362B92 /* OmniScaleLegacy.fsh in Resources */,
-				B3F7E571297736C200362B92 /* JitWaitScreen.xib in Resources */,
 				B3F7E572297736C200362B92 /* GLES in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5842,16 +5716,13 @@
 				1A2FB109206EE8A700A1F942 /* PVSaveStatesViewController.swift in Sources */,
 				B3411C11276B470B00D85327 /* QuickTableViewController.swift in Sources */,
 				378F4A001B63D7CD0065FA39 /* GCDWebServer.m in Sources */,
-				B300DED7295FEF450049F2AB /* JitWaitScreenViewController.swift in Sources */,
 				B3427C00287EA0CF0054C1B5 /* blit_ps.metal in Sources */,
 				37EEA2A827BC7E610070E222 /* ConsoleGamesView.swift in Sources */,
 				B3427BF6287EA0CF0054C1B5 /* ulTron.metal in Sources */,
-				B300DECE295FECC30049F2AB /* FastmemUtil.m in Sources */,
 				B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */,
 				934855C929708D5A00A5BBC6 /* main.m in Sources */,
 				B3D5E2B2218EC1AE0015C690 /* RxTableViewRealmDataSource.swift in Sources */,
 				37EEA2A327BC7E610070E222 /* ViewControllerResolver.swift in Sources */,
-				B300DEDA295FEFF40049F2AB /* JitFailedJailbreakScreenViewController.swift in Sources */,
 				1A3D40A817B2DCE4004DFFFC /* PVAppDelegate.swift in Sources */,
 				B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */,
 				B31A464F26B4C5060084A1D6 /* PVAltKitService.m in Sources */,
@@ -5869,7 +5740,6 @@
 				378F4A031B63D7CD0065FA39 /* GCDWebServerRequest.m in Sources */,
 				B3411C16276B470B00D85327 /* RowCompatible.swift in Sources */,
 				B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
-				B300DEC3295FEC320049F2AB /* CodeSignatureUtils.m in Sources */,
 				B39AF05F28754EB8004882FC /* PVAppDelegate+VolumeButton.swift in Sources */,
 				B3411C1C276B470C00D85327 /* Icon.swift in Sources */,
 				B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
@@ -5888,9 +5758,7 @@
 				1180B307248FF8AC00636C8A /* UICollectionView+Rx.swift in Sources */,
 				B3890BE420B97588005BB001 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				37EEA2A027BC7E610070E222 /* Extensions.swift in Sources */,
-				B3E61EFA295FF168003249F7 /* DOLCancellationToken.swift in Sources */,
 				B382C649278E626D007E61FE /* PVGPUViewController.m in Sources */,
-				B300DEC1295FEA9B0049F2AB /* DOLJitManager.m in Sources */,
 				378F4A0A1B63D7CD0065FA39 /* GCDWebServerErrorResponse.m in Sources */,
 				B3427BFE287EA0CF0054C1B5 /* MameShaders.metal in Sources */,
 				1A3D433B17B30BA3004DFFFC /* PVGLViewController.m in Sources */,
@@ -5911,13 +5779,11 @@
 				1A2FB10C206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
 				B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */,
 				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
-				B300DED2295FECDC0049F2AB /* LocalizerUtils.m in Sources */,
 				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
 				37EEA2A427BC7E610070E222 /* SearchBar.swift in Sources */,
 				B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */,
 				B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */,
 				CF17114E2586A13100258602 /* PVCheatsTableViewCell.swift in Sources */,
-				B300DED0295FECC70049F2AB /* JitAcquisitionUtils.m in Sources */,
 				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
 				1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */,
 				1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */,
@@ -5932,7 +5798,6 @@
 				B38D02342884D03B008FBED8 /* SettingsOptionRow.swift in Sources */,
 				B35E6C23207ED7050040709A /* UIAppearanceExtensions.swift in Sources */,
 				B35E6C29207ED7050040709A /* AppearanceStyleExtensions.swift in Sources */,
-				B300DEDB295FEFF40049F2AB /* JitScreenDelegate.swift in Sources */,
 				B3411C1F276B470C00D85327 /* Section.swift in Sources */,
 				B378225421D32AD60077E86F /* SliderCell.swift in Sources */,
 				B37B71AD278E3198005FB278 /* UIViewController+Alerts.swift in Sources */,
@@ -5961,7 +5826,6 @@
 				B3D5E2AE218EC1AE0015C690 /* RealmBindObserver.swift in Sources */,
 				1A48697617C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B3411C1E276B470C00D85327 /* Deprecated.swift in Sources */,
-				B300DECC295FECB50049F2AB /* DebuggerUtils.m in Sources */,
 				37EEA2A227BC7E610070E222 /* GameItemView.swift in Sources */,
 				378F4A051B63D7CD0065FA39 /* GCDWebServerDataRequest.m in Sources */,
 				1F8D52461D9198E000C29F90 /* PVLicensesViewController.swift in Sources */,
@@ -6008,7 +5872,6 @@
 				CF87D488258ADDD100838AF8 /* PVCheatsInfoViewController.swift in Sources */,
 				CF87D489258ADDD100838AF8 /* PVCheatsTableViewCell.swift in Sources */,
 				CF87D47E258ADDA500838AF8 /* PVEmulatorViewController+Cheats.swift in Sources */,
-				B300DEC2295FEA9D0049F2AB /* DOLJitManager.m in Sources */,
 				1FE10F291D94ECC600A20D1A /* PVAppearanceViewController.swift in Sources */,
 				B3427BF5287EA0CF0054C1B5 /* crt_filter_ps.metal in Sources */,
 				B3D5E2C0218EC62E0015C690 /* Sections.swift in Sources */,
@@ -6034,7 +5897,6 @@
 				B36207C0292661C300121B83 /* PVMetalViewController.m in Sources */,
 				B3B104BD218F2DE200210C39 /* PVCoreFactory.swift in Sources */,
 				B3427C01287EA0CF0054C1B5 /* blit_ps.metal in Sources */,
-				B300DEC4295FEC340049F2AB /* CodeSignatureUtils.m in Sources */,
 				B3411C26276B472900D85327 /* SwitchRow.swift in Sources */,
 				B3411C23276B472900D85327 /* Icon.swift in Sources */,
 				B35E6C28207ED7050040709A /* AppearanceStyleable.swift in Sources */,
@@ -6122,14 +5984,9 @@
 				B387676D20BD0F43009D8CD2 /* WebServerActivatorController.swift in Sources */,
 				B361F63327C07B300080D368 /* ViewControllerResolver.swift in Sources */,
 				B361F63D27C07BB20080D368 /* Theme.swift in Sources */,
-				B300DECF295FECC40049F2AB /* FastmemUtil.m in Sources */,
-				B3E61EFB295FF16C003249F7 /* DOLCancellationToken.swift in Sources */,
 				B361F63827C07B390080D368 /* SideNavigationController.swift in Sources */,
 				1180B30824924AEA00636C8A /* UICollectionView+Rx.swift in Sources */,
-				B300DED3295FECDC0049F2AB /* LocalizerUtils.m in Sources */,
 				11BB0A2325AF7DFF004DEDC3 /* PVEmulatorViewController+PauseMenu.swift in Sources */,
-				B300DED1295FECC70049F2AB /* JitAcquisitionUtils.m in Sources */,
-				B3E61EFC295FF197003249F7 /* JitScreenDelegate.swift in Sources */,
 				1AD481D51BA3542A00FDA50A /* GCDWebUploader.m in Sources */,
 				B361F63127C07B2C0080D368 /* SideMenuView.swift in Sources */,
 				B3411C34276B472900D85327 /* Subtitle.swift in Sources */,
@@ -6144,7 +6001,6 @@
 				B355DF8C292088E500E4C858 /* PVAppDelegate+Open.swift in Sources */,
 				B3411C30276B472900D85327 /* OptionRow.swift in Sources */,
 				1A2FB10D206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
-				B300DECD295FECB50049F2AB /* DebuggerUtils.m in Sources */,
 				B35D27022033B44B00F17D58 /* PVGameMoreInfoViewController.swift in Sources */,
 				B3427BF7287EA0CF0054C1B5 /* ulTron.metal in Sources */,
 				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */,
@@ -6233,16 +6089,13 @@
 				B3788748297A4FE700F9F062 /* PVSaveStatesViewController.swift in Sources */,
 				B3788749297A4FE700F9F062 /* QuickTableViewController.swift in Sources */,
 				B378874A297A4FE700F9F062 /* GCDWebServer.m in Sources */,
-				B378874C297A4FE700F9F062 /* JitWaitScreenViewController.swift in Sources */,
 				B378874F297A4FE700F9F062 /* blit_ps.metal in Sources */,
 				B3788750297A4FE700F9F062 /* ConsoleGamesView.swift in Sources */,
 				B3788751297A4FE700F9F062 /* ulTron.metal in Sources */,
-				B3788752297A4FE700F9F062 /* FastmemUtil.m in Sources */,
 				B3788753297A4FE700F9F062 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3788755297A4FE700F9F062 /* main.m in Sources */,
 				B3788756297A4FE700F9F062 /* RxTableViewRealmDataSource.swift in Sources */,
 				B3788757297A4FE700F9F062 /* ViewControllerResolver.swift in Sources */,
-				B3788758297A4FE700F9F062 /* JitFailedJailbreakScreenViewController.swift in Sources */,
 				B378875A297A4FE700F9F062 /* PVAppDelegate.swift in Sources */,
 				B378875B297A4FE700F9F062 /* GCDWebDAVServer.m in Sources */,
 				B378875C297A4FE700F9F062 /* PVAltKitService.m in Sources */,
@@ -6260,7 +6113,6 @@
 				B378876B297A4FE700F9F062 /* GCDWebServerRequest.m in Sources */,
 				B378876C297A4FE700F9F062 /* RowCompatible.swift in Sources */,
 				B378876E297A4FE700F9F062 /* PVSaveStateInfoViewController.swift in Sources */,
-				B378876F297A4FE700F9F062 /* CodeSignatureUtils.m in Sources */,
 				B3788770297A4FE700F9F062 /* PVAppDelegate+VolumeButton.swift in Sources */,
 				B3788772297A4FE700F9F062 /* Icon.swift in Sources */,
 				B3788773297A4FE700F9F062 /* PVCoresTableViewContorller.swift in Sources */,
@@ -6279,9 +6131,7 @@
 				B3788784297A4FE700F9F062 /* UICollectionView+Rx.swift in Sources */,
 				B3788785297A4FE700F9F062 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B3788787297A4FE700F9F062 /* Extensions.swift in Sources */,
-				B3788788297A4FE700F9F062 /* DOLCancellationToken.swift in Sources */,
 				B3788789297A4FE700F9F062 /* PVGPUViewController.m in Sources */,
-				B378878A297A4FE700F9F062 /* DOLJitManager.m in Sources */,
 				B378878C297A4FE700F9F062 /* GCDWebServerErrorResponse.m in Sources */,
 				B3788790297A4FE700F9F062 /* MameShaders.metal in Sources */,
 				B3788791297A4FE700F9F062 /* PVGLViewController.m in Sources */,
@@ -6302,13 +6152,11 @@
 				B37887A4297A4FE700F9F062 /* PVSaveStateCollectionViewCell.swift in Sources */,
 				B37887A6297A4FE700F9F062 /* UIColor+Hex.swift in Sources */,
 				B37887A7297A4FE700F9F062 /* PVGameLibrarySectionHeaderView.swift in Sources */,
-				B37887A8297A4FE700F9F062 /* LocalizerUtils.m in Sources */,
 				B37887A9297A4FE700F9F062 /* Theme.swift in Sources */,
 				B37887AA297A4FE700F9F062 /* SearchBar.swift in Sources */,
 				B37887AB297A4FE700F9F062 /* ApplicationMonitor.swift in Sources */,
 				B37887AC297A4FE700F9F062 /* ConflictsController.swift in Sources */,
 				B37887AD297A4FE700F9F062 /* PVCheatsTableViewCell.swift in Sources */,
-				B37887AF297A4FE700F9F062 /* JitAcquisitionUtils.m in Sources */,
 				B37887B0297A4FE700F9F062 /* Services.swift in Sources */,
 				B37887B1297A4FE700F9F062 /* PVGameLibraryUpdatesController.swift in Sources */,
 				B37887B3297A4FE700F9F062 /* UIDevice+Hardware.m in Sources */,
@@ -6323,7 +6171,6 @@
 				B37887BF297A4FE700F9F062 /* SettingsOptionRow.swift in Sources */,
 				B37887C0297A4FE700F9F062 /* UIAppearanceExtensions.swift in Sources */,
 				B37887C1297A4FE700F9F062 /* AppearanceStyleExtensions.swift in Sources */,
-				B37887C2297A4FE700F9F062 /* JitScreenDelegate.swift in Sources */,
 				B37887C4297A4FE700F9F062 /* Section.swift in Sources */,
 				B37887C5297A4FE700F9F062 /* SliderCell.swift in Sources */,
 				B37887C6297A4FE700F9F062 /* UIViewController+Alerts.swift in Sources */,
@@ -6352,7 +6199,6 @@
 				B37887E1297A4FE700F9F062 /* RealmBindObserver.swift in Sources */,
 				B37887E2297A4FE700F9F062 /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B37887E4297A4FE700F9F062 /* Deprecated.swift in Sources */,
-				B37887E5297A4FE700F9F062 /* DebuggerUtils.m in Sources */,
 				B37887E8297A4FE700F9F062 /* GameItemView.swift in Sources */,
 				B37887E9297A4FE700F9F062 /* GCDWebServerDataRequest.m in Sources */,
 				B37887EB297A4FE700F9F062 /* PVLicensesViewController.swift in Sources */,
@@ -6439,16 +6285,13 @@
 				B3F7E2A8297736BE00362B92 /* PVSaveStatesViewController.swift in Sources */,
 				B3F7E2A9297736BE00362B92 /* QuickTableViewController.swift in Sources */,
 				B3F7E2AA297736BE00362B92 /* GCDWebServer.m in Sources */,
-				B3F7E2AC297736BE00362B92 /* JitWaitScreenViewController.swift in Sources */,
 				B3F7E2AF297736BE00362B92 /* blit_ps.metal in Sources */,
 				B3F7E2B0297736BE00362B92 /* ConsoleGamesView.swift in Sources */,
 				B3F7E2B1297736BE00362B92 /* ulTron.metal in Sources */,
-				B3F7E2B2297736BE00362B92 /* FastmemUtil.m in Sources */,
 				B3F7E2B3297736BE00362B92 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3F7E2B5297736BE00362B92 /* main.m in Sources */,
 				B3F7E2B6297736BE00362B92 /* RxTableViewRealmDataSource.swift in Sources */,
 				B3F7E2B7297736BE00362B92 /* ViewControllerResolver.swift in Sources */,
-				B3F7E2B8297736BE00362B92 /* JitFailedJailbreakScreenViewController.swift in Sources */,
 				B3F7E2BA297736BE00362B92 /* PVAppDelegate.swift in Sources */,
 				B3F7E2BB297736BE00362B92 /* GCDWebDAVServer.m in Sources */,
 				B3F7E2BC297736BE00362B92 /* PVAltKitService.m in Sources */,
@@ -6466,7 +6309,6 @@
 				B3F7E2CB297736BE00362B92 /* GCDWebServerRequest.m in Sources */,
 				B3F7E2CC297736BE00362B92 /* RowCompatible.swift in Sources */,
 				B3F7E2CE297736BE00362B92 /* PVSaveStateInfoViewController.swift in Sources */,
-				B3F7E2CF297736BE00362B92 /* CodeSignatureUtils.m in Sources */,
 				B3F7E2D0297736BE00362B92 /* PVAppDelegate+VolumeButton.swift in Sources */,
 				B3F7E2D2297736BE00362B92 /* Icon.swift in Sources */,
 				B3F7E2D3297736BE00362B92 /* PVCoresTableViewContorller.swift in Sources */,
@@ -6485,9 +6327,7 @@
 				B3F7E2E4297736BE00362B92 /* UICollectionView+Rx.swift in Sources */,
 				B3F7E2E5297736BE00362B92 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B3F7E2E8297736BE00362B92 /* Extensions.swift in Sources */,
-				B3F7E2E9297736BE00362B92 /* DOLCancellationToken.swift in Sources */,
 				B3F7E2EA297736BE00362B92 /* PVGPUViewController.m in Sources */,
-				B3F7E2EB297736BE00362B92 /* DOLJitManager.m in Sources */,
 				B3F7E2ED297736BE00362B92 /* GCDWebServerErrorResponse.m in Sources */,
 				B3F7E2F1297736BE00362B92 /* MameShaders.metal in Sources */,
 				B3F7E2F2297736BE00362B92 /* PVGLViewController.m in Sources */,
@@ -6508,13 +6348,11 @@
 				B3F7E305297736BE00362B92 /* PVSaveStateCollectionViewCell.swift in Sources */,
 				B3F7E307297736BE00362B92 /* UIColor+Hex.swift in Sources */,
 				B3F7E308297736BE00362B92 /* PVGameLibrarySectionHeaderView.swift in Sources */,
-				B3F7E309297736BE00362B92 /* LocalizerUtils.m in Sources */,
 				B3F7E30A297736BE00362B92 /* Theme.swift in Sources */,
 				B3F7E30B297736BE00362B92 /* SearchBar.swift in Sources */,
 				B3F7E30C297736BE00362B92 /* ApplicationMonitor.swift in Sources */,
 				B3F7E30D297736BE00362B92 /* ConflictsController.swift in Sources */,
 				B3F7E30E297736BE00362B92 /* PVCheatsTableViewCell.swift in Sources */,
-				B3F7E310297736BE00362B92 /* JitAcquisitionUtils.m in Sources */,
 				B3F7E311297736BE00362B92 /* Services.swift in Sources */,
 				B3F7E312297736BE00362B92 /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3F7E314297736BE00362B92 /* UIDevice+Hardware.m in Sources */,
@@ -6529,7 +6367,6 @@
 				B3F7E320297736BE00362B92 /* SettingsOptionRow.swift in Sources */,
 				B3F7E321297736BE00362B92 /* UIAppearanceExtensions.swift in Sources */,
 				B3F7E322297736BE00362B92 /* AppearanceStyleExtensions.swift in Sources */,
-				B3F7E323297736BE00362B92 /* JitScreenDelegate.swift in Sources */,
 				B3F7E325297736BE00362B92 /* Section.swift in Sources */,
 				B3F7E326297736BE00362B92 /* SliderCell.swift in Sources */,
 				B3F7E327297736BE00362B92 /* UIViewController+Alerts.swift in Sources */,
@@ -6558,7 +6395,6 @@
 				B3F7E343297736BE00362B92 /* RealmBindObserver.swift in Sources */,
 				B3F7E344297736BE00362B92 /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B3F7E346297736BE00362B92 /* Deprecated.swift in Sources */,
-				B3F7E347297736BE00362B92 /* DebuggerUtils.m in Sources */,
 				B3F7E34A297736BE00362B92 /* GameItemView.swift in Sources */,
 				B3F7E34B297736BE00362B92 /* GCDWebServerDataRequest.m in Sources */,
 				B3F7E34D297736BE00362B92 /* PVLicensesViewController.swift in Sources */,
@@ -6604,16 +6440,13 @@
 				B3F7E435297736C200362B92 /* PVSaveStatesViewController.swift in Sources */,
 				B3F7E436297736C200362B92 /* QuickTableViewController.swift in Sources */,
 				B3F7E437297736C200362B92 /* GCDWebServer.m in Sources */,
-				B3F7E439297736C200362B92 /* JitWaitScreenViewController.swift in Sources */,
 				B3F7E43C297736C200362B92 /* blit_ps.metal in Sources */,
 				B3F7E43D297736C200362B92 /* ConsoleGamesView.swift in Sources */,
 				B3F7E43E297736C200362B92 /* ulTron.metal in Sources */,
-				B3F7E43F297736C200362B92 /* FastmemUtil.m in Sources */,
 				B3F7E440297736C200362B92 /* PVAppDelegate+AppCenter.swift in Sources */,
 				B3F7E442297736C200362B92 /* main.m in Sources */,
 				B3F7E443297736C200362B92 /* RxTableViewRealmDataSource.swift in Sources */,
 				B3F7E444297736C200362B92 /* ViewControllerResolver.swift in Sources */,
-				B3F7E445297736C200362B92 /* JitFailedJailbreakScreenViewController.swift in Sources */,
 				B3F7E447297736C200362B92 /* PVAppDelegate.swift in Sources */,
 				B3F7E448297736C200362B92 /* GCDWebDAVServer.m in Sources */,
 				B3F7E449297736C200362B92 /* PVAltKitService.m in Sources */,
@@ -6631,7 +6464,6 @@
 				B3F7E458297736C200362B92 /* GCDWebServerRequest.m in Sources */,
 				B3F7E459297736C200362B92 /* RowCompatible.swift in Sources */,
 				B3F7E45B297736C200362B92 /* PVSaveStateInfoViewController.swift in Sources */,
-				B3F7E45C297736C200362B92 /* CodeSignatureUtils.m in Sources */,
 				B3F7E45D297736C200362B92 /* PVAppDelegate+VolumeButton.swift in Sources */,
 				B3F7E45F297736C200362B92 /* Icon.swift in Sources */,
 				B3F7E460297736C200362B92 /* PVCoresTableViewContorller.swift in Sources */,
@@ -6650,9 +6482,7 @@
 				B3F7E471297736C200362B92 /* UICollectionView+Rx.swift in Sources */,
 				B3F7E472297736C200362B92 /* PVGameLibraryViewController+PeekPop.swift in Sources */,
 				B3F7E475297736C200362B92 /* Extensions.swift in Sources */,
-				B3F7E476297736C200362B92 /* DOLCancellationToken.swift in Sources */,
 				B3F7E477297736C200362B92 /* PVGPUViewController.m in Sources */,
-				B3F7E478297736C200362B92 /* DOLJitManager.m in Sources */,
 				B3F7E47A297736C200362B92 /* GCDWebServerErrorResponse.m in Sources */,
 				B3F7E47E297736C200362B92 /* MameShaders.metal in Sources */,
 				B3F7E47F297736C200362B92 /* PVGLViewController.m in Sources */,
@@ -6673,13 +6503,11 @@
 				B3F7E492297736C200362B92 /* PVSaveStateCollectionViewCell.swift in Sources */,
 				B3F7E494297736C200362B92 /* UIColor+Hex.swift in Sources */,
 				B3F7E495297736C200362B92 /* PVGameLibrarySectionHeaderView.swift in Sources */,
-				B3F7E496297736C200362B92 /* LocalizerUtils.m in Sources */,
 				B3F7E497297736C200362B92 /* Theme.swift in Sources */,
 				B3F7E498297736C200362B92 /* SearchBar.swift in Sources */,
 				B3F7E499297736C200362B92 /* ApplicationMonitor.swift in Sources */,
 				B3F7E49A297736C200362B92 /* ConflictsController.swift in Sources */,
 				B3F7E49B297736C200362B92 /* PVCheatsTableViewCell.swift in Sources */,
-				B3F7E49D297736C200362B92 /* JitAcquisitionUtils.m in Sources */,
 				B3F7E49E297736C200362B92 /* Services.swift in Sources */,
 				B3F7E49F297736C200362B92 /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3F7E4A1297736C200362B92 /* UIDevice+Hardware.m in Sources */,
@@ -6694,7 +6522,6 @@
 				B3F7E4AD297736C200362B92 /* SettingsOptionRow.swift in Sources */,
 				B3F7E4AE297736C200362B92 /* UIAppearanceExtensions.swift in Sources */,
 				B3F7E4AF297736C200362B92 /* AppearanceStyleExtensions.swift in Sources */,
-				B3F7E4B0297736C200362B92 /* JitScreenDelegate.swift in Sources */,
 				B3F7E4B2297736C200362B92 /* Section.swift in Sources */,
 				B3F7E4B3297736C200362B92 /* SliderCell.swift in Sources */,
 				B3F7E4B4297736C200362B92 /* UIViewController+Alerts.swift in Sources */,
@@ -6723,7 +6550,6 @@
 				B3F7E4D0297736C200362B92 /* RealmBindObserver.swift in Sources */,
 				B3F7E4D1297736C200362B92 /* PVGameLibraryCollectionViewCell.swift in Sources */,
 				B3F7E4D3297736C200362B92 /* Deprecated.swift in Sources */,
-				B3F7E4D4297736C200362B92 /* DebuggerUtils.m in Sources */,
 				B3F7E4D7297736C200362B92 /* GameItemView.swift in Sources */,
 				B3F7E4D8297736C200362B92 /* GCDWebServerDataRequest.m in Sources */,
 				B3F7E4DA297736C200362B92 /* PVLicensesViewController.swift in Sources */,

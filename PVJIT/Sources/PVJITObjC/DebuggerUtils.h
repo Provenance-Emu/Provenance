@@ -2,7 +2,7 @@
 // Licensed under GPLv2+
 // Refer to the license.txt file included.
 
-#pragma once
+@import Foundation;
 
 #ifdef __cplusplus
 extern "C"

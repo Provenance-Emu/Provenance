@@ -3,6 +3,7 @@
 // Refer to the license.txt file included.
 
 import Foundation
+import UIKit
 
 @objc class JitFailedJailbreakScreenViewController : UIViewController
 {

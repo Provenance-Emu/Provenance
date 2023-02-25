@@ -3,6 +3,8 @@
 // Refer to the license.txt file included.
 
 import Foundation
+import UIKit
+import PVJITObjC
 
 @objc final class JitWaitScreenViewController : UIViewController {
   @objc weak var delegate: JitScreenDelegate?
