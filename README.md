@@ -42,6 +42,8 @@
   </div>
 </br>
 
+![Alt](https://repobeats.axiom.co/api/embed/19c0dec78befc395b346c14006c62ff964912fa9.svg "Repobeats analytics image")
+
 ### Release Roadmap
 
 ![GitHub Release](https://img.shields.io/github/release/provenance-emu/provenance.svg?style=flat-square) 
