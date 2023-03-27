@@ -441,79 +441,6 @@ bool systemReadJoypads()
     return true;
 }
 
-#pragma mark - Cheats
-
-NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
-extern bool cheatsVerifyCheatCode(const char *code, const char *desc);
-
-- (BOOL)setCheatWithCode:(NSString *)code type:(NSString *)type enabled:(BOOL)enabled {
-    // Sanitize
-    code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-
-    // VBA expects cheats UPPERCASE
-    code = [code uppercaseString];
-
-    // Remove any spaces
-    code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
-
-    if (enabled)
-        [cheatList setValue:@YES forKey:code];
-    else
-        [cheatList removeObjectForKey:code];
-
-    cheatsDeleteAll(false); // Old values not restored by default. Dunno if matters much to cheaters
-
-    NSArray *multipleCodes = [[NSArray alloc] init];
-    
-    // Quick and dirty cheat check
-    BOOL valid = cheatsVerifyCheatCode(code.UTF8String, nil);
-    if(!valid) {  return NO; }
-
-    // Apply enabled cheats found in dictionary
-    for (id key in cheatList)
-    {
-        if ([[cheatList valueForKey:key] isEqual:@YES])
-        {
-            // Handle multi-line cheats
-            multipleCodes = [key componentsSeparatedByString:@"+"];
-
-            for (NSString *singleCode in multipleCodes)
-            {
-                if ([singleCode length] == 11 || [singleCode length] == 13 || [singleCode length] == 17) // Code with Address:Value
-                {
-                    // XXXXXXXX:YY || XXXXXXXX:YYYY || XXXXXXXX:YYYYYYYY
-                    cheatsAddCheatCode([singleCode UTF8String], "code");
-                }
-
-                if ([singleCode length] == 12) // Codebreaker/GameShark SP/Xploder code
-                {
-                    // VBA expects 12-character Codebreaker/GameShark SP codes in format: XXXXXXXX YYYY
-                    NSMutableString *formattedCode = [NSMutableString stringWithString:singleCode];
-                    [formattedCode insertString:@" " atIndex:8];
-
-                    cheatsAddCBACode([formattedCode UTF8String], "code");
-                }
-
-                if ([singleCode length] == 16) // GameShark Advance/Action Replay (v1/v2) and Action Replay v3
-                {
-                    // Note: GameShark and Action Replay were synonymous until AR v3. Same codes and devices, but different names by region
-                    if ([type isEqual: @"GameShark"])
-                        cheatsAddGSACode([singleCode UTF8String], "code", false);
-
-                    // AR v3 was an entirely different device from GS/AR v1/v2, with different code types and encryption
-                    else if ([type isEqual: @"Action Replay"])
-                        cheatsAddGSACode([singleCode UTF8String], "code", true); // true = AR v3 code
-
-                    else // default to GS/AR v1/v2 code (can't determine GS/AR v1/v2 vs AR v3 because same length)
-                        cheatsAddGSACode([singleCode UTF8String], "code", false);
-                }
-            }
-        }
-    }
-    // TODO: Make this a real return
-    return YES;
-}
-
 # pragma mark - Misc Helper Methods
 
 - (void)loadOverrides:(NSString *)gameID
@@ -987,7 +914,86 @@ void systemMessage(int, const char * str, ...)
 
 @end
 
+
+#pragma mark - Cheats
 @implementation PVGBAEmulatorCore (GameWithCheat)
+NSMutableDictionary *cheatList = [[NSMutableDictionary alloc] init];
+
+- (NSArray*)cheatCodeTypes {
+    return @[
+        @"Action Replay v3",
+        @"GameShark",
+        @"Action Replay v1/v2",
+        @"Other"
+    ];
+}
+- (BOOL)setCheatWithCode:(NSString *)code type:(NSString *)type codeType: (NSString *)codeType
+          cheatIndex:(UInt8)cheatIndex enabled:(BOOL)enabled {
+    // Sanitize
+    code = [code stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+    // VBA expects cheats UPPERCASE
+    code = [code uppercaseString];
+
+    // Remove any spaces
+    code = [code stringByReplacingOccurrencesOfString:@" " withString:@""];
+    
+    // Concat address/value pairs
+    NSArray *multipleCodes = [code componentsSeparatedByString:@"+"];
+    for (int i=0; i < multipleCodes.count; i++) {
+        NSString* code = multipleCodes[i];
+        if (multipleCodes.count > i+1 && code.length <= 8) {
+            code = [code stringByAppendingString:multipleCodes[i+1]];
+            i++;
+        }
+        if (enabled)
+            [cheatList setValue:@YES forKey:code];
+        else
+            [cheatList removeObjectForKey:code];
+    }
+    
+    cheatsDeleteAll(false); // Old values not restored by default. Dunno if matters much to cheaters
+    
+    // Apply enabled cheats found in dictionary
+    for (id key in cheatList)
+    {
+        NSLog(@"Processing %@ %@", key, codeType);
+        if ([[cheatList valueForKey:key] isEqual:@YES])
+        {
+            NSString* singleCode = key;
+            if ([singleCode length] == 11 || [singleCode length] == 13 || [singleCode length] == 17) // Code with Address:Value
+            {
+                // XXXXXXXX:YY || XXXXXXXX:YYYY || XXXXXXXX:YYYYYYYY
+                cheatsAddCheatCode([singleCode UTF8String], "code");
+            }
+
+            if ([singleCode length] == 12) // Codebreaker/GameShark SP/Xploder code
+            {
+                // VBA expects 12-character Codebreaker/GameShark SP codes in format: XXXXXXXX YYYY
+                NSMutableString *formattedCode = [NSMutableString stringWithString:singleCode];
+                [formattedCode insertString:@" " atIndex:8];
+
+                cheatsAddCBACode([formattedCode UTF8String], "code");
+            }
+
+            if ([singleCode length] == 16) // GameShark Advance/Action Replay (v1/v2) and Action Replay v3
+            {
+                // Note: GameShark and Action Replay were synonymous until AR v3. Same codes and devices, but different names by region
+                if ([codeType isEqual: @"GameShark"])
+                    cheatsAddGSACode([singleCode UTF8String], "code", true);
+
+                // AR v3 was an entirely different device from GS/AR v1/v2, with different code types and encryption
+                else if ([codeType isEqual: @"Action Replay v3"])
+                    cheatsAddGSACode([singleCode UTF8String], "code", true); // true = AR v3 code
+
+                else // default to GS/AR v1/v2 code (can't determine GS/AR v1/v2 vs AR v3 because same length)
+                    cheatsAddGSACode([singleCode UTF8String], "code", false);
+            }
+        }
+    }
+    // TODO: Make this a real return
+    return YES;
+}
 
 -(BOOL)supportsCheatCode { return YES; }
 
