@@ -11,7 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 934D2E18294B4D4700BDEBA5 /* Build configuration list for PBXAggregateTarget "PPSSPPLibAdjustments" */;
 			buildPhases = (
-				934D2E19294B4D5900BDEBA5 /* ShellScript */,
+				934D2E19294B4D5900BDEBA5 /* Copy libMoltenVK.dylib */,
 			);
 			dependencies = (
 			);
@@ -1317,7 +1317,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		934D2E19294B4D5900BDEBA5 /* ShellScript */ = {
+		934D2E19294B4D5900BDEBA5 /* Copy libMoltenVK.dylib */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1327,6 +1327,7 @@
 			inputPaths = (
 				"${SRCROOT}/ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib",
 			);
+			name = "Copy libMoltenVK.dylib";
 			outputFileListPaths = (
 			);
 			outputPaths = (

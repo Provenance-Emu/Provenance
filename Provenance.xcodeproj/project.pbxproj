@@ -11,7 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = B30E94852793B8BE00871E57 /* Build configuration list for PBXAggregateTarget "Check CodeSigning" */;
 			buildPhases = (
-				B30E94842793B8BE00871E57 /* ShellScript */,
+				B30E94842793B8BE00871E57 /* Test for CodeSigning.xcconfig */,
 			);
 			dependencies = (
 			);
@@ -218,6 +218,8 @@
 		B306E0D02769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
 		B307830628924D69007E7A2D /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B307830728924D6B007E7A2D /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
+		B30B753C29D23DF500F78682 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
+		B30B753D29D23DF500F78682 /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B31117B0218EB3A900C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B1218EB3AA00C495A2 /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
 		B31117B3218EB3AE00C495A2 /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
@@ -702,7 +704,7 @@
 		B3DEEF922942F92C00A6957C /* PVBliss.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; platformFilters = (ios, tvos, ); };
 		B3DEEF932942F92C00A6957C /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3E21D6E203211BE009939D3 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E21D6D203211BE009939D3 /* IndexRequestHandler.swift */; };
-		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3E21D72203211BE009939D3 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3E3B5D9202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
 		B3E61EFA295FF168003249F7 /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
@@ -1821,6 +1823,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				B3F7E3F8297736BE00362B92 /* PVSupport.framework in Embed Frameworks */,
+				B30B753D29D23DF500F78682 /* PVLibRetro.framework in Embed Frameworks */,
 				B3F7E3FB297736BE00362B92 /* PVLibrary.framework in Embed Frameworks */,
 				B3F7E414297736BE00362B92 /* PVStella.framework in Embed Frameworks */,
 			);
@@ -2995,6 +2998,7 @@
 				B3F7E39D297736BE00362B92 /* PVStella.framework in Frameworks */,
 				B3F7E39F297736BE00362B92 /* SystemConfiguration.framework in Frameworks */,
 				B3F7E3A3297736BE00362B92 /* CoreData.framework in Frameworks */,
+				B30B753C29D23DF500F78682 /* PVLibRetro.framework in Frameworks */,
 				B3F7E3A4297736BE00362B92 /* PVLibrary.framework in Frameworks */,
 				B3F7E3A8297736BE00362B92 /* AudioToolbox.framework in Frameworks */,
 				B3F7E3AB297736BE00362B92 /* PVSupport.framework in Frameworks */,
@@ -4568,7 +4572,7 @@
 			buildPhases = (
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
-				934BE9A5296F171E00FB9933 /* ShellScript */,
+				934BE9A5296F171E00FB9933 /* Code Sign libretro.h Cores */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
 				1A44C0AD1D0A1DE80018751A /* Script: Set Build Number */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
@@ -4915,7 +4919,7 @@
 			buildPhases = (
 				B3F7E2A5297736BE00362B92 /* Sources */,
 				B3F7E373297736BE00362B92 /* Frameworks */,
-				B3F7E3C2297736BE00362B92 /* ShellScript */,
+				B3F7E3C2297736BE00362B92 /* Code Sign libretro.h Cores */,
 				B3F7E3C3297736BE00362B92 /* Resources */,
 				B3F7E3E6297736BE00362B92 /* Script: Set Build Number */,
 				B3F7E3E7297736BE00362B92 /* Embed Frameworks */,
@@ -4948,7 +4952,7 @@
 			buildPhases = (
 				B3F7E432297736C200362B92 /* Sources */,
 				B3F7E500297736C200362B92 /* Frameworks */,
-				B3F7E54F297736C200362B92 /* ShellScript */,
+				B3F7E54F297736C200362B92 /* Code Sign libretro.h Cores */,
 				B3F7E550297736C200362B92 /* Resources */,
 				B3F7E573297736C200362B92 /* Script: Set Build Number */,
 				B3F7E574297736C200362B92 /* Embed Frameworks */,
@@ -5525,7 +5529,7 @@
 			shellPath = /bin/bash;
 			shellScript = ". \"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh\" ProvenanceTV\n";
 		};
-		934BE9A5296F171E00FB9933 /* ShellScript */ = {
+		934BE9A5296F171E00FB9933 /* Code Sign libretro.h Cores */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5534,6 +5538,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Code Sign libretro.h Cores";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -5560,7 +5565,7 @@
 			shellPath = /bin/sh;
 			shellScript = ./Provenance/Resources/createVersionHeader.sh;
 		};
-		B30E94842793B8BE00871E57 /* ShellScript */ = {
+		B30E94842793B8BE00871E57 /* Test for CodeSigning.xcconfig */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5569,6 +5574,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Test for CodeSigning.xcconfig";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -5681,7 +5687,7 @@
 			shellPath = /bin/bash;
 			shellScript = ". Scripts/set_bundle_build_number.sh TopShelf\n";
 		};
-		B3F7E3C2297736BE00362B92 /* ShellScript */ = {
+		B3F7E3C2297736BE00362B92 /* Code Sign libretro.h Cores */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5690,6 +5696,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Code Sign libretro.h Cores";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -5721,7 +5728,7 @@
 			shellPath = /bin/bash;
 			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
 		};
-		B3F7E54F297736C200362B92 /* ShellScript */ = {
+		B3F7E54F297736C200362B92 /* Code Sign libretro.h Cores */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5730,6 +5737,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Code Sign libretro.h Cores";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -6738,6 +6746,7 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
+				maccatalyst,
 				tvos,
 			);
 			target = B3E21D6A203211BE009939D3 /* Spotlight */;
@@ -10047,6 +10056,7 @@
 			buildSettings = {
 				APP_DISPLAY_NAME = "$(TARGET_NAME)-Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Lite";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
@@ -10109,6 +10119,7 @@
 			buildSettings = {
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Lite";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
@@ -10171,6 +10182,7 @@
 			buildSettings = {
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-Lite";
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;

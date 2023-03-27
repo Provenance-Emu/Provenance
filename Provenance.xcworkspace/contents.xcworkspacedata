@@ -56,10 +56,10 @@
          location = "group:Cores/O2EM/PVO2EM.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Play/PVPlayCore.xcodeproj">
+         location = "group:Cores/PicoDrive/PVPicoDrive.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/PicoDrive/PVPicoDrive.xcodeproj">
+         location = "group:Cores/Play/PVPlayCore.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/PokeMini/PVPokeMini.xcodeproj">
@@ -92,9 +92,6 @@
    <Group
       location = "group:"
       name = "Cores Libretro">
-      <FileRef
-         location = "group:Cores/supergrafx/PVSupergrafx.xcodeproj">
-      </FileRef>
       <Group
          location = "container:"
          name = "Broken">
@@ -114,9 +111,6 @@
             location = "group:Cores/TIC80/PVTIC80.xcodeproj">
          </FileRef>
       </Group>
-      <FileRef
-         location = "group:Cores/NP2Kai/PVNP2Kai.xcodeproj">
-      </FileRef>
       <FileRef
          location = "group:Cores/BeetlePSX/PVBeetlePSX.xcodeproj">
       </FileRef>
@@ -163,6 +157,9 @@
          location = "group:Cores/Mupen64Plus-NX/PVMupen64Plus-NX.xcodeproj">
       </FileRef>
       <FileRef
+         location = "group:Cores/NP2Kai/PVNP2Kai.xcodeproj">
+      </FileRef>
+      <FileRef
          location = "group:Cores/Opera/PVOpera.xcodeproj">
       </FileRef>
       <FileRef
@@ -170,6 +167,9 @@
       </FileRef>
       <FileRef
          location = "group:Cores/Potator/PVPotator.xcodeproj">
+      </FileRef>
+      <FileRef
+         location = "group:Cores/supergrafx/PVSupergrafx.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/VecX/PVVecX.xcodeproj">
