@@ -94,7 +94,7 @@ std::map<int, ActionReplay::ARCode> arcodes{};
         gcode.user_defined=true;
         gcode.enabled=enabled;
         gcodes[cheatIndex]=gcode;
-        ELOG(@"Applying Gecko Code size %d enabled %d\n", gcode.codes
+        NSLog(@"Applying Gecko Code size %d enabled %d\n", gcode.codes
                .size(), gcode.enabled);
         std::vector<Gecko::GeckoCode> activate;
         activate.clear();
@@ -119,7 +119,7 @@ std::map<int, ActionReplay::ARCode> arcodes{};
             if (value.enabled)
                 activate.push_back(value);
         }
-        ELOG(@"Applying AR Code size %d enabled %d\n", arcode.ops
+        NSLog(@"Applying AR Code size %d enabled %d\n", arcode.ops
                .size(), arcode.enabled);
         // They are auto applied when activated
         ActionReplay::ApplyCodes(activate);

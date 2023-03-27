@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		9337CF61298CCB56007CDDB6 /* MelonDSRetroArchTVCore */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9337CF63298CCB56007CDDB6 /* Build configuration list for PBXAggregateTarget "MelonDSRetroArchTVCore" */;
+			buildPhases = (
+				9337CF62298CCB56007CDDB6 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = MelonDSRetroArchTVCore;
+			productName = BuildMelonRetroArchCore;
+		};
 		934293282973FECF00975F0B /* MelonDSRetroArchCore */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 9342932C2973FECF00975F0B /* Build configuration list for PBXAggregateTarget "MelonDSRetroArchCore" */;
@@ -21,6 +32,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		93BC0505298AF1A600BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0504298AF1A600BA5157 /* PVDebug.c */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B338055B28757C3A0009C732 /* PVMelonDSCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVMelonDSCore+Controls.mm */; };
 		B338055D287582CE0009C732 /* PVMelonDSCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVMelonDSCore+Audio.m */; };
@@ -138,6 +150,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9337CF67298CCC87007CDDB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9337CF61298CCB56007CDDB6;
+			remoteInfo = MelonDSRetroArchTVCore;
+		};
 		9342932E2973FFF800975F0B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -167,6 +186,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		93BC0504298AF1A600BA5157 /* PVDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PVDebug.c; path = ../../../Debug/PVDebug.c; sourceTree = "<group>"; };
 		B30178D3207C901D0051B93D /* libMelonDS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMelonDS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B33805642877B5080009C732 /* net.kuribo64.melonDS.desktop */ = {isa = PBXFileReference; lastKnownFileType = text; path = net.kuribo64.melonDS.desktop; sourceTree = "<group>"; };
@@ -709,8 +729,8 @@
 		B33807DD2877B5090009C732 /* net_ifinfo_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = net_ifinfo_test.c; sourceTree = "<group>"; };
 		B33807DE2877B5090009C732 /* udp-test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "udp-test.c"; sourceTree = "<group>"; };
 		B33807DF2877B5090009C732 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		B33807E02877B5090009C732 /* net_ifinfo */ = {isa = PBXFileReference; lastKnownFileType = file; path = net_ifinfo; sourceTree = "<group>"; };
-		B33807E12877B5090009C732 /* http_test */ = {isa = PBXFileReference; lastKnownFileType = file; path = http_test; sourceTree = "<group>"; };
+		B33807E02877B5090009C732 /* net_ifinfo */ = {isa = PBXFileReference; lastKnownFileType = text; path = net_ifinfo; sourceTree = "<group>"; };
+		B33807E12877B5090009C732 /* http_test */ = {isa = PBXFileReference; lastKnownFileType = text; path = http_test; sourceTree = "<group>"; };
 		B33807E22877B5090009C732 /* net_http_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = net_http_test.c; sourceTree = "<group>"; };
 		B33807E52877B5090009C732 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		B33807E62877B5090009C732 /* rpng_test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rpng_test.c; sourceTree = "<group>"; };
@@ -2627,6 +2647,7 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				93BC0504298AF1A600BA5157 /* PVDebug.c */,
 				B3C76223207833DE009950E4 /* PVMelonDSCore.h */,
 				B3C76224207833DE009950E4 /* PVMelonDSCore.mm */,
 				B3447EB1218BC69700557ACE /* PVMelonDSCore+Audio.h */,
@@ -2756,6 +2777,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9337CF68298CCC87007CDDB6 /* PBXTargetDependency */,
 				9342932F2973FFF800975F0B /* PBXTargetDependency */,
 				B39313822870FB9A00372EBB /* PBXTargetDependency */,
 			);
@@ -2806,6 +2828,7 @@
 				B3C7620F20783162009950E4 /* PVMelonDS */,
 				B30178D2207C901D0051B93D /* MelonDS */,
 				934293282973FECF00975F0B /* MelonDSRetroArchCore */,
+				9337CF61298CCB56007CDDB6 /* MelonDSRetroArchTVCore */,
 			);
 		};
 /* End PBXProject section */
@@ -2822,6 +2845,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		9337CF62298CCB56007CDDB6 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"appletvsimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/buildTV\" ]; then\n    mkdir \"${SRCROOT}/cmake/buildTV\"\nfi\n\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status melonds-libretro | head -n1 | awk '{print $1;}'`tvOSBuild\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/buildTV/\"*\n    cp -pR \"${SRCROOT}/melonds-libretro/\"* \"${SRCROOT}/cmake/buildTV/\"\n    cp \"${SRCROOT}/cmake/Makefile.TV\" \"${SRCROOT}/cmake/buildTV/Makefile\"\n    touch \"${SRCROOT}/cmake/${LATEST}\"\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/buildTV/\"\n#make clean\nmake -j5\ncp melonds_libretro_tvos.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/melonds_libretro_tvos.dylib\"\n";
+		};
 		9342932D2973FF5600975F0B /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2837,7 +2877,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir ${SRCROOT}/cmake/build\nfi\n#rm -fr \"${SRCROOT}/cmake/build/*\"\ncp -pR ${SRCROOT}/melonDS/* ${SRCROOT}/cmake/build/\ncp ${SRCROOT}/cmake/Makefile ${SRCROOT}/cmake/build/\n\n# Build\ncd ${SRCROOT}/cmake/build/\n#make clean\nmake -j5\ncp melonds_libretro_ios.dylib ${SRCROOT}/../../CoresRetro/RetroArch/modules/melonds_libretro_ios.dylib\n";
+			shellScript = "if [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"appletvsimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\n\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status melonds-libretro | head -n1 | awk '{print $1;}'`iOSBuild\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    cp -pR \"${SRCROOT}/melonds-libretro/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/Makefile\" \"${SRCROOT}/cmake/build/\"\n    touch \"${SRCROOT}/cmake/${LATEST}\"\nfi\n# Build\ncd \"${SRCROOT}/cmake/build/\"\n#make clean\nmake -j5\ncp melonds_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/melonds_libretro_ios.dylib\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2941,6 +2981,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93BC0505298AF1A600BA5157 /* PVDebug.c in Sources */,
 				B338055D287582CE0009C732 /* PVMelonDSCore+Audio.m in Sources */,
 				B338055B28757C3A0009C732 /* PVMelonDSCore+Controls.mm in Sources */,
 				B338055F287583AD0009C732 /* PVMelonDSCore+Video.m in Sources */,
@@ -2951,8 +2992,23 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9337CF68298CCC87007CDDB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				tvos,
+			);
+			target = 9337CF61298CCB56007CDDB6 /* MelonDSRetroArchTVCore */;
+			targetProxy = 9337CF67298CCC87007CDDB6 /* PBXContainerItemProxy */;
+		};
 		9342932F2973FFF800975F0B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilters = (
+				driverkit,
+				ios,
+				maccatalyst,
+				macos,
+				watchos,
+			);
 			target = 934293282973FECF00975F0B /* MelonDSRetroArchCore */;
 			targetProxy = 9342932E2973FFF800975F0B /* PBXContainerItemProxy */;
 		};
@@ -2964,7 +3020,35 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		934293292973FECF00975F0B /* Debug */ = {
+		9337CF64298CCB56007CDDB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LD_MAP_FILE_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Debug;
+		};
+		9337CF65298CCB56007CDDB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LD_MAP_FILE_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Release;
+		};
+		9337CF66298CCB56007CDDB6 /* Archive */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -2972,6 +3056,22 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+			};
+			name = Archive;
+		};
+		934293292973FECF00975F0B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				LD_MAP_FILE_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Debug;
 		};
@@ -2980,9 +3080,12 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Release;
 		};
@@ -2991,9 +3094,12 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 			};
 			name = Archive;
 		};
@@ -3037,6 +3143,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3096,7 +3203,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -3131,6 +3240,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMelonDS";
 				PRODUCT_NAME = PVMelonDS;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -3162,6 +3272,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3224,7 +3335,9 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -3236,6 +3349,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -3296,7 +3410,9 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -3331,6 +3447,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMelonDS";
 				PRODUCT_NAME = PVMelonDS;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -3366,6 +3483,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMelonDS";
 				PRODUCT_NAME = PVMelonDS;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -3378,6 +3496,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9337CF63298CCB56007CDDB6 /* Build configuration list for PBXAggregateTarget "MelonDSRetroArchTVCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9337CF64298CCB56007CDDB6 /* Debug */,
+				9337CF65298CCB56007CDDB6 /* Release */,
+				9337CF66298CCB56007CDDB6 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9342932C2973FECF00975F0B /* Build configuration list for PBXAggregateTarget "MelonDSRetroArchCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

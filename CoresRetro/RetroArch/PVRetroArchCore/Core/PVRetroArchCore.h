@@ -7,25 +7,30 @@
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 
-
 @interface PVRetroArchCore : PVEmulatorCore<PVRetroArchCoreResponderClient, UIApplicationDelegate> {
-	 int videoWidth;
-	 int videoHeight;
-	 int videoBitDepth;
-	 int8_t gsPreference;
-	 int8_t resFactor;
-	 float sampleRate;
-	 BOOL isNTSC;
-	 BOOL isRootView;
-	 UIView *m_view;
-	 UIViewController *m_view_controller;
-	 UIViewController *backup_view_controller;
-	 CAMetalLayer* m_metal_layer;
-	 CAEAGLLayer *m_gl_layer;
-	 NSString *romPath;
-	 CFRunLoopObserverRef iterate_observer;
+    int videoWidth;
+    int videoHeight;
+    int videoBitDepth;
+    int8_t gsPreference;
+    int8_t resFactor;
+    float sampleRate;
+    BOOL isNTSC;
+    BOOL isRootView;
+    UIView *m_view;
+    UIViewController *m_view_controller;
+    UIViewController *backup_view_controller;
+    CAMetalLayer* m_metal_layer;
+    CAEAGLLayer *m_gl_layer;
+    NSString *romPath;
+    CFRunLoopObserverRef iterate_observer;
+    bool retroArchControls;
+    bool bindAnalogKeys;
+    bool hasSecondScreen;
+	bool coreOptionOverwrite;
+    NSString* coreOptionConfigPath;
+    NSString* coreOptionConfig;
 @public
-	 dispatch_queue_t _callbackQueue;
+    dispatch_queue_t _callbackQueue;
 }
 @property (nonatomic, assign) int videoWidth;
 @property (nonatomic, assign) int videoHeight;
@@ -33,7 +38,14 @@
 @property (nonatomic, assign) int8_t resFactor;
 @property (nonatomic, assign) int8_t gsPreference;
 @property (nonatomic, assign) bool isRootView;
-@property (nonatomic, assign) NSString* coreIdentifier;
+@property (nonatomic, assign) bool retroArchControls;
+@property (nonatomic, assign) bool hasTouchControls;
+@property (nonatomic, assign) bool bindAnalogKeys;
+@property (nonatomic, assign) bool hasSecondScreen;
+@property (nonatomic) NSString* coreIdentifier;
+@property (nonatomic) NSString* coreOptionConfigPath;
+@property (nonatomic) NSString* coreOptionConfig;
+@property (nonatomic) bool coreOptionOverwrite;
 // Apple Platform (Libretro)
 @property (nonatomic) UIView* view;
 @property (nonatomic) UIWindow* window;
@@ -58,6 +70,7 @@
 //
 - (void) setupView;
 - (void) setRootView:(BOOL)flag;
+- (void) setupWindow;
 - (void) refreshScreenSize;
 - (void) startVM:(UIView *)view;
 - (void) setupControllers;
@@ -65,6 +78,10 @@
 - (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;
 - (void) gamepadEventIrRecenter:(int)action;
 - (BOOL) setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
+- (void) useRetroArchController:(BOOL)flag;
+- (void) controllerConnected:(NSNotification *)notification;
+- (void) controllerDisconnected:(NSNotification *)notification;
+- (void) processKeyPress:(int)key pressed:(bool)pressed;
 @end
 
 /* iOS UI */
@@ -300,3 +317,10 @@ void apple_input_keyboard_event(bool down,
 void apple_direct_input_keyboard_event(bool down,
 		unsigned code, uint32_t character, uint32_t mod, unsigned device);
 #endif
+
+// Options
+#define USE_SECOND_SCREEN "Move Display to Mirrored Display"
+#define USE_RETROARCH_CONTROLLER "Use Retro Arch Controller Overlay"
+#define ENABLE_ANALOG_KEY "Enable WASD -> Analog Key Bindings"
+#define RETROARCH_PVOVERLAY "/RetroArch/overlays/pv_ui_overlay/pv_ui.cfg"
+#define RETROARCH_DEFAULT_OVERLAY "/RetroArch/overlays/gamepads/neo-retropad/neo-retropad.cfg"

@@ -91,9 +91,11 @@ final class PVControllerManager: NSObject {
 //            return false
 //        }
     }
-
+    var skipKeyBinding:Bool = false
+    var skipControllerBinding:Bool = false
+    var hasLayout:Bool = false
+    
     static let shared: PVControllerManager = PVControllerManager()
-
     func listenForICadeControllers(window: UIWindow?, preferredPlayer: Int = -1, completion: iCadeListenCompletion? = nil) {
         iCadeController?.controllerPressedAnyKey = { [unowned self] (_) -> Void in
             var player = 0
@@ -158,7 +160,6 @@ final class PVControllerManager: NSObject {
             NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardConnect(_:)), name: .GCKeyboardDidConnect, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleKeyboardDisconnect(_:)), name: .GCKeyboardDidDisconnect, object: nil)
         }
-
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidConnect(_:)), name: .GCControllerDidConnect, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVControllerManager.handleControllerDidDisconnect(_:)), name: .GCControllerDidDisconnect, object: nil)
         UserDefaults.standard.addObserver(self as NSObject, forKeyPath: "kICadeControllerSettingKey", options: .new, context: nil)
@@ -168,6 +169,11 @@ final class PVControllerManager: NSObject {
         setupICade()
     }
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+        UserDefaults.standard.removeObserver(self, forKeyPath: "kICadeControllerSettingKey")
+    }
+    
     func isAssigned(_ controller: GCController) -> Bool {
         return allLiveControllers.contains(where: { (_, existingController) -> Bool in
             controller == existingController
@@ -208,11 +214,20 @@ final class PVControllerManager: NSObject {
     }
 
     @objc func handleControllerDidConnect(_ note: Notification?) {
+        guard !PVControllerManager.shared.skipControllerBinding else {
+            return
+        }
         guard let controller = note?.object as? GCController else {
             ELOG("Object wasn't a GCController")
             return
         }
-
+        PVControllerManager.shared.connectController(controller);
+    }
+    
+    @objc func connectController(_ controller:GCController) {
+        guard !PVControllerManager.shared.skipControllerBinding else {
+            return
+        }
         // ignore the bogus controller in the simulator
         if isSimulator && (controller.vendorName == nil || controller.vendorName == "Gamepad") {
             return
@@ -233,6 +248,9 @@ final class PVControllerManager: NSObject {
         }
 #endif
         ILOG("Controller connected: \(controller.vendorName ?? "No Vendor")")
+        controller.setupPauseHandler(onPause: {
+            NotificationCenter.default.post(name: NSNotification.Name("PauseGame"), object: nil)
+        })
         assign(controller)
         #if os(iOS)
             if self.controllerUserInteractionEnabled {
@@ -242,13 +260,21 @@ final class PVControllerManager: NSObject {
     }
 
     @objc func handleControllerDidDisconnect(_ note: Notification?) {
+        guard !PVControllerManager.shared.skipControllerBinding else {
+            return
+        }
         guard let controller = note?.object as? GCController else {
             ELOG("Object wasn't a GCController")
             return
         }
+        PVControllerManager.shared.disconnectController(controller)
+    }
 
+    @objc func disconnectController(_ controller:GCController) {
         ILOG("Controller disconnected: \(controller.vendorName ?? "No Vendor")")
-
+        guard !PVControllerManager.shared.skipControllerBinding else {
+            return
+        }
         if controller == player1 {
             player1 = nil
         } else if controller == player2 {
@@ -279,18 +305,26 @@ final class PVControllerManager: NSObject {
     @available(iOS 14.0, tvOS 14.0, *)
     @objc func handleKeyboardConnect(_ note: Notification?) {
 //        #if !targetEnvironment(simulator)
+        ILOG("Keyboard Connected\n");
+        if (PVControllerManager.shared.skipKeyBinding) {
+            return
+        }
         if let controller = GCKeyboard.coalesced?.createController() {
+            
             keyboardController = controller
-            NotificationCenter.default.post(name:.GCControllerDidConnect, object: controller)
+            PVControllerManager.shared.connectController(controller);
+            NotificationCenter.default.post(name:Notification.Name("HideTouchControls"), object:nil)
         }
 //        #endif
     }
 
     @available(iOS 14.0, tvOS 14.0, *)
     @objc func handleKeyboardDisconnect(_ note: Notification?) {
+        ILOG("Keyboard Disconnected\n");
         if let controller = keyboardController {
             keyboardController = nil
-            NotificationCenter.default.post(name:.GCControllerDidDisconnect, object:controller)
+            PVControllerManager.shared.disconnectController(controller)
+            NotificationCenter.default.post(name:Notification.Name("ShowTouchControls"), object:nil)
         }
     }
 
@@ -446,7 +480,7 @@ final class PVControllerManager: NSObject {
     var controllerUserInteractionEnabled: Bool = false {
         didSet {
             guard controllerUserInteractionEnabled else {
-                controllers().forEach { $0.extendedGamepad?.valueChangedHandler = nil }
+                //controllers().forEach { $0.extendedGamepad?.valueChangedHandler = nil }
                 return
             }
             controllers().forEach { controller in
@@ -734,7 +768,7 @@ extension GCKeyboard {
         controller.setValue(self.vendorName ?? "Keyboard", forKey: "vendorName")
 
         keyboard.keyChangedHandler = {(keyboard, button, key, pressed) -> Void in
-            // print("\(button) \(key) \(pressed)")
+            //print("\(button) \(key) \(pressed)")
 
             func isPressed(_ code:GCKeyCode) -> Bool {
                 return keyboard.button(forKeyCode:code)?.isPressed ?? false
@@ -750,9 +784,9 @@ extension GCKeyboard {
             let left_y:Float = isPressed(.keyW) ? 1.0 : isPressed(.keyS) ? -1.0 : 0.0
             gamepad.leftThumbstick.setValueForXAxis(left_x, yAxis:left_y)
 
-            // -,=,[,]
-            let right_x:Float = isPressed(.closeBracket) ? 1.0 : isPressed(.openBracket) ? -1.0 : 0.0
-            let right_y:Float = isPressed(.equalSign) ? 1.0 : isPressed(.hyphen) ? -1.0 : 0.0
+            // -,=,[,] || YGHJ
+            let right_x:Float = (isPressed(.closeBracket) || isPressed(.keyG)) ? 1.0 : (isPressed(.openBracket) || isPressed(.keyJ)) ? -1.0 : 0.0
+            let right_y:Float = (isPressed(.equalSign) || isPressed(.keyY)) ? 1.0 : (isPressed(.hyphen) || isPressed(.keyH)) ? -1.0 : 0.0
             gamepad.rightThumbstick.setValueForXAxis(right_x, yAxis:right_y)
 
             // ABXY
@@ -771,7 +805,11 @@ extension GCKeyboard {
 
             // MENU, OPTIONS
             gamepad.buttonMenu.setValue(isPressed(.graveAccentAndTilde) ? 1.0 : 0.0)
-            gamepad.buttonOptions?.setValue(isPressed(.one) ? 1.0 : 0.0)
+            gamepad.buttonOptions?.setValue((isPressed(.one) || isPressed(.keyU)) ? 1.0 : 0.0)
+
+            // L3, R3
+            gamepad.leftThumbstickButton?.setValue(isPressed(.keyX) ? 1.0 : 0.0)
+            gamepad.rightThumbstickButton?.setValue(isPressed(.keyC) ? 1.0 : 0.0)
 
             // the system does not call this handler in setValue, so call it with the dpad
             gamepad.valueChangedHandler?(gamepad, gamepad.dpad)

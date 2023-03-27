@@ -414,7 +414,6 @@
 		4470E621C92E4E439F0D41CD /* zstd_decompress_block.c in Sources */ = {isa = PBXBuildFile; fileRef = 1F53EEF3CBED4BEA8B232884 /* zstd_decompress_block.c */; };
 		44C8F444D21C43D79798A7BC /* md4.c in Sources */ = {isa = PBXBuildFile; fileRef = F2D397CD3E3A4AD19120C5B8 /* md4.c */; };
 		45AE6A95DA4B401A9526199A /* WiiSave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B7DE82CB0D647E9B5984802 /* WiiSave.cpp */; };
-		45B6D4349D6D4BA9B506C363 /* VulkanLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C8FE57AA722F468DB62C2216 /* VulkanLoader.cpp */; };
 		4646F66AF5EE431E84B31542 /* curl_ntlm_wb.c in Sources */ = {isa = PBXBuildFile; fileRef = 8B8ACD99B53B4E48B8135CAE /* curl_ntlm_wb.c */; };
 		46C7739F46BC46DF9F28CF62 /* ftp.c in Sources */ = {isa = PBXBuildFile; fileRef = EF9AB95FF900473E876861F7 /* ftp.c */; };
 		46D58073BD53422DB8FA5BC0 /* Clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C301D9B3DBBD4246A0A1DA64 /* Clipper.cpp */; };
@@ -8080,7 +8079,7 @@
 		05CA2CDA84A74447AC6F9AA1 /* WiimoteHIDAttr.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = WiimoteHIDAttr.cpp; path = Source/Core/Core/IOS/USB/Bluetooth/WiimoteHIDAttr.cpp; sourceTree = SOURCE_ROOT; };
 		0610F09F14F74D21B9A1288A /* unix.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = unix.c; path = Externals/enet/unix.c; sourceTree = SOURCE_ROOT; };
 		061B6C4660D54CF5B8A02002 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/Externals/FreeSurround/CMakeFiles/FreeSurround.dir/Info.plist; sourceTree = "<absolute>"; };
-		063D3264BEF047229A08D3E6 /* FixedSizeQueueTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = FixedSizeQueueTest; path = FixedSizeQueueTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		063D3264BEF047229A08D3E6 /* FixedSizeQueueTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FixedSizeQueueTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		065226B47CC34BAB9F540174 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = Source/UnitTests/Common/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		06A8290DCDC34201B556E4B7 /* Zelda.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Zelda.cpp; path = Source/Core/Core/HW/DSPHLE/UCodes/Zelda.cpp; sourceTree = SOURCE_ROOT; };
 		06D905849FC043D3BADA9DD3 /* HiresTextures_DDSLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = HiresTextures_DDSLoader.cpp; path = Source/Core/VideoCommon/HiresTextures_DDSLoader.cpp; sourceTree = SOURCE_ROOT; };
@@ -8144,7 +8143,7 @@
 		0D51929E7DAF426FBCCA8697 /* asyn-thread.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = "asyn-thread.c"; path = "Externals/curl/lib/asyn-thread.c"; sourceTree = SOURCE_ROOT; };
 		0D7D7E0AC35643F181CB522C /* Clipper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Clipper.h; path = Source/Core/VideoBackends/Software/Clipper.h; sourceTree = SOURCE_ROOT; };
 		0D837EF0064545D7AB3A569B /* lz_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lz_encoder.c; path = Externals/liblzma/lz/lz_encoder.c; sourceTree = SOURCE_ROOT; };
-		0DA33A3C1ADC4DD9B03532F8 /* CommonFuncsTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = CommonFuncsTest; path = CommonFuncsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0DA33A3C1ADC4DD9B03532F8 /* CommonFuncsTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = CommonFuncsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0DABB2EA5F804758BAA5F538 /* vli_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = vli_decoder.c; path = Externals/liblzma/common/vli_decoder.c; sourceTree = SOURCE_ROOT; };
 		0DDC52F364D14132A9D1C210 /* XFMemory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = XFMemory.h; path = Source/Core/VideoCommon/XFMemory.h; sourceTree = SOURCE_ROOT; };
 		0E118EF6CAAB42C28CF0D2BE /* pngmem.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pngmem.c; path = Externals/libpng/pngmem.c; sourceTree = SOURCE_ROOT; };
@@ -8166,7 +8165,7 @@
 		10C1E73161F04A339767944C /* huf_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_compress.c; path = Externals/zstd/lib/compress/huf_compress.c; sourceTree = SOURCE_ROOT; };
 		10DF81BD1AE746D3BF987A1D /* lzma_encoder_optimum_normal.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = lzma_encoder_optimum_normal.c; path = Externals/liblzma/lzma/lzma_encoder_optimum_normal.c; sourceTree = SOURCE_ROOT; };
 		11074068289B4B06820EA74A /* WII_IPC.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = WII_IPC.h; path = Source/Core/Core/HW/WII_IPC.h; sourceTree = SOURCE_ROOT; };
-		1111BB4F63D94D658F81B740 /* CryptoEcTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = CryptoEcTest; path = CryptoEcTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1111BB4F63D94D658F81B740 /* CryptoEcTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = CryptoEcTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		112AADC283DF425A9766476B /* VertexLoaderBase.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VertexLoaderBase.h; path = Source/Core/VideoCommon/VertexLoaderBase.h; sourceTree = SOURCE_ROOT; };
 		11303F69F8DF49F582EC3B3F /* JitAsmCommon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = JitAsmCommon.cpp; path = Source/Core/Core/PowerPC/JitCommon/JitAsmCommon.cpp; sourceTree = SOURCE_ROOT; };
 		1143DAAFA56848EAB101BF10 /* FifoRecordAnalyzer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FifoRecordAnalyzer.cpp; path = Source/Core/Core/FifoPlayer/FifoRecordAnalyzer.cpp; sourceTree = SOURCE_ROOT; };
@@ -8244,7 +8243,7 @@
 		1A6CA2C4FB6340298766A82C /* block_buffer_encoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = block_buffer_encoder.h; path = Externals/liblzma/common/block_buffer_encoder.h; sourceTree = SOURCE_ROOT; };
 		1A7ED68DB884442BAC2BAD5C /* AbstractStagingTexture.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = AbstractStagingTexture.cpp; path = Source/Core/VideoCommon/AbstractStagingTexture.cpp; sourceTree = SOURCE_ROOT; };
 		1A8E196F0E5842138A06A023 /* pkparse.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pkparse.c; path = Externals/mbedtls/library/pkparse.c; sourceTree = SOURCE_ROOT; };
-		1A9893033830441097A65CEC /* FloatUtilsTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = FloatUtilsTest; path = FloatUtilsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A9893033830441097A65CEC /* FloatUtilsTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FloatUtilsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AC93245FFC945A1BF8EA37B /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/Externals/enet/CMakeFiles/enet.dir/Info.plist; sourceTree = "<absolute>"; };
 		1ACC69F072AF492DA628165E /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = Externals/SFML/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		1ACCC1A68A324318AC818179 /* des.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = des.c; path = Externals/mbedtls/library/des.c; sourceTree = SOURCE_ROOT; };
@@ -8286,7 +8285,7 @@
 		1F7CC90862CE4FFDBE271927 /* fse_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_compress.c; path = Externals/zstd/lib/compress/fse_compress.c; sourceTree = SOURCE_ROOT; };
 		1F87262EBEFD4E3EBCDDB421 /* CSVSignatureDB.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CSVSignatureDB.cpp; path = Source/Core/Core/PowerPC/SignatureDB/CSVSignatureDB.cpp; sourceTree = SOURCE_ROOT; };
 		1FA7791A7F454E6D97DB44ED /* ProgramShaderCache.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ProgramShaderCache.h; path = Source/Core/VideoBackends/OGL/ProgramShaderCache.h; sourceTree = SOURCE_ROOT; };
-		1FECF898B33D476CB3DA2737 /* NandPathsTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = NandPathsTest; path = NandPathsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FECF898B33D476CB3DA2737 /* NandPathsTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = NandPathsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2042130C3C3B41B78A6D8B37 /* index_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = index_encoder.c; path = Externals/liblzma/common/index_encoder.c; sourceTree = SOURCE_ROOT; };
 		20591018B94A4259AB1DD4C9 /* System.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = System.cpp; path = Source/Core/Core/System.cpp; sourceTree = SOURCE_ROOT; };
 		2088D013A25041D38A692039 /* CommandLineParse.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CommandLineParse.cpp; path = Source/Core/UICommon/CommandLineParse.cpp; sourceTree = SOURCE_ROOT; };
@@ -8340,7 +8339,7 @@
 		2733A1FACE3047F29A797A40 /* RenderBase.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = RenderBase.cpp; path = Source/Core/VideoCommon/RenderBase.cpp; sourceTree = SOURCE_ROOT; };
 		273A556FA9B54FDE9AC35BD5 /* ParseContextBase.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ParseContextBase.cpp; path = Externals/glslang/glslang/MachineIndependent/ParseContextBase.cpp; sourceTree = SOURCE_ROOT; };
 		27527A8B712246BBB9F8AD69 /* CommonTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CommonTypes.h; path = Source/Core/Common/CommonTypes.h; sourceTree = SOURCE_ROOT; };
-		279038446885432B9A0334B1 /* MathUtilTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = MathUtilTest; path = MathUtilTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		279038446885432B9A0334B1 /* MathUtilTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = MathUtilTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		279C5D9D7B86478FB6C22005 /* PpAtom.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PpAtom.cpp; path = Externals/glslang/glslang/MachineIndependent/preprocessor/PpAtom.cpp; sourceTree = SOURCE_ROOT; };
 		27A5A1661C5F473C80096DB7 /* DVDMath.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DVDMath.cpp; path = Source/Core/Core/HW/DVD/DVDMath.cpp; sourceTree = SOURCE_ROOT; };
 		27B7FF1C5B95447DBF4D2B69 /* VertexLoaderManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VertexLoaderManager.h; path = Source/Core/VideoCommon/VertexLoaderManager.h; sourceTree = SOURCE_ROOT; };
@@ -8391,7 +8390,7 @@
 		2E73AAE0DCBF42F8B9B05B1D /* Core.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Core.h; path = Source/Core/Core/Core.h; sourceTree = SOURCE_ROOT; };
 		2EF9233D486843E197A238E7 /* relocatable.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = relocatable.c; path = "Externals/libiconv-1.14/lib/relocatable.c"; sourceTree = SOURCE_ROOT; };
 		2F28D5CEA3E442BD8E9C8B62 /* NetPlayChatUI.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = NetPlayChatUI.cpp; path = Source/Core/VideoCommon/NetPlayChatUI.cpp; sourceTree = SOURCE_ROOT; };
-		2F61ACB12F2544F38B36AC74 /* BitSetTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = BitSetTest; path = BitSetTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2F61ACB12F2544F38B36AC74 /* BitSetTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = BitSetTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F8F04F1237E4B65B5E325B1 /* OptionParser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = OptionParser.cpp; path = "Externals/cpp-optparse/OptionParser.cpp"; sourceTree = SOURCE_ROOT; };
 		2F8FF6FA873445BC91455DB4 /* nist_kw.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = nist_kw.c; path = Externals/mbedtls/library/nist_kw.c; sourceTree = SOURCE_ROOT; };
 		2FCD30AF1DB24AB99E72B039 /* debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = Externals/zstd/lib/common/debug.c; sourceTree = SOURCE_ROOT; };
@@ -8422,7 +8421,7 @@
 		33347301CD4742F59CDA46F1 /* Pipes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Pipes.h; path = Source/Core/InputCommon/ControllerInterface/Pipes/Pipes.h; sourceTree = SOURCE_ROOT; };
 		33512EC1339840B9B0927F59 /* http_negotiate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = http_negotiate.c; path = Externals/curl/lib/http_negotiate.c; sourceTree = SOURCE_ROOT; };
 		335A886F21844B1D9AFB8541 /* ActionReplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ActionReplay.cpp; path = Source/Core/Core/ActionReplay.cpp; sourceTree = SOURCE_ROOT; };
-		336D9CECBBD34B888198360F /* FlagTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = FlagTest; path = FlagTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		336D9CECBBD34B888198360F /* FlagTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FlagTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33AEF279B3CD43EDA9573587 /* AddressSpace.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = AddressSpace.cpp; path = Source/Core/Core/HW/AddressSpace.cpp; sourceTree = SOURCE_ROOT; };
 		343CEAF70D914CBC8F368081 /* PixelShaderGen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = PixelShaderGen.h; path = Source/Core/VideoCommon/PixelShaderGen.h; sourceTree = SOURCE_ROOT; };
 		3490C63A186340B4B1A13C00 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/Source/Core/VideoCommon/CMakeFiles/videocommon.dir/Info.plist; sourceTree = "<absolute>"; };
@@ -8441,7 +8440,7 @@
 		363AF2FA28774324913999BE /* parsedate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = parsedate.c; path = Externals/curl/lib/parsedate.c; sourceTree = SOURCE_ROOT; };
 		363E16BCD39844168ED3A493 /* x509_csr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = x509_csr.c; path = Externals/mbedtls/library/x509_csr.c; sourceTree = SOURCE_ROOT; };
 		365B30DF581D4E74899695D3 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = Externals/SFML/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		3667081458CB4BD7847EBA70 /* FileSystemTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = FileSystemTest; path = FileSystemTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3667081458CB4BD7847EBA70 /* FileSystemTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FileSystemTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36A4C30A0E964C71ABDBB202 /* SamplerCache.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SamplerCache.h; path = Source/Core/VideoBackends/OGL/SamplerCache.h; sourceTree = SOURCE_ROOT; };
 		36BE93FE34404412A335E2F3 /* Device.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Device.cpp; path = Source/Core/Core/IOS/Device.cpp; sourceTree = SOURCE_ROOT; };
 		36C646F469D74F01AB7B7B9F /* GeometryShaderGen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GeometryShaderGen.h; path = Source/Core/VideoCommon/GeometryShaderGen.h; sourceTree = SOURCE_ROOT; };
@@ -8450,7 +8449,7 @@
 		3719F70763DB44F48094FB1C /* openssl.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = openssl.c; path = Externals/curl/lib/vtls/openssl.c; sourceTree = SOURCE_ROOT; };
 		37732DE9266440B7A3884312 /* TextureCache.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TextureCache.h; path = Source/Core/VideoBackends/Null/TextureCache.h; sourceTree = SOURCE_ROOT; };
 		377BB64C83954C1E89FA7DEA /* GCMemcardUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GCMemcardUtils.h; path = Source/Core/Core/HW/GCMemcard/GCMemcardUtils.h; sourceTree = SOURCE_ROOT; };
-		37976FF96B4E45E0AE6F8A49 /* PageFaultTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = PageFaultTest; path = PageFaultTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		37976FF96B4E45E0AE6F8A49 /* PageFaultTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = PageFaultTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3799155848014E629EC0AE98 /* libvideoogl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libvideoogl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		37AB98DD55A443EDAC8B1ADA /* digest_sspi.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = digest_sspi.c; path = Externals/curl/lib/vauth/digest_sspi.c; sourceTree = SOURCE_ROOT; };
 		37B26A3F0435483FAE0CE3DF /* FifoRecorder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FifoRecorder.h; path = Source/Core/Core/FifoPlayer/FifoRecorder.h; sourceTree = SOURCE_ROOT; };
@@ -8541,7 +8540,7 @@
 		45E784427F1D44FDB31B5873 /* xtea.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xtea.c; path = Externals/mbedtls/library/xtea.c; sourceTree = SOURCE_ROOT; };
 		4616BB486BED4DB884D7D3E0 /* polarssl.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = polarssl.c; path = Externals/curl/lib/vtls/polarssl.c; sourceTree = SOURCE_ROOT; };
 		46DB01260B7043048D69A471 /* DSPHost.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DSPHost.cpp; path = Source/Core/Core/HW/DSPLLE/DSPHost.cpp; sourceTree = SOURCE_ROOT; };
-		46F7DA2E87E043B4B24A077B /* DSPAcceleratorTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = DSPAcceleratorTest; path = DSPAcceleratorTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		46F7DA2E87E043B4B24A077B /* DSPAcceleratorTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = DSPAcceleratorTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		46FE4D8A886B4CE5B8BB2107 /* simple_coder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = simple_coder.h; path = Externals/liblzma/simple/simple_coder.h; sourceTree = SOURCE_ROOT; };
 		472D40BC780A4276946ACA78 /* FileBlob.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FileBlob.h; path = Source/Core/DiscIO/FileBlob.h; sourceTree = SOURCE_ROOT; };
 		4787EF90648E4B318A720B22 /* ntlm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ntlm.c; path = Externals/curl/lib/vauth/ntlm.c; sourceTree = SOURCE_ROOT; };
@@ -8650,9 +8649,9 @@
 		564F2EDEEC4D48FEA985432E /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/Source/UnitTests/Common/CMakeFiles/FloatUtilsTest.dir/Info.plist; sourceTree = "<absolute>"; };
 		564FC582471447D790599D8A /* easy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = easy.c; path = Externals/curl/lib/easy.c; sourceTree = SOURCE_ROOT; };
 		56F797585EF04E8680687B59 /* ARDecrypt.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ARDecrypt.cpp; path = Source/Core/Core/ARDecrypt.cpp; sourceTree = SOURCE_ROOT; };
-		572513C0DD194608AF410050 /* StringUtilTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = StringUtilTest; path = StringUtilTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		572513C0DD194608AF410050 /* StringUtilTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = StringUtilTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		574DB324A7314274B2EF7F17 /* curl_gssapi.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = curl_gssapi.c; path = Externals/curl/lib/curl_gssapi.c; sourceTree = SOURCE_ROOT; };
-		578F8EFC108849F694A63F5C /* FileUtilTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = FileUtilTest; path = FileUtilTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		578F8EFC108849F694A63F5C /* FileUtilTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = FileUtilTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		579A0B1255F6438E9F53EDFC /* LibusbUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LibusbUtils.h; path = Source/Core/Core/LibusbUtils.h; sourceTree = SOURCE_ROOT; };
 		57A9ABA10146493C8B7DD2E6 /* JitArm64Cache.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = JitArm64Cache.cpp; path = Source/Core/Core/PowerPC/JitArm64/JitArm64Cache.cpp; sourceTree = SOURCE_ROOT; };
 		57BE4FC32FE34AA9A8532473 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = Source/UnitTests/VideoCommon/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
@@ -8699,7 +8698,7 @@
 		5D22EFA16BD54DE08956FD4C /* AsyncRequests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = AsyncRequests.cpp; path = Source/Core/VideoCommon/AsyncRequests.cpp; sourceTree = SOURCE_ROOT; };
 		5D26EA3856EF4188BB79C516 /* MD5.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MD5.cpp; path = Source/Core/Common/MD5.cpp; sourceTree = SOURCE_ROOT; };
 		5D31A341785D440FA2352AF0 /* timeval.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = timeval.c; path = Externals/curl/lib/timeval.c; sourceTree = SOURCE_ROOT; };
-		5D3922F1953C443683235594 /* SPSCQueueTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = SPSCQueueTest; path = SPSCQueueTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D3922F1953C443683235594 /* SPSCQueueTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = SPSCQueueTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D4965B72CF2407EB4BA206C /* Enums.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Enums.cpp; path = Source/Core/DiscIO/Enums.cpp; sourceTree = SOURCE_ROOT; };
 		5DB97F43867A451BBC8A8C08 /* JitArm64_LoadStoreFloating.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = JitArm64_LoadStoreFloating.cpp; path = Source/Core/Core/PowerPC/JitArm64/JitArm64_LoadStoreFloating.cpp; sourceTree = SOURCE_ROOT; };
 		5E2E048773E44E8B923D251A /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = Externals/gtest/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
@@ -9021,7 +9020,7 @@
 		8BC81186F27245A1A7C5DDFA /* DITSpecification.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DITSpecification.cpp; path = Source/Core/InputCommon/DynamicInputTextures/DITSpecification.cpp; sourceTree = SOURCE_ROOT; };
 		8BD20EDBC2EC4DE7AC71B89A /* FileSystemTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FileSystemTest.cpp; path = Source/UnitTests/Core/IOS/FS/FileSystemTest.cpp; sourceTree = SOURCE_ROOT; };
 		8BF721F1DFFE4E28BE95DE85 /* DualShockUDPClient.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DualShockUDPClient.cpp; path = Source/Core/InputCommon/ControllerInterface/DualShockUDPClient/DualShockUDPClient.cpp; sourceTree = SOURCE_ROOT; };
-		8BFB82AF96E24C7DB24BA1C8 /* ESFormatsTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = ESFormatsTest; path = ESFormatsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8BFB82AF96E24C7DB24BA1C8 /* ESFormatsTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = ESFormatsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C278B257CFB44999FE9B682 /* ConstantManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ConstantManager.h; path = Source/Core/VideoCommon/ConstantManager.h; sourceTree = SOURCE_ROOT; };
 		8C31A029DF5245D0BA9C9906 /* SWOGLWindow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SWOGLWindow.cpp; path = Source/Core/VideoBackends/Software/SWOGLWindow.cpp; sourceTree = SOURCE_ROOT; };
 		8C55801B12DF401289AB5B7C /* zstd_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_fast.c; path = Externals/zstd/lib/compress/zstd_fast.c; sourceTree = SOURCE_ROOT; };
@@ -9057,7 +9056,7 @@
 		9011B6F1BE82411691FF9FCF /* FreeLookSettings.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FreeLookSettings.cpp; path = Source/Core/Core/Config/FreeLookSettings.cpp; sourceTree = SOURCE_ROOT; };
 		9065AABC403A41FB928D2F4F /* memcmplen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = memcmplen.h; path = Externals/liblzma/common/memcmplen.h; sourceTree = SOURCE_ROOT; };
 		907EC57AED0F4B2EAD32A862 /* DSPIntMisc.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DSPIntMisc.cpp; path = Source/Core/Core/DSP/Interpreter/DSPIntMisc.cpp; sourceTree = SOURCE_ROOT; };
-		908272F7C3FE46B8A54FDAF7 /* libcore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcore.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		908272F7C3FE46B8A54FDAF7 /* libdolphin-core.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libdolphin-core.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		908D692347044F418CA05856 /* IMUGyroscope.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IMUGyroscope.h; path = Source/Core/InputCommon/ControllerEmu/ControlGroup/IMUGyroscope.h; sourceTree = SOURCE_ROOT; };
 		90AB7870DA294C21AC3741F2 /* Config.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Config.h; path = Source/Core/Common/Config/Config.h; sourceTree = SOURCE_ROOT; };
 		90B8B2D615E845489B87B1F2 /* filter_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = filter_decoder.c; path = Externals/liblzma/common/filter_decoder.c; sourceTree = SOURCE_ROOT; };
@@ -9085,6 +9084,7 @@
 		939B624ED4B84B1495F2BE8A /* fse_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_decompress.c; path = Externals/zstd/lib/common/fse_decompress.c; sourceTree = SOURCE_ROOT; };
 		93A434DE26994781B7144509 /* platform_util.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = platform_util.c; path = Externals/mbedtls/library/platform_util.c; sourceTree = SOURCE_ROOT; };
 		93A69252CFDF44B39E120385 /* VertexLoaderManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = VertexLoaderManager.cpp; path = Source/Core/VideoCommon/VertexLoaderManager.cpp; sourceTree = SOURCE_ROOT; };
+		93BC050B298B004700BA5157 /* LibDolphinConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = LibDolphinConfig.xcconfig; path = ../LibDolphinConfig.xcconfig; sourceTree = "<group>"; };
 		93E877DB30204BA38136AF98 /* WII_IPC.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = WII_IPC.cpp; path = Source/Core/Core/HW/WII_IPC.cpp; sourceTree = SOURCE_ROOT; };
 		94383BE09C464782BB51B3C4 /* StickGate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StickGate.h; path = Source/Core/InputCommon/ControllerEmu/StickGate.h; sourceTree = SOURCE_ROOT; };
 		945B69A2F82B4E87990CF676 /* ecp_curves.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ecp_curves.c; path = Externals/mbedtls/library/ecp_curves.c; sourceTree = SOURCE_ROOT; };
@@ -9113,7 +9113,7 @@
 		9773A7DF5EBB4E268BA38B55 /* FileMonitor.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FileMonitor.cpp; path = Source/Core/Core/HW/DVD/FileMonitor.cpp; sourceTree = SOURCE_ROOT; };
 		977D52D736B34D2BB39B0972 /* MinizipUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MinizipUtil.h; path = Source/Core/Common/MinizipUtil.h; sourceTree = SOURCE_ROOT; };
 		978E51450CB641B082F6B7E3 /* Force.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Force.h; path = Source/Core/InputCommon/ControllerEmu/ControlGroup/Force.h; sourceTree = SOURCE_ROOT; };
-		97AE98159ED84948A87D92A1 /* EnumFormatterTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = EnumFormatterTest; path = EnumFormatterTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		97AE98159ED84948A87D92A1 /* EnumFormatterTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = EnumFormatterTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97BCBE548D4C462CA3EAC3D4 /* WIABlob.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = WIABlob.h; path = Source/Core/DiscIO/WIABlob.h; sourceTree = SOURCE_ROOT; };
 		9830C13DD35B4D929EAB5A95 /* Versions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Versions.cpp; path = Externals/glslang/glslang/MachineIndependent/Versions.cpp; sourceTree = SOURCE_ROOT; };
 		986560C9F1514FB2815D3301 /* zstd_decompress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_internal.h; path = Externals/zstd/lib/decompress/zstd_decompress_internal.h; sourceTree = SOURCE_ROOT; };
@@ -9126,7 +9126,7 @@
 		9905F8E42B8C4586B3857475 /* IniFile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IniFile.h; path = Source/Core/Common/IniFile.h; sourceTree = SOURCE_ROOT; };
 		99749CF5669842E3BD76E37F /* zstd_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress.c; path = Externals/zstd/lib/compress/zstd_compress.c; sourceTree = SOURCE_ROOT; };
 		999DC2ED8E3A434BA6AA4A19 /* DSPCodeUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DSPCodeUtil.h; path = Source/Core/Core/DSP/DSPCodeUtil.h; sourceTree = SOURCE_ROOT; };
-		999E6F71031540A294ED10AD /* BusyLoopTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = BusyLoopTest; path = BusyLoopTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		999E6F71031540A294ED10AD /* BusyLoopTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = BusyLoopTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		99A8D01E478A4ADEA574D5AC /* pipeline.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pipeline.c; path = Externals/curl/lib/pipeline.c; sourceTree = SOURCE_ROOT; };
 		99BE012C631449929F7241DB /* delta_private.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = delta_private.h; path = Externals/liblzma/delta/delta_private.h; sourceTree = SOURCE_ROOT; };
 		99C33E1390D3471CA303E976 /* host.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = host.c; path = Externals/enet/host.c; sourceTree = SOURCE_ROOT; };
@@ -9165,7 +9165,7 @@
 		9E657ED1AC924E8B83CFC1E3 /* Triggers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Triggers.h; path = Source/Core/InputCommon/ControllerEmu/ControlGroup/Triggers.h; sourceTree = SOURCE_ROOT; };
 		9E82A71DF707474E907664B1 /* FifoAnalyzer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FifoAnalyzer.cpp; path = Source/Core/Core/FifoPlayer/FifoAnalyzer.cpp; sourceTree = SOURCE_ROOT; };
 		9E95CFAD80464AAF83680B19 /* GCMemcardDirectory.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GCMemcardDirectory.h; path = Source/Core/Core/HW/GCMemcard/GCMemcardDirectory.h; sourceTree = SOURCE_ROOT; };
-		9EAE6985868B4F619D463534 /* VertexLoaderTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = VertexLoaderTest; path = VertexLoaderTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9EAE6985868B4F619D463534 /* VertexLoaderTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = VertexLoaderTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0916097EA549EB91B60C06 /* VideoCommon.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VideoCommon.h; path = Source/Core/VideoCommon/VideoCommon.h; sourceTree = SOURCE_ROOT; };
 		9F156746777B4C84B82BA059 /* PerfQueryBase.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PerfQueryBase.cpp; path = Source/Core/VideoCommon/PerfQueryBase.cpp; sourceTree = SOURCE_ROOT; };
 		9F1BEFABAD4E4658B9DA7BEF /* EfbCopy.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = EfbCopy.cpp; path = Source/Core/VideoBackends/Software/EfbCopy.cpp; sourceTree = SOURCE_ROOT; };
@@ -9212,7 +9212,7 @@
 		A4A3315DED0447709775489F /* hmac.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hmac.c; path = Externals/curl/lib/hmac.c; sourceTree = SOURCE_ROOT; };
 		A4B87D53E3074497AEDAE0A9 /* Dump.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Dump.cpp; path = Source/Core/Core/Debugger/Dump.cpp; sourceTree = SOURCE_ROOT; };
 		A4C022A7E818424BABC259BA /* Filesystem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Filesystem.h; path = Source/Core/DiscIO/Filesystem.h; sourceTree = SOURCE_ROOT; };
-		A4C49CB45DCC4B1C9EED5D0E /* PowerPCTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = PowerPCTest; path = PowerPCTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4C49CB45DCC4B1C9EED5D0E /* PowerPCTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = PowerPCTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A50DCF1CAE8F4AE4B0C891E6 /* AsyncShaderCompiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = AsyncShaderCompiler.h; path = Source/Core/VideoCommon/AsyncShaderCompiler.h; sourceTree = SOURCE_ROOT; };
 		A5129937870C4AC09FD2A5A4 /* AXVoice.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = AXVoice.h; path = Source/Core/Core/HW/DSPHLE/UCodes/AXVoice.h; sourceTree = SOURCE_ROOT; };
 		A5470A26B75E41A492B2A439 /* BitUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BitUtils.h; path = Source/Core/Common/BitUtils.h; sourceTree = SOURCE_ROOT; };
@@ -9445,7 +9445,7 @@
 		C4959E4E2B5D4D70A5D36CFD /* PixelShaderManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PixelShaderManager.cpp; path = Source/Core/VideoCommon/PixelShaderManager.cpp; sourceTree = SOURCE_ROOT; };
 		C4E56B1E7AE34B53A3EE5114 /* limits.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = limits.cpp; path = Externals/glslang/glslang/MachineIndependent/limits.cpp; sourceTree = SOURCE_ROOT; };
 		C528D5B50AE0496896E04BD6 /* NetPlayServer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = NetPlayServer.cpp; path = Source/Core/Core/NetPlayServer.cpp; sourceTree = SOURCE_ROOT; };
-		C53581E14CFA46648750E93E /* libcommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C53581E14CFA46648750E93E /* libdolphin-common.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libdolphin-common.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5519F66B4884991B5D56FC8 /* GCKeyboard.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GCKeyboard.cpp; path = Source/Core/Core/HW/GCKeyboard.cpp; sourceTree = SOURCE_ROOT; };
 		C5764EC73AC842F287426CCF /* ButtonManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ButtonManager.h; path = Source/Core/InputCommon/ControllerInterface/Touch/ButtonManager.h; sourceTree = SOURCE_ROOT; };
 		C57C182F64434B98852875C8 /* sign.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = sign.c; path = Externals/ed25519/sign.c; sourceTree = SOURCE_ROOT; };
@@ -9484,7 +9484,7 @@
 		C8FE57AA722F468DB62C2216 /* VulkanLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = VulkanLoader.cpp; path = Source/Core/VideoBackends/Vulkan/VulkanLoader.cpp; sourceTree = SOURCE_ROOT; };
 		C9218E6E23C74A4190BF915F /* SPSCQueue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SPSCQueue.h; path = Source/Core/Common/SPSCQueue.h; sourceTree = SOURCE_ROOT; };
 		C9469BE966184DB38324758A /* MMU.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MMU.h; path = Source/Core/Core/PowerPC/MMU.h; sourceTree = SOURCE_ROOT; };
-		C968170A7D39415ABF53325A /* BitUtilsTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = BitUtilsTest; path = BitUtilsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C968170A7D39415ABF53325A /* BitUtilsTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = BitUtilsTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C96A88B66B224568B85AA8F1 /* libdiscio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libdiscio.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97A3BBEEABD4C25AB2100A3 /* CISOBlob.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CISOBlob.h; path = Source/Core/DiscIO/CISOBlob.h; sourceTree = SOURCE_ROOT; };
 		C9A578A554F149ED83F4706E /* block_buffer_encoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = block_buffer_encoder.c; path = Externals/liblzma/common/block_buffer_encoder.c; sourceTree = SOURCE_ROOT; };
@@ -9536,7 +9536,7 @@
 		D0332099CF024F07A8C3378F /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = Source/Core/VideoCommon/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		D06FFBFBE19F4D9B83CB5A43 /* inet_ntop.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inet_ntop.c; path = Externals/curl/lib/inet_ntop.c; sourceTree = SOURCE_ROOT; };
 		D0958582943D4A0F96D7913F /* hardware_cputhreads.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hardware_cputhreads.c; path = Externals/liblzma/common/hardware_cputhreads.c; sourceTree = SOURCE_ROOT; };
-		D09B294247B347C69B6056C5 /* BlockingLoopTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = BlockingLoopTest; path = BlockingLoopTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D09B294247B347C69B6056C5 /* BlockingLoopTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = BlockingLoopTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0A76A4DF9AF403A85D7589A /* BaseConfigLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BaseConfigLoader.cpp; path = Source/Core/Core/ConfigLoaders/BaseConfigLoader.cpp; sourceTree = SOURCE_ROOT; };
 		D0AF2EFE286E4BC0B75DDBEE /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/Source/UnitTests/Common/CMakeFiles/FlagTest.dir/Info.plist; sourceTree = "<absolute>"; };
 		D0B762AC1698487684FA1C53 /* pkcs5.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pkcs5.c; path = Externals/mbedtls/library/pkcs5.c; sourceTree = SOURCE_ROOT; };
@@ -9566,7 +9566,7 @@
 		D46C889664FE4FD1BFA877B0 /* socks_gssapi.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = socks_gssapi.c; path = Externals/curl/lib/socks_gssapi.c; sourceTree = SOURCE_ROOT; };
 		D471731A9C084E9087915F06 /* non-ascii.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = "non-ascii.c"; path = "Externals/curl/lib/non-ascii.c"; sourceTree = SOURCE_ROOT; };
 		D4CAE28FAD6D4984B162C0EB /* DITConfiguration.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DITConfiguration.cpp; path = Source/Core/InputCommon/DynamicInputTextures/DITConfiguration.cpp; sourceTree = SOURCE_ROOT; };
-		D4E1696AE2FC404FB96E7B55 /* SwapTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = SwapTest; path = SwapTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D4E1696AE2FC404FB96E7B55 /* SwapTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = SwapTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4F6EED884AC4C15ACFC4458 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = Source/Core/VideoBackends/OGL/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		D50000F7612E4AB399394E02 /* filter_flags_decoder.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = filter_flags_decoder.c; path = Externals/liblzma/common/filter_flags_decoder.c; sourceTree = SOURCE_ROOT; };
 		D5062D1356714B80BA95160E /* Network.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Network.cpp; path = Source/Core/Common/Network.cpp; sourceTree = SOURCE_ROOT; };
@@ -9661,7 +9661,7 @@
 		E144C1E323054FF3B6EBB27C /* Fifo.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Fifo.h; path = Source/Core/VideoCommon/Fifo.h; sourceTree = SOURCE_ROOT; };
 		E1783A7B643A4D83837500F5 /* DSPDisassembler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DSPDisassembler.cpp; path = Source/Core/Core/DSP/DSPDisassembler.cpp; sourceTree = SOURCE_ROOT; };
 		E1F60930BEFF48358D99D101 /* WFSSRV.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = WFSSRV.cpp; path = Source/Core/Core/IOS/WFS/WFSSRV.cpp; sourceTree = SOURCE_ROOT; };
-		E20B2AE1290D4797851DCB20 /* DSPAssemblyTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = DSPAssemblyTest; path = DSPAssemblyTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E20B2AE1290D4797851DCB20 /* DSPAssemblyTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = DSPAssemblyTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2483DF81CBA4D82908833A3 /* OSThread.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = OSThread.cpp; path = Source/Core/Core/Debugger/OSThread.cpp; sourceTree = SOURCE_ROOT; };
 		E298192895D64EC89A654F87 /* SocketSelector.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SocketSelector.cpp; path = Externals/SFML/src/SFML/Network/SocketSelector.cpp; sourceTree = SOURCE_ROOT; };
 		E29843984F0F476A923619AE /* Manager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Manager.h; path = Source/Core/UICommon/ResourcePack/Manager.h; sourceTree = SOURCE_ROOT; };
@@ -9678,7 +9678,7 @@
 		E40AF06B711646088153CFB4 /* libzstd-dolphin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libzstd-dolphin.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E41329AD2D14463398EEDA0E /* JitArm64_Integer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = JitArm64_Integer.cpp; path = Source/Core/Core/PowerPC/JitArm64/JitArm64_Integer.cpp; sourceTree = SOURCE_ROOT; };
 		E4379D3965AB4D65832FE3CE /* DSPSymbols.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DSPSymbols.cpp; path = Source/Core/Core/HW/DSPLLE/DSPSymbols.cpp; sourceTree = SOURCE_ROOT; };
-		E449D1CC998F479899984D08 /* BitFieldTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = BitFieldTest; path = BitFieldTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E449D1CC998F479899984D08 /* BitFieldTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = BitFieldTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E458846B6D164537B7C57355 /* delta_decoder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = delta_decoder.h; path = Externals/liblzma/delta/delta_decoder.h; sourceTree = SOURCE_ROOT; };
 		E45FB1C1DD6C468C9CFE4D4E /* CommandLineParse.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CommandLineParse.h; path = Source/Core/UICommon/CommandLineParse.h; sourceTree = SOURCE_ROOT; };
 		E47B91B64521425D99F081FD /* Common.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Common.h; path = Source/Core/Core/IOS/USB/Common.h; sourceTree = SOURCE_ROOT; };
@@ -9715,7 +9715,7 @@
 		E9958B90CCCD498E92C5CBF0 /* memory_buffer_alloc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = memory_buffer_alloc.c; path = Externals/mbedtls/library/memory_buffer_alloc.c; sourceTree = SOURCE_ROOT; };
 		E9BAC90BC2E64A989910E7D0 /* WiiRoot.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = WiiRoot.h; path = Source/Core/Core/WiiRoot.h; sourceTree = SOURCE_ROOT; };
 		E9C17C253F6C4DCFA10DF446 /* NumericSetting.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NumericSetting.h; path = Source/Core/InputCommon/ControllerEmu/Setting/NumericSetting.h; sourceTree = SOURCE_ROOT; };
-		EA05D19C36424210AD696CBE /* MMIOTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = MMIOTest; path = MMIOTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA05D19C36424210AD696CBE /* MMIOTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = MMIOTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA076C20DA4C4E0E88525AB0 /* Jit_Util.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Jit_Util.cpp; path = Source/Core/Core/PowerPC/JitArm64/Jit_Util.cpp; sourceTree = SOURCE_ROOT; };
 		EA597B0199244FFFBB593558 /* libinputcommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libinputcommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA7E831705C847B480128909 /* bignum.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = bignum.c; path = Externals/mbedtls/library/bignum.c; sourceTree = SOURCE_ROOT; };
@@ -9761,7 +9761,7 @@
 		EF85D8C0F30E46A0A825D973 /* UberShaderPixel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = UberShaderPixel.cpp; path = Source/Core/VideoCommon/UberShaderPixel.cpp; sourceTree = SOURCE_ROOT; };
 		EF9AB95FF900473E876861F7 /* ftp.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = ftp.c; path = Externals/curl/lib/ftp.c; sourceTree = SOURCE_ROOT; };
 		EFADCD761C6A4E2CB9EAE5F3 /* PeakFinder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PeakFinder.cpp; path = Externals/soundtouch/PeakFinder.cpp; sourceTree = SOURCE_ROOT; };
-		EFB9D51FA9034A38B9F73B9C /* CoreTimingTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = CoreTimingTest; path = CoreTimingTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFB9D51FA9034A38B9F73B9C /* CoreTimingTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = CoreTimingTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFC2D0F26C0B4D538FA4585C /* RSO.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = RSO.cpp; path = Source/Core/Core/Debugger/RSO.cpp; sourceTree = SOURCE_ROOT; };
 		EFC8167F141D4D65BC60E9A8 /* GCPadEmu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GCPadEmu.h; path = Source/Core/Core/HW/GCPadEmu.h; sourceTree = SOURCE_ROOT; };
 		EFD2763432A9486CAECB3B00 /* VertexLoaderUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VertexLoaderUtils.h; path = Source/Core/VideoCommon/VertexLoaderUtils.h; sourceTree = SOURCE_ROOT; };
@@ -9830,7 +9830,7 @@
 		F8B09F4C267E41A3AC597A61 /* TraversalProto.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TraversalProto.h; path = Source/Core/Common/TraversalProto.h; sourceTree = SOURCE_ROOT; };
 		F902F47740AF4E7C8C0960EE /* NetplaySettings.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NetplaySettings.h; path = Source/Core/Core/Config/NetplaySettings.h; sourceTree = SOURCE_ROOT; };
 		F930F3D6F532467FA6424051 /* pngtrans.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pngtrans.c; path = Externals/libpng/pngtrans.c; sourceTree = SOURCE_ROOT; };
-		F9460EB91E2645F6A1A9E9B2 /* EventTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = EventTest; path = EventTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F9460EB91E2645F6A1A9E9B2 /* EventTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = EventTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F969D908099C484FBEBF2A5B /* ConditionRegister.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ConditionRegister.cpp; path = Source/Core/Core/PowerPC/ConditionRegister.cpp; sourceTree = SOURCE_ROOT; };
 		F9B6DB458B4642BF80AC4DE0 /* iOS.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = iOS.mm; path = Source/Core/InputCommon/ControllerInterface/iOS/iOS.mm; sourceTree = SOURCE_ROOT; };
 		F9C54ADAF59043FDAE2A474F /* OGLPipeline.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = OGLPipeline.cpp; path = Source/Core/VideoBackends/OGL/OGLPipeline.cpp; sourceTree = SOURCE_ROOT; };
@@ -11923,38 +11923,38 @@
 		6149B8F3EBE64F7CB2CB467F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E449D1CC998F479899984D08 /* BitFieldTest */,
-				2F61ACB12F2544F38B36AC74 /* BitSetTest */,
-				C968170A7D39415ABF53325A /* BitUtilsTest */,
-				D09B294247B347C69B6056C5 /* BlockingLoopTest */,
-				999E6F71031540A294ED10AD /* BusyLoopTest */,
-				0DA33A3C1ADC4DD9B03532F8 /* CommonFuncsTest */,
-				EFB9D51FA9034A38B9F73B9C /* CoreTimingTest */,
-				1111BB4F63D94D658F81B740 /* CryptoEcTest */,
-				46F7DA2E87E043B4B24A077B /* DSPAcceleratorTest */,
-				E20B2AE1290D4797851DCB20 /* DSPAssemblyTest */,
-				8BFB82AF96E24C7DB24BA1C8 /* ESFormatsTest */,
-				97AE98159ED84948A87D92A1 /* EnumFormatterTest */,
-				F9460EB91E2645F6A1A9E9B2 /* EventTest */,
-				3667081458CB4BD7847EBA70 /* FileSystemTest */,
-				578F8EFC108849F694A63F5C /* FileUtilTest */,
-				063D3264BEF047229A08D3E6 /* FixedSizeQueueTest */,
-				336D9CECBBD34B888198360F /* FlagTest */,
-				1A9893033830441097A65CEC /* FloatUtilsTest */,
+				E449D1CC998F479899984D08 /* BitFieldTest.app */,
+				2F61ACB12F2544F38B36AC74 /* BitSetTest.app */,
+				C968170A7D39415ABF53325A /* BitUtilsTest.app */,
+				D09B294247B347C69B6056C5 /* BlockingLoopTest.app */,
+				999E6F71031540A294ED10AD /* BusyLoopTest.app */,
+				0DA33A3C1ADC4DD9B03532F8 /* CommonFuncsTest.app */,
+				EFB9D51FA9034A38B9F73B9C /* CoreTimingTest.app */,
+				1111BB4F63D94D658F81B740 /* CryptoEcTest.app */,
+				46F7DA2E87E043B4B24A077B /* DSPAcceleratorTest.app */,
+				E20B2AE1290D4797851DCB20 /* DSPAssemblyTest.app */,
+				8BFB82AF96E24C7DB24BA1C8 /* ESFormatsTest.app */,
+				97AE98159ED84948A87D92A1 /* EnumFormatterTest.app */,
+				F9460EB91E2645F6A1A9E9B2 /* EventTest.app */,
+				3667081458CB4BD7847EBA70 /* FileSystemTest.app */,
+				578F8EFC108849F694A63F5C /* FileUtilTest.app */,
+				063D3264BEF047229A08D3E6 /* FixedSizeQueueTest.app */,
+				336D9CECBBD34B888198360F /* FlagTest.app */,
+				1A9893033830441097A65CEC /* FloatUtilsTest.app */,
 				4BB39C731E2447D7AC8FDEFE /* libFreeSurround.a */,
-				EA05D19C36424210AD696CBE /* MMIOTest */,
-				279038446885432B9A0334B1 /* MathUtilTest */,
-				1FECF898B33D476CB3DA2737 /* NandPathsTest */,
-				37976FF96B4E45E0AE6F8A49 /* PageFaultTest */,
-				A4C49CB45DCC4B1C9EED5D0E /* PowerPCTest */,
-				5D3922F1953C443683235594 /* SPSCQueueTest */,
+				EA05D19C36424210AD696CBE /* MMIOTest.app */,
+				279038446885432B9A0334B1 /* MathUtilTest.app */,
+				1FECF898B33D476CB3DA2737 /* NandPathsTest.app */,
+				37976FF96B4E45E0AE6F8A49 /* PageFaultTest.app */,
+				A4C49CB45DCC4B1C9EED5D0E /* PowerPCTest.app */,
+				5D3922F1953C443683235594 /* SPSCQueueTest.app */,
 				E6922D69AF9748DE8DA73888 /* libSoundTouch.a */,
-				572513C0DD194608AF410050 /* StringUtilTest */,
-				D4E1696AE2FC404FB96E7B55 /* SwapTest */,
-				9EAE6985868B4F619D463534 /* VertexLoaderTest */,
+				572513C0DD194608AF410050 /* StringUtilTest.app */,
+				D4E1696AE2FC404FB96E7B55 /* SwapTest.app */,
+				9EAE6985868B4F619D463534 /* VertexLoaderTest.app */,
 				0482791101EB4C2E8E78B035 /* libaudiocommon.a */,
-				C53581E14CFA46648750E93E /* libcommon.a */,
-				908272F7C3FE46B8A54FDAF7 /* libcore.a */,
+				C53581E14CFA46648750E93E /* libdolphin-common.a */,
+				908272F7C3FE46B8A54FDAF7 /* libdolphin-core.a */,
 				781C6645E0EC44189CDA84E9 /* libcpp-optparse.a */,
 				1E099526FB60469D94F9CEEB /* libcurl.a */,
 				C96A88B66B224568B85AA8F1 /* libdiscio.a */,
@@ -12770,6 +12770,7 @@
 		899B370CC03D42239A7E2CE5 = {
 			isa = PBXGroup;
 			children = (
+				93BC050B298B004700BA5157 /* LibDolphinConfig.xcconfig */,
 				E0C639D8CCB7456CAECD411B /* ALL_BUILD */,
 				FBBD9DEBCE954357B1295C8F /* cpp-optparse */,
 				CA3D5C51495F4FBEBBEAE553 /* fmtd */,
@@ -13988,7 +13989,7 @@
 			);
 			name = EnumFormatterTest;
 			productName = EnumFormatterTest;
-			productReference = 97AE98159ED84948A87D92A1 /* EnumFormatterTest */;
+			productReference = 97AE98159ED84948A87D92A1 /* EnumFormatterTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		12EF7DC7FA03454FA4C38BBF /* png */ = {
@@ -14092,12 +14093,12 @@
 			);
 			name = EventTest;
 			productName = EventTest;
-			productReference = F9460EB91E2645F6A1A9E9B2 /* EventTest */;
+			productReference = F9460EB91E2645F6A1A9E9B2 /* EventTest.app */;
 			productType = "com.apple.product-type.application";
 		};
-		28C8EC9CC6C448748C0AEAF8 /* common */ = {
+		28C8EC9CC6C448748C0AEAF8 /* dolphin-common */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E5E4E486CD3944708C8F1DE2 /* Build configuration list for PBXNativeTarget "common" */;
+			buildConfigurationList = E5E4E486CD3944708C8F1DE2 /* Build configuration list for PBXNativeTarget "dolphin-common" */;
 			buildPhases = (
 				D99F48C5DE9746379F788598 /* Sources */,
 				579D41C59AB04FB7AD882C82 /* Frameworks */,
@@ -14115,9 +14116,9 @@
 				CADEDEB0AA3F43FBBE1899D9 /* PBXTargetDependency */,
 				E69B6318540842C4BAAAB084 /* PBXTargetDependency */,
 			);
-			name = common;
+			name = "dolphin-common";
 			productName = common;
-			productReference = C53581E14CFA46648750E93E /* libcommon.a */;
+			productReference = C53581E14CFA46648750E93E /* libdolphin-common.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		2D752928893D4BFD95D25A85 /* lzo2 */ = {
@@ -14219,7 +14220,7 @@
 			);
 			name = CommonFuncsTest;
 			productName = CommonFuncsTest;
-			productReference = 0DA33A3C1ADC4DD9B03532F8 /* CommonFuncsTest */;
+			productReference = 0DA33A3C1ADC4DD9B03532F8 /* CommonFuncsTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		30C527C477554E4D8442CAD5 /* FixedSizeQueueTest */ = {
@@ -14265,7 +14266,7 @@
 			);
 			name = FixedSizeQueueTest;
 			productName = FixedSizeQueueTest;
-			productReference = 063D3264BEF047229A08D3E6 /* FixedSizeQueueTest */;
+			productReference = 063D3264BEF047229A08D3E6 /* FixedSizeQueueTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		3D62691CDE764D5ABA7203A1 /* SwapTest */ = {
@@ -14311,7 +14312,7 @@
 			);
 			name = SwapTest;
 			productName = SwapTest;
-			productReference = D4E1696AE2FC404FB96E7B55 /* SwapTest */;
+			productReference = D4E1696AE2FC404FB96E7B55 /* SwapTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		3F467100F3C2470595B4E136 /* pugixml */ = {
@@ -14373,7 +14374,7 @@
 			);
 			name = BitFieldTest;
 			productName = BitFieldTest;
-			productReference = E449D1CC998F479899984D08 /* BitFieldTest */;
+			productReference = E449D1CC998F479899984D08 /* BitFieldTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		43508507A8C242E5BFE1BA93 /* MMIOTest */ = {
@@ -14419,7 +14420,7 @@
 			);
 			name = MMIOTest;
 			productName = MMIOTest;
-			productReference = EA05D19C36424210AD696CBE /* MMIOTest */;
+			productReference = EA05D19C36424210AD696CBE /* MMIOTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		49318C94EA5D453AA16C3407 /* zstd */ = {
@@ -14481,7 +14482,7 @@
 			);
 			name = PowerPCTest;
 			productName = PowerPCTest;
-			productReference = A4C49CB45DCC4B1C9EED5D0E /* PowerPCTest */;
+			productReference = A4C49CB45DCC4B1C9EED5D0E /* PowerPCTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		5AB7A678D0364D78A54D1240 /* StringUtilTest */ = {
@@ -14527,7 +14528,7 @@
 			);
 			name = StringUtilTest;
 			productName = StringUtilTest;
-			productReference = 572513C0DD194608AF410050 /* StringUtilTest */;
+			productReference = 572513C0DD194608AF410050 /* StringUtilTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		5AC9F7A7A0B8445FA5779EA8 /* main */ = {
@@ -14677,7 +14678,7 @@
 			);
 			name = BitUtilsTest;
 			productName = BitUtilsTest;
-			productReference = C968170A7D39415ABF53325A /* BitUtilsTest */;
+			productReference = C968170A7D39415ABF53325A /* BitUtilsTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		6BE1452B379441EA91E622A5 /* curl */ = {
@@ -14791,7 +14792,7 @@
 			);
 			name = DSPAssemblyTest;
 			productName = DSPAssemblyTest;
-			productReference = E20B2AE1290D4797851DCB20 /* DSPAssemblyTest */;
+			productReference = E20B2AE1290D4797851DCB20 /* DSPAssemblyTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		74710D29352D45F688AF1321 /* mbedx509 */ = {
@@ -14916,7 +14917,7 @@
 			);
 			name = CoreTimingTest;
 			productName = CoreTimingTest;
-			productReference = EFB9D51FA9034A38B9F73B9C /* CoreTimingTest */;
+			productReference = EFB9D51FA9034A38B9F73B9C /* CoreTimingTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		904647FC2D314066B9F04905 /* glslang */ = {
@@ -15043,7 +15044,7 @@
 			);
 			name = CryptoEcTest;
 			productName = CryptoEcTest;
-			productReference = 1111BB4F63D94D658F81B740 /* CryptoEcTest */;
+			productReference = 1111BB4F63D94D658F81B740 /* CryptoEcTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		9E880FE088854C14B37985AB /* VertexLoaderTest */ = {
@@ -15089,7 +15090,7 @@
 			);
 			name = VertexLoaderTest;
 			productName = VertexLoaderTest;
-			productReference = 9EAE6985868B4F619D463534 /* VertexLoaderTest */;
+			productReference = 9EAE6985868B4F619D463534 /* VertexLoaderTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A1E96E8370224777AC38779A /* FlagTest */ = {
@@ -15135,7 +15136,7 @@
 			);
 			name = FlagTest;
 			productName = FlagTest;
-			productReference = 336D9CECBBD34B888198360F /* FlagTest */;
+			productReference = 336D9CECBBD34B888198360F /* FlagTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A3E807AFE2D24E96A1C9ED02 /* FileUtilTest */ = {
@@ -15181,7 +15182,7 @@
 			);
 			name = FileUtilTest;
 			productName = FileUtilTest;
-			productReference = 578F8EFC108849F694A63F5C /* FileUtilTest */;
+			productReference = 578F8EFC108849F694A63F5C /* FileUtilTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A86D49B7CF3C48AAABE055EE /* NandPathsTest */ = {
@@ -15227,7 +15228,7 @@
 			);
 			name = NandPathsTest;
 			productName = NandPathsTest;
-			productReference = 1FECF898B33D476CB3DA2737 /* NandPathsTest */;
+			productReference = 1FECF898B33D476CB3DA2737 /* NandPathsTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A9FADB726A3F4823AF69920A /* mbedcrypto */ = {
@@ -15305,7 +15306,7 @@
 			);
 			name = BusyLoopTest;
 			productName = BusyLoopTest;
-			productReference = 999E6F71031540A294ED10AD /* BusyLoopTest */;
+			productReference = 999E6F71031540A294ED10AD /* BusyLoopTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		B4B149B254ED48638CE7C1D1 /* BlockingLoopTest */ = {
@@ -15351,7 +15352,7 @@
 			);
 			name = BlockingLoopTest;
 			productName = BlockingLoopTest;
-			productReference = D09B294247B347C69B6056C5 /* BlockingLoopTest */;
+			productReference = D09B294247B347C69B6056C5 /* BlockingLoopTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		BC133FCCC6484287B8897B20 /* FileSystemTest */ = {
@@ -15397,7 +15398,7 @@
 			);
 			name = FileSystemTest;
 			productName = FileSystemTest;
-			productReference = 3667081458CB4BD7847EBA70 /* FileSystemTest */;
+			productReference = 3667081458CB4BD7847EBA70 /* FileSystemTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		C0FE329640A24E14BC42E1E8 /* discio */ = {
@@ -15538,7 +15539,7 @@
 			);
 			name = PageFaultTest;
 			productName = PageFaultTest;
-			productReference = 37976FF96B4E45E0AE6F8A49 /* PageFaultTest */;
+			productReference = 37976FF96B4E45E0AE6F8A49 /* PageFaultTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D5AE0652CBF341B6A584AB4D /* unittests_stubhost */ = {
@@ -15557,9 +15558,9 @@
 			productReference = 31D9BCE2831E4CBCB574B4EF /* libunittests_stubhost.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		D9135B9C9BB8460684E1A3BD /* core */ = {
+		D9135B9C9BB8460684E1A3BD /* dolphin-core */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C5382785FFE044F2AEEB9DCE /* Build configuration list for PBXNativeTarget "core" */;
+			buildConfigurationList = C5382785FFE044F2AEEB9DCE /* Build configuration list for PBXNativeTarget "dolphin-core" */;
 			buildPhases = (
 				A6C34803D4C34B97A6DAE99D /* Sources */,
 				EFAF08D9ECF1425A991117D6 /* Frameworks */,
@@ -15569,9 +15570,9 @@
 			dependencies = (
 				54060EB5206A4CDABDC3B522 /* PBXTargetDependency */,
 			);
-			name = core;
+			name = "dolphin-core";
 			productName = core;
-			productReference = 908272F7C3FE46B8A54FDAF7 /* libcore.a */;
+			productReference = 908272F7C3FE46B8A54FDAF7 /* libdolphin-core.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		DBA2A2E484DB4CEEBFB352D1 /* MathUtilTest */ = {
@@ -15617,7 +15618,7 @@
 			);
 			name = MathUtilTest;
 			productName = MathUtilTest;
-			productReference = 279038446885432B9A0334B1 /* MathUtilTest */;
+			productReference = 279038446885432B9A0334B1 /* MathUtilTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		E33CDF321FC14FA886406CC2 /* SPSCQueueTest */ = {
@@ -15663,7 +15664,7 @@
 			);
 			name = SPSCQueueTest;
 			productName = SPSCQueueTest;
-			productReference = 5D3922F1953C443683235594 /* SPSCQueueTest */;
+			productReference = 5D3922F1953C443683235594 /* SPSCQueueTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		E53F2830D584400F94C75AC0 /* FloatUtilsTest */ = {
@@ -15709,7 +15710,7 @@
 			);
 			name = FloatUtilsTest;
 			productName = FloatUtilsTest;
-			productReference = 1A9893033830441097A65CEC /* FloatUtilsTest */;
+			productReference = 1A9893033830441097A65CEC /* FloatUtilsTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		E7F9B2035B1D49008E68966E /* gtest */ = {
@@ -15771,7 +15772,7 @@
 			);
 			name = BitSetTest;
 			productName = BitSetTest;
-			productReference = 2F61ACB12F2544F38B36AC74 /* BitSetTest */;
+			productReference = 2F61ACB12F2544F38B36AC74 /* BitSetTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		E9B822A07E744C9F81239713 /* DSPAcceleratorTest */ = {
@@ -15817,7 +15818,7 @@
 			);
 			name = DSPAcceleratorTest;
 			productName = DSPAcceleratorTest;
-			productReference = 46F7DA2E87E043B4B24A077B /* DSPAcceleratorTest */;
+			productReference = 46F7DA2E87E043B4B24A077B /* DSPAcceleratorTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		F71468D61B894A5BBA55BE5A /* ESFormatsTest */ = {
@@ -15863,7 +15864,7 @@
 			);
 			name = ESFormatsTest;
 			productName = ESFormatsTest;
-			productReference = 8BFB82AF96E24C7DB24BA1C8 /* ESFormatsTest */;
+			productReference = 8BFB82AF96E24C7DB24BA1C8 /* ESFormatsTest.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -15918,8 +15919,8 @@
 				9E880FE088854C14B37985AB /* VertexLoaderTest */,
 				D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */,
 				5F9E26EB6412457CAAEF2862 /* audiocommon */,
-				28C8EC9CC6C448748C0AEAF8 /* common */,
-				D9135B9C9BB8460684E1A3BD /* core */,
+				28C8EC9CC6C448748C0AEAF8 /* dolphin-common */,
+				D9135B9C9BB8460684E1A3BD /* dolphin-core */,
 				C23503A6E1A84878BB8365ED /* cpp-optparse */,
 				6BE1452B379441EA91E622A5 /* curl */,
 				C0FE329640A24E14BC42E1E8 /* discio */,
@@ -17316,7 +17317,6 @@
 				FA18FD9BCD744CC2B027F22C /* VKVertexFormat.cpp in Sources */,
 				2D2D74858E1246228C813259 /* VKVertexManager.cpp in Sources */,
 				11098DFAD62544A79B399845 /* VulkanContext.cpp in Sources */,
-				45B6D4349D6D4BA9B506C363 /* VulkanLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17537,7 +17537,7 @@
 		};
 		01EDC9F561A24BB6AC90F6DD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = BAAA2C866FEE4975B0C39720 /* PBXContainerItemProxy */;
 		};
 		02861D2203B442A49F8ADB2C /* PBXTargetDependency */ = {
@@ -17562,7 +17562,7 @@
 		};
 		03D059C886AB4A41A900FAC1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 198B0DD3DEB94AC0BBA16F98 /* PBXContainerItemProxy */;
 		};
 		042E1A41BBEE485085B06A7B /* PBXTargetDependency */ = {
@@ -17612,7 +17612,7 @@
 		};
 		0712E147D99E460F97E67890 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 9CB3CDB26D2E460E9BBE54C9 /* PBXContainerItemProxy */;
 		};
 		0794A8B621F44A1BAE6CC7D4 /* PBXTargetDependency */ = {
@@ -17687,7 +17687,7 @@
 		};
 		0AFBC2FBC9224EE982047B54 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 2B010D57214742CD889D122E /* PBXContainerItemProxy */;
 		};
 		0B1A35508ACB45FA85A4D01F /* PBXTargetDependency */ = {
@@ -17962,7 +17962,7 @@
 		};
 		188BC396DBA84EA19C3FE07E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 974E45CA76AA45528F92994B /* PBXContainerItemProxy */;
 		};
 		1898F46F751E4E9D8413AE1E /* PBXTargetDependency */ = {
@@ -18017,7 +18017,7 @@
 		};
 		19FD53B8D63040078E8D696F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 7AAD39C2A7E8406DB472AB64 /* PBXContainerItemProxy */;
 		};
 		1A2E426D888C45B6A8BB56D4 /* PBXTargetDependency */ = {
@@ -18037,7 +18037,7 @@
 		};
 		1AB691F8693645C4A8E61A62 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = BBB2CB4918554360958CBE01 /* PBXContainerItemProxy */;
 		};
 		1B091EB1055E4DAABDEC120C /* PBXTargetDependency */ = {
@@ -18097,7 +18097,7 @@
 		};
 		1E3CA033A0D34A37AF7C3111 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 597B84DCFC114579865102B0 /* PBXContainerItemProxy */;
 		};
 		1E4071F89CC44C9BB277EBBB /* PBXTargetDependency */ = {
@@ -18112,7 +18112,7 @@
 		};
 		1F0701E098694FCCBAB811A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 999305F7A31F4C2487567D61 /* PBXContainerItemProxy */;
 		};
 		1F20C598032C4957BC4FF722 /* PBXTargetDependency */ = {
@@ -18137,7 +18137,7 @@
 		};
 		1FCAEECB3ADF426F8D77365B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = F14FFBBCF4A7491F9DC1BBDC /* PBXContainerItemProxy */;
 		};
 		1FD1E95DD51B4AC3BDC7865F /* PBXTargetDependency */ = {
@@ -18292,7 +18292,7 @@
 		};
 		274D634A726A476798BCB9B5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 43A7DC6DEC624DADA20C0904 /* PBXContainerItemProxy */;
 		};
 		275949F3881042EEA44DB710 /* PBXTargetDependency */ = {
@@ -18387,7 +18387,7 @@
 		};
 		2B3E92F943584C8CBB9196D6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 55F18296EFF046D98F8404B7 /* PBXContainerItemProxy */;
 		};
 		2B4BA350CA954EF197676325 /* PBXTargetDependency */ = {
@@ -18537,7 +18537,7 @@
 		};
 		32008D6ABF9E48BF95C2E0C1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 6638737BBF0F46A889EBC239 /* PBXContainerItemProxy */;
 		};
 		32330EBD3B484BECA4E92CB4 /* PBXTargetDependency */ = {
@@ -18577,7 +18577,7 @@
 		};
 		34CA050291B54A4F92A67209 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = B78B958A74324D3EB9B015B1 /* PBXContainerItemProxy */;
 		};
 		35055DFEA3E0426C9C760192 /* PBXTargetDependency */ = {
@@ -18867,7 +18867,7 @@
 		};
 		428A390D8A1F4E3E8010042E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = D1115E65FB1546D3A29FCE69 /* PBXContainerItemProxy */;
 		};
 		42CD00A92F124725909FC33A /* PBXTargetDependency */ = {
@@ -18917,7 +18917,7 @@
 		};
 		43FCD1707655427081603E60 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 4D3AD16CF67E4C198F1351C2 /* PBXContainerItemProxy */;
 		};
 		440ADF5986244B26AE38F94D /* PBXTargetDependency */ = {
@@ -18957,7 +18957,7 @@
 		};
 		452822A12350487EA56A05AA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 3390ECF046684270ABA8F1C3 /* PBXContainerItemProxy */;
 		};
 		4543D600E7394F09A0A565FF /* PBXTargetDependency */ = {
@@ -19012,7 +19012,7 @@
 		};
 		47F0388E5EB842E8A38197E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = BED825F4AD514B89BCED9156 /* PBXContainerItemProxy */;
 		};
 		4800143B86694E79A244719D /* PBXTargetDependency */ = {
@@ -19027,7 +19027,7 @@
 		};
 		48A11EAB45F646C29161AA82 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = DA642AB048DA4F1792869A12 /* PBXContainerItemProxy */;
 		};
 		48BEF26FF7514F4AB01BFE39 /* PBXTargetDependency */ = {
@@ -19112,7 +19112,7 @@
 		};
 		4B6133903B464C70BBB01F2C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 59399F0994F1492293CC8ABC /* PBXContainerItemProxy */;
 		};
 		4BD22C6F7342406799687D97 /* PBXTargetDependency */ = {
@@ -19132,7 +19132,7 @@
 		};
 		4C7DCCDDC0904DC39F36BAB7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 0F2C0365024049F6AF082CDB /* PBXContainerItemProxy */;
 		};
 		4CC0D75A9CF24DABA17432CA /* PBXTargetDependency */ = {
@@ -19152,7 +19152,7 @@
 		};
 		4E4EE76F9FA74EF0A59ACD84 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 3D84C1DA3B8D4B1DABCB45B2 /* PBXContainerItemProxy */;
 		};
 		4EE8583202774E86914F03A7 /* PBXTargetDependency */ = {
@@ -19282,7 +19282,7 @@
 		};
 		55A0017472A04E2BA6983ACD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 250ADA41493D438EBF226470 /* PBXContainerItemProxy */;
 		};
 		55B5665AC08D4A819B17E897 /* PBXTargetDependency */ = {
@@ -19327,7 +19327,7 @@
 		};
 		5720913E98834D9BA287CB7E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = F70C6F90234A4A5BA3E327DF /* PBXContainerItemProxy */;
 		};
 		57685B6671A546D3B7392464 /* PBXTargetDependency */ = {
@@ -19527,7 +19527,7 @@
 		};
 		6120A9C6C64B4554B8CCDB0F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 53E3629D4287445B836FCDBB /* PBXContainerItemProxy */;
 		};
 		62010DA8C3A844C3B1936768 /* PBXTargetDependency */ = {
@@ -19607,7 +19607,7 @@
 		};
 		64BAB444B1C24784BC9F61FB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 589C1346F54A42E88C1EFC69 /* PBXContainerItemProxy */;
 		};
 		64E0CFA12BB04CE996E21DCA /* PBXTargetDependency */ = {
@@ -19722,7 +19722,7 @@
 		};
 		6A49BC15393542CE91FAF95F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 9AC1F880808E4450842EBD7F /* PBXContainerItemProxy */;
 		};
 		6A5A0935D05244E1A7611344 /* PBXTargetDependency */ = {
@@ -19862,7 +19862,7 @@
 		};
 		7197517755BC4D0689D4C2D6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 88DA895F66384E08A1A6A54A /* PBXContainerItemProxy */;
 		};
 		71C2E37F99F94B539CFAB048 /* PBXTargetDependency */ = {
@@ -19917,7 +19917,7 @@
 		};
 		745360025C57498790D8EF90 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = CE9F143FB19D42FC85A61222 /* PBXContainerItemProxy */;
 		};
 		74AF8A8D2314483D9CE8D2E7 /* PBXTargetDependency */ = {
@@ -19937,7 +19937,7 @@
 		};
 		7518F34CBAFF41CAB48E96C9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 45642F36A9314DE59C9F42BE /* PBXContainerItemProxy */;
 		};
 		753215AF94F0428FB48B4F88 /* PBXTargetDependency */ = {
@@ -19947,7 +19947,7 @@
 		};
 		75870891B07E4F84919288C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 744807B0AF144EC38921FAE7 /* PBXContainerItemProxy */;
 		};
 		759FD3BB8CC6427D95037EC6 /* PBXTargetDependency */ = {
@@ -19997,7 +19997,7 @@
 		};
 		7834AFC9659842D28C6A69AC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 37AFA7D82C5C4F0B88C3B920 /* PBXContainerItemProxy */;
 		};
 		7847A619B0F5479FB016A39F /* PBXTargetDependency */ = {
@@ -20067,7 +20067,7 @@
 		};
 		7E28117540434E6C86F99AC9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 965EF757A2A043EAA8269BD2 /* PBXContainerItemProxy */;
 		};
 		7E3F1D4B435A4EDCAFDC7DF4 /* PBXTargetDependency */ = {
@@ -20112,7 +20112,7 @@
 		};
 		7FA79E989C0042ADBE23E193 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 2BF2476C1A364AC3BC947FC6 /* PBXContainerItemProxy */;
 		};
 		7FBAD54565954D2682EB2817 /* PBXTargetDependency */ = {
@@ -20172,7 +20172,7 @@
 		};
 		81C7E2A49BA34AD3AD1B2C38 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 8ECCF230B8E24F8D8A90127C /* PBXContainerItemProxy */;
 		};
 		823246A475D24FF78D7A085F /* PBXTargetDependency */ = {
@@ -20297,7 +20297,7 @@
 		};
 		887B711EF6E74CBD904ABDB0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = B1FA59A70E034440888DA949 /* PBXContainerItemProxy */;
 		};
 		889A9FF4C67D49A0A7DDF6E4 /* PBXTargetDependency */ = {
@@ -20367,7 +20367,7 @@
 		};
 		8C03B7756B58474299951433 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = BE5CE71805194BBEAB65C681 /* PBXContainerItemProxy */;
 		};
 		8D100904D3E949C88B882EAF /* PBXTargetDependency */ = {
@@ -20502,7 +20502,7 @@
 		};
 		92C7E1F2866A41E3BB011300 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 6DF91FBB15E7444097156497 /* PBXContainerItemProxy */;
 		};
 		92FC3C9DB798484C9B193796 /* PBXTargetDependency */ = {
@@ -20567,7 +20567,7 @@
 		};
 		966982DA7F30440EBFD27064 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 13DC513E5EB24879A7D860B4 /* PBXContainerItemProxy */;
 		};
 		96958AC648D348849BA8F2D8 /* PBXTargetDependency */ = {
@@ -20632,7 +20632,7 @@
 		};
 		98B232C680FE438BA25F5B74 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 24DB7DCA2C4D4E088CAB81EF /* PBXContainerItemProxy */;
 		};
 		990B31A7247247C4975A5B1A /* PBXTargetDependency */ = {
@@ -20642,12 +20642,12 @@
 		};
 		999211A07B384F459EC5E6D2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 649584F793D8437181F11CC5 /* PBXContainerItemProxy */;
 		};
 		99CCC872DBEF4A41B2877D66 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = C25F049C9AD44DB4A290B9A5 /* PBXContainerItemProxy */;
 		};
 		9A279F13B6124441A8E3A29B /* PBXTargetDependency */ = {
@@ -20697,7 +20697,7 @@
 		};
 		9D3CAA91893C44D2BA2C5BF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 46E895AAE13C4D6496708ADE /* PBXContainerItemProxy */;
 		};
 		9D56887C79DC40DAB98A14C1 /* PBXTargetDependency */ = {
@@ -20922,7 +20922,7 @@
 		};
 		A85CF96FEB934689B6D57A81 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = C16D9935663442FE8E3BFA63 /* PBXContainerItemProxy */;
 		};
 		A9AE276B9CAF4F1E96910B64 /* PBXTargetDependency */ = {
@@ -21017,7 +21017,7 @@
 		};
 		AE3D0E4F96184D8D90215F75 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 035A364245AF4D0CA7C8D1C7 /* PBXContainerItemProxy */;
 		};
 		AE78020B063C414E8274F5AA /* PBXTargetDependency */ = {
@@ -21072,7 +21072,7 @@
 		};
 		B0EB4C21C60B464B8067F2A6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 08D3E9DE034F4F91AF93E943 /* PBXContainerItemProxy */;
 		};
 		B191D1DA08934031B145DD74 /* PBXTargetDependency */ = {
@@ -21117,7 +21117,7 @@
 		};
 		B5A814FD09334BB3BAA0510E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 5E926FE0D00B42809CE2C8B1 /* PBXContainerItemProxy */;
 		};
 		B5D3295926F144ACA5B66FF7 /* PBXTargetDependency */ = {
@@ -21222,7 +21222,7 @@
 		};
 		BBD7DD03794046F382FB5306 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 8EA2A69033094E76BBA0D414 /* PBXContainerItemProxy */;
 		};
 		BC3C5EBFC1774F07AF398778 /* PBXTargetDependency */ = {
@@ -21282,7 +21282,7 @@
 		};
 		BE26E8EC08044A54B186A0C9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 0E129AAC52454A3397116054 /* PBXContainerItemProxy */;
 		};
 		BE3E99C3A7B944338212C9E0 /* PBXTargetDependency */ = {
@@ -21417,7 +21417,7 @@
 		};
 		C7D0FA1978F64CFCA5CAFB61 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = D68AE8459FB54E51958F06B2 /* PBXContainerItemProxy */;
 		};
 		C8346BBF69E74B2E9DC921EE /* PBXTargetDependency */ = {
@@ -21497,12 +21497,12 @@
 		};
 		CC0D8952BDCD432BA100C6A5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 3835985EC8524D7E9430C8E1 /* PBXContainerItemProxy */;
 		};
 		CCBF1AC0A8F545C2BF42CD26 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 3EFB4C15C7FF429DAFAF5D86 /* PBXContainerItemProxy */;
 		};
 		CCF070345FE24896897AF246 /* PBXTargetDependency */ = {
@@ -21512,7 +21512,7 @@
 		};
 		CD387D02BCAA4F37A90C057F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 21FB2AD2CF5D4BA294046BB5 /* PBXContainerItemProxy */;
 		};
 		CD66DECE5B1545BABF9FD505 /* PBXTargetDependency */ = {
@@ -21707,7 +21707,7 @@
 		};
 		D7F11730E08E4B9F85EB5B31 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 3200139474034EC9ADCAD3BD /* PBXContainerItemProxy */;
 		};
 		D85DF729269643A58DDF2D56 /* PBXTargetDependency */ = {
@@ -21737,7 +21737,7 @@
 		};
 		D9671ABCE33A484B9D8EE824 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = EFA87D40A9F3467FBF470180 /* PBXContainerItemProxy */;
 		};
 		D9DEEEC33F6B40D394D4FE32 /* PBXTargetDependency */ = {
@@ -22082,7 +22082,7 @@
 		};
 		ED4FFB6141554106BF13407B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 3B3AE0C16B2544289808B2CC /* PBXContainerItemProxy */;
 		};
 		EF37C3E3C40B4D87982A5BC6 /* PBXTargetDependency */ = {
@@ -22167,7 +22167,7 @@
 		};
 		F2169904778A42D59B56B659 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = DE33430F73414F6CB169F582 /* PBXContainerItemProxy */;
 		};
 		F227C92398FA4034922B275E /* PBXTargetDependency */ = {
@@ -22177,7 +22177,7 @@
 		};
 		F22873FA3402421E9CF4238F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 25E900F5EE594C04B7373D07 /* PBXContainerItemProxy */;
 		};
 		F259CE8154044AA9AD6A2507 /* PBXTargetDependency */ = {
@@ -22237,7 +22237,7 @@
 		};
 		F48F038BBEF54DED8D948222 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 66767CB81E304F2FAF5331F6 /* PBXContainerItemProxy */;
 		};
 		F4E14C3A60ED435580EA77CC /* PBXTargetDependency */ = {
@@ -22247,7 +22247,7 @@
 		};
 		F4FC2DBAB38545D08FCAC3EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = 977B6D485FB54E89930C0144 /* PBXContainerItemProxy */;
 		};
 		F5A6B62E34D341EE862756FE /* PBXTargetDependency */ = {
@@ -22257,7 +22257,7 @@
 		};
 		F63CE30A9D2A47D9B709C2CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = A43C1BAA4A434706BF7AA995 /* PBXContainerItemProxy */;
 		};
 		F64D9C9F62DD4135B8CCF68D /* PBXTargetDependency */ = {
@@ -22397,7 +22397,7 @@
 		};
 		FD22EFFFFF9548A181BE6324 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D9135B9C9BB8460684E1A3BD /* core */;
+			target = D9135B9C9BB8460684E1A3BD /* dolphin-core */;
 			targetProxy = F412C0B9E2BF4132B8ECDFB8 /* PBXContainerItemProxy */;
 		};
 		FE134B682E6548EBAFFC83A1 /* PBXTargetDependency */ = {
@@ -22432,7 +22432,7 @@
 		};
 		FFF0D684A6CF465D8B85A4E2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 28C8EC9CC6C448748C0AEAF8 /* common */;
+			target = 28C8EC9CC6C448748C0AEAF8 /* dolphin-common */;
 			targetProxy = 4BF485D79CFA4D1481F40D6B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -22446,6 +22446,7 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = "";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -22524,6 +22525,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videovulkan;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/glslang/StandAlone",
 					"../dolphin-ios/Externals/glslang/glslang/Public",
@@ -22595,6 +22597,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "glslang-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -22734,6 +22737,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FileSystemTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -22878,6 +22882,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = EventTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -23022,6 +23027,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CryptoEcTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -23166,6 +23172,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CoreTimingTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -23230,6 +23237,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmtd;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -23368,6 +23376,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BlockingLoopTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -23452,6 +23461,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedtls;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -23474,6 +23484,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = unittests;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -23612,6 +23623,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SwapTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -23756,6 +23768,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitFieldTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -23900,6 +23913,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = DSPAcceleratorTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -24044,6 +24058,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MathUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -24120,6 +24135,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest_main;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/gtest/include",
 					"$(inherited)",
@@ -24146,6 +24162,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lib;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -24284,6 +24301,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = StringUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -24359,6 +24377,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = enet;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -24381,6 +24400,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -24403,6 +24423,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = unittests;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -24482,6 +24503,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedcrypto;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -24540,6 +24562,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "cpp-optparse";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -24618,6 +24641,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedx509;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -24756,6 +24780,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BusyLoopTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -24850,6 +24875,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videoogl;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -24876,6 +24902,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -24898,6 +24925,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -24984,6 +25012,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = audiocommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -25053,8 +25082,6 @@
 					"'-march=armv8-a+crc'",
 					"-fno-strict-aliasing",
 					"-fno-exceptions",
-					"-fvisibility-inlines-hidden",
-					"'-fvisibility=hidden'",
 					"-fomit-frame-pointer",
 					"-Wall",
 					"-Wtype-limits",
@@ -25070,8 +25097,9 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = common;
+				PRODUCT_NAME = "dolphin-common";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -25211,6 +25239,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CommonFuncsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -25238,6 +25267,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -25377,6 +25407,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CryptoEcTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -25521,6 +25552,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitFieldTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -25613,6 +25645,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = uicommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -25635,6 +25668,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = package;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -25705,6 +25739,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = enet;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -25798,6 +25833,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videocommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -25863,6 +25899,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ed25519;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -26002,6 +26039,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FileUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -26072,6 +26110,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-network";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -26211,6 +26250,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = EventTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -26276,6 +26316,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "xxhash-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -26339,6 +26380,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "glslang-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -26478,6 +26520,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = NandPathsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -26556,6 +26599,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "lzma-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -26695,6 +26739,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FixedSizeQueueTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -26838,6 +26883,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FlagTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -26909,6 +26955,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "zstd-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -26922,6 +26969,7 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = "";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -27000,6 +27048,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videovulkan;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/glslang/StandAlone",
 					"../dolphin-ios/Externals/glslang/glslang/Public",
@@ -27030,6 +27079,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lib;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -27102,6 +27152,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -27240,6 +27291,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ESFormatsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -27324,6 +27376,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedtls;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -27412,6 +27465,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = inputcommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -27501,6 +27555,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videosoftware;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -27584,6 +27639,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedx509;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -27591,22 +27647,24 @@
 		};
 		26E6DDCAC0414D3583F9A99C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 93BC050B298B004700BA5157 /* LibDolphinConfig.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ARCHS = (
 					arm64,
 					x86_64,
 				);
-				BUILD_DIR = "dolphin-build";
+				BUILD_DIR = ../lib;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 			};
@@ -27694,8 +27752,9 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = core;
+				PRODUCT_NAME = "dolphin-core";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -27839,6 +27898,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = NandPathsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -27983,6 +28043,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CoreTimingTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -28126,6 +28187,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MathUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -28270,6 +28332,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FlagTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -28297,6 +28360,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -28369,6 +28433,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -28428,6 +28493,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmtd;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -28490,6 +28556,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzo2;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -28629,6 +28696,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SwapTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -28692,6 +28760,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmtd;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -28777,6 +28846,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = audiocommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -28841,6 +28911,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "png-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -28903,6 +28974,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzo2;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -28973,6 +29045,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest_maind;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/gtest/include",
 					"$(inherited)",
@@ -29064,6 +29137,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = uicommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -29071,22 +29145,24 @@
 		};
 		3B2BAA83C6CC43C7AC375460 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 93BC050B298B004700BA5157 /* LibDolphinConfig.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ARCHS = (
 					arm64,
 					x86_64,
 				);
-				BUILD_DIR = "dolphin-build";
+				BUILD_DIR = ../lib;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 			};
@@ -29176,6 +29252,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videoogl;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -29246,6 +29323,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -29312,6 +29390,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -29450,6 +29529,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = PageFaultTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -29594,6 +29674,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitSetTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -29660,6 +29741,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ed25519;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -29725,6 +29807,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-system";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -29815,6 +29898,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = main;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -29884,6 +29968,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-system";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -29950,6 +30035,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "zstd-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -30089,6 +30175,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = PageFaultTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -30182,6 +30269,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videoogl;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -30251,6 +30339,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -30313,6 +30402,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzo2;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -30452,6 +30542,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = PageFaultTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -30529,6 +30620,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -30551,6 +30643,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = package;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -30615,6 +30708,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "png-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -30637,6 +30731,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = package;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -30726,6 +30821,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videoogl;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -30752,6 +30848,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = unittests;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -30891,6 +30988,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FileUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -31035,6 +31133,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FixedSizeQueueTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -31062,6 +31161,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -31150,6 +31250,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videosoftware;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -31293,6 +31394,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BusyLoopTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -31386,6 +31488,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = inputcommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -31465,6 +31568,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedcrypto;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -31524,6 +31628,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = pugixml;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -31587,6 +31692,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FreeSurround;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -31646,6 +31752,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = pugixml;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -31736,6 +31843,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = main;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -31879,6 +31987,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BusyLoopTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -32022,6 +32131,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FloatUtilsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -32116,6 +32226,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = discio;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -32187,6 +32298,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtestd;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -32260,6 +32372,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "lzma-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -32349,6 +32462,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = main;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -32360,22 +32474,24 @@
 		};
 		5DDCD81D875A424DBFF03A12 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 93BC050B298B004700BA5157 /* LibDolphinConfig.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ARCHS = (
 					arm64,
 					x86_64,
 				);
-				BUILD_DIR = "dolphin-build";
+				BUILD_DIR = ../lib;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 			};
@@ -32438,6 +32554,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SoundTouch;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -32577,6 +32694,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MMIOTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -32721,6 +32839,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FloatUtilsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -32787,6 +32906,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SoundTouch;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -32858,6 +32978,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest_main;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/gtest/include",
 					"$(inherited)",
@@ -33001,6 +33122,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SPSCQueueTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -33070,6 +33192,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-network";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -33136,6 +33259,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "zstd-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -33275,6 +33399,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = PowerPCTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -33359,6 +33484,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = unittests_stubhost;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -33416,6 +33542,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = imgui;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -33554,6 +33681,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitFieldTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -33649,6 +33777,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = main;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -33712,6 +33841,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = pugixml;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -33781,8 +33911,6 @@
 					"'-march=armv8-a+crc'",
 					"-fno-strict-aliasing",
 					"-fno-exceptions",
-					"-fvisibility-inlines-hidden",
-					"'-fvisibility=hidden'",
 					"-Wall",
 					"-Wtype-limits",
 					"-Wsign-compare",
@@ -33797,8 +33925,9 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = common;
+				PRODUCT_NAME = "dolphin-common";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -33888,6 +34017,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videonull;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -33914,6 +34044,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -34053,6 +34184,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FixedSizeQueueTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -34197,6 +34329,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = EventTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -34267,6 +34400,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-network";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -34324,6 +34458,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = imgui;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -34385,6 +34520,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "xxhash-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -34524,6 +34660,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MMIOTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -34668,6 +34805,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = StringUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -34766,6 +34904,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videocommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -34909,6 +35048,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SPSCQueueTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -35052,6 +35192,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CryptoEcTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -35195,6 +35336,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CommonFuncsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -35339,6 +35481,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BlockingLoopTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -35406,6 +35549,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FreeSurround;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -35492,6 +35636,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = uicommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -35630,6 +35775,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = EventTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -35713,6 +35859,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedcrypto;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -35851,6 +35998,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CoreTimingTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -35878,6 +36026,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lib;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -35948,6 +36097,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = curl;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -36087,6 +36237,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = EnumFormatterTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -36156,6 +36307,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "png-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -36245,6 +36397,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = discio;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -36314,8 +36467,6 @@
 					"'-march=armv8-a+crc'",
 					"-fno-strict-aliasing",
 					"-fno-exceptions",
-					"-fvisibility-inlines-hidden",
-					"'-fvisibility=hidden'",
 					"-fomit-frame-pointer",
 					"-Wall",
 					"-Wtype-limits",
@@ -36331,8 +36482,9 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = common;
+				PRODUCT_NAME = "dolphin-common";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -36471,6 +36623,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = PowerPCTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -36535,6 +36688,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmtd;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -36557,6 +36711,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lib;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -36696,6 +36851,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FlagTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -36762,6 +36918,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ed25519;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -36833,6 +36990,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = gtest_main;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/gtest/include",
 					"$(inherited)",
@@ -36894,6 +37052,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = imgui;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -36916,6 +37075,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -36976,6 +37136,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ed25519;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -37115,6 +37276,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FlagTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -37259,6 +37421,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FileSystemTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -37330,6 +37493,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = minizip;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -37469,6 +37633,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = VertexLoaderTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -37612,6 +37777,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = DSPAssemblyTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -37695,6 +37861,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedtls;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -37783,8 +37950,9 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = core;
+				PRODUCT_NAME = "dolphin-core";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -37847,6 +38015,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "cpp-optparse";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -37927,6 +38096,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = unittests_stubhost;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -38066,6 +38236,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CommonFuncsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -38141,6 +38312,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = enet;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -38280,6 +38452,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SPSCQueueTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -38346,6 +38519,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "xxhash-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -38408,6 +38582,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SoundTouch;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -38547,6 +38722,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CoreTimingTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -38690,6 +38866,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitSetTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -38760,6 +38937,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "zstd-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -38899,6 +39077,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FileUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -39042,6 +39221,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = VertexLoaderTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -39108,6 +39288,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "xxhash-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -39247,6 +39428,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ESFormatsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -39391,6 +39573,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MathUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -39465,6 +39648,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = iconv;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -39604,6 +39788,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitUtilsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -39748,6 +39933,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = VertexLoaderTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -39818,6 +40004,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-system";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -39957,6 +40144,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = PageFaultTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -39984,6 +40172,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = package;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -40055,6 +40244,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = curl;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -40077,6 +40267,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = unittests;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -40133,6 +40324,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = imgui;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -40272,6 +40464,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = NandPathsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -40334,6 +40527,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "cpp-optparse";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -40412,6 +40606,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedx509;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -40551,6 +40746,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BlockingLoopTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -40625,6 +40821,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = iconv;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -40764,6 +40961,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = StringUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -40841,6 +41039,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "lzma-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -40934,6 +41133,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videocommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -41077,6 +41277,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = DSPAssemblyTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -41221,6 +41422,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = PowerPCTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -41365,6 +41567,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SwapTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -41457,6 +41660,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = inputcommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -41546,6 +41750,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videosoftware;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -41628,6 +41833,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedtls;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -41717,6 +41923,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videonull;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -41809,8 +42016,9 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = core;
+				PRODUCT_NAME = "dolphin-core";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -41901,6 +42109,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = audiocommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -41990,6 +42199,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = discio;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -42003,6 +42213,7 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = "";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -42081,6 +42292,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videovulkan;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/glslang/StandAlone",
 					"../dolphin-ios/Externals/glslang/glslang/Public",
@@ -42228,6 +42440,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = DSPAcceleratorTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -42321,6 +42534,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = inputcommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -42460,6 +42674,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SwapTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -42604,6 +42819,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CommonFuncsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -42748,6 +42964,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MMIOTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -42892,6 +43109,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitUtilsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -42985,8 +43203,9 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = core;
+				PRODUCT_NAME = "dolphin-core";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -43129,6 +43348,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MMIOTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -43220,6 +43440,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = audiocommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -43359,6 +43580,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = EnumFormatterTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -43456,6 +43678,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videocommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -43523,6 +43746,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "png-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -43662,6 +43886,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = PowerPCTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -43736,8 +43961,6 @@
 					"'-march=armv8-a+crc'",
 					"-fno-strict-aliasing",
 					"-fno-exceptions",
-					"-fvisibility-inlines-hidden",
-					"'-fvisibility=hidden'",
 					"-fomit-frame-pointer",
 					"-Wall",
 					"-Wtype-limits",
@@ -43753,8 +43976,9 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = common;
+				PRODUCT_NAME = "dolphin-common";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -43894,6 +44118,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BusyLoopTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -43979,6 +44204,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = unittests_stubhost;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -44117,6 +44343,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = EnumFormatterTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -44261,6 +44488,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitUtilsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -44334,6 +44562,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = iconv;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -44356,6 +44585,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -44418,6 +44648,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "glslang-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -44476,6 +44707,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = pugixml;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -44563,6 +44795,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = uicommon;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -44702,6 +44935,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = CryptoEcTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -44729,6 +44963,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -44868,6 +45103,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = DSPAssemblyTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -45012,6 +45248,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitSetTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -45095,6 +45332,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedcrypto;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -45158,6 +45396,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "glslang-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -45180,6 +45419,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -45318,6 +45558,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FixedSizeQueueTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -45392,6 +45633,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = enet;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -45480,6 +45722,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = discio;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -45619,6 +45862,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = DSPAcceleratorTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -45682,6 +45926,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "cpp-optparse";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -45746,6 +45991,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-system";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -45885,6 +46131,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitSetTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -45961,6 +46208,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = curl;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -46041,6 +46289,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = unittests_stubhost;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -46180,6 +46429,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ESFormatsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -46274,6 +46524,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videonull;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -46417,6 +46668,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FloatUtilsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -46561,6 +46813,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FloatUtilsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -46645,6 +46898,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = mbedx509;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -46783,6 +47037,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SPSCQueueTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -46927,6 +47182,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = DSPAssemblyTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -47003,6 +47259,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = curl;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -47141,6 +47398,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = NandPathsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -47234,6 +47492,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videonull;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -47301,6 +47560,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FreeSurround;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -47440,6 +47700,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = EnumFormatterTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -47583,6 +47844,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FileUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -47650,6 +47912,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SoundTouch;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -47663,6 +47926,7 @@
 					x86_64,
 				);
 				COMBINE_HIDPI_IMAGES = YES;
+				EXCLUDED_ARCHS = "";
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -47740,6 +48004,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videovulkan;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/glslang/StandAlone",
 					"../dolphin-ios/Externals/glslang/glslang/Public",
@@ -47755,22 +48020,24 @@
 		};
 		EEE00E733E11497AB29BA7F1 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 93BC050B298B004700BA5157 /* LibDolphinConfig.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ARCHS = (
 					arm64,
 					x86_64,
 				);
-				BUILD_DIR = "dolphin-build";
+				BUILD_DIR = ../lib;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
 				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 			};
@@ -47910,6 +48177,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitFieldTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -47980,6 +48248,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "sfml-network";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -48118,6 +48387,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BitUtilsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -48196,6 +48466,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "lzma-dolphin";
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -48257,6 +48528,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = lzo2;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -48396,6 +48668,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = BlockingLoopTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -48540,6 +48813,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MathUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -48614,6 +48888,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = iconv;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -48703,6 +48978,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = videosoftware;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"$(inherited)",
@@ -48846,6 +49122,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = StringUtilTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -48990,6 +49267,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FileSystemTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -49133,6 +49411,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FileSystemTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -49160,6 +49439,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -49299,6 +49579,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ESFormatsTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -49442,6 +49723,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = DSPAcceleratorTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -49586,6 +49868,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = VertexLoaderTest;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					"../dolphin-ios/Externals/rangeset/include",
 					"../dolphin-ios/Externals/gtest/include",
@@ -49654,6 +49937,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FreeSurround;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
 			};
@@ -49671,7 +49955,7 @@
 				6C1E3916E94740F2BC3147C3 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		07A797363BD740368BD27663 /* Build configuration list for PBXNativeTarget "mbedcrypto" */ = {
 			isa = XCConfigurationList;
@@ -49682,7 +49966,7 @@
 				0A2722885C214380A59937E4 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		0C4F814ECE9D494B8F021025 /* Build configuration list for PBXNativeTarget "fmtd" */ = {
 			isa = XCConfigurationList;
@@ -49693,7 +49977,7 @@
 				89059859BE3C41699DD9BF98 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		0FC6E25C133D4B89879D2171 /* Build configuration list for PBXNativeTarget "videonull" */ = {
 			isa = XCConfigurationList;
@@ -49704,7 +49988,7 @@
 				E5CE442DB08F4D93B6293E45 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		103AA0CA69204FFB9D83BCA9 /* Build configuration list for PBXNativeTarget "videosoftware" */ = {
 			isa = XCConfigurationList;
@@ -49715,7 +49999,7 @@
 				F482FBC484E143FC99A91576 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		1235690A0B25473B9BAA279E /* Build configuration list for PBXNativeTarget "lzma" */ = {
 			isa = XCConfigurationList;
@@ -49726,7 +50010,7 @@
 				F0B90FF56EC54FF097058DB6 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		14252B036ABB4002BDC41EB0 /* Build configuration list for PBXNativeTarget "xxhash" */ = {
 			isa = XCConfigurationList;
@@ -49737,7 +50021,7 @@
 				745A9A3ED77C487297D22B6A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		142F9C02B659455BAB6D70AD /* Build configuration list for PBXNativeTarget "BitFieldTest" */ = {
 			isa = XCConfigurationList;
@@ -49748,7 +50032,7 @@
 				1502DE6C2A524AB8B78472A9 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		14B49DADCA524411BDF0F84A /* Build configuration list for PBXNativeTarget "videoogl" */ = {
 			isa = XCConfigurationList;
@@ -49759,7 +50043,7 @@
 				3B8FF6AA086C4F1D9521DAD5 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		1A36FABD258147EF940E0335 /* Build configuration list for PBXNativeTarget "EnumFormatterTest" */ = {
 			isa = XCConfigurationList;
@@ -49770,7 +50054,7 @@
 				BF8860E6D2ED4E55A9B7126E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		2545AE854EF4408B957570CD /* Build configuration list for PBXNativeTarget "mbedtls" */ = {
 			isa = XCConfigurationList;
@@ -49781,7 +50065,7 @@
 				249CAEFD967F466A825B0D26 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		2AFD0F2D6B444EE2B23673F3 /* Build configuration list for PBXNativeTarget "videovulkan" */ = {
 			isa = XCConfigurationList;
@@ -49792,7 +50076,7 @@
 				20CFF74042B7446995BA953B /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		2BD28F5B6D5C4B02A7D11054 /* Build configuration list for PBXNativeTarget "gtest" */ = {
 			isa = XCConfigurationList;
@@ -49803,7 +50087,7 @@
 				223D6881D9DA4852B57844EF /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		2F2715D5CF8E430FB9F8DC68 /* Build configuration list for PBXNativeTarget "minizip" */ = {
 			isa = XCConfigurationList;
@@ -49814,7 +50098,7 @@
 				923B3D2858E64C47BB1312A0 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		39FFF2D9176F490E83B869A3 /* Build configuration list for PBXNativeTarget "glslang" */ = {
 			isa = XCConfigurationList;
@@ -49825,7 +50109,7 @@
 				005123D237DF4DE2B5207D8E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		3A18AAD8F7BB4804AAE54C0E /* Build configuration list for PBXNativeTarget "VertexLoaderTest" */ = {
 			isa = XCConfigurationList;
@@ -49836,7 +50120,7 @@
 				A10963AAEEB24BA8ABE60928 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		3C36A968EE9149A282DB3DF4 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
@@ -49847,7 +50131,7 @@
 				0E1E449462CF480D8D1C8B80 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		3FFC68D1F8304924965595A4 /* Build configuration list for PBXNativeTarget "SPSCQueueTest" */ = {
 			isa = XCConfigurationList;
@@ -49858,7 +50142,7 @@
 				97633C584A984D089F46BF3C /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		404E8903CE8C4AAAA5AC9B8D /* Build configuration list for PBXNativeTarget "BlockingLoopTest" */ = {
 			isa = XCConfigurationList;
@@ -49869,7 +50153,7 @@
 				A75BE500B4A14426BFC60CC8 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		4196FFDD8B1545F39D4A1C0F /* Build configuration list for PBXNativeTarget "CoreTimingTest" */ = {
 			isa = XCConfigurationList;
@@ -49880,7 +50164,7 @@
 				991E806E341E4CC297C68AFB /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		4387B92E90DD4C46914AF9A0 /* Build configuration list for PBXNativeTarget "pugixml" */ = {
 			isa = XCConfigurationList;
@@ -49891,7 +50175,7 @@
 				5685859E758C463E8F073B1D /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		445DD3913D564C78971D5212 /* Build configuration list for PBXNativeTarget "CryptoEcTest" */ = {
 			isa = XCConfigurationList;
@@ -49902,7 +50186,7 @@
 				01132CED9A224BEEACD2C296 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		456653A32E974B829FDAD0B4 /* Build configuration list for PBXNativeTarget "FlagTest" */ = {
 			isa = XCConfigurationList;
@@ -49913,7 +50197,7 @@
 				8F9B9D60475842C4AB97C9B1 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		462B0E4C4EFB477588A2D5E1 /* Build configuration list for PBXNativeTarget "unittests_stubhost" */ = {
 			isa = XCConfigurationList;
@@ -49924,7 +50208,7 @@
 				9632FACDF91A4C10901BDA7D /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		499211CB5C084D9B883A3B12 /* Build configuration list for PBXNativeTarget "lzo2" */ = {
 			isa = XCConfigurationList;
@@ -49935,7 +50219,7 @@
 				4A6A000EBE87452C8B20679A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		52D46A8ED4614620AA2587ED /* Build configuration list for PBXNativeTarget "FloatUtilsTest" */ = {
 			isa = XCConfigurationList;
@@ -49946,7 +50230,7 @@
 				E636497C22D64F5689338145 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		54438C325A8C488BBD593BCB /* Build configuration list for PBXProject "dolphin-emu" */ = {
 			isa = XCConfigurationList;
@@ -49957,7 +50241,7 @@
 				EEE00E733E11497AB29BA7F1 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		627995BF38DB46FF8EDC3296 /* Build configuration list for PBXNativeTarget "ESFormatsTest" */ = {
 			isa = XCConfigurationList;
@@ -49968,7 +50252,7 @@
 				FD64FACCD8944578989608F4 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		651C1196EE1749E393CB8EB0 /* Build configuration list for PBXNativeTarget "mbedx509" */ = {
 			isa = XCConfigurationList;
@@ -49979,7 +50263,7 @@
 				E6BA8E65252E473686BDE704 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		654E06B91AC34987BF8A69EE /* Build configuration list for PBXAggregateTarget "lib" */ = {
 			isa = XCConfigurationList;
@@ -49990,7 +50274,7 @@
 				89FEF3D4116D4201A4E4DD16 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		694A211DD5764C118C6D1907 /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
@@ -50001,7 +50285,7 @@
 				A465D0F495634A07BE837789 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		6B44384711BD499A91E94193 /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
@@ -50012,7 +50296,7 @@
 				72F09D9FD34B4D55B14A70A3 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		6B614B220E954AD0AC163275 /* Build configuration list for PBXNativeTarget "png" */ = {
 			isa = XCConfigurationList;
@@ -50023,7 +50307,7 @@
 				3966368577064B7385F11576 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		6E70561AF3DE4AF58F8F22A1 /* Build configuration list for PBXNativeTarget "SwapTest" */ = {
 			isa = XCConfigurationList;
@@ -50034,7 +50318,7 @@
 				381422E5C6AB4E598F7983E0 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		6FC004C6B96F4E998219DEE8 /* Build configuration list for PBXNativeTarget "CommonFuncsTest" */ = {
 			isa = XCConfigurationList;
@@ -50045,7 +50329,7 @@
 				11B88093C2D840099FAF89C1 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		75B6FD8C1B99441588EA4B75 /* Build configuration list for PBXNativeTarget "BusyLoopTest" */ = {
 			isa = XCConfigurationList;
@@ -50056,7 +50340,7 @@
 				59F28FCA4F924337B0F93763 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		78457DEFE4D9485AA9051E9E /* Build configuration list for PBXNativeTarget "PowerPCTest" */ = {
 			isa = XCConfigurationList;
@@ -50067,7 +50351,7 @@
 				C067CFA767A7461FACF66C50 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		787BE020CE734F5E8313B72E /* Build configuration list for PBXNativeTarget "BitUtilsTest" */ = {
 			isa = XCConfigurationList;
@@ -50078,7 +50362,7 @@
 				C5FCB9EDE5BA4F75BD5567B7 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		7AAE9C2CB62647EBA5161532 /* Build configuration list for PBXNativeTarget "ed25519" */ = {
 			isa = XCConfigurationList;
@@ -50089,7 +50373,7 @@
 				8C411DA774DC4AAE92FDBF88 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		7AD25B00FE2649DCBF2D69A9 /* Build configuration list for PBXAggregateTarget "unittests" */ = {
 			isa = XCConfigurationList;
@@ -50100,7 +50384,7 @@
 				09D749BEC1384A98A320EF56 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		837AE11A4E814D8EB86BCE89 /* Build configuration list for PBXNativeTarget "FileSystemTest" */ = {
 			isa = XCConfigurationList;
@@ -50111,7 +50395,7 @@
 				91BC6C30CD514301A4E20642 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		904466B4F8CD419096B5E32A /* Build configuration list for PBXNativeTarget "MMIOTest" */ = {
 			isa = XCConfigurationList;
@@ -50122,7 +50406,7 @@
 				BCEDBF4491CE49ACB83B5047 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		94F6D268BF564B6A9E53D2FF /* Build configuration list for PBXNativeTarget "FreeSurround" */ = {
 			isa = XCConfigurationList;
@@ -50133,7 +50417,7 @@
 				544D0474839B448B9C453F94 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		94F6EAC8E921498E8697A9FD /* Build configuration list for PBXNativeTarget "SoundTouch" */ = {
 			isa = XCConfigurationList;
@@ -50144,7 +50428,7 @@
 				988C380C62AE4333B7881F9E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		9A5B37589F684CE08CBE44B4 /* Build configuration list for PBXNativeTarget "enet" */ = {
 			isa = XCConfigurationList;
@@ -50155,7 +50439,7 @@
 				96B5C0B986114BF1B3E61A1A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A11939A01192401B9C78414F /* Build configuration list for PBXNativeTarget "sfml-network" */ = {
 			isa = XCConfigurationList;
@@ -50166,7 +50450,7 @@
 				F058A939C1AC4065A76E4348 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A12B79460DB84B73A1993E41 /* Build configuration list for PBXNativeTarget "main" */ = {
 			isa = XCConfigurationList;
@@ -50177,7 +50461,7 @@
 				59ECDD6DE66A4C30960E696C /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		A9C12EEA0C83496A97FCEB2B /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
@@ -50188,7 +50472,7 @@
 				C6B0B142C39D4A4FBE32E045 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		AE806CD8DD4041ABB6528AB9 /* Build configuration list for PBXNativeTarget "MathUtilTest" */ = {
 			isa = XCConfigurationList;
@@ -50199,7 +50483,7 @@
 				F38CACBD56E44A129DC4240C /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		B1D7309BFCBF4C1EA00A9CAE /* Build configuration list for PBXNativeTarget "BitSetTest" */ = {
 			isa = XCConfigurationList;
@@ -50210,7 +50494,7 @@
 				D1EEB3C1C6854E9385F2405A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		B4AF896007D84569A599FA77 /* Build configuration list for PBXNativeTarget "videocommon" */ = {
 			isa = XCConfigurationList;
@@ -50221,7 +50505,7 @@
 				AD3FD21AD2614997978818EC /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		B9D018E01BCE4A99B5D0571F /* Build configuration list for PBXNativeTarget "NandPathsTest" */ = {
 			isa = XCConfigurationList;
@@ -50232,7 +50516,7 @@
 				1E05D953CE464D0F80488217 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		BB4F1461575E402ABDC75723 /* Build configuration list for PBXNativeTarget "uicommon" */ = {
 			isa = XCConfigurationList;
@@ -50243,7 +50527,7 @@
 				CCAA8510229240EB9BEA2B5E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		BB9707C3CF6F43949FE37141 /* Build configuration list for PBXNativeTarget "cpp-optparse" */ = {
 			isa = XCConfigurationList;
@@ -50254,7 +50538,7 @@
 				DBFB2F949AEA467196FF4AF7 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		BC203EC105724D4D814EC4B9 /* Build configuration list for PBXNativeTarget "PageFaultTest" */ = {
 			isa = XCConfigurationList;
@@ -50265,7 +50549,7 @@
 				4834337A2A61464387DC775F /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		C011C4ABEA194E4A9A8F3EA4 /* Build configuration list for PBXNativeTarget "FileUtilTest" */ = {
 			isa = XCConfigurationList;
@@ -50276,7 +50560,7 @@
 				9A2E7A7F489F4E9E85D1CA7B /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		C2EC6B5D0446492A8861F825 /* Build configuration list for PBXNativeTarget "iconv" */ = {
 			isa = XCConfigurationList;
@@ -50287,9 +50571,9 @@
 				9F586669BC6D416DB3075F20 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
-		C5382785FFE044F2AEEB9DCE /* Build configuration list for PBXNativeTarget "core" */ = {
+		C5382785FFE044F2AEEB9DCE /* Build configuration list for PBXNativeTarget "dolphin-core" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				26EA6D7FE53647FB90EB3109 /* Debug */,
@@ -50298,7 +50582,7 @@
 				95965FA46A1447DBB3B88AAD /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		C5B87C23BFBB48ACB72D4A06 /* Build configuration list for PBXNativeTarget "zstd" */ = {
 			isa = XCConfigurationList;
@@ -50309,7 +50593,7 @@
 				44D6180830FD4353B6B66265 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		C981494253964BC0B8172FD6 /* Build configuration list for PBXNativeTarget "curl" */ = {
 			isa = XCConfigurationList;
@@ -50320,7 +50604,7 @@
 				DCE7B17D162442F089EE5049 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		D3882ED4F2204F14B1A49EDE /* Build configuration list for PBXNativeTarget "DSPAssemblyTest" */ = {
 			isa = XCConfigurationList;
@@ -50331,7 +50615,7 @@
 				E8C6177685044254930F2C68 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		DD0E2A342EBD4A62954B5DA1 /* Build configuration list for PBXNativeTarget "gtest_main" */ = {
 			isa = XCConfigurationList;
@@ -50342,7 +50626,7 @@
 				6655AC8159494C2FA3E93349 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		E15A01407FDB4541A75CCA74 /* Build configuration list for PBXNativeTarget "DSPAcceleratorTest" */ = {
 			isa = XCConfigurationList;
@@ -50353,7 +50637,7 @@
 				DA9FD88E9D7B4784946681C9 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		E3CD11306E334C7484C25CBF /* Build configuration list for PBXNativeTarget "discio" */ = {
 			isa = XCConfigurationList;
@@ -50364,7 +50648,7 @@
 				BA24977C9C594521B97528CD /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		E548A5CC2D354884B20C8DA7 /* Build configuration list for PBXNativeTarget "StringUtilTest" */ = {
 			isa = XCConfigurationList;
@@ -50375,7 +50659,7 @@
 				F6D77461CA94426A97F73340 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		E5D8DEA278884EA68A3F8FF5 /* Build configuration list for PBXNativeTarget "audiocommon" */ = {
 			isa = XCConfigurationList;
@@ -50386,9 +50670,9 @@
 				BEDFA85862BB4E91BD357A26 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
-		E5E4E486CD3944708C8F1DE2 /* Build configuration list for PBXNativeTarget "common" */ = {
+		E5E4E486CD3944708C8F1DE2 /* Build configuration list for PBXNativeTarget "dolphin-common" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				725C141609FC45008B35C89D /* Debug */,
@@ -50397,7 +50681,7 @@
 				C1CA7D824E9E4D7DB0B81AA0 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		E981C7BAD93F44A3B543D5AC /* Build configuration list for PBXNativeTarget "EventTest" */ = {
 			isa = XCConfigurationList;
@@ -50408,7 +50692,7 @@
 				0104CB8E027C4B1B8C9B3A02 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		F4254AF1B0CF46E2A871E8B6 /* Build configuration list for PBXNativeTarget "sfml-system" */ = {
 			isa = XCConfigurationList;
@@ -50419,7 +50703,7 @@
 				A173DA29E4EB4C24B2FBD2D9 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		FBF0AB200AF446CBA70EC050 /* Build configuration list for PBXNativeTarget "inputcommon" */ = {
 			isa = XCConfigurationList;
@@ -50430,7 +50714,7 @@
 				52BC9BC3418E482AA15D494A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 		FCF19B1F655F42CE917BED2E /* Build configuration list for PBXNativeTarget "FixedSizeQueueTest" */ = {
 			isa = XCConfigurationList;
@@ -50441,7 +50725,7 @@
 				5015DB7839D348CB9495949C /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

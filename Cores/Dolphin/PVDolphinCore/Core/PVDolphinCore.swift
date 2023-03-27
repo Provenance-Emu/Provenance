@@ -69,7 +69,7 @@ extension PVDolphinCore: CoreOptional {
 
 	static var fastMemoryOption: CoreOption = {
 		.bool(.init(
-			title: "Fast Memory (Requires Large Memory)",
+			title: "Fast Memory (Much Faster)",
 			description: nil,
 			requiresRestart: true),
 		defaultValue: true)
@@ -97,15 +97,21 @@ extension PVDolphinCore: CoreOptional {
 		  .init(title: "4X", description: "4X", value: 4),
 		  .init(title: "8X", description: "8X", value: 8),
 	  ],
-	  defaultValue: 2)
+	  defaultValue: 1)
 	  }()
-
+    static var multiPlayerOption: CoreOption = {
+        .bool(.init(
+            title: MAP_MULTIPLAYER,
+            description: nil,
+            requiresRestart: false),
+              defaultValue: false)
+    }()
 	public static var options: [CoreOption] {
 		var options = [CoreOption]()
 		let coreOptions: [CoreOption] = [
 			resolutionOption, gsOption, forceBilinearFilteringOption,
 			cpuOption, msaaOption, ssaaOption, cpuClockOption,
-			fastMemoryOption, enableCheatOption]
+			fastMemoryOption, enableCheatOption, multiPlayerOption]
 		let coreGroup:CoreOption = .group(.init(title: "Dolphin! Core",
 												description: "Global options for Dolphin!"),
 										  subOptions: coreOptions)
@@ -142,6 +148,10 @@ extension PVDolphinCore: CoreOptional {
 	@objc var fastMemoryOption: Bool{
 		PVDolphinCore.valueForOption(PVDolphinCore.fastMemoryOption).asBool
 	}
+    @objc var multiPlayerOption: Bool{
+        PVDolphinCore.valueForOption(PVDolphinCore.multiPlayerOption).asBool
+    }
+    
 	func parseOptions() {
 		self.gsPreference = NSNumber(value: gs).int8Value
 		self.resFactor = NSNumber(value: resolution).int8Value
@@ -155,6 +165,7 @@ extension PVDolphinCore: CoreOptional {
         self.enableCheatCode = enableCheatOption
 		self.fastMemory = fastMemoryOption
 		self.cpuOClock = NSNumber(value: cpuClock).int8Value
+        self.multiPlayer = multiPlayerOption
 	}
 }
 
@@ -168,11 +179,11 @@ extension PVDolphinCore: GameWithCheat {
     ) -> Bool
     {
         do {
-            ILOG("Calling setCheat \(code) \(type) \(codeType)")
+            NSLog("Calling setCheat \(code) \(type) \(codeType)")
             try self.setCheat(code, setType: type, setCodeType: codeType, setIndex: cheatIndex, setEnabled: enabled)
             return true
         } catch let error {
-            ILOG("Error setCheat \(error)")
+            NSLog("Error setCheat \(error)")
             return false
         }
     }

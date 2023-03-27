@@ -17,7 +17,6 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVLogging/PVLogging.h>
 
 /* Dolphin Includes */
 #include "AudioCommon/AudioCommon.h"
@@ -85,6 +84,10 @@
 #include "Core/GeckoCodeConfig.h"
 #include "Core/ActionReplay.h"
 #include "Core/ARDecrypt.h"
+#include "Core/HW/Memmap.h"
+#include "Core/PowerPC/PowerPC.h"
+
+#include "FastmemUtil.h"
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
@@ -97,6 +100,8 @@ static bool s_have_wm_user_stop = false;
 static bool s_game_metadata_is_valid = false;
 static std::mutex s_host_identity_lock;
 static bool _isOff = false;
+static bool can_enable_fastmem = CanEnableFastmem();
+static bool hacky_fastmem = GetFastmemType() == DOLFastmemTypeHacky;
 __weak PVDolphinCore *_current = 0;
 bool _isInitialized;
 std::string user_dir;
@@ -135,6 +140,7 @@ static void UpdateWiiPointer();
         isNTSC = YES;
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
         _callbackQueue = dispatch_queue_create("org.provenance-emu.dolphin.CallbackHandlerQueue", queueAttributes);
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
         //dol_host = DolHost::GetInstance();
         [self parseOptions];
     }
@@ -167,7 +173,7 @@ static void UpdateWiiPointer();
     {
         _dolphinCoreModule = @"gc";
         _isWii = false;
-        _frameInterval = 60;
+        _frameInterval = 120;
         _dolphinCoreAspect = CGSizeMake(4, 3);
         _dolphinCoreScreen = CGSizeMake(640, 480);
         _videoWidth=640;
@@ -177,13 +183,12 @@ static void UpdateWiiPointer();
     {
         _dolphinCoreModule = @"Wii";
         _isWii = true;
-        _frameInterval = 60;
+        _frameInterval = 120;
         _dolphinCoreAspect = CGSizeMake(16,9);
         _dolphinCoreScreen = CGSizeMake(832, 456);
         _videoWidth=832;
         _videoHeight=456;
     }
-    //	dol_host->Init([[self supportDirectoryPath] fileSystemRepresentation], [path fileSystemRepresentation] );
     [self parseOptions];
     return YES;
 }
@@ -191,7 +196,9 @@ static void UpdateWiiPointer();
 /* Config at dolphin-ios/Source/Core/Core/Config */
 - (void)setOptionValues {
     [self parseOptions];
-    
+    Config::Load();
+    SConfig::GetInstance().LoadSettings();
+
     // Resolution upscaling
     Config::SetBase(Config::GFX_EFB_SCALE, self.resFactor);
     Config::SetBase(Config::GFX_MAX_EFB_SCALE, 8); // 16 but dolphini uses 8
@@ -205,32 +212,18 @@ static void UpdateWiiPointer();
         Config::SetBase(Config::MAIN_OSD_MESSAGES, false);
     }
     VideoBackendBase::PopulateBackendInfoFromUI();
-    
     // CPU
     if (self.cpuType == 0) {
         SConfig::GetInstance().cpu_core = PowerPC::CPUCore::Interpreter;
-        SConfig::GetInstance().m_DSPEnableJIT = false;
-        SConfig::GetInstance().bJITOff = true;
-        SConfig::GetInstance().bJITLoadStoreOff=true;
-        SConfig::GetInstance().bJITLoadStoreFloatingOff=true;
-        SConfig::GetInstance().bJITLoadStorePairedOff=true;
-        SConfig::GetInstance().bJITFloatingPointOff=true;
-        SConfig::GetInstance().bJITIntegerOff=true;
-        SConfig::GetInstance().bJITPairedOff=true;
-        SConfig::GetInstance().bJITSystemRegistersOff=true;
-        SConfig::GetInstance().bJITBranchOff=true;
-        SConfig::GetInstance().bJITRegisterCacheOff=true;
-        Config::SetBase(Config::MAIN_JIT_FOLLOW_BRANCH, false);
-        Config::SetBase(Config::MAIN_DSP_JIT, false);
     } else if (self.cpuType == 1) {
         SConfig::GetInstance().cpu_core = PowerPC::CPUCore::CachedInterpreter;
-        SConfig::GetInstance().m_DSPEnableJIT = false;
     } else if (self.cpuType == 2) {
 #if defined(__x86_64__)
         Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JIT64);
 #else
         Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JITARM64);
 #endif
+        /*
         SConfig::GetInstance().m_DSPEnableJIT = true;
         SConfig::GetInstance().bJITOff = false;
         SConfig::GetInstance().bJITLoadStoreOff=false;
@@ -243,21 +236,22 @@ static void UpdateWiiPointer();
         SConfig::GetInstance().bJITBranchOff=false;
         SConfig::GetInstance().bJITRegisterCacheOff=false;
         Config::SetBase(Config::MAIN_JIT_FOLLOW_BRANCH, true);
-        Config::SetBase(Config::MAIN_DSP_JIT, true);
+         Config::SetBase(Config::MAIN_DSP_JIT, true);
+        */
     }
-    
-    SConfig::GetInstance().m_WiiKeyboard = false;
     SConfig::GetInstance().m_WiiSDCard = true;
     SConfig::GetInstance().bEnableMemcardSdWriting = true;
-    SConfig::GetInstance().bAutomaticStart = true;
-    SConfig::GetInstance().m_bt_passthrough_enabled = false;
-    
     // Filtering
     Config::SetBase(Config::GFX_ENHANCE_FORCE_FILTERING, self.isBilinear);
-    
     // Fast Mem
-    SConfig::GetInstance().bFastmem = self.fastMemory;
-    
+    if (self.fastMemory) {
+        Config::SetBase(Config::MAIN_FASTMEM, self.fastMemory);
+        SConfig::GetInstance().bFastmem = self.fastMemory;
+        if (can_enable_fastmem) {
+            Config::SetBase(Config::MAIN_DEBUG_HACKY_FASTMEM, hacky_fastmem);
+        }
+    }
+    Config::SetBase(Config::GFX_SHOW_FPS, false);
     // Anti Aliasing
     if (self.gsPreference == 0) {
         Config::SetBase(Config::GFX_MSAA, self.msaa);
@@ -266,31 +260,34 @@ static void UpdateWiiPointer();
         Config::SetBase(Config::GFX_MSAA, 1);
         Config::SetBase(Config::GFX_SSAA, false);
     }
-    
     // Cheats
     SConfig::GetInstance().bEnableCheats = self.enableCheatCode;
-    
     // CPU Overclock
     Config::SetBase(Config::MAIN_CPU_THREAD, true);
     SConfig::GetInstance().m_OCFactor = self.cpuOClock;
-    SConfig::GetInstance().m_OCEnable = true;
-    
+    SConfig::GetInstance().m_OCEnable = self.cpuOClock > 1;
     // CPU High Level / Low Level Emulation (Low Level is slower but better)
     SConfig::GetInstance().bDSPHLE = true;
     //Core::SetIsThrottlerTempDisabled(true);
-    
-    // Wiimote
-    //SConfig::GetInstance().m_WiimoteContinuousScanning = true;
-    Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, false);
-    
     // Wait for Shaders
     //Config::SetBase(Config::GFX_WAIT_FOR_SHADERS_BEFORE_STARTING, true);
-    
-    // Must be set to false (will crash if set to other values)
+    // Wiimote
+    SConfig::GetInstance().m_WiiKeyboard = false;
+    SConfig::GetInstance().m_WiimoteContinuousScanning = false;
+    Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, false);
+    SConfig::GetInstance().m_bt_passthrough_enabled = false;
+    // Social
+    Discord::SetDiscordPresenceEnabled(false);
+    // Alerts
+    Common::SetEnableAlert(false);
+    /*
+    //Audio
+    Config::SetBase(Config::MAIN_AUDIO_LATENCY, 22);
+    SConfig::GetInstance().bAutomaticStart = true;
+    // Must be set to false (will crash / disable fastmem / slow things down..etc if set to other values)
     SConfig::GetInstance().bMMU = false;
     //SConfig::GetInstance().bDSPThread = false;
     //Config::SetBase(Config::GFX_ENABLE_GPU_TEXTURE_DECODING, false);
-    
     // Sync
     Config::SetBase(Config::MAIN_SYNC_ON_SKIP_IDLE, true);
     Config::SetBase(Config::MAIN_SYNC_GPU, false);
@@ -301,33 +298,21 @@ static void UpdateWiiPointer();
     Config::SetBase(Config::MAIN_ACCURATE_NANS, false);
     Config::SetBase(Config::MAIN_TIMING_VARIANCE, 40);
     Config::SetBase(Config::MAIN_SKIP_IPL, true);
-    
-    //Audio
-    Config::SetBase(Config::MAIN_AUDIO_LATENCY, 20);
-    
     //Debug Settings
     SConfig::GetInstance().bEnableDebugging = false;
     SConfig::GetInstance().m_ShowFrameCount = false;
-    
     // Graphics Multithreading
     //Config::SetBase(Config::GFX_BACKEND_MULTITHREADING, false);
     //Config::SetBase(Config::GFX_SAVE_TEXTURE_CACHE_TO_STATE, false);
     //Config::SetBase(Config::GFX_SHADER_COMPILATION_MODE, ShaderCompilationMode::Synchronous);
     //Config::SetBase(Config::GFX_SHADER_COMPILER_THREADS, 1);
     //Config::SetBase(Config::GFX_SHADER_PRECOMPILER_THREADS, 1);
-    
     // Other
     //Config::SetBase(Config::GFX_HACK_EFB_EMULATE_FORMAT_CHANGES, 1);
     //Config::SetBase(Config::GFX_HACK_DEFER_EFB_COPIES, 0);
     //Config::SetBase(Config::GFX_HACK_FORCE_LOGICOPS_FALLBACK, 1);
     //Config::SetBase(Config::GFX_STEREO_CONVERGENCE, 613);
-    
-    // Social
-    Discord::SetDiscordPresenceEnabled(false);
-    
-    // Alerts
-    Common::SetEnableAlert(false);
-    
+    */
     //SConfig::GetInstance().SaveSettings();
 }
 
@@ -342,19 +327,11 @@ static void UpdateWiiPointer();
         if(![fm copyItemAtPath:sysPath toPath:saveDirectory error:&error]) {
             NSLog(@"Error copying the sys files: %@", [error description]);
         }
-        
     }
     // Copy Wii Files (needed to boot some games)
-    NSString *wiiPath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Sys/Wii/" ofType:nil];
-    NSString* wiiDestDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData/Wii/" ];
-    for(NSString *file in wiiPath)
-    {
-        NSString *src= [wiiPath stringByAppendingString:file];
-        NSString *dst = [wiiDestDirectory stringByAppendingString:file];
-        if (![fm fileExistsAtPath: dst]) {
-            [fm copyItemAtPath:src toPath:dst error:nil];
-        }
-    }
+    NSString *wiiPath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Sys/Wii" ofType:nil];
+    NSString* wiiDestDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData/Wii" ];
+    [self syncResources:wiiPath to:wiiDestDirectory overWrite:false];
     // Copy gecko code handler from resource bundle
     NSString *filePath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Sys/codehandler.bin" ofType:nil];
     NSString *codeHandler = [saveDirectory stringByAppendingPathComponent:@"codehandler.bin"];
@@ -368,53 +345,88 @@ static void UpdateWiiPointer();
     UICommon::SetUserDirectory(user_dir);
     UICommon::CreateDirectories();
     UICommon::Init();
-    ILOG(@"User Directory set to '%s'\n", user_dir.c_str());
+    NSLog(@"User Directory set to '%s'\n", user_dir.c_str());
+    NSString *configPath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Config" ofType:nil];
+    NSString *configDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData/Config" ];
+    [self syncResources:configPath to:configDirectory overWrite:true];
 }
-
+- (void)syncResource:(NSString*)from to:(NSString*)to {
+    if (!from)
+        return;
+    NSLog(@"Syncing %@ to %@", from, to);
+    NSError *error;
+    NSFileManager *fm = [[NSFileManager alloc] init];
+    NSData *fileData = [NSData dataWithContentsOfFile:from];
+    [fileData writeToFile:to atomically:NO];
+}
+- (void)syncResources:(NSString*)from to:(NSString*)to overWrite:(bool)overwrite{
+    if (!from)
+        return;
+    NSLog(@"Syncing %@ to %@", from, to);
+    NSError *error;
+    NSFileManager *fm = [[NSFileManager alloc] init];
+    NSArray* files = [fm contentsOfDirectoryAtPath:from error:&error];
+    if (![fm fileExistsAtPath: to]) {
+        [fm createDirectoryAtPath:to withIntermediateDirectories:true attributes:nil error:nil];
+    }
+    for (NSString *file in files) {
+        NSString *src=  [NSString stringWithFormat:@"%@/%@", from, file];
+        NSString *dst = [NSString stringWithFormat:@"%@/%@", to, file];
+        NSLog(@"Syncing %@ %@", src, dst);
+        if (overwrite) {
+            [self syncResource:src to:dst];
+        } else if (![fm fileExistsAtPath: dst]) {
+            [fm copyItemAtPath:src toPath:dst error:nil];
+        }
+    }
+}
 - (void)startVM:(UIView *)view {
-    ILOG(@"Starting VM\n");
+    NSLog(@"Starting VM\n");
+    m_view=view;
     // Ensure core is stopped (otherwise game lags)
     Core::Stop();
     while (Core::GetState() != Core::State::Uninitialized) {
-       sleep(1);
+        sleep(1);
     }
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        std::unique_lock<std::mutex> guard(s_host_identity_lock);
-        __block WindowSystemInfo wsi;
-        wsi.type = WindowSystemType::IPhoneOS;
-        wsi.display_connection = nullptr;
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            wsi.render_surface = (__bridge void*)view.layer;
-        });
-        wsi.render_surface_scale = [UIScreen mainScreen].scale;
-        VideoBackendBase::ActivateBackend(Config::Get(Config::MAIN_GFX_BACKEND));
-        ILOG(@"Using GFX backend: %s\n", Config::Get(Config::MAIN_GFX_BACKEND).c_str());
-        std::string gamePath=std::string([_romPath UTF8String]);
-        std::vector<std::string> normalized_game_paths;
-        normalized_game_paths.push_back(gamePath);
-        [self setupControllers];
-        if (!BootManager::BootCore(BootParameters::GenerateFromFile(normalized_game_paths), wsi))
-        {
-            ILOG(@"Could not boot %s\n", [_romPath UTF8String]);
-            return;
-        }
-        AudioCommon::SetSoundStreamRunning(true);
-        while (Core::GetState() == Core::State::Starting && !Core::IsRunning())
-        {
-            Common::SleepCurrentThread(100);
-        }
-        _isInitialized = true;
-        _isOff = false;
-        ILOG(@"VM Started\n");
-        while (_isInitialized)
-        {
-            guard.unlock();
-            s_update_main_frame_event.Wait();
-            guard.lock();
-            Core::HostDispatchJobs();
-        }
-        _isOff=true;
+    [NSThread detachNewThreadSelector:@selector(startDolphin) toTarget:self withObject:nil];
+}
+
+- (void)startDolphin {
+    std::unique_lock<std::mutex> guard(s_host_identity_lock);
+    __block WindowSystemInfo wsi;
+    wsi.type = WindowSystemType::IPhoneOS;
+    wsi.display_connection = nullptr;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        wsi.render_surface = (__bridge void*)m_view.layer;
     });
+    wsi.render_surface_scale = [UIScreen mainScreen].scale;
+    VideoBackendBase::ActivateBackend(Config::Get(Config::MAIN_GFX_BACKEND));
+    NSLog(@"Using GFX backend: %s\n", Config::Get(Config::MAIN_GFX_BACKEND).c_str());
+    std::string gamePath=std::string([_romPath UTF8String]);
+    std::vector<std::string> normalized_game_paths;
+    normalized_game_paths.push_back(gamePath);
+    [self setupControllers];
+    if (!BootManager::BootCore(BootParameters::GenerateFromFile(normalized_game_paths), wsi))
+    {
+        NSLog(@"Could not boot %s\n", [_romPath UTF8String]);
+        return;
+    }
+    AudioCommon::SetSoundStreamRunning(true);
+    while (Core::GetState() == Core::State::Starting && !Core::IsRunning())
+    {
+        Common::SleepCurrentThread(100);
+    }
+    _isInitialized = true;
+    _isOff = false;
+    NSLog(@"VM Started\n");
+    while (_isInitialized)
+    {
+        guard.unlock();
+        s_update_main_frame_event.Wait();
+        guard.lock();
+        Core::HostDispatchJobs();
+    }
+    _isOff=true;
 }
 
 - (void)startEmulation {
@@ -424,31 +436,9 @@ static void UpdateWiiPointer();
     [self setOptionValues];
     [self setupView];
     [super startEmulation];
-    //		[self.renderDelegate willRenderFrameOnAlternateThread];
-    //		dol_host->SetPresentationFBO((int)[[self.renderDelegate presentationFramebuffer] integerValue]);
-    //if(dol_host->LoadFileAtPath())
-    //_frameInterval = dol_host->GetFrameInterval();
-    //Disable the OE framelimiting
-    //	[self.renderDelegate suspendFPSLimiting];
-    //	if(!self.isRunning) {
-    //		[super startEmulation];
-    ////        [NSThread detachNewThreadSelector:@selector(runReicastRenderThread) toTarget:self withObject:nil];
-    //	}
-}
-
-- (void)runReicastEmuThread {
-    @autoreleasepool
-    {
-        //[self reicastMain];
-        // Core returns
-        // Unlock rendering thread
-        //dispatch_semaphore_signal(coreWaitToEndFrameSemaphore);
-        [super stopEmulation];
-    }
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
-    //dol_host->Pause(flag);
     Core::State state = flag ? Core::State::Paused : Core::State::Running;
     Core::SetState(state);
     [super setPauseEmulation:flag];
@@ -456,8 +446,10 @@ static void UpdateWiiPointer();
 
 - (void)stopEmulation {
     [super stopEmulation];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     self->shouldStop = YES;
     _isInitialized = false;
+    g_controller_interface.Shutdown();
     Core::SetState(Core::State::Running);
     ProcessorInterface::PowerButton_Tap();
     Core::Stop();
@@ -465,13 +457,17 @@ static void UpdateWiiPointer();
     while (CPU::GetState() != CPU::State::PowerDown ||
            Core::GetState() != Core::State::Uninitialized ||
            !_isOff) {
-        Common::SleepCurrentThread(100);
+        sleep(1);
+        //Common::SleepCurrentThread(100);
     }
     Core::Shutdown();
-    
     VertexLoaderManager::Clear();
+    Fifo::ExitGpuLoop();
     Fifo::Shutdown();
-    //g_video_backend->ShutdownShared();
+    Memory::ShutdownFastmemArena();
+    Memory::Shutdown();
+    PowerPC::Shutdown();
+    g_video_backend->Shutdown();
     s_host_identity_lock.unlock();
     [m_view removeFromSuperview];
     [m_view_controller dismissViewControllerAnimated:NO completion:nil];
@@ -543,6 +539,27 @@ static void UpdateWiiPointer();
 		[m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
 	}
 }
+-(void)optionUpdated:(NSNotification *)notification {
+    NSDictionary *info = notification.userInfo;
+    for (NSString* key in info.allKeys) {
+        NSString *value=[info valueForKey:key];
+        [self processOption:key value:value];
+        printf("Received Option key:%s value:%s\n",key.UTF8String, value.UTF8String);
+    }
+}
+-(void)processOption:(NSString *)key value:(NSString*)value {
+    typedef void (^Process)();
+    NSDictionary *actions = @{
+        @MAP_MULTIPLAYER:
+        ^{
+            self.multiPlayer = [value isEqualToString:@"true"];
+            [self setupControllers];
+        }
+    };
+    Process action=[actions objectForKey:key];
+    if (action)
+        action();
+}
 @end
 
 /* Dolphin Host (Required by Core) */
@@ -560,7 +577,7 @@ bool Host_UIBlocksControllerState()
 
 void Host_Message(HostMessageID id)
 {
-    ILOG(@"message id: %i\n", (int)id);
+    NSLog(@"message id: %i\n", (int)id);
   if (id == HostMessageID::WMUserJobDispatch)
 	  s_update_main_frame_event.Set();
   else if (id == HostMessageID::WMUserStop) {
@@ -568,7 +585,7 @@ void Host_Message(HostMessageID id)
 	if (Core::IsRunning())
 	  Core::QueueHostJob(&Core::Stop);
   } else if (id == HostMessageID::WMUserCreate)
-      ILOG(@"User Create Called\n", (int)id);
+      NSLog(@"User Create Called\n", (int)id);
 }
 
 void Host_UpdateTitle(const std::string& title)
@@ -581,13 +598,13 @@ void Host_UpdateDisasmDialog()
 
 void Host_UpdateMainFrame()
 {
-    ILOG(@"UpdateMainFrame called\n");
+    NSLog(@"UpdateMainFrame called\n");
 }
 
 
 void Host_RequestRenderWindowSize(int width, int height)
 {
-    ILOG(@"Requested Render Window Size %d %d\n",width,height);
+    NSLog(@"Requested Render Window Size %d %d\n",width,height);
 	UpdateWiiPointer();
 }
 
@@ -635,14 +652,15 @@ bool Host_RendererHasFullFocus()
 
 bool MsgAlert(const char* caption, const char* text, bool yes_no, Common::MsgType style)
 {
-    ILOG(@"Message %s %s\n", caption, text);
+    NSLog(@"Message %s %s\n", caption, text);
 	return true;
 }
 
 void UpdateWiiPointer()
 {
-    ILOG(@"Update Wii Pointer\n");
+    NSLog(@"Update Wii Pointer\n");
     if (Core::IsRunningAndStarted() && g_renderer) {
         g_renderer->ResizeSurface();
+        ButtonManager::GamepadEvent("Touchscreen", 4, ButtonManager::ButtonType::WIIMOTE_IR_RECENTER, 1);
     }
 }

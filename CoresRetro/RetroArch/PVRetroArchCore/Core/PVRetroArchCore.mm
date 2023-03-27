@@ -14,7 +14,6 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
-#import <PVLogging/PVLogging.h>
 
 /* RetroArch Includes */
 #include <stdint.h>
@@ -60,6 +59,9 @@ extern int g_gs_preference;
 - (instancetype)init {
 	if (self = [super init]) {
         self.alwaysUseMetal = true;
+        self.skipLayout = true;
+        PVRetroArchCore.systemName = self.systemIdentifier;
+        PVRetroArchCore.className = self.coreIdentifier;
         [self parseOptions];
 		CGRect bounds=[[UIScreen mainScreen] bounds];
 		_videoWidth  = bounds.size.width;
@@ -70,6 +72,7 @@ extern int g_gs_preference;
 		isNTSC = YES;
 		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
 		_callbackQueue = dispatch_queue_create("org.provenance-emu.pvretroarchcore.CallbackHandlerQueue", queueAttributes);
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
 		g_gs_preference = self.gsPreference;
 		[self setRootView:false];
         [CocoaView get];
@@ -85,6 +88,7 @@ extern int g_gs_preference;
 #pragma mark - PVEmulatorCore
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
     self.alwaysUseMetal = true;
+    self.skipLayout = true;
 	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
 	NSString *configPath = self.saveStatesPath;
 	const char * dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
@@ -105,9 +109,32 @@ extern int g_gs_preference;
 -(void)resetEmulation {
     command_event(CMD_EVENT_RESET, NULL);
 }
-- (void)setPauseEmulation:(BOOL)flag {
-    command_event(flag ? CMD_EVENT_PAUSE : CMD_EVENT_UNPAUSE, NULL);
-    [super setPauseEmulation:flag];
+-(void)optionUpdated:(NSNotification *)notification {
+    NSDictionary *info = notification.userInfo;
+    for (NSString* key in info.allKeys) {
+        NSString *value=[info valueForKey:key];
+        [self processOption:key value:value];
+        printf("Received Option key:%s value:%s\n",key.UTF8String, value.UTF8String);
+    }
 }
-
+-(void)processOption:(NSString *)key value:(NSString*)value {
+    typedef void (^Process)();
+    NSDictionary *actions = @{
+        @USE_RETROARCH_CONTROLLER:
+        ^{
+            [self useRetroArchController:[value isEqualToString:@"true"]];
+        },
+        @ENABLE_ANALOG_KEY:
+        ^{
+            self.bindAnalogKeys=[value isEqualToString:@"true"];
+        },
+        @USE_SECOND_SCREEN:
+        ^{
+            [value isEqualToString:@"true"] ? [self useSecondaryScreen] : [self usePrimaryScreen];
+        }
+    };
+    Process action=[actions objectForKey:key];
+    if (action)
+        action();
+}
 @end

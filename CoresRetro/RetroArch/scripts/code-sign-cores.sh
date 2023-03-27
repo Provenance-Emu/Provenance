@@ -7,11 +7,15 @@ if [ -z "${CODE_SIGN_IDENTITY}" ] ; then
     echo "CODE_SIGN_IDENTITY needs to be set for code-signing!"
 
     if [ "${CONFIGURATION}" = "Release" ] ; then
-        exit 1
+        exit 0
     else
         # Code-signing is optional for non-release builds.
         exit 0
     fi
+fi
+
+if [ "${CODE_SIGNING_ALLOWED}" = "NO" ] ; then
+	exit 0
 fi
 
 ITEMS=""

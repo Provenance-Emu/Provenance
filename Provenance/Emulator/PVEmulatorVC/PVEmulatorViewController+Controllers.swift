@@ -4,6 +4,9 @@ import GameController
 import PVSupport
 
 extension PVEmulatorViewController {
+    @objc func handlePause(_ note: Notification?) {
+        self.controllerPauseButtonPressed()
+    }
     func controllerPauseButtonPressed() {
         DispatchQueue.main.async(execute: { () -> Void in
             if !self.isShowingMenu {
@@ -40,9 +43,7 @@ extension PVEmulatorViewController {
     @objc func controllerDidConnect(_ note: Notification?) {
 
         // In instances where the controller is connected *after* the VC has been shown, we need to set the pause handler
-        let controller = note?.object as? GCController
-        controller?.setupPauseHandler(onPause: controllerPauseButtonPressed)
-
+        // pause handler moved to controller (Notification PauseGame)
         hideOrShowMenuButton()
     }
 

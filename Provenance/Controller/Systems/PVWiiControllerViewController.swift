@@ -20,6 +20,12 @@ private extension JSButton {
 
 final class PVWiiControllerViewController: PVControllerViewController<PVWiiSystemResponderClient> {
 	override func layoutViews() {
+        leftShoulderButton?.buttonTag = .nunchukC
+        rightShoulderButton?.buttonTag = .nunchukZ
+        leftShoulderButton2?.buttonTag = .wiiPlus
+        rightShoulderButton2?.buttonTag = .wiiMinus
+        selectButton?.buttonTag = .select
+        startButton?.buttonTag = .start
 		buttonGroup?.subviews.forEach {
 			guard let button = $0 as? JSButton, let text = button.titleLabel.text else {
 				return
@@ -37,18 +43,73 @@ final class PVWiiControllerViewController: PVControllerViewController<PVWiiSyste
 			} else if text == "2" || text == "2" {
 				button.buttonTag = .wiiTwo
 			} else if text == "C" || text == "C" {
-				button.buttonTag = .nunchunkC
+				button.buttonTag = .nunchukC
 			} else if text == "Z" || text == "Z" {
-				button.buttonTag = .nunchunkZ
+				button.buttonTag = .nunchukZ
 			}
 		}
-
-		leftShoulderButton?.buttonTag = .wiiPlus
-		rightShoulderButton?.buttonTag = .wiiMinus
-		selectButton?.buttonTag = .select
-		startButton?.buttonTag = .start
 	}
+    override func prelayoutSettings() {
+        //alwaysRightAlign = true
+        alwaysJoypadOverDpad = false
+        topRightJoyPad2 = false
+        joyPadScale = 0.5
+        joyPad2Scale = 0.5
+    }
+    override func dPad(_ dPad: JSDPad, joystick2 value: JoystickValue) {
+        var up:CGFloat = value.y < 0.5 ? CGFloat(1 - (value.y * 2)) : 0.0
+        var down:CGFloat = value.y > 0.5 ? CGFloat((value.y - 0.5) * 2) : 0.0
+        var left:CGFloat = value.x < 0.5 ? CGFloat(1 - (value.x * 2)) : 0.0
+        var right:CGFloat = value.x > 0.5 ? CGFloat((value.x - 0.5) * 2) : 0.0
 
+        up = min(up, 1.0)
+        down = min(down, 1.0)
+        left = min(left, 1.0)
+        right = min(right, 1.0)
+
+        up = max(up, 0.0)
+        down = max(down, 0.0)
+        left = max(left, 0.0)
+        right = max(right, 0.0)
+
+        // print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
+        emulatorCore.didMoveJoystick(.wiiSwingUp, withValue: up, forPlayer: 0)
+        if down != 0 {
+            emulatorCore.didMoveJoystick(.wiiSwingDown, withValue: down, forPlayer: 0)
+        }
+        emulatorCore.didMoveJoystick(.wiiSwingLeft, withValue: left, forPlayer: 0)
+        if right != 0 {
+            emulatorCore.didMoveJoystick(.wiiSwingRight, withValue: right, forPlayer: 0)
+        }
+    }
+    
+    override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
+        var up:CGFloat = value.y < 0.5 ? CGFloat(1 - (value.y * 2)) : 0.0
+        var down:CGFloat = value.y > 0.5 ? CGFloat((value.y - 0.5) * 2) : 0.0
+        var left:CGFloat = value.x < 0.5 ? CGFloat(1 - (value.x * 2)) : 0.0
+        var right:CGFloat = value.x > 0.5 ? CGFloat((value.x - 0.5) * 2) : 0.0
+
+        up = min(up, 1.0)
+        down = min(down, 1.0)
+        left = min(left, 1.0)
+        right = min(right, 1.0)
+
+        up = max(up, 0.0)
+        down = max(down, 0.0)
+        left = max(left, 0.0)
+        right = max(right, 0.0)
+
+        // print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
+        emulatorCore.didMoveJoystick(.nunchukStickUp, withValue: up, forPlayer: 0)
+        if down != 0 {
+            emulatorCore.didMoveJoystick(.nunchukStickDown, withValue: down, forPlayer: 0)
+        }
+        emulatorCore.didMoveJoystick(.nunchukStickLeft, withValue: left, forPlayer: 0)
+        if right != 0 {
+            emulatorCore.didMoveJoystick(.nunchukStickRight, withValue: right, forPlayer: 0)
+        }
+    }
+    
 	override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
 		emulatorCore.didRelease(.wiiDPadUp, forPlayer: 0)
 		emulatorCore.didRelease(.wiiDPadDown, forPlayer: 0)

@@ -37,9 +37,38 @@ extension PVPlayCore: CoreOptional {
             requiresRestart: false))
     }()
     
+    static var spuOption: CoreOption = {
+         .enumeration(.init(title: "Sound Processing Unit Block Count",
+               description: "(Smaller Value is more accurate)",
+               requiresRestart: true),
+           values: [
+               .init(title: "20", description: "20", value: 20),
+               .init(title: "100", description: "100", value: 100),
+               .init(title: "200", description: "200", value: 200),
+               .init(title: "1000", description: "1000", value: 1000),
+               .init(title: "2000", description: "2000", value: 2000),
+               .init(title: "5000", description: "5000", value: 5000),
+               .init(title: "10000", description: "10000", value: 10000),
+               .init(title: "30000", description: "30000", value: 30000),
+               .init(title: "60000", description: "60000", value: 60000),
+               .init(title: "120000", description: "120000", value: 120000),
+               .init(title: "240000", description: "240000", value: 240000),
+               .init(title: "1000000", description: "1000000", value: 1000000),
+           ],
+           defaultValue: 100)
+           }()
+    
+    static var limitFPSOption: CoreOption = {
+        .bool(.init(
+            title: "Limit FPS to 60 FPS",
+            description: nil,
+            requiresRestart: true
+        ), defaultValue: true)
+    }()
+    
     public static var options: [CoreOption] {
         var options = [CoreOption]()
-        let coreOptions: [CoreOption] = [resolutionOption, gsOption, forceBilinearFilteringOption]
+        let coreOptions: [CoreOption] = [resolutionOption, gsOption, forceBilinearFilteringOption, spuOption, limitFPSOption]
         let coreGroup:CoreOption = .group(.init(title: "Play! Core",
                                                 description: "Global options for Play!"),
                                           subOptions: coreOptions)
@@ -58,9 +87,17 @@ extension PVPlayCore: CoreOptional {
     @objc var bilinearFiltering: Bool {
         PVPlayCore.valueForOption(PVPlayCore.forceBilinearFilteringOption).asBool
     }
+    @objc var spu: Int{
+        PVPlayCore.valueForOption(PVPlayCore.spuOption).asInt ?? 0
+    }
+    @objc var fps: Bool {
+        PVPlayCore.valueForOption(PVPlayCore.limitFPSOption).asBool
+    }
     func parseOptions() {
         self.gsPreference = NSNumber(value: gs).int8Value
         self.resFactor = NSNumber(value: resolution).int8Value
+        self.limitFPS = NSNumber(value:fps).boolValue
+        self.spuCount=NSNumber(value:spu).int8Value
     }
 }
 

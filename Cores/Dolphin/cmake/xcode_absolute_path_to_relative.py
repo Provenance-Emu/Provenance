@@ -18,7 +18,7 @@ VULKAN_DIR = PROVENANCE_DIR + '/MoltenVK'
 CORE_LIB_DIR = "../dolphin-ios"
 
 # Places built library binaries under dolphin-ios/dolphin-build
-BUILD_DIR = "dolphin-build"
+BUILD_DIR = "../lib"
 
 LIBS_TO_RENAME = []
 LIBS_TO_RENAME.append([' = fmt;', ' = fmtd;'])

@@ -14,7 +14,16 @@
 * You should have received a copy of the GNU General Public License along with RetroArch.
 * If not, see <http://www.gnu.org/licenses/>.
 */
-// Adds FFMPEG files
+// Local Changes:
+// Load Local dylib
+// Load Local vulkan_common
+// FFMPEG Updated to:
+// #ifdef HAVE_FFMPEG
+// #include "../cores/libretro-ffmpeg/ffmpeg_core.c"
+// #include "../cores/libretro-ffmpeg/packet_buffer.c"
+// #include "../cores/libretro-ffmpeg/video_buffer.c"
+// #include "../libretro-common/rthreads/tpool.c"
+// #endif
 #define VFS_FRONTEND
 #include <retro_environment.h>
 
@@ -304,7 +313,7 @@ VIDEO CONTEXT
 #endif
 
 #ifdef HAVE_VULKAN
-//#include "./vulkan_common.c"
+//#include "../gfx/common/vulkan_common.c"
 #include "../gfx/drivers_display/gfx_display_vulkan.c"
 #include "../libretro-common/vulkan/vulkan_symbol_wrapper.c"
 #ifdef HAVE_VULKAN_DISPLAY
@@ -905,6 +914,7 @@ LEDS
 
 #if defined(HAVE_RPILED)
 #include "../led/drivers/led_rpi.c"
+#include "../led/drivers/led_sys_linux.c"
 #endif
 
 #if defined(_WIN32) && !defined(_XBOX) && !defined(__WINRT__)
@@ -1079,7 +1089,7 @@ FILTERS
 /*============================================================
 DYNAMIC
 ============================================================ */
-// #include "../libretro-common/dynamic/dylib.c"
+//#include "../libretro-common/dynamic/dylib.c"
 #ifdef HAVE_VIDEO_FILTER
 #include "../gfx/video_filter.c"
 #endif
@@ -1092,9 +1102,6 @@ CORES
 ============================================================ */
 #ifdef HAVE_FFMPEG
 #include "../cores/libretro-ffmpeg/ffmpeg_core.c"
-#include "../cores/libretro-ffmpeg/packet_buffer.c"
-#include "../cores/libretro-ffmpeg/video_buffer.c"
-#include "../libretro-common/rthreads/tpool.c"
 #endif
 
 #if defined(HAVE_MPV)
@@ -1240,6 +1247,9 @@ RETROARCH
 ============================================================ */
 #include "../retroarch.c"
 #include "../runloop.c"
+#ifdef HAVE_RUNAHEAD
+#include "../runahead.c"
+#endif
 #include "../command.c"
 #include "../midi_driver.c"
 #include "../location_driver.c"
@@ -1248,37 +1258,17 @@ RETROARCH
 
 #include "../msg_hash.c"
 #ifdef HAVE_LANGEXTRA
-#include "../intl/msg_hash_de.c"
-#include "../intl/msg_hash_es.c"
-#include "../intl/msg_hash_eo.c"
-#include "../intl/msg_hash_fr.c"
-#include "../intl/msg_hash_it.c"
+#include "../intl/msg_hash_ca.c"
+#include "../intl/msg_hash_chs.c"
+#include "../intl/msg_hash_el.c"
 #include "../intl/msg_hash_ja.c"
 #include "../intl/msg_hash_ko.c"
-#include "../intl/msg_hash_nl.c"
 #include "../intl/msg_hash_pt_br.c"
 #include "../intl/msg_hash_pt_pt.c"
-#include "../intl/msg_hash_pl.c"
 #include "../intl/msg_hash_ru.c"
-#include "../intl/msg_hash_vn.c"
-#include "../intl/msg_hash_chs.c"
-#include "../intl/msg_hash_cht.c"
-#include "../intl/msg_hash_ar.c"
-#include "../intl/msg_hash_el.c"
 #include "../intl/msg_hash_tr.c"
-#include "../intl/msg_hash_sk.c"
-#include "../intl/msg_hash_fa.c"
-#include "../intl/msg_hash_he.c"
-#include "../intl/msg_hash_ast.c"
-#include "../intl/msg_hash_fi.c"
-#include "../intl/msg_hash_id.c"
-#include "../intl/msg_hash_sv.c"
-#include "../intl/msg_hash_uk.c"
-#include "../intl/msg_hash_cs.c"
 #include "../intl/msg_hash_val.c"
-#include "../intl/msg_hash_ca.c"
-#include "../intl/msg_hash_en.c"
-#include "../intl/msg_hash_hu.c"
+#include "../intl/msg_hash_vn.c"
 #endif
 
 #include "../intl/msg_hash_us.c"
@@ -1368,6 +1358,7 @@ DATA RUNLOOP
 #include "../tasks/task_patch.c"
 #endif
 #include "../tasks/task_save.c"
+#include "../tasks/task_movie.c"
 #include "../tasks/task_image.c"
 #include "../tasks/task_file_transfer.c"
 #include "../tasks/task_playlist_manager.c"

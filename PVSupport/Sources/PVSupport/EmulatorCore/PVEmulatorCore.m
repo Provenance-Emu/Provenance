@@ -78,6 +78,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         _isDoubleBufferedCached = [self isDoubleBuffered];
         _skipEmulationLoop       = NO;
         _alwaysUseMetal          = NO;
+        _skipLayout              = NO;
 	}
 	
 	return self;
@@ -565,5 +566,24 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 }
 
 - (void)sendEvent:(UIEvent *)event {
+}
+static NSString *_className;
++ (NSString *)className {
+    // options are identified by classname
+    if (_className && [_className containsString:@"dylib"])
+        return _className;
+    return NSStringFromClass(self);
+}
++ (void)setClassName:(NSString *)name {
+    _className=name;
+}
+static NSString *_systemName;
++ (NSString *)systemName {
+    if (_systemName)
+        return _systemName;
+    return NSStringFromClass(self);
+}
++ (void)setSystemName:(NSString *)name {
+    _systemName=name;
 }
 @end

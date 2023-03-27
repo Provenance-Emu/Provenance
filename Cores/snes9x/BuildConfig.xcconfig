@@ -1,0 +1,1 @@
+VALID_ARCHS[sdk=iphonesimulator*] = x86_64 arm64

@@ -9,7 +9,7 @@
 #import <PVRetroArch/PVRetroArchCore.h>
 
 NS_ASSUME_NONNULL_BEGIN
-@interface PVRetroArchCore (Controls) <PVGameCubeSystemResponderClient>
+@interface PVRetroArchCore (Controls)
 #pragma mark - Control
 - (void)initControllBuffers;
 - (void)pollControllers;

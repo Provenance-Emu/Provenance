@@ -134,8 +134,9 @@ final class PVSettingsViewController: QuickTableViewController {
                 VLOG("Class <\(pvcore.principleClass)> does not implement CoreOptional")
                 return nil
             }
-
             return NavigationRow(text: pvcore.projectName, detailText: .none, icon: nil, customization: nil, action: { [weak self] row in
+                coreClass.className = pvcore.identifier
+                coreClass.systemName = (pvcore.supportedSystems.map { $0.identifier }).joined(separator: ",")
                 let coreOptionsVC = CoreOptionsViewController(withCore: coreClass)
                 coreOptionsVC.title = row.text
                 self?.navigationController?.pushViewController(coreOptionsVC, animated: true)

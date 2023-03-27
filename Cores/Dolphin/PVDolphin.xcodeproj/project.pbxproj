@@ -11,21 +11,28 @@
 		930899DA29508B7100E145C8 /* libcpp-optparse.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACD2949E94400CC8234 /* libcpp-optparse.a */; };
 		930899DB29508B7100E145C8 /* libed25519.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD32949E94400CC8234 /* libed25519.a */; };
 		930899E029508B7100E145C8 /* libpugixml.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF52949E94400CC8234 /* libpugixml.a */; };
+		932931A0297EC23600464B9D /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9329319F297EC23300464B9D /* Security.framework */; };
+		932931A2297EC31900464B9D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932931A1297EC31800464B9D /* SystemConfiguration.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		932931A5297EC81700464B9D /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 932931A3297EC81600464B9D /* FastmemUtil.m */; };
+		932931A6297EC81700464B9D /* FastmemUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 932931A4297EC81600464B9D /* FastmemUtil.h */; };
+		932931BE297ED02900464B9D /* Config in Resources */ = {isa = PBXBuildFile; fileRef = 932931BD297ED02900464B9D /* Config */; };
+		9333C82729895CEF0042CD99 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9333C82629895CEF0042CD99 /* PVSupport.framework */; };
 		933CC5E42951BF680070CF1D /* libpng-dolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5E12951BB8A0070CF1D /* libpng-dolphin.a */; };
 		933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5FE2951FB9F0070CF1D /* GLKit.framework */; platformFilters = (ios, tvos, watchos, ); };
 		933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */; };
 		933CC6032952034E0070CF1D /* PVDolphinCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC6022952034E0070CF1D /* PVDolphinCore.swift */; };
 		933CFC26295335B600217F45 /* libvideovulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB072949E94400CC8234 /* libvideovulkan.a */; };
 		933CFC362953605600217F45 /* DolphinOGLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CFC352953605600217F45 /* DolphinOGLViewController.swift */; };
-		93480AFD2953810E00C61651 /* libmain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE92949E94400CC8234 /* libmain.a */; };
 		93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93599B4C2955FD520049DAC8 /* QuartzCore.framework */; };
 		9366AC80295976D000162286 /* PVDolphinCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC5E295976D000162286 /* PVDolphinCore+Cheats.mm */; };
 		9366AC832959C6D900162286 /* Cheats_GeckoCode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC812959C6D800162286 /* Cheats_GeckoCode.mm */; };
 		9366AC842959C6D900162286 /* Cheats_ActionReplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC822959C6D900162286 /* Cheats_ActionReplay.mm */; };
 		9366AC862959CD4A00162286 /* Sys in Resources */ = {isa = PBXBuildFile; fileRef = 9366AC852959CD4A00162286 /* Sys */; };
-		93C33A952952192200CC86C5 /* libcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACB2949E94400CC8234 /* libcore.a */; };
-		93C791F02954BF4B001212D2 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316ECDB26E5C6920077FE46 /* MoltenVK.xcframework */; };
-		93C792162954BF65001212D2 /* MoltenVK.xcframework in Resources */ = {isa = PBXBuildFile; fileRef = B316ECDB26E5C6920077FE46 /* MoltenVK.xcframework */; };
+		93713380298BEE0F0050DB6E /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 9371337F298BEE0E0050DB6E /* PVDebug.c */; };
+		93829B18298980F50061038E /* libdolphin-common.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAC92949E94400CC8234 /* libdolphin-common.a */; };
+		93C33A952952192200CC86C5 /* libdolphin-core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACB2949E94400CC8234 /* libdolphin-core.a */; };
+		93CB27CC297CE59B006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27CB297CE59B006A940B /* libMoltenVK_Dolphin.dylib */; };
+		93CB27D0297CE5DF006A940B /* VulkanLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CB27CF297CE5DF006A940B /* VulkanLoader.cpp */; };
 		B301797F207C909E0051B93D /* libdolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdolphin.a */; };
 		B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDolphinCore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVDolphinCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDolphinCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -46,7 +53,6 @@
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B39F67CC295D8B1F0048CEAD /* libfmtd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD72949E94400CC8234 /* libfmtd.a */; };
 		B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */; };
-		B3AAFB222949EA6900CC8234 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAC92949E94400CC8234 /* libcommon.a */; };
 		B3AAFB232949EA9E00CC8234 /* libvideocommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAFF2949E94400CC8234 /* libvideocommon.a */; };
 		B3AAFB242949EB8100CC8234 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACF2949E94400CC8234 /* libcurl.a */; };
 		B3AAFB252949EB8100CC8234 /* libenet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD52949E94400CC8234 /* libenet.a */; };
@@ -79,10 +85,8 @@
 		B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB502949F72800CC8234 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
 		B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB522949F73C00CC8234 /* MetalKit.framework */; };
 		B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB532949F73C00CC8234 /* Metal.framework */; };
-		B3AFCF2F29779CBE00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF2E29779CBE00A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,13 +124,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5F9E26EB6412457CAAEF2862;
 			remoteInfo = audiocommon;
-		};
-		9308999829508AED00E145C8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 28C8EC9CC6C448748C0AEAF8;
-			remoteInfo = common;
 		};
 		9308999A29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -218,13 +215,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 2D752928893D4BFD95D25A85;
 			remoteInfo = lzo2;
-		};
-		930899B829508AED00E145C8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5AC9F7A7A0B8445FA5779EA8;
-			remoteInfo = main;
 		};
 		930899BA29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -352,12 +342,12 @@
 			remoteGlobalIDString = 7FD26A8923E048C185776846;
 			remoteInfo = lzma;
 		};
-		B34A8EF829584A700000D110 /* PBXContainerItemProxy */ = {
+		93829AC229896E070061038E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 0424D5B451D54E0A9CBB3EF1;
-			remoteInfo = xxhash;
+			remoteGlobalIDString = 28C8EC9CC6C448748C0AEAF8;
+			remoteInfo = common;
 		};
 		B3AAFA8C2949E94400CC8234 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -823,6 +813,12 @@
 
 /* Begin PBXFileReference section */
 		930D481D2954B18400D83090 /* Sys */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sys; path = "dolphin-ios/Data/Sys"; sourceTree = "<group>"; };
+		9329319F297EC23300464B9D /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		932931A1297EC31800464B9D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		932931A3297EC81600464B9D /* FastmemUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FastmemUtil.m; sourceTree = "<group>"; };
+		932931A4297EC81600464B9D /* FastmemUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastmemUtil.h; sourceTree = "<group>"; };
+		932931BD297ED02900464B9D /* Config */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Config; sourceTree = "<group>"; };
+		9333C82629895CEF0042CD99 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		933CC5FE2951FB9F0070CF1D /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DolphinVulkanViewController.swift; sourceTree = "<group>"; };
 		933CC6022952034E0070CF1D /* PVDolphinCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDolphinCore.swift; sourceTree = "<group>"; };
@@ -832,7 +828,26 @@
 		9366AC812959C6D800162286 /* Cheats_GeckoCode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Cheats_GeckoCode.mm; sourceTree = "<group>"; };
 		9366AC822959C6D900162286 /* Cheats_ActionReplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Cheats_ActionReplay.mm; sourceTree = "<group>"; };
 		9366AC852959CD4A00162286 /* Sys */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Sys; path = "dolphin-ios/Data/Sys"; sourceTree = "<group>"; };
+		9371337F298BEE0E0050DB6E /* PVDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PVDebug.c; path = ../../../Debug/PVDebug.c; sourceTree = "<group>"; };
+		93BC050A298AFFFC00BA5157 /* LibDolphinConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = LibDolphinConfig.xcconfig; sourceTree = "<group>"; };
 		93C33AC029527E5F00CC86C5 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		93CB27C9297CE56E006A940B /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = lib; sourceTree = "<group>"; };
+		93CB27CB297CE59B006A940B /* libMoltenVK_Dolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Dolphin.dylib; path = lib/libMoltenVK_Dolphin.dylib; sourceTree = "<group>"; };
+		93CB27CF297CE5DF006A940B /* VulkanLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VulkanLoader.cpp; sourceTree = "<group>"; };
+		93F7813E297EBBB9001F6241 /* DebuggerUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DebuggerUtils.m; sourceTree = "<group>"; };
+		93F7813F297EBBB9001F6241 /* DOLCancellationToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DOLCancellationToken.swift; sourceTree = "<group>"; };
+		93F78140297EBBB9001F6241 /* FastmemUtil.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FastmemUtil.m; sourceTree = "<group>"; };
+		93F78141297EBBB9001F6241 /* CodeSignatureUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeSignatureUtils.m; sourceTree = "<group>"; };
+		93F78142297EBBB9001F6241 /* StringUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StringUtils.h; sourceTree = "<group>"; };
+		93F78143297EBBB9001F6241 /* JitAcquisitionUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JitAcquisitionUtils.m; sourceTree = "<group>"; };
+		93F78144297EBBB9001F6241 /* DOLJitManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOLJitManager.h; sourceTree = "<group>"; };
+		93F78145297EBBB9001F6241 /* LocalizerUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalizerUtils.h; sourceTree = "<group>"; };
+		93F78146297EBBB9001F6241 /* DebuggerUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DebuggerUtils.h; sourceTree = "<group>"; };
+		93F78147297EBBB9001F6241 /* FastmemUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FastmemUtil.h; sourceTree = "<group>"; };
+		93F78148297EBBB9001F6241 /* DOLJitManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DOLJitManager.m; sourceTree = "<group>"; };
+		93F78149297EBBB9001F6241 /* JitAcquisitionUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JitAcquisitionUtils.h; sourceTree = "<group>"; };
+		93F7814A297EBBB9001F6241 /* CodeSignatureUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeSignatureUtils.h; sourceTree = "<group>"; };
+		93F7814B297EBBB9001F6241 /* LocalizerUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalizerUtils.m; sourceTree = "<group>"; };
 		B30178D3207C901D0051B93D /* libdolphin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdolphin.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316BAD426E5C66D0077FE46 /* gameini-ratings-from-wiki.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "gameini-ratings-from-wiki.sh"; sourceTree = "<group>"; };
 		B316BAD526E5C66D0077FE46 /* check-includes.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "check-includes.py"; sourceTree = "<group>"; };
@@ -15486,14 +15501,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93829B18298980F50061038E /* libdolphin-common.a in Frameworks */,
+				B3AAFB2E2949EBAE00CC8234 /* libaudiocommon.a in Frameworks */,
+				B3AAFB352949F2B300CC8234 /* libinputcommon.a in Frameworks */,
+				B3AAFB482949F45B00CC8234 /* libuicommon.a in Frameworks */,
+				B3AAFB232949EA9E00CC8234 /* libvideocommon.a in Frameworks */,
 				B39F67CC295D8B1F0048CEAD /* libfmtd.a in Frameworks */,
-				93480AFD2953810E00C61651 /* libmain.a in Frameworks */,
 				933CFC26295335B600217F45 /* libvideovulkan.a in Frameworks */,
-				93C33A952952192200CC86C5 /* libcore.a in Frameworks */,
+				93C33A952952192200CC86C5 /* libdolphin-core.a in Frameworks */,
 				933CC5E42951BF680070CF1D /* libpng-dolphin.a in Frameworks */,
 				9308994B2950752400E145C8 /* libminizip.a in Frameworks */,
-				B3AAFB2E2949EBAE00CC8234 /* libaudiocommon.a in Frameworks */,
-				B3AAFB222949EA6900CC8234 /* libcommon.a in Frameworks */,
 				930899DA29508B7100E145C8 /* libcpp-optparse.a in Frameworks */,
 				B3AAFB242949EB8100CC8234 /* libcurl.a in Frameworks */,
 				B3AAFB3B2949F30E00CC8234 /* libdiscio.a in Frameworks */,
@@ -15503,7 +15520,6 @@
 				B3AAFB4C2949F59800CC8234 /* libglslang-dolphin.a in Frameworks */,
 				B3AAFB272949EB8100CC8234 /* libiconv.a in Frameworks */,
 				B3AAFB3C2949F31300CC8234 /* libimgui.a in Frameworks */,
-				B3AAFB352949F2B300CC8234 /* libinputcommon.a in Frameworks */,
 				B3AAFB3D2949F32700CC8234 /* liblzma-dolphin.a in Frameworks */,
 				B3AAFB4D2949F5BB00CC8234 /* liblzo2.a in Frameworks */,
 				B3AAFB282949EB8100CC8234 /* libmbedcrypto.a in Frameworks */,
@@ -15513,8 +15529,6 @@
 				B3AAFB3E2949F34400CC8234 /* libsfml-network.a in Frameworks */,
 				B3AAFB492949F52E00CC8234 /* libsfml-system.a in Frameworks */,
 				B3AAFB342949F28700CC8234 /* libSoundTouch.a in Frameworks */,
-				B3AAFB482949F45B00CC8234 /* libuicommon.a in Frameworks */,
-				B3AAFB232949EA9E00CC8234 /* libvideocommon.a in Frameworks */,
 				B3AAFB2F2949EBD000CC8234 /* libvideonull.a in Frameworks */,
 				B3AAFB302949EBD000CC8234 /* libvideoogl.a in Frameworks */,
 				B3AAFB312949EBD000CC8234 /* libvideosoftware.a in Frameworks */,
@@ -15529,11 +15543,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
+				932931A0297EC23600464B9D /* Security.framework in Frameworks */,
 				933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */,
 				93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */,
 				B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
+				932931A2297EC31900464B9D /* SystemConfiguration.framework in Frameworks */,
+				9333C82729895CEF0042CD99 /* PVSupport.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */,
 				B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */,
@@ -15543,18 +15559,46 @@
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
-				B3AFCF2F29779CBE00A01010 /* PVLogging in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
+				93CB27CC297CE59B006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */,
 				B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libdolphin.a in Frameworks */,
-				93C791F02954BF4B001212D2 /* MoltenVK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		932931A7297ECFF700464B9D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				932931BD297ED02900464B9D /* Config */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		93F7813D297EBBB9001F6241 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				93F7813E297EBBB9001F6241 /* DebuggerUtils.m */,
+				93F7813F297EBBB9001F6241 /* DOLCancellationToken.swift */,
+				93F78140297EBBB9001F6241 /* FastmemUtil.m */,
+				93F78141297EBBB9001F6241 /* CodeSignatureUtils.m */,
+				93F78142297EBBB9001F6241 /* StringUtils.h */,
+				93F78143297EBBB9001F6241 /* JitAcquisitionUtils.m */,
+				93F78144297EBBB9001F6241 /* DOLJitManager.h */,
+				93F78145297EBBB9001F6241 /* LocalizerUtils.h */,
+				93F78146297EBBB9001F6241 /* DebuggerUtils.h */,
+				93F78147297EBBB9001F6241 /* FastmemUtil.h */,
+				93F78148297EBBB9001F6241 /* DOLJitManager.m */,
+				93F78149297EBBB9001F6241 /* JitAcquisitionUtils.h */,
+				93F7814A297EBBB9001F6241 /* CodeSignatureUtils.h */,
+				93F7814B297EBBB9001F6241 /* LocalizerUtils.m */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
 		B316BACF26E5C66D0077FE46 /* dolphin-ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -19306,6 +19350,7 @@
 		B316C44B26E5C6730077FE46 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				93F7813D297EBBB9001F6241 /* Util */,
 				B316C44C26E5C6730077FE46 /* UI */,
 				B316C45B26E5C6730077FE46 /* AppDelegate.h */,
 				B316C45C26E5C6730077FE46 /* Util */,
@@ -39063,6 +39108,10 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				9371337F298BEE0E0050DB6E /* PVDebug.c */,
+				932931A4297EC81600464B9D /* FastmemUtil.h */,
+				932931A3297EC81600464B9D /* FastmemUtil.m */,
+				93CB27CF297CE5DF006A940B /* VulkanLoader.cpp */,
 				9366AC822959C6D900162286 /* Cheats_ActionReplay.mm */,
 				9366AC812959C6D800162286 /* Cheats_GeckoCode.mm */,
 				933CFC352953605600217F45 /* DolphinOGLViewController.swift */,
@@ -39086,38 +39135,38 @@
 		B3AAFA442949E94300CC8234 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3AAFA8D2949E94400CC8234 /* BitFieldTest */,
-				B3AAFA8F2949E94400CC8234 /* BitSetTest */,
-				B3AAFA912949E94400CC8234 /* BitUtilsTest */,
-				B3AAFA932949E94400CC8234 /* BlockingLoopTest */,
-				B3AAFA952949E94400CC8234 /* BusyLoopTest */,
-				B3AAFA972949E94400CC8234 /* CommonFuncsTest */,
-				B3AAFA992949E94400CC8234 /* CoreTimingTest */,
-				B3AAFA9B2949E94400CC8234 /* CryptoEcTest */,
-				B3AAFA9D2949E94400CC8234 /* DSPAcceleratorTest */,
-				B3AAFA9F2949E94400CC8234 /* DSPAssemblyTest */,
-				B3AAFAA12949E94400CC8234 /* ESFormatsTest */,
-				B3AAFAA32949E94400CC8234 /* EnumFormatterTest */,
-				B3AAFAA52949E94400CC8234 /* EventTest */,
-				B3AAFAA72949E94400CC8234 /* FileSystemTest */,
-				B3AAFAA92949E94400CC8234 /* FileUtilTest */,
-				B3AAFAAB2949E94400CC8234 /* FixedSizeQueueTest */,
-				B3AAFAAD2949E94400CC8234 /* FlagTest */,
-				B3AAFAAF2949E94400CC8234 /* FloatUtilsTest */,
+				B3AAFA8D2949E94400CC8234 /* BitFieldTest.app */,
+				B3AAFA8F2949E94400CC8234 /* BitSetTest.app */,
+				B3AAFA912949E94400CC8234 /* BitUtilsTest.app */,
+				B3AAFA932949E94400CC8234 /* BlockingLoopTest.app */,
+				B3AAFA952949E94400CC8234 /* BusyLoopTest.app */,
+				B3AAFA972949E94400CC8234 /* CommonFuncsTest.app */,
+				B3AAFA992949E94400CC8234 /* CoreTimingTest.app */,
+				B3AAFA9B2949E94400CC8234 /* CryptoEcTest.app */,
+				B3AAFA9D2949E94400CC8234 /* DSPAcceleratorTest.app */,
+				B3AAFA9F2949E94400CC8234 /* DSPAssemblyTest.app */,
+				B3AAFAA12949E94400CC8234 /* ESFormatsTest.app */,
+				B3AAFAA32949E94400CC8234 /* EnumFormatterTest.app */,
+				B3AAFAA52949E94400CC8234 /* EventTest.app */,
+				B3AAFAA72949E94400CC8234 /* FileSystemTest.app */,
+				B3AAFAA92949E94400CC8234 /* FileUtilTest.app */,
+				B3AAFAAB2949E94400CC8234 /* FixedSizeQueueTest.app */,
+				B3AAFAAD2949E94400CC8234 /* FlagTest.app */,
+				B3AAFAAF2949E94400CC8234 /* FloatUtilsTest.app */,
 				B3AAFAB12949E94400CC8234 /* libFreeSurround.a */,
-				B3AAFAB32949E94400CC8234 /* MMIOTest */,
-				B3AAFAB52949E94400CC8234 /* MathUtilTest */,
-				B3AAFAB72949E94400CC8234 /* NandPathsTest */,
-				B3AAFAB92949E94400CC8234 /* PageFaultTest */,
-				B3AAFABB2949E94400CC8234 /* PowerPCTest */,
-				B3AAFABD2949E94400CC8234 /* SPSCQueueTest */,
+				B3AAFAB32949E94400CC8234 /* MMIOTest.app */,
+				B3AAFAB52949E94400CC8234 /* MathUtilTest.app */,
+				B3AAFAB72949E94400CC8234 /* NandPathsTest.app */,
+				B3AAFAB92949E94400CC8234 /* PageFaultTest.app */,
+				B3AAFABB2949E94400CC8234 /* PowerPCTest.app */,
+				B3AAFABD2949E94400CC8234 /* SPSCQueueTest.app */,
 				B3AAFABF2949E94400CC8234 /* libSoundTouch.a */,
-				B3AAFAC12949E94400CC8234 /* StringUtilTest */,
-				B3AAFAC32949E94400CC8234 /* SwapTest */,
-				B3AAFAC52949E94400CC8234 /* VertexLoaderTest */,
+				B3AAFAC12949E94400CC8234 /* StringUtilTest.app */,
+				B3AAFAC32949E94400CC8234 /* SwapTest.app */,
+				B3AAFAC52949E94400CC8234 /* VertexLoaderTest.app */,
 				B3AAFAC72949E94400CC8234 /* libaudiocommon.a */,
-				B3AAFAC92949E94400CC8234 /* libcommon.a */,
-				B3AAFACB2949E94400CC8234 /* libcore.a */,
+				B3AAFAC92949E94400CC8234 /* libdolphin-common.a */,
+				B3AAFACB2949E94400CC8234 /* libdolphin-core.a */,
 				B3AAFACD2949E94400CC8234 /* libcpp-optparse.a */,
 				B3AAFACF2949E94400CC8234 /* libcurl.a */,
 				B3AAFAD12949E94400CC8234 /* libdiscio.a */,
@@ -39157,9 +39206,12 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
+				93BC050A298AFFFC00BA5157 /* LibDolphinConfig.xcconfig */,
+				932931A7297ECFF700464B9D /* Resources */,
+				93CB27C9297CE56E006A940B /* lib */,
 				9366AC852959CD4A00162286 /* Sys */,
 				B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */,
-				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				B316BACF26E5C66D0077FE46 /* dolphin-ios */,
 				B3C762202078327B009950E4 /* PVDolphinCore */,
 				B3C7621220783162009950E4 /* PVDolphin */,
@@ -39190,6 +39242,9 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9333C82629895CEF0042CD99 /* PVSupport.framework */,
+				932931A1297EC31800464B9D /* SystemConfiguration.framework */,
+				9329319F297EC23300464B9D /* Security.framework */,
 				93599B4C2955FD520049DAC8 /* QuartzCore.framework */,
 				930D481D2954B18400D83090 /* Sys */,
 				93C33AC029527E5F00CC86C5 /* libc++.tbd */,
@@ -39208,6 +39263,7 @@
 				B35E6BF4207CD2740040709A /* CoreAudio.framework */,
 				B35E6BF3207CD2730040709A /* CoreAudioKit.framework */,
 				B3C7621E2078325C009950E4 /* Foundation.framework */,
+				93CB27CB297CE59B006A940B /* libMoltenVK_Dolphin.dylib */,
 				B339468820783F41008DBAB4 /* libpthread.tbd */,
 				B339468A20783F48008DBAB4 /* libz.tbd */,
 				B3C7621C20783243009950E4 /* OpenGLES.framework */,
@@ -39235,6 +39291,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3135B9D26E4CC330047F338 /* PVDolphinCore+Audio.h in Headers */,
+				932931A6297EC81700464B9D /* FastmemUtil.h in Headers */,
 				B3135BA026E4CC330047F338 /* PVDolphinCore+Controls.h in Headers */,
 				B3135B9C26E4CC290047F338 /* PVDolphinCore.h in Headers */,
 				B3135B9F26E4CC330047F338 /* PVDolphinCore+Saves.h in Headers */,
@@ -39257,12 +39314,15 @@
 			buildRules = (
 			);
 			dependencies = (
+				93829AC329896E070061038E /* PBXTargetDependency */,
+				930899B129508AED00E145C8 /* PBXTargetDependency */,
+				930899C929508AED00E145C8 /* PBXTargetDependency */,
+				930899CD29508AED00E145C8 /* PBXTargetDependency */,
 				933CC5E82951C0480070CF1D /* PBXTargetDependency */,
 				930899402950713700E145C8 /* PBXTargetDependency */,
 				B3AAFB432949F3A400CC8234 /* PBXTargetDependency */,
 				933CC5E62951C0380070CF1D /* PBXTargetDependency */,
 				9308999729508AED00E145C8 /* PBXTargetDependency */,
-				9308999929508AED00E145C8 /* PBXTargetDependency */,
 				9308999B29508AED00E145C8 /* PBXTargetDependency */,
 				9308999D29508AED00E145C8 /* PBXTargetDependency */,
 				9308999F29508AED00E145C8 /* PBXTargetDependency */,
@@ -39275,18 +39335,14 @@
 				930899AB29508AED00E145C8 /* PBXTargetDependency */,
 				930899AD29508AED00E145C8 /* PBXTargetDependency */,
 				930899AF29508AED00E145C8 /* PBXTargetDependency */,
-				930899B129508AED00E145C8 /* PBXTargetDependency */,
 				930899B729508AED00E145C8 /* PBXTargetDependency */,
-				930899B929508AED00E145C8 /* PBXTargetDependency */,
 				930899BB29508AED00E145C8 /* PBXTargetDependency */,
 				930899BD29508AED00E145C8 /* PBXTargetDependency */,
 				930899BF29508AED00E145C8 /* PBXTargetDependency */,
 				930899C329508AED00E145C8 /* PBXTargetDependency */,
 				930899C529508AED00E145C8 /* PBXTargetDependency */,
 				930899C729508AED00E145C8 /* PBXTargetDependency */,
-				930899C929508AED00E145C8 /* PBXTargetDependency */,
 				930899CB29508AED00E145C8 /* PBXTargetDependency */,
-				930899CD29508AED00E145C8 /* PBXTargetDependency */,
 				930899CF29508AED00E145C8 /* PBXTargetDependency */,
 				930899D129508AED00E145C8 /* PBXTargetDependency */,
 				930899D329508AED00E145C8 /* PBXTargetDependency */,
@@ -39312,12 +39368,10 @@
 			buildRules = (
 			);
 			dependencies = (
-				B34A8EF929584A700000D110 /* PBXTargetDependency */,
 				930899D929508B0400E145C8 /* PBXTargetDependency */,
 			);
 			name = PVDolphin;
 			packageProductDependencies = (
-				B3AFCF2E29779CBE00A01010 /* PVLogging */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVDolphin.framework */;
@@ -39387,146 +39441,128 @@
 			remoteRef = 933CC5E02951BB8A0070CF1D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA8D2949E94400CC8234 /* BitFieldTest */ = {
+		B3AAFA8D2949E94400CC8234 /* BitFieldTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = BitFieldTest;
+			fileType = wrapper.application;
 			path = BitFieldTest.app;
 			remoteRef = B3AAFA8C2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA8F2949E94400CC8234 /* BitSetTest */ = {
+		B3AAFA8F2949E94400CC8234 /* BitSetTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = BitSetTest;
+			fileType = wrapper.application;
 			path = BitSetTest.app;
 			remoteRef = B3AAFA8E2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA912949E94400CC8234 /* BitUtilsTest */ = {
+		B3AAFA912949E94400CC8234 /* BitUtilsTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = BitUtilsTest;
+			fileType = wrapper.application;
 			path = BitUtilsTest.app;
 			remoteRef = B3AAFA902949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA932949E94400CC8234 /* BlockingLoopTest */ = {
+		B3AAFA932949E94400CC8234 /* BlockingLoopTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = BlockingLoopTest;
+			fileType = wrapper.application;
 			path = BlockingLoopTest.app;
 			remoteRef = B3AAFA922949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA952949E94400CC8234 /* BusyLoopTest */ = {
+		B3AAFA952949E94400CC8234 /* BusyLoopTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = BusyLoopTest;
+			fileType = wrapper.application;
 			path = BusyLoopTest.app;
 			remoteRef = B3AAFA942949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA972949E94400CC8234 /* CommonFuncsTest */ = {
+		B3AAFA972949E94400CC8234 /* CommonFuncsTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = CommonFuncsTest;
+			fileType = wrapper.application;
 			path = CommonFuncsTest.app;
 			remoteRef = B3AAFA962949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA992949E94400CC8234 /* CoreTimingTest */ = {
+		B3AAFA992949E94400CC8234 /* CoreTimingTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = CoreTimingTest;
+			fileType = wrapper.application;
 			path = CoreTimingTest.app;
 			remoteRef = B3AAFA982949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA9B2949E94400CC8234 /* CryptoEcTest */ = {
+		B3AAFA9B2949E94400CC8234 /* CryptoEcTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = CryptoEcTest;
+			fileType = wrapper.application;
 			path = CryptoEcTest.app;
 			remoteRef = B3AAFA9A2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA9D2949E94400CC8234 /* DSPAcceleratorTest */ = {
+		B3AAFA9D2949E94400CC8234 /* DSPAcceleratorTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = DSPAcceleratorTest;
+			fileType = wrapper.application;
 			path = DSPAcceleratorTest.app;
 			remoteRef = B3AAFA9C2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA9F2949E94400CC8234 /* DSPAssemblyTest */ = {
+		B3AAFA9F2949E94400CC8234 /* DSPAssemblyTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = DSPAssemblyTest;
+			fileType = wrapper.application;
 			path = DSPAssemblyTest.app;
 			remoteRef = B3AAFA9E2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAA12949E94400CC8234 /* ESFormatsTest */ = {
+		B3AAFAA12949E94400CC8234 /* ESFormatsTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = ESFormatsTest;
+			fileType = wrapper.application;
 			path = ESFormatsTest.app;
 			remoteRef = B3AAFAA02949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAA32949E94400CC8234 /* EnumFormatterTest */ = {
+		B3AAFAA32949E94400CC8234 /* EnumFormatterTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = EnumFormatterTest;
+			fileType = wrapper.application;
 			path = EnumFormatterTest.app;
 			remoteRef = B3AAFAA22949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAA52949E94400CC8234 /* EventTest */ = {
+		B3AAFAA52949E94400CC8234 /* EventTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = EventTest;
+			fileType = wrapper.application;
 			path = EventTest.app;
 			remoteRef = B3AAFAA42949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAA72949E94400CC8234 /* FileSystemTest */ = {
+		B3AAFAA72949E94400CC8234 /* FileSystemTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = FileSystemTest;
+			fileType = wrapper.application;
 			path = FileSystemTest.app;
 			remoteRef = B3AAFAA62949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAA92949E94400CC8234 /* FileUtilTest */ = {
+		B3AAFAA92949E94400CC8234 /* FileUtilTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = FileUtilTest;
+			fileType = wrapper.application;
 			path = FileUtilTest.app;
 			remoteRef = B3AAFAA82949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAAB2949E94400CC8234 /* FixedSizeQueueTest */ = {
+		B3AAFAAB2949E94400CC8234 /* FixedSizeQueueTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = FixedSizeQueueTest;
+			fileType = wrapper.application;
 			path = FixedSizeQueueTest.app;
 			remoteRef = B3AAFAAA2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAAD2949E94400CC8234 /* FlagTest */ = {
+		B3AAFAAD2949E94400CC8234 /* FlagTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = FlagTest;
+			fileType = wrapper.application;
 			path = FlagTest.app;
 			remoteRef = B3AAFAAC2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAAF2949E94400CC8234 /* FloatUtilsTest */ = {
+		B3AAFAAF2949E94400CC8234 /* FloatUtilsTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = FloatUtilsTest;
+			fileType = wrapper.application;
 			path = FloatUtilsTest.app;
 			remoteRef = B3AAFAAE2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -39538,50 +39574,44 @@
 			remoteRef = B3AAFAB02949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAB32949E94400CC8234 /* MMIOTest */ = {
+		B3AAFAB32949E94400CC8234 /* MMIOTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = MMIOTest;
+			fileType = wrapper.application;
 			path = MMIOTest.app;
 			remoteRef = B3AAFAB22949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAB52949E94400CC8234 /* MathUtilTest */ = {
+		B3AAFAB52949E94400CC8234 /* MathUtilTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = MathUtilTest;
+			fileType = wrapper.application;
 			path = MathUtilTest.app;
 			remoteRef = B3AAFAB42949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAB72949E94400CC8234 /* NandPathsTest */ = {
+		B3AAFAB72949E94400CC8234 /* NandPathsTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = NandPathsTest;
+			fileType = wrapper.application;
 			path = NandPathsTest.app;
 			remoteRef = B3AAFAB62949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAB92949E94400CC8234 /* PageFaultTest */ = {
+		B3AAFAB92949E94400CC8234 /* PageFaultTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = PageFaultTest;
+			fileType = wrapper.application;
 			path = PageFaultTest.app;
 			remoteRef = B3AAFAB82949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFABB2949E94400CC8234 /* PowerPCTest */ = {
+		B3AAFABB2949E94400CC8234 /* PowerPCTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = PowerPCTest;
+			fileType = wrapper.application;
 			path = PowerPCTest.app;
 			remoteRef = B3AAFABA2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFABD2949E94400CC8234 /* SPSCQueueTest */ = {
+		B3AAFABD2949E94400CC8234 /* SPSCQueueTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = SPSCQueueTest;
+			fileType = wrapper.application;
 			path = SPSCQueueTest.app;
 			remoteRef = B3AAFABC2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -39593,26 +39623,23 @@
 			remoteRef = B3AAFABE2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAC12949E94400CC8234 /* StringUtilTest */ = {
+		B3AAFAC12949E94400CC8234 /* StringUtilTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = StringUtilTest;
+			fileType = wrapper.application;
 			path = StringUtilTest.app;
 			remoteRef = B3AAFAC02949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAC32949E94400CC8234 /* SwapTest */ = {
+		B3AAFAC32949E94400CC8234 /* SwapTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = SwapTest;
+			fileType = wrapper.application;
 			path = SwapTest.app;
 			remoteRef = B3AAFAC22949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAC52949E94400CC8234 /* VertexLoaderTest */ = {
+		B3AAFAC52949E94400CC8234 /* VertexLoaderTest.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = VertexLoaderTest;
+			fileType = wrapper.application;
 			path = VertexLoaderTest.app;
 			remoteRef = B3AAFAC42949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -39624,17 +39651,17 @@
 			remoteRef = B3AAFAC62949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAC92949E94400CC8234 /* libcommon.a */ = {
+		B3AAFAC92949E94400CC8234 /* libdolphin-common.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libcommon.a;
+			path = "libdolphin-common.a";
 			remoteRef = B3AAFAC82949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFACB2949E94400CC8234 /* libcore.a */ = {
+		B3AAFACB2949E94400CC8234 /* libdolphin-core.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libcore.a;
+			path = "libdolphin-core.a";
 			remoteRef = B3AAFACA2949E94400CC8234 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -39863,8 +39890,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				9366AC862959CD4A00162286 /* Sys in Resources */,
-				93C792162954BF65001212D2 /* MoltenVK.xcframework in Resources */,
 				B33350262078619C0036A448 /* Core.plist in Resources */,
+				932931BE297ED02900464B9D /* Config in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -39882,11 +39909,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93713380298BEE0F0050DB6E /* PVDebug.c in Sources */,
+				932931A5297EC81700464B9D /* FastmemUtil.m in Sources */,
 				9366AC842959C6D900162286 /* Cheats_ActionReplay.mm in Sources */,
 				933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */,
 				B3135BA726E4CD5A0047F338 /* PVDolphinCore+Video.mm in Sources */,
 				B3135BA526E4CD500047F338 /* PVDolphinCore+Saves.mm in Sources */,
 				933CFC362953605600217F45 /* DolphinOGLViewController.swift in Sources */,
+				93CB27D0297CE5DF006A940B /* VulkanLoader.cpp in Sources */,
 				9366AC832959C6D900162286 /* Cheats_GeckoCode.mm in Sources */,
 				B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */,
 				933CC6032952034E0070CF1D /* PVDolphinCore.swift in Sources */,
@@ -39923,11 +39953,6 @@
 			isa = PBXTargetDependency;
 			name = audiocommon;
 			targetProxy = 9308999629508AED00E145C8 /* PBXContainerItemProxy */;
-		};
-		9308999929508AED00E145C8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = common;
-			targetProxy = 9308999829508AED00E145C8 /* PBXContainerItemProxy */;
 		};
 		9308999B29508AED00E145C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -39993,11 +40018,6 @@
 			isa = PBXTargetDependency;
 			name = lzo2;
 			targetProxy = 930899B629508AED00E145C8 /* PBXContainerItemProxy */;
-		};
-		930899B929508AED00E145C8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = main;
-			targetProxy = 930899B829508AED00E145C8 /* PBXContainerItemProxy */;
 		};
 		930899BB29508AED00E145C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -40084,10 +40104,10 @@
 			name = lzma;
 			targetProxy = 933CC5E72951C0480070CF1D /* PBXContainerItemProxy */;
 		};
-		B34A8EF929584A700000D110 /* PBXTargetDependency */ = {
+		93829AC329896E070061038E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = xxhash;
-			targetProxy = B34A8EF829584A700000D110 /* PBXContainerItemProxy */;
+			name = common;
+			targetProxy = 93829AC229896E070061038E /* PBXContainerItemProxy */;
 		};
 		B3AAFB432949F3A400CC8234 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -40371,6 +40391,11 @@
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/lib\"",
+					"\"$(SRCROOT)/lib/$(CONFIGURATION)\"",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -40399,6 +40424,11 @@
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/lib\"",
+					"\"$(SRCROOT)/lib/$(CONFIGURATION)\"",
+				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -40409,159 +40439,6 @@
 				SUPPORTS_MACCATALYST = YES;
 			};
 			name = Release;
-		};
-		B324C5012191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_BITCODE = NO;
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					RELEASE,
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/PVDolphinCore/Compatibility\"",
-					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CFLAGS = "$(inherited)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VALIDATE_PRODUCT = YES;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Archive;
-		};
-		B324C5022191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEAD_CODE_STRIPPING = YES;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/dolphin-ios/Source/Core/Core/IOS\"",
-					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
-					"\"$(SRCROOT)/dolphin-ios/Externals/fmt/include\"",
-					"\"$(SRCROOT)/dolphin-ios/Externals/soundtouch\"",
-					"\"$(SRCROOT)/dolphin-ios/Externals/mbedtls/include\"",
-					"\"$(SRCROOT)/dolphin-ios/Externals/Vulkan/Include\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVDolphin/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/dolphin-ios/Externals/MoltenVK",
-				);
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVDolphin";
-				PRODUCT_NAME = PVDolphin;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
-				SWIFT_VERSION = 5.0;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
-			};
-			name = Archive;
-		};
-		B324C5042191A2A2009F4EDC /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEAD_CODE_STRIPPING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"$(inherited)",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTS_MACCATALYST = YES;
-			};
-			name = Archive;
 		};
 		B3C7621620783162009950E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -40607,7 +40484,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -40687,7 +40564,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -40727,7 +40604,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
@@ -40736,6 +40614,11 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = "$(TARGET_BUILD_DIR)";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/PVDolphinCore/Core/PVDolphinCore-Prefix.pch";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -40757,13 +40640,19 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/dolphin-ios/Externals/MoltenVK",
+					"\"$(PROJECT_DIR)/dolphin-ios/Externals/MoltenVK\"",
+					"\"$(SRCROOT)/lib\"",
+					"$(PROJECT_DIR)",
+					"\"$(SRCROOT)/lib/$(CONFIGURATION)-$(PLATFORM_NAME)\"",
+					"\"$(SRCROOT)/lib/$(CONFIGURATION)\"",
 				);
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVDolphin";
 				PRODUCT_NAME = PVDolphin;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -40774,7 +40663,35 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEAD_CODE_STRIPPING = YES;
@@ -40783,7 +40700,27 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(TARGET_BUILD_DIR)";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/PVDolphinCore/Core/PVDolphinCore-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"USE_GDBSTUB=1",
+					"NONJAILBROKEN=1",
+					"PB_ENABLE_MALLOC=1",
+					"PB_NO_PACKED_STRUCTS=1",
+					"PB_FIELD_32BIT=1",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -40804,15 +40741,22 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/dolphin-ios/Externals/MoltenVK",
+					"\"$(PROJECT_DIR)/dolphin-ios/Externals/MoltenVK\"",
+					"\"$(SRCROOT)/lib\"",
+					"$(PROJECT_DIR)",
+					"\"$(SRCROOT)/lib/$(CONFIGURATION)-$(PLATFORM_NAME)\"",
+					"\"$(SRCROOT)/lib/$(CONFIGURATION)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVDolphin";
 				PRODUCT_NAME = PVDolphin;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
@@ -40826,7 +40770,6 @@
 			buildConfigurations = (
 				B30178DA207C901D0051B93D /* Debug */,
 				B30178DB207C901D0051B93D /* Release */,
-				B324C5042191A2A2009F4EDC /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -40836,7 +40779,6 @@
 			buildConfigurations = (
 				B3C7621620783162009950E4 /* Debug */,
 				B3C7621720783162009950E4 /* Release */,
-				B324C5012191A2A2009F4EDC /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -40846,19 +40788,11 @@
 			buildConfigurations = (
 				B3C7621920783162009950E4 /* Debug */,
 				B3C7621A20783162009950E4 /* Release */,
-				B324C5022191A2A2009F4EDC /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		B3AFCF2E29779CBE00A01010 /* PVLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLogging;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

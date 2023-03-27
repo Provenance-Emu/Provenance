@@ -11,10 +11,9 @@ import PVLogging
 
 public extension CoreOptional { // where Self:PVEmulatorCore {
     static func storedValueForOption<T>(_: T.Type, _ option: String, andMD5 md5: String? = nil) -> T? {
-        let className = NSStringFromClass(Self.self)
+        let className = self.className
         let key = "\(className).\(option)"
         let md5Key: String = [className, md5, option].compactMap {$0}.joined(separator: ".")
-
         VLOG("Looking for either key's `\(key)` or \(md5Key) with type \(T.self)")
 
         let savedOption = UserDefaults.standard.object(forKey: md5Key) ??  UserDefaults.standard.object(forKey: key)
@@ -38,7 +37,7 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
     }
 
     static func setValue(_ value: Encodable?, forOption option: CoreOption, andMD5 md5: String? = nil) {
-        let className = NSStringFromClass(Self.self)
+        let className = self.className
 		let key: String
 		if let md5 = md5, !md5.isEmpty {
 			key = "\(className.utf8).\(md5).\(option.key)"
@@ -50,6 +49,9 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
         DLOG("Options: Setting key: \(key) to value: \(value ?? "nil")")
         UserDefaults.standard.set(value, forKey: key)
         UserDefaults.standard.synchronize()
+        let broadcast = NotificationCenter.default
+        let info:Dictionary=[option.key: "\(value ?? "nil")"]
+        broadcast.post(name: Notification.Name("OptionUpdated"), object: nil, userInfo:info)
     }
 
     static func valueForOption(_ option: CoreOption) -> CoreOptionValue {

@@ -1,3 +1,5 @@
+// Local Changes:
+// Add PVRetroArchCore.h
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
 #import <PVSupport/PVEmulatorCore.h>

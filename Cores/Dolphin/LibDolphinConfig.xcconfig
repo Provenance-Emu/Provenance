@@ -1,0 +1,12 @@
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = * ***.a
+INCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = PVDebug.c
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = * ***.a
+INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.c
+//EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*][arch=*] = * ***.a
+//INCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*][arch=*] = PVDebug.c
+
+BUILD_DIR = $(SRCROOT)/../lib
+
+OBJROOT = $(SRCROOT)/../lib/dolphin-emu
+SYMROOT = $(SRCROOT)/../lib/dolphin-emu
+PROJECT_TEMP_DIR = $(SRCROOT)/../lib/dolphin-emu/build/$(PROJECT_NAME).build

@@ -3,8 +3,8 @@ AR             := ar
 
 HAVE_NEON      := 0
 HAVE_OPENGL    := 0
-HAVE_OPENGLES3 := 0
-HAVE_THREADS   := 0
+HAVE_OPENGLES3 := 1
+HAVE_THREADS   := 1
 HAVE_WIFI      := 1
 
 SPACE :=
@@ -29,6 +29,8 @@ endif
 
 # system platform
 system_platform = unix
+platform=ios-arm64
+system_platform=ios-arm64
 ifeq ($(shell uname -a),)
 	EXE_EXT = .exe
 	system_platform = win
@@ -49,9 +51,6 @@ endif
 ifeq (,$(ARCH))
    ARCH = $(shell uname -m)
 endif
-platform = ios-arm64
-system_platform = ios-arm64
-ARCH = arm64
 
 CORE_DIR    += ./src/libretro
 MELON_DIR     += ./src

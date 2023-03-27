@@ -26,25 +26,22 @@ import os
 		metalView.colorPixelFormat = .bgra8Unorm;
 		metalView.depthStencilPixelFormat = .depth32Float
 		metalView.translatesAutoresizingMaskIntoConstraints = false
+        metalView.preferredFramesPerSecond = 120
 	}
-
 	override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-
 	}
 	required init?(coder: NSCoder) {
 		super.init(coder:coder)
 	}
-
 	@objc public override func viewDidLoad() {
-		VLOG("View Did Load\n")
+		NSLog("View Did Load\n")
 		self.view=metalView;
-        VLOG("Starting VM\n")
+        NSLog("Starting VM\n")
 		core.startVM(self.view)
 	}
-
 	@objc public override func viewDidLayoutSubviews() {
-        VLOG("View Size Changed\n")
+        NSLog("View Size Changed\n")
 		core.refreshScreenSize()
 	}
 }

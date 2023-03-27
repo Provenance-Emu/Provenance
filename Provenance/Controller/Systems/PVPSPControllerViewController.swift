@@ -45,8 +45,10 @@ final class PVPSPControllerViewController: PVControllerViewController<PVPSPSyste
     }
     
     override func prelayoutSettings() {
-        alwaysRightAlign = true
-        alwaysJoypadOverDpad = false
+        //alwaysRightAlign = true
+        //alwaysJoypadOverDpad = true
+        joyPadScale = 0.5
+        joyPad2Scale = 0.5
     }
 
     override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
