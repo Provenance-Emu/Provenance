@@ -124,8 +124,6 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 7947508ACC0143F4BAEB8610 /* Build configuration list for PBXAggregateTarget "GitVersion" */;
 			buildPhases = (
-				9C9E992BAB3297391AD074D6 /* Generate something_that_never_exists */,
-				77F54181E04BC1E43C771982 /* Generate CMakeFiles/GitVersion */,
 			);
 			dependencies = (
 				8B017C26EF7E4ACE9678B9EA /* PBXTargetDependency */,
@@ -8821,24 +8819,6 @@
 			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake/ext/zstd/build/cmake/lib\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -P ../cmake/ext/zstd/build/cmake/lib/cmake_uninstall.cmake\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake/ext/zstd/build/cmake/lib\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -P ../cmake/ext/zstd/build/cmake/lib/cmake_uninstall.cmake\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake/ext/zstd/build/cmake/lib\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -P ../cmake/ext/zstd/build/cmake/lib/cmake_uninstall.cmake\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake/ext/zstd/build/cmake/lib\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -P ../cmake/ext/zstd/build/cmake/lib/cmake_uninstall.cmake\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		77F54181E04BC1E43C771982 /* Generate CMakeFiles/GitVersion */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				../cmake/something_that_never_exists,
-			);
-			name = "Generate CMakeFiles/GitVersion";
-			outputPaths = (
-				../cmake/CMakeFiles/GitVersion,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake\nfi\n";
-			showEnvVarsInLog = 0;
-		};
 		856F57EBAFC26698BB31136C /* Generate ext/glslang/CMakeFiles/Continuous */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -8882,22 +8862,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake\n  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		9C9E992BAB3297391AD074D6 /* Generate something_that_never_exists */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate something_that_never_exists";
-			outputPaths = (
-				../cmake/something_that_never_exists,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\nif test \"$CONFIGURATION\" = \"Debug\"; then :\n  cd ../cmake\n  cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\nif test \"$CONFIGURATION\" = \"Release\"; then :\n  cd ../cmake\n  cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\nif test \"$CONFIGURATION\" = \"MinSizeRel\"; then :\n  cd ../cmake\n  cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\nif test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :\n  cd ../cmake\n  cmake -DSOURCE_DIR=../ppsspp -DOUTPUT_DIR=../cmake -P ../ppsspp/git-version.cmake\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		AD0580B01C18899927F4CC60 /* Generate CMakeFiles/ALL_BUILD */ = {
@@ -14493,7 +14457,7 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/ffmpeg/ios/universal/include/";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -15731,7 +15695,7 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/ffmpeg/ios/universal/include/";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -16174,7 +16138,7 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/ffmpeg/ios/universal/include/";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -17744,7 +17708,7 @@
 				CODE_SIGNING_REQUIRED = NO;
 				CODE_SIGN_IDENTITY = "";
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/ffmpeg/ios/universal/include/";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};

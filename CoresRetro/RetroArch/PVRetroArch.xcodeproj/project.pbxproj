@@ -1609,6 +1609,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/System/iOSSupport/System/Library/Frameworks",
 				);
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -1709,6 +1710,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/System/iOSSupport/System/Library/Frameworks",
 				);
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
