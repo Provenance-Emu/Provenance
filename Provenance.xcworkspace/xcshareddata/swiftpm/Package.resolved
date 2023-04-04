@@ -11,6 +11,42 @@
         }
       },
       {
+        "package": "BitByteData",
+        "repositoryURL": "https://github.com/tsolomko/BitByteData",
+        "state": {
+          "branch": null,
+          "revision": "b4b41619522aacd7aae7b02fa8360833e796a03d",
+          "version": "2.0.2"
+        }
+      },
+      {
+        "package": "Checksum",
+        "repositoryURL": "https://github.com/JoeMatt/Checksum.git",
+        "state": {
+          "branch": null,
+          "revision": "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+          "version": "1.1.1"
+        }
+      },
+      {
+        "package": "GRDB",
+        "repositoryURL": "https://github.com/groue/GRDB.swift.git",
+        "state": {
+          "branch": null,
+          "revision": "d3862c042446d3025a8a4123b013e1b6d58fc315",
+          "version": "6.8.0"
+        }
+      },
+      {
+        "package": "MacDirtyCow.swift",
+        "repositoryURL": "https://github.com/JoeMatt/MacDirtyCow.swift.git",
+        "state": {
+          "branch": null,
+          "revision": "02bede657d3ff3e9f46a87091e1ded24043c9d42",
+          "version": "0.2.0"
+        }
+      },
+      {
         "package": "NSLogger",
         "repositoryURL": "https://github.com/fpillet/NSLogger",
         "state": {
@@ -29,6 +65,15 @@
         }
       },
       {
+        "package": "PLzmaSDK",
+        "repositoryURL": "https://github.com/OlehKulykov/PLzmaSDK.git",
+        "state": {
+          "branch": "1.2.5",
+          "revision": "ee2666a06aa1f6632d5060d1cf316520ed8aecbd",
+          "version": null
+        }
+      },
+      {
         "package": "Reachability",
         "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
         "state": {
@@ -38,12 +83,75 @@
         }
       },
       {
+        "package": "RealmDatabase",
+        "repositoryURL": "https://github.com/realm/realm-core.git",
+        "state": {
+          "branch": null,
+          "revision": "a7d486d07b821e28ffd3587e99355a63148cbb43",
+          "version": "13.4.1"
+        }
+      },
+      {
+        "package": "Realm",
+        "repositoryURL": "https://github.com/realm/realm-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "4d55ba88e78ed427eae439e7c15fac2372f95c64",
+          "version": "10.36.0"
+        }
+      },
+      {
+        "package": "RxDataSources",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxDataSources.git",
+        "state": {
+          "branch": null,
+          "revision": "90c29b48b628479097fe775ed1966d75ac374518",
+          "version": "5.0.2"
+        }
+      },
+      {
+        "package": "RxRealm",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm",
+        "state": {
+          "branch": null,
+          "revision": "a7de576348d48286d8b100a501f757a1c531f1dd",
+          "version": "5.0.5"
+        }
+      },
+      {
+        "package": "RxSwift",
+        "repositoryURL": "https://github.com/ReactiveX/RxSwift",
+        "state": {
+          "branch": null,
+          "revision": "b4307ba0b6425c0ba4178e138799946c3da594f8",
+          "version": "6.5.0"
+        }
+      },
+      {
+        "package": "SQLite.swift",
+        "repositoryURL": "https://github.com/stephencelis/SQLite.swift",
+        "state": {
+          "branch": null,
+          "revision": "7a2e3cd27de56f6d396e84f63beefd0267b55ccb",
+          "version": "0.14.1"
+        }
+      },
+      {
         "package": "SteamController",
         "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
         "state": {
           "branch": "master",
           "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
           "version": null
+        }
+      },
+      {
+        "package": "SWCompression",
+        "repositoryURL": "https://github.com/tsolomko/SWCompression.git",
+        "state": {
+          "branch": null,
+          "revision": "cd39ca0a3b269173bab06f68b182b72fa690765c",
+          "version": "4.8.5"
         }
       },
       {
@@ -71,6 +179,15 @@
           "branch": "master",
           "revision": "d3cbf32788250741d397cfb5bcd532c37aa1096d",
           "version": null
+        }
+      },
+      {
+        "package": "ZipArchive",
+        "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
+        "state": {
+          "branch": null,
+          "revision": "38e0ce0598e06b034271f296a8e15b149c91aa19",
+          "version": "2.4.3"
         }
       }
     ]

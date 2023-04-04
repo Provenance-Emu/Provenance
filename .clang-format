@@ -1,0 +1,44 @@
+# We'll use defaults from the `WebKit_Browser` style.
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 100
+---
+Language: Cpp
+# Force pointers to the type for C++.
+DerivePointerAlignment: false
+PointerAlignment: Left
+---
+Language: JavaScript
+---
+Language: Proto
+# Don't format .proto files.
+DisableFormat: true
+---
+Language: CSharp
+---
+Language: Swift
+SpacesBeforeTrailingComments: 1
+AllowShortBlocksOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: true
+ColumnLimit: 120
+IndentWidth: 4
+---
+Language: Java
+---
+Language: ObjC
+---
+Language: ObjC++
+---
+Language: TypeScript
+---
+Language: JSON
+---
+Language: YAML
+---
+Language: Markdown
+---
+Language: HTML
+---
+Language: XML

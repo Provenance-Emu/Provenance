@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.UIKit.status-bar-override-allow</key>
+	<true/>
+	<key>get-task-allow</key>
+	<true/>
+	<key>platform-application</key>
+	<true/>
+	<key>com.apple.security.iokit-user-client-class</key>
+	<array>
+		<string>AGXDeviceUserClient</string>
+		<string>IOHDIXControllerUserClient</string>
+		<string>IOSurfaceRootUserClient</string>
+	</array>
+	<key>com.apple.security.exception.files.absolute-path.read-write</key>
+	<array>
+		<string>/</string>
+	</array>
+	<key>com.apple.mobile.deleted.AllowFreeSpace</key>
+	<true/>
+	<key>com.apple.private.security.container-manager</key>
+	<true/>
+	<key>com.apple.private.security.no-container</key>
+	<true/>
+	<key>com.apple.private.security.no-sandbox</key>
+	<true/>
+	<key>com.apple.private.persona-mgmt</key>
+	<true/>
+	<key>com.apple.private.WebClips.read-write</key>
+	<true/>
+	<key>com.apple.locationd.simulation</key>
+	<true/>
+	<key>com.apple.SystemConfiguration.SCDynamicStore-write-access</key>
+	<true/>
+	<key>com.apple.private.security.system-application</key>
+	<true/>
+	<key>com.apple.private.coreservices.canmaplsdatabase</key>
+	<true/>
+	<key>com.apple.lsapplicationworkspace.rebuildappdatabases</key>
+	<true/>
+	<key>com.apple.private.MobileContainerManager.allowed</key>
+	<true/>
+	<key>com.apple.private.MobileInstallationHelperService.InstallDaemonOpsEnabled</key>
+	<true/>
+	<key>com.apple.private.MobileInstallationHelperService.allowed</key>
+	<true/>
+	<key>com.apple.private.uninstall.deletion</key>
+	<true/>
+	<key>com.apple.private.security.storage.MobileDocuments</key>
+	<true/>
+	<key>com.apple.managedconfiguration.profiled-access</key>
+	<true/>
+</dict>
+</plist>

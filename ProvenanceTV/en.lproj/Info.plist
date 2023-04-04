@@ -161,19 +161,6 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Dark</string>
-	<key>UTExportedTypeDeclarations</key>
-	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
-				<string></string>
-			</array>
-			<key>UTTypeIdentifier</key>
-			<string></string>
-			<key>UTTypeTagSpecification</key>
-			<dict/>
-		</dict>
-	</array>
 	<key>appcenter</key>
 	<string>7d623115-99d6-439e-8e3a-9f2d0b1fbc02</string>
 </dict>

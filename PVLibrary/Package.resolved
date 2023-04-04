@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "ba68e3b02d9ed953a0c9ff43183f856f20c9b7ce",
-        "version" : "6.6.1"
+        "revision" : "d3862c042446d3025a8a4123b013e1b6d58fc315",
+        "version" : "6.8.0"
       }
     },
     {
@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "b77443ca7fa25407869ca537bf3ae912b1427bff",
-        "version" : "12.13.0"
+        "revision" : "a7d486d07b821e28ffd3587e99355a63148cbb43",
+        "version" : "13.4.1"
       }
     },
     {
@@ -58,8 +58,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "b1072f3ef733108dfcc62c2001781e5d65605fbf",
-        "version" : "10.34.1"
+        "revision" : "4d55ba88e78ed427eae439e7c15fac2372f95c64",
+        "version" : "10.36.0"
       }
     },
     {
@@ -94,8 +94,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tsolomko/SWCompression.git",
       "state" : {
-        "revision" : "bca9a664eb9361d41a87d3e376a1e7db9ea2c287",
-        "version" : "4.8.4"
+        "revision" : "cd39ca0a3b269173bab06f68b182b72fa690765c",
+        "version" : "4.8.5"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "32e8d724467f8fe623624570367e3d50c5638e46",
+        "version" : "1.5.2"
       }
     },
     {

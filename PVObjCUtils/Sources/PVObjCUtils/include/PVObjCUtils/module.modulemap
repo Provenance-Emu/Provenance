@@ -1,0 +1,7 @@
+ module PVObjCUtils {
+  textual header "DebugUtils.h"
+ }
+
+  module OpenEmu.Geometry {
+    textual header "OEGeometry.h"
+ }

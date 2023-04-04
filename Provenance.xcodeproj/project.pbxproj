@@ -2600,6 +2600,7 @@
 		B344605A27DCB73E0035B08E /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/swift/libswift_Concurrency.tbd; sourceTree = DEVELOPER_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3475E65293CB6F200725A82 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34BA92729B5DD120055A710 /* PVApp */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = PVApp; sourceTree = "<group>"; };
 		B35104C32896646800FA401F /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35104C62896648500FA401F /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSwitchCell.swift; sourceTree = "<group>"; };
@@ -4368,6 +4369,7 @@
 			isa = PBXGroup;
 			children = (
 				B3441260297A834900368CFF /* PVSupport */,
+				B34BA92729B5DD120055A710 /* PVApp */,
 			);
 			name = Packages;
 			sourceTree = "<group>";

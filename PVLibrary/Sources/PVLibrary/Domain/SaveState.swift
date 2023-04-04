@@ -29,3 +29,18 @@ public struct SaveState: SaveStateInfoProvider, Codable {
     public let image: LocalFile?
     public let isAutosave: Bool
 }
+
+import CoreTransferable
+import UniformTypeIdentifiers
+@available(iOS 16.0, *)
+public extension Transferable where Self: SaveStateInfoProvider {
+	static var transferRepresentation: some TransferRepresentation {
+		CodableRepresentation(contentType: .savestate)
+	}
+}
+
+public extension CustomLoggable where Self: SaveStateInfoProvider {
+	var customLogString: String {
+		"game: \(game.title), core: \(core.title), file: \(file.path), date: \(date). lastOpened: \(lastOpened?.customLogString ?: "nil") image: \(image?.filename ?? "nil") Autosave: \(isAutoSave ? "Y":"N")"
+	}
+}

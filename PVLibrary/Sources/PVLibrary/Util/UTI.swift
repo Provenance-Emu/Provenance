@@ -19,6 +19,19 @@ public extension UTI {
     static let rar = UTI(rawValue: "com.rarlab.rar-archive")
 }
 
+import UniformTypeIdentifiers
+
+// also declare the content type in the Info.plist
+@available(iOS 14.0, tvOS 14.0, *)
+public extension UTType {
+	static var rom: UTType = UTType(exportedAs: "com.provenance.rom")
+	static var bios: UTType = UTType(exportedAs: "com.provenance.rom")
+	static var artwork: UTType = UTType(exportedAs: "com.provenance.artwork")
+	static var savestate: UTType = UTType(exportedAs: "com.provenance.savestate")
+	static var sevenZipArchive: UTType = UTType(exportedAs: "org.7-zip.7-zip-archive")
+	static var rar: UTType = UTType(exportedAs: "com.rarlab.rar-archive")
+}
+
 /// Instances of the UTI class represent a specific Universal Type Identifier, e.g. kUTTypeMPEG4.
 
 public final class UTI: RawRepresentable, Equatable {

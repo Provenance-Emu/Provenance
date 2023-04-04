@@ -36,3 +36,11 @@ public struct Game: Codable {
     public let systemShortName: String?
     public let language: String?
 }
+
+import CoreTransferable
+import UniformTypeIdentifiers
+extension Game: Transferable {
+	static var transferRepresentation: some TransferRepresentation {
+		CodableRepresentation(contentType: .rom)
+	}
+}
