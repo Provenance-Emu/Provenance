@@ -10806,7 +10806,7 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
+			repositoryURL = "https://github.com/lechium/SwiftUI-Introspect";
 			requirement = {
 				branch = master;
 				kind = branch;

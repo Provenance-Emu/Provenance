@@ -129,10 +129,10 @@
       },
       {
         "package": "Introspect",
-        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
+        "repositoryURL": "https://github.com/lechium/SwiftUI-Introspect",
         "state": {
           "branch": "master",
-          "revision": "d3cbf32788250741d397cfb5bcd532c37aa1096d",
+          "revision": "bb2440f8ea9c5c09879492013ec5a42f76ba4875",
           "version": null
         }
       },
