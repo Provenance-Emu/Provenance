@@ -66,17 +66,34 @@
 		93AA124D296DCE52007C9808 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		93AA124F296DCE58007C9808 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA124E296DCE58007C9808 /* libiconv.tbd */; };
 		93AA1253296DCEE8007C9808 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA1252296DCEE8007C9808 /* VideoToolbox.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		93AC9F672A48952800D3F4D6 /* runloop.c in Sources */ = {isa = PBXBuildFile; fileRef = 93AC9F662A48952700D3F4D6 /* runloop.c */; };
+		93ACAAB22A4A763400A744F8 /* griffin.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B66BEC2968382700A621DD /* griffin.m */; };
 		93B66B9F2967DB7600A621DD /* menu_pipeline.metal in Sources */ = {isa = PBXBuildFile; fileRef = 93B66B992967C64300A621DD /* menu_pipeline.metal */; };
 		93B66BA02967DB7600A621DD /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 93B66B982967C64300A621DD /* Shaders.metal */; };
 		93B66C1C296854C000A621DD /* griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B66BEA2968382700A621DD /* griffin.c */; };
 		93B66E3C2968551C00A621DD /* libretroarch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B66E39296854C000A621DD /* libretroarch.a */; };
-		93B66E3D296855E100A621DD /* griffin_objc.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B66BEC2968382700A621DD /* griffin_objc.m */; };
 		93B716DC296591EE00F4CDC7 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DA296591ED00F4CDC7 /* CoreMedia.framework */; };
 		93B716DD296591EE00F4CDC7 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DB296591EE00F4CDC7 /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, ); };
 		93B716E02965921000F4CDC7 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DE2965921000F4CDC7 /* CoreVideo.framework */; };
 		93B716E12965921000F4CDC7 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DF2965921000F4CDC7 /* CoreText.framework */; };
 		93B716E32965922200F4CDC7 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716E22965922200F4CDC7 /* MobileCoreServices.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
 		93B716F2296595F600F4CDC7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716F1296595F500F4CDC7 /* AppKit.framework */; platformFilters = (maccatalyst, macos, ); };
+		93BC0F952A4C0615003D97EC /* GCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F732A4C0614003D97EC /* GCDWebServerResponse.m */; };
+		93BC0F962A4C0615003D97EC /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F762A4C0614003D97EC /* GCDWebServerRequest.m */; };
+		93BC0F972A4C0615003D97EC /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F792A4C0614003D97EC /* GCDWebServerFunctions.m */; };
+		93BC0F982A4C0615003D97EC /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F7A2A4C0614003D97EC /* GCDWebServer.m */; };
+		93BC0F992A4C0615003D97EC /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F7B2A4C0614003D97EC /* GCDWebServerConnection.m */; };
+		93BC0F9A2A4C0615003D97EC /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F802A4C0614003D97EC /* GCDWebServerErrorResponse.m */; };
+		93BC0F9B2A4C0615003D97EC /* GCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F822A4C0614003D97EC /* GCDWebServerFileResponse.m */; };
+		93BC0F9C2A4C0615003D97EC /* GCDWebServerDataResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F832A4C0614003D97EC /* GCDWebServerDataResponse.m */; };
+		93BC0F9D2A4C0615003D97EC /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F852A4C0614003D97EC /* GCDWebServerStreamedResponse.m */; };
+		93BC0F9E2A4C0615003D97EC /* GCDWebServerURLEncodedFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F8A2A4C0614003D97EC /* GCDWebServerURLEncodedFormRequest.m */; };
+		93BC0F9F2A4C0615003D97EC /* GCDWebServerMultiPartFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F8B2A4C0614003D97EC /* GCDWebServerMultiPartFormRequest.m */; };
+		93BC0FA02A4C0615003D97EC /* GCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F8C2A4C0614003D97EC /* GCDWebServerDataRequest.m */; };
+		93BC0FA12A4C0615003D97EC /* GCDWebServerFileRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F8D2A4C0614003D97EC /* GCDWebServerFileRequest.m */; };
+		93BC0FA22A4C0615003D97EC /* WebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F902A4C0614003D97EC /* WebServer.m */; };
+		93BC0FA32A4C0615003D97EC /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BC0F942A4C0615003D97EC /* GCDWebUploader.m */; };
+		93BC0FA62A4C063F003D97EC /* libRetroWebServer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93BC0F652A4C05E0003D97EC /* libRetroWebServer.a */; };
 		93CFF5F5296C10C700D19529 /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = 93CFF5F4296C10C600D19529 /* dylib.c */; };
 		93D104FD29782C9D00C31705 /* pv_ui_overlay in Resources */ = {isa = PBXBuildFile; fileRef = 93D104FC29782C9D00C31705 /* pv_ui_overlay */; };
 		93D6B0C5296A0DAE00D5EE11 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 93D6B0C4296A0DAE00D5EE11 /* main.m */; };
@@ -131,6 +148,13 @@
 			remoteGlobalIDString = 93B66C18296854C000A621DD;
 			remoteInfo = "retroarch copy";
 		};
+		93BC0FA42A4C0632003D97EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 93BC0F642A4C05E0003D97EC;
+			remoteInfo = RetroWebServer;
+		};
 		93D6B0E8296A0EB900D5EE11 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -155,6 +179,15 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		93B66E34296854C000A621DD /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93BC0F632A4C05E0003D97EC /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
@@ -212,6 +245,7 @@
 		93AA1244296DCCF3007C9808 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = "cmake/FFmpeg-iOS/lib/libavformat.a"; sourceTree = "<group>"; };
 		93AA124E296DCE58007C9808 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		93AA1252296DCEE8007C9808 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		93AC9F662A48952700D3F4D6 /* runloop.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = runloop.c; sourceTree = "<group>"; };
 		93B66B982967C64300A621DD /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		93B66B992967C64300A621DD /* menu_pipeline.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = menu_pipeline.metal; sourceTree = "<group>"; };
 		93B66BA12967DF5700A621DD /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "../../Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
@@ -221,7 +255,7 @@
 		93B66BCC2968004900A621DD /* vulkan_metal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vulkan_metal.h; sourceTree = "<group>"; };
 		93B66BDC29680D2D00A621DD /* libMoltenVK_RetroArch.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_RetroArch.dylib; path = lib/libMoltenVK_RetroArch.dylib; sourceTree = "<group>"; };
 		93B66BEA2968382700A621DD /* griffin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = griffin.c; sourceTree = "<group>"; };
-		93B66BEC2968382700A621DD /* griffin_objc.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = griffin_objc.m; sourceTree = "<group>"; };
+		93B66BEC2968382700A621DD /* griffin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = griffin.m; sourceTree = "<group>"; };
 		93B66E39296854C000A621DD /* libretroarch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libretroarch.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B716DA296591ED00F4CDC7 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		93B716DB296591EE00F4CDC7 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/iOSSupport/System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -231,6 +265,40 @@
 		93B716F1296595F500F4CDC7 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		93BA743C2965B96D00A49D66 /* cocoa_vk_ctx.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoa_vk_ctx.m; sourceTree = "<group>"; };
 		93BA743D2965B96D00A49D66 /* cocoa_gl_ctx.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cocoa_gl_ctx.m; sourceTree = "<group>"; };
+		93BC0F652A4C05E0003D97EC /* libRetroWebServer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRetroWebServer.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		93BC0F712A4C0614003D97EC /* GCDWebServerFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerFunctions.h; sourceTree = "<group>"; };
+		93BC0F722A4C0614003D97EC /* GCDWebServerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerPrivate.h; sourceTree = "<group>"; };
+		93BC0F732A4C0614003D97EC /* GCDWebServerResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerResponse.m; sourceTree = "<group>"; };
+		93BC0F742A4C0614003D97EC /* GCDWebServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerConnection.h; sourceTree = "<group>"; };
+		93BC0F752A4C0614003D97EC /* GCDWebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServer.h; sourceTree = "<group>"; };
+		93BC0F762A4C0614003D97EC /* GCDWebServerRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerRequest.m; sourceTree = "<group>"; };
+		93BC0F772A4C0614003D97EC /* GCDWebServerHTTPStatusCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerHTTPStatusCodes.h; sourceTree = "<group>"; };
+		93BC0F782A4C0614003D97EC /* GCDWebServerResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerResponse.h; sourceTree = "<group>"; };
+		93BC0F792A4C0614003D97EC /* GCDWebServerFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerFunctions.m; sourceTree = "<group>"; };
+		93BC0F7A2A4C0614003D97EC /* GCDWebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServer.m; sourceTree = "<group>"; };
+		93BC0F7B2A4C0614003D97EC /* GCDWebServerConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerConnection.m; sourceTree = "<group>"; };
+		93BC0F7C2A4C0614003D97EC /* GCDWebServerRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerRequest.h; sourceTree = "<group>"; };
+		93BC0F7E2A4C0614003D97EC /* GCDWebServerFileResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerFileResponse.h; sourceTree = "<group>"; };
+		93BC0F7F2A4C0614003D97EC /* GCDWebServerStreamedResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerStreamedResponse.h; sourceTree = "<group>"; };
+		93BC0F802A4C0614003D97EC /* GCDWebServerErrorResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerErrorResponse.m; sourceTree = "<group>"; };
+		93BC0F812A4C0614003D97EC /* GCDWebServerDataResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerDataResponse.h; sourceTree = "<group>"; };
+		93BC0F822A4C0614003D97EC /* GCDWebServerFileResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerFileResponse.m; sourceTree = "<group>"; };
+		93BC0F832A4C0614003D97EC /* GCDWebServerDataResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerDataResponse.m; sourceTree = "<group>"; };
+		93BC0F842A4C0614003D97EC /* GCDWebServerErrorResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerErrorResponse.h; sourceTree = "<group>"; };
+		93BC0F852A4C0614003D97EC /* GCDWebServerStreamedResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerStreamedResponse.m; sourceTree = "<group>"; };
+		93BC0F872A4C0614003D97EC /* GCDWebServerDataRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerDataRequest.h; sourceTree = "<group>"; };
+		93BC0F882A4C0614003D97EC /* GCDWebServerMultiPartFormRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerMultiPartFormRequest.h; sourceTree = "<group>"; };
+		93BC0F892A4C0614003D97EC /* GCDWebServerFileRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerFileRequest.h; sourceTree = "<group>"; };
+		93BC0F8A2A4C0614003D97EC /* GCDWebServerURLEncodedFormRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerURLEncodedFormRequest.m; sourceTree = "<group>"; };
+		93BC0F8B2A4C0614003D97EC /* GCDWebServerMultiPartFormRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerMultiPartFormRequest.m; sourceTree = "<group>"; };
+		93BC0F8C2A4C0614003D97EC /* GCDWebServerDataRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerDataRequest.m; sourceTree = "<group>"; };
+		93BC0F8D2A4C0614003D97EC /* GCDWebServerFileRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebServerFileRequest.m; sourceTree = "<group>"; };
+		93BC0F8E2A4C0614003D97EC /* GCDWebServerURLEncodedFormRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebServerURLEncodedFormRequest.h; sourceTree = "<group>"; };
+		93BC0F8F2A4C0614003D97EC /* WebServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebServer.h; sourceTree = "<group>"; };
+		93BC0F902A4C0614003D97EC /* WebServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebServer.m; sourceTree = "<group>"; };
+		93BC0F922A4C0615003D97EC /* GCDWebUploader.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GCDWebUploader.bundle; sourceTree = "<group>"; };
+		93BC0F932A4C0615003D97EC /* GCDWebUploader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebUploader.h; sourceTree = "<group>"; };
+		93BC0F942A4C0615003D97EC /* GCDWebUploader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebUploader.m; sourceTree = "<group>"; };
 		93CFF5F4296C10C600D19529 /* dylib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dylib.c; sourceTree = "<group>"; };
 		93CFF608296C138D00D19529 /* code-sign-test-cores.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "code-sign-test-cores.sh"; sourceTree = "<group>"; };
 		93D104FC29782C9D00C31705 /* pv_ui_overlay */ = {isa = PBXFileReference; lastKnownFileType = folder; path = pv_ui_overlay; sourceTree = "<group>"; };
@@ -282,6 +350,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		93BC0F622A4C05E0003D97EC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		93D6B0AD296A0DAA00D5EE11 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -312,6 +387,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93BC0FA62A4C063F003D97EC /* libRetroWebServer.a in Frameworks */,
 				936E9A212A35AC6100B1D0F8 /* CFNetwork.framework in Frameworks */,
 				936E99EA2A35A3E600B1D0F8 /* CoreGraphics.framework in Frameworks */,
 				936E99E82A35A3A400B1D0F8 /* Metal.framework in Frameworks */,
@@ -366,6 +442,95 @@
 			name = "Swift Modules";
 			sourceTree = "<group>";
 		};
+		93BC0F662A4C05E1003D97EC /* RetroWebServer */ = {
+			isa = PBXGroup;
+			children = (
+				93BC0F6E2A4C0614003D97EC /* WebServer */,
+			);
+			path = RetroWebServer;
+			sourceTree = "<group>";
+		};
+		93BC0F6E2A4C0614003D97EC /* WebServer */ = {
+			isa = PBXGroup;
+			children = (
+				93BC0F6F2A4C0614003D97EC /* GCDWebServer */,
+				93BC0F8F2A4C0614003D97EC /* WebServer.h */,
+				93BC0F902A4C0614003D97EC /* WebServer.m */,
+				93BC0F912A4C0614003D97EC /* GCDWebUploader */,
+			);
+			name = WebServer;
+			path = RetroArch/pkg/apple/WebServer;
+			sourceTree = SOURCE_ROOT;
+		};
+		93BC0F6F2A4C0614003D97EC /* GCDWebServer */ = {
+			isa = PBXGroup;
+			children = (
+				93BC0F702A4C0614003D97EC /* Core */,
+				93BC0F7D2A4C0614003D97EC /* Responses */,
+				93BC0F862A4C0614003D97EC /* Requests */,
+			);
+			path = GCDWebServer;
+			sourceTree = "<group>";
+		};
+		93BC0F702A4C0614003D97EC /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				93BC0F712A4C0614003D97EC /* GCDWebServerFunctions.h */,
+				93BC0F722A4C0614003D97EC /* GCDWebServerPrivate.h */,
+				93BC0F732A4C0614003D97EC /* GCDWebServerResponse.m */,
+				93BC0F742A4C0614003D97EC /* GCDWebServerConnection.h */,
+				93BC0F752A4C0614003D97EC /* GCDWebServer.h */,
+				93BC0F762A4C0614003D97EC /* GCDWebServerRequest.m */,
+				93BC0F772A4C0614003D97EC /* GCDWebServerHTTPStatusCodes.h */,
+				93BC0F782A4C0614003D97EC /* GCDWebServerResponse.h */,
+				93BC0F792A4C0614003D97EC /* GCDWebServerFunctions.m */,
+				93BC0F7A2A4C0614003D97EC /* GCDWebServer.m */,
+				93BC0F7B2A4C0614003D97EC /* GCDWebServerConnection.m */,
+				93BC0F7C2A4C0614003D97EC /* GCDWebServerRequest.h */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		93BC0F7D2A4C0614003D97EC /* Responses */ = {
+			isa = PBXGroup;
+			children = (
+				93BC0F7E2A4C0614003D97EC /* GCDWebServerFileResponse.h */,
+				93BC0F7F2A4C0614003D97EC /* GCDWebServerStreamedResponse.h */,
+				93BC0F802A4C0614003D97EC /* GCDWebServerErrorResponse.m */,
+				93BC0F812A4C0614003D97EC /* GCDWebServerDataResponse.h */,
+				93BC0F822A4C0614003D97EC /* GCDWebServerFileResponse.m */,
+				93BC0F832A4C0614003D97EC /* GCDWebServerDataResponse.m */,
+				93BC0F842A4C0614003D97EC /* GCDWebServerErrorResponse.h */,
+				93BC0F852A4C0614003D97EC /* GCDWebServerStreamedResponse.m */,
+			);
+			path = Responses;
+			sourceTree = "<group>";
+		};
+		93BC0F862A4C0614003D97EC /* Requests */ = {
+			isa = PBXGroup;
+			children = (
+				93BC0F872A4C0614003D97EC /* GCDWebServerDataRequest.h */,
+				93BC0F882A4C0614003D97EC /* GCDWebServerMultiPartFormRequest.h */,
+				93BC0F892A4C0614003D97EC /* GCDWebServerFileRequest.h */,
+				93BC0F8A2A4C0614003D97EC /* GCDWebServerURLEncodedFormRequest.m */,
+				93BC0F8B2A4C0614003D97EC /* GCDWebServerMultiPartFormRequest.m */,
+				93BC0F8C2A4C0614003D97EC /* GCDWebServerDataRequest.m */,
+				93BC0F8D2A4C0614003D97EC /* GCDWebServerFileRequest.m */,
+				93BC0F8E2A4C0614003D97EC /* GCDWebServerURLEncodedFormRequest.h */,
+			);
+			path = Requests;
+			sourceTree = "<group>";
+		};
+		93BC0F912A4C0614003D97EC /* GCDWebUploader */ = {
+			isa = PBXGroup;
+			children = (
+				93BC0F922A4C0615003D97EC /* GCDWebUploader.bundle */,
+				93BC0F932A4C0615003D97EC /* GCDWebUploader.h */,
+				93BC0F942A4C0615003D97EC /* GCDWebUploader.m */,
+			);
+			path = GCDWebUploader;
+			sourceTree = "<group>";
+		};
 		93D6B0B1296A0DAB00D5EE11 /* PVRetroArch_Test */ = {
 			isa = PBXGroup;
 			children = (
@@ -397,6 +562,8 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				93B66BEC2968382700A621DD /* griffin.m */,
+				93AC9F662A48952700D3F4D6 /* runloop.c */,
 				935E7D4E29A4C98C00D92748 /* griffin_slang.cpp */,
 				935E7D4C29A4C6E200D92748 /* localintermediate.h */,
 				93654F79298F4A2C0046503F /* PVRetroArchCore+Controls+DS.m */,
@@ -418,7 +585,6 @@
 				93835810296CFAA600A23231 /* cocoa_common.m */,
 				93BA743D2965B96D00A49D66 /* cocoa_gl_ctx.m */,
 				93BA743C2965B96D00A49D66 /* cocoa_vk_ctx.m */,
-				93B66BEC2968382700A621DD /* griffin_objc.m */,
 				9383580C296CDBB600A23231 /* metal.m */,
 				936B47F92969798B00C7D2A3 /* platform_darwin.m */,
 				B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */,
@@ -451,6 +617,7 @@
 				B3C762202078327B009950E4 /* PVRetroArchCore */,
 				93F66F0A296745A100203EB3 /* Resources */,
 				93D6B0B1296A0DAB00D5EE11 /* PVRetroArch_Test */,
+				93BC0F662A4C05E1003D97EC /* RetroWebServer */,
 				B3C7621120783162009950E4 /* Products */,
 				B3C7621B20783242009950E4 /* Frameworks */,
 			);
@@ -462,6 +629,7 @@
 				B3C7621020783162009950E4 /* PVRetroArch.framework */,
 				93B66E39296854C000A621DD /* libretroarch.a */,
 				93D6B0B0296A0DAB00D5EE11 /* PVRetroArch_Test.app */,
+				93BC0F652A4C05E0003D97EC /* libRetroWebServer.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -564,6 +732,23 @@
 			productReference = 93B66E39296854C000A621DD /* libretroarch.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		93BC0F642A4C05E0003D97EC /* RetroWebServer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 93BC0F6D2A4C05E1003D97EC /* Build configuration list for PBXNativeTarget "RetroWebServer" */;
+			buildPhases = (
+				93BC0F612A4C05E0003D97EC /* Sources */,
+				93BC0F622A4C05E0003D97EC /* Frameworks */,
+				93BC0F632A4C05E0003D97EC /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RetroWebServer;
+			productName = RetroWebServer;
+			productReference = 93BC0F652A4C05E0003D97EC /* libRetroWebServer.a */;
+			productType = "com.apple.product-type.library.static";
+		};
 		93D6B0AF296A0DAA00D5EE11 /* PVRetroArch_Test */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 93D6B0DC296A0DB200D5EE11 /* Build configuration list for PBXNativeTarget "PVRetroArch_Test" */;
@@ -600,6 +785,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				93BC0FA52A4C0632003D97EC /* PBXTargetDependency */,
 				93B66E3B2968551200A621DD /* PBXTargetDependency */,
 			);
 			name = PVRetroArch;
@@ -623,6 +809,9 @@
 				TargetAttributes = {
 					93B66BBF2967F05A00A621DD = {
 						CreatedOnToolsVersion = 14.2;
+					};
+					93BC0F642A4C05E0003D97EC = {
+						CreatedOnToolsVersion = 15.0;
 					};
 					93D6B0AF296A0DAA00D5EE11 = {
 						CreatedOnToolsVersion = 14.2;
@@ -660,6 +849,7 @@
 				93B66BBF2967F05A00A621DD /* RetroArchAdjustments */,
 				93B66C18296854C000A621DD /* retroarch */,
 				93D6B0AF296A0DAA00D5EE11 /* PVRetroArch_Test */,
+				93BC0F642A4C05E0003D97EC /* RetroWebServer */,
 			);
 		};
 /* End PBXProject section */
@@ -733,9 +923,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				93B66C1C296854C000A621DD /* griffin.c in Sources */,
+				93ACAAB22A4A763400A744F8 /* griffin.m in Sources */,
 				935E7D5329A4CA7F00D92748 /* griffin_cpp.cpp in Sources */,
 				935E7D4F29A4C98C00D92748 /* griffin_slang.cpp in Sources */,
 				935E7D4D29A4C7AC00D92748 /* localintermediate.h in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		93BC0F612A4C05E0003D97EC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				93BC0F9F2A4C0615003D97EC /* GCDWebServerMultiPartFormRequest.m in Sources */,
+				93BC0F9A2A4C0615003D97EC /* GCDWebServerErrorResponse.m in Sources */,
+				93BC0FA02A4C0615003D97EC /* GCDWebServerDataRequest.m in Sources */,
+				93BC0FA22A4C0615003D97EC /* WebServer.m in Sources */,
+				93BC0F9C2A4C0615003D97EC /* GCDWebServerDataResponse.m in Sources */,
+				93BC0F982A4C0615003D97EC /* GCDWebServer.m in Sources */,
+				93BC0F962A4C0615003D97EC /* GCDWebServerRequest.m in Sources */,
+				93BC0F9B2A4C0615003D97EC /* GCDWebServerFileResponse.m in Sources */,
+				93BC0F992A4C0615003D97EC /* GCDWebServerConnection.m in Sources */,
+				93BC0F9D2A4C0615003D97EC /* GCDWebServerStreamedResponse.m in Sources */,
+				93BC0F9E2A4C0615003D97EC /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				93BC0F952A4C0615003D97EC /* GCDWebServerResponse.m in Sources */,
+				93BC0F972A4C0615003D97EC /* GCDWebServerFunctions.m in Sources */,
+				93BC0FA12A4C0615003D97EC /* GCDWebServerFileRequest.m in Sources */,
+				93BC0FA32A4C0615003D97EC /* GCDWebUploader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -756,6 +969,7 @@
 				932A0C942968641F0032C168 /* EmulatorKeyboardViewModel.swift in Sources */,
 				932A5CBB296869180032C168 /* EmulatorKeyCoded.swift in Sources */,
 				93835811296CFAA700A23231 /* cocoa_common.m in Sources */,
+				93AC9F672A48952800D3F4D6 /* runloop.c in Sources */,
 				935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */,
 				938E5BB5298B31D500F8596C /* PVDebug.c in Sources */,
 				932A0C952968641F0032C168 /* EmulatorTouchMouse.swift in Sources */,
@@ -763,7 +977,6 @@
 				936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */,
 				93654F7B298F4A2D0046503F /* PVRetroArchCore+Controls+DS.m in Sources */,
 				932A0C972968641F0032C168 /* HelperBarViewModel.swift in Sources */,
-				93B66E3D296855E100A621DD /* griffin_objc.m in Sources */,
 				93B66B9F2967DB7600A621DD /* menu_pipeline.metal in Sources */,
 				93B66BA02967DB7600A621DD /* Shaders.metal in Sources */,
 				93FF381A2965FF9C00772659 /* cocoa_gl_ctx.m in Sources */,
@@ -800,6 +1013,11 @@
 			isa = PBXTargetDependency;
 			target = 93B66C18296854C000A621DD /* retroarch */;
 			targetProxy = 93B66E3A2968551200A621DD /* PBXContainerItemProxy */;
+		};
+		93BC0FA52A4C0632003D97EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 93BC0F642A4C05E0003D97EC /* RetroWebServer */;
+			targetProxy = 93BC0FA42A4C0632003D97EC /* PBXContainerItemProxy */;
 		};
 		93D6B0E9296A0EB900D5EE11 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -869,8 +1087,11 @@
 					./RetroArch/gfx/drivers_context,
 					./Retroarch/gfx,
 					./RetroArch/gfx/include/,
+					./RetroArch/pkg/apple/WebServer,
 					./RetroArch/pkg/apple/WebServer/GCDWebServer/Core,
-					./RetroArch/pkg/apple/WebServer/,
+					./RetroArch/pkg/apple/WebServer/GCDWebServer/Responses,
+					./RetroArch/pkg/apple/WebServer/GCDWebServer/Requests,
+					./RetroArch/pkg/apple/WebServer/GCDWebUploader,
 					"$(DEPS_DIR)/glslang",
 					"$(DEPS_DIR)/SPIRV-Cross",
 					"$(DEPS_DIR)/glslang/glslang/glslang/Public",
@@ -929,8 +1150,11 @@
 					./RetroArch/gfx/drivers_context,
 					./Retroarch/gfx,
 					./RetroArch/gfx/include/,
+					./RetroArch/pkg/apple/WebServer,
 					./RetroArch/pkg/apple/WebServer/GCDWebServer/Core,
-					./RetroArch/pkg/apple/WebServer/,
+					./RetroArch/pkg/apple/WebServer/GCDWebServer/Responses,
+					./RetroArch/pkg/apple/WebServer/GCDWebServer/Requests,
+					./RetroArch/pkg/apple/WebServer/GCDWebUploader,
 					"$(DEPS_DIR)/glslang",
 					"$(DEPS_DIR)/SPIRV-Cross",
 					"$(DEPS_DIR)/glslang/glslang/glslang/Public",
@@ -952,6 +1176,49 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				STRIP_SWIFT_SYMBOLS = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		93BC0F6B2A4C05E1003D97EC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		93BC0F6C2A4C05E1003D97EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1349,6 +1616,10 @@
 					"$(SRCROOT)/PVRetroArchCore/Core",
 					./RetroArch/gfx/drivers/,
 					./RetroArch/frontend/drivers,
+					./RetroArch/input,
+					./RetroArch/input/drivers,
+					"./RetroArch/libretro-common/include",
+					./RetroArch/input/include/GameController/,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVRetroArch/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1447,6 +1718,10 @@
 					"$(SRCROOT)/PVRetroArchCore/Core",
 					./RetroArch/gfx/drivers/,
 					./RetroArch/frontend/drivers,
+					./RetroArch/input,
+					./RetroArch/input/drivers,
+					"./RetroArch/libretro-common/include",
+					./RetroArch/input/include/GameController/,
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVRetroArch/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1502,6 +1777,15 @@
 			buildConfigurations = (
 				93B66E36296854C000A621DD /* Debug */,
 				93B66E37296854C000A621DD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		93BC0F6D2A4C05E1003D97EC /* Build configuration list for PBXNativeTarget "RetroWebServer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93BC0F6B2A4C05E1003D97EC /* Debug */,
+				93BC0F6C2A4C05E1003D97EC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

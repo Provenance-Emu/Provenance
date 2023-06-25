@@ -592,13 +592,15 @@ extension GameLaunchingViewController where Self: UIViewController {
         let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
 
         // Check if Save State exists
-        if saveState == nil, emulatorViewController.core.supportsSaveStates {
+        /*
+         if saveState == nil, emulatorViewController.core.supportsSaveStates {
             checkForSaveStateThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
                 self.presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: optionallyChosenSaveState)
             }
         } else {
+         */
             presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: saveState)
-        }
+        //}
     }
 
     // Used to just show and then optionally quickly load any passed in PVSaveStates
@@ -653,6 +655,10 @@ extension GameLaunchingViewController where Self: UIViewController {
             } else if shouldAskToLoadSaveState {
                 // 1) Alert to ask about loading latest save state
                 let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .actionSheet)
+                // TODO: XCode15/iOS17 Requires actual source view here
+                alert.preferredContentSize = CGSize(width: 300, height: 150)
+                alert.popoverPresentationController?.sourceView = self.view
+                alert.popoverPresentationController?.sourceRect = UIScreen.main.bounds
                 #if os(iOS)
                     let switchControl = UISwitch()
                     switchControl.isOn = !PVSettingsModel.shared.askToAutoLoad

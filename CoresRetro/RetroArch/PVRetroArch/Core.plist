@@ -214,22 +214,6 @@
 		</dict>
 		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>ppsspp_libretro.dylib</string>
-                        <key>PVPrincipleClass</key>
-                        <string>PVRetroArchCore</string>
-                        <key>PVSupportedSystems</key>
-                        <array>
-                                <string>com.provenance.psp</string>
-                        </array>
-                        <key>PVProjectName</key>
-                        <string>RetroArch - PSP</string>      
-                        <key>PVProjectURL</key>
-                        <string>https://github.com/hrydgard/ppsspp.git</string>
-                        <key>PVProjectVersion</key>
-                        <string>v1.15.4</string>
-                </dict>
-		<dict>
-                        <key>PVCoreIdentifier</key>
                         <string>nestopia_libretro_ios.dylib</string>
                         <key>PVPrincipleClass</key>
                         <string>PVRetroArchCore</string>

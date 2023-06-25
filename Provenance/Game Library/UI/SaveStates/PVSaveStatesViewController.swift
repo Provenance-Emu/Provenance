@@ -198,6 +198,9 @@ final class PVSaveStatesViewController: UICollectionViewController {
             }
 
             let alert = UIAlertController(title: "Delete this save state?", message: nil, preferredStyle: .alert)
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            alert.popoverPresentationController?.sourceView = self.view
+            alert.popoverPresentationController?.sourceRect = UIScreen.main.bounds
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { [unowned self] _ in
                 do {
                     try PVSaveState.delete(saveState)
@@ -230,6 +233,9 @@ final class PVSaveStatesViewController: UICollectionViewController {
 
     func showSaveStateOptions(saveState: PVSaveState) {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.preferredContentSize = CGSize(width: 300, height: 150)
+        alert.popoverPresentationController?.sourceView = self.view
+        alert.popoverPresentationController?.sourceRect = UIScreen.main.bounds
         alert.addAction(UIAlertAction(title: "Load", style: .default, handler: { (_: UIAlertAction) in
             self.delegate?.saveStatesViewController(self, load: saveState)
         }))

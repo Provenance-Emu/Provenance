@@ -210,7 +210,6 @@ void extract_bundles();
     [self syncResources:self.BIOSPath
                      to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system" ]];
 }
-
 - (void)syncResources:(NSString*)from to:(NSString*)to {
 	if (!from)
 		return;
@@ -441,8 +440,7 @@ void extract_bundles();
         self.view.contentMode=UIViewContentModeScaleToFill;
 	}
 }
-- (void)showGameView
-{
+- (void)showGameView {
 	NSLog(@"In Show Game View now\n");
     [self setupWindow];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
@@ -590,7 +588,6 @@ void bundle_decompressed(retro_task_t *task,
        runloop_st->flags &= ~RUNLOOP_FLAG_OVERRIDES_ACTIVE;
    });
 }
-
 void extract_bundles() {
 	settings_t *settings = config_get_ptr();
 	task_push_decompress(
@@ -606,8 +603,7 @@ void extract_bundles() {
 }
 void main_msg_queue_push(const char *msg,
 	  unsigned prio, unsigned duration,
-	  bool flush)
-{
+	  bool flush) {
 	NSLog(@"MSGQ: %s\n", msg);
 }
 

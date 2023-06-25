@@ -1515,6 +1515,13 @@
 			remoteGlobalIDString = 93D6B0B0296A0DAB00D5EE11;
 			remoteInfo = PVRetroArch_Test;
 		};
+		93BC0FD52A4C074F003D97EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 934BE9A6296F177A00FB9933 /* PVRetroArch.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 93BC0F652A4C05E0003D97EC;
+			remoteInfo = RetroWebServer;
+		};
 		B305EEFC276B4C71003AE510 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -3795,6 +3802,7 @@
 				934BE9AE296F177B00FB9933 /* PVRetroArch.framework */,
 				934BE9B0296F177B00FB9933 /* libretroarch.a */,
 				934BE9B2296F177B00FB9933 /* PVRetroArch_Test.app */,
+				93BC0FD62A4C074F003D97EC /* libRetroWebServer.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5213,6 +5221,13 @@
 			fileType = wrapper.application;
 			path = PVRetroArch_Test.app;
 			remoteRef = 934BE9B1296F177B00FB9933 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93BC0FD62A4C074F003D97EC /* libRetroWebServer.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRetroWebServer.a;
+			remoteRef = 93BC0FD52A4C074F003D97EC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
