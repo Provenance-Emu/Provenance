@@ -35,9 +35,10 @@
 #include "PH_Generic.h"
 #include "../../tools/PsfPlayer/Source/SH_OpenAL.h"
 #include "../ui_shared/StatsManager.h"
-#include "PH_Generic.h"
 #include "PS2VM.h"
 #include "CGSH_Provenance_OGL.h"
+#include "Iop_SpuBase.h"
+#include "../../tools/PsfPlayer/Source/SH_OpenAL.h"
 
 #define SAMPLE_RATE_DEFAULT 44100
 
@@ -49,28 +50,6 @@ CAMetalLayer* m_metal_layer = nullptr;
 CAEAGLLayer *m_gl_layer = nullptr;
 
 __weak PVPlayCore *_current = nil;
-
-class CGSH_OpenEmu : public CGSH_OpenGL
-{
-public:
-	static FactoryFunction	GetFactoryFunction();
-	virtual void			InitializeImpl();
-protected:
-	virtual void			PresentBackbuffer();
-};
-
-class CSH_OpenEmu : public CSoundHandler
-{
-public:
-	CSH_OpenEmu() {};
-	virtual ~CSH_OpenEmu() {};
-	virtual void		Reset();
-	virtual void		Write(int16*, unsigned int, unsigned int);
-	virtual bool		HasFreeBuffers();
-	virtual void		RecycleBuffers();
-
-	static FactoryFunction	GetFactoryFunction();
-};
 
 class CPH_OpenEmu : public CPadHandler
 {
@@ -148,24 +127,26 @@ private:
 
 - (instancetype)init {
     if (self = [super init]) {
+        NSLog(@"PlayCore: Init\n");
         videoBitDepth = 32; // ignored
         videoDepthBitDepth = 0; // TODO
         self.videoWidth = 640;
         self.videoHeight = 448;
         self.resFactor = 1; // 2x
-//        [self setFramerateMultiplier: 1];
-//        [self setGameSpeed:GameSpeedFast];
         sampleRate = SAMPLE_RATE_DEFAULT;
         isNTSC = YES;
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
         _callbackQueue = dispatch_queue_create("org.provenance-emu.play.CallbackHandlerQueue", queueAttributes);
-        _ps2VM = new CPS2VM();
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
+        if (!_ps2VM)
+            _ps2VM = new CPS2VM();
     }
     _current = self;
     return self;
 }
 
 - (void)dealloc {
+    NSLog(@"PlayCore: dealloc called\n");
     _current = nil;
 }
 
@@ -199,27 +180,10 @@ private:
     [self parseOptions];
     // Set OpenGL or Vulkan
     CAppConfig::GetInstance().SetPreferenceInteger(PREFERENCE_VIDEO_GS_HANDLER, (self.gsPreference));
-//    CAppConfig::GetInstance().SetPreferenceBoolean(PREF_CGSHANDLER_WIDESCREEN, resizeOutputToWidescreen.isOn);
     CAppConfig::GetInstance().SetPreferenceBoolean(PREF_CGSH_OPENGL_FORCEBILINEARTEXTURES, self.bilinearFiltering);
-//    CAppConfig::GetInstance().SetPreferenceBoolean(PREFERENCE_AUDIO_ENABLEOUTPUT, enableAudioOutput.isOn);
     CAppConfig::GetInstance().SetPreferenceBoolean(PREFERENCE_ALTSTORE_JIT_ENABLED, true);
 }
 
-#pragma mark - Running
-//- (void)startEmulation {
-//    [self setupEmulation];
-//    [super startEmulation];
-//    [self.frontBufferCondition lock];
-//    while (!shouldStop && self.isFrontBufferReady) [self.frontBufferCondition wait];
-//    [self.frontBufferCondition unlock];
-//
-//}
-//- (void)startEmulation {
-//    if(!self.isRunning) {
-//        [super startEmulation];
-//        [NSThread detachNewThreadSelector:@selector(runGLESRenderThread) toTarget:self withObject:nil];
-//    }
-//}
 - (void)startEmulation
 {
     self.skipEmulationLoop=true;
@@ -227,6 +191,15 @@ private:
     [self startVM];
     [self setupControllers];
     [super startEmulation];
+}
+
+-(void)setupPad {
+    _ps2VM->DestroyPadHandler();
+    _ps2VM->CreatePadHandler(CPH_Generic::GetFactoryFunction());
+    _ps2VM->DestroySoundHandler();
+    _ps2VM->CreateSoundHandler(&CSH_OpenAL::HandlerFactory);
+    padHandler = (CPH_Generic *)_ps2VM->GetPadHandler();
+    [self setupControllers];
 }
 
 - (void)startVM
@@ -241,7 +214,14 @@ private:
             self.resFactor
         ));
     _ps2VM->CreatePadHandler(CPH_Generic::GetFactoryFunction());
-    _ps2VM->CreateSoundHandler(CSH_OpenEmu::GetFactoryFunction());
+    if(CAppConfig::GetInstance().GetPreferenceBoolean(PREFERENCE_AUDIO_ENABLEOUTPUT))
+    {
+        _ps2VM->CreateSoundHandler(&CSH_OpenAL::HandlerFactory);
+    }
+    else
+    {
+        _ps2VM->DestroySoundHandler();
+    }
     gsHandler = (CGSH_Provenance_OGL *)_ps2VM->GetGSHandler();
     padHandler = (CPH_Generic *)_ps2VM->GetPadHandler();
     gsHandler->Reset();
@@ -268,6 +248,9 @@ private:
     }    
     // TODO: Play! starts a bunch of threads. They all need to be realtime.
     _ps2VM->Resume();
+    // Audio
+    _ps2VM->m_iop->m_spuCore0.SetVolumeAdjust((float)self.volume / 100.0);
+    _ps2VM->m_iop->m_spuCore1.SetVolumeAdjust((float)self.volume / 100.0);
 }
 
 //- (void)runGLESRenderThread {
@@ -360,28 +343,6 @@ private:
     _ps2VM->Initialize();
     _ps2VM->ReloadFrameRateLimit();
     _ps2VM->ReloadSpuBlockCount();
-    //
-    //	_bindings[PS2::CControllerInfo::START] = std::make_shared<CSimpleBinding>(PVPS2ButtonStart);
-    //	_bindings[PS2::CControllerInfo::SELECT] = std::make_shared<CSimpleBinding>(PVPS2ButtonSelect);
-    //	_bindings[PS2::CControllerInfo::DPAD_LEFT] = std::make_shared<CSimpleBinding>(PVPS2ButtonLeft);
-    //	_bindings[PS2::CControllerInfo::DPAD_RIGHT] = std::make_shared<CSimpleBinding>(PVPS2ButtonRight);
-    //	_bindings[PS2::CControllerInfo::DPAD_UP] = std::make_shared<CSimpleBinding>(PVPS2ButtonUp);
-    //	_bindings[PS2::CControllerInfo::DPAD_DOWN] = std::make_shared<CSimpleBinding>(PVPS2ButtonDown);
-    //	_bindings[PS2::CControllerInfo::SQUARE] = std::make_shared<CSimpleBinding>(PVPS2ButtonSquare);
-    //	_bindings[PS2::CControllerInfo::CROSS] = std::make_shared<CSimpleBinding>(PVPS2ButtonCross);
-    //	_bindings[PS2::CControllerInfo::TRIANGLE] = std::make_shared<CSimpleBinding>(PVPS2ButtonTriangle);
-    //	_bindings[PS2::CControllerInfo::CIRCLE] = std::make_shared<CSimpleBinding>(PVPS2ButtonCircle);
-    //	_bindings[PS2::CControllerInfo::L1] = std::make_shared<CSimpleBinding>(PVPS2ButtonL1);
-    //	_bindings[PS2::CControllerInfo::L2] = std::make_shared<CSimpleBinding>(PVPS2ButtonL2);
-    //	_bindings[PS2::CControllerInfo::L3] = std::make_shared<CSimpleBinding>(PVPS2ButtonL3);
-    //	_bindings[PS2::CControllerInfo::R1] = std::make_shared<CSimpleBinding>(PVPS2ButtonR1);
-    //	_bindings[PS2::CControllerInfo::R2] = std::make_shared<CSimpleBinding>(PVPS2ButtonR2);
-    //	_bindings[PS2::CControllerInfo::R3] = std::make_shared<CSimpleBinding>(PVPS2ButtonR3);
-    //	_bindings[PS2::CControllerInfo::ANALOG_LEFT_X] = std::make_shared<CSimulatedAxisBinding>(PVPS2LeftAnalogLeft,PVPS2LeftAnalogRight);
-    //	_bindings[PS2::CControllerInfo::ANALOG_LEFT_Y] = std::make_shared<CSimulatedAxisBinding>(PVPS2LeftAnalogUp,PVPS2LeftAnalogDown);
-    //	_bindings[PS2::CControllerInfo::ANALOG_RIGHT_X] = std::make_shared<CSimulatedAxisBinding>(PVPS2RightAnalogLeft,PVPS2RightAnalogRight);
-    //	_bindings[PS2::CControllerInfo::ANALOG_RIGHT_Y] = std::make_shared<CSimulatedAxisBinding>(PVPS2RightAnalogUp,PVPS2RightAnalogDown);
-    
     // TODO: In Debug disable dynarec?
 }
 
@@ -397,17 +358,25 @@ private:
 }
 
 - (void)stopEmulation {
+    NSLog(@"PS2VM: stopEmulation Called\n");
     shouldStop=true;
     [super stopEmulation];
     if (_ps2VM) {
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         _ps2VM->Pause();
-        _ps2VM->DestroyGSHandler();
         _ps2VM->DestroyPadHandler();
         _ps2VM->DestroySoundHandler();
+        _ps2VM->DestroyGSHandler();
         _ps2VM->Destroy();
         delete _ps2VM;
+        [m_view removeFromSuperview];
         _ps2VM = nullptr;
+        padHandler = nullptr;
+        gsHandler = nullptr;
+        m_view = nullptr;
+        m_metal_layer = nullptr;
+        m_gl_layer = nullptr;
+        NSLog(@"PS2VM: stopEmulation OK\n");
     }
 }
 
@@ -420,29 +389,6 @@ private:
         _ps2VM->Resume();
     }
 }
-
-//- (void)resetEmulation {
-//    [super resetEmulation];
-//    dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
-//    [self.frontBufferCondition lock];
-//    [self.frontBufferCondition signal];
-//    [self.frontBufferCondition unlock];
-//}
-
-
-//- (void)swapBuffers {
-//    [self.renderDelegate didRenderFrameOnAlternateThread];
-//}
-
-//- (void)executeFrameSkippingFrame:(BOOL)skip {
-//    dispatch_semaphore_signal(glesWaitToBeginFrameSemaphore);
-//
-//    dispatch_semaphore_wait(coreWaitToEndFrameSemaphore, [self frameTime]);
-//}
-
-//- (void)executeFrame {
-//    [self executeFrameSkippingFrame:NO];
-//}
 
 - (void)initView {
     UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
@@ -495,126 +441,32 @@ private:
         [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
     }
 }
+
+
+-(void)optionUpdated:(NSNotification *)notification {
+    NSDictionary *info = notification.userInfo;
+    for (NSString* key in info.allKeys) {
+        NSString *value=[info valueForKey:key];
+        [self processOption:key value:value];
+        printf("Received Option key:%s value:%s\n",key.UTF8String, value.UTF8String);
+    }
+}
+
+-(void)processOption:(NSString *)key value:(NSString*)value {
+    typedef void (^Process)();
+    NSDictionary *actions = @{
+        @"Audio Volume":
+        ^{
+            [self setOptionValues];
+            _ps2VM->m_iop->m_spuCore0.SetVolumeAdjust((float)self.volume / 100.0);
+            _ps2VM->m_iop->m_spuCore1.SetVolumeAdjust((float)self.volume / 100.0);
+        },
+    };
+    Process action=[actions objectForKey:key];
+    if (action)
+        action();
+}
 @end
-
-
-CGSH_OpenGLiOS::CGSH_OpenGLiOS(CAEAGLLayer* layer)
-    : m_layer(layer)
-{
-}
-
-CGSH_OpenGLiOS::~CGSH_OpenGLiOS()
-{
-}
-
-CGSHandler::FactoryFunction CGSH_OpenGLiOS::GetFactoryFunction(CAEAGLLayer* layer)
-{
-    return [layer]() { return new CGSH_OpenGLiOS(layer); };
-}
-
-void CGSH_OpenGLiOS::InitializeImpl()
-{
-    m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
-
-    if(!m_context)
-    {
-        ELOG(@"Failed to create ES context");
-        return;
-    }
-
-    if(![EAGLContext setCurrentContext:m_context])
-    {
-        ELOG(@"Failed to set ES context current");
-        return;
-    }
-
-    CreateFramebuffer();
-
-    {
-        PRESENTATION_PARAMS presentationParams;
-        presentationParams.mode = PRESENTATION_MODE_FILL;
-        presentationParams.windowWidth = m_framebufferWidth;
-        presentationParams.windowHeight = m_framebufferHeight;
-
-        SetPresentationParams(presentationParams);
-    }
-
-    CGSH_OpenGL::InitializeImpl();
-}
-
-void CGSH_OpenGLiOS::PresentBackbuffer()
-{
-    glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
-    CHECKGLERROR();
-
-    BOOL success = [m_context presentRenderbuffer:GL_RENDERBUFFER];
-    assert(success == YES);
-}
-
-void CGSH_OpenGLiOS::CreateFramebuffer()
-{
-    assert(m_defaultFramebuffer == 0);
-
-    glGenFramebuffers(1, &m_defaultFramebuffer);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_defaultFramebuffer);
-
-    // Create color render buffer and allocate backing store.
-    glGenRenderbuffers(1, &m_colorRenderbuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, m_colorRenderbuffer);
-    [m_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:m_layer];
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &m_framebufferWidth);
-    glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &m_framebufferHeight);
-
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_colorRenderbuffer);
-
-    CHECKGLERROR();
-
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
-        ELOG(@"Failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
-        assert(false);
-    }
-
-    m_presentFramebuffer = m_defaultFramebuffer;
-}
-
-#pragma mark - Graphics callbacks
-
-static CGSHandler *GSHandlerFactory()
-{
-    return new CGSH_OpenEmu();
-}
-
-CGSHandler::FactoryFunction CGSH_OpenEmu::GetFactoryFunction()
-{
-    return GSHandlerFactory;
-}
-
-void CGSH_OpenEmu::InitializeImpl()
-{
-    GET_CURRENT_OR_RETURN();
-
-    // TODO: provenance doesn't have this
-//    [current.renderDelegate willRenderFrameOnAlternateThread];
-    CGSH_OpenGL::InitializeImpl();
-
-    // TODO: provenance doesn't have this
-//    this->m_presentFramebuffer = [current.renderDelegate.presentationFramebuffer intValue];
-
-    glClearColor(0,0,0,0);
-    glClear(GL_COLOR_BUFFER_BIT);
-}
-
-void CGSH_OpenEmu::PresentBackbuffer()
-{
-    GET_CURRENT_OR_RETURN();
-
-    [current.renderDelegate didRenderFrameOnAlternateThread];
-
-    // Start the next one.
-    // TODO: provenance doesn't have this
-//    [current.renderDelegate willRenderFrameOnAlternateThread];
-}
 
 
 #pragma mark - Pad callbacks
@@ -655,28 +507,6 @@ CPadHandler::FactoryFunction CPH_OpenEmu::GetFactoryFunction()
 {
     return PadHandlerFactory;
 }
-
-#pragma mark -
-
-//CSimpleBinding::CSimpleBinding(OEPS2Button keyCode)
-//: m_keyCode(keyCode)
-//, m_state(0)
-//{
-//
-//}
-//
-//CSimpleBinding::~CSimpleBinding() = default;
-//
-//void CSimpleBinding::ProcessEvent(OEPS2Button keyCode, uint32 state)
-//{
-//    if(keyCode != m_keyCode) return;
-//    m_state = state;
-//}
-//
-//uint32 CSimpleBinding::GetValue() const
-//{
-//    return m_state;
-//}
 
 #pragma mark -
 
@@ -722,44 +552,6 @@ uint32_t CSimulatedAxisBinding::GetValue() const
 
 #pragma mark - Sound callbacks
 
-void CSH_OpenEmu::Reset()
-{
-
-}
-
-bool CSH_OpenEmu::HasFreeBuffers()
-{
-    return true;
-}
-
-void CSH_OpenEmu::RecycleBuffers()
-{
-
-}
-
-void CSH_OpenEmu::Write(int16 *audio, unsigned int sampleCount, unsigned int sampleRate)
-{
-    GET_CURRENT_OR_RETURN();
-
-    OERingBuffer *rb = [current ringBufferAtIndex:0];
-    [rb write:audio maxLength:sampleCount*2];
-}
-
-void MakeCurrentThreadRealTime();
-static CSoundHandler *SoundHandlerFactory()
-{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        MakeCurrentThreadRealTime();
-    });
-//    OESetThreadRealtime(1. / (1 * 60), .007, .03);
-    return new CSH_OpenEmu();
-}
-
-CSoundHandler::FactoryFunction CSH_OpenEmu::GetFactoryFunction()
-{
-    return SoundHandlerFactory;
-}
 
 #pragma mark - Threads
 #include <mach/mach.h>

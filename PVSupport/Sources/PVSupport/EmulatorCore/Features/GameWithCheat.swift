@@ -57,4 +57,7 @@ public extension Collection where Self.Element == CheatCodeTypes {
 
     @objc(cheatCodeTypes)
     var cheatCodeTypes: [String] { get }
+
+    @objc(resetCheatCodes)
+    optional func resetCheatCodes()
 }

@@ -1,0 +1,1749 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		008B500BAD14455EA01E441A /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 98243C13AAB7436DAAC66A98 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				11537734279A4B12B886BFA3 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		2275E4DCB3644EB4B9DCE3B8 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 62534BA000E9496789D1A520 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				3B763A82C5943A02B9F89E73 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		ABA4403727F94B99941A8657 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 832D216D90B0470CAF20FA53 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				0ED0DC91DCDC4462828F7482 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				B1BA32AA712F4E1A98684082 /* PBXTargetDependency */,
+				BAB3CC147BB64FDDA52BD919 /* PBXTargetDependency */,
+				803A6A40572B4AECA4CFBBAA /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		058E09B5339041CAB1866D0F /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Bra.h */ = {isa = PBXBuildFile; fileRef = FE8A5118DA754CDCB7A104A9 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Bra.h */; };
+		05AA49F44668445FA9F37C90 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */ = {isa = PBXBuildFile; fileRef = 8F77E87A56C74DA0A514457A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */; };
+		09A2D244A8134E009949B1AF /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = BFD0D9EDB0174783B78C0524 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */; };
+		18FCD9BC9FCD43E7B5F1815C /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Bra86.c */ = {isa = PBXBuildFile; fileRef = ECA05C0D625C4553A286B32B /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Bra86.c */; };
+		1E305DECC54B4B77AF761620 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Precomp.h */ = {isa = PBXBuildFile; fileRef = CE9BD10621024FC78B1B3AD1 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Precomp.h */; };
+		1E471DB247D04E5C92184F84 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Lzma86Dec.c */ = {isa = PBXBuildFile; fileRef = 0CBAD45643AE4766856DC093 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Lzma86Dec.c */; };
+		21E594255F9347B9A1EEC68A /* ../cmake/core/deps/libchdr/CMakeFiles/chdr-static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = C7E979A77A9B4AE89AB919B0 /* ../cmake/core/deps/libchdr/CMakeFiles/chdr-static.dir/Info.plist */; };
+		25208A638EB64C59A8E7D1FE /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */ = {isa = PBXBuildFile; fileRef = 0583DCAE385140AD94A7F618 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */; };
+		30BD7967AB5147D3BE9CA2EC /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */ = {isa = PBXBuildFile; fileRef = DDF5070C50254F0A9E1ADD44 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */; };
+		3620D1219DAC48BEBC4ACF99 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Compiler.h */ = {isa = PBXBuildFile; fileRef = E81ED0A475A44B2AA109F7BB /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Compiler.h */; };
+		36A3C162D04C4E19BE507EF3 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/7zTypes.h */ = {isa = PBXBuildFile; fileRef = 1503F31DAF2E4CB9876DAFFA /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/7zTypes.h */; };
+		378D37CB8EEB4E038C089099 /* ../flycast/core/deps/libchdr/src/libchdr_chd.c */ = {isa = PBXBuildFile; fileRef = D8032E8C4D8448C988FBA9FE /* ../flycast/core/deps/libchdr/src/libchdr_chd.c */; };
+		3BC09399D165405986193C1D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzmaEnc.c */ = {isa = PBXBuildFile; fileRef = DDD2D57C67E04BF9B27FC21E /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzmaEnc.c */; };
+		3D6D8867536542789741765D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Delta.c */ = {isa = PBXBuildFile; fileRef = 3D51742789D84CAAAF2D1C11 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Delta.c */; };
+		40EAEB2481D14DF2A5ADB96D /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */ = {isa = PBXBuildFile; fileRef = 4747745BC950400B8D8B03FF /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */; };
+		45380FFF321249B3A8047F53 /* ../flycast/core/deps/libchdr/src/libchdr_flac.c */ = {isa = PBXBuildFile; fileRef = 052CD3FE2B1B4464A5B53301 /* ../flycast/core/deps/libchdr/src/libchdr_flac.c */; };
+		457C68E553A24DF0B015B434 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */ = {isa = PBXBuildFile; fileRef = 093AAABB0A4B4B4CB5AC2A4B /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */; };
+		47F572FE37054D77A3D33760 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Lzma86.h */ = {isa = PBXBuildFile; fileRef = 8AE6655B89B94BBF98690D3E /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Lzma86.h */; };
+		47FC2B6149F145488885D50D /* ../cmake/core/deps/libchdr/deps/lzma-22.01/CMakeFiles/lzma.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 7131C6EEB7934DA8BD64A53B /* ../cmake/core/deps/libchdr/deps/lzma-22.01/CMakeFiles/lzma.dir/Info.plist */; };
+		4A8362ED5C75492080DD79FC /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */ = {isa = PBXBuildFile; fileRef = 89A9DC9D042E4625AB12519E /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */; };
+		5389A308A2DC4E9EB662B63F /* ../cmake/core/deps/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 55EE910C77A344E6B6529E92 /* ../cmake/core/deps/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */; };
+		5B674E60A81D4B50A7FEDC3C /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */ = {isa = PBXBuildFile; fileRef = FE7A8510B00A45648C2D450F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */; };
+		6257B14B09C64DE68DAAA8DD /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Delta.h */ = {isa = PBXBuildFile; fileRef = A4F43361D6694462BD20140D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Delta.h */; };
+		6718BDE4E643483BB9357C09 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */ = {isa = PBXBuildFile; fileRef = EE8C69F49A63407A91DC5816 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */; };
+		70827B853E62465E9064C7A4 /* ../flycast/core/deps/libchdr/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 6517B15ECB7540D8B4C7871D /* ../flycast/core/deps/libchdr/CMakeLists.txt */; };
+		7300D3E0924B438DB8E834AC /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Alloc.c */ = {isa = PBXBuildFile; fileRef = 459A4BCE09C54689BA8A4615 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Alloc.c */; };
+		7341208FFF8440CEA2755613 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */ = {isa = PBXBuildFile; fileRef = 94E1792CA69E44AA8E435CA1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */; };
+		777573C59E5545A1A693FF44 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/CpuArch.c */ = {isa = PBXBuildFile; fileRef = 9062210977774385B512F900 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/CpuArch.c */; };
+		778AE942A009415D9666A435 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaLib.h */ = {isa = PBXBuildFile; fileRef = 2013E511025B4679A450E605 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaLib.h */; };
+		8119FA40910A45409294A05C /* ../flycast/core/deps/libchdr/src/libchdr_cdrom.c */ = {isa = PBXBuildFile; fileRef = 1BCA590280E147D89D2E5AC4 /* ../flycast/core/deps/libchdr/src/libchdr_cdrom.c */; };
+		900C6CB14E6B42BFBD356771 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */ = {isa = PBXBuildFile; fileRef = 56C4FACCB7B54A5397F40DF0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */; };
+		914C3481F47B46DAB088C04A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */ = {isa = PBXBuildFile; fileRef = BC60CD7E8B864433ACF9955C /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */; };
+		91DCB2DD1E35401AB8D42EB3 /* ../flycast/core/deps/libchdr/src/libchdr_bitstream.c */ = {isa = PBXBuildFile; fileRef = AB0369C49CAC4BBB815EF073 /* ../flycast/core/deps/libchdr/src/libchdr_bitstream.c */; };
+		9EE8C6EF15134A518EBE7B76 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */ = {isa = PBXBuildFile; fileRef = 9423155658C24566BC20AEC0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */; };
+		A69D884EDA364C08A029AF91 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 5F9251E98DE34584813C5E3E /* ../flycast/core/deps/libchdr/deps/lzma-22.01/CMakeLists.txt */; };
+		A9A42CA49D4C449287CADC9D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzmaDec.c */ = {isa = PBXBuildFile; fileRef = 1A5384A51A9C42DA9CA5A404 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzmaDec.c */; };
+		AA4C8A71CD6949539A93E41C /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/BraIA64.c */ = {isa = PBXBuildFile; fileRef = 59E2EB697B82429CB9BB1871 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/BraIA64.c */; };
+		AA670CFDAF61476487791318 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaEnc.h */ = {isa = PBXBuildFile; fileRef = 9204000CF8CB42F0A7567F4B /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaEnc.h */; };
+		ACCC621922A44D3DBAD31C0E /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */ = {isa = PBXBuildFile; fileRef = F223209E366A4E4CB9569A07 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */; };
+		AD761A21B07F4B999F3F88A1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */ = {isa = PBXBuildFile; fileRef = F1CC4F119E574968AA174FF1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */; };
+		B1EC3C2C0EDE45E0BAC40389 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/CpuArch.h */ = {isa = PBXBuildFile; fileRef = A877217624AE44A6A0191783 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/CpuArch.h */; };
+		B4A73D94B3E0495BA4C41315 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Sort.c */ = {isa = PBXBuildFile; fileRef = 1A82465437054581A523A901 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Sort.c */; };
+		B93EEA4A2DDC45E78A2A6D0C /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Sort.h */ = {isa = PBXBuildFile; fileRef = 90CF34EF9A7D4E3ABFE59DDD /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Sort.h */; };
+		B9A97BE0B4A447779F671292 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */ = {isa = PBXBuildFile; fileRef = 39579D64D44B4E5BB263C72B /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */; };
+		BB03F8CCC0114BFDB5411822 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */ = {isa = PBXBuildFile; fileRef = E1983D62F6224914B015C13F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */; };
+		BBE61DE30BB64C16BD68172A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */ = {isa = PBXBuildFile; fileRef = 2A7A372F7B25496E9E3ECAC2 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */; };
+		BFF5A7C6E93A4AB09298D468 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzFind.h */ = {isa = PBXBuildFile; fileRef = 0F0FB04330B345AD8AB80958 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzFind.h */; };
+		C70AF30B51364800A971F5B3 /* ../flycast/core/deps/libchdr/tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 7375077C972F4FEDB7CF5B5B /* ../flycast/core/deps/libchdr/tests/CMakeLists.txt */; };
+		CADA65CD48924AC5B5A3C3EF /* ../flycast/core/deps/libchdr/tests/benchmark.c */ = {isa = PBXBuildFile; fileRef = 42611BDD9D5F4F8CA43E47EF /* ../flycast/core/deps/libchdr/tests/benchmark.c */; };
+		CE6C070F5E9044F38F91EDA2 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzHash.h */ = {isa = PBXBuildFile; fileRef = 3B33600BF1B54181BDB73931 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzHash.h */; };
+		D9506929870A43CE99854D0E /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Alloc.h */ = {isa = PBXBuildFile; fileRef = D3924137CF904D5EBBE8789D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Alloc.h */; };
+		E368B748AAA748BCBC4C845C /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */ = {isa = PBXBuildFile; fileRef = 6F6B0FE1EFC84606A33F8AE3 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */; };
+		E4B35E83B37B467DB514F2D1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */ = {isa = PBXBuildFile; fileRef = 1387C3D469D94B9391EF8B7F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */; };
+		E61FB0807707477FA7BA5C6A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */ = {isa = PBXBuildFile; fileRef = 04E117271C3944F19015A094 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */; };
+		EA21B6B7534842A8B722E046 /* ../flycast/core/deps/libchdr/src/libchdr_huffman.c */ = {isa = PBXBuildFile; fileRef = 6797D0B721C1482B8D6C6501 /* ../flycast/core/deps/libchdr/src/libchdr_huffman.c */; };
+		EBEE81ADEC39428AA147A06D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzFind.c */ = {isa = PBXBuildFile; fileRef = 00F17434C3C94C4CA42C4C78 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzFind.c */; };
+		F21F2DD54A634C36A1E4FC3B /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */ = {isa = PBXBuildFile; fileRef = 5D09508617A0456E9850399F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */; };
+		F61EE65ED5FD4222A8F4E91B /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 67B920DC4E7D40B5AC7EAEB7 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */; };
+		FC8F07E4280E4AB7B42FB1EB /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaDec.h */ = {isa = PBXBuildFile; fileRef = 42FC01F3E7DF4CE9BF9ED74B /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaDec.h */; };
+		FCD5374F18594B5CA1174425 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */ = {isa = PBXBuildFile; fileRef = 5C6F5EA5C4C9418BBF872627 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		24A965FC4A6D403789C9B132 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		37D0E99AD32B464AB2337D87 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		5360D91F0C414789A0698F4B /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		8CD6E9170F224EAC9497D8D0 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		32FCCEAA3A64453DA5D9F963 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BB7C10033F9A412EBB714112;
+			remoteInfo = "chdr-benchmark";
+		};
+		429D625EBE464445992C856B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2BE0B7D344A44A6D8225277F;
+			remoteInfo = "chdr-static";
+		};
+		58076D73B81E45A9A35B83A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1FE77D070658490AA68362CA;
+			remoteInfo = zlib;
+		};
+		6F7A5EDB103541B79E3EFD1A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1FE77D070658490AA68362CA;
+			remoteInfo = zlib;
+		};
+		92982EE48B544BD5B4A5DC78 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2275E4DCB3644EB4B9DCE3B8;
+			remoteInfo = ZERO_CHECK;
+		};
+		9E50EC9C4EF74C9E8D478FCD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 82D74A25B94742398F672774;
+			remoteInfo = lzma;
+		};
+		AEAFD4388DE94809A8F1D315 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2BE0B7D344A44A6D8225277F;
+			remoteInfo = "chdr-static";
+		};
+		B6E86DE4E63B4ED28625653C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ABA4403727F94B99941A8657;
+			remoteInfo = ALL_BUILD;
+		};
+		C60BC48895B44461B473E92B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2275E4DCB3644EB4B9DCE3B8;
+			remoteInfo = ZERO_CHECK;
+		};
+		D26C4D015C53491FA100E81F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 82D74A25B94742398F672774;
+			remoteInfo = lzma;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		00F17434C3C94C4CA42C4C78 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzFind.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = LzFind.c; path = "deps/lzma-22.01/src/LzFind.c"; sourceTree = SOURCE_ROOT; };
+		04E117271C3944F19015A094 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inflate.h; path = "deps/zlib-1.2.12/inflate.h"; sourceTree = SOURCE_ROOT; };
+		052CD3FE2B1B4464A5B53301 /* ../flycast/core/deps/libchdr/src/libchdr_flac.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_flac.c; path = src/libchdr_flac.c; sourceTree = SOURCE_ROOT; };
+		0583DCAE385140AD94A7F618 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inftrees.h; path = "deps/zlib-1.2.12/inftrees.h"; sourceTree = SOURCE_ROOT; };
+		093AAABB0A4B4B4CB5AC2A4B /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = crc32.c; path = "deps/zlib-1.2.12/crc32.c"; sourceTree = SOURCE_ROOT; };
+		0CBAD45643AE4766856DC093 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Lzma86Dec.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Lzma86Dec.c; path = "deps/lzma-22.01/src/Lzma86Dec.c"; sourceTree = SOURCE_ROOT; };
+		0F0FB04330B345AD8AB80958 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzFind.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzFind.h; path = "deps/lzma-22.01/include/LzFind.h"; sourceTree = SOURCE_ROOT; };
+		1387C3D469D94B9391EF8B7F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inffast.c; path = "deps/zlib-1.2.12/inffast.c"; sourceTree = SOURCE_ROOT; };
+		1503F31DAF2E4CB9876DAFFA /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/7zTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = 7zTypes.h; path = "deps/lzma-22.01/include/7zTypes.h"; sourceTree = SOURCE_ROOT; };
+		1A5384A51A9C42DA9CA5A404 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzmaDec.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = LzmaDec.c; path = "deps/lzma-22.01/src/LzmaDec.c"; sourceTree = SOURCE_ROOT; };
+		1A82465437054581A523A901 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Sort.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Sort.c; path = "deps/lzma-22.01/src/Sort.c"; sourceTree = SOURCE_ROOT; };
+		1BCA590280E147D89D2E5AC4 /* ../flycast/core/deps/libchdr/src/libchdr_cdrom.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_cdrom.c; path = src/libchdr_cdrom.c; sourceTree = SOURCE_ROOT; };
+		2013E511025B4679A450E605 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaLib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaLib.h; path = "deps/lzma-22.01/include/LzmaLib.h"; sourceTree = SOURCE_ROOT; };
+		28E92E13595447F38B0832D9 /* chdr-benchmark */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = "chdr-benchmark"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A7A372F7B25496E9E3ECAC2 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zutil.h; path = "deps/zlib-1.2.12/zutil.h"; sourceTree = SOURCE_ROOT; };
+		39579D64D44B4E5BB263C72B /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = adler32.c; path = "deps/zlib-1.2.12/adler32.c"; sourceTree = SOURCE_ROOT; };
+		3B33600BF1B54181BDB73931 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzHash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzHash.h; path = "deps/lzma-22.01/include/LzHash.h"; sourceTree = SOURCE_ROOT; };
+		3D51742789D84CAAAF2D1C11 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Delta.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Delta.c; path = "deps/lzma-22.01/src/Delta.c"; sourceTree = SOURCE_ROOT; };
+		42611BDD9D5F4F8CA43E47EF /* ../flycast/core/deps/libchdr/tests/benchmark.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = benchmark.c; path = tests/benchmark.c; sourceTree = SOURCE_ROOT; };
+		42FC01F3E7DF4CE9BF9ED74B /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaDec.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaDec.h; path = "deps/lzma-22.01/include/LzmaDec.h"; sourceTree = SOURCE_ROOT; };
+		459A4BCE09C54689BA8A4615 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Alloc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Alloc.c; path = "deps/lzma-22.01/src/Alloc.c"; sourceTree = SOURCE_ROOT; };
+		4747745BC950400B8D8B03FF /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = deflate.c; path = "deps/zlib-1.2.12/deflate.c"; sourceTree = SOURCE_ROOT; };
+		4952AEE67BDF4D86BBCB27D1 /* ../flycast/core/deps/libchdr/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		55EE910C77A344E6B6529E92 /* ../cmake/core/deps/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/core/deps/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist"; sourceTree = "<absolute>"; };
+		56C4FACCB7B54A5397F40DF0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inffixed.h; path = "deps/zlib-1.2.12/inffixed.h"; sourceTree = SOURCE_ROOT; };
+		59E2EB697B82429CB9BB1871 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/BraIA64.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = BraIA64.c; path = "deps/lzma-22.01/src/BraIA64.c"; sourceTree = SOURCE_ROOT; };
+		5C6F5EA5C4C9418BBF872627 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inftrees.c; path = "deps/zlib-1.2.12/inftrees.c"; sourceTree = SOURCE_ROOT; };
+		5D09508617A0456E9850399F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = compress.c; path = "deps/zlib-1.2.12/compress.c"; sourceTree = SOURCE_ROOT; };
+		5F9251E98DE34584813C5E3E /* ../flycast/core/deps/libchdr/deps/lzma-22.01/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "deps/lzma-22.01/CMakeLists.txt"; sourceTree = SOURCE_ROOT; };
+		6517B15ECB7540D8B4C7871D /* ../flycast/core/deps/libchdr/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		6797D0B721C1482B8D6C6501 /* ../flycast/core/deps/libchdr/src/libchdr_huffman.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_huffman.c; path = src/libchdr_huffman.c; sourceTree = SOURCE_ROOT; };
+		67B920DC4E7D40B5AC7EAEB7 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist"; sourceTree = "<absolute>"; };
+		6F6B0FE1EFC84606A33F8AE3 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = inflate.c; path = "deps/zlib-1.2.12/inflate.c"; sourceTree = SOURCE_ROOT; };
+		7131C6EEB7934DA8BD64A53B /* ../cmake/core/deps/libchdr/deps/lzma-22.01/CMakeFiles/lzma.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/core/deps/libchdr/deps/lzma-22.01/CMakeFiles/lzma.dir/Info.plist"; sourceTree = "<absolute>"; };
+		7375077C972F4FEDB7CF5B5B /* ../flycast/core/deps/libchdr/tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = tests/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		89A9DC9D042E4625AB12519E /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = deflate.h; path = "deps/zlib-1.2.12/deflate.h"; sourceTree = SOURCE_ROOT; };
+		8AE6655B89B94BBF98690D3E /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Lzma86.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Lzma86.h; path = "deps/lzma-22.01/include/Lzma86.h"; sourceTree = SOURCE_ROOT; };
+		8F77E87A56C74DA0A514457A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gzguts.h; path = "deps/zlib-1.2.12/gzguts.h"; sourceTree = SOURCE_ROOT; };
+		9062210977774385B512F900 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/CpuArch.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = CpuArch.c; path = "deps/lzma-22.01/src/CpuArch.c"; sourceTree = SOURCE_ROOT; };
+		90CF34EF9A7D4E3ABFE59DDD /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Sort.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Sort.h; path = "deps/lzma-22.01/include/Sort.h"; sourceTree = SOURCE_ROOT; };
+		9204000CF8CB42F0A7567F4B /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaEnc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaEnc.h; path = "deps/lzma-22.01/include/LzmaEnc.h"; sourceTree = SOURCE_ROOT; };
+		9423155658C24566BC20AEC0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = trees.c; path = "deps/zlib-1.2.12/trees.c"; sourceTree = SOURCE_ROOT; };
+		94E1792CA69E44AA8E435CA1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zlib.h; path = "deps/zlib-1.2.12/zlib.h"; sourceTree = SOURCE_ROOT; };
+		A4F43361D6694462BD20140D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Delta.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Delta.h; path = "deps/lzma-22.01/include/Delta.h"; sourceTree = SOURCE_ROOT; };
+		A877217624AE44A6A0191783 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/CpuArch.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CpuArch.h; path = "deps/lzma-22.01/include/CpuArch.h"; sourceTree = SOURCE_ROOT; };
+		AB0369C49CAC4BBB815EF073 /* ../flycast/core/deps/libchdr/src/libchdr_bitstream.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_bitstream.c; path = src/libchdr_bitstream.c; sourceTree = SOURCE_ROOT; };
+		B989383DA1554ED7AA18DDE9 /* chdr-static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libchdr-static.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC60CD7E8B864433ACF9955C /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = uncompr.c; path = "deps/zlib-1.2.12/uncompr.c"; sourceTree = SOURCE_ROOT; };
+		BFD0D9EDB0174783B78C0524 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "deps/zlib-1.2.12/CMakeLists.txt"; sourceTree = SOURCE_ROOT; };
+		C7E979A77A9B4AE89AB919B0 /* ../cmake/core/deps/libchdr/CMakeFiles/chdr-static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/core/deps/libchdr/CMakeFiles/chdr-static.dir/Info.plist"; sourceTree = "<absolute>"; };
+		CE9BD10621024FC78B1B3AD1 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Precomp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Precomp.h; path = "deps/lzma-22.01/include/Precomp.h"; sourceTree = SOURCE_ROOT; };
+		CFFD55F03E564772AC6CE387 /* zlib */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libz.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D3924137CF904D5EBBE8789D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Alloc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Alloc.h; path = "deps/lzma-22.01/include/Alloc.h"; sourceTree = SOURCE_ROOT; };
+		D8032E8C4D8448C988FBA9FE /* ../flycast/core/deps/libchdr/src/libchdr_chd.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_chd.c; path = src/libchdr_chd.c; sourceTree = SOURCE_ROOT; };
+		D85D0D9695DD4BB48F14AD5F /* lzma */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblzma.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DDD2D57C67E04BF9B27FC21E /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzmaEnc.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = LzmaEnc.c; path = "deps/lzma-22.01/src/LzmaEnc.c"; sourceTree = SOURCE_ROOT; };
+		DDF5070C50254F0A9E1ADD44 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = crc32.h; path = "deps/zlib-1.2.12/crc32.h"; sourceTree = SOURCE_ROOT; };
+		E1983D62F6224914B015C13F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zutil.c; path = "deps/zlib-1.2.12/zutil.c"; sourceTree = SOURCE_ROOT; };
+		E81ED0A475A44B2AA109F7BB /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Compiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Compiler.h; path = "deps/lzma-22.01/include/Compiler.h"; sourceTree = SOURCE_ROOT; };
+		ECA05C0D625C4553A286B32B /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Bra86.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = Bra86.c; path = "deps/lzma-22.01/src/Bra86.c"; sourceTree = SOURCE_ROOT; };
+		EE8C69F49A63407A91DC5816 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zconf.h; path = "../cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h"; sourceTree = "<absolute>"; };
+		F1CC4F119E574968AA174FF1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = infback.c; path = "deps/zlib-1.2.12/infback.c"; sourceTree = SOURCE_ROOT; };
+		F223209E366A4E4CB9569A07 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = trees.h; path = "deps/zlib-1.2.12/trees.h"; sourceTree = SOURCE_ROOT; };
+		FE7A8510B00A45648C2D450F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inffast.h; path = "deps/zlib-1.2.12/inffast.h"; sourceTree = SOURCE_ROOT; };
+		FE8A5118DA754CDCB7A104A9 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Bra.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Bra.h; path = "deps/lzma-22.01/include/Bra.h"; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		001B6D4C9DC84FCAACACE126 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		398F37D3C6A142EE8DA93D13 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		68F89552D24C4DD2AF5B5E1A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B44A3288C8042F89201CAB1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		24DEF6AFB2C44926BE79A5F3 /* lzma */ = {
+			isa = PBXGroup;
+			children = (
+				9A3061C715F8463DAED56CC4 /* Header Files */,
+				929C9E03CFF049B992AF3BFE /* Source Files */,
+				7592B8845C874C3EB3FF75AC /* Resources */,
+				5F9251E98DE34584813C5E3E /* ../flycast/core/deps/libchdr/deps/lzma-22.01/CMakeLists.txt */,
+			);
+			name = lzma;
+			sourceTree = "<group>";
+		};
+		333E17248A3241FE8BCD39D5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C7E979A77A9B4AE89AB919B0 /* ../cmake/core/deps/libchdr/CMakeFiles/chdr-static.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		337B32A5D7DA43CA82B429BA /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		3A62F3C26CEE4958AA040ED6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				28E92E13595447F38B0832D9 /* chdr-benchmark */,
+				B989383DA1554ED7AA18DDE9 /* chdr-static */,
+				D85D0D9695DD4BB48F14AD5F /* lzma */,
+				CFFD55F03E564772AC6CE387 /* zlib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5D25C3FB7FC54143BC8AD8BC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6567C2B194C843B9A40560AB /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				EE8C69F49A63407A91DC5816 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/zconf.h */,
+				DDF5070C50254F0A9E1ADD44 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.h */,
+				89A9DC9D042E4625AB12519E /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.h */,
+				8F77E87A56C74DA0A514457A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/gzguts.h */,
+				FE7A8510B00A45648C2D450F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.h */,
+				56C4FACCB7B54A5397F40DF0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffixed.h */,
+				04E117271C3944F19015A094 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.h */,
+				0583DCAE385140AD94A7F618 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.h */,
+				F223209E366A4E4CB9569A07 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.h */,
+				94E1792CA69E44AA8E435CA1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zlib.h */,
+				2A7A372F7B25496E9E3ECAC2 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		6654E31B0B054AE4B0BE199A /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				42611BDD9D5F4F8CA43E47EF /* ../flycast/core/deps/libchdr/tests/benchmark.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		70FA81F629BB48058CA1A029 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				39579D64D44B4E5BB263C72B /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */,
+				5D09508617A0456E9850399F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */,
+				093AAABB0A4B4B4CB5AC2A4B /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */,
+				4747745BC950400B8D8B03FF /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */,
+				F1CC4F119E574968AA174FF1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */,
+				1387C3D469D94B9391EF8B7F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */,
+				6F6B0FE1EFC84606A33F8AE3 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */,
+				5C6F5EA5C4C9418BBF872627 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */,
+				9423155658C24566BC20AEC0 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */,
+				BC60CD7E8B864433ACF9955C /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */,
+				E1983D62F6224914B015C13F /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		72F3E0C1B14C4AB8A7EEFB41 /* chdr-static */ = {
+			isa = PBXGroup;
+			children = (
+				7743EDFAE6D24B94A41CCB27 /* Source Files */,
+				333E17248A3241FE8BCD39D5 /* Resources */,
+				6517B15ECB7540D8B4C7871D /* ../flycast/core/deps/libchdr/CMakeLists.txt */,
+			);
+			name = "chdr-static";
+			sourceTree = "<group>";
+		};
+		7592B8845C874C3EB3FF75AC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7131C6EEB7934DA8BD64A53B /* ../cmake/core/deps/libchdr/deps/lzma-22.01/CMakeFiles/lzma.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		7743EDFAE6D24B94A41CCB27 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				AB0369C49CAC4BBB815EF073 /* ../flycast/core/deps/libchdr/src/libchdr_bitstream.c */,
+				1BCA590280E147D89D2E5AC4 /* ../flycast/core/deps/libchdr/src/libchdr_cdrom.c */,
+				D8032E8C4D8448C988FBA9FE /* ../flycast/core/deps/libchdr/src/libchdr_chd.c */,
+				052CD3FE2B1B4464A5B53301 /* ../flycast/core/deps/libchdr/src/libchdr_flac.c */,
+				6797D0B721C1482B8D6C6501 /* ../flycast/core/deps/libchdr/src/libchdr_huffman.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		7780C683792247DC94CE3E25 /* zlib */ = {
+			isa = PBXGroup;
+			children = (
+				70FA81F629BB48058CA1A029 /* Source Files */,
+				6567C2B194C843B9A40560AB /* Header Files */,
+				E28CA27E65864E1FB0A9852A /* Resources */,
+				BFD0D9EDB0174783B78C0524 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/CMakeLists.txt */,
+			);
+			name = zlib;
+			sourceTree = "<group>";
+		};
+		7D094C18BD99487F8ABBB363 /* chdr-benchmark */ = {
+			isa = PBXGroup;
+			children = (
+				6654E31B0B054AE4B0BE199A /* Source Files */,
+				84E3975BA8644B5684301BEE /* Resources */,
+				7375077C972F4FEDB7CF5B5B /* ../flycast/core/deps/libchdr/tests/CMakeLists.txt */,
+			);
+			name = "chdr-benchmark";
+			sourceTree = "<group>";
+		};
+		84E3975BA8644B5684301BEE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				55EE910C77A344E6B6529E92 /* ../cmake/core/deps/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		929C9E03CFF049B992AF3BFE /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				459A4BCE09C54689BA8A4615 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Alloc.c */,
+				ECA05C0D625C4553A286B32B /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Bra86.c */,
+				59E2EB697B82429CB9BB1871 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/BraIA64.c */,
+				9062210977774385B512F900 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/CpuArch.c */,
+				3D51742789D84CAAAF2D1C11 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Delta.c */,
+				00F17434C3C94C4CA42C4C78 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzFind.c */,
+				0CBAD45643AE4766856DC093 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Lzma86Dec.c */,
+				1A5384A51A9C42DA9CA5A404 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzmaDec.c */,
+				DDD2D57C67E04BF9B27FC21E /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzmaEnc.c */,
+				1A82465437054581A523A901 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Sort.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		9A3061C715F8463DAED56CC4 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				1503F31DAF2E4CB9876DAFFA /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/7zTypes.h */,
+				D3924137CF904D5EBBE8789D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Alloc.h */,
+				FE8A5118DA754CDCB7A104A9 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Bra.h */,
+				E81ED0A475A44B2AA109F7BB /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Compiler.h */,
+				A877217624AE44A6A0191783 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/CpuArch.h */,
+				A4F43361D6694462BD20140D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Delta.h */,
+				0F0FB04330B345AD8AB80958 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzFind.h */,
+				3B33600BF1B54181BDB73931 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzHash.h */,
+				8AE6655B89B94BBF98690D3E /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Lzma86.h */,
+				42FC01F3E7DF4CE9BF9ED74B /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaDec.h */,
+				9204000CF8CB42F0A7567F4B /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaEnc.h */,
+				2013E511025B4679A450E605 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/LzmaLib.h */,
+				CE9BD10621024FC78B1B3AD1 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Precomp.h */,
+				90CF34EF9A7D4E3ABFE59DDD /* ../flycast/core/deps/libchdr/deps/lzma-22.01/include/Sort.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		A8A5DFC129C84DC6869C9E7D /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				337B32A5D7DA43CA82B429BA /* CMake Rules */,
+				4952AEE67BDF4D86BBCB27D1 /* ../flycast/core/deps/libchdr/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		CB556BB0EF554E4496A5C2E6 = {
+			isa = PBXGroup;
+			children = (
+				72F3E0C1B14C4AB8A7EEFB41 /* chdr-static */,
+				A8A5DFC129C84DC6869C9E7D /* ALL_BUILD */,
+				24DEF6AFB2C44926BE79A5F3 /* lzma */,
+				7780C683792247DC94CE3E25 /* zlib */,
+				7D094C18BD99487F8ABBB363 /* chdr-benchmark */,
+				3A62F3C26CEE4958AA040ED6 /* Products */,
+				5D25C3FB7FC54143BC8AD8BC /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		E28CA27E65864E1FB0A9852A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				67B920DC4E7D40B5AC7EAEB7 /* ../cmake/core/deps/libchdr/deps/zlib-1.2.12/CMakeFiles/zlib.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1FE77D070658490AA68362CA /* zlib */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4DAD5C8FD9D426CA8CCA208 /* Build configuration list for PBXNativeTarget "zlib" */;
+			buildPhases = (
+				9E45CE989B674256840E1B95 /* Sources */,
+				9B44A3288C8042F89201CAB1 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = zlib;
+			productName = zlib;
+			productReference = CFFD55F03E564772AC6CE387 /* zlib */;
+			productType = "com.apple.product-type.library.static";
+		};
+		2BE0B7D344A44A6D8225277F /* chdr-static */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E0DBA2799B9242599A9EC3E2 /* Build configuration list for PBXNativeTarget "chdr-static" */;
+			buildPhases = (
+				A1EA966FBD944C83AF84C633 /* Sources */,
+				398F37D3C6A142EE8DA93D13 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C378CA4B3E1C4CB7B06A620B /* PBXTargetDependency */,
+				7D4CEEDF86504ACEA3A3957E /* PBXTargetDependency */,
+				7B872D49481B4B2EA3D6406B /* PBXTargetDependency */,
+			);
+			name = "chdr-static";
+			productName = "chdr-static";
+			productReference = B989383DA1554ED7AA18DDE9 /* chdr-static */;
+			productType = "com.apple.product-type.library.static";
+		};
+		82D74A25B94742398F672774 /* lzma */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 614B30991CFC4BF6A24FBA0C /* Build configuration list for PBXNativeTarget "lzma" */;
+			buildPhases = (
+				2C21FF117F3646B197BC8D63 /* Sources */,
+				001B6D4C9DC84FCAACACE126 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = lzma;
+			productName = lzma;
+			productReference = D85D0D9695DD4BB48F14AD5F /* lzma */;
+			productType = "com.apple.product-type.library.static";
+		};
+		BB7C10033F9A412EBB714112 /* chdr-benchmark */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 94F57B544784478D9A4F984A /* Build configuration list for PBXNativeTarget "chdr-benchmark" */;
+			buildPhases = (
+				7768A17F28354126B7F4FA36 /* Sources */,
+				68F89552D24C4DD2AF5B5E1A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				59369E6112C1472FAA7BA5CE /* PBXTargetDependency */,
+				7A84C5B32C9140BE97E2AC24 /* PBXTargetDependency */,
+				A30D10E5B6D44620893AAAA4 /* PBXTargetDependency */,
+			);
+			name = "chdr-benchmark";
+			productName = "chdr-benchmark";
+			productReference = 28E92E13595447F38B0832D9 /* chdr-benchmark */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0BFF95BE38904AB7AA47FA43 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = 8CE51528231B438E9BDF4DEF /* Build configuration list for PBXProject "chdr" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				8CD6E9170F224EAC9497D8D0 /* Debug */,
+				24A965FC4A6D403789C9B132 /* Release */,
+				5360D91F0C414789A0698F4B /* MinSizeRel */,
+				37D0E99AD32B464AB2337D87 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = CB556BB0EF554E4496A5C2E6;
+			projectDirPath = ../flycast/core/deps/libchdr;
+			projectRoot = "";
+			targets = (
+				ABA4403727F94B99941A8657 /* ALL_BUILD */,
+				2275E4DCB3644EB4B9DCE3B8 /* ZERO_CHECK */,
+				BB7C10033F9A412EBB714112 /* chdr-benchmark */,
+				2BE0B7D344A44A6D8225277F /* chdr-static */,
+				008B500BAD14455EA01E441A /* install */,
+				82D74A25B94742398F672774 /* lzma */,
+				1FE77D070658490AA68362CA /* zlib */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		0ED0DC91DCDC4462828F7482 /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+../cmake/core/deps/libchdr/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/core/deps/libchdr
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/core/deps/libchdr
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/core/deps/libchdr
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/core/deps/libchdr
+  echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		3B763A82C5943A02B9F89E73 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+../cmake/core/deps/libchdr/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/core/deps/libchdr
+  make -f ../cmake/core/deps/libchdr/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/core/deps/libchdr
+  make -f ../cmake/core/deps/libchdr/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/core/deps/libchdr
+  make -f ../cmake/core/deps/libchdr/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/core/deps/libchdr
+  make -f ../cmake/core/deps/libchdr/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		3C0110FC8322DE7E50886E21 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		87AF4882E018677E2624B544 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/core/deps/libchdr
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/core/deps/libchdr
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/core/deps/libchdr
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/core/deps/libchdr
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		9B50530E35CC49C82C2FACCF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2C21FF117F3646B197BC8D63 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7300D3E0924B438DB8E834AC /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Alloc.c */,
+				18FCD9BC9FCD43E7B5F1815C /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Bra86.c */,
+				AA4C8A71CD6949539A93E41C /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/BraIA64.c */,
+				777573C59E5545A1A693FF44 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/CpuArch.c */,
+				3D6D8867536542789741765D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Delta.c */,
+				EBEE81ADEC39428AA147A06D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzFind.c */,
+				1E471DB247D04E5C92184F84 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Lzma86Dec.c */,
+				A9A42CA49D4C449287CADC9D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzmaDec.c */,
+				3BC09399D165405986193C1D /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/LzmaEnc.c */,
+				B4A73D94B3E0495BA4C41315 /* ../flycast/core/deps/libchdr/deps/lzma-22.01/src/Sort.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7768A17F28354126B7F4FA36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CADA65CD48924AC5B5A3C3EF /* ../flycast/core/deps/libchdr/tests/benchmark.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9E45CE989B674256840E1B95 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B9A97BE0B4A447779F671292 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/adler32.c */,
+				F21F2DD54A634C36A1E4FC3B /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/compress.c */,
+				457C68E553A24DF0B015B434 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/crc32.c */,
+				40EAEB2481D14DF2A5ADB96D /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/deflate.c */,
+				AD761A21B07F4B999F3F88A1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/infback.c */,
+				E4B35E83B37B467DB514F2D1 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inffast.c */,
+				E368B748AAA748BCBC4C845C /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inflate.c */,
+				FCD5374F18594B5CA1174425 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/inftrees.c */,
+				9EE8C6EF15134A518EBE7B76 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/trees.c */,
+				914C3481F47B46DAB088C04A /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/uncompr.c */,
+				BB03F8CCC0114BFDB5411822 /* ../flycast/core/deps/libchdr/deps/zlib-1.2.12/zutil.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1EA966FBD944C83AF84C633 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				91DCB2DD1E35401AB8D42EB3 /* ../flycast/core/deps/libchdr/src/libchdr_bitstream.c */,
+				8119FA40910A45409294A05C /* ../flycast/core/deps/libchdr/src/libchdr_cdrom.c */,
+				378D37CB8EEB4E038C089099 /* ../flycast/core/deps/libchdr/src/libchdr_chd.c */,
+				45380FFF321249B3A8047F53 /* ../flycast/core/deps/libchdr/src/libchdr_flac.c */,
+				EA21B6B7534842A8B722E046 /* ../flycast/core/deps/libchdr/src/libchdr_huffman.c */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		11537734279A4B12B886BFA3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ABA4403727F94B99941A8657 /* ALL_BUILD */;
+			targetProxy = B6E86DE4E63B4ED28625653C /* PBXContainerItemProxy */;
+		};
+		59369E6112C1472FAA7BA5CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2BE0B7D344A44A6D8225277F /* chdr-static */;
+			targetProxy = AEAFD4388DE94809A8F1D315 /* PBXContainerItemProxy */;
+		};
+		7A84C5B32C9140BE97E2AC24 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 82D74A25B94742398F672774 /* lzma */;
+			targetProxy = D26C4D015C53491FA100E81F /* PBXContainerItemProxy */;
+		};
+		7B872D49481B4B2EA3D6406B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1FE77D070658490AA68362CA /* zlib */;
+			targetProxy = 6F7A5EDB103541B79E3EFD1A /* PBXContainerItemProxy */;
+		};
+		7D4CEEDF86504ACEA3A3957E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 82D74A25B94742398F672774 /* lzma */;
+			targetProxy = 9E50EC9C4EF74C9E8D478FCD /* PBXContainerItemProxy */;
+		};
+		803A6A40572B4AECA4CFBBAA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BB7C10033F9A412EBB714112 /* chdr-benchmark */;
+			targetProxy = 32FCCEAA3A64453DA5D9F963 /* PBXContainerItemProxy */;
+		};
+		A30D10E5B6D44620893AAAA4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1FE77D070658490AA68362CA /* zlib */;
+			targetProxy = 58076D73B81E45A9A35B83A8 /* PBXContainerItemProxy */;
+		};
+		B1BA32AA712F4E1A98684082 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2275E4DCB3644EB4B9DCE3B8 /* ZERO_CHECK */;
+			targetProxy = C60BC48895B44461B473E92B /* PBXContainerItemProxy */;
+		};
+		BAB3CC147BB64FDDA52BD919 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2BE0B7D344A44A6D8225277F /* chdr-static */;
+			targetProxy = 429D625EBE464445992C856B /* PBXContainerItemProxy */;
+		};
+		C378CA4B3E1C4CB7B06A620B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2275E4DCB3644EB4B9DCE3B8 /* ZERO_CHECK */;
+			targetProxy = 92982EE48B544BD5B4A5DC78 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		10E604D84D05473C96CDA131 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libchdr/lzma,"../flycast/core/deps/libchdr/deps/zlib-1.2.12","../cmake/core/deps/libchdr/deps/zlib-1.2.12",../cmake/core/deps/libchdr/include,../flycast/core/deps/libchdr/include,"../flycast/core/deps/libchdr/deps/lzma-22.01/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("       -DNDEBUG -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "chdr-static";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		1991CEBCB9AF44239563656E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",_7ZIP_ST,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../flycast/core/deps/libchdr/deps/lzma-22.01/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("       -DNDEBUG -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lzma;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		1CD683B7778341ABB029A58F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libchdr/include,"$(inherited)");
+				INFOPLIST_FILE = "../cmake/core/deps/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("   -fPIE ","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/core/deps/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/core/deps/libchdr/deps/lzma-22.01/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/core/deps/libchdr/deps/zlib-1.2.12/Debug${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "chdr-benchmark";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		2CA59A58387B48288C0AC7EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		4231E290EF28497C9E5883DA /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		43216E63F5914AD4A9729620 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		4F229C806AA847E3AE747B3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libchdr/lzma,"../flycast/core/deps/libchdr/deps/zlib-1.2.12","../cmake/core/deps/libchdr/deps/zlib-1.2.12",../cmake/core/deps/libchdr/include,../flycast/core/deps/libchdr/include,"../flycast/core/deps/libchdr/deps/lzma-22.01/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("       -DNDEBUG -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "chdr-static";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		5ACC3512B37E4850AAF1B645 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libchdr/include,"$(inherited)");
+				INFOPLIST_FILE = "../cmake/core/deps/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("       -DNDEBUG -fPIE ","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/core/deps/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/core/deps/libchdr/deps/lzma-22.01/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/core/deps/libchdr/deps/zlib-1.2.12/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "chdr-benchmark";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		5DE012944D584CABB0588C93 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = RelWithDebInfo;
+		};
+		67C9422E913D4BEE9B93CC25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		6CF4B34ECB6240A494FFA394 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libchdr/include,"$(inherited)");
+				INFOPLIST_FILE = "../cmake/core/deps/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("       -DNDEBUG -fPIE ","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/core/deps/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/core/deps/libchdr/deps/lzma-22.01/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/core/deps/libchdr/deps/zlib-1.2.12/Release${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "chdr-benchmark";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		80FCA6FD2A0A4873B23A4908 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = MinSizeRel;
+		};
+		95D3E09492724DC99B76890B /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		9933EF82A0A64584BB45C1D8 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libchdr/lzma,"../flycast/core/deps/libchdr/deps/zlib-1.2.12","../cmake/core/deps/libchdr/deps/zlib-1.2.12",../cmake/core/deps/libchdr/include,../flycast/core/deps/libchdr/include,"../flycast/core/deps/libchdr/deps/lzma-22.01/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("    -DNDEBUG -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "chdr-static";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		A3E3CC0B360244ECAC0088CF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../cmake/core/deps/libchdr/deps/zlib-1.2.12",../flycast,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("       -DNDEBUG -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = z;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		B1294B657E494C23B48C55CD /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		B3053AF558BE4A51A6864554 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",_7ZIP_ST,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../flycast/core/deps/libchdr/deps/lzma-22.01/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("   -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lzma;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		BC8F8276A5974A45B43875C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		BE80BE1E253544BD8A4BE067 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../cmake/core/deps/libchdr/deps/zlib-1.2.12",../flycast,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("    -DNDEBUG -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = z;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		CE1E691877CA41118888F25A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",_7ZIP_ST,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../flycast/core/deps/libchdr/deps/lzma-22.01/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("       -DNDEBUG -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lzma;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		D98BF5B7133C497D90CE248A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../cmake/core/deps/libchdr/deps/zlib-1.2.12",../flycast,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("       -DNDEBUG -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = z;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		DBA86205A139402FA897A1B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libchdr/lzma,"../flycast/core/deps/libchdr/deps/zlib-1.2.12","../cmake/core/deps/libchdr/deps/zlib-1.2.12",../cmake/core/deps/libchdr/include,../flycast/core/deps/libchdr/include,"../flycast/core/deps/libchdr/deps/lzma-22.01/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("   -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "chdr-static";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E200FA125FAE43C7B4D7FC9C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = Release;
+		};
+		E39F012A94C140F083CCE96F /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		E84808E07881413F9017CD11 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		EA1DE1E55CCE4555BD96D8C0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../cmake/core/deps/libchdr/deps/zlib-1.2.12",../flycast,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("   -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = z;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		EC477F9C56E34C4E95DC3CDB /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../flycast/core/deps/libchdr/include,"$(inherited)");
+				INFOPLIST_FILE = "../cmake/core/deps/libchdr/tests/CMakeFiles/chdr-benchmark.dir/Info.plist";
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("    -DNDEBUG -fPIE ","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/core/deps/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/core/deps/libchdr/deps/lzma-22.01/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/core/deps/libchdr/deps/zlib-1.2.12/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "chdr-benchmark";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		F0165CD49F8341AFB5237758 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				BUILD_DIR = ../lib;
+			};
+			name = Debug;
+		};
+		F683DFA680CE484EB2B13A75 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		F881550E9DEF43FFBE04EF5F /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",_7ZIP_ST,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../flycast/core/deps/libchdr/deps/lzma-22.01/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("    -DNDEBUG -fPIC ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = lzma;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		FB2CA927B1B446DBB426826D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		FD616D98D3AF4C9E90B9B5E8 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		614B30991CFC4BF6A24FBA0C /* Build configuration list for PBXNativeTarget "lzma" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3053AF558BE4A51A6864554 /* Debug */,
+				1991CEBCB9AF44239563656E /* Release */,
+				F881550E9DEF43FFBE04EF5F /* MinSizeRel */,
+				CE1E691877CA41118888F25A /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		62534BA000E9496789D1A520 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC8F8276A5974A45B43875C6 /* Debug */,
+				67C9422E913D4BEE9B93CC25 /* Release */,
+				FD616D98D3AF4C9E90B9B5E8 /* MinSizeRel */,
+				B1294B657E494C23B48C55CD /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		832D216D90B0470CAF20FA53 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				43216E63F5914AD4A9729620 /* Debug */,
+				2CA59A58387B48288C0AC7EE /* Release */,
+				95D3E09492724DC99B76890B /* MinSizeRel */,
+				E84808E07881413F9017CD11 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8CE51528231B438E9BDF4DEF /* Build configuration list for PBXProject "chdr" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0165CD49F8341AFB5237758 /* Debug */,
+				E200FA125FAE43C7B4D7FC9C /* Release */,
+				80FCA6FD2A0A4873B23A4908 /* MinSizeRel */,
+				5DE012944D584CABB0588C93 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		94F57B544784478D9A4F984A /* Build configuration list for PBXNativeTarget "chdr-benchmark" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1CD683B7778341ABB029A58F /* Debug */,
+				6CF4B34ECB6240A494FFA394 /* Release */,
+				EC477F9C56E34C4E95DC3CDB /* MinSizeRel */,
+				5ACC3512B37E4850AAF1B645 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		98243C13AAB7436DAAC66A98 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F683DFA680CE484EB2B13A75 /* Debug */,
+				FB2CA927B1B446DBB426826D /* Release */,
+				E39F012A94C140F083CCE96F /* MinSizeRel */,
+				4231E290EF28497C9E5883DA /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C4DAD5C8FD9D426CA8CCA208 /* Build configuration list for PBXNativeTarget "zlib" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EA1DE1E55CCE4555BD96D8C0 /* Debug */,
+				A3E3CC0B360244ECAC0088CF /* Release */,
+				BE80BE1E253544BD8A4BE067 /* MinSizeRel */,
+				D98BF5B7133C497D90CE248A /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E0DBA2799B9242599A9EC3E2 /* Build configuration list for PBXNativeTarget "chdr-static" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DBA86205A139402FA897A1B3 /* Debug */,
+				4F229C806AA847E3AE747B3B /* Release */,
+				9933EF82A0A64584BB45C1D8 /* MinSizeRel */,
+				10E604D84D05473C96CDA131 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0BFF95BE38904AB7AA47FA43 /* Project object */;
+}

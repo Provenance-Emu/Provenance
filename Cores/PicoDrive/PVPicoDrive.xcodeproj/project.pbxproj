@@ -1661,6 +1661,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = iphoneos;
+				SYMROOT = "${SRCROOT}/build";
 			};
 			name = Debug;
 		};
@@ -1709,6 +1710,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				SDKROOT = iphoneos;
+				SYMROOT = "${SRCROOT}/build";
 			};
 			name = Release;
 		};
@@ -1756,6 +1758,7 @@
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				OTHER_CFLAGS = "";
 				SDKROOT = iphoneos;
+				SYMROOT = "${SRCROOT}/build";
 			};
 			name = Archive;
 		};

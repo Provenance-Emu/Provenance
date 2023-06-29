@@ -1,0 +1,56 @@
+disabled_rules:
+  - trailing_whitespace
+  - trailing_comma
+  - large_tuple
+  - nesting
+  - todo
+  - operator_whitespace
+  - colon
+  - identifier_name
+
+opt_in_rules: # some rules are only opt-in
+  - empty_count
+  - yoda_condition
+  # Find all the available rules by running:
+  # swiftlint rules
+
+included:
+  - Sources
+  - Tests
+  - Examples/RxRealmDemo-iOS
+
+# excluded: # paths to ignore during linting. Takes precedence over `included`.
+
+# configurable rules can be customized from this configuration file
+# binary rules can set their severity level
+force_cast: warning # implicitly
+force_try:
+  severity: warning # explicitly
+# rules that have both warning and error levels, can set just the warning level
+# implicitly
+line_length: 180
+# they can set both implicitly with an array
+function_body_length: 120
+type_body_length:
+  - 400 # warning
+  - 500 # error
+# or they can set both explicitly
+file_length:
+  warning: 500
+  error: 1200
+# naming rules can set warnings/errors for min_length and max_length
+# additionally they can set excluded names
+generic_type_name:
+  min_length: 1 # only warning
+  max_length: 30
+
+type_name:
+  min_length: 2 # only warning
+  max_length: # warning and error
+    warning: 100
+    error: 120
+  excluded: iPhone # excluded via string
+identifier_name:
+  min_length:
+    warning: 1
+reporter: "xcode"

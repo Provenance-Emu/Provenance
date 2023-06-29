@@ -1,0 +1,73 @@
+name: RxRealmDemo
+options:
+  minimumXcodeGenVersion: "2.15.1"
+  developmentLanguage: en
+  usesTabs: false
+  indentWidth: 2
+  tabWidth: 2
+  xcodeVersion: "1220"
+  deploymentTarget:
+    iOS: "11.0"
+  defaultConfig: "Release"
+configs:
+  Debug: debug
+  Release: release
+attributes:
+  ORGANIZATIONNAME: RxSwiftCommunity
+schemes:
+  RxRealmDemo-iOS:
+    scheme: {}
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        RxRealmDemo-iOS: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+  # RxRealmDemo-tvOS:
+  #   scheme: {}
+  #   build:
+  #     parallelizeBuild: true
+  #     buildImplicitDependencies: true
+  #     targets:
+  #       RxRealmDemo-tvOS: all
+  #   run:
+  #     config: Debug
+  #   profile:
+  #     config: Release
+  #   analyze:
+  #     config: Debug
+  #   archive:
+  #     config: Release
+  #     revealArchiveInOrganizer: true
+targets:
+  RxRealmDemo-iOS:
+    type: application
+    platform: iOS
+    sources: [RxRealmDemo-iOS]
+    settings:
+      INFOPLIST_FILE: RxRealmDemo-iOS/Info.plist
+      PRODUCT_NAME: RxRealmDemo-iOS
+      OTHER_LDFLAGS: -ObjC
+      PRODUCT_BUNDLE_IDENTIFIER: RxSwiftCommunity.RxRealm.iOSDemo
+      ASSETCATALOG_COMPILER_APPICON_NAME: $(APP_ICON_NAME)
+      DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+  # RxRealmDemo-tvOS:
+  #   type: application
+  #   platform: tvOS
+  #   deploymentTarget: "10.0"
+  #   sources: [RxRealmDemo-tvOS]
+  #   settings:
+  #     INFOPLIST_FILE: RxRealmDemo-tvOS/Info.plist
+  #     PRODUCT_NAME: RxRealmDemo-tvOS
+  #     OTHER_LDFLAGS: -ObjC
+  #     PRODUCT_BUNDLE_IDENTIFIER: RxSwiftCommunity.RxRealm.tvOSDemo
+  #     ASSETCATALOG_COMPILER_APPICON_NAME: $(APP_ICON_NAME)
+  #     DEBUG_INFORMATION_FORMAT: dwarf-with-dsym

@@ -82,46 +82,209 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
     [self useRetroArchController:self.retroArchControls];
 }
 - (void)processKeyPress:(int)key pressed:(bool)pressed {
-    if (!self.bindAnalogKeys)
-        return;
+    if (self.bindAnalogKeys) {
+        switch (key) {
+                static float dPadX=0;
+                static float dPadY=0;
+                static float leftXAxis=0;
+                static float leftYAxis=0;
+                static float rightXAxis=0;
+                static float rightYAxis=0;
+            case(KEY_S): // down
+                leftYAxis=pressed?-1.0:leftYAxis<0 ? 0 : leftYAxis;
+                [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
+                break;
+            case(KEY_W): // up
+                leftYAxis=pressed?1.0:leftYAxis>0 ? 0 : leftYAxis;
+                [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
+                break;
+            case(KEY_D):  // right
+                leftXAxis=pressed?1.0:leftXAxis>0 ? 0 :leftXAxis;
+                [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
+                break;
+            case(KEY_A):  // left
+                leftXAxis=pressed?-1.0:leftXAxis<0 ? 0 : leftXAxis;
+                [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
+                break;
+            case(KEY_O): // up
+                rightYAxis=pressed?1.0:rightYAxis > 0 ? 0 : rightYAxis;
+                [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+                if (self.bindAnalogDpad)
+                    [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+               break;
+            case(KEY_L): // down
+                rightYAxis=pressed?-1.0:rightYAxis < 0 ? 0 : rightYAxis;
+                [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+                if (self.bindAnalogDpad)
+                    [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+               break;
+            case(KEY_K):  // left
+                rightXAxis=pressed?-1.0:rightXAxis < 0 ? 0 : rightXAxis;
+                [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+                if (self.bindAnalogDpad)
+                    [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+                break;
+            case(KEY_Semicolon):  // right
+                rightXAxis=pressed?1.0:rightXAxis > 0 ? 0 : rightXAxis;
+                [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+                if (self.bindAnalogDpad)
+                    [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
+                break;
+            case(KEY_Up):
+                dPadY = pressed ? 1.0 : dPadY > 0 ? 0 : dPadY;
+                [touch_controller.extendedGamepad.dpad setValueForXAxis:dPadX yAxis:dPadY];
+                break;
+            case(KEY_Down):
+                dPadY = pressed ? -1.0 : dPadY < 0 ? 0.0 : dPadY;
+                [touch_controller.extendedGamepad.dpad setValueForXAxis:dPadX yAxis:dPadY];
+                break;
+            case(KEY_Left):
+                dPadX = pressed ? -1.0 : dPadX < 0 ? 0.0 : dPadX;
+                [touch_controller.extendedGamepad.dpad setValueForXAxis:dPadX yAxis:dPadY];
+                break;
+            case(KEY_Right):
+                dPadX = pressed ? 1.0 : dPadX > 0 ? 0.0 : dPadX;
+                [touch_controller.extendedGamepad.dpad setValueForXAxis:dPadX yAxis:dPadY];
+                break;
+            case(KEY_F):
+                [touch_controller.extendedGamepad.buttonB setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_Space):
+                [touch_controller.extendedGamepad.buttonA setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_Q):
+                [touch_controller.extendedGamepad.buttonX setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_E):
+                [touch_controller.extendedGamepad.buttonY setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_G):
+                [touch_controller.extendedGamepad.buttonY setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_Y):
+                [touch_controller.extendedGamepad.buttonX setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_J):
+                [touch_controller.extendedGamepad.buttonB setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_B):
+                [touch_controller.extendedGamepad.buttonA setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_N):
+                [touch_controller.extendedGamepad.buttonA setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_Tab):
+                [touch_controller.extendedGamepad.leftShoulder setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_LeftShift):
+                [touch_controller.extendedGamepad.leftTrigger 
+                    setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_X):
+                [touch_controller.extendedGamepad.leftThumbstickButton setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_R):
+                [touch_controller.extendedGamepad.rightShoulder setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_V):
+                [touch_controller.extendedGamepad.rightTrigger setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_C):
+                [touch_controller.extendedGamepad.rightThumbstickButton setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_U):
+                [touch_controller.extendedGamepad.buttonOptions setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_I):
+                [touch_controller.extendedGamepad.buttonMenu 
+                    setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_Slash):
+                [touch_controller.extendedGamepad.buttonOptions setValue:pressed ? 1.0 : 0.0];
+                break;
+            case(KEY_RightShift):
+                [touch_controller.extendedGamepad.buttonMenu 
+                    setValue:pressed ? 1.0 : 0.0];
+                break;
+            default:
+                break;
+        }
+    }
+    if (self.bindNumKeys) {
+        switch (key) {
+            case(KEY_Z):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP1, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_X):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP2, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_C):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP3, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_A):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP4, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_S):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP5, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_D):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP6, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_Q):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP7, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_W):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP8, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_E):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP9, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_Up):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP8, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_Down):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP2, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_Left):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP4, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_Right):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP6, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_LeftControl):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP0, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_LeftAlt):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP_PERIOD, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_LeftShift):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP_ENTER, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_V):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP_ENTER, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_F):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP_PLUS, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_R):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP_MINUS, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_3):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP_MULTIPLY, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_2):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP_DIVIDE, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            case(KEY_4):
+                apple_direct_input_keyboard_event(pressed, (int)RETROK_KP_EQUALS, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+                break;
+            default:
+                break;
+        }
+    }
     switch (key) {
-        static float leftXAxis=0;
-        static float leftYAxis=0;
-        static float rightXAxis=0;
-        static float rightYAxis=0;
-        case(22): // s
-            leftYAxis=pressed?-1.0:0;
-            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
-            break;
-        case(26): // w
-            leftYAxis=pressed?1.0:0;
-            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
-            break;
-        case(7):  // d
-            leftXAxis=pressed?1.0:0;
-            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
-            break;
-        case(4):  // a
-            leftXAxis=pressed?-1.0:0;
-            [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:leftXAxis yAxis:leftYAxis];
-            break;
-        case(11): // h
-            rightYAxis=pressed?-1.0:0;
-            [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
-            break;
-        case(28): // y
-            rightYAxis=pressed?1.0:0;
-            [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
-            break;
-        case(13):  // j
-            rightXAxis=pressed?1.0:0;
-            [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
-            break;
-        case(10):  // g
-            rightXAxis=pressed?-1.0:0;
-            [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:rightXAxis yAxis:rightYAxis];
-            break;
-        default:
+        case(KEY_RightAlt):
+            apple_direct_input_keyboard_event(pressed, (int)RETROK_ESCAPE, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
             break;
     }
 }
@@ -227,17 +390,11 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
             controller.extendedGamepad.dpad.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
                 [touch_controller.extendedGamepad.dpad setValueForXAxis:xValue yAxis:yValue];
             };
-            controller.extendedGamepad.leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput* xAxis, float value) {
-                [touch_controller.extendedGamepad.leftThumbstick.xAxis setValue:value];
+            controller.extendedGamepad.leftThumbstick.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
+                [touch_controller.extendedGamepad.leftThumbstick setValueForXAxis:xValue yAxis:yValue];
             };
-            controller.extendedGamepad.leftThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput* yAxis, float value) {
-                [touch_controller.extendedGamepad.leftThumbstick.yAxis setValue:value];
-            };
-            controller.extendedGamepad.rightThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput* xAxis, float value) {
-                [touch_controller.extendedGamepad.rightThumbstick.xAxis setValue:value];
-            };
-            controller.extendedGamepad.rightThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput* yAxis, float value) {
-                [touch_controller.extendedGamepad.rightThumbstick.yAxis setValue:value];
+            controller.extendedGamepad.rightThumbstick.valueChangedHandler = ^(GCControllerDirectionPad *dpad, float xValue, float yValue) {
+                [touch_controller.extendedGamepad.rightThumbstick setValueForXAxis:xValue yAxis:yValue];
             };
             controller.extendedGamepad.leftThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 [touch_controller.extendedGamepad.leftThumbstickButton setValue:value];
@@ -255,9 +412,6 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
             controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 [touch_controller.extendedGamepad.buttonHome setValue:value];
             };
-            //controller.extendedGamepad.buttonMenu.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-            //    [[NSNotificationCenter defaultCenter] postNotificationName:@"PauseGame" object:nil userInfo:nil];
-            //};
             #endif
         }
     }
@@ -294,25 +448,19 @@ void apple_gamecontroller_joypad_disconnect(GCController* controller);
                         settings->paths.path_overlay,
                         new_overlay.UTF8String
                 );
-                should_update=true;
+                settings->bools.input_overlay_auto_scale=true;
+                settings->floats.input_overlay_opacity=0.3;
                 NSLog(@"Updating %s to %s\n", original_overlay.UTF8String, new_overlay.UTF8String);
             }
         }
+        settings->bools.input_overlay_enable=true;
+        should_update=true;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"HideTouchControls" object:nil userInfo:nil];
     } else {
+        should_update=true;
+        settings->bools.input_overlay_enable=false;
         NSLog(@"Option: Don't Use Retro arch controller\n");
-        settings_t *settings                     = config_get_ptr();
-        NSString *overlay=@RETROARCH_PVOVERLAY;
-        NSString *new_overlay =  [overlay stringByReplacingOccurrencesOfString:@"/RetroArch"
-         withString:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch" ]];
-        if (![new_overlay isEqualToString:original_overlay]) {
-            configuration_set_string(settings,
-                    settings->paths.path_overlay,
-                    new_overlay.UTF8String
-            );
-            should_update=true;
-            NSLog(@"Updating %s to %s\n", original_overlay.UTF8String, new_overlay.UTF8String);
-        }
+        
         [[NSNotificationCenter defaultCenter] postNotificationName:@"ShowTouchControls" object:nil userInfo:nil];
     }
     if (should_update) {
@@ -938,6 +1086,10 @@ void apple_direct_input_keyboard_event(bool down,
           character, (enum retro_mod)mod, device);
 }
 
+void apple_init_small_keyboard() {
+    settings_t *settings         = config_get_ptr();
+    settings->bools.input_small_keyboard_enable = true;
+}
 #if TARGET_OS_IPHONE
 static bool apple_input_handle_small_keyboard(unsigned* code, bool down)
 {

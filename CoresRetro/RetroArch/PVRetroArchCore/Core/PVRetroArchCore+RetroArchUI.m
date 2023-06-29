@@ -10,6 +10,7 @@
 #import "PVRetroArchCore+Controls.h"
 #import "PVRetroArchCore+Audio.h"
 #import "PVRetroArchCore+Video.h"
+#import "PVRetroArchCore+Archive.h"
 #import <PVRetroArch/RetroArch-Swift.h>
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
@@ -41,11 +42,13 @@
 #include "../../retroarch.h"
 #include "../../verbosity.h"
 #include "../../paths.h"
+#include "../../audio/audio_driver.h"
 
 #ifdef HAVE_MENU
 #include "../../menu/menu_setting.h"
 #endif
 #import <AVFoundation/AVFoundation.h>
+
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
 apple_frontend_settings_t apple_frontend_settings;
@@ -90,8 +93,50 @@ int argc =  1;
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
+    if (!self.isOn) {
+        return;
+    }
     command_event(flag ? CMD_EVENT_PAUSE : CMD_EVENT_UNPAUSE, NULL);
+    runloop_state_t *runloop_st = runloop_state_get_ptr();
+    if (flag) {
+        NSLog(@"RetroArch: Pause\n");
+        runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
+        runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
+        runloop_st->flags |= RUNLOOP_FLAG_PAUSED;
+        runloop_st->flags |= RUNLOOP_FLAG_IDLE;
+    } else {
+        NSLog(@"RetroArch: UnPause\n");
+        runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
+        runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
+        runloop_st->flags &= ~RUNLOOP_FLAG_PAUSED;
+        runloop_st->flags &= ~RUNLOOP_FLAG_IDLE;
+        [self setSpeed];
+    }
     [super setPauseEmulation:flag];
+}
+- (void)setSpeed {
+    settings_t *settings = config_get_ptr();
+    runloop_state_t *runloop_st = runloop_state_get_ptr();
+    apple_direct_input_keyboard_event(false, (int)RETROK_F14, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+    apple_direct_input_keyboard_event(false, (int)RETROK_F15, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+    runloop_st->flags &= ~RUNLOOP_FLAG_FASTMOTION;
+    runloop_st->flags &= ~RUNLOOP_FLAG_SLOWMOTION;
+    runloop_st->flags &= ~RUNLOOP_FLAG_PAUSED;
+    runloop_st->flags &= ~RUNLOOP_FLAG_IDLE;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
+        settings_t *settings = config_get_ptr();
+        float sm = self.smSpeed / 100.0;
+        float ff = self.ffSpeed / 100.0;
+        settings->floats.slowmotion_ratio  = sm;
+        settings->floats.fastforward_ratio = ff;
+        if (self.gameSpeed > 1) {
+            NSLog(@"RetroArch:fast forward %f", ff);
+            apple_direct_input_keyboard_event(true, (int)RETROK_F15, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+        } else if (self.gameSpeed < 1) {
+            NSLog(@"RetroArch:slow motion %f", sm);
+            apple_direct_input_keyboard_event(true, (int)RETROK_F14, 0, 0, (int)RETRO_DEVICE_KEYBOARD);
+        }
+    });
 }
 
 - (void)stopEmulation {
@@ -119,7 +164,6 @@ int argc =  1;
 }
 - (void)setOptionValues {
 	g_gs_preference = self.gsPreference;
-
 }
 
 void extract_bundles();
@@ -127,7 +171,7 @@ void extract_bundles();
 	NSFileManager *fm = [[NSFileManager alloc] init];
 	NSString *fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/retroarch.cfg",
 						  self.batterySavesPath];
-    NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.1.1.cfg",
+    NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.2.22.cfg",
                          self.batterySavesPath];
 	if (![fm fileExistsAtPath: fileName] || ![fm fileExistsAtPath: verFile] || [self shouldUpdateAssets]) {
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"retroarch.cfg" ofType:nil];
@@ -159,9 +203,11 @@ void extract_bundles();
                      to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/overlays/pv_ui_overlay" ]];
     [self syncResource:[[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"pv_ui_overlay/pv_ui.cfg" ofType:nil]
                      to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/overlays/pv_ui_overlay/pv_ui.cfg" ]];
+    [self syncResources:[[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"mame_plugins" ofType:nil]
+                     to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system/mame/plugins" ]];
     if (!self.retroArchControls) {
         content = [content stringByAppendingString:
-                       @"input_overlay = \"~/Documents/RetroArch/overlays/pv_ui_overlay/pv_ui.cfg\"\n"
+                       @"input_overlay_enable = \"false\"\n"
         ];
     }
     if (self.coreOptionConfigPath.length > 0 && self.coreOptionConfig.length > 0) {
@@ -176,6 +222,8 @@ void extract_bundles();
     } else if (self.coreOptionConfig.length > 0) {
         content=[content stringByAppendingString:self.coreOptionConfig];
     }
+    content = [content stringByAppendingString:
+               [NSString stringWithFormat:@"cache_directory = \"%@\"\n", self.batterySavesPath]];
     fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/opt.cfg", self.batterySavesPath];
     [content writeToFile:fileName
               atomically:NO
@@ -209,6 +257,12 @@ void extract_bundles();
     [self writeConfigFile];
     [self syncResources:self.BIOSPath
                      to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system" ]];
+}
+- (void)setVolume {
+    [self parseOptions];
+    settings_t *settings = config_get_ptr();
+    settings->floats.audio_mixer_volume = 92.0 * self.volume/92.0 - 80;
+    command_event_set_mixer_volume(settings, 0);
 }
 - (void)syncResources:(NSString*)from to:(NSString*)to {
 	if (!from)
@@ -334,6 +388,7 @@ void extract_bundles();
 			NSLog(@"Found Module %s\n", sysPath.UTF8String);
 		}
 		if ([fm fileExistsAtPath: romPath]) {
+            romPath=[self checkROM:romPath];
 			NSLog(@"Found Game %s\n", romPath.UTF8String);
 		}
 		// Core Identifier is the dylib file name
@@ -342,16 +397,23 @@ void extract_bundles();
 		argv=param;
 		NSLog(@"Loading %s %s\n", param[2], param[3]);
 	}
+    if (processing_init) {
+        [self extractArchive:[[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"assets.zip" ofType:nil] toDestination:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch"] overwrite:true];
+        processing_init=false;
+    }
 	NSError *error;
-	[[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:&error];
+    [[AVAudioSession sharedInstance]
+     setCategory:AVAudioSessionCategoryAmbient
+     mode:AVAudioSessionModeDefault
+     options:AVAudioSessionCategoryOptionAllowBluetooth |
+     AVAudioSessionCategoryOptionAllowAirPlay |
+     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+     AVAudioSessionCategoryOptionMixWithOthers
+     error:&error];
 	[self refreshSystemConfig];
 	[self showGameView];
 	rarch_main(argc, argv, NULL);
 	_isInitialized=true;
-	if (processing_init) {
-		extract_bundles();
-		processing_init=false;
-	}
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
         runloop_state_t *runloop_st = runloop_state_get_ptr();
         runloop_st->flags &= ~RUNLOOP_FLAG_OVERRIDES_ACTIVE;
@@ -359,6 +421,17 @@ void extract_bundles();
 	iterate_observer = CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting, true, 0, rarch_draw_observer, 0);
 	CFRunLoopAddObserver(CFRunLoopGetMain(), iterate_observer, kCFRunLoopCommonModes);
 	apple_gamecontroller_joypad_init(NULL);
+    [self setupJoypad];
+}
+- (void)setupJoypad {
+    NSLog(@"Analog Dpad %d", self.bindAnalogDpad);
+    if (self.bindAnalogDpad) {
+        settings_t *settings = config_get_ptr();
+        settings->uints.input_analog_dpad_mode[0]=ANALOG_DPAD_LSTICK_FORCED;
+    } else {
+        settings_t *settings = config_get_ptr();
+        settings->uints.input_analog_dpad_mode[0]=ANALOG_DPAD_NONE;
+    }
 }
 
 - (void)setupWindow {
@@ -444,10 +517,12 @@ void extract_bundles();
 	NSLog(@"In Show Game View now\n");
     [self setupWindow];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [self setVolume];
 		command_event(CMD_EVENT_AUDIO_START, NULL);
+        command_event(CMD_EVENT_UNPAUSE, NULL);
+        [self useRetroArchController:self.retroArchControls];
 	});
 }
-
 #pragma mark - ApplePlatform
 -(id)renderView { return _renderView; }
 -(bool)hasFocus { return YES; }
@@ -577,8 +652,10 @@ void bundle_decompressed(retro_task_t *task,
    if (err)
 	   NSLog(@"%s", err);
    if (dec) {
-	  if (!err)
-		 command_event(CMD_EVENT_REINIT, NULL);
+       [_current useRetroArchController:_current.retroArchControls];
+       if (!err) {
+           //command_event(CMD_EVENT_REINIT, NULL);
+       }
 	  free(dec->source_file);
 	  free(dec);
    }
@@ -607,3 +684,6 @@ void main_msg_queue_push(const char *msg,
 	NSLog(@"MSGQ: %s\n", msg);
 }
 
+void menuToggle() {
+    command_event(CMD_EVENT_MENU_TOGGLE, NULL);
+}

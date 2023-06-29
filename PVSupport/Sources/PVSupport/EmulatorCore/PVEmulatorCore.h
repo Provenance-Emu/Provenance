@@ -158,7 +158,10 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 @property (nonatomic, readonly) NSUInteger audioBufferCount;
 @property (nonatomic, readonly) NSUInteger audioBitDepth;
 @property (nonatomic, readonly) BOOL isEmulationPaused;
+@property (nonatomic, assign) BOOL isOn;
 @property (nonatomic, readonly, nullable) const void * videoBuffer;
+
+@property (nonatomic, assign) BOOL extractArchive;
 
 - (void)startEmulation NS_REQUIRES_SUPER;
 - (void)resetEmulation;
@@ -194,4 +197,5 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
 - (void)sendEvent:(UIEvent *)event;
 + (void)setClassName:(NSString *)name;
 + (void)setSystemName:(NSString *)name;
+- (void)initialize;
 @end

@@ -79,11 +79,14 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
         _skipEmulationLoop       = NO;
         _alwaysUseMetal          = NO;
         _skipLayout              = NO;
+        _extractArchive          = YES;
+        _isOn                    = NO;
 	}
 	
 	return self;
 }
-
+- (void)initialize {
+}
 - (void)dealloc {
     [self stopEmulation];
 
@@ -123,6 +126,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 #endif
 			self.isRunning  = YES;
 			shouldStop = NO;
+            self.isOn = YES;
             self.gameSpeed = GameSpeedNormal;
             if (!_skipEmulationLoop) {
                 MAKEWEAK(self);
@@ -220,6 +224,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     }
         //    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
         //    [self.emulationLoopThreadLock unlock];
+    self.isOn = false;
 }
 
 - (void)updateControllers {

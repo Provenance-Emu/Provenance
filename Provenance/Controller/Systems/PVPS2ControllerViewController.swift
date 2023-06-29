@@ -49,64 +49,25 @@ final class PVPS2ControllerViewController: PVControllerViewController<PVPS2Syste
     override func prelayoutSettings() {
         //alwaysRightAlign = true
         alwaysJoypadOverDpad = false
-        joyPadScale = 0.5
-        joyPad2Scale = 0.5
+        joyPadScale = 0.35
+        joyPad2Scale = 0.35
     }
-
     override func dPad(_ dPad: JSDPad, joystick2 value: JoystickValue) {
-        var up:CGFloat = value.y < 0.5 ? CGFloat(1 - (value.y * 2)) : 0.0
-        var down:CGFloat = value.y > 0.5 ? CGFloat((value.y - 0.5) * 2) : 0.0
-        var left:CGFloat = value.x < 0.5 ? CGFloat(1 - (value.x * 2)) : 0.0
-        var right:CGFloat = value.x > 0.5 ? CGFloat((value.x - 0.5) * 2) : 0.0
+        var y:CGFloat = -CGFloat(value.y - 0.5) * 5
+        var x:CGFloat = CGFloat(value.x - 0.5) * 5
 
-        up = min(up, 1.0)
-        down = min(down, 1.0)
-        left = min(left, 1.0)
-        right = min(right, 1.0)
-
-        up = max(up, 0.0)
-        down = max(down, 0.0)
-        left = max(left, 0.0)
-        right = max(right, 0.0)
-
-        // print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
-        emulatorCore.didMoveJoystick(.rightAnalogUp, withValue: up, forPlayer: 0)
-        if down != 0 {
-            emulatorCore.didMoveJoystick(.rightAnalogDown, withValue: down, forPlayer: 0)
-        }
-        emulatorCore.didMoveJoystick(.rightAnalogLeft, withValue: left, forPlayer: 0)
-        if right != 0 {
-            emulatorCore.didMoveJoystick(.rightAnalogRight, withValue: right, forPlayer: 0)
-        }
+        y = y < -1 ? -1 : y > 1 ? 1 : y;
+        x = x < -1 ? -1 : x > 1 ? 1 : x;
+        emulatorCore.didMoveJoystick(.rightAnalog, withXValue: x, withYValue: y, forPlayer: 0)
     }
-    
     override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
-        var up:CGFloat = value.y < 0.5 ? CGFloat(1 - (value.y * 2)) : 0.0
-        var down:CGFloat = value.y > 0.5 ? CGFloat((value.y - 0.5) * 2) : 0.0
-        var left:CGFloat = value.x < 0.5 ? CGFloat(1 - (value.x * 2)) : 0.0
-        var right:CGFloat = value.x > 0.5 ? CGFloat((value.x - 0.5) * 2) : 0.0
+        var y:CGFloat = -CGFloat(value.y - 0.5) * 5
+        var x:CGFloat = CGFloat(value.x - 0.5) * 5
 
-        up = min(up, 1.0)
-        down = min(down, 1.0)
-        left = min(left, 1.0)
-        right = min(right, 1.0)
-
-        up = max(up, 0.0)
-        down = max(down, 0.0)
-        left = max(left, 0.0)
-        right = max(right, 0.0)
-
-        // print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
-        emulatorCore.didMoveJoystick(.leftAnalogUp, withValue: up, forPlayer: 0)
-        if down != 0 {
-            emulatorCore.didMoveJoystick(.leftAnalogDown, withValue: down, forPlayer: 0)
-        }
-        emulatorCore.didMoveJoystick(.leftAnalogLeft, withValue: left, forPlayer: 0)
-        if right != 0 {
-            emulatorCore.didMoveJoystick(.leftAnalogRight, withValue: right, forPlayer: 0)
-        }
+        y = y < -1 ? -1 : y > 1 ? 1 : y;
+        x = x < -1 ? -1 : x > 1 ? 1 : x;
+        emulatorCore.didMoveJoystick(.leftAnalog, withXValue: x, withYValue: y, forPlayer: 0)
     }
-    
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)

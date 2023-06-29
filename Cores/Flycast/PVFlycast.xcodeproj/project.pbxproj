@@ -3,38 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
-
-/* Begin PBXAggregateTarget section */
-		9333C7F6298941B60042CD99 /* BuildFlyCastRetroArchModule */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 9333C7F7298941B70042CD99 /* Build configuration list for PBXAggregateTarget "BuildFlyCastRetroArchModule" */;
-			buildPhases = (
-				9333C7FA298941BE0042CD99 /* ShellScript */,
-			);
-			dependencies = (
-				9333C7FC298941D30042CD99 /* PBXTargetDependency */,
-			);
-			name = BuildFlyCastRetroArchModule;
-			productName = BuildFlyCastRetroArchModule;
-		};
-		934BE793296E6AD200FB9933 /* FlycastAdjustments */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 934BE794296E6AD200FB9933 /* Build configuration list for PBXAggregateTarget "FlycastAdjustments" */;
-			buildPhases = (
-				934BE798296E6AD900FB9933 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = FlycastAdjustments;
-			productName = FlycastAdjustments;
-		};
-/* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
 		934BE785296E638800FB9933 /* ta_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934BE784296E638800FB9933 /* ta_util.cpp */; };
-		934BE78D296E663500FB9933 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36AE8C2295F0A7F00CC9D4F /* libz.tbd */; };
 		934BE7A5296E6BA200FB9933 /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B39821F029239F4300A82429 /* stdstring.c */; };
 		934BE7A6296E6BA200FB9933 /* retro_dirent.c in Sources */ = {isa = PBXBuildFile; fileRef = B398219229239F4300A82429 /* retro_dirent.c */; };
 		934BE7A7296E6BA200FB9933 /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = B398219129239F4300A82429 /* file_path.c */; };
@@ -52,10 +25,8 @@
 		934BE7B4296E6BA200FB9933 /* oslib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F5D29239F4A00A82429 /* oslib.cpp */; };
 		934BE7B6296E6BA200FB9933 /* rglgen.c in Sources */ = {isa = PBXBuildFile; fileRef = B398218C29239F4300A82429 /* rglgen.c */; };
 		934BE7C3296E6C1600FB9933 /* libflycast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libflycast.a */; };
-		934BE7C4296E6C2900FB9933 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36AE9FE295F1C3000CC9D4F /* libbz2.tbd */; };
-		934BE7C6296E6CD800FB9933 /* zip_source_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE7C5296E6CD800FB9933 /* zip_source_compress.c */; };
 		934BE7D0296E978D00FB9933 /* libomp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE7CF296E978D00FB9933 /* libomp.a */; };
-		934BE93A296EB58800FB9933 /* liblibminiupnpc-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE929296EB34500FB9933 /* liblibminiupnpc-static.a */; };
+		934BE93A296EB58800FB9933 /* lib_unused_libminiupnpc-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE929296EB34500FB9933 /* lib_unused_libminiupnpc-static.a */; };
 		934BE977296EB71D00FB9933 /* upnpreplyparse.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE950296EB70700FB9933 /* upnpreplyparse.c */; };
 		934BE978296EB75100FB9933 /* receivedata.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE953296EB70800FB9933 /* receivedata.c */; };
 		934BE979296EB75A00FB9933 /* minisoap.c in Sources */ = {isa = PBXBuildFile; fileRef = 934BE942296EB70200FB9933 /* minisoap.c */; };
@@ -87,15 +58,7 @@
 		934BE994296ECF1D00FB9933 /* LzmaEnc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E1D29239F4900A82429 /* LzmaEnc.c */; };
 		934BE995296ECF1D00FB9933 /* LzmaLib.c in Sources */ = {isa = PBXBuildFile; fileRef = B3982E4429239F4A00A82429 /* LzmaLib.c */; };
 		934BE996296ED64300FB9933 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E8729239F3700A82429 /* common.cpp */; };
-		934BE998296EF9AA00FB9933 /* pvr_mem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934BE997296EF9A900FB9933 /* pvr_mem.cpp */; };
-		934BE99A296EFB2B00FB9933 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934BE999296EFB2B00FB9933 /* libretro.cpp */; };
-		934BE99B296EFB3600FB9933 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934BE999296EFB2B00FB9933 /* libretro.cpp */; };
-		934BE99C296EFB4300FB9933 /* libretro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934BE999296EFB2B00FB9933 /* libretro.cpp */; };
 		93C68C44298AE30D0008E5A3 /* PVDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 93C68C43298AE2F80008E5A3 /* PVDebug.m */; };
-		B301797F207C909E0051B93D /* libflycast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libflycast.a */; };
-		B316B4E721926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
-		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B34CFF64295F30540014C8AF /* pvr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34CFF63295F30540014C8AF /* pvr.cpp */; };
 		B34CFF65295F31300014C8AF /* elan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34CFF61295F303E0014C8AF /* elan.cpp */; };
 		B34CFF69295F31CB0014C8AF /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34CFF67295F31C70014C8AF /* md5.cpp */; };
@@ -106,15 +69,11 @@
 		B34CFF73295F327D0014C8AF /* isofs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34CFF72295F327C0014C8AF /* isofs.cpp */; };
 		B34CFF75295F329A0014C8AF /* mem_watch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34CFF74295F32990014C8AF /* mem_watch.cpp */; };
 		B34CFF82295F330C0014C8AF /* naomi2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B34CFF80295F33020014C8AF /* naomi2.cpp */; };
-		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
-		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B36AE815295F036000CC9D4F /* option.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F5E29239F4A00A82429 /* option.cpp */; };
 		B36AE816295F036000CC9D4F /* oslib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F5D29239F4A00A82429 /* oslib.cpp */; };
 		B36AE817295F036000CC9D4F /* vmu_xhair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F6229239F4A00A82429 /* vmu_xhair.cpp */; };
 		B36AE818295F036000CC9D4F /* audiostream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F5B29239F4A00A82429 /* audiostream.cpp */; };
 		B36AE81A295F036000CC9D4F /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3982F6429239F4A00A82429 /* LogManager.cpp */; };
-		B36AE81B295F037900CC9D4F /* libflycast-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B36AE80B295F034C00CC9D4F /* libflycast-libretro.a */; platformFilters = (ios, maccatalyst, ); };
 		B36AE81C295F03C900CC9D4F /* cheats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980D8B29239F3600A82429 /* cheats.cpp */; };
 		B36AE81D295F03C900CC9D4F /* nullDC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E6529239F3700A82429 /* nullDC.cpp */; };
 		B36AE81F295F03C900CC9D4F /* serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980D8A29239F3600A82429 /* serialize.cpp */; };
@@ -249,7 +208,6 @@
 		B36AE8D4295F0CBB00CC9D4F /* miniupnp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E4E29239F3700A82429 /* miniupnp.cpp */; };
 		B36AE8D5295F0CBB00CC9D4F /* picoppp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E4A29239F3700A82429 /* picoppp.cpp */; };
 		B36AE8D6295F0CBB00CC9D4F /* dns.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E4F29239F3700A82429 /* dns.cpp */; };
-		B36AE8DB295F0F3400CC9D4F /* PVFlycast.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVFlycast.mm */; };
 		B36AE8E7295F118D00CC9D4F /* sdl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E7629239F3700A82429 /* sdl.cpp */; };
 		B36AE8E8295F118D00CC9D4F /* wgl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E7129239F3700A82429 /* wgl.cpp */; };
 		B36AE8E9295F118D00CC9D4F /* xgl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E8029239F3700A82429 /* xgl.cpp */; };
@@ -277,7 +235,6 @@
 		B36AE906295F16F200CC9D4F /* memalign.c in Sources */ = {isa = PBXBuildFile; fileRef = B39821EA29239F4300A82429 /* memalign.c */; };
 		B36AE907295F170700CC9D4F /* stdstring.c in Sources */ = {isa = PBXBuildFile; fileRef = B39821F029239F4300A82429 /* stdstring.c */; };
 		B36AE908295F177300CC9D4F /* xbrz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980EFA29239F3700A82429 /* xbrz.cpp */; };
-		B36AE909295F17C200CC9D4F /* gl2ext.h in Headers */ = {isa = PBXBuildFile; fileRef = B3982E6629239F4A00A82429 /* gl2ext.h */; };
 		B36AE90A295F19D400CC9D4F /* cdipsr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B39821F229239F4300A82429 /* cdipsr.cpp */; };
 		B36AE98E295F1BA000CC9D4F /* zip_unchange_data.c in Sources */ = {isa = PBXBuildFile; fileRef = B39823D529239F4400A82429 /* zip_unchange_data.c */; };
 		B36AE98F295F1BA000CC9D4F /* zip_file_replace.c in Sources */ = {isa = PBXBuildFile; fileRef = B39823AA29239F4400A82429 /* zip_file_replace.c */; };
@@ -388,13 +345,11 @@
 		B36AE9F9295F1BA100CC9D4F /* zip_source_free.c in Sources */ = {isa = PBXBuildFile; fileRef = B39823C129239F4400A82429 /* zip_source_free.c */; };
 		B36AE9FA295F1BE300CC9D4F /* zip_algorithm_bzip2.c in Sources */ = {isa = PBXBuildFile; fileRef = B398240A29239F4400A82429 /* zip_algorithm_bzip2.c */; };
 		B36AE9FD295F1C1500CC9D4F /* zip_err_str.c in Sources */ = {isa = PBXBuildFile; fileRef = B39823C529239F4400A82429 /* zip_err_str.c */; };
-		B36AE9FF295F1C3800CC9D4F /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36AE9FE295F1C3000CC9D4F /* libbz2.tbd */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, ); };
 		B36AEA00295F1E3C00CC9D4F /* libchdr_chd.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102C29239F3700A82429 /* libchdr_chd.c */; };
 		B36AEA01295F1EAE00CC9D4F /* zip_source_file_stdio_named.c in Sources */ = {isa = PBXBuildFile; fileRef = B39823DB29239F4400A82429 /* zip_source_file_stdio_named.c */; };
 		B36AEA02295F1EB700CC9D4F /* zip_mkstempm.c in Sources */ = {isa = PBXBuildFile; fileRef = B398240F29239F4400A82429 /* zip_mkstempm.c */; };
 		B36AEA03295F1EBE00CC9D4F /* zip_random_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B39823B029239F4400A82429 /* zip_random_unix.c */; };
 		B36AEA05295F202700CC9D4F /* libchdr_flac.c in Sources */ = {isa = PBXBuildFile; fileRef = B398102F29239F3700A82429 /* libchdr_flac.c */; };
-		B36AEA06295F203F00CC9D4F /* flac.h in Headers */ = {isa = PBXBuildFile; fileRef = B39821CB29239F4300A82429 /* flac.h */; };
 		B36AEA07295F275500CC9D4F /* pico_tcp.c in Sources */ = {isa = PBXBuildFile; fileRef = B398109F29239F3700A82429 /* pico_tcp.c */; };
 		B36AEA08295F27A500CC9D4F /* pico_dev_ppp.c in Sources */ = {isa = PBXBuildFile; fileRef = B398107429239F3700A82429 /* pico_dev_ppp.c */; };
 		B36AEA09295F27A500CC9D4F /* pico_dhcp_server.c in Sources */ = {isa = PBXBuildFile; fileRef = B398107929239F3700A82429 /* pico_dhcp_server.c */; };
@@ -439,51 +394,134 @@
 		B36AEA32295F2B8100CC9D4F /* simulator-aarch64.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3980EE229239F3700A82429 /* simulator-aarch64.cc */; };
 		B36AEA33295F2B8100CC9D4F /* cpu-features-auditor-aarch64.cc in Sources */ = {isa = PBXBuildFile; fileRef = B3980EDB29239F3700A82429 /* cpu-features-auditor-aarch64.cc */; };
 		B39831DC292413EF00A82429 /* emulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3980E4629239F3700A82429 /* emulator.cpp */; };
-		B39E12A128925DD900016387 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39E12A028925DD900016387 /* PVLibRetro.framework */; };
-		B3AFCF902977A7A000A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF8F2977A7A000A01010 /* PVLogging */; };
-		B3C7621520783162009950E4 /* PVFlycast.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVFlycast.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
-		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
-		B3C76225207833DE009950E4 /* PVFlycastCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVFlycastCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C76226207833DE009950E4 /* PVFlycastCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVFlycastCore.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		9333C7FB298941D30042CD99 /* PBXContainerItemProxy */ = {
+		931C042A2A89B17D00759ACB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 934BE7A1296E6BA200FB9933;
-			remoteInfo = "flycast-retroarch-module";
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A38134A94AA54E9BB8D97552;
+			remoteInfo = GenericCodeGenFlycast;
 		};
-		9333C7FD2989420F0042CD99 /* PBXContainerItemProxy */ = {
+		931C042C2A89B17D00759ACB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9333C7F6298941B60042CD99;
-			remoteInfo = BuildFlyCastRetroArchModule;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9E3925D883E54283B9D9818B;
+			remoteInfo = MachineIndependentFlycast;
 		};
-		934BE799296E6B3600FB9933 /* PBXContainerItemProxy */ = {
+		931C042E2A89B17D00759ACB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 934BE793296E6AD200FB9933;
-			remoteInfo = FlycastAdjustments;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CEE02E2C2C304EDC9B6E7538;
+			remoteInfo = OGLCompilerFlycast;
 		};
-		934BE79B296E6B3C00FB9933 /* PBXContainerItemProxy */ = {
+		931C04302A89B17D00759ACB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 934BE793296E6AD200FB9933;
-			remoteInfo = FlycastAdjustments;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8FC3FA13C6544DA0861763AC;
+			remoteInfo = OSDependentFlycast;
 		};
-		934BE7A3296E6BA200FB9933 /* PBXContainerItemProxy */ = {
+		931C04322A89B17D00759ACB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 633E7C7AB7AA4D64AF3DEE7A;
+			remoteInfo = SPIRVFlycast;
+		};
+		931C04362A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3A06ECA0ADF345BEB1C672FD;
+			remoteInfo = "chdr-staticFlycast";
+		};
+		931C04382A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EE552274B7A24CA192A5F683;
+			remoteInfo = elfFlycast;
+		};
+		931C043A2A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 41465F1CC43748E5A1275471;
+			remoteInfo = "flycast-resourcesFlycast";
+		};
+		931C043C2A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B28EC58696994C6F8B1071D7;
+			remoteInfo = flycast_libretroFlycast;
+		};
+		931C043E2A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8583632333D54DFFBB1FF9EB;
+			remoteInfo = glslangFlycast;
+		};
+		931C04402A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 769D9D1BF78C4B8580D3452A;
+			remoteInfo = "glslang-default-resource-limitsFlycast";
+		};
+		931C04422A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CC6E2E9514914D8E9A601D1B;
+			remoteInfo = "libminiupnpc-staticFlycast";
+		};
+		931C04442A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C14EF6B0205E413BA4E583CE;
+			remoteInfo = lzmaFlycast;
+		};
+		931C04462A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4E35253DCFC6463391ECA222;
+			remoteInfo = nowideFlycast;
+		};
+		931C04482A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D9D2057BBE424F219134366D;
+			remoteInfo = xxhashFlycast;
+		};
+		931C044A2A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6D914C31B10742A7B3B734BF;
+			remoteInfo = zipFlycast;
+		};
+		931C044C2A89B17D00759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AC7317D8DA9541D9A3308B23;
+			remoteInfo = zlibFlycast;
+		};
+		931C04CC2A89E12400759ACB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 934BE793296E6AD200FB9933;
-			remoteInfo = FlycastAdjustments;
+			remoteGlobalIDString = 4A6A904EFA0F4E0988C66DC1;
+			remoteInfo = flycast_libretroFlycast;
 		};
 		934BE7C1296E6C0F00FB9933 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -491,13 +529,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B30178D2207C901D0051B93D;
 			remoteInfo = flycast;
-		};
-		934BE7D7296EB34500FB9933 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C7620720783162009950E4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 934BE793296E6AD200FB9933;
-			remoteInfo = FlycastAdjustments;
 		};
 		934BE938296EB57F00FB9933 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -508,47 +539,17 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		934BE924296EB34500FB9933 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B30178D1207C901D0051B93D /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B36AE809295F034C00CC9D4F /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = flycast_libretro.xcodeproj; path = cmake/flycast_libretro.xcodeproj; sourceTree = "<group>"; };
+		931C04CF2A89EEA900759ACB /* version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
+		931C04D02A89EEA900759ACB /* pvr_mem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pvr_mem.cpp; sourceTree = "<group>"; };
+		931C04D22A89EEA900759ACB /* libretro.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = libretro.cpp; sourceTree = "<group>"; };
 		934BE784296E638800FB9933 /* ta_util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ta_util.cpp; sourceTree = "<group>"; };
-		934BE787296E659700FB9933 /* liblibzip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibzip.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		934BE789296E65D100FB9933 /* libz.1.2.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.8.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.1.2.8.tbd; sourceTree = DEVELOPER_DIR; };
-		934BE78B296E65FD00FB9933 /* liblibzip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibzip.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		934BE7BE296E6BA200FB9933 /* libflycast-retroarch-module.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libflycast-retroarch-module.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
-		934BE7C5296E6CD800FB9933 /* zip_source_compress.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = zip_source_compress.c; path = cmake/zip_source_compress.c; sourceTree = "<group>"; };
+		934BE7BE296E6BA200FB9933 /* lib_unused_flycast-retroarch-module.dylib */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "lib_unused_flycast-retroarch-module.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		934BE7CA296E955800FB9933 /* OpenMP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenMP.framework; path = cmake/OpenMP.framework; sourceTree = "<group>"; };
 		934BE7CF296E978D00FB9933 /* libomp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libomp.a; path = cmake/OpenMP.framework/Versions/A/libomp.a; sourceTree = "<group>"; };
 		934BE7D2296E999200FB9933 /* omp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = omp.h; path = cmake/OpenMP.framework/Versions/A/Headers/omp.h; sourceTree = "<group>"; };
-		934BE929296EB34500FB9933 /* liblibminiupnpc-static.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "liblibminiupnpc-static.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		934BE929296EB34500FB9933 /* lib_unused_libminiupnpc-static.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "lib_unused_libminiupnpc-static.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		934BE93B296EB6ED00FB9933 /* connecthostport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = connecthostport.c; path = src/connecthostport.c; sourceTree = "<group>"; };
 		934BE93C296EB6ED00FB9933 /* minixmlvalid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minixmlvalid.c; path = src/minixmlvalid.c; sourceTree = "<group>"; };
 		934BE93D296EB6ED00FB9933 /* testaddr_is_reserved.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testaddr_is_reserved.c; path = src/testaddr_is_reserved.c; sourceTree = "<group>"; };
@@ -584,12 +585,11 @@
 		934BE95B296EB70A00FB9933 /* minissdpc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minissdpc.c; path = src/minissdpc.c; sourceTree = "<group>"; };
 		934BE95C296EB70B00FB9933 /* upnperrors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = upnperrors.c; path = src/upnperrors.c; sourceTree = "<group>"; };
 		934BE95D296EB70B00FB9933 /* testportlistingparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = testportlistingparse.c; path = src/testportlistingparse.c; sourceTree = "<group>"; };
-		934BE997296EF9A900FB9933 /* pvr_mem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pvr_mem.cpp; path = cmake/pvr_mem.cpp; sourceTree = "<group>"; };
-		934BE999296EFB2B00FB9933 /* libretro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = libretro.cpp; path = cmake/libretro.cpp; sourceTree = "<group>"; };
+		937B1DCC2A8A097E007DC9DB /* posix_vmem.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = posix_vmem.cpp; sourceTree = "<group>"; };
+		937B1DDD2A8A0BCA007DC9DB /* addrspace.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = addrspace.cpp; sourceTree = "<group>"; };
 		93C68C43298AE2F80008E5A3 /* PVDebug.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = PVDebug.m; path = ../../../Debug/PVDebug.m; sourceTree = "<group>"; };
 		B30178D3207C901D0051B93D /* libflycast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libflycast.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B316B4E621926FE500693472 /* emu.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emu.cfg; sourceTree = "<group>"; };
-		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447E96218B809200557ACE /* PVFlycastCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVFlycastCore+Controls.h"; sourceTree = "<group>"; };
@@ -633,11 +633,7 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		B36AE80B295F034C00CC9D4F /* libflycast-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libflycast-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B36AE8C2295F0A7F00CC9D4F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
-		B36AE8C4295F0A8500CC9D4F /* liblzma.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = liblzma.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/liblzma.tbd; sourceTree = DEVELOPER_DIR; };
-		B36AE98D295F1A6B00CC9D4F /* libcompression.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcompression.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libcompression.tbd; sourceTree = DEVELOPER_DIR; };
-		B36AE9FE295F1C3000CC9D4F /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
+		B36AE80B295F034C00CC9D4F /* lib_unused_flycast-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "lib_unused_flycast-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3980D8429239F3600A82429 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		B3980D8729239F3600A82429 /* rec_x64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rec_x64.cpp; sourceTree = "<group>"; };
 		B3980D8829239F3600A82429 /* xbyak_base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = xbyak_base.h; sourceTree = "<group>"; };
@@ -8620,15 +8616,12 @@
 		B398301029239F4B00A82429 /* cdromfs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = cdromfs.cpp; sourceTree = "<group>"; };
 		B398301129239F4B00A82429 /* cdromfs_imp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cdromfs_imp.h; sourceTree = "<group>"; };
 		B398301229239F4B00A82429 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		B39E12A028925DD900016387 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B39E12A428925DEB00016387 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVFlycast.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFlycast.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVFlycast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFlycast.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3C7621C20783243009950E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		B3C7621E2078325C009950E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		B3C7622120783297009950E4 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C76223207833DE009950E4 /* PVFlycastCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFlycastCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVFlycastCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVFlycastCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
@@ -8640,15 +8633,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				934BE7C4296E6C2900FB9933 /* libbz2.tbd in Frameworks */,
 				934BE7C3296E6C1600FB9933 /* libflycast.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		934BE921296EB34500FB9933 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8656,8 +8641,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				934BE93A296EB58800FB9933 /* liblibminiupnpc-static.a in Frameworks */,
-				934BE78D296E663500FB9933 /* libz.tbd in Frameworks */,
+				934BE93A296EB58800FB9933 /* lib_unused_libminiupnpc-static.a in Frameworks */,
 				934BE7D0296E978D00FB9933 /* libomp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8673,34 +8657,54 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B36AE81B295F037900CC9D4F /* libflycast-libretro.a in Frameworks */,
-				B36AE9FF295F1C3800CC9D4F /* libbz2.tbd in Frameworks */,
-				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
-				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
-				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				B301797F207C909E0051B93D /* libflycast.a in Frameworks */,
-				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
-				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B39E12A128925DD900016387 /* PVLibRetro.framework in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
-				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
-				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3AFCF902977A7A000A01010 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		931C04122A89B17D00759ACB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				931C042B2A89B17D00759ACB /* libGenericCodeGenFlycast.a */,
+				931C042D2A89B17D00759ACB /* libMachineIndependentFlycast.a */,
+				931C042F2A89B17D00759ACB /* libOGLCompilerFlycast.a */,
+				931C04312A89B17D00759ACB /* libOSDependentFlycast.a */,
+				931C04332A89B17D00759ACB /* libSPIRVFlycast.a */,
+				931C04372A89B17D00759ACB /* libchdr-staticFlycast.a */,
+				931C04392A89B17D00759ACB /* libelfFlycast.a */,
+				931C043B2A89B17D00759ACB /* libflycast-resourcesFlycast.a */,
+				931C043D2A89B17D00759ACB /* flycast_libretroFlycast.dylib */,
+				931C043F2A89B17D00759ACB /* libglslangFlycast.a */,
+				931C04412A89B17D00759ACB /* libglslang-default-resource-limitsFlycast.a */,
+				931C04432A89B17D00759ACB /* libminiupnpcFlycast.a */,
+				931C04452A89B17D00759ACB /* liblzmaFlycast.a */,
+				931C04472A89B17D00759ACB /* libnowideFlycast.a */,
+				931C04492A89B17D00759ACB /* libxxhashFlycast.a */,
+				931C044B2A89B17D00759ACB /* libzipFlycast.a */,
+				931C044D2A89B17D00759ACB /* libzFlycast.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		931C04CE2A89EEA900759ACB /* flycast */ = {
+			isa = PBXGroup;
+			children = (
+				937B1DDD2A8A0BCA007DC9DB /* addrspace.cpp */,
+				937B1DCC2A8A097E007DC9DB /* posix_vmem.cpp */,
+				931C04CF2A89EEA900759ACB /* version.h */,
+				931C04D02A89EEA900759ACB /* pvr_mem.cpp */,
+				931C04D22A89EEA900759ACB /* libretro.cpp */,
+			);
+			path = flycast;
+			sourceTree = "<group>";
+		};
 		934BE792296E6A8800FB9933 /* cmake */ = {
 			isa = PBXGroup;
 			children = (
-				934BE999296EFB2B00FB9933 /* libretro.cpp */,
-				934BE997296EF9A900FB9933 /* pvr_mem.cpp */,
 				934BE7D2296E999200FB9933 /* omp.h */,
 				934BE7CF296E978D00FB9933 /* libomp.a */,
 				934BE7CA296E955800FB9933 /* OpenMP.framework */,
-				934BE7C5296E6CD800FB9933 /* zip_source_compress.c */,
 			);
 			name = cmake;
 			sourceTree = "<group>";
@@ -22674,6 +22678,7 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */,
 				934BE792296E6A8800FB9933 /* cmake */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				B3F9F3A9295F4D7800DF8B8A /* PVFlycastCore+Options.swift */,
@@ -22690,9 +22695,9 @@
 			children = (
 				B3C7621020783162009950E4 /* PVFlycast.framework */,
 				B30178D3207C901D0051B93D /* libflycast.a */,
-				B36AE80B295F034C00CC9D4F /* libflycast-libretro.a */,
-				934BE7BE296E6BA200FB9933 /* libflycast-retroarch-module.dylib */,
-				934BE929296EB34500FB9933 /* liblibminiupnpc-static.a */,
+				B36AE80B295F034C00CC9D4F /* lib_unused_flycast-libretro.a */,
+				934BE7BE296E6BA200FB9933 /* lib_unused_flycast-retroarch-module.dylib */,
+				934BE929296EB34500FB9933 /* lib_unused_libminiupnpc-static.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -22711,18 +22716,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				934BE78B296E65FD00FB9933 /* liblibzip.a */,
-				934BE789296E65D100FB9933 /* libz.1.2.8.tbd */,
-				934BE787296E659700FB9933 /* liblibzip.a */,
-				B36AE9FE295F1C3000CC9D4F /* libbz2.tbd */,
-				B36AE98D295F1A6B00CC9D4F /* libcompression.tbd */,
-				B36AE8C4295F0A8500CC9D4F /* liblzma.tbd */,
-				B36AE8C2295F0A7F00CC9D4F /* libz.tbd */,
-				B39E12A428925DEB00016387 /* PVLibRetro.framework */,
-				B39E12A028925DD900016387 /* PVLibRetro.framework */,
 				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
 				B35E6BEF207CD2610040709A /* AudioUnit.framework */,
-				B324C31B2191964F009F4EDC /* AVFoundation.framework */,
 				B35E6BF8207D00D00040709A /* AVFoundation.framework */,
 				B35E6BF4207CD2740040709A /* CoreAudio.framework */,
 				B35E6BF3207CD2730040709A /* CoreAudioKit.framework */,
@@ -22731,7 +22726,6 @@
 				B339468A20783F48008DBAB4 /* libz.tbd */,
 				B3C7621C20783243009950E4 /* OpenGLES.framework */,
 				B3B104B8218F281B00210C39 /* PVSupport.framework */,
-				B3C7622120783297009950E4 /* PVSupport.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -22739,6 +22733,7 @@
 		B3C762202078327B009950E4 /* PVFlycastCore */ = {
 			isa = PBXGroup;
 			children = (
+				931C04CE2A89EEA900759ACB /* flycast */,
 				B3447EB5218BCE2000557ACE /* Core */,
 				B3447EA8218BC51300557ACE /* Audio */,
 				B3447EA0218B881000557ACE /* PVFlycast.mm */,
@@ -22748,93 +22743,70 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		B3C7620D20783162009950E4 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B3C7621520783162009950E4 /* PVFlycast.h in Headers */,
-				B36AE909295F17C200CC9D4F /* gl2ext.h in Headers */,
-				B36AEA06295F203F00CC9D4F /* flac.h in Headers */,
-				B3C76225207833DE009950E4 /* PVFlycastCore.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
-		934BE7A1296E6BA200FB9933 /* flycast-retroarch-module */ = {
+		934BE7A1296E6BA200FB9933 /* _unused_flycast-retroarch-module */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 934BE7BA296E6BA200FB9933 /* Build configuration list for PBXNativeTarget "flycast-retroarch-module" */;
+			buildConfigurationList = 934BE7BA296E6BA200FB9933 /* Build configuration list for PBXNativeTarget "_unused_flycast-retroarch-module" */;
 			buildPhases = (
 				934BE7A4296E6BA200FB9933 /* Sources */,
 				934BE7B7296E6BA200FB9933 /* Frameworks */,
-				934BE7C7296E6FFC00FB9933 /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				934BE7C2296E6C0F00FB9933 /* PBXTargetDependency */,
-				934BE7A2296E6BA200FB9933 /* PBXTargetDependency */,
 			);
-			name = "flycast-retroarch-module";
+			name = "_unused_flycast-retroarch-module";
 			productName = "flycast-libretro";
-			productReference = 934BE7BE296E6BA200FB9933 /* libflycast-retroarch-module.dylib */;
+			productReference = 934BE7BE296E6BA200FB9933 /* lib_unused_flycast-retroarch-module.dylib */;
 			productType = "com.apple.product-type.library.static";
 		};
-		934BE7D5296EB34500FB9933 /* libminiupnpc-static */ = {
+		934BE7D5296EB34500FB9933 /* _unused_libminiupnpc-static */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 934BE925296EB34500FB9933 /* Build configuration list for PBXNativeTarget "libminiupnpc-static" */;
+			buildConfigurationList = 934BE925296EB34500FB9933 /* Build configuration list for PBXNativeTarget "_unused_libminiupnpc-static" */;
 			buildPhases = (
 				934BE7D8296EB34500FB9933 /* Sources */,
-				934BE921296EB34500FB9933 /* Frameworks */,
-				934BE924296EB34500FB9933 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				934BE7D6296EB34500FB9933 /* PBXTargetDependency */,
 			);
-			name = "libminiupnpc-static";
+			name = "_unused_libminiupnpc-static";
 			productName = flycast;
-			productReference = 934BE929296EB34500FB9933 /* liblibminiupnpc-static.a */;
+			productReference = 934BE929296EB34500FB9933 /* lib_unused_libminiupnpc-static.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B30178D2207C901D0051B93D /* flycast */ = {
+		B30178D2207C901D0051B93D /* _unused_flycast */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "flycast" */;
+			buildConfigurationList = B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "_unused_flycast" */;
 			buildPhases = (
 				B30178CF207C901D0051B93D /* Sources */,
 				B30178D0207C901D0051B93D /* Frameworks */,
-				B30178D1207C901D0051B93D /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				934BE939296EB57F00FB9933 /* PBXTargetDependency */,
-				934BE79A296E6B3600FB9933 /* PBXTargetDependency */,
 			);
-			name = flycast;
+			name = _unused_flycast;
 			productName = flycast;
 			productReference = B30178D3207C901D0051B93D /* libflycast.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B36AE80A295F034C00CC9D4F /* flycast-libretro */ = {
+		B36AE80A295F034C00CC9D4F /* _unused_flycast-libretro */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B36AE814295F034C00CC9D4F /* Build configuration list for PBXNativeTarget "flycast-libretro" */;
+			buildConfigurationList = B36AE814295F034C00CC9D4F /* Build configuration list for PBXNativeTarget "_unused_flycast-libretro" */;
 			buildPhases = (
 				B36AE807295F034C00CC9D4F /* Sources */,
 				B36AE808295F034C00CC9D4F /* Frameworks */,
-				B36AE809295F034C00CC9D4F /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				934BE79C296E6B3C00FB9933 /* PBXTargetDependency */,
 			);
-			name = "flycast-libretro";
+			name = "_unused_flycast-libretro";
 			productName = "flycast-libretro";
-			productReference = B36AE80B295F034C00CC9D4F /* libflycast-libretro.a */;
+			productReference = B36AE80B295F034C00CC9D4F /* lib_unused_flycast-libretro.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		B3C7620F20783162009950E4 /* PVFlycast */ = {
@@ -22843,17 +22815,15 @@
 			buildPhases = (
 				B3C7620B20783162009950E4 /* Sources */,
 				B3C7620C20783162009950E4 /* Frameworks */,
-				B3C7620D20783162009950E4 /* Headers */,
 				B3C7620E20783162009950E4 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				9333C7FE2989420F0042CD99 /* PBXTargetDependency */,
+				931C04CD2A89E12400759ACB /* PBXTargetDependency */,
 			);
 			name = PVFlycast;
 			packageProductDependencies = (
-				B3AFCF8F2977A7A000A01010 /* PVLogging */,
 			);
 			productName = PVFlycast;
 			productReference = B3C7621020783162009950E4 /* PVFlycast.framework */;
@@ -22870,12 +22840,6 @@
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
-					9333C7F6298941B60042CD99 = {
-						CreatedOnToolsVersion = 14.2;
-					};
-					934BE793296E6AD200FB9933 = {
-						CreatedOnToolsVersion = 14.2;
-					};
 					B30178D2207C901D0051B93D = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -22913,88 +22877,154 @@
 			mainGroup = B3C7620620783162009950E4;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 931C04122A89B17D00759ACB /* Products */;
+					ProjectRef = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVFlycast */,
-				B30178D2207C901D0051B93D /* flycast */,
-				B36AE80A295F034C00CC9D4F /* flycast-libretro */,
-				934BE793296E6AD200FB9933 /* FlycastAdjustments */,
-				934BE7D5296EB34500FB9933 /* libminiupnpc-static */,
-				934BE7A1296E6BA200FB9933 /* flycast-retroarch-module */,
-				9333C7F6298941B60042CD99 /* BuildFlyCastRetroArchModule */,
+				B30178D2207C901D0051B93D /* _unused_flycast */,
+				B36AE80A295F034C00CC9D4F /* _unused_flycast-libretro */,
+				934BE7D5296EB34500FB9933 /* _unused_libminiupnpc-static */,
+				934BE7A1296E6BA200FB9933 /* _unused_flycast-retroarch-module */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		931C042B2A89B17D00759ACB /* libGenericCodeGenFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGenericCodeGenFlycast.a;
+			remoteRef = 931C042A2A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C042D2A89B17D00759ACB /* libMachineIndependentFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libMachineIndependentFlycast.a;
+			remoteRef = 931C042C2A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C042F2A89B17D00759ACB /* libOGLCompilerFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libOGLCompilerFlycast.a;
+			remoteRef = 931C042E2A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C04312A89B17D00759ACB /* libOSDependentFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libOSDependentFlycast.a;
+			remoteRef = 931C04302A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C04332A89B17D00759ACB /* libSPIRVFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSPIRVFlycast.a;
+			remoteRef = 931C04322A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C04372A89B17D00759ACB /* libchdr-staticFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libchdr-staticFlycast.a";
+			remoteRef = 931C04362A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C04392A89B17D00759ACB /* libelfFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libelfFlycast.a;
+			remoteRef = 931C04382A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C043B2A89B17D00759ACB /* libflycast-resourcesFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libflycast-resourcesFlycast.a";
+			remoteRef = 931C043A2A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C043D2A89B17D00759ACB /* flycast_libretroFlycast.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = flycast_libretroFlycast.dylib;
+			remoteRef = 931C043C2A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C043F2A89B17D00759ACB /* libglslangFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libglslangFlycast.a;
+			remoteRef = 931C043E2A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C04412A89B17D00759ACB /* libglslang-default-resource-limitsFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libglslang-default-resource-limitsFlycast.a";
+			remoteRef = 931C04402A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C04432A89B17D00759ACB /* libminiupnpcFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libminiupnpcFlycast.a;
+			remoteRef = 931C04422A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C04452A89B17D00759ACB /* liblzmaFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblzmaFlycast.a;
+			remoteRef = 931C04442A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C04472A89B17D00759ACB /* libnowideFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libnowideFlycast.a;
+			remoteRef = 931C04462A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C04492A89B17D00759ACB /* libxxhashFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libxxhashFlycast.a;
+			remoteRef = 931C04482A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C044B2A89B17D00759ACB /* libzipFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libzipFlycast.a;
+			remoteRef = 931C044A2A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		931C044D2A89B17D00759ACB /* libzFlycast.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libzFlycast.a;
+			remoteRef = 931C044C2A89B17D00759ACB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B3C7620E20783162009950E4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B316B4E721926FE500693472 /* emu.cfg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		9333C7FA298941BE0042CD99 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${TARGET_BUILD_DIR}/libflycast-retroarch-module.dylib",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${SRCROOT}/../../CoresRetro/RetroArch/modules/flycast_libretro_ios.dylib\n",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#cmake -E cmake_symlink_library ${TARGET_BUILD_DIR}/libflycast-retroarch-module.dylib ${TARGET_BUILD_DIR}/libflycast-retroarch-module.dylib ${TARGET_BUILD_DIR}/libflycast-retroarch-module.dylib\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\ncp \"${TARGET_BUILD_DIR}/libflycast-retroarch-module.dylib\" \"${SRCROOT}/../../CoresRetro/RetroArch/modules/flycast_libretro_ios.dylib\"\n";
-		};
-		934BE798296E6AD900FB9933 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#cd ${SRCROOT}/flycast\n#git pull origin master --recurse\n#git checkout origin/master\n\n";
-		};
-		934BE7C7296E6FFC00FB9933 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${TARGET_BUILD_DIR}/libflycast-retroarch-module.dylib",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${SRCROOT}/../../CoresRetro/RetroArch/modules/flycast_libretro_ios.dylib",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "
-";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		934BE7A4296E6BA200FB9933 /* Sources */ = {
@@ -23005,7 +23035,6 @@
 				934BE7A6296E6BA200FB9933 /* retro_dirent.c in Sources */,
 				934BE7A7296E6BA200FB9933 /* file_path.c in Sources */,
 				934BE7A8296E6BA200FB9933 /* memalign.c in Sources */,
-				934BE99B296EFB3600FB9933 /* libretro.cpp in Sources */,
 				934BE7AA296E6BA200FB9933 /* option.cpp in Sources */,
 				934BE7AB296E6BA200FB9933 /* vfs_implementation.c in Sources */,
 				934BE7AC296E6BA200FB9933 /* glsm.c in Sources */,
@@ -23158,7 +23187,6 @@
 				B36AE9FD295F1C1500CC9D4F /* zip_err_str.c in Sources */,
 				B36AE834295F044200CC9D4F /* gltex.cpp in Sources */,
 				B36AE841295F047400CC9D4F /* reios_elf.cpp in Sources */,
-				934BE7C6296E6CD800FB9933 /* zip_source_compress.c in Sources */,
 				B36AE833295F043700CC9D4F /* norend.cpp in Sources */,
 				B36AE8D0295F0C5900CC9D4F /* libchdr_huffman.c in Sources */,
 				B36AE87C295F052400CC9D4F /* naomi.cpp in Sources */,
@@ -23180,7 +23208,6 @@
 				B36AE859295F04EA00CC9D4F /* sh4_mem.cpp in Sources */,
 				B36AE89D295F055A00CC9D4F /* dsp_arm32.cpp in Sources */,
 				B36AE9D7295F1BA100CC9D4F /* zip_source_get_file_attributes.c in Sources */,
-				934BE998296EF9AA00FB9933 /* pvr_mem.cpp in Sources */,
 				B36AE994295F1BA000CC9D4F /* zip_set_archive_flag.c in Sources */,
 				B36AE8A9295F095700CC9D4F /* xxhash.c in Sources */,
 				B36AE8B4295F09D000CC9D4F /* LzFind.c in Sources */,
@@ -23234,7 +23261,6 @@
 				B36AEA00295F1E3C00CC9D4F /* libchdr_chd.c in Sources */,
 				B36AE9B8295F1BA000CC9D4F /* zip_error.c in Sources */,
 				B36AE9B1295F1BA000CC9D4F /* zip_fopen_index.c in Sources */,
-				934BE99A296EFB2B00FB9933 /* libretro.cpp in Sources */,
 				B36AE9B6295F1BA000CC9D4F /* zip_file_get_offset.c in Sources */,
 				B36AE8A7295F059700CC9D4F /* 7zArchive.cpp in Sources */,
 				B36AE8D6295F0CBB00CC9D4F /* dns.cpp in Sources */,
@@ -23397,7 +23423,6 @@
 				B36AE904295F16E600CC9D4F /* retro_dirent.c in Sources */,
 				B36AE903295F16D500CC9D4F /* file_path.c in Sources */,
 				B36AE906295F16F200CC9D4F /* memalign.c in Sources */,
-				934BE99C296EFB4300FB9933 /* libretro.cpp in Sources */,
 				B36AE815295F036000CC9D4F /* option.cpp in Sources */,
 				B36AE8FE295F166400CC9D4F /* vfs_implementation.c in Sources */,
 				B36AE8FB295F163000CC9D4F /* glsm.c in Sources */,
@@ -23417,53 +23442,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B36AE8DB295F0F3400CC9D4F /* PVFlycast.mm in Sources */,
 				93C68C44298AE30D0008E5A3 /* PVDebug.m in Sources */,
-				B3C76226207833DE009950E4 /* PVFlycastCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		9333C7FC298941D30042CD99 /* PBXTargetDependency */ = {
+		931C04CD2A89E12400759ACB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 934BE7A1296E6BA200FB9933 /* flycast-retroarch-module */;
-			targetProxy = 9333C7FB298941D30042CD99 /* PBXContainerItemProxy */;
-		};
-		9333C7FE2989420F0042CD99 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9333C7F6298941B60042CD99 /* BuildFlyCastRetroArchModule */;
-			targetProxy = 9333C7FD2989420F0042CD99 /* PBXContainerItemProxy */;
-		};
-		934BE79A296E6B3600FB9933 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 934BE793296E6AD200FB9933 /* FlycastAdjustments */;
-			targetProxy = 934BE799296E6B3600FB9933 /* PBXContainerItemProxy */;
-		};
-		934BE79C296E6B3C00FB9933 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 934BE793296E6AD200FB9933 /* FlycastAdjustments */;
-			targetProxy = 934BE79B296E6B3C00FB9933 /* PBXContainerItemProxy */;
-		};
-		934BE7A2296E6BA200FB9933 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 934BE793296E6AD200FB9933 /* FlycastAdjustments */;
-			targetProxy = 934BE7A3296E6BA200FB9933 /* PBXContainerItemProxy */;
+			name = flycast_libretroFlycast;
+			targetProxy = 931C04CC2A89E12400759ACB /* PBXContainerItemProxy */;
 		};
 		934BE7C2296E6C0F00FB9933 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B30178D2207C901D0051B93D /* flycast */;
+			target = B30178D2207C901D0051B93D /* _unused_flycast */;
 			targetProxy = 934BE7C1296E6C0F00FB9933 /* PBXContainerItemProxy */;
-		};
-		934BE7D6296EB34500FB9933 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 934BE793296E6AD200FB9933 /* FlycastAdjustments */;
-			targetProxy = 934BE7D7296EB34500FB9933 /* PBXContainerItemProxy */;
 		};
 		934BE939296EB57F00FB9933 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 934BE7D5296EB34500FB9933 /* libminiupnpc-static */;
+			target = 934BE7D5296EB34500FB9933 /* _unused_libminiupnpc-static */;
 			targetProxy = 934BE938296EB57F00FB9933 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -23534,127 +23532,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		9333C7F8298941B70042CD99 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		9333C7F9298941B70042CD99 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
-		934BE795296E6AD200FB9933 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = YES;
-			};
-			name = Debug;
-		};
-		934BE796296E6AD200FB9933 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = YES;
-			};
-			name = Release;
-		};
-		934BE7BB296E6BA200FB9933 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = NO;
-				DEAD_CODE_STRIPPING = NO;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				EXECUTABLE_EXTENSION = dylib;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/cmake",
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Deps\"",
-					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
-					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
-					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
-					"\"$(SRCROOT)/flycast/core\"",
-					"\"$(SRCROOT)/flycast/core/hw\"",
-					"\"$(SRCROOT)/flycast/core/khronos\"",
-					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
-					"\"$(SRCROOT)/flycast/core/deps\"",
-					"\"$(SRCROOT)/flycast/core/deps/glm\"",
-					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
-					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
-					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/glsym\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common\"",
-					"\"$(SRCROOT)/cmake/include\"",
-					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
-				);
-				LIBRARY_STYLE = DYNAMIC;
-				MACH_O_TYPE = mh_dylib;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_CFLAGS = (
-					"$(inherited)",
-					"-mno-thumb",
-					"-mfpu=neon",
-					"-fno-operator-names",
-					"-fno-rtti",
-					"-ffast-math",
-					"-ftree-vectorize",
-					"-fno-strict-aliasing",
-					"-frename-registers",
-					"-fno-rtti",
-					"-fpermissive",
-					"-fno-operator-names",
-					"-fsingle-precision-constant",
-					"-fPIC",
-					"-dynamiclib",
-				);
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Debug;
-		};
 		934BE7BC296E6BA200FB9933 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -23735,65 +23612,6 @@
 			};
 			name = Release;
 		};
-		934BE926296EB34500FB9933 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COMBINE_HIDPI_IMAGES = NO;
-				DEAD_CODE_STRIPPING = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/cmake",
-				);
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Deps\"",
-					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
-					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
-					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
-					"\"$(SRCROOT)/flycast/core\"",
-					"\"$(SRCROOT)/flycast/core/hw\"",
-					"\"$(SRCROOT)/flycast/core/khronos\"",
-					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
-					"\"$(SRCROOT)/flycast/core/deps\"",
-					"\"$(SRCROOT)/flycast/core/deps/glm\"",
-					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
-					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
-					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/cmake/include\"",
-					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
-					"\"$(SRCROOT)/flycast/core/deps/miniupnpc/include\"",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
-				);
-				OTHER_LDFLAGS = (
-					"-Xclang",
-					"-fopenmp",
-					"-fobjc-arc",
-					"-fmodules",
-					"-Wall",
-					"-std=c++11",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
-			};
-			name = Debug;
-		};
 		934BE927296EB34500FB9933 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -23852,65 +23670,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
 			name = Release;
-		};
-		B30178DA207C901D0051B93D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				COMBINE_HIDPI_IMAGES = NO;
-				DEAD_CODE_STRIPPING = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/cmake",
-				);
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Deps\"",
-					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
-					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
-					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
-					"\"$(SRCROOT)/flycast/core\"",
-					"\"$(SRCROOT)/flycast/core/hw\"",
-					"\"$(SRCROOT)/flycast/core/khronos\"",
-					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
-					"\"$(SRCROOT)/flycast/core/deps\"",
-					"\"$(SRCROOT)/flycast/core/deps/glm\"",
-					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
-					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
-					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/cmake/include\"",
-					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
-					"\"$(SRCROOT)/flycast/core/deps/miniupnpc/include\"",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/cmake/OpenMP.framework/Versions/A",
-				);
-				OTHER_LDFLAGS = (
-					"-Xclang",
-					"-fopenmp",
-					"-fobjc-arc",
-					"-fmodules",
-					"-fno-strict-aliasing",
-					"-Wall",
-				);
-				PRODUCT_NAME = flycast;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
-			};
-			name = Debug;
 		};
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -23971,56 +23730,6 @@
 			};
 			name = Release;
 		};
-		B36AE811295F034C00CC9D4F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_STYLE = Automatic;
-				DEAD_CODE_STRIPPING = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Deps\"",
-					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
-					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
-					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
-					"\"$(SRCROOT)/flycast/core\"",
-					"\"$(SRCROOT)/flycast/core/hw\"",
-					"\"$(SRCROOT)/flycast/core/khronos\"",
-					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
-					"\"$(SRCROOT)/flycast/core/deps\"",
-					"\"$(SRCROOT)/flycast/core/deps/glm\"",
-					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
-					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
-					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/glsym\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common\"",
-					"\"$(SRCROOT)/cmake/include\"",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Debug;
-		};
 		B36AE812295F034C00CC9D4F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -24065,99 +23774,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
-		};
-		B3C7621620783162009950E4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_BITCODE = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					DEBUG,
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Deps\"",
-					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
-					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libzip/developer-xcode\"",
-					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
-					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
-					"\"$(SRCROOT)/flycast/core\"",
-					"\"$(SRCROOT)/flycast/core/hw\"",
-					"\"$(SRCROOT)/flycast/core/khronos\"",
-					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
-					"\"$(SRCROOT)/flycast/core/deps\"",
-					"\"$(SRCROOT)/flycast/core/deps/glm\"",
-					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
-					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
-					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
 		};
 		B3C7621720783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -24243,6 +23859,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -24250,61 +23867,6 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
-		};
-		B3C7621920783162009950E4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Deps\"",
-					"\"$(SRCROOT)/flycast/core/hw/sh4/dyna\"",
-					"\"$(SRCROOT)/flycast/core/deps/libchdr/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/libzip/lib\"",
-					"\"$(SRCROOT)/flycast/core/deps/lzma\"",
-					"\"$(SRCROOT)/flycast/core\"",
-					"\"$(SRCROOT)/flycast/core/hw\"",
-					"\"$(SRCROOT)/flycast/core/khronos\"",
-					"\"$(SRCROOT)/flycast/core/deps/nowide/include\"",
-					"\"$(SRCROOT)/flycast/core/deps\"",
-					"\"$(SRCROOT)/flycast/core/deps/glm\"",
-					"\"$(SRCROOT)/flycast/core/deps/xxHash\"",
-					"\"$(SRCROOT)/flycast/core/deps/stb/\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/include\"",
-					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
-					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
-					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				INFOPLIST_FILE = PVFlycast/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVFlycast";
-				PRODUCT_NAME = PVFlycast;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
-			};
-			name = Debug;
 		};
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -24363,55 +23925,33 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9333C7F7298941B70042CD99 /* Build configuration list for PBXAggregateTarget "BuildFlyCastRetroArchModule" */ = {
+		934BE7BA296E6BA200FB9933 /* Build configuration list for PBXNativeTarget "_unused_flycast-retroarch-module" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9333C7F8298941B70042CD99 /* Debug */,
-				9333C7F9298941B70042CD99 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		934BE794296E6AD200FB9933 /* Build configuration list for PBXAggregateTarget "FlycastAdjustments" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				934BE795296E6AD200FB9933 /* Debug */,
-				934BE796296E6AD200FB9933 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		934BE7BA296E6BA200FB9933 /* Build configuration list for PBXNativeTarget "flycast-retroarch-module" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				934BE7BB296E6BA200FB9933 /* Debug */,
 				934BE7BC296E6BA200FB9933 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		934BE925296EB34500FB9933 /* Build configuration list for PBXNativeTarget "libminiupnpc-static" */ = {
+		934BE925296EB34500FB9933 /* Build configuration list for PBXNativeTarget "_unused_libminiupnpc-static" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				934BE926296EB34500FB9933 /* Debug */,
 				934BE927296EB34500FB9933 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "flycast" */ = {
+		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "_unused_flycast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B30178DA207C901D0051B93D /* Debug */,
 				B30178DB207C901D0051B93D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B36AE814295F034C00CC9D4F /* Build configuration list for PBXNativeTarget "flycast-libretro" */ = {
+		B36AE814295F034C00CC9D4F /* Build configuration list for PBXNativeTarget "_unused_flycast-libretro" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B36AE811295F034C00CC9D4F /* Debug */,
 				B36AE812295F034C00CC9D4F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -24420,7 +23960,6 @@
 		B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVFlycast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C7621620783162009950E4 /* Debug */,
 				B3C7621720783162009950E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -24429,20 +23968,12 @@
 		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVFlycast" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C7621920783162009950E4 /* Debug */,
 				B3C7621A20783162009950E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		B3AFCF8F2977A7A000A01010 /* PVLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLogging;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }
