@@ -5,15 +5,25 @@ empty:=
 space:= $(empty) $(empty)
 spaceplus:= $(empty)\ $(empty)
 
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../ppsspp/ext/zstd/build/cmake/CMakeModules/JoinPaths.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../ppsspp/ext/zstd/build/cmake/lib/cmake_uninstall.cmake.in))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../ppsspp/ext/zstd/lib/libzstd.pc.in))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/lib/python3.10/site-packages/cmake/data/share/cmake-3.25/Modules/CMakeASMInformation.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/lib/python3.10/site-packages/cmake/data/share/cmake-3.25/Modules/Compiler/Clang-ASM.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/lib/python3.10/site-packages/cmake/data/share/cmake-3.25/Modules/Compiler/Clang.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/lib/python3.10/site-packages/cmake/data/share/cmake-3.25/Modules/Platform/Apple-Clang-ASM.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/lib/python3.10/site-packages/cmake/data/share/cmake-3.25/Modules/Platform/Apple-Clang.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../libretro_ppsspp/ext/zstd/build/cmake/CMakeModules/JoinPaths.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../libretro_ppsspp/ext/zstd/build/cmake/lib/CMakeLists.txt))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../libretro_ppsspp/ext/zstd/build/cmake/lib/cmake_uninstall.cmake.in))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../libretro_ppsspp/ext/zstd/lib/libzstd.pc.in))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/Cellar/cmake/3.26.4/share/cmake/Modules/CMakeASMInformation.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/Cellar/cmake/3.26.4/share/cmake/Modules/Compiler/Clang-ASM.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/Cellar/cmake/3.26.4/share/cmake/Modules/Compiler/Clang.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/Cellar/cmake/3.26.4/share/cmake/Modules/Platform/Apple-Clang-ASM.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /usr/local/Cellar/cmake/3.26.4/share/cmake/Modules/Platform/Apple-Clang.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard ../cmake/CMakeFiles/cmake.verify_globs))
+
+.NOTPARALLEL:
+
+.PHONY: all VERIFY_GLOBS
+
+all: VERIFY_GLOBS ../cmake/CMakeFiles/cmake.check_cache
+
+VERIFY_GLOBS:
+	/usr/local/Cellar/cmake/3.26.4/bin/cmake -P ../cmake/CMakeFiles/VerifyGlobs.cmake
 
 ../cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
-	/usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -H../ppsspp -B../cmake
+	/usr/local/Cellar/cmake/3.26.4/bin/cmake -H../libretro_ppsspp -B../cmake

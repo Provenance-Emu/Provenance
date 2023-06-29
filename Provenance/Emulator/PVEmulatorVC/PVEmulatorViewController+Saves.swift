@@ -269,6 +269,7 @@ extension PVEmulatorViewController {
     }
 
     @objc func showSaveStateMenu() {
+        recoverSaveStates()
         guard let saveStatesNavController = UIStoryboard(name: "SaveStates", bundle: nil).instantiateViewController(withIdentifier: "PVSaveStatesViewControllerNav") as? UINavigationController else {
             return
         }
@@ -352,6 +353,58 @@ extension PVEmulatorViewController {
                     presentError("Unable to convert autosave to new format: \(error.localizedDescription)")
                 }
             }
+        }
+    }
+    func recoverSaveStates() {
+        do {
+            let fileManager = FileManager.default
+            let directoryContents = try fileManager.contentsOfDirectory(
+                at: saveStatePath,
+                includingPropertiesForKeys:[.contentModificationDateKey]
+            ).filter { $0.lastPathComponent.hasSuffix(".svs") }
+            .sorted(by: {
+                let date0 = try $0.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
+                let date1 = try $1.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
+                return date0.compare(date1) == .orderedAscending
+            })
+            guard let realm = try? Realm() else {
+                presentError("Unable to instantiate realm, abandoning old save state conversion")
+                return
+            }
+            var saves=["SaveState":1]
+            for saveState in game.saveStates {
+                let fn=saveState.file.url.path.components(separatedBy: "/")
+                if let file = fn.last?.lowercased() {
+                    saves[file] = 1;
+                }
+            }
+            for url in directoryContents {
+                let fn=url.path.components(separatedBy: "/")
+                if let file = fn.last?.lowercased() {
+                    if (fileManager.fileExists(atPath: url.path) &&
+                        file.contains("svs") &&
+                        !file.contains("json") &&
+                        !file.contains("jpg") &&
+                        saves.index(forKey: file) == nil) {
+                        do {
+                            guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
+                                presentError("No core in database with id \(self.core.coreIdentifier ?? "null")")
+                                return
+                            }
+                            let imgFile = PVImageFile(withURL:  URL(fileURLWithPath: url.path.replacingOccurrences(of: "svs", with: "jpg")))
+                            let saveFile = PVFile(withURL: url)
+                            let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: imgFile, isAutosave: false)
+                            try realm.write {
+                                realm.add(newState)
+                            }
+                        } catch {
+                            presentError("Unable to Add Save State")
+                        }
+                    }
+                }
+            }
+        } catch {
+            print(error)
         }
     }
 }

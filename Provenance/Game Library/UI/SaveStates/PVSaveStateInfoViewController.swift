@@ -166,6 +166,9 @@ extension PVSaveStateInfoViewController {
 
         let deleteAction = UIPreviewAction(title: "Delete", style: .destructive) { [unowned self] _, _ in
             let alert = UIAlertController(title: "Delete save state", message: "Are you sure?", preferredStyle: .alert)
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            alert.popoverPresentationController?.sourceView = self.view
+            alert.popoverPresentationController?.sourceRect = UIScreen.main.bounds
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_: UIAlertAction) -> Void in
                 if let saveState = self.saveState {
                     do {

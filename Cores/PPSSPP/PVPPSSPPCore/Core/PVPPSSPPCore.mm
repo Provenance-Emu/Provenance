@@ -46,12 +46,12 @@
 #include "Common/Thread/ThreadUtil.h"
 #include "Common/Thread/ThreadManager.h"
 #include "Common/File/VFS/VFS.h"
-#include "Common/File/VFS/AssetReader.h"
 #include "Common/Data/Text/I18n.h"
 #include "Common/StringUtils.h""
+#include "Common/System/System.h"
+#include "Common/System/Request.h"
 #include "Common/System/Display.h"
 #include "Common/System/NativeApp.h"
-#include "Common/System/System.h"
 #include "Common/GraphicsContext.h"
 #include "Common/Net/Resolve.h"
 #include "Common/UI/Screen.h"
@@ -72,10 +72,7 @@
 #include "Core/ConfigValues.h"
 #include "Core/Core.h"
 #include "Core/CoreParameter.h"
-#include "Core/HLE/sceCtrl.h"
-#include "Core/HLE/sceUtility.h"
 #include "Core/HW/MemoryStick.h"
-#include "Core/Host.h"
 #include "Core/MemMap.h"
 #include "Core/System.h"
 #include "Core/CoreTiming.h"
@@ -83,6 +80,8 @@
 #include "Core/CwCheat.h"
 #include "Core/ELF/ParamSFO.h"
 #include "Core/SaveState.h"
+#include "Core/System.h"
+#include "iOSCoreAudio.h"
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
 #pragma mark - Private
@@ -101,6 +100,8 @@
 
 - (instancetype)init {
 	if (self = [super init]) {
+        self.alwaysUseMetal = true;
+        self.skipLayout = true;
 		if (IS_IPHONE()) {
 			_videoWidth  = 480;
 			_videoHeight = 272;
@@ -115,7 +116,7 @@
 		_callbackQueue = dispatch_queue_create("org.provenance-emu.PPSSPP.CallbackHandlerQueue", queueAttributes);
 		[self parseOptions];
 	}
-	_current = self;
+    _current = self;
 	return self;
 }
 
@@ -145,31 +146,46 @@
 
 #pragma mark - Running
 - (void)setupEmulation {
+    (@"Setup Emulation");
+    [self setOptionValues];
 	int argc = 2;
 	const char* argv[] = { "" ,[_romPath UTF8String], NULL };
 	NSString* saveDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"/saves/"];
 	std::string user_dir = std::string([saveDirectory UTF8String]);
 	NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
 	NSString *resourcePath = [[[NSBundle bundleForClass:[PVPPSSPPCore class]]  resourcePath] stringByAppendingString:@"/assets/"];
-	ELOG(@"Bundle Path is at %s\n", [resourcePath UTF8String]);
+	NSLog(@"Bundle Path is at %s\n", [resourcePath UTF8String]);
 	// Copy over font files if needed
 	NSString *fontSourceDirectory = [resourcePath stringByAppendingString:@"/assets/"];
-	NativeInit(argc, argv, documentsPath.UTF8String, resourcePath.UTF8String, NULL);
 	g_Config.flash0Directory = Path([fontSourceDirectory UTF8String]);
 	g_Config.internalDataDirectory = Path([saveDirectory UTF8String]);
 	g_Config.memStickDirectory = g_Config.internalDataDirectory;
 	g_Config.defaultCurrentDirectory = g_Config.internalDataDirectory;
 	std::string error_string;
-	while (!PSP_InitUpdate(&error_string))
-		sleep_ms(10);
+    NSLog(@"PSP Init");
+    NativeInit(argc, argv, documentsPath.UTF8String, resourcePath.UTF8String, NULL);
+    [self setOptionValues];
+    while (!_isInitialized && !PSP_InitUpdate(&error_string))
+        sleep_ms(10);
 	if (!PSP_IsInited()){
-		ELOG(@"PSP Init Error %s", error_string.c_str());
-		return;
-	}
+        NSLog(@"PSP Init Error %s", error_string.c_str());
+        std::string error_string;
+        PSP_Shutdown();
+    }
+    Memory::MemoryMap_Setup(0);
+    while (!_isInitialized && !PSP_InitStart(PSP_CoreParameter(), &error_string)) {
+        sleep_ms(500);
+        PSP_Shutdown();
+        Memory::MemoryMap_Shutdown(0);
+        Memory::MemoryMap_Setup(0);
+        sleep_ms(500);
+        NSLog(@"%s", error_string.c_str());
+    }
 }
 
 /* Config */
 - (void)setOptionValues {
+    NSLog(@"Set Option Values");
 	[self parseOptions];
 	// Option Interface
 	g_Config.iMultiSampleLevel = self.msaa;
@@ -188,7 +204,6 @@
 	g_Config.bEnableNetworkChat = false;
 	g_Config.bDiscordPresence = false;
 	g_Config.bHideSlowWarnings = true;
-	g_Config.iShowFPSCounter = false;
 	g_Config.bShowTouchControls = false;
 	g_Config.bIgnoreBadMemAccess = true;
 	g_Config.iScreenRotation = ROTATION_LOCKED_HORIZONTAL;
@@ -197,13 +212,13 @@
 	g_Config.bPauseOnLostFocus = true;
 	g_Config.bCacheFullIsoInRam = false;
 	g_Config.bPreloadFunctions = true;
+    g_Config.bEnableSound = true;
 
 	// Core Options
 	PSP_CoreParameter().fileToStart     = Path(std::string([_romPath UTF8String]));
 	PSP_CoreParameter().mountIso.clear();
     PSP_CoreParameter().startBreak      = false;
 	PSP_CoreParameter().enableSound     = true;
-	PSP_CoreParameter().printfEmuLog    = true;
 	PSP_CoreParameter().headLess        = false;
 	PSP_CoreParameter().renderWidth  = self.videoWidth * self.resFactor;
 	PSP_CoreParameter().renderHeight = self.videoHeight * self.resFactor;
@@ -213,28 +228,32 @@
 	PSP_CoreParameter().cpuCore  =     (CPUCore)self.cpuType;
 	if (self.gsPreference == 0)
 		PSP_CoreParameter().gpuCore  =   GPUCORE_GLES;
-	[self refreshScreenSize];
+    else if (self.gsPreference == 3)
+        PSP_CoreParameter().gpuCore  =   GPUCORE_VULKAN;
+    if (g_Config.bEnableSound) {
+           iOSCoreAudioShutdown();
+           iOSCoreAudioInit();
+    }
 }
 
 - (void)startVM:(UIView *)view {
-	ELOG(@"Starting VM (Initialization State %d)\n", _isInitialized);
-	[self setupVideo];
-	[self setOptionValues];
-	[self setupEmulation];
-	[self setOptionValues];
+	NSLog(@"Start VM (Initialization State %d)\n", _isInitialized);
 	[self runVM];
 	[self setupControllers];
-	ELOG(@"VM Started\n");
+	NSLog(@"VM Started\n");
 }
 
 - (void)startEmulation {
+    NSLog(@"Start Emulation");
+    isViewReady = false;
+    _isInitialized = false;
 	g_threadManager.Init(cpu_info.num_cores, cpu_info.logical_cpu_count);
 	[self startGame];
 	[super startEmulation];
 }
 
 - (void)setPauseEmulation:(BOOL)flag {
-    ELOG(@"We are right now Paused: %d %d -> %d\n", isPaused, self.isEmulationPaused, flag);
+    NSLog(@"We are right now Paused: %d %d -> %d\n", isPaused, self.isEmulationPaused, flag);
     if (flag == isPaused) return;
     if (flag != isPaused || flag != self.isEmulationPaused) {
         Core_EnableStepping(flag, "ui.lost_focus", 0);
@@ -247,13 +266,17 @@
 	_isInitialized = false;
 	self->shouldStop = true;
 	[self stopGame:true];
-	[super stopEmulation];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-	g_threadManager.Teardown();
-	Memory::MemoryMap_Shutdown(0);
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    //NativeShutdown();
+    LogManager::Shutdown();
+    net::Shutdown();
+    Memory::MemoryMap_Shutdown(0);
+    g_threadManager.Teardown();
+    [super stopEmulation];
 }
 
 - (void)startGame {
+    NSLog(@"Start Game");
 	g_threadManager.Init(cpu_info.num_cores, cpu_info.logical_cpu_count);
 	self.skipEmulationLoop = true;
 	[self setupView];
@@ -264,9 +287,12 @@
 }
 
 - (void)resetEmulation {
-	NativeSetRestarting();
-	[self stopGame:false];
+    NativeSetRestarting();
+    [self stopGame:false];
 	[self startGame];
+    //std::string error_string;
+    //PSP_Reboot(&error_string);
+    
 }
 @end
 
@@ -397,7 +423,7 @@ void System_SendMessage(const char *command, const char *parameter) {
 	if (!strcmp(command, "finish")) {
 	} else if (!strcmp(command, "sharetext")) {
 		NSString *text = [NSString stringWithUTF8String:parameter];
-		ELOG(@"Text %s\n", text);
+		NSLog(@"Text %s\n", text);
 	} else if (!strcmp(command, "camera_command")) {
 	} else if (!strcmp(command, "gps_command")) {
 	} else if (!strcmp(command, "safe_insets")) {
@@ -409,7 +435,7 @@ void System_SendMessage(const char *command, const char *parameter) {
 			g_safeInsetBottom = bottom;
 		}
 	}
-	ELOG(@"Command %s Received\n",command);
+	NSLog(@"Command %s Received\n",command);
 }
 
 void System_Toast(const char *text) {}
@@ -433,6 +459,17 @@ void Vibrate(int mode) {
 
 	AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
 }
+void System_Vibrate(int mode) {
+
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+    NSArray *pattern = @[@YES, @30, @NO, @2];
+
+    dictionary[@"VibePattern"] = pattern;
+    dictionary[@"Intensity"] = @2;
+
+    AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary);
+}
+
 @implementation CLLocationManager
 @end
 std::vector<std::string> __cameraGetDeviceList() {
@@ -440,4 +477,20 @@ std::vector<std::string> __cameraGetDeviceList() {
 void OpenDirectory(const char *path) {
 }
 void LaunchBrowser(char const* url) {
+}
+
+void System_Notify(SystemNotification notification) {
+        switch (notification) {
+        }
+}
+bool System_MakeRequest(SystemRequestType type, int requestId, const std::string &param1, const std::string &param2, int param3) {
+    return false;
+}
+void System_ShowFileInFolder(const char *path) {}
+void System_LaunchUrl(LaunchUrlType urlType, char const* url) {}
+
+std::vector<std::string> System_GetCameraDeviceList() {
+    std::vector<std::string> deviceList;
+    deviceList.empty();
+    return deviceList;
 }

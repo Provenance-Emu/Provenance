@@ -7,21 +7,49 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		9C2FE12D6226493A89B86940 /* install */ = {
+		35E138004C754BA89FCFF9F6 /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 73200B7B262B463C940F8AB7 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = 954073627E584665ADCF0AE4 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				68E7274F4E0318E24F112A6C /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		492AF1C578C644C5851A69FB /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = DB4B70B7980447958AC5080E /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				F8998727B3CB4482872FC0B3 /* PBXTargetDependency */,
+				3B88AB2407C3461B82813C34 /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
 		};
-		CC999B7DD8894553A8463837 /* RUN_TESTS */ = {
+		872B88AC16C241AEBBB9B138 /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 25C9CBF0889D41D3A5FF7C0F /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 5D3083D27F944A788B77F011 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				97821A5CF5F94734E7402E5D /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				61485B49A5454EA6A492E517 /* PBXTargetDependency */,
+				163BBC68CED540A791D3F74C /* PBXTargetDependency */,
+				EB8E4E34F09440AE8F649BE2 /* PBXTargetDependency */,
+				0B03B5B83C1A4A129061D75B /* PBXTargetDependency */,
+				281C488D7A424112B1695C3E /* PBXTargetDependency */,
+				E2C4CB10E8944FA9A012FF3C /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		FE9EA17B6F164179AF1C6707 /* RUN_TESTS */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7B56E379CC4642EFAB75AAC1 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -30,95 +58,67 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
-		D5C5F59DA0D24BB697F70C76 /* ALL_BUILD */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 265D748D5C834435B39F5F0C /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
-			buildPhases = (
-				87FB7BCCF128ED780034CC73 /* Generate CMakeFiles/ALL_BUILD */,
-			);
-			dependencies = (
-				3C93AB4D1664405D8BEBFDBF /* PBXTargetDependency */,
-				08E82B3A72294F0FACA820A1 /* PBXTargetDependency */,
-				B8928E5F2ACB48099B613C81 /* PBXTargetDependency */,
-				6FDE1F01B09743B8B931A977 /* PBXTargetDependency */,
-				2845CEAB75594809A3D94D5A /* PBXTargetDependency */,
-				8533FB1108274C1484680F7C /* PBXTargetDependency */,
-			);
-			name = ALL_BUILD;
-			productName = ALL_BUILD;
-		};
-		F98D9B492C154EF89F56E070 /* ZERO_CHECK */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 4EB6FFE257BA4303AFA285E1 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
-			buildPhases = (
-				8EA8E9A50936D47AF8529A3E /* Generate CMakeFiles/ZERO_CHECK */,
-			);
-			dependencies = (
-			);
-			name = ZERO_CHECK;
-			productName = ZERO_CHECK;
-		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		08392DD95953454787F2A0DA /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_error_handling.hpp */ = {isa = PBXBuildFile; fileRef = 61BFA1EAE7A3415E82A095F3 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_error_handling.hpp */; };
-		13EE3EDADA384758A9E5F118 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 44FF6608A0E3487CA0BA5D85 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */; };
-		1459DEF01A9644A49955B7DE /* ../ppsspp/ext/SPIRV-Cross/spirv_parser.hpp */ = {isa = PBXBuildFile; fileRef = 5F4ADBB2E9AF4823BC3BFA4C /* ../ppsspp/ext/SPIRV-Cross/spirv_parser.hpp */; };
-		295DED2B547C4C7DA4484681 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = F63DC775C83548F985A2D9DA /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */; };
-		2EB7A24D1CE846598F20BCC4 /* ../ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp */ = {isa = PBXBuildFile; fileRef = 1AE98D0413754A81A8EE0A8A /* ../ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp */; };
-		2F55DD0B9EC94FFAAEC5285B /* ../ppsspp/ext/SPIRV-Cross/spirv_glsl.hpp */ = {isa = PBXBuildFile; fileRef = 2C426CB7600E436E90BD8B59 /* ../ppsspp/ext/SPIRV-Cross/spirv_glsl.hpp */; };
-		3040482164EC4A5D848BEE48 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross.hpp */ = {isa = PBXBuildFile; fileRef = FB66C6D93C5C4A4B84682218 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross.hpp */; };
-		309D27C4C22947B691312924 /* ../ppsspp/ext/SPIRV-Cross/spirv_msl.cpp */ = {isa = PBXBuildFile; fileRef = 1AD57994AD804B89BA230223 /* ../ppsspp/ext/SPIRV-Cross/spirv_msl.cpp */; };
-		33A5EF68A52248C79A2A6E9B /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-msl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 7C21C06D98B949D1B7F365D3 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-msl.dir/Info.plist */; };
-		3799B0132B83447185E4C88A /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp */ = {isa = PBXBuildFile; fileRef = BB8E2D0A5ED442D2949895DE /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp */; };
-		3988E00CCC09492BAA217280 /* ../ppsspp/ext/SPIRV-Cross/spirv_cpp.hpp */ = {isa = PBXBuildFile; fileRef = 4E5C24DA2BB6490099630EAE /* ../ppsspp/ext/SPIRV-Cross/spirv_cpp.hpp */; };
-		3C69BF94F3B04B959D1890A0 /* ../ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp */ = {isa = PBXBuildFile; fileRef = 6AEC3B8BD66342D5A1B29065 /* ../ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp */; };
-		54564D41E7A34C4DB8B29B3F /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-core.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 396286EE7D2F4372886AECDD /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-core.dir/Info.plist */; };
-		58450B14C48446E6B7A991DD /* ../ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp */ = {isa = PBXBuildFile; fileRef = D6221A01168A475D84298202 /* ../ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp */; };
-		5EC61603D06C4F9CAEA64ADF /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp */ = {isa = PBXBuildFile; fileRef = 014A42FBD89F4DDD8ED0CC2A /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp */; };
-		64CD97106E4746F9AA3D2332 /* ../ppsspp/ext/SPIRV-Cross/spirv_hlsl.hpp */ = {isa = PBXBuildFile; fileRef = CA16BFDD49844FAEA1270EDB /* ../ppsspp/ext/SPIRV-Cross/spirv_hlsl.hpp */; };
-		73C058972FBF4D63909B4FB7 /* ../ppsspp/ext/SPIRV-Cross/spirv_common.hpp */ = {isa = PBXBuildFile; fileRef = 639F4972B9054467B034D253 /* ../ppsspp/ext/SPIRV-Cross/spirv_common.hpp */; };
-		73EFDA82469A4CDA80A84A7D /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_util.hpp */ = {isa = PBXBuildFile; fileRef = 38C5AF9D888A4B24B956927C /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_util.hpp */; };
-		7A0E7AE0D20D4F118455F04B /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-cpp.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = B2EFA723D4224B02B1FD373B /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-cpp.dir/Info.plist */; };
-		91C9A7D7EE63432F924A011D /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = E0E5851840C14DEFA76BFF31 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */; };
-		93B49B4A5B654A91AB4DB69A /* ../ppsspp/ext/SPIRV-Cross/spirv_cfg.hpp */ = {isa = PBXBuildFile; fileRef = 60F790D51F3C4C41811BEC2A /* ../ppsspp/ext/SPIRV-Cross/spirv_cfg.hpp */; };
-		9C63909D1DCD48F494459ECE /* ../ppsspp/ext/SPIRV-Cross/GLSL.std.450.h */ = {isa = PBXBuildFile; fileRef = 6AD96948C9CA41E8B6E2C64B /* ../ppsspp/ext/SPIRV-Cross/GLSL.std.450.h */; };
-		A3F4E59457934C8082BEDE5E /* ../ppsspp/ext/SPIRV-Cross/spirv_cross.cpp */ = {isa = PBXBuildFile; fileRef = DAA981204E0548BA98779B76 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross.cpp */; };
-		A7BE1952D22F406B897E520D /* ../ppsspp/ext/SPIRV-Cross/spirv.hpp */ = {isa = PBXBuildFile; fileRef = C4F5B1647DF642B294947D5E /* ../ppsspp/ext/SPIRV-Cross/spirv.hpp */; };
-		B58F1BA1B2B54B4EBEA21B65 /* ../ppsspp/ext/SPIRV-Cross/spirv_msl.hpp */ = {isa = PBXBuildFile; fileRef = 661057C02CD74BF2AA24761C /* ../ppsspp/ext/SPIRV-Cross/spirv_msl.hpp */; };
-		BD8CAC0107AF405DAC281D8C /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-hlsl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = F2098D28A40F45289EA5A32F /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-hlsl.dir/Info.plist */; };
-		BFAE9704BE9B4C5DAF925C50 /* ../ppsspp/ext/SPIRV-Cross/spirv_parser.cpp */ = {isa = PBXBuildFile; fileRef = BA8791D4F0EA461D80A8618A /* ../ppsspp/ext/SPIRV-Cross/spirv_parser.cpp */; };
-		C14D3402649A42DE8A8CF46E /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_containers.hpp */ = {isa = PBXBuildFile; fileRef = 33236A3E4C72465594347C57 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_containers.hpp */; };
-		D08A7C13966848E78EE758F3 /* ../ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp */ = {isa = PBXBuildFile; fileRef = E729CA1B150843AAA5326C73 /* ../ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp */; };
-		D4F23230C89140AAB137F856 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 371456165CB94D85A06659D1 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */; };
-		D77BECB9A6974D84A2D39E71 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-glsl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 51CB53F1BD934525916A4474 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-glsl.dir/Info.plist */; };
-		DE98B455919443B0B99022DD /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.hpp */ = {isa = PBXBuildFile; fileRef = 79F782E9EF354C4F94E0F3C1 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.hpp */; };
-		DFD167C449244219A1C8312A /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = C7D6F3E96F11481E9F3BE894 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */; };
+		01AA21301831403A91EA3969 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp */ = {isa = PBXBuildFile; fileRef = D534CB074B3347958EC5E432 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp */; };
+		02BC88F3F4834789A3D47930 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp */ = {isa = PBXBuildFile; fileRef = 45E814A6CC8C4CA7BDA7179F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp */; };
+		059CE7D76C404329A3E0A849 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 8142E04C5731476C983114A9 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */; };
+		0AA5116496984944A47D00DA /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.hpp */ = {isa = PBXBuildFile; fileRef = 2C3C548ED6BD4AE3952F3FE5 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.hpp */; };
+		14463755FC1449D8AA0D5CCB /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.hpp */ = {isa = PBXBuildFile; fileRef = 6AC0246191FA46668E40CC2F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.hpp */; };
+		1D8ECE4410364782B63E8839 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv.hpp */ = {isa = PBXBuildFile; fileRef = A63BA1422F374A1E97361C2D /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv.hpp */; };
+		1E3972C4E74749F9BD930479 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-msl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 2612D02CAAC54710AEF678E7 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-msl.dir/Info.plist */; };
+		2028E49CBDC843418479C2C7 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-cpp.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = E7920EF5DF8C426C85441609 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-cpp.dir/Info.plist */; };
+		24E25BFEF2034ED486E75C1F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.cpp */ = {isa = PBXBuildFile; fileRef = FA0148F0E09146A695B162A7 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.cpp */; };
+		294E525105BC4CE3837C698B /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.hpp */ = {isa = PBXBuildFile; fileRef = 06D8687DBA0B45B18A99ED4C /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.hpp */; };
+		2A3238FBAF1A45D7A64EB286 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp */ = {isa = PBXBuildFile; fileRef = 77CC557DFB814ABAAC050653 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp */; };
+		2AFA5310ECDD49318B91AA76 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.hpp */ = {isa = PBXBuildFile; fileRef = 5A0A3C16168B488AA62A43AC /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.hpp */; };
+		2F6FCF5F60A143CE9D7B4236 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_containers.hpp */ = {isa = PBXBuildFile; fileRef = 673C019AAE364A90AB4BEA4A /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_containers.hpp */; };
+		38559D027EF54B97BD94D148 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_error_handling.hpp */ = {isa = PBXBuildFile; fileRef = 93505CEC968D4EB99395C9E8 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_error_handling.hpp */; };
+		5197FE3D64734E77BA225B1B /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.cpp */ = {isa = PBXBuildFile; fileRef = 081FB0525E6745DC9809AAEB /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.cpp */; };
+		5DF2529E84D34B6C8A1E89A4 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.hpp */ = {isa = PBXBuildFile; fileRef = 19B127D4A472443689EEDDDB /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.hpp */; };
+		7CF6D87CDCAD423DA88CABB9 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp */ = {isa = PBXBuildFile; fileRef = D131178F926A4702B8F8D201 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp */; };
+		7F50E26ABDA146F98FF1F29B /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-core.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 8EE331435C7243E88D9615C0 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-core.dir/Info.plist */; };
+		8408ADDA20FE4577A13ECD49 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_common.hpp */ = {isa = PBXBuildFile; fileRef = F11134142D0B487CBAE6F60E /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_common.hpp */; };
+		84E4763B16814E328FCCC1EE /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.cpp */ = {isa = PBXBuildFile; fileRef = 9A91BBBEF6A447ED8C5546CA /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.cpp */; };
+		8D7AFDB70712482A8BC21B92 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp */ = {isa = PBXBuildFile; fileRef = 4BF67D042E5C4CFCB9595D80 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp */; };
+		9FB0AF75F3774260AED0587C /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = BC4832CFE98449028BFC44A0 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */; };
+		A7D2C90B35404FAC8B110015 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.hpp */ = {isa = PBXBuildFile; fileRef = 8DE3AB2828A34C0C92E33D7F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.hpp */; };
+		AD6966FB24FE4AE996B080AE /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.hpp */ = {isa = PBXBuildFile; fileRef = E042A3E22F304381B7B16C78 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.hpp */; };
+		BF1035E484A34A3290F6CD88 /* ../libretro_ppsspp/ext/SPIRV-Cross/GLSL.std.450.h */ = {isa = PBXBuildFile; fileRef = 4A649126AFC44A83BC9CE328 /* ../libretro_ppsspp/ext/SPIRV-Cross/GLSL.std.450.h */; };
+		C254CF9B280C4261886933C0 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.hpp */ = {isa = PBXBuildFile; fileRef = 9CDFC4AFD59C4B32BA31127E /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.hpp */; };
+		D27B6E9F91724AB2AD8C859C /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 87C7B145F1C640D2A06A98C8 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */; };
+		D358FE4D27B145F285AB59A4 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 930D18900786488D97A10EAB /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */; };
+		D7DA153D7EEA437992BB9A39 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = D695F8824065457F8A33D801 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */; };
+		E4A88059598F427285BAD579 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.hpp */ = {isa = PBXBuildFile; fileRef = EBEB3D3827164F8385E579BC /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.hpp */; };
+		E53BF91DFDC0474583194DCB /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-glsl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 3AE706EE2CC6492A95BCB39D /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-glsl.dir/Info.plist */; };
+		E8B9518720D04032B6C5786A /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp */ = {isa = PBXBuildFile; fileRef = 44A55279B2204F78BA43D3BA /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp */; };
+		FB0ACF27239C400D8D48DBB5 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-hlsl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = B5C5EB2E5ED44B54A0B8DD16 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-hlsl.dir/Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		2BD62B59025547558EF5EA7E /* Release */ = {
+		9BC2227FE0564C36BDE06384 /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
-		3CF1A8C6661142288D2B1D67 /* MinSizeRel */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = MinSizeRel;
-		};
-		7A7D63A99F6740C3B7F079AF /* Debug */ = {
+		A3C709E2EDD94E38BE0A0743 /* Debug */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Debug;
 		};
-		D05BF644648647D190431466 /* RelWithDebInfo */ = {
+		B631B25F6A20422FB6F327AF /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		F756E0CECA784FA9A1602341 /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -128,213 +128,213 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		1B1C66DE0D64414C99937A83 /* PBXContainerItemProxy */ = {
+		089A2E87CD424A7B9ED3F7E7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = BDDE12001F104E6487AE4EBA;
-			remoteInfo = "spirv-cross-hlsl";
-		};
-		234760F0FF2B43528A066F47 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
-			remoteInfo = ZERO_CHECK;
-		};
-		2398235AB3CA4C2ABE6DB11F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
-			remoteInfo = ZERO_CHECK;
-		};
-		34EDF01D75274552A3BEFD04 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 271CF7DF5B3B402B873047D9;
+			remoteGlobalIDString = FD7A24106EE544E4A4315752;
 			remoteInfo = "spirv-cross-core";
 		};
-		4F91C97AE4774CF88ECB9703 /* PBXContainerItemProxy */ = {
+		0E9D4146451044BFA5C5A526 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
+			remoteGlobalIDString = FD7A24106EE544E4A4315752;
+			remoteInfo = "spirv-cross-core";
+		};
+		1403B708AE484BD5B2682DE5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
 			remoteInfo = ZERO_CHECK;
 		};
-		54CF7B95A9B64A55B641748C /* PBXContainerItemProxy */ = {
+		301EFF0037A641CD98B55FB5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 271CF7DF5B3B402B873047D9;
-			remoteInfo = "spirv-cross-core";
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
+			remoteInfo = ZERO_CHECK;
 		};
-		5A8697F845CE4DEF815693AB /* PBXContainerItemProxy */ = {
+		3F6245E47E3943C68F53CE26 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 271CF7DF5B3B402B873047D9;
-			remoteInfo = "spirv-cross-core";
-		};
-		6FEFE766E62C4D3BA9D4C165 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C2D9AC6A949E46078ED42D9C;
+			remoteGlobalIDString = 4BDC1B6F1FDC471D932AF991;
 			remoteInfo = "spirv-cross-glsl";
 		};
-		828D899271F944D596DAB8F3 /* PBXContainerItemProxy */ = {
+		5F09CB30FE014DBF9167452B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
 			remoteInfo = ZERO_CHECK;
 		};
-		991E37DF5FBF42B7B713950A /* PBXContainerItemProxy */ = {
+		5F5E96E9BCE841A99E9BD552 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D5C5F59DA0D24BB697F70C76;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
+			remoteInfo = ZERO_CHECK;
+		};
+		80EBACFD5D1D42C2A66BDB2C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 872B88AC16C241AEBBB9B138;
 			remoteInfo = ALL_BUILD;
 		};
-		99A607631A844707A135CD96 /* PBXContainerItemProxy */ = {
+		846AD58CC179474691093F73 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
-			remoteInfo = ZERO_CHECK;
-		};
-		9CAD8FE46B7449F9A3C2FBD0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C2D9AC6A949E46078ED42D9C;
-			remoteInfo = "spirv-cross-glsl";
-		};
-		C46443E610844B429BB6B674 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7630E4A548634CCEAB05ED4C;
-			remoteInfo = "spirv-cross-cpp";
-		};
-		C86331EBF7F843A3AC89E370 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C2D9AC6A949E46078ED42D9C;
-			remoteInfo = "spirv-cross-glsl";
-		};
-		CFE8B0AB95BD49639EC4876D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C2D9AC6A949E46078ED42D9C;
-			remoteInfo = "spirv-cross-glsl";
-		};
-		D866F84EA1904A6C90A20621 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 271CF7DF5B3B402B873047D9;
+			remoteGlobalIDString = FD7A24106EE544E4A4315752;
 			remoteInfo = "spirv-cross-core";
 		};
-		E0F9D67F2AF84283B835C103 /* PBXContainerItemProxy */ = {
+		89130BCAE2904ECEB52BC8F9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F98D9B492C154EF89F56E070;
+			remoteGlobalIDString = 4BDC1B6F1FDC471D932AF991;
+			remoteInfo = "spirv-cross-glsl";
+		};
+		8EFDC8876E6D4BB586BED683 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4BDC1B6F1FDC471D932AF991;
+			remoteInfo = "spirv-cross-glsl";
+		};
+		94CEB983E1A641578F2FF795 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
 			remoteInfo = ZERO_CHECK;
 		};
-		FA0539446C05461C9173F78F /* PBXContainerItemProxy */ = {
+		969F2859C7124DC5984EA72D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 271CF7DF5B3B402B873047D9;
+			remoteGlobalIDString = FD7A24106EE544E4A4315752;
 			remoteInfo = "spirv-cross-core";
 		};
-		FEC24AB84CF04FD1B651DFDC /* PBXContainerItemProxy */ = {
+		A306BABDEE04407B88BB6368 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 3CC728C16D58436E9D2AE11C /* Project object */;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 3953A91AF4CC4ED1911EB33B;
+			remoteGlobalIDString = BB55E92C3B4F4F45BC0C1072;
 			remoteInfo = "spirv-cross-msl";
+		};
+		AD0550AA7AB54AA08064A89C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6B12748EDC344027BF818E3A;
+			remoteInfo = "spirv-cross-hlsl";
+		};
+		BB2475759D454ECBAF251B6C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4BDC1B6F1FDC471D932AF991;
+			remoteInfo = "spirv-cross-glsl";
+		};
+		BBB86246906945BE81B715C0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 35E138004C754BA89FCFF9F6;
+			remoteInfo = ZERO_CHECK;
+		};
+		C3C04EC0DFD84331BA7BC956 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FD7A24106EE544E4A4315752;
+			remoteInfo = "spirv-cross-core";
+		};
+		F87F355F1BBE4FD58DB888D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EC1B35F0E3F84012B88A113E;
+			remoteInfo = "spirv-cross-cpp";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		014A42FBD89F4DDD8ED0CC2A /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross_util.cpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp"; sourceTree = "<absolute>"; };
-		1AD57994AD804B89BA230223 /* ../ppsspp/ext/SPIRV-Cross/spirv_msl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_msl.cpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_msl.cpp"; sourceTree = "<absolute>"; };
-		1AE98D0413754A81A8EE0A8A /* ../ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_hlsl.cpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp"; sourceTree = "<absolute>"; };
-		2BEE0A5F8D39402EBF9B3B2E /* spirv-cross-cpp */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-cpp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2C426CB7600E436E90BD8B59 /* ../ppsspp/ext/SPIRV-Cross/spirv_glsl.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_glsl.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_glsl.hpp"; sourceTree = "<absolute>"; };
-		33236A3E4C72465594347C57 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_containers.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_containers.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cross_containers.hpp"; sourceTree = "<absolute>"; };
-		371456165CB94D85A06659D1 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		38C5AF9D888A4B24B956927C /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_util.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_util.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cross_util.hpp"; sourceTree = "<absolute>"; };
-		396286EE7D2F4372886AECDD /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-core.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-core.dir/Info.plist"; sourceTree = "<absolute>"; };
-		44FF6608A0E3487CA0BA5D85 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		4E5C24DA2BB6490099630EAE /* ../ppsspp/ext/SPIRV-Cross/spirv_cpp.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cpp.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cpp.hpp"; sourceTree = "<absolute>"; };
-		51CB53F1BD934525916A4474 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-glsl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-glsl.dir/Info.plist"; sourceTree = "<absolute>"; };
-		5F4ADBB2E9AF4823BC3BFA4C /* ../ppsspp/ext/SPIRV-Cross/spirv_parser.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_parser.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_parser.hpp"; sourceTree = "<absolute>"; };
-		60F790D51F3C4C41811BEC2A /* ../ppsspp/ext/SPIRV-Cross/spirv_cfg.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cfg.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cfg.hpp"; sourceTree = "<absolute>"; };
-		61BFA1EAE7A3415E82A095F3 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_error_handling.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_error_handling.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cross_error_handling.hpp"; sourceTree = "<absolute>"; };
-		639F4972B9054467B034D253 /* ../ppsspp/ext/SPIRV-Cross/spirv_common.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_common.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_common.hpp"; sourceTree = "<absolute>"; };
-		661057C02CD74BF2AA24761C /* ../ppsspp/ext/SPIRV-Cross/spirv_msl.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_msl.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_msl.hpp"; sourceTree = "<absolute>"; };
-		6AD96948C9CA41E8B6E2C64B /* ../ppsspp/ext/SPIRV-Cross/GLSL.std.450.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GLSL.std.450.h; path = "../ppsspp/ext/SPIRV-Cross/GLSL.std.450.h"; sourceTree = "<absolute>"; };
-		6AEC3B8BD66342D5A1B29065 /* ../ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cfg.cpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp"; sourceTree = "<absolute>"; };
-		6DB9FFE4D0DA44DE8225C269 /* spirv-cross-msl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-msl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		79F782E9EF354C4F94E0F3C1 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_parsed_ir.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.hpp"; sourceTree = "<absolute>"; };
-		7C21C06D98B949D1B7F365D3 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-msl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-msl.dir/Info.plist"; sourceTree = "<absolute>"; };
-		8F02173BAB104052925FB33E /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		9BE429781E144FA7958118E1 /* spirv-cross-core */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-core.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A2791FBFDD2944428A9355BB /* spirv-cross-glsl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-glsl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA95292A728C4328A640294B /* spirv-cross-hlsl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-hlsl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B2EFA723D4224B02B1FD373B /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-cpp.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-cpp.dir/Info.plist"; sourceTree = "<absolute>"; };
-		BA8791D4F0EA461D80A8618A /* ../ppsspp/ext/SPIRV-Cross/spirv_parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_parser.cpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_parser.cpp"; sourceTree = "<absolute>"; };
-		BB8E2D0A5ED442D2949895DE /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross_parsed_ir.cpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp"; sourceTree = "<absolute>"; };
-		C4F5B1647DF642B294947D5E /* ../ppsspp/ext/SPIRV-Cross/spirv.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv.hpp"; sourceTree = "<absolute>"; };
-		C7D6F3E96F11481E9F3BE894 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		CA16BFDD49844FAEA1270EDB /* ../ppsspp/ext/SPIRV-Cross/spirv_hlsl.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_hlsl.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_hlsl.hpp"; sourceTree = "<absolute>"; };
-		D6221A01168A475D84298202 /* ../ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cpp.cpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp"; sourceTree = "<absolute>"; };
-		DAA981204E0548BA98779B76 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross.cpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cross.cpp"; sourceTree = "<absolute>"; };
-		E0E5851840C14DEFA76BFF31 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		E729CA1B150843AAA5326C73 /* ../ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_glsl.cpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp"; sourceTree = "<absolute>"; };
-		F2098D28A40F45289EA5A32F /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-hlsl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-hlsl.dir/Info.plist"; sourceTree = "<absolute>"; };
-		F63DC775C83548F985A2D9DA /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		FB66C6D93C5C4A4B84682218 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross.hpp; path = "../ppsspp/ext/SPIRV-Cross/spirv_cross.hpp"; sourceTree = "<absolute>"; };
+		06D8687DBA0B45B18A99ED4C /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_glsl.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.hpp"; sourceTree = "<absolute>"; };
+		081FB0525E6745DC9809AAEB /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_parser.cpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.cpp"; sourceTree = "<absolute>"; };
+		1283F32E725E49CABEEB56FD /* spirv-cross-hlsl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-hlsl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B7D62051D04CB0870A76A1 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		19B127D4A472443689EEDDDB /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.hpp"; sourceTree = "<absolute>"; };
+		2612D02CAAC54710AEF678E7 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-msl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-msl.dir/Info.plist"; sourceTree = "<absolute>"; };
+		27CCDAB046B1496A86799CA8 /* spirv-cross-cpp */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-cpp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2B0915F085AC474AA456C9E2 /* spirv-cross-msl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-msl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C3C548ED6BD4AE3952F3FE5 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_msl.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.hpp"; sourceTree = "<absolute>"; };
+		3AE706EE2CC6492A95BCB39D /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-glsl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-glsl.dir/Info.plist"; sourceTree = "<absolute>"; };
+		44A55279B2204F78BA43D3BA /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross_parsed_ir.cpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp"; sourceTree = "<absolute>"; };
+		45E814A6CC8C4CA7BDA7179F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_hlsl.cpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp"; sourceTree = "<absolute>"; };
+		4A649126AFC44A83BC9CE328 /* ../libretro_ppsspp/ext/SPIRV-Cross/GLSL.std.450.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GLSL.std.450.h; path = "../libretro_ppsspp/ext/SPIRV-Cross/GLSL.std.450.h"; sourceTree = "<absolute>"; };
+		4BF67D042E5C4CFCB9595D80 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_glsl.cpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp"; sourceTree = "<absolute>"; };
+		5A0A3C16168B488AA62A43AC /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_util.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.hpp"; sourceTree = "<absolute>"; };
+		673C019AAE364A90AB4BEA4A /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_containers.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_containers.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_containers.hpp"; sourceTree = "<absolute>"; };
+		6AC0246191FA46668E40CC2F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cfg.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.hpp"; sourceTree = "<absolute>"; };
+		77CC557DFB814ABAAC050653 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross_util.cpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp"; sourceTree = "<absolute>"; };
+		813BB96875E74F4D8DE7CA86 /* spirv-cross-core */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-core.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8142E04C5731476C983114A9 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		87C7B145F1C640D2A06A98C8 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		8DE3AB2828A34C0C92E33D7F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_parser.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.hpp"; sourceTree = "<absolute>"; };
+		8EE331435C7243E88D9615C0 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-core.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-core.dir/Info.plist"; sourceTree = "<absolute>"; };
+		930D18900786488D97A10EAB /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		93505CEC968D4EB99395C9E8 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_error_handling.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_error_handling.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_error_handling.hpp"; sourceTree = "<absolute>"; };
+		9A91BBBEF6A447ED8C5546CA /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_msl.cpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.cpp"; sourceTree = "<absolute>"; };
+		9CDFC4AFD59C4B32BA31127E /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_hlsl.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.hpp"; sourceTree = "<absolute>"; };
+		A63BA1422F374A1E97361C2D /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv.hpp"; sourceTree = "<absolute>"; };
+		AE9C38153B144A7EA5185689 /* spirv-cross-glsl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libspirv-cross-glsl.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5C5EB2E5ED44B54A0B8DD16 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-hlsl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-hlsl.dir/Info.plist"; sourceTree = "<absolute>"; };
+		BC4832CFE98449028BFC44A0 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		D131178F926A4702B8F8D201 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cpp.cpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp"; sourceTree = "<absolute>"; };
+		D534CB074B3347958EC5E432 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cfg.cpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp"; sourceTree = "<absolute>"; };
+		D695F8824065457F8A33D801 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		E042A3E22F304381B7B16C78 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cpp.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.hpp"; sourceTree = "<absolute>"; };
+		E7920EF5DF8C426C85441609 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-cpp.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = "../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-cpp.dir/Info.plist"; sourceTree = "<absolute>"; };
+		EBEB3D3827164F8385E579BC /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_cross_parsed_ir.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.hpp"; sourceTree = "<absolute>"; };
+		F11134142D0B487CBAE6F60E /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_common.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = spirv_common.hpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_common.hpp"; sourceTree = "<absolute>"; };
+		FA0148F0E09146A695B162A7 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = spirv_cross.cpp; path = "../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.cpp"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		0711F156A7074E0B95B5C82F /* Frameworks */ = {
+		409BD991E4CC45D3842CD76F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		820AFFCD175D4C70B5F117C0 /* Frameworks */ = {
+		A550C944EC5A4DC1AFA9603D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		918612B92D2C457CB37E1A76 /* Frameworks */ = {
+		B4E29C4CE35C4CF1A6CB71D7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A13B92517B7145EFBD28AF46 /* Frameworks */ = {
+		BB897FA5A73D48F5A28C5507 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		FACE496C4EF04FB5A338BB15 /* Frameworks */ = {
+		C22134A169CE43E98312F257 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -344,371 +344,371 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0751497662F2498FA792AA94 /* Source Files */ = {
+		097202DD5E8640438E254431 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				1AE98D0413754A81A8EE0A8A /* ../ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp */,
+				2612D02CAAC54710AEF678E7 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-msl.dir/Info.plist */,
 			);
-			name = "Source Files";
+			name = Resources;
 			sourceTree = "<group>";
 		};
-		0B69E9515A374A9D90B0AA98 /* spirv-cross-msl */ = {
-			isa = PBXGroup;
-			children = (
-				B11F69C6F03040069E47A335 /* Header Files */,
-				A927A0D476574FEEAC3DD42B /* Source Files */,
-				9590E8D7CEFA433498CCAE90 /* Resources */,
-				E0E5851840C14DEFA76BFF31 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
-			);
-			name = "spirv-cross-msl";
-			sourceTree = "<group>";
-		};
-		2122012F6C6D4E3BB9C663C5 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				9BE429781E144FA7958118E1 /* spirv-cross-core */,
-				2BEE0A5F8D39402EBF9B3B2E /* spirv-cross-cpp */,
-				A2791FBFDD2944428A9355BB /* spirv-cross-glsl */,
-				AA95292A728C4328A640294B /* spirv-cross-hlsl */,
-				6DB9FFE4D0DA44DE8225C269 /* spirv-cross-msl */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		262EB4A9B14E4D4E920096D4 /* spirv-cross-core */ = {
-			isa = PBXGroup;
-			children = (
-				EDB3BA6A71E546B38606D7D7 /* Header Files */,
-				C63A8410B73E44F997EC2244 /* Source Files */,
-				D9C329958B454788BF1B59EA /* Resources */,
-				F63DC775C83548F985A2D9DA /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
-			);
-			name = "spirv-cross-core";
-			sourceTree = "<group>";
-		};
-		31314ECC360241C5B03A9001 /* spirv-cross-hlsl */ = {
-			isa = PBXGroup;
-			children = (
-				701436862D924F1CB9C93AEA /* Header Files */,
-				0751497662F2498FA792AA94 /* Source Files */,
-				7F8529B219D6429CB3F2CA2F /* Resources */,
-				371456165CB94D85A06659D1 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
-			);
-			name = "spirv-cross-hlsl";
-			sourceTree = "<group>";
-		};
-		33B24CDA72DD477E8548C05A /* CMake Rules */ = {
+		1719810ABB2A45378C0328CC /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		364D421727964E1E972E2B03 /* Frameworks */ = {
+		1978C5996AC745C8B9BEFF10 = {
+			isa = PBXGroup;
+			children = (
+				B5BC21CBB4D5432BA36B70E8 /* spirv-cross-core */,
+				5246B476E0A544E3A25961CA /* spirv-cross-glsl */,
+				6327F1616C76478F8D7A5384 /* spirv-cross-cpp */,
+				8EDFB2143FA84C0FB354F0A4 /* spirv-cross-msl */,
+				F820AE8C9D3B4160BF468811 /* spirv-cross-hlsl */,
+				5B650899204144BBBCBA7A35 /* ALL_BUILD */,
+				33EFF9DFD8624856AC809EBC /* Products */,
+				EF18AC62387349AFB044202D /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		1CF6E1EC98584F7C89ABB71F /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				9A91BBBEF6A447ED8C5546CA /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		287FC508C7954C8C8F6F89C5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3AE706EE2CC6492A95BCB39D /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-glsl.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		2FA32FE199964B7AA33C94EC /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				4BF67D042E5C4CFCB9595D80 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		33EFF9DFD8624856AC809EBC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				813BB96875E74F4D8DE7CA86 /* spirv-cross-core */,
+				27CCDAB046B1496A86799CA8 /* spirv-cross-cpp */,
+				AE9C38153B144A7EA5185689 /* spirv-cross-glsl */,
+				1283F32E725E49CABEEB56FD /* spirv-cross-hlsl */,
+				2B0915F085AC474AA456C9E2 /* spirv-cross-msl */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5246B476E0A544E3A25961CA /* spirv-cross-glsl */ = {
+			isa = PBXGroup;
+			children = (
+				2FA32FE199964B7AA33C94EC /* Source Files */,
+				E956F28F51F6487DA891F493 /* Header Files */,
+				287FC508C7954C8C8F6F89C5 /* Resources */,
+				D695F8824065457F8A33D801 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
+			);
+			name = "spirv-cross-glsl";
+			sourceTree = "<group>";
+		};
+		56FD86F6061F42AF8127B188 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				D131178F926A4702B8F8D201 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		5B650899204144BBBCBA7A35 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				1719810ABB2A45378C0328CC /* CMake Rules */,
+				13B7D62051D04CB0870A76A1 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		6327F1616C76478F8D7A5384 /* spirv-cross-cpp */ = {
+			isa = PBXGroup;
+			children = (
+				A3A12D94F7EC4CF5B346715B /* Header Files */,
+				56FD86F6061F42AF8127B188 /* Source Files */,
+				B72934BD28AD4B149A5C9ABC /* Resources */,
+				930D18900786488D97A10EAB /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
+			);
+			name = "spirv-cross-cpp";
+			sourceTree = "<group>";
+		};
+		6861360DB5A74B06BAD9AA36 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				2C3C548ED6BD4AE3952F3FE5 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.hpp */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		7821FCA35A224A2ABF823FED /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				45E814A6CC8C4CA7BDA7179F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		8E43DE49E2034D2BB54417DF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B5C5EB2E5ED44B54A0B8DD16 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-hlsl.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		8EDFB2143FA84C0FB354F0A4 /* spirv-cross-msl */ = {
+			isa = PBXGroup;
+			children = (
+				6861360DB5A74B06BAD9AA36 /* Header Files */,
+				1CF6E1EC98584F7C89ABB71F /* Source Files */,
+				097202DD5E8640438E254431 /* Resources */,
+				87C7B145F1C640D2A06A98C8 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
+			);
+			name = "spirv-cross-msl";
+			sourceTree = "<group>";
+		};
+		9FE48E1C773A4B9EA688F09C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8EE331435C7243E88D9615C0 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-core.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		A3055986159D4C2A9DED5125 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				D534CB074B3347958EC5E432 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp */,
+				FA0148F0E09146A695B162A7 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.cpp */,
+				44A55279B2204F78BA43D3BA /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp */,
+				77CC557DFB814ABAAC050653 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp */,
+				081FB0525E6745DC9809AAEB /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		A3A12D94F7EC4CF5B346715B /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				E042A3E22F304381B7B16C78 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.hpp */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		B137D9D8C44840118DDB51FB /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				9CDFC4AFD59C4B32BA31127E /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.hpp */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		B5BC21CBB4D5432BA36B70E8 /* spirv-cross-core */ = {
+			isa = PBXGroup;
+			children = (
+				D4A37C5886244774AECC72D7 /* Header Files */,
+				A3055986159D4C2A9DED5125 /* Source Files */,
+				9FE48E1C773A4B9EA688F09C /* Resources */,
+				BC4832CFE98449028BFC44A0 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
+			);
+			name = "spirv-cross-core";
+			sourceTree = "<group>";
+		};
+		B72934BD28AD4B149A5C9ABC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E7920EF5DF8C426C85441609 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-cpp.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		D4A37C5886244774AECC72D7 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				4A649126AFC44A83BC9CE328 /* ../libretro_ppsspp/ext/SPIRV-Cross/GLSL.std.450.h */,
+				A63BA1422F374A1E97361C2D /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv.hpp */,
+				6AC0246191FA46668E40CC2F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.hpp */,
+				F11134142D0B487CBAE6F60E /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_common.hpp */,
+				19B127D4A472443689EEDDDB /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.hpp */,
+				673C019AAE364A90AB4BEA4A /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_containers.hpp */,
+				93505CEC968D4EB99395C9E8 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_error_handling.hpp */,
+				EBEB3D3827164F8385E579BC /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.hpp */,
+				5A0A3C16168B488AA62A43AC /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.hpp */,
+				8DE3AB2828A34C0C92E33D7F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.hpp */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		E956F28F51F6487DA891F493 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				06D8687DBA0B45B18A99ED4C /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.hpp */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		EF18AC62387349AFB044202D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		36824308CCE24205AE99A8FD /* spirv-cross-glsl */ = {
+		F820AE8C9D3B4160BF468811 /* spirv-cross-hlsl */ = {
 			isa = PBXGroup;
 			children = (
-				B344A7A479C84D0D963B6C49 /* Source Files */,
-				D91755A311D14BE980CC2438 /* Header Files */,
-				B2C459F7D5E44BC5B8B832F2 /* Resources */,
-				44FF6608A0E3487CA0BA5D85 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
+				B137D9D8C44840118DDB51FB /* Header Files */,
+				7821FCA35A224A2ABF823FED /* Source Files */,
+				8E43DE49E2034D2BB54417DF /* Resources */,
+				8142E04C5731476C983114A9 /* ../libretro_ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
 			);
-			name = "spirv-cross-glsl";
-			sourceTree = "<group>";
-		};
-		6CE13E410C01433D9BCC9291 /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				4E5C24DA2BB6490099630EAE /* ../ppsspp/ext/SPIRV-Cross/spirv_cpp.hpp */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		701436862D924F1CB9C93AEA /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				CA16BFDD49844FAEA1270EDB /* ../ppsspp/ext/SPIRV-Cross/spirv_hlsl.hpp */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		769FA5914746471B89AF4ABB /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				B2EFA723D4224B02B1FD373B /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-cpp.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		7F8529B219D6429CB3F2CA2F /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				F2098D28A40F45289EA5A32F /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-hlsl.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		872567544490420C9483F85B /* ALL_BUILD */ = {
-			isa = PBXGroup;
-			children = (
-				33B24CDA72DD477E8548C05A /* CMake Rules */,
-				8F02173BAB104052925FB33E /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
-			);
-			name = ALL_BUILD;
-			sourceTree = "<group>";
-		};
-		9590E8D7CEFA433498CCAE90 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				7C21C06D98B949D1B7F365D3 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-msl.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		A927A0D476574FEEAC3DD42B /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				1AD57994AD804B89BA230223 /* ../ppsspp/ext/SPIRV-Cross/spirv_msl.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		B11F69C6F03040069E47A335 /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				661057C02CD74BF2AA24761C /* ../ppsspp/ext/SPIRV-Cross/spirv_msl.hpp */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		B2C459F7D5E44BC5B8B832F2 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				51CB53F1BD934525916A4474 /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-glsl.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		B344A7A479C84D0D963B6C49 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				E729CA1B150843AAA5326C73 /* ../ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		C63A8410B73E44F997EC2244 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				6AEC3B8BD66342D5A1B29065 /* ../ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp */,
-				DAA981204E0548BA98779B76 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross.cpp */,
-				BB8E2D0A5ED442D2949895DE /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp */,
-				014A42FBD89F4DDD8ED0CC2A /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp */,
-				BA8791D4F0EA461D80A8618A /* ../ppsspp/ext/SPIRV-Cross/spirv_parser.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		D33A27AC3C7C4CDFA328F4FF /* spirv-cross-cpp */ = {
-			isa = PBXGroup;
-			children = (
-				6CE13E410C01433D9BCC9291 /* Header Files */,
-				E46DA07B88B34BFDA26010AE /* Source Files */,
-				769FA5914746471B89AF4ABB /* Resources */,
-				C7D6F3E96F11481E9F3BE894 /* ../ppsspp/ext/SPIRV-Cross-build/CMakeLists.txt */,
-			);
-			name = "spirv-cross-cpp";
-			sourceTree = "<group>";
-		};
-		D91755A311D14BE980CC2438 /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				2C426CB7600E436E90BD8B59 /* ../ppsspp/ext/SPIRV-Cross/spirv_glsl.hpp */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		D9C329958B454788BF1B59EA /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				396286EE7D2F4372886AECDD /* ../cmake/ext/SPIRV-Cross-build/CMakeFiles/spirv-cross-core.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		E46DA07B88B34BFDA26010AE /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				D6221A01168A475D84298202 /* ../ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		EDB3BA6A71E546B38606D7D7 /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				6AD96948C9CA41E8B6E2C64B /* ../ppsspp/ext/SPIRV-Cross/GLSL.std.450.h */,
-				C4F5B1647DF642B294947D5E /* ../ppsspp/ext/SPIRV-Cross/spirv.hpp */,
-				60F790D51F3C4C41811BEC2A /* ../ppsspp/ext/SPIRV-Cross/spirv_cfg.hpp */,
-				639F4972B9054467B034D253 /* ../ppsspp/ext/SPIRV-Cross/spirv_common.hpp */,
-				FB66C6D93C5C4A4B84682218 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross.hpp */,
-				33236A3E4C72465594347C57 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_containers.hpp */,
-				61BFA1EAE7A3415E82A095F3 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_error_handling.hpp */,
-				79F782E9EF354C4F94E0F3C1 /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.hpp */,
-				38C5AF9D888A4B24B956927C /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_util.hpp */,
-				5F4ADBB2E9AF4823BC3BFA4C /* ../ppsspp/ext/SPIRV-Cross/spirv_parser.hpp */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		EE90DF9BB9BB4005BA98644A = {
-			isa = PBXGroup;
-			children = (
-				262EB4A9B14E4D4E920096D4 /* spirv-cross-core */,
-				36824308CCE24205AE99A8FD /* spirv-cross-glsl */,
-				D33A27AC3C7C4CDFA328F4FF /* spirv-cross-cpp */,
-				0B69E9515A374A9D90B0AA98 /* spirv-cross-msl */,
-				31314ECC360241C5B03A9001 /* spirv-cross-hlsl */,
-				872567544490420C9483F85B /* ALL_BUILD */,
-				2122012F6C6D4E3BB9C663C5 /* Products */,
-				364D421727964E1E972E2B03 /* Frameworks */,
-			);
+			name = "spirv-cross-hlsl";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		271CF7DF5B3B402B873047D9 /* spirv-cross-core */ = {
+		4BDC1B6F1FDC471D932AF991 /* spirv-cross-glsl */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 87430A7B113E415489FF4CA4 /* Build configuration list for PBXNativeTarget "spirv-cross-core" */;
+			buildConfigurationList = 2306EB2EFE3840FE91C14FD3 /* Build configuration list for PBXNativeTarget "spirv-cross-glsl" */;
 			buildPhases = (
-				E611823163544B67A0F63575 /* Sources */,
-				FACE496C4EF04FB5A338BB15 /* Frameworks */,
+				30BCBB88E6B248A7A5E865C1 /* Sources */,
+				409BD991E4CC45D3842CD76F /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				26F1F08E249940E8833CECB7 /* PBXTargetDependency */,
-			);
-			name = "spirv-cross-core";
-			productName = "spirv-cross-core";
-			productReference = 9BE429781E144FA7958118E1 /* spirv-cross-core */;
-			productType = "com.apple.product-type.library.static";
-		};
-		3953A91AF4CC4ED1911EB33B /* spirv-cross-msl */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A5021E92BEEA4CA4903D48CA /* Build configuration list for PBXNativeTarget "spirv-cross-msl" */;
-			buildPhases = (
-				99CD07B234FC441AB87F8B91 /* Sources */,
-				820AFFCD175D4C70B5F117C0 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				6A008EF63CF04DE49F41BE15 /* PBXTargetDependency */,
-				B84BB477120040558DD8A1C0 /* PBXTargetDependency */,
-				34B3AB62DDD745429F498194 /* PBXTargetDependency */,
-			);
-			name = "spirv-cross-msl";
-			productName = "spirv-cross-msl";
-			productReference = 6DB9FFE4D0DA44DE8225C269 /* spirv-cross-msl */;
-			productType = "com.apple.product-type.library.static";
-		};
-		7630E4A548634CCEAB05ED4C /* spirv-cross-cpp */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 02D011BFCAA04187A6190FAE /* Build configuration list for PBXNativeTarget "spirv-cross-cpp" */;
-			buildPhases = (
-				4B568F7C3D884DF5B091F6E4 /* Sources */,
-				0711F156A7074E0B95B5C82F /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8432440D4AEC4B878F82837E /* PBXTargetDependency */,
-				232DDBBF243344578361D69E /* PBXTargetDependency */,
-				D69A6000C16848AAB6605DF8 /* PBXTargetDependency */,
-			);
-			name = "spirv-cross-cpp";
-			productName = "spirv-cross-cpp";
-			productReference = 2BEE0A5F8D39402EBF9B3B2E /* spirv-cross-cpp */;
-			productType = "com.apple.product-type.library.static";
-		};
-		BDDE12001F104E6487AE4EBA /* spirv-cross-hlsl */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 123C22188F2B4FDF92B4CD5D /* Build configuration list for PBXNativeTarget "spirv-cross-hlsl" */;
-			buildPhases = (
-				D69A52128C5043E08B3708AB /* Sources */,
-				918612B92D2C457CB37E1A76 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				9E92B825686B4B93B4D7EE79 /* PBXTargetDependency */,
-				448BC9DCD99940F2916815EE /* PBXTargetDependency */,
-				549183AD25BC4E5B83718377 /* PBXTargetDependency */,
-			);
-			name = "spirv-cross-hlsl";
-			productName = "spirv-cross-hlsl";
-			productReference = AA95292A728C4328A640294B /* spirv-cross-hlsl */;
-			productType = "com.apple.product-type.library.static";
-		};
-		C2D9AC6A949E46078ED42D9C /* spirv-cross-glsl */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 4FBD6866FF6247CBA7BAEC43 /* Build configuration list for PBXNativeTarget "spirv-cross-glsl" */;
-			buildPhases = (
-				F1D7F48C51024427B50237D6 /* Sources */,
-				A13B92517B7145EFBD28AF46 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				A783F849A4FA43ED890A6DBA /* PBXTargetDependency */,
-				38E3AEA6917746F7B9C1D511 /* PBXTargetDependency */,
+				635E9F08EBFC4B2F92D7DE51 /* PBXTargetDependency */,
+				A30FE67F6427438282AD8593 /* PBXTargetDependency */,
 			);
 			name = "spirv-cross-glsl";
 			productName = "spirv-cross-glsl";
-			productReference = A2791FBFDD2944428A9355BB /* spirv-cross-glsl */;
+			productReference = AE9C38153B144A7EA5185689 /* spirv-cross-glsl */;
+			productType = "com.apple.product-type.library.static";
+		};
+		6B12748EDC344027BF818E3A /* spirv-cross-hlsl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C2F273DC8477462EA8B2718B /* Build configuration list for PBXNativeTarget "spirv-cross-hlsl" */;
+			buildPhases = (
+				613252605FE849BDBDA3C3F2 /* Sources */,
+				B4E29C4CE35C4CF1A6CB71D7 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				026120CD0F0542EF92D12355 /* PBXTargetDependency */,
+				1FC584745C2347A999BA8878 /* PBXTargetDependency */,
+				895986EDE5474BA3AC7699B1 /* PBXTargetDependency */,
+			);
+			name = "spirv-cross-hlsl";
+			productName = "spirv-cross-hlsl";
+			productReference = 1283F32E725E49CABEEB56FD /* spirv-cross-hlsl */;
+			productType = "com.apple.product-type.library.static";
+		};
+		BB55E92C3B4F4F45BC0C1072 /* spirv-cross-msl */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4C767A0FCEF542639CBC4531 /* Build configuration list for PBXNativeTarget "spirv-cross-msl" */;
+			buildPhases = (
+				1C0B8C4CCC674FE48AE46608 /* Sources */,
+				BB897FA5A73D48F5A28C5507 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1B474118841E4A0AB7DC6C75 /* PBXTargetDependency */,
+				58F6EE7C4E114961ADB1AF9F /* PBXTargetDependency */,
+				1CDDA6911DEA4B5091BA9717 /* PBXTargetDependency */,
+			);
+			name = "spirv-cross-msl";
+			productName = "spirv-cross-msl";
+			productReference = 2B0915F085AC474AA456C9E2 /* spirv-cross-msl */;
+			productType = "com.apple.product-type.library.static";
+		};
+		EC1B35F0E3F84012B88A113E /* spirv-cross-cpp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F882D027066B42028913D90A /* Build configuration list for PBXNativeTarget "spirv-cross-cpp" */;
+			buildPhases = (
+				C0C59563314A45E3953176F4 /* Sources */,
+				A550C944EC5A4DC1AFA9603D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3191571F6F354C27A5A70CB3 /* PBXTargetDependency */,
+				01C85733DEFA49B9917742C7 /* PBXTargetDependency */,
+				59FE1BC180314A99BEE0D67A /* PBXTargetDependency */,
+			);
+			name = "spirv-cross-cpp";
+			productName = "spirv-cross-cpp";
+			productReference = 27CCDAB046B1496A86799CA8 /* spirv-cross-cpp */;
+			productType = "com.apple.product-type.library.static";
+		};
+		FD7A24106EE544E4A4315752 /* spirv-cross-core */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9FD98421C9EC418CB6443F9C /* Build configuration list for PBXNativeTarget "spirv-cross-core" */;
+			buildPhases = (
+				32E817E1DE2D4951BFF0DCDA /* Sources */,
+				C22134A169CE43E98312F257 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				32133A9B19794651A13120C2 /* PBXTargetDependency */,
+			);
+			name = "spirv-cross-core";
+			productName = "spirv-cross-core";
+			productReference = 813BB96875E74F4D8DE7CA86 /* spirv-cross-core */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		3CC728C16D58436E9D2AE11C /* Project object */ = {
+		CE5CE6BF6B1B47209E30CCD8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1500;
 			};
-			buildConfigurationList = C60CE8C6D05A438EA63F5356 /* Build configuration list for PBXProject "SPIRV-Cross" */;
+			buildConfigurationList = 30F44002A355486CB19FBA01 /* Build configuration list for PBXProject "SPIRV-Cross" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				7A7D63A99F6740C3B7F079AF /* Debug */,
-				2BD62B59025547558EF5EA7E /* Release */,
-				3CF1A8C6661142288D2B1D67 /* MinSizeRel */,
-				D05BF644648647D190431466 /* RelWithDebInfo */,
+				A3C709E2EDD94E38BE0A0743 /* Debug */,
+				9BC2227FE0564C36BDE06384 /* Release */,
+				B631B25F6A20422FB6F327AF /* MinSizeRel */,
+				F756E0CECA784FA9A1602341 /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = EE90DF9BB9BB4005BA98644A;
-			projectDirPath = "../ppsspp";
+			mainGroup = 1978C5996AC745C8B9BEFF10;
+			projectDirPath = "../libretro_ppsspp";
 			projectRoot = "";
 			targets = (
-				D5C5F59DA0D24BB697F70C76 /* ALL_BUILD */,
-				CC999B7DD8894553A8463837 /* RUN_TESTS */,
-				F98D9B492C154EF89F56E070 /* ZERO_CHECK */,
-				9C2FE12D6226493A89B86940 /* install */,
-				271CF7DF5B3B402B873047D9 /* spirv-cross-core */,
-				7630E4A548634CCEAB05ED4C /* spirv-cross-cpp */,
-				C2D9AC6A949E46078ED42D9C /* spirv-cross-glsl */,
-				BDDE12001F104E6487AE4EBA /* spirv-cross-hlsl */,
-				3953A91AF4CC4ED1911EB33B /* spirv-cross-msl */,
+				872B88AC16C241AEBBB9B138 /* ALL_BUILD */,
+				FE9EA17B6F164179AF1C6707 /* RUN_TESTS */,
+				35E138004C754BA89FCFF9F6 /* ZERO_CHECK */,
+				492AF1C578C644C5851A69FB /* install */,
+				FD7A24106EE544E4A4315752 /* spirv-cross-core */,
+				EC1B35F0E3F84012B88A113E /* spirv-cross-cpp */,
+				4BDC1B6F1FDC471D932AF991 /* spirv-cross-glsl */,
+				6B12748EDC344027BF818E3A /* spirv-cross-hlsl */,
+				BB55E92C3B4F4F45BC0C1072 /* spirv-cross-msl */,
 			);
 		};
 /* End PBXProject section */
@@ -728,19 +728,19 @@
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/ext/SPIRV-Cross-build
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/ext/SPIRV-Cross-build
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/ext/SPIRV-Cross-build
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/ext/SPIRV-Cross-build
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.26.4/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -760,55 +760,7 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		87AF4882E018677E2624B544 = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# shell script goes here
-exit 0";
-			showEnvVarsInLog = 0;
-		};
-		87FB7BCCF128ED780034CC73 /* Generate CMakeFiles/ALL_BUILD */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ALL_BUILD";
-			outputPaths = (
-"../cmake/ext/SPIRV-Cross-build/CMakeFiles/ALL_BUILD"			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/ext/SPIRV-Cross-build
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/ext/SPIRV-Cross-build
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/ext/SPIRV-Cross-build
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/ext/SPIRV-Cross-build
-  echo Build\\ all\\ projects
-fi
-";
-			showEnvVarsInLog = 0;
-		};
-		8EA8E9A50936D47AF8529A3E /* Generate CMakeFiles/ZERO_CHECK */ = {
+		68E7274F4E0318E24F112A6C /* Generate CMakeFiles/ZERO_CHECK */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -841,6 +793,21 @@ fi
 ";
 			showEnvVarsInLog = 0;
 		};
+		87AF4882E018677E2624B544 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
 		910A41151295C5F9742C25BD = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -870,19 +837,52 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/ext/SPIRV-Cross-build
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/ext/SPIRV-Cross-build
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/ext/SPIRV-Cross-build
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/ext/SPIRV-Cross-build
-  /usr/local/lib/python3.10/site-packages/cmake/data/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.26.4/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		97821A5CF5F94734E7402E5D /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+"../cmake/ext/SPIRV-Cross-build/CMakeFiles/ALL_BUILD"			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/ext/SPIRV-Cross-build
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/ext/SPIRV-Cross-build
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/ext/SPIRV-Cross-build
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/ext/SPIRV-Cross-build
+  echo Build\\ all\\ projects
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -905,202 +905,185 @@ exit 0";
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		4B568F7C3D884DF5B091F6E4 /* Sources */ = {
+		1C0B8C4CCC674FE48AE46608 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				58450B14C48446E6B7A991DD /* ../ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp */,
+				84E4763B16814E328FCCC1EE /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_msl.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		99CD07B234FC441AB87F8B91 /* Sources */ = {
+		30BCBB88E6B248A7A5E865C1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				309D27C4C22947B691312924 /* ../ppsspp/ext/SPIRV-Cross/spirv_msl.cpp */,
+				8D7AFDB70712482A8BC21B92 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D69A52128C5043E08B3708AB /* Sources */ = {
+		32E817E1DE2D4951BFF0DCDA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2EB7A24D1CE846598F20BCC4 /* ../ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp */,
+				01AA21301831403A91EA3969 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp */,
+				24E25BFEF2034ED486E75C1F /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross.cpp */,
+				E8B9518720D04032B6C5786A /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp */,
+				2A3238FBAF1A45D7A64EB286 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp */,
+				5197FE3D64734E77BA225B1B /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_parser.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E611823163544B67A0F63575 /* Sources */ = {
+		613252605FE849BDBDA3C3F2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C69BF94F3B04B959D1890A0 /* ../ppsspp/ext/SPIRV-Cross/spirv_cfg.cpp */,
-				A3F4E59457934C8082BEDE5E /* ../ppsspp/ext/SPIRV-Cross/spirv_cross.cpp */,
-				3799B0132B83447185E4C88A /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_parsed_ir.cpp */,
-				5EC61603D06C4F9CAEA64ADF /* ../ppsspp/ext/SPIRV-Cross/spirv_cross_util.cpp */,
-				BFAE9704BE9B4C5DAF925C50 /* ../ppsspp/ext/SPIRV-Cross/spirv_parser.cpp */,
+				02BC88F3F4834789A3D47930 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_hlsl.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F1D7F48C51024427B50237D6 /* Sources */ = {
+		C0C59563314A45E3953176F4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D08A7C13966848E78EE758F3 /* ../ppsspp/ext/SPIRV-Cross/spirv_glsl.cpp */,
+				7CF6D87CDCAD423DA88CABB9 /* ../libretro_ppsspp/ext/SPIRV-Cross/spirv_cpp.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		08E82B3A72294F0FACA820A1 /* PBXTargetDependency */ = {
+		01C85733DEFA49B9917742C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 271CF7DF5B3B402B873047D9 /* spirv-cross-core */;
-			targetProxy = FA0539446C05461C9173F78F /* PBXContainerItemProxy */;
+			target = 4BDC1B6F1FDC471D932AF991 /* spirv-cross-glsl */;
+			targetProxy = BB2475759D454ECBAF251B6C /* PBXContainerItemProxy */;
 		};
-		232DDBBF243344578361D69E /* PBXTargetDependency */ = {
+		026120CD0F0542EF92D12355 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 271CF7DF5B3B402B873047D9 /* spirv-cross-core */;
-			targetProxy = 34EDF01D75274552A3BEFD04 /* PBXContainerItemProxy */;
+			target = FD7A24106EE544E4A4315752 /* spirv-cross-core */;
+			targetProxy = 846AD58CC179474691093F73 /* PBXContainerItemProxy */;
 		};
-		26F1F08E249940E8833CECB7 /* PBXTargetDependency */ = {
+		0B03B5B83C1A4A129061D75B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = 4F91C97AE4774CF88ECB9703 /* PBXContainerItemProxy */;
+			target = BB55E92C3B4F4F45BC0C1072 /* spirv-cross-msl */;
+			targetProxy = A306BABDEE04407B88BB6368 /* PBXContainerItemProxy */;
 		};
-		2845CEAB75594809A3D94D5A /* PBXTargetDependency */ = {
+		163BBC68CED540A791D3F74C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3953A91AF4CC4ED1911EB33B /* spirv-cross-msl */;
-			targetProxy = FEC24AB84CF04FD1B651DFDC /* PBXContainerItemProxy */;
+			target = 4BDC1B6F1FDC471D932AF991 /* spirv-cross-glsl */;
+			targetProxy = 8EFDC8876E6D4BB586BED683 /* PBXContainerItemProxy */;
 		};
-		34B3AB62DDD745429F498194 /* PBXTargetDependency */ = {
+		1B474118841E4A0AB7DC6C75 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C2D9AC6A949E46078ED42D9C /* spirv-cross-glsl */;
-			targetProxy = 6FEFE766E62C4D3BA9D4C165 /* PBXContainerItemProxy */;
+			target = FD7A24106EE544E4A4315752 /* spirv-cross-core */;
+			targetProxy = 0E9D4146451044BFA5C5A526 /* PBXContainerItemProxy */;
 		};
-		38E3AEA6917746F7B9C1D511 /* PBXTargetDependency */ = {
+		1CDDA6911DEA4B5091BA9717 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 271CF7DF5B3B402B873047D9 /* spirv-cross-core */;
-			targetProxy = D866F84EA1904A6C90A20621 /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = BBB86246906945BE81B715C0 /* PBXContainerItemProxy */;
 		};
-		3C93AB4D1664405D8BEBFDBF /* PBXTargetDependency */ = {
+		1FC584745C2347A999BA8878 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = E0F9D67F2AF84283B835C103 /* PBXContainerItemProxy */;
+			target = 4BDC1B6F1FDC471D932AF991 /* spirv-cross-glsl */;
+			targetProxy = 3F6245E47E3943C68F53CE26 /* PBXContainerItemProxy */;
 		};
-		448BC9DCD99940F2916815EE /* PBXTargetDependency */ = {
+		281C488D7A424112B1695C3E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 271CF7DF5B3B402B873047D9 /* spirv-cross-core */;
-			targetProxy = 5A8697F845CE4DEF815693AB /* PBXContainerItemProxy */;
+			target = 6B12748EDC344027BF818E3A /* spirv-cross-hlsl */;
+			targetProxy = AD0550AA7AB54AA08064A89C /* PBXContainerItemProxy */;
 		};
-		549183AD25BC4E5B83718377 /* PBXTargetDependency */ = {
+		3191571F6F354C27A5A70CB3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C2D9AC6A949E46078ED42D9C /* spirv-cross-glsl */;
-			targetProxy = C86331EBF7F843A3AC89E370 /* PBXContainerItemProxy */;
+			target = FD7A24106EE544E4A4315752 /* spirv-cross-core */;
+			targetProxy = C3C04EC0DFD84331BA7BC956 /* PBXContainerItemProxy */;
 		};
-		6A008EF63CF04DE49F41BE15 /* PBXTargetDependency */ = {
+		32133A9B19794651A13120C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = 828D899271F944D596DAB8F3 /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 301EFF0037A641CD98B55FB5 /* PBXContainerItemProxy */;
 		};
-		6FDE1F01B09743B8B931A977 /* PBXTargetDependency */ = {
+		3B88AB2407C3461B82813C34 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7630E4A548634CCEAB05ED4C /* spirv-cross-cpp */;
-			targetProxy = C46443E610844B429BB6B674 /* PBXContainerItemProxy */;
+			target = 872B88AC16C241AEBBB9B138 /* ALL_BUILD */;
+			targetProxy = 80EBACFD5D1D42C2A66BDB2C /* PBXContainerItemProxy */;
 		};
-		8432440D4AEC4B878F82837E /* PBXTargetDependency */ = {
+		58F6EE7C4E114961ADB1AF9F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = 99A607631A844707A135CD96 /* PBXContainerItemProxy */;
+			target = 4BDC1B6F1FDC471D932AF991 /* spirv-cross-glsl */;
+			targetProxy = 89130BCAE2904ECEB52BC8F9 /* PBXContainerItemProxy */;
 		};
-		8533FB1108274C1484680F7C /* PBXTargetDependency */ = {
+		59FE1BC180314A99BEE0D67A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BDDE12001F104E6487AE4EBA /* spirv-cross-hlsl */;
-			targetProxy = 1B1C66DE0D64414C99937A83 /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 1403B708AE484BD5B2682DE5 /* PBXContainerItemProxy */;
 		};
-		9E92B825686B4B93B4D7EE79 /* PBXTargetDependency */ = {
+		61485B49A5454EA6A492E517 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = 234760F0FF2B43528A066F47 /* PBXContainerItemProxy */;
+			target = FD7A24106EE544E4A4315752 /* spirv-cross-core */;
+			targetProxy = 969F2859C7124DC5984EA72D /* PBXContainerItemProxy */;
 		};
-		A783F849A4FA43ED890A6DBA /* PBXTargetDependency */ = {
+		635E9F08EBFC4B2F92D7DE51 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F98D9B492C154EF89F56E070 /* ZERO_CHECK */;
-			targetProxy = 2398235AB3CA4C2ABE6DB11F /* PBXContainerItemProxy */;
+			target = FD7A24106EE544E4A4315752 /* spirv-cross-core */;
+			targetProxy = 089A2E87CD424A7B9ED3F7E7 /* PBXContainerItemProxy */;
 		};
-		B84BB477120040558DD8A1C0 /* PBXTargetDependency */ = {
+		895986EDE5474BA3AC7699B1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 271CF7DF5B3B402B873047D9 /* spirv-cross-core */;
-			targetProxy = 54CF7B95A9B64A55B641748C /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 5F09CB30FE014DBF9167452B /* PBXContainerItemProxy */;
 		};
-		B8928E5F2ACB48099B613C81 /* PBXTargetDependency */ = {
+		A30FE67F6427438282AD8593 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C2D9AC6A949E46078ED42D9C /* spirv-cross-glsl */;
-			targetProxy = 9CAD8FE46B7449F9A3C2FBD0 /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 5F5E96E9BCE841A99E9BD552 /* PBXContainerItemProxy */;
 		};
-		D69A6000C16848AAB6605DF8 /* PBXTargetDependency */ = {
+		E2C4CB10E8944FA9A012FF3C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C2D9AC6A949E46078ED42D9C /* spirv-cross-glsl */;
-			targetProxy = CFE8B0AB95BD49639EC4876D /* PBXContainerItemProxy */;
+			target = 35E138004C754BA89FCFF9F6 /* ZERO_CHECK */;
+			targetProxy = 94CEB983E1A641578F2FF795 /* PBXContainerItemProxy */;
 		};
-		F8998727B3CB4482872FC0B3 /* PBXTargetDependency */ = {
+		EB8E4E34F09440AE8F649BE2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D5C5F59DA0D24BB697F70C76 /* ALL_BUILD */;
-			targetProxy = 991E37DF5FBF42B7B713950A /* PBXContainerItemProxy */;
+			target = EC1B35F0E3F84012B88A113E /* spirv-cross-cpp */;
+			targetProxy = F87F355F1BBE4FD58DB888D5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1150EE82E23C4ACEA1BF3232 /* Release */ = {
+		04202BE9906D4E8FAFFEC9E6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		1EB9D104CC3E40E593FF230E /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
 				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                      -D_DEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-core";
+				PRODUCT_NAME = "spirv-cross-cpp";
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = Debug;
 		};
-		216EFD87FAF246DD9CC05CA3 /* MinSizeRel */ = {
+		170A4AD062654ACA81AB9C37 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1117,9 +1100,54 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		26C3A6C999BD4B70960949B2 /* MinSizeRel */ = {
+		1EFBAC913EAA425AB86A1B81 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Release;
+		};
+		26C41AAF85C649D889715D94 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                      -D_DEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-core";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		2AB2DF3A68F64D72AD772289 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1134,11 +1162,32 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = RelWithDebInfo;
 		};
-		2DC78109240B457F9014EA24 /* MinSizeRel */ = {
+		3425E47DC8754EDBA753AB79 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		360177713C5F45429C90F219 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1148,16 +1197,16 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                    -DNDEBUG     -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-glsl";
+				PRODUCT_NAME = "spirv-cross-hlsl";
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
@@ -1165,9 +1214,114 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		35D29D6826FE4C99A61DAD75 /* Release */ = {
+		3CA746B81EB2427D80DB9B0D /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = MinSizeRel;
+		};
+		416F16D8734344E4A0ACC6D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		42C682E540DB408281063149 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		44736711499743B9A64F2FC8 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                    -DNDEBUG     -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-msl";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		50F389E42BE147B48609E8D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		56E9D249D389475E961B4591 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1177,13 +1331,13 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                    -DNDEBUG     -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "spirv-cross-glsl";
@@ -1194,9 +1348,10 @@ exit 0";
 			};
 			name = Release;
 		};
-		36E131B09C014F82AD04EEBB /* Debug */ = {
+		594D32B3F96643AABD371301 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1213,38 +1368,10 @@ exit 0";
 			};
 			name = Debug;
 		};
-		40FF8F5E0347499EBD583E8D /* Debug */ = {
+		5BF9CD9582514FC59DA48E8D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0       -D_DEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-msl";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		48FD5997511E461E94421988 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1253,14 +1380,14 @@ exit 0";
 				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                    -DNDEBUG     -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "spirv-cross-hlsl";
@@ -1269,158 +1396,12 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
-		};
-		5FBBA325F85342FA9BA220D9 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-glsl";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		63EC28AAA79940D5AD4F4CBA /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
-				BUILD_DIR = ../lib;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = RelWithDebInfo;
-		};
-		69B425EC542B438D8B0F3F6D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
 			name = Release;
 		};
-		6C645D17F3C341FF856AE695 /* Release */ = {
+		65C16A66B437461DB6A5EAE8 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
-				BUILD_DIR = ../lib;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Release;
-		};
-		6F44C16A8F4C4CAC9FA6CB8F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		7039E81F41864CDD8A0A8E88 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
-				BUILD_DIR = ../lib;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = MinSizeRel;
-		};
-		73D164D089AD4F4C97C67BF6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		811EBE8C92294C9B84AE32B9 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		822F25737FD74A4CB7FD4C6E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1435,11 +1416,12 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
+			name = MinSizeRel;
 		};
-		91B558E8BC104D3EB105F58C /* Debug */ = {
+		6E983F5AFA9E456EB299F492 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1449,16 +1431,16 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0       -D_DEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                      -D_DEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-core";
+				PRODUCT_NAME = "spirv-cross-msl";
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
@@ -1466,38 +1448,10 @@ exit 0";
 			};
 			name = Debug;
 		};
-		94E37E0236C14626BC836128 /* Debug */ = {
+		75DC196B849E44E38A36A64A /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0       -D_DEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-cpp";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		955EA6BAF61E4E8E957C1522 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1507,16 +1461,16 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                       -DNDEBUG        -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-cpp";
+				PRODUCT_NAME = "spirv-cross-msl";
 				SECTORDER_FLAGS = "";
 				
 				USE_HEADERMAP = NO;
@@ -1524,9 +1478,174 @@ exit 0";
 			};
 			name = RelWithDebInfo;
 		};
-		96112E5E996A4C20BD11FCB7 /* RelWithDebInfo */ = {
+		7637F38370884B4296414F69 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                    -DNDEBUG     -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-msl";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		7C7D57CD6A354721A1C0B485 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		7D71601600FC4A93BCBC9D5D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		881679E689C7424B9A212F5C /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		8985DBBA9B784E018C668D73 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = RelWithDebInfo;
+		};
+		91B7EE6462C147F7B134C7CC /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                    -DNDEBUG     -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-core";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		9207761DCF7941C8B8A2E069 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                       -DNDEBUG        -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-glsl";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		93CFFC858D364ED58D6BE155 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1543,61 +1662,10 @@ exit 0";
 			};
 			name = RelWithDebInfo;
 		};
-		997B56C44E6745CAA4CC453D /* RelWithDebInfo */ = {
+		949F48BD610440AFA5058123 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		9A64106D99BF47F4BD49EA46 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		9EA067BDC29542BABEF8A1B5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
-				BUILD_DIR = ../lib;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Debug;
-		};
-		A877ADC6710D45BABFC30133 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1607,119 +1675,13 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-msl";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		AF813017CBAD462C84EE8A75 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-core";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		B5521CCDEACC4BDCB78A547A /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		BDB4222E45FF478EA28ED4F5 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-hlsl";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		C848285A20604A379A405F08 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                    -DNDEBUG     -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "spirv-cross-cpp";
@@ -1730,57 +1692,10 @@ exit 0";
 			};
 			name = Release;
 		};
-		C94E5B1E68504292BF1197A2 /* Debug */ = {
+		96DCC61E492F460EA0BBEA6E /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		CBD3933A46BD4E659A9291CC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0       -D_DEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-glsl";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		D195B90541E8458BA6834738 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1790,13 +1705,13 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                       -DNDEBUG        -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = "spirv-cross-core";
@@ -1807,173 +1722,10 @@ exit 0";
 			};
 			name = RelWithDebInfo;
 		};
-		D6FEAF44964D461F871CFCBF /* Release */ = {
+		9D3F426ABEB2461D9E0D6A45 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-hlsl";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		E21F5FD5E757419795509018 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-msl";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		EB3CDA6F7DD64BCAAC7F6617 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0     -DNDEBUG     -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-cpp";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		ED24EFACFF304BEFA3A2E8DF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0       -D_DEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-hlsl";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		F2EC3301140E4704A761CF43 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",__LIBRETRO__,GLEW_NO_GLU,USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = (../ppsspp/ext/glslang,../ppsspp/ext/glew,../ppsspp,"../ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=11.0        -DNDEBUG        -D_NDEBUG -fPIC -fno-strict-aliasing -fno-exceptions '-std=gnu++17'   -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "spirv-cross-msl";
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		F4F923735027409A8AB64739 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		F64C2F90FA2A4D9098959A67 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1989,121 +1741,404 @@ exit 0";
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
+		};
+		A0703A0ADB6843C799F61837 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                    -DNDEBUG     -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-glsl";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		A7FD7CE619B44BA88ACF1E05 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                    -DNDEBUG     -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-core";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		AD10EB7AB967455A91426EBE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		B0F834BB7EFF44BA9724ABB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                      -D_DEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-glsl";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		B8F3D65F32B74B11B62FF6ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_REQUIRED = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				BUILD_DIR = ../lib;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+			};
+			name = Debug;
+		};
+		BD79BA312CB84203929D4152 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                      -D_DEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-hlsl";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		C6AF5759A78A47119A9D6CFF /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                       -DNDEBUG        -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-cpp";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		CA03F61D6D52472B91704652 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                    -DNDEBUG     -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-cpp";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		D14CB842640E46C38847B2B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		D47AB9114FB044A0A8A7CBB2 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",SPIRV_CROSS_EXCEPTIONS_TO_ASSERTIONS,__STDC_LIMIT_MACROS,"'GL_ETC1_RGB8_OES=0'",__STDC_CONSTANT_MACROS,"'ASSETS_DIR=\"/usr/local/share/ppsspp/assets/\"'",USING_GLES2,MOBILE_DEVICE,"'PNG_ARM_NEON_OPT=0'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (../libretro_ppsspp/ext/glslang,../libretro_ppsspp/ext/glew,../libretro_ppsspp,"../libretro_ppsspp/ext/SPIRV-Cross-build/../SPIRV-Cross","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = " -mios-version-min=11.0                -mios-version-min=11.0                       -DNDEBUG        -D_NDEBUG '-std=gnu++17' -fno-strict-aliasing -fno-exceptions   -U__STRICT_ANSI__ -U__STRICT_ANSI__ -Wno-nullability-completeness -Wno-tautological-pointer-compare -Wno-deprecated-register -Wformat -Wno-multichar";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "spirv-cross-hlsl";
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		EB4309FE06F148598C095D1C /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		02D011BFCAA04187A6190FAE /* Build configuration list for PBXNativeTarget "spirv-cross-cpp" */ = {
+		2306EB2EFE3840FE91C14FD3 /* Build configuration list for PBXNativeTarget "spirv-cross-glsl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				94E37E0236C14626BC836128 /* Debug */,
-				C848285A20604A379A405F08 /* Release */,
-				EB3CDA6F7DD64BCAAC7F6617 /* MinSizeRel */,
-				955EA6BAF61E4E8E957C1522 /* RelWithDebInfo */,
+				B0F834BB7EFF44BA9724ABB9 /* Debug */,
+				56E9D249D389475E961B4591 /* Release */,
+				A0703A0ADB6843C799F61837 /* MinSizeRel */,
+				9207761DCF7941C8B8A2E069 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		123C22188F2B4FDF92B4CD5D /* Build configuration list for PBXNativeTarget "spirv-cross-hlsl" */ = {
+		30F44002A355486CB19FBA01 /* Build configuration list for PBXProject "SPIRV-Cross" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				ED24EFACFF304BEFA3A2E8DF /* Debug */,
-				D6FEAF44964D461F871CFCBF /* Release */,
-				48FD5997511E461E94421988 /* MinSizeRel */,
-				BDB4222E45FF478EA28ED4F5 /* RelWithDebInfo */,
+				B8F3D65F32B74B11B62FF6ED /* Debug */,
+				1EFBAC913EAA425AB86A1B81 /* Release */,
+				3CA746B81EB2427D80DB9B0D /* MinSizeRel */,
+				8985DBBA9B784E018C668D73 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		25C9CBF0889D41D3A5FF7C0F /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		4C767A0FCEF542639CBC4531 /* Build configuration list for PBXNativeTarget "spirv-cross-msl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C94E5B1E68504292BF1197A2 /* Debug */,
-				73D164D089AD4F4C97C67BF6 /* Release */,
-				26C3A6C999BD4B70960949B2 /* MinSizeRel */,
-				B5521CCDEACC4BDCB78A547A /* RelWithDebInfo */,
+				6E983F5AFA9E456EB299F492 /* Debug */,
+				7637F38370884B4296414F69 /* Release */,
+				44736711499743B9A64F2FC8 /* MinSizeRel */,
+				75DC196B849E44E38A36A64A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		265D748D5C834435B39F5F0C /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		5D3083D27F944A788B77F011 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				6F44C16A8F4C4CAC9FA6CB8F /* Debug */,
-				69B425EC542B438D8B0F3F6D /* Release */,
-				811EBE8C92294C9B84AE32B9 /* MinSizeRel */,
-				997B56C44E6745CAA4CC453D /* RelWithDebInfo */,
+				D14CB842640E46C38847B2B4 /* Debug */,
+				416F16D8734344E4A0ACC6D6 /* Release */,
+				3425E47DC8754EDBA753AB79 /* MinSizeRel */,
+				7C7D57CD6A354721A1C0B485 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		4EB6FFE257BA4303AFA285E1 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		7B56E379CC4642EFAB75AAC1 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				822F25737FD74A4CB7FD4C6E /* Debug */,
-				1150EE82E23C4ACEA1BF3232 /* Release */,
-				9A64106D99BF47F4BD49EA46 /* MinSizeRel */,
-				F4F923735027409A8AB64739 /* RelWithDebInfo */,
+				42C682E540DB408281063149 /* Debug */,
+				50F389E42BE147B48609E8D6 /* Release */,
+				881679E689C7424B9A212F5C /* MinSizeRel */,
+				2AB2DF3A68F64D72AD772289 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		4FBD6866FF6247CBA7BAEC43 /* Build configuration list for PBXNativeTarget "spirv-cross-glsl" */ = {
+		954073627E584665ADCF0AE4 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CBD3933A46BD4E659A9291CC /* Debug */,
-				35D29D6826FE4C99A61DAD75 /* Release */,
-				2DC78109240B457F9014EA24 /* MinSizeRel */,
-				5FBBA325F85342FA9BA220D9 /* RelWithDebInfo */,
+				AD10EB7AB967455A91426EBE /* Debug */,
+				7D71601600FC4A93BCBC9D5D /* Release */,
+				65C16A66B437461DB6A5EAE8 /* MinSizeRel */,
+				EB4309FE06F148598C095D1C /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		73200B7B262B463C940F8AB7 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		9FD98421C9EC418CB6443F9C /* Build configuration list for PBXNativeTarget "spirv-cross-core" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				36E131B09C014F82AD04EEBB /* Debug */,
-				F64C2F90FA2A4D9098959A67 /* Release */,
-				216EFD87FAF246DD9CC05CA3 /* MinSizeRel */,
-				96112E5E996A4C20BD11FCB7 /* RelWithDebInfo */,
+				26C41AAF85C649D889715D94 /* Debug */,
+				A7FD7CE619B44BA88ACF1E05 /* Release */,
+				91B7EE6462C147F7B134C7CC /* MinSizeRel */,
+				96DCC61E492F460EA0BBEA6E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		87430A7B113E415489FF4CA4 /* Build configuration list for PBXNativeTarget "spirv-cross-core" */ = {
+		C2F273DC8477462EA8B2718B /* Build configuration list for PBXNativeTarget "spirv-cross-hlsl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				91B558E8BC104D3EB105F58C /* Debug */,
-				AF813017CBAD462C84EE8A75 /* Release */,
-				1EB9D104CC3E40E593FF230E /* MinSizeRel */,
-				D195B90541E8458BA6834738 /* RelWithDebInfo */,
+				BD79BA312CB84203929D4152 /* Debug */,
+				5BF9CD9582514FC59DA48E8D /* Release */,
+				360177713C5F45429C90F219 /* MinSizeRel */,
+				D47AB9114FB044A0A8A7CBB2 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		A5021E92BEEA4CA4903D48CA /* Build configuration list for PBXNativeTarget "spirv-cross-msl" */ = {
+		DB4B70B7980447958AC5080E /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				40FF8F5E0347499EBD583E8D /* Debug */,
-				A877ADC6710D45BABFC30133 /* Release */,
-				E21F5FD5E757419795509018 /* MinSizeRel */,
-				F2EC3301140E4704A761CF43 /* RelWithDebInfo */,
+				594D32B3F96643AABD371301 /* Debug */,
+				9D3F426ABEB2461D9E0D6A45 /* Release */,
+				170A4AD062654ACA81AB9C37 /* MinSizeRel */,
+				93CFFC858D364ED58D6BE155 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C60CE8C6D05A438EA63F5356 /* Build configuration list for PBXProject "SPIRV-Cross" */ = {
+		F882D027066B42028913D90A /* Build configuration list for PBXNativeTarget "spirv-cross-cpp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9EA067BDC29542BABEF8A1B5 /* Debug */,
-				6C645D17F3C341FF856AE695 /* Release */,
-				7039E81F41864CDD8A0A8E88 /* MinSizeRel */,
-				63EC28AAA79940D5AD4F4CBA /* RelWithDebInfo */,
+				04202BE9906D4E8FAFFEC9E6 /* Debug */,
+				949F48BD610440AFA5058123 /* Release */,
+				CA03F61D6D52472B91704652 /* MinSizeRel */,
+				C6AF5759A78A47119A9D6CFF /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 3CC728C16D58436E9D2AE11C /* Project object */;
+	rootObject = CE5CE6BF6B1B47209E30CCD8 /* Project object */;
 }

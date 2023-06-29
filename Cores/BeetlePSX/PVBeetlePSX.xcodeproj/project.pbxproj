@@ -3029,7 +3029,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# copy\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\ncd \"${SRCROOT}/cmake/build/\"\ncp mednafen_psx_hw_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib\"\n";
+			shellScript = "# copy\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\ncd \"${SRCROOT}/cmake/build/\"\n#cp mednafen_psx_hw_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -24,7 +24,7 @@ extension PVPPSSPPCore: CoreOptional {
 			   description: "(Requires Restart)",
 			   requiresRestart: true),
 		  values: [
-			   //.init(title: "Vulkan", description: "Vulkan", value: 3),
+			   .init(title: "Vulkan", description: "Vulkan", value: 3),
 			   .init(title: "OpenGL", description: "OpenGL", value: 0)
 		  ],
 		  defaultValue: 0)

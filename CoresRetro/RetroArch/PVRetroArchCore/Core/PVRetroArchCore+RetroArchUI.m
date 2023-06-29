@@ -127,7 +127,7 @@ void extract_bundles();
 	NSFileManager *fm = [[NSFileManager alloc] init];
 	NSString *fileName = [NSString stringWithFormat:@"%@/../../RetroArch/config/retroarch.cfg",
 						  self.batterySavesPath];
-    NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.0.1.cfg",
+    NSString *verFile = [NSString stringWithFormat:@"%@/../../RetroArch/config/1.1.1.cfg",
                          self.batterySavesPath];
 	if (![fm fileExistsAtPath: fileName] || ![fm fileExistsAtPath: verFile] || [self shouldUpdateAssets]) {
         NSString *src = [[NSBundle bundleForClass:[PVRetroArchCore class]] pathForResource:@"retroarch.cfg" ofType:nil];
@@ -210,7 +210,6 @@ void extract_bundles();
     [self syncResources:self.BIOSPath
                      to:[self.batterySavesPath stringByAppendingPathComponent:@"../../RetroArch/system" ]];
 }
-
 - (void)syncResources:(NSString*)from to:(NSString*)to {
 	if (!from)
 		return;
@@ -317,7 +316,7 @@ void extract_bundles();
 
 - (void)startVM:(UIView *)view {
 	apple_platform     = self;
-	ELOG(@"Starting VM\n");
+	NSLog(@"Starting VM\n");
 	NSString *optConfig = [NSString stringWithFormat:@"%@/../../RetroArch/config/opt.cfg",
 						  self.batterySavesPath];
     NSFileManager *fm = [[NSFileManager alloc] init];
@@ -363,7 +362,7 @@ void extract_bundles();
 }
 
 - (void)setupWindow {
-    ELOG(@"Set:METAL VULKAN OPENGLES:Attaching View Controller\n");
+    NSLog(@"Set:METAL VULKAN OPENGLES:Attaching View Controller\n");
     if (m_view) {
         [m_view removeFromSuperview];
         m_view=nil;
@@ -441,9 +440,8 @@ void extract_bundles();
         self.view.contentMode=UIViewContentModeScaleToFill;
 	}
 }
-- (void)showGameView
-{
-	ELOG(@"In Show Game View now\n");
+- (void)showGameView {
+	NSLog(@"In Show Game View now\n");
     [self setupWindow];
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1.0 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 		command_event(CMD_EVENT_AUDIO_START, NULL);
@@ -555,7 +553,7 @@ static void rarch_draw_observer(CFRunLoopObserverRef observer,
    task_queue_check();
    if (ret == -1) {
 	   command_event(CMD_EVENT_MENU_SAVE_CURRENT_CONFIG, NULL);
-	   ELOG(@"exit loop\n");
+	   NSLog(@"exit loop\n");
 	   return;
    }
    runloop_flags = runloop_get_flags();
@@ -575,9 +573,9 @@ void bundle_decompressed(retro_task_t *task,
 	  void *task_data,
 	  void *user_data, const char *err) {
    decompress_task_data_t *dec = (decompress_task_data_t*)task_data;
-   ELOG(@"Bundle Decompressed\n");
+   NSLog(@"Bundle Decompressed\n");
    if (err)
-	   ELOG(@"%s", err);
+	   NSLog(@"%s", err);
    if (dec) {
 	  if (!err)
 		 command_event(CMD_EVENT_REINIT, NULL);
@@ -590,7 +588,6 @@ void bundle_decompressed(retro_task_t *task,
        runloop_st->flags &= ~RUNLOOP_FLAG_OVERRIDES_ACTIVE;
    });
 }
-
 void extract_bundles() {
 	settings_t *settings = config_get_ptr();
 	task_push_decompress(
@@ -606,8 +603,7 @@ void extract_bundles() {
 }
 void main_msg_queue_push(const char *msg,
 	  unsigned prio, unsigned duration,
-	  bool flush)
-{
-	ELOG(@"MSGQ: %s\n", msg);
+	  bool flush) {
+	NSLog(@"MSGQ: %s\n", msg);
 }
 

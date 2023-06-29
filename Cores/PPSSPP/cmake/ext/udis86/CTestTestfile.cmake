@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: ../ppsspp/ext/udis86
+# Source directory: ../libretro_ppsspp/ext/udis86
 # Build directory: ../cmake/ext/udis86
 # 
 # This file includes the relevant testing commands required for 

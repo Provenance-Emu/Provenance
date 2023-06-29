@@ -21,45 +21,54 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		933430432A32467B001C35C2 /* DarwinFileSystemServices.mm in Sources */ = {isa = PBXBuildFile; fileRef = 933430422A32467B001C35C2 /* DarwinFileSystemServices.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		933430452A3246F9001C35C2 /* DarwinFileSystemServices.h in Headers */ = {isa = PBXBuildFile; fileRef = 933430442A3246F8001C35C2 /* DarwinFileSystemServices.h */; };
 		93928447295DFFA900F2AD12 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93928433295DFFA900F2AD12 /* CoreMedia.framework */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
+		939FFC652A32327B007970EB /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 939FFC642A32327B007970EB /* assets */; };
+		93AA16EE2A35E361007E89E1 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16E62A35E32A007E89E1 /* libavcodec.a */; };
+		93AA16EF2A35E361007E89E1 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16E22A35E329007E89E1 /* libavdevice.a */; };
+		93AA16F02A35E361007E89E1 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16E52A35E329007E89E1 /* libavformat.a */; };
+		93AA16F12A35E361007E89E1 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16E72A35E32A007E89E1 /* libavutil.a */; };
+		93AA16F22A35E361007E89E1 /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16E32A35E329007E89E1 /* libswresample.a */; };
+		93AA16F32A35E361007E89E1 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16E42A35E329007E89E1 /* libswscale.a */; };
+		93AA16F42A35E392007E89E1 /* libarmips.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740EE295B2FD20028EB94 /* libarmips.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA16F52A35E392007E89E1 /* libbasis_universal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9348D7702A322D5E00CC7998 /* libbasis_universal.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA16F62A35E392007E89E1 /* libcityhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740F0295B2FD20028EB94 /* libcityhash.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA16F72A35E392007E89E1 /* libCommonPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16A42A35DDDB007E89E1 /* libCommonPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA16F82A35E392007E89E1 /* libCorePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16A62A35DDDB007E89E1 /* libCorePPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA16FA2A35E392007E89E1 /* libgason.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740F8295B2FD20028EB94 /* libgason.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA16FB2A35E392007E89E1 /* libGenericCodeGenPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16A82A35DDDB007E89E1 /* libGenericCodeGenPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA16FC2A35E392007E89E1 /* libglslang-default-resource-limitsPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16722A35D279007E89E1 /* libglslang-default-resource-limitsPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA16FD2A35E392007E89E1 /* libglslangPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16702A35D279007E89E1 /* libglslangPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA16FE2A35E392007E89E1 /* libHLSLPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA166C2A35D279007E89E1 /* libHLSLPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA16FF2A35E392007E89E1 /* libkirk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740FC295B2FD20028EB94 /* libkirk.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17002A35E392007E89E1 /* liblibzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740FE295B2FD20028EB94 /* liblibzip.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17012A35E392007E89E1 /* libMachineIndependentPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16AA2A35DDDB007E89E1 /* libMachineIndependentPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17022A35E392007E89E1 /* libminiupnpc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74104295B2FD20028EB94 /* libminiupnpc.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17032A35E392007E89E1 /* libnativePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B02A35DDDB007E89E1 /* libnativePPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17042A35E392007E89E1 /* libOGLCompilerPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16AC2A35DDDB007E89E1 /* libOGLCompilerPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17052A35E392007E89E1 /* libOSDependent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740E8295B2FD20028EB94 /* libOSDependent.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17062A35E392007E89E1 /* libpng17.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E7410A295B2FD20028EB94 /* libpng17.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17072A35E392007E89E1 /* libsfmt19937PPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B22A35DDDB007E89E1 /* libsfmt19937PPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17082A35E392007E89E1 /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74110295B2FD20028EB94 /* libsnappy.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17092A35E392007E89E1 /* libspirv-cross-corePPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16742A35D279007E89E1 /* libspirv-cross-corePPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA170A2A35E392007E89E1 /* libspirv-cross-cppPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16762A35D279007E89E1 /* libspirv-cross-cppPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA170B2A35E392007E89E1 /* libspirv-cross-glslPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16782A35D279007E89E1 /* libspirv-cross-glslPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA170C2A35E392007E89E1 /* libspirv-cross-hlslPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA167A2A35D279007E89E1 /* libspirv-cross-hlslPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA170D2A35E392007E89E1 /* libspirv-cross-mslPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA167C2A35D279007E89E1 /* libspirv-cross-mslPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA170E2A35E392007E89E1 /* libSPIRVPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA166E2A35D279007E89E1 /* libSPIRVPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA170F2A35E392007E89E1 /* libudis86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E7411C295B2FD20028EB94 /* libudis86.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17102A35E392007E89E1 /* libunix_based_hardware_detection.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9348D7762A322D5E00CC7998 /* libunix_based_hardware_detection.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17112A35E392007E89E1 /* libutilsPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B42A35DDDB007E89E1 /* libutilsPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17122A35E392007E89E1 /* libvmaPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B62A35DDDB007E89E1 /* libvmaPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17132A35E392007E89E1 /* libxbrzPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16B82A35DDDB007E89E1 /* libxbrzPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17142A35E392007E89E1 /* libxxhashPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99C02A358C0A00B1D0F8 /* libxxhashPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
+		93AA17152A35E392007E89E1 /* libzstdPPSSPP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA16AE2A35DDDB007E89E1 /* libzstdPPSSPP.a */; platformFilters = (ios, maccatalyst, ); };
 		93AEC060295E7FEB00F9381C /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AEC04C295E7FEB00F9381C /* GLKit.framework */; platformFilters = (ios, macos, tvos, ); };
-		93C33C38295F84EF008DFADD /* MemArenaDarwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C33C24295F84EF008DFADD /* MemArenaDarwin.cpp */; };
-		93E74163295B344F0028EB94 /* libarmips.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740EE295B2FD20028EB94 /* libarmips.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74164295B344F0028EB94 /* libcityhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740F0295B2FD20028EB94 /* libcityhash.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74165295B344F0028EB94 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740DC295B2FD20028EB94 /* libCommon.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74166295B344F0028EB94 /* libCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740DE295B2FD20028EB94 /* libCore.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74167295B344F0028EB94 /* libgason.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740F8295B2FD20028EB94 /* libgason.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74168295B344F0028EB94 /* libGenericCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740E0295B2FD20028EB94 /* libGenericCodeGen.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74169295B344F0028EB94 /* libglslang-ppsspp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740FA295B2FD20028EB94 /* libglslang-ppsspp.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7416A295B344F0028EB94 /* libHLSL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740E2295B2FD20028EB94 /* libHLSL.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7416B295B344F0028EB94 /* libkirk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740FC295B2FD20028EB94 /* libkirk.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7416C295B344F0028EB94 /* liblibzip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740FE295B2FD20028EB94 /* liblibzip.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7416D295B344F0028EB94 /* libMachineIndependent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740E4295B2FD20028EB94 /* libMachineIndependent.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7416E295B344F0028EB94 /* libminiupnpc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74104295B2FD20028EB94 /* libminiupnpc.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7416F295B344F0028EB94 /* libnative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74106295B2FD20028EB94 /* libnative.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74170295B344F0028EB94 /* libOGLCompiler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740E6295B2FD20028EB94 /* libOGLCompiler.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74171295B344F0028EB94 /* libOSDependent.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740E8295B2FD20028EB94 /* libOSDependent.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74172295B344F0028EB94 /* libpng17.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E7410A295B2FD20028EB94 /* libpng17.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74173295B344F0028EB94 /* libsfmt19937.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E7410E295B2FD20028EB94 /* libsfmt19937.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74174295B344F0028EB94 /* libsnappy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74110295B2FD20028EB94 /* libsnappy.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74175295B344F0028EB94 /* libspirv-cross-core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74112295B2FD20028EB94 /* libspirv-cross-core.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74176295B344F0028EB94 /* libspirv-cross-cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74114295B2FD20028EB94 /* libspirv-cross-cpp.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74177295B344F0028EB94 /* libspirv-cross-glsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74116295B2FD20028EB94 /* libspirv-cross-glsl.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74178295B344F0028EB94 /* libspirv-cross-hlsl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74118295B2FD20028EB94 /* libspirv-cross-hlsl.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74179295B344F0028EB94 /* libspirv-cross-msl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E7411A295B2FD20028EB94 /* libspirv-cross-msl.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7417A295B344F0028EB94 /* libSPIRV.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E740EC295B2FD20028EB94 /* libSPIRV.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7417B295B344F0028EB94 /* libudis86.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E7411C295B2FD20028EB94 /* libudis86.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7417C295B344F0028EB94 /* libvma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E7411E295B2FD20028EB94 /* libvma.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7417D295B344F0028EB94 /* libxbrz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74120295B2FD20028EB94 /* libxbrz.a */; platformFilters = (ios, maccatalyst, ); };
-		93E7417E295B344F0028EB94 /* libxxhash-ppsspp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74122295B2FD20028EB94 /* libxxhash-ppsspp.a */; platformFilters = (ios, maccatalyst, ); };
-		93E74186295B35080028EB94 /* libavdevice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74180295B35060028EB94 /* libavdevice.a */; };
-		93E74187295B35080028EB94 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74181295B35060028EB94 /* libavutil.a */; };
-		93E74188295B35080028EB94 /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74182295B35070028EB94 /* libswresample.a */; };
-		93E74189295B35080028EB94 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74183295B35070028EB94 /* libswscale.a */; };
-		93E7418A295B35080028EB94 /* libavcodec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74184295B35070028EB94 /* libavcodec.a */; };
-		93E7418B295B35080028EB94 /* libavformat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74185295B35070028EB94 /* libavformat.a */; };
-		93E74191295B37970028EB94 /* libzstd-ppsspp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E74102295B2FD20028EB94 /* libzstd-ppsspp.a */; platformFilters = (ios, maccatalyst, ); };
+		93BDF7532A335F4D00264477 /* MemArenaDarwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93C33C24295F84EF008DFADD /* MemArenaDarwin.cpp */; };
+		93BDF7562A3363D800264477 /* iOSCoreAudio.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93BDF7542A3363D700264477 /* iOSCoreAudio.mm */; };
+		93BDF7572A3363D800264477 /* iOSCoreAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BDF7552A3363D700264477 /* iOSCoreAudio.h */; };
 		93E741E8295B67C70028EB94 /* PVPPSSPPCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPPSSPPCore+Cheats.mm */; };
 		93E741E9295B67C70028EB94 /* PVPPSSPPCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVPPSSPPCore+Controls.mm */; };
 		93E741EA295B67C70028EB94 /* PPSSPPVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E74126295B31460028EB94 /* PPSSPPVulkanViewController.swift */; };
@@ -94,7 +103,6 @@
 		93E7420B295B67C70028EB94 /* PVPPSSPPCore+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EA9218BC59D00557ACE /* PVPPSSPPCore+Saves.h */; };
 		93E7420C295B67C70028EB94 /* PVPPSSPP.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVPPSSPP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		93E7420D295B67C70028EB94 /* PVPPSSPPCore+Video.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EAD218BC5C500557ACE /* PVPPSSPPCore+Video.h */; };
-		93E74210295B67C70028EB94 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = 93E741A0295B3E1E0028EB94 /* assets */; };
 		93E74243295B70280028EB94 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		93E7427B295C53890028EB94 /* OGLGraphicsContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 93E7427A295C53890028EB94 /* OGLGraphicsContext.h */; };
 		93F28DC3295E264700E4D464 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC2295E264600E4D464 /* MediaPlayer.framework */; };
@@ -103,6 +111,55 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		933430392A32411C001C35C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9DBD7C28852246318E922FA6;
+			remoteInfo = basis_universal;
+		};
+		9334303B2A32411C001C35C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 0946238B57BC4BD8B0F15225;
+			remoteInfo = "glslang-default-resource-limits";
+		};
+		9334303D2A32411C001C35C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 1B01694D1CD4425C85A7CD1E;
+			remoteInfo = unix_based_hardware_detection;
+		};
+		9334303F2A32411C001C35C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FF96856397CC4E8F8DF6C23F;
+			remoteInfo = utils;
+		};
+		9348D76F2A322D5E00CC7998 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = EEB26E146DDC46A395E6B357;
+			remoteInfo = basis_universal;
+		};
+		9348D7712A322D5E00CC7998 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 494C9714ED5C479E99A02D5A;
+			remoteInfo = cpu_features;
+		};
+		9348D7752A322D5E00CC7998 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9E0FC98BE3144B2C95ADB7DA;
+			remoteInfo = unix_based_hardware_detection;
+		};
 		934D2E1A294B4D8800BDEBA5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3C7620720783162009950E4 /* Project object */;
@@ -110,47 +167,173 @@
 			remoteGlobalIDString = 934D2DFF294B4D4600BDEBA5;
 			remoteInfo = PlayLibAdjustments;
 		};
-		93E740DB295B2FD20028EB94 /* PBXContainerItemProxy */ = {
+		936E99BF2A358C0A00B1D0F8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 077766163100401E81FB2F8D;
-			remoteInfo = Common;
+			remoteGlobalIDString = D49A135ADB4946D3B43DF1A4;
+			remoteInfo = xxhashPPSSPP;
 		};
-		93E740DD295B2FD20028EB94 /* PBXContainerItemProxy */ = {
+		939FFC4B2A323069007970EB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 54246CBFA40144EFA1F0C059;
-			remoteInfo = Core;
+			remoteGlobalIDString = 37C152FA542D41A19C944A5F;
+			remoteInfo = PPSSPP;
 		};
-		93E740DF295B2FD20028EB94 /* PBXContainerItemProxy */ = {
+		93AA166B2A35D279007E89E1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = C847ADAC2B3744CBB862B123;
-			remoteInfo = GenericCodeGen;
+			remoteGlobalIDString = 2DFF95F720A442FE8E3D232C;
+			remoteInfo = HLSLPPSSPP;
 		};
-		93E740E1295B2FD20028EB94 /* PBXContainerItemProxy */ = {
+		93AA166D2A35D279007E89E1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 4C9B9ED451A2436B86721FCE;
-			remoteInfo = HLSL;
+			remoteGlobalIDString = 50FD9716E62C4152917F8C07;
+			remoteInfo = SPIRVPPSSPP;
 		};
-		93E740E3295B2FD20028EB94 /* PBXContainerItemProxy */ = {
+		93AA166F2A35D279007E89E1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 559ACD1F20DA45A4894CD72E;
-			remoteInfo = MachineIndependent;
+			remoteGlobalIDString = 86EB15D74E364265847A2436;
+			remoteInfo = glslangPPSSPP;
 		};
-		93E740E5295B2FD20028EB94 /* PBXContainerItemProxy */ = {
+		93AA16712A35D279007E89E1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 4FD035E968314E86B834FB71;
-			remoteInfo = OGLCompiler;
+			remoteGlobalIDString = F9D17F06CC724CFCB08579D6;
+			remoteInfo = "glslang-default-resource-limitsPPSSPP";
+		};
+		93AA16732A35D279007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F974D78C94F44A6A87FEA4CE;
+			remoteInfo = "spirv-cross-corePPSSPP";
+		};
+		93AA16752A35D279007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9ADC552DBFFB42029C140B54;
+			remoteInfo = "spirv-cross-cppPPSSPP";
+		};
+		93AA16772A35D279007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 17B42C895F274197AE2084E4;
+			remoteInfo = "spirv-cross-glslPPSSPP";
+		};
+		93AA16792A35D279007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4B22EF778EC0413E97EFB1E5;
+			remoteInfo = "spirv-cross-hlslPPSSPP";
+		};
+		93AA167B2A35D279007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 58592F67701A4ABC8FEECA1F;
+			remoteInfo = "spirv-cross-mslPPSSPP";
+		};
+		93AA16A32A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B1C9EA0C430842828D829BA0;
+			remoteInfo = CommonPPSSPP;
+		};
+		93AA16A52A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C4162BA831844106B688130B;
+			remoteInfo = CorePPSSPP;
+		};
+		93AA16A72A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1DC7F1ABCAE24ACDBD40B8AD;
+			remoteInfo = GenericCodeGenPPSSPP;
+		};
+		93AA16A92A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F1FBB2BBD4494EA19FEFA055;
+			remoteInfo = MachineIndependentPPSSPP;
+		};
+		93AA16AB2A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 078E94D8460A444E978AB752;
+			remoteInfo = OGLCompilerPPSSPP;
+		};
+		93AA16AD2A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 922CAA6DC8B543948A7F8EF1;
+			remoteInfo = libzstd_staticPPSSPP;
+		};
+		93AA16AF2A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BC98A36589864BB49668C82E;
+			remoteInfo = nativePPSSPP;
+		};
+		93AA16B12A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 947FDAEB025E43228F8F2D0F;
+			remoteInfo = sfmt19937PPSSPP;
+		};
+		93AA16B32A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4A71AC715D444526BA22EE4B;
+			remoteInfo = utilsPPSSPP;
+		};
+		93AA16B52A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 65544F20F285481692E536D8;
+			remoteInfo = vmaPPSSPP;
+		};
+		93AA16B72A35DDDB007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 3530A62A93CE47AF9234C6E1;
+			remoteInfo = xbrzPPSSPP;
+		};
+		93AA16DF2A35E193007E89E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = D4BC6F19F9884F72838790F1;
+			remoteInfo = libzstd_staticPPSSPP;
+		};
+		93DC57812A358B48008645AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 644A9AD7B8104B368C3EEF13;
+			remoteInfo = xxhashPPSSPP;
 		};
 		93E740E7295B2FD20028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -158,20 +341,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 6F0DF0821BF6442CBD7117B8;
 			remoteInfo = OSDependent;
-		};
-		93E740E9295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 634E82A2B9C142E1933E31F0;
-			remoteInfo = PPSSPP;
-		};
-		93E740EB295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 67841B4BACF84FD19D5D37FC;
-			remoteInfo = SPIRV;
 		};
 		93E740ED295B2FD20028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -215,13 +384,6 @@
 			remoteGlobalIDString = 021AB957AD4B4F088A48AB5D;
 			remoteInfo = gason;
 		};
-		93E740F9295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BC41A6685DCA4AD3AFF28F24;
-			remoteInfo = glslang;
-		};
 		93E740FB295B2FD20028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
@@ -243,26 +405,12 @@
 			remoteGlobalIDString = 0424CBDA0B6B4103A4A063C5;
 			remoteInfo = libzstd_shared;
 		};
-		93E74101295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 35F76287301446DCAEA48B55;
-			remoteInfo = libzstd_static;
-		};
 		93E74103295B2FD20028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = D77934D5E82148358AF88339;
 			remoteInfo = miniupnpc;
-		};
-		93E74105295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5C0BE94EB8C244E7BB2D0D10;
-			remoteInfo = native;
 		};
 		93E74107295B2FD20028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -278,20 +426,6 @@
 			remoteGlobalIDString = 474B4D4C2CEE4279ACDEB1B7;
 			remoteInfo = png17;
 		};
-		93E7410B295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3B0BE25F7C474EA0B15B8B33;
-			remoteInfo = ppsspp_libretro;
-		};
-		93E7410D295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7C2E91EBA8A4173B4708F8C;
-			remoteInfo = sfmt19937;
-		};
 		93E7410F295B2FD20028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
@@ -299,68 +433,12 @@
 			remoteGlobalIDString = 6C2ECA5D410D469B92CE02D4;
 			remoteInfo = snappy;
 		};
-		93E74111295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C876E4BB97324E3EAE09C0BA;
-			remoteInfo = "spirv-cross-core";
-		};
-		93E74113295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D1649473663841569BC044C8;
-			remoteInfo = "spirv-cross-cpp";
-		};
-		93E74115295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 06B2087F30ED48E698DC0789;
-			remoteInfo = "spirv-cross-glsl";
-		};
-		93E74117295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 13230E03E0F246A38B5B7796;
-			remoteInfo = "spirv-cross-hlsl";
-		};
-		93E74119295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 26BF69F45CB5484CAD3FECFF;
-			remoteInfo = "spirv-cross-msl";
-		};
 		93E7411B295B2FD20028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 4FCE8C66B1B5446A85DEEDFC;
 			remoteInfo = udis86;
-		};
-		93E7411D295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 51B93677CD9D4B8F9F18ED44;
-			remoteInfo = vma;
-		};
-		93E7411F295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2A17E19898AD44A6B0043BC5;
-			remoteInfo = xbrz;
-		};
-		93E74121295B2FD20028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BEC328FA97F94186B3E79DED;
-			remoteInfo = xxhash;
 		};
 		93E74123295B2FD20028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -373,204 +451,190 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = B3C96563044A43E5BFD3B734;
+			remoteGlobalIDString = E19AB9B0CFB34BE6A42F54C5;
 			remoteInfo = Common;
 		};
 		93E7412B295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = D3112008053644F0A970B0DE;
+			remoteGlobalIDString = 9E99CB722E674BF6AEA01982;
 			remoteInfo = Core;
 		};
 		93E7412D295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8AFE7149B25F464CAB2377F2;
+			remoteGlobalIDString = 7AA4B5C843FE4F2895DEDCF3;
 			remoteInfo = GenericCodeGen;
 		};
 		93E7412F295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 98A317B95C6643E88068A132;
+			remoteGlobalIDString = 607C519D2C1C41968CD64A52;
 			remoteInfo = HLSL;
 		};
 		93E74131295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 549C873559D34DCFAFBDA43B;
+			remoteGlobalIDString = BA5315E34A504E3082AA4FA9;
 			remoteInfo = MachineIndependent;
 		};
 		93E74133295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E08166C30C8B4BD4A4277C83;
+			remoteGlobalIDString = 905DD4FAB2CA433E8553E225;
 			remoteInfo = OGLCompiler;
 		};
 		93E74135295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 832420D4CCAD4C60BA53FDC4;
+			remoteGlobalIDString = 2B99665325A844979C7C9158;
 			remoteInfo = OSDependent;
 		};
 		93E74137295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 9398923F8A5F4E32837CF859;
+			remoteGlobalIDString = D0C25C0135B347E5B92D4441;
 			remoteInfo = SPIRV;
 		};
 		93E74139295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 2DB7197F72E043BA9418CD83;
+			remoteGlobalIDString = 6BC97518EB1B4EA4BD1384CB;
 			remoteInfo = armips;
 		};
 		93E7413B295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 0DD906CBC8FF45BCB08FF54B;
+			remoteGlobalIDString = B3CFEC20FB604CB585EEEC0E;
 			remoteInfo = cityhash;
 		};
 		93E7413D295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C6E8AFE049CF43ABBA3A58EE;
+			remoteGlobalIDString = 41BFAA38E5A641A893720F96;
 			remoteInfo = gason;
 		};
 		93E7413F295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 611604303C3749B0AC027685;
+			remoteGlobalIDString = 67CAE3ECB9A84D2880EFA022;
 			remoteInfo = glslang;
 		};
 		93E74141295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 433081A91D0E469CA1A19BA8;
+			remoteGlobalIDString = 3F2F4E8162574C8A88D188AF;
 			remoteInfo = kirk;
 		};
 		93E74143295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 3F3E0595B7064E42BA4A800C;
+			remoteGlobalIDString = 90F952491F1E4396A50834A5;
 			remoteInfo = libzip;
-		};
-		93E74145295B34350028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 3C8DE66F88734C78B99EB866;
-			remoteInfo = libzstd_static;
 		};
 		93E74147295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 19B25B0D9B2E4E62A5362130;
+			remoteGlobalIDString = C247B7671E2C4BC4924152FA;
 			remoteInfo = miniupnpc;
 		};
 		93E74149295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 89A516AD70444ACDA04E69FC;
+			remoteGlobalIDString = DC6471DA5C0E4611AC4D14EF;
 			remoteInfo = native;
 		};
 		93E7414B295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 07DE9557E3BD4B6FA53002DE;
+			remoteGlobalIDString = B0D1693B1B9D48EA83C09367;
 			remoteInfo = png17;
 		};
 		93E7414D295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5D6D1C1C121E4084BFC8E8B2;
+			remoteGlobalIDString = 06036B4034874F92BA1C3BD8;
 			remoteInfo = sfmt19937;
 		};
 		93E7414F295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 21B8A05A270D454B86750CCC;
+			remoteGlobalIDString = 14D3E896048C4D81BE9FAF22;
 			remoteInfo = snappy;
 		};
 		93E74151295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 271CF7DF5B3B402B873047D9;
+			remoteGlobalIDString = FD7A24106EE544E4A4315752;
 			remoteInfo = "spirv-cross-core";
 		};
 		93E74153295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 7630E4A548634CCEAB05ED4C;
+			remoteGlobalIDString = EC1B35F0E3F84012B88A113E;
 			remoteInfo = "spirv-cross-cpp";
 		};
 		93E74155295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C2D9AC6A949E46078ED42D9C;
+			remoteGlobalIDString = 4BDC1B6F1FDC471D932AF991;
 			remoteInfo = "spirv-cross-glsl";
 		};
 		93E74157295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = BDDE12001F104E6487AE4EBA;
+			remoteGlobalIDString = 6B12748EDC344027BF818E3A;
 			remoteInfo = "spirv-cross-hlsl";
 		};
 		93E74159295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 3953A91AF4CC4ED1911EB33B;
+			remoteGlobalIDString = BB55E92C3B4F4F45BC0C1072;
 			remoteInfo = "spirv-cross-msl";
 		};
 		93E7415B295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E83DD037D15B47B2BDE4C5DE;
+			remoteGlobalIDString = 6370A10F061446888D13ACA8;
 			remoteInfo = udis86;
 		};
 		93E7415D295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6E8C1D94EBAD4417AECF217D;
+			remoteGlobalIDString = 17183DE7FB8441A682BD65C0;
 			remoteInfo = vma;
 		};
 		93E7415F295B34350028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = BE304ABD25794A5C86B3F7D7;
+			remoteGlobalIDString = 6B5002BC3BEF4BC2992DB210;
 			remoteInfo = xbrz;
-		};
-		93E74161295B34350028EB94 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 72B31B8DE79340099437C0FF;
-			remoteInfo = xxhash;
 		};
 		93E741E6295B67C70028EB94 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -604,11 +668,22 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		933430422A32467B001C35C2 /* DarwinFileSystemServices.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DarwinFileSystemServices.mm; sourceTree = "<group>"; };
+		933430442A3246F8001C35C2 /* DarwinFileSystemServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DarwinFileSystemServices.h; sourceTree = "<group>"; };
 		9360C5A6294CB607000322B9 /* PVPPSSPPCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "PVPPSSPPCore+Cheats.mm"; sourceTree = "<group>"; };
 		936FDBA72957F9080073628A /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = ../../MoltenVK/MoltenVK/dylib/iOS/libMoltenVK.dylib; sourceTree = "<group>"; };
 		93928433295DFFA900F2AD12 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreMedia.framework; sourceTree = DEVELOPER_DIR; };
 		939B19422948B05F0024133A /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
+		939FFC642A32327B007970EB /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = cmake/assets; sourceTree = "<group>"; };
+		93AA16E22A35E329007E89E1 /* libavdevice.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavdevice.a; path = cmake/ffmpeg/ios/universal/lib/libavdevice.a; sourceTree = "<group>"; };
+		93AA16E32A35E329007E89E1 /* libswresample.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswresample.a; path = cmake/ffmpeg/ios/universal/lib/libswresample.a; sourceTree = "<group>"; };
+		93AA16E42A35E329007E89E1 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libswscale.a; path = cmake/ffmpeg/ios/universal/lib/libswscale.a; sourceTree = "<group>"; };
+		93AA16E52A35E329007E89E1 /* libavformat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavformat.a; path = cmake/ffmpeg/ios/universal/lib/libavformat.a; sourceTree = "<group>"; };
+		93AA16E62A35E32A007E89E1 /* libavcodec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavcodec.a; path = cmake/ffmpeg/ios/universal/lib/libavcodec.a; sourceTree = "<group>"; };
+		93AA16E72A35E32A007E89E1 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libavutil.a; path = cmake/ffmpeg/ios/universal/lib/libavutil.a; sourceTree = "<group>"; };
 		93AEC04C295E7FEB00F9381C /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.1.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
+		93BDF7542A3363D700264477 /* iOSCoreAudio.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = iOSCoreAudio.mm; sourceTree = "<group>"; };
+		93BDF7552A3363D700264477 /* iOSCoreAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iOSCoreAudio.h; sourceTree = "<group>"; };
 		93C33C24295F84EF008DFADD /* MemArenaDarwin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemArenaDarwin.cpp; sourceTree = "<group>"; };
 		93E74125295B31460028EB94 /* PPSSPPOGLViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSSPPOGLViewController.swift; sourceTree = "<group>"; };
 		93E74126295B31460028EB94 /* PPSSPPVulkanViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSSPPVulkanViewController.swift; sourceTree = "<group>"; };
@@ -622,7 +697,6 @@
 		93E7418F295B377B0028EB94 /* libz.1.2.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.8.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.1.2.8.tbd; sourceTree = DEVELOPER_DIR; };
 		93E74193295B38140028EB94 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/CoreAudio.framework; sourceTree = DEVELOPER_DIR; };
 		93E74196295B386C0028EB94 /* libz.1.2.11.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.11.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/usr/lib/libz.1.2.11.tbd; sourceTree = DEVELOPER_DIR; };
-		93E741A0295B3E1E0028EB94 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ppsspp/assets; sourceTree = "<group>"; };
 		93E741DE295B5B0A0028EB94 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib; sourceTree = "<group>"; };
 		93E741E0295B5B240028EB94 /* libMoltenVK_PPSSPP.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_PPSSPP.dylib; path = lib/libMoltenVK_PPSSPP.dylib; sourceTree = "<group>"; };
 		93E74216295B67C70028EB94 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -704,41 +778,45 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93E74191295B37970028EB94 /* libzstd-ppsspp.a in Frameworks */,
-				93E7416C295B344F0028EB94 /* liblibzip.a in Frameworks */,
-				93E74186295B35080028EB94 /* libavdevice.a in Frameworks */,
-				93E74187295B35080028EB94 /* libavutil.a in Frameworks */,
-				93E74188295B35080028EB94 /* libswresample.a in Frameworks */,
-				93E74189295B35080028EB94 /* libswscale.a in Frameworks */,
-				93E7418A295B35080028EB94 /* libavcodec.a in Frameworks */,
-				93E7418B295B35080028EB94 /* libavformat.a in Frameworks */,
-				93E74163295B344F0028EB94 /* libarmips.a in Frameworks */,
-				93E74164295B344F0028EB94 /* libcityhash.a in Frameworks */,
-				93E74165295B344F0028EB94 /* libCommon.a in Frameworks */,
-				93E74166295B344F0028EB94 /* libCore.a in Frameworks */,
-				93E74167295B344F0028EB94 /* libgason.a in Frameworks */,
-				93E74168295B344F0028EB94 /* libGenericCodeGen.a in Frameworks */,
-				93E74169295B344F0028EB94 /* libglslang-ppsspp.a in Frameworks */,
-				93E7416A295B344F0028EB94 /* libHLSL.a in Frameworks */,
-				93E7416B295B344F0028EB94 /* libkirk.a in Frameworks */,
-				93E7416D295B344F0028EB94 /* libMachineIndependent.a in Frameworks */,
-				93E7416E295B344F0028EB94 /* libminiupnpc.a in Frameworks */,
-				93E7416F295B344F0028EB94 /* libnative.a in Frameworks */,
-				93E74170295B344F0028EB94 /* libOGLCompiler.a in Frameworks */,
-				93E74171295B344F0028EB94 /* libOSDependent.a in Frameworks */,
-				93E74172295B344F0028EB94 /* libpng17.a in Frameworks */,
-				93E74173295B344F0028EB94 /* libsfmt19937.a in Frameworks */,
-				93E74174295B344F0028EB94 /* libsnappy.a in Frameworks */,
-				93E74175295B344F0028EB94 /* libspirv-cross-core.a in Frameworks */,
-				93E74176295B344F0028EB94 /* libspirv-cross-cpp.a in Frameworks */,
-				93E74177295B344F0028EB94 /* libspirv-cross-glsl.a in Frameworks */,
-				93E74178295B344F0028EB94 /* libspirv-cross-hlsl.a in Frameworks */,
-				93E74179295B344F0028EB94 /* libspirv-cross-msl.a in Frameworks */,
-				93E7417A295B344F0028EB94 /* libSPIRV.a in Frameworks */,
-				93E7417B295B344F0028EB94 /* libudis86.a in Frameworks */,
-				93E7417C295B344F0028EB94 /* libvma.a in Frameworks */,
-				93E7417D295B344F0028EB94 /* libxbrz.a in Frameworks */,
-				93E7417E295B344F0028EB94 /* libxxhash-ppsspp.a in Frameworks */,
+				93AA16F42A35E392007E89E1 /* libarmips.a in Frameworks */,
+				93AA16F52A35E392007E89E1 /* libbasis_universal.a in Frameworks */,
+				93AA16F62A35E392007E89E1 /* libcityhash.a in Frameworks */,
+				93AA16F72A35E392007E89E1 /* libCommonPPSSPP.a in Frameworks */,
+				93AA16F82A35E392007E89E1 /* libCorePPSSPP.a in Frameworks */,
+				93AA16FA2A35E392007E89E1 /* libgason.a in Frameworks */,
+				93AA16FB2A35E392007E89E1 /* libGenericCodeGenPPSSPP.a in Frameworks */,
+				93AA16FC2A35E392007E89E1 /* libglslang-default-resource-limitsPPSSPP.a in Frameworks */,
+				93AA16FD2A35E392007E89E1 /* libglslangPPSSPP.a in Frameworks */,
+				93AA16FE2A35E392007E89E1 /* libHLSLPPSSPP.a in Frameworks */,
+				93AA16FF2A35E392007E89E1 /* libkirk.a in Frameworks */,
+				93AA17002A35E392007E89E1 /* liblibzip.a in Frameworks */,
+				93AA17012A35E392007E89E1 /* libMachineIndependentPPSSPP.a in Frameworks */,
+				93AA17022A35E392007E89E1 /* libminiupnpc.a in Frameworks */,
+				93AA17032A35E392007E89E1 /* libnativePPSSPP.a in Frameworks */,
+				93AA17042A35E392007E89E1 /* libOGLCompilerPPSSPP.a in Frameworks */,
+				93AA17052A35E392007E89E1 /* libOSDependent.a in Frameworks */,
+				93AA17062A35E392007E89E1 /* libpng17.a in Frameworks */,
+				93AA17072A35E392007E89E1 /* libsfmt19937PPSSPP.a in Frameworks */,
+				93AA17082A35E392007E89E1 /* libsnappy.a in Frameworks */,
+				93AA17092A35E392007E89E1 /* libspirv-cross-corePPSSPP.a in Frameworks */,
+				93AA170A2A35E392007E89E1 /* libspirv-cross-cppPPSSPP.a in Frameworks */,
+				93AA170B2A35E392007E89E1 /* libspirv-cross-glslPPSSPP.a in Frameworks */,
+				93AA170C2A35E392007E89E1 /* libspirv-cross-hlslPPSSPP.a in Frameworks */,
+				93AA170D2A35E392007E89E1 /* libspirv-cross-mslPPSSPP.a in Frameworks */,
+				93AA170E2A35E392007E89E1 /* libSPIRVPPSSPP.a in Frameworks */,
+				93AA170F2A35E392007E89E1 /* libudis86.a in Frameworks */,
+				93AA17102A35E392007E89E1 /* libunix_based_hardware_detection.a in Frameworks */,
+				93AA17112A35E392007E89E1 /* libutilsPPSSPP.a in Frameworks */,
+				93AA17122A35E392007E89E1 /* libvmaPPSSPP.a in Frameworks */,
+				93AA17132A35E392007E89E1 /* libxbrzPPSSPP.a in Frameworks */,
+				93AA17142A35E392007E89E1 /* libxxhashPPSSPP.a in Frameworks */,
+				93AA17152A35E392007E89E1 /* libzstdPPSSPP.a in Frameworks */,
+				93AA16EE2A35E361007E89E1 /* libavcodec.a in Frameworks */,
+				93AA16EF2A35E361007E89E1 /* libavdevice.a in Frameworks */,
+				93AA16F02A35E361007E89E1 /* libavformat.a in Frameworks */,
+				93AA16F12A35E361007E89E1 /* libavutil.a in Frameworks */,
+				93AA16F22A35E361007E89E1 /* libswresample.a in Frameworks */,
+				93AA16F32A35E361007E89E1 /* libswscale.a in Frameworks */,
 				939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -749,42 +827,46 @@
 		93E740A9295B2FD10028EB94 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				93E740DC295B2FD20028EB94 /* libCommon.a */,
-				93E740DE295B2FD20028EB94 /* libCore.a */,
-				93E740E0295B2FD20028EB94 /* libGenericCodeGen.a */,
-				93E740E2295B2FD20028EB94 /* libHLSL.a */,
-				93E740E4295B2FD20028EB94 /* libMachineIndependent.a */,
-				93E740E6295B2FD20028EB94 /* libOGLCompiler.a */,
+				93AA16A42A35DDDB007E89E1 /* libCommonPPSSPP.a */,
+				93AA16A62A35DDDB007E89E1 /* libCorePPSSPP.a */,
+				93AA16A82A35DDDB007E89E1 /* libGenericCodeGenPPSSPP.a */,
+				93AA166C2A35D279007E89E1 /* libHLSLPPSSPP.a */,
+				93AA16AA2A35DDDB007E89E1 /* libMachineIndependentPPSSPP.a */,
+				93AA16AC2A35DDDB007E89E1 /* libOGLCompilerPPSSPP.a */,
 				93E740E8295B2FD20028EB94 /* libOSDependent.a */,
-				93E740EA295B2FD20028EB94 /* PPSSPP */,
-				93E740EC295B2FD20028EB94 /* libSPIRV.a */,
+				939FFC4C2A323069007970EB /* PPSSPP.app */,
+				93AA166E2A35D279007E89E1 /* libSPIRVPPSSPP.a */,
 				93E740EE295B2FD20028EB94 /* libarmips.a */,
+				9348D7702A322D5E00CC7998 /* libbasis_universal.a */,
 				93E740F0295B2FD20028EB94 /* libcityhash.a */,
+				9348D7722A322D5E00CC7998 /* libcpu_features.a */,
 				93E740F2295B2FD20028EB94 /* datagen */,
 				93E740F4295B2FD20028EB94 /* fullbench */,
 				93E740F6295B2FD20028EB94 /* fuzzer */,
 				93E740F8295B2FD20028EB94 /* libgason.a */,
-				93E740FA295B2FD20028EB94 /* libglslang-ppsspp.a */,
+				93AA16702A35D279007E89E1 /* libglslangPPSSPP.a */,
+				93AA16722A35D279007E89E1 /* libglslang-default-resource-limitsPPSSPP.a */,
 				93E740FC295B2FD20028EB94 /* libkirk.a */,
 				93E740FE295B2FD20028EB94 /* liblibzip.a */,
 				93E74100295B2FD20028EB94 /* libzstd.dylib */,
-				93E74102295B2FD20028EB94 /* libzstd-ppsspp.a */,
+				93AA16AE2A35DDDB007E89E1 /* libzstdPPSSPP.a */,
 				93E74104295B2FD20028EB94 /* libminiupnpc.a */,
-				93E74106295B2FD20028EB94 /* libnative.a */,
+				93AA16B02A35DDDB007E89E1 /* libnativePPSSPP.a */,
 				93E74108295B2FD20028EB94 /* paramgrill */,
 				93E7410A295B2FD20028EB94 /* libpng17.a */,
-				93E7410C295B2FD20028EB94 /* ppsspp_libretro.dylib */,
-				93E7410E295B2FD20028EB94 /* libsfmt19937.a */,
+				93AA16B22A35DDDB007E89E1 /* libsfmt19937PPSSPP.a */,
 				93E74110295B2FD20028EB94 /* libsnappy.a */,
-				93E74112295B2FD20028EB94 /* libspirv-cross-core.a */,
-				93E74114295B2FD20028EB94 /* libspirv-cross-cpp.a */,
-				93E74116295B2FD20028EB94 /* libspirv-cross-glsl.a */,
-				93E74118295B2FD20028EB94 /* libspirv-cross-hlsl.a */,
-				93E7411A295B2FD20028EB94 /* libspirv-cross-msl.a */,
+				93AA16742A35D279007E89E1 /* libspirv-cross-corePPSSPP.a */,
+				93AA16762A35D279007E89E1 /* libspirv-cross-cppPPSSPP.a */,
+				93AA16782A35D279007E89E1 /* libspirv-cross-glslPPSSPP.a */,
+				93AA167A2A35D279007E89E1 /* libspirv-cross-hlslPPSSPP.a */,
+				93AA167C2A35D279007E89E1 /* libspirv-cross-mslPPSSPP.a */,
 				93E7411C295B2FD20028EB94 /* libudis86.a */,
-				93E7411E295B2FD20028EB94 /* libvma.a */,
-				93E74120295B2FD20028EB94 /* libxbrz.a */,
-				93E74122295B2FD20028EB94 /* libxxhash-ppsspp.a */,
+				9348D7762A322D5E00CC7998 /* libunix_based_hardware_detection.a */,
+				93AA16B42A35DDDB007E89E1 /* libutilsPPSSPP.a */,
+				93AA16B62A35DDDB007E89E1 /* libvmaPPSSPP.a */,
+				93AA16B82A35DDDB007E89E1 /* libxbrzPPSSPP.a */,
+				936E99C02A358C0A00B1D0F8 /* libxxhashPPSSPP.a */,
 				93E74124295B2FD20028EB94 /* zstreamtest */,
 			);
 			name = Products;
@@ -793,6 +875,10 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				93BDF7552A3363D700264477 /* iOSCoreAudio.h */,
+				93BDF7542A3363D700264477 /* iOSCoreAudio.mm */,
+				933430442A3246F8001C35C2 /* DarwinFileSystemServices.h */,
+				933430422A32467B001C35C2 /* DarwinFileSystemServices.mm */,
 				93F6EC60298AC9FA00397536 /* PVDebug.m */,
 				93C33C24295F84EF008DFADD /* MemArenaDarwin.cpp */,
 				93E7427A295C53890028EB94 /* OGLGraphicsContext.h */,
@@ -818,7 +904,7 @@
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
-				93E741A0295B3E1E0028EB94 /* assets */,
+				939FFC642A32327B007970EB /* assets */,
 				B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
 				B3C762202078327B009950E4 /* PVPPSSPPCore */,
@@ -850,6 +936,12 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				93AA16E62A35E32A007E89E1 /* libavcodec.a */,
+				93AA16E22A35E329007E89E1 /* libavdevice.a */,
+				93AA16E52A35E329007E89E1 /* libavformat.a */,
+				93AA16E72A35E32A007E89E1 /* libavutil.a */,
+				93AA16E32A35E329007E89E1 /* libswresample.a */,
+				93AA16E42A35E329007E89E1 /* libswscale.a */,
 				93AEC04C295E7FEB00F9381C /* GLKit.framework */,
 				93F28DC2295E264600E4D464 /* MediaPlayer.framework */,
 				93928433295DFFA900F2AD12 /* CoreMedia.framework */,
@@ -908,6 +1000,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				93E74207295B67C70028EB94 /* PVPPSSPPCore+Audio.h in Headers */,
+				933430452A3246F9001C35C2 /* DarwinFileSystemServices.h in Headers */,
+				93BDF7572A3363D800264477 /* iOSCoreAudio.h in Headers */,
 				93E74208295B67C70028EB94 /* PVPPSSPPCore+Controls.h in Headers */,
 				93E74209295B67C70028EB94 /* PVPPSSPPCore.h in Headers */,
 				93E7420B295B67C70028EB94 /* PVPPSSPPCore+Saves.h in Headers */,
@@ -959,29 +1053,33 @@
 				93E74130295B34350028EB94 /* PBXTargetDependency */,
 				93E74132295B34350028EB94 /* PBXTargetDependency */,
 				93E74134295B34350028EB94 /* PBXTargetDependency */,
-				93E74136295B34350028EB94 /* PBXTargetDependency */,
 				93E74138295B34350028EB94 /* PBXTargetDependency */,
-				93E7413A295B34350028EB94 /* PBXTargetDependency */,
-				93E7413C295B34350028EB94 /* PBXTargetDependency */,
-				93E7413E295B34350028EB94 /* PBXTargetDependency */,
+				9334303C2A32411C001C35C2 /* PBXTargetDependency */,
 				93E74140295B34350028EB94 /* PBXTargetDependency */,
-				93E74142295B34350028EB94 /* PBXTargetDependency */,
-				93E74144295B34350028EB94 /* PBXTargetDependency */,
-				93E74146295B34350028EB94 /* PBXTargetDependency */,
-				93E74148295B34350028EB94 /* PBXTargetDependency */,
+				93AA16E02A35E193007E89E1 /* PBXTargetDependency */,
 				93E7414A295B34350028EB94 /* PBXTargetDependency */,
-				93E7414C295B34350028EB94 /* PBXTargetDependency */,
 				93E7414E295B34350028EB94 /* PBXTargetDependency */,
-				93E74150295B34350028EB94 /* PBXTargetDependency */,
 				93E74152295B34350028EB94 /* PBXTargetDependency */,
 				93E74154295B34350028EB94 /* PBXTargetDependency */,
 				93E74156295B34350028EB94 /* PBXTargetDependency */,
 				93E74158295B34350028EB94 /* PBXTargetDependency */,
 				93E7415A295B34350028EB94 /* PBXTargetDependency */,
-				93E7415C295B34350028EB94 /* PBXTargetDependency */,
+				933430402A32411C001C35C2 /* PBXTargetDependency */,
 				93E7415E295B34350028EB94 /* PBXTargetDependency */,
 				93E74160295B34350028EB94 /* PBXTargetDependency */,
-				93E74162295B34350028EB94 /* PBXTargetDependency */,
+				93DC57822A358B48008645AB /* PBXTargetDependency */,
+				93E74136295B34350028EB94 /* PBXTargetDependency */,
+				93E7413A295B34350028EB94 /* PBXTargetDependency */,
+				9334303A2A32411C001C35C2 /* PBXTargetDependency */,
+				93E7413C295B34350028EB94 /* PBXTargetDependency */,
+				93E7413E295B34350028EB94 /* PBXTargetDependency */,
+				93E74142295B34350028EB94 /* PBXTargetDependency */,
+				93E74144295B34350028EB94 /* PBXTargetDependency */,
+				93E74148295B34350028EB94 /* PBXTargetDependency */,
+				93E7414C295B34350028EB94 /* PBXTargetDependency */,
+				93E74150295B34350028EB94 /* PBXTargetDependency */,
+				93E7415C295B34350028EB94 /* PBXTargetDependency */,
+				9334303E2A32411C001C35C2 /* PBXTargetDependency */,
 				934D2E1B294B4D8800BDEBA5 /* PBXTargetDependency */,
 			);
 			name = psp;
@@ -1036,46 +1134,179 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		93E740DC295B2FD20028EB94 /* libCommon.a */ = {
+		9348D7702A322D5E00CC7998 /* libbasis_universal.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libCommon.a;
-			remoteRef = 93E740DB295B2FD20028EB94 /* PBXContainerItemProxy */;
+			path = libbasis_universal.a;
+			remoteRef = 9348D76F2A322D5E00CC7998 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E740DE295B2FD20028EB94 /* libCore.a */ = {
+		9348D7722A322D5E00CC7998 /* libcpu_features.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libCore.a;
-			remoteRef = 93E740DD295B2FD20028EB94 /* PBXContainerItemProxy */;
+			path = libcpu_features.a;
+			remoteRef = 9348D7712A322D5E00CC7998 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E740E0295B2FD20028EB94 /* libGenericCodeGen.a */ = {
+		9348D7762A322D5E00CC7998 /* libunix_based_hardware_detection.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libGenericCodeGen.a;
-			remoteRef = 93E740DF295B2FD20028EB94 /* PBXContainerItemProxy */;
+			path = libunix_based_hardware_detection.a;
+			remoteRef = 9348D7752A322D5E00CC7998 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E740E2295B2FD20028EB94 /* libHLSL.a */ = {
+		936E99C02A358C0A00B1D0F8 /* libxxhashPPSSPP.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libHLSL.a;
-			remoteRef = 93E740E1295B2FD20028EB94 /* PBXContainerItemProxy */;
+			path = libxxhashPPSSPP.a;
+			remoteRef = 936E99BF2A358C0A00B1D0F8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E740E4295B2FD20028EB94 /* libMachineIndependent.a */ = {
+		939FFC4C2A323069007970EB /* PPSSPP.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libMachineIndependent.a;
-			remoteRef = 93E740E3295B2FD20028EB94 /* PBXContainerItemProxy */;
+			fileType = wrapper.application;
+			path = PPSSPP.app;
+			remoteRef = 939FFC4B2A323069007970EB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E740E6295B2FD20028EB94 /* libOGLCompiler.a */ = {
+		93AA166C2A35D279007E89E1 /* libHLSLPPSSPP.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libOGLCompiler.a;
-			remoteRef = 93E740E5295B2FD20028EB94 /* PBXContainerItemProxy */;
+			path = libHLSLPPSSPP.a;
+			remoteRef = 93AA166B2A35D279007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA166E2A35D279007E89E1 /* libSPIRVPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSPIRVPPSSPP.a;
+			remoteRef = 93AA166D2A35D279007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16702A35D279007E89E1 /* libglslangPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libglslangPPSSPP.a;
+			remoteRef = 93AA166F2A35D279007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16722A35D279007E89E1 /* libglslang-default-resource-limitsPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libglslang-default-resource-limitsPPSSPP.a";
+			remoteRef = 93AA16712A35D279007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16742A35D279007E89E1 /* libspirv-cross-corePPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libspirv-cross-corePPSSPP.a";
+			remoteRef = 93AA16732A35D279007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16762A35D279007E89E1 /* libspirv-cross-cppPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libspirv-cross-cppPPSSPP.a";
+			remoteRef = 93AA16752A35D279007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16782A35D279007E89E1 /* libspirv-cross-glslPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libspirv-cross-glslPPSSPP.a";
+			remoteRef = 93AA16772A35D279007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA167A2A35D279007E89E1 /* libspirv-cross-hlslPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libspirv-cross-hlslPPSSPP.a";
+			remoteRef = 93AA16792A35D279007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA167C2A35D279007E89E1 /* libspirv-cross-mslPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libspirv-cross-mslPPSSPP.a";
+			remoteRef = 93AA167B2A35D279007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16A42A35DDDB007E89E1 /* libCommonPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCommonPPSSPP.a;
+			remoteRef = 93AA16A32A35DDDB007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16A62A35DDDB007E89E1 /* libCorePPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCorePPSSPP.a;
+			remoteRef = 93AA16A52A35DDDB007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16A82A35DDDB007E89E1 /* libGenericCodeGenPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGenericCodeGenPPSSPP.a;
+			remoteRef = 93AA16A72A35DDDB007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16AA2A35DDDB007E89E1 /* libMachineIndependentPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libMachineIndependentPPSSPP.a;
+			remoteRef = 93AA16A92A35DDDB007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16AC2A35DDDB007E89E1 /* libOGLCompilerPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libOGLCompilerPPSSPP.a;
+			remoteRef = 93AA16AB2A35DDDB007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16AE2A35DDDB007E89E1 /* libzstdPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libzstdPPSSPP.a;
+			remoteRef = 93AA16AD2A35DDDB007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16B02A35DDDB007E89E1 /* libnativePPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libnativePPSSPP.a;
+			remoteRef = 93AA16AF2A35DDDB007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16B22A35DDDB007E89E1 /* libsfmt19937PPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libsfmt19937PPSSPP.a;
+			remoteRef = 93AA16B12A35DDDB007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16B42A35DDDB007E89E1 /* libutilsPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libutilsPPSSPP.a;
+			remoteRef = 93AA16B32A35DDDB007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16B62A35DDDB007E89E1 /* libvmaPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libvmaPPSSPP.a;
+			remoteRef = 93AA16B52A35DDDB007E89E1 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		93AA16B82A35DDDB007E89E1 /* libxbrzPPSSPP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libxbrzPPSSPP.a;
+			remoteRef = 93AA16B72A35DDDB007E89E1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		93E740E8295B2FD20028EB94 /* libOSDependent.a */ = {
@@ -1083,21 +1314,6 @@
 			fileType = archive.ar;
 			path = libOSDependent.a;
 			remoteRef = 93E740E7295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E740EA295B2FD20028EB94 /* PPSSPP */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = PPSSPP;
-			path = PPSSPP.app;
-			remoteRef = 93E740E9295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E740EC295B2FD20028EB94 /* libSPIRV.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSPIRV.a;
-			remoteRef = 93E740EB295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		93E740EE295B2FD20028EB94 /* libarmips.a */ = {
@@ -1145,13 +1361,6 @@
 			remoteRef = 93E740F7295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E740FA295B2FD20028EB94 /* libglslang-ppsspp.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libglslang-ppsspp.a";
-			remoteRef = 93E740F9295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		93E740FC295B2FD20028EB94 /* libkirk.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1170,15 +1379,8 @@
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
 			name = libzstd.dylib;
-			path = libzstd.1.5.3.dylib;
+			path = libzstd.1.5.5.dylib;
 			remoteRef = 93E740FF295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E74102295B2FD20028EB94 /* libzstd-ppsspp.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libzstd-ppsspp.a";
-			remoteRef = 93E74101295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		93E74104295B2FD20028EB94 /* libminiupnpc.a */ = {
@@ -1186,13 +1388,6 @@
 			fileType = archive.ar;
 			path = libminiupnpc.a;
 			remoteRef = 93E74103295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E74106295B2FD20028EB94 /* libnative.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libnative.a;
-			remoteRef = 93E74105295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		93E74108295B2FD20028EB94 /* paramgrill */ = {
@@ -1210,20 +1405,6 @@
 			remoteRef = 93E74109295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E7410C295B2FD20028EB94 /* ppsspp_libretro.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = ppsspp_libretro.dylib;
-			remoteRef = 93E7410B295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E7410E295B2FD20028EB94 /* libsfmt19937.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libsfmt19937.a;
-			remoteRef = 93E7410D295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		93E74110295B2FD20028EB94 /* libsnappy.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1231,67 +1412,11 @@
 			remoteRef = 93E7410F295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		93E74112295B2FD20028EB94 /* libspirv-cross-core.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libspirv-cross-core.a";
-			remoteRef = 93E74111295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E74114295B2FD20028EB94 /* libspirv-cross-cpp.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libspirv-cross-cpp.a";
-			remoteRef = 93E74113295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E74116295B2FD20028EB94 /* libspirv-cross-glsl.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libspirv-cross-glsl.a";
-			remoteRef = 93E74115295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E74118295B2FD20028EB94 /* libspirv-cross-hlsl.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libspirv-cross-hlsl.a";
-			remoteRef = 93E74117295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E7411A295B2FD20028EB94 /* libspirv-cross-msl.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libspirv-cross-msl.a";
-			remoteRef = 93E74119295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		93E7411C295B2FD20028EB94 /* libudis86.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libudis86.a;
 			remoteRef = 93E7411B295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E7411E295B2FD20028EB94 /* libvma.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libvma.a;
-			remoteRef = 93E7411D295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E74120295B2FD20028EB94 /* libxbrz.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libxbrz.a;
-			remoteRef = 93E7411F295B2FD20028EB94 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93E74122295B2FD20028EB94 /* libxxhash-ppsspp.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libxxhash-ppsspp.a";
-			remoteRef = 93E74121295B2FD20028EB94 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		93E74124295B2FD20028EB94 /* zstreamtest */ = {
@@ -1310,7 +1435,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				93E74243295B70280028EB94 /* Core.plist in Resources */,
-				93E74210295B67C70028EB94 /* assets in Resources */,
+				939FFC652A32327B007970EB /* assets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1335,7 +1460,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\ncp ${SRCROOT}/ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib ${SRCROOT}/lib/libMoltenVK_PPSSPP.dylib\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\ncp ${SRCROOT}/libretro_ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib ${SRCROOT}/lib/libMoltenVK_PPSSPP.dylib\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1344,6 +1469,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93BDF7532A335F4D00264477 /* MemArenaDarwin.cpp in Sources */,
 				93E741E8295B67C70028EB94 /* PVPPSSPPCore+Cheats.mm in Sources */,
 				93E741E9295B67C70028EB94 /* PVPPSSPPCore+Controls.mm in Sources */,
 				93E741EA295B67C70028EB94 /* PPSSPPVulkanViewController.swift in Sources */,
@@ -1352,9 +1478,10 @@
 				93E741EC295B67C70028EB94 /* PVPPSSPPCore+Video.mm in Sources */,
 				93E741ED295B67C70028EB94 /* PPSSPPOGLViewController.swift in Sources */,
 				93E741EE295B67C70028EB94 /* PVPPSSPPCore+Saves.mm in Sources */,
+				93BDF7562A3363D800264477 /* iOSCoreAudio.mm in Sources */,
 				93E741F0295B67C70028EB94 /* PVPPSSPP.mm in Sources */,
 				93E741F1295B67C70028EB94 /* PVPPSSPPCore.mm in Sources */,
-				93C33C38295F84EF008DFADD /* MemArenaDarwin.cpp in Sources */,
+				933430432A32467B001C35C2 /* DarwinFileSystemServices.mm in Sources */,
 				93E741F2295B67C70028EB94 /* PVPPSSPPCore+Audio.mm in Sources */,
 				93F6EC61298AC9FA00397536 /* PVDebug.m in Sources */,
 			);
@@ -1370,10 +1497,40 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9334303A2A32411C001C35C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = basis_universal;
+			targetProxy = 933430392A32411C001C35C2 /* PBXContainerItemProxy */;
+		};
+		9334303C2A32411C001C35C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "glslang-default-resource-limits";
+			targetProxy = 9334303B2A32411C001C35C2 /* PBXContainerItemProxy */;
+		};
+		9334303E2A32411C001C35C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = unix_based_hardware_detection;
+			targetProxy = 9334303D2A32411C001C35C2 /* PBXContainerItemProxy */;
+		};
+		933430402A32411C001C35C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = utils;
+			targetProxy = 9334303F2A32411C001C35C2 /* PBXContainerItemProxy */;
+		};
 		934D2E1B294B4D8800BDEBA5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 934D2DFF294B4D4600BDEBA5 /* PPSSPPLibAdjustments */;
 			targetProxy = 934D2E1A294B4D8800BDEBA5 /* PBXContainerItemProxy */;
+		};
+		93AA16E02A35E193007E89E1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libzstd_staticPPSSPP;
+			targetProxy = 93AA16DF2A35E193007E89E1 /* PBXContainerItemProxy */;
+		};
+		93DC57822A358B48008645AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = xxhashPPSSPP;
+			targetProxy = 93DC57812A358B48008645AB /* PBXContainerItemProxy */;
 		};
 		93E7412A295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1445,11 +1602,6 @@
 			name = libzip;
 			targetProxy = 93E74143295B34350028EB94 /* PBXContainerItemProxy */;
 		};
-		93E74146295B34350028EB94 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = libzstd_static;
-			targetProxy = 93E74145295B34350028EB94 /* PBXContainerItemProxy */;
-		};
 		93E74148295B34350028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = miniupnpc;
@@ -1515,11 +1667,6 @@
 			name = xbrz;
 			targetProxy = 93E7415F295B34350028EB94 /* PBXContainerItemProxy */;
 		};
-		93E74162295B34350028EB94 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = xxhash;
-			targetProxy = 93E74161295B34350028EB94 /* PBXContainerItemProxy */;
-		};
 		93E741E5295B67C70028EB94 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B30178D2207C901D0051B93D /* psp */;
@@ -1528,14 +1675,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		934D2E00294B4D4700BDEBA5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
 		934D2E01294B4D4700BDEBA5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1543,52 +1682,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
-		};
-		93E74213295B67C70028EB94 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/ppsspp\"",
-					"\"$(SRCROOT)/ppsspp/ext/vulkan\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include\"",
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/lib",
-					"$(PROJECT_DIR)/ppsspp/ext/vulkan/iOS/Frameworks",
-					"$(SRCROOT)/lib/$(CONFIGURATION)-$(PLATFORM_NAME)",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvppsspp";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				SWIFT_INCLUDE_PATHS = "";
-				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Debug;
 		};
 		93E74214295B67C70028EB94 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1610,10 +1703,10 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/ppsspp\"",
-					"\"$(SRCROOT)/ppsspp/ext/vulkan\"",
+					"\"$(SRCROOT)/libretro_ppsspp\"",
+					"\"$(SRCROOT)/libretro_ppsspp/ext/vulkan\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include\"",
+					"\"$(SRCROOT)/cmake/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1625,7 +1718,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/lib",
-					"$(PROJECT_DIR)/ppsspp/ext/vulkan/iOS/Frameworks",
+					"$(PROJECT_DIR)/libretro_ppsspp/ext/vulkan/iOS/Frameworks",
 					"$(SRCROOT)/lib/$(CONFIGURATION)-$(PLATFORM_NAME)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvppsspp";
@@ -1641,37 +1734,6 @@
 			};
 			name = Release;
 		};
-		B30178DA207C901D0051B93D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/ppsspp\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/ppsspp/ios/universal/include\"",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/ppsspp/ffmpeg/ios/universal/lib",
-				);
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"$(inherited)",
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
-			};
-			name = Debug;
-		};
 		B30178DB207C901D0051B93D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1685,11 +1747,11 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/ppsspp\"",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/ppsspp/ios/universal/include\"",
+					"\"$(SRCROOT)/cmake/ios/universal/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/ppsspp/ffmpeg/ios/universal/lib",
+					"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1703,79 +1765,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
-		};
-		B3C7621620783162009950E4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_BITCODE = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					DEBUG,
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
 		};
 		B3C7621720783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1842,6 +1831,7 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/lib/ppsspp";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -1856,7 +1846,6 @@
 		934D2E18294B4D4700BDEBA5 /* Build configuration list for PBXAggregateTarget "PPSSPPLibAdjustments" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				934D2E00294B4D4700BDEBA5 /* Debug */,
 				934D2E01294B4D4700BDEBA5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1865,7 +1854,6 @@
 		93E74212295B67C70028EB94 /* Build configuration list for PBXNativeTarget "PVPPSSPP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				93E74213295B67C70028EB94 /* Debug */,
 				93E74214295B67C70028EB94 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1874,7 +1862,6 @@
 		B30178D9207C901D0051B93D /* Build configuration list for PBXNativeTarget "psp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B30178DA207C901D0051B93D /* Debug */,
 				B30178DB207C901D0051B93D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1883,7 +1870,6 @@
 		B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVPPSSPP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C7621620783162009950E4 /* Debug */,
 				B3C7621720783162009950E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

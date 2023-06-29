@@ -82,7 +82,8 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      shouldAutocreateTestPlan = "YES">
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
@@ -92,8 +93,6 @@
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <TestPlans>
-      </TestPlans>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/libretro
+# Install script for directory: ../libretro_ppsspp/libretro
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

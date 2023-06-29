@@ -4468,7 +4468,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncp ${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h ${SRCROOT}/Play-/Source/gs/GSH_Vulkan/\ncp ${SRCROOT}/PVPlayCore/Core/Loader.cpp ${SRCROOT}/Play-/deps/Framework/src/vulkan/Loader.cpp\n\ncp ${SRCROOT}/../PPSSPP/ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib ${SRCROOT}/lib/libMoltenVK_Play.dylib\ncp -pR ${SRCROOT}/../PPSSPP/ppsspp/ext/vulkan ${SRCROOT}/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include/\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\ncp ${SRCROOT}/PVPlayCore/Core/GSH_VulkanPlatformDefs.h ${SRCROOT}/Play-/Source/gs/GSH_Vulkan/\ncp ${SRCROOT}/PVPlayCore/Core/Loader.cpp ${SRCROOT}/Play-/deps/Framework/src/vulkan/Loader.cpp\n\ncp ${SRCROOT}/../PPSSPP/libretro_ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib ${SRCROOT}/lib/libMoltenVK_Play.dylib\ncp -pR ${SRCROOT}/../PPSSPP/libretro_ppsspp/ext/vulkan ${SRCROOT}/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include/\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: ../ppsspp/ext/glslang/OGLCompilersDLL
+# Source directory: ../libretro_ppsspp/ext/glslang/OGLCompilersDLL
 # Build directory: ../cmake/ext/glslang/OGLCompilersDLL
 # 
 # This file includes the relevant testing commands required for 

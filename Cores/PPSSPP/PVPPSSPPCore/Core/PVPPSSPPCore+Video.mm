@@ -44,7 +44,6 @@
 #include "Common/Thread/ThreadUtil.h"
 #include "Common/Thread/ThreadManager.h"
 #include "Common/File/VFS/VFS.h"
-#include "Common/File/VFS/AssetReader.h"
 #include "Common/Data/Text/I18n.h"
 #include "Common/StringUtils.h"
 #include "Common/System/Display.h"
@@ -73,7 +72,6 @@
 #include "Core/HLE/sceCtrl.h"
 #include "Core/HLE/sceUtility.h"
 #include "Core/HW/MemoryStick.h"
-#include "Core/Host.h"
 #include "Core/MemMap.h"
 #include "Core/System.h"
 #include "Core/CoreTiming.h"
@@ -114,193 +112,230 @@ static bool threadStopped = false;
 }
 
 - (void)refreshScreenSize {
-	 if (!_isInitialized || !m_view)
-		return;
-	 float scale = [UIScreen mainScreen].scale;
-	 UIScreen *screen=[UIScreen mainScreen];
-	 if ([screen respondsToSelector:@selector(nativeScale)]) {
-		 scale = screen.nativeScale;
-	 }
-	 CGSize size = m_view.frame.size;
-	 if (size.height > size.width) {
-		 float h = size.height;
-         if (IS_IPAD())
-             size.height = int(size.width * size.width / size.height);
-         else
-             size.height = size.width * 272 / 480;
-	 }
-	 if (screen == [UIScreen mainScreen]) {
-		 g_dpi = (IS_IPAD() ? 200.0f : 150.0f) * scale;
-     } else {
-		 float diagonal = sqrt(size.height * size.height + size.width * size.width);
-		 g_dpi = diagonal * scale * 0.1f;
-	 }
-	 g_dpi_scale_x = 240.0f / g_dpi;
-	 g_dpi_scale_y = 240.0f / g_dpi;
-	 g_dpi_scale_real_x = g_dpi_scale_x;
-	 g_dpi_scale_real_y = g_dpi_scale_y;
-	 pixel_xres = size.width * scale;
-	 pixel_yres = size.height * scale;
-	 dp_xres = pixel_xres * g_dpi_scale_x;
-	 dp_yres = pixel_yres * g_dpi_scale_y;
-	 pixel_in_dps_x = (float)pixel_xres / (float)dp_xres;
-	 pixel_in_dps_y = (float)pixel_yres / (float)dp_yres;
-	 [m_view setContentScaleFactor:scale];
-	 // PSP native resize
-	 PSP_CoreParameter().pixelWidth = pixel_xres;
-	 PSP_CoreParameter().pixelHeight = pixel_yres;
-	 NativeResized();
-	 ELOG(@"Updated display resolution: (%d, %d) @%.1fx", pixel_xres, pixel_yres, scale);
+    NSLog(@"Refresh Screen Size");
+    UIScreen *screen=[UIScreen mainScreen];
+    if (!_isInitialized || !m_view)
+        return;
+    float scale = screen.scale;
+    if ([screen respondsToSelector:@selector(nativeScale)]) {
+            scale = screen.nativeScale;
+    }
+    CGSize size = screen.applicationFrame.size;
+    if (size.height > size.width) {
+        float h = size.height;
+        if (IS_IPAD())
+            size.height = int(size.width * size.width / size.height);
+        else
+            size.height = size.width * 272 / 480;
+    }
+    if (screen == [UIScreen mainScreen]) {
+            g_display.dpi = (IS_IPAD() ? 200.0f : 150.0f) * scale;
+    } else {
+            float diagonal = sqrt(size.height * size.height + size.width * size.width);
+            g_display.dpi = diagonal * scale * 0.1f;
+    }
+    g_display.dpi_scale_x = 240.0f / g_display.dpi;
+    g_display.dpi_scale_y = 240.0f / g_display.dpi;
+    g_display.dpi_scale_real_x = g_display.dpi_scale_x;
+    g_display.dpi_scale_real_y = g_display.dpi_scale_y;
+    g_display.pixel_xres = size.width * scale;
+    g_display.pixel_yres = size.height * scale;
+    g_display.dp_xres = g_display.pixel_xres * g_display.dpi_scale_x;
+    g_display.dp_yres = g_display.pixel_yres * g_display.dpi_scale_y;
+    g_display.pixel_in_dps_x = (float)g_display.pixel_xres / (float)g_display.dp_xres;
+    g_display.pixel_in_dps_y = (float)g_display.pixel_yres / (float)g_display.dp_yres;
+    [m_view setContentScaleFactor:scale];
+    // PSP native resize
+    PSP_CoreParameter().pixelWidth = g_display.pixel_xres;
+    PSP_CoreParameter().pixelHeight = g_display.pixel_yres;
+    NativeResized();
+    NSLog(@"Updated display resolution: (%d, %d) @%.1fx", g_display.pixel_xres, g_display.pixel_yres, scale);
 }
 
 - (void)setupView {
-	if (m_view) {
-		ELOG(@"Restarting\n");
-		[self startVM:m_view];
-		return;
-	}
-	UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
-	auto screenBounds = [[UIScreen mainScreen] bounds];
-	if(self.gsPreference == 3)
-	{
-		PPSSPPVulkanViewController *cgsh_view_controller=[[PPSSPPVulkanViewController alloc]
-													  initWithResFactor:self.resFactor
-													  videoWidth: self.videoWidth
-													  videoHeight: self.videoHeight
-													  core: self];
-		m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
-		m_view=cgsh_view_controller.view;
-		m_view.contentMode = UIViewContentModeScaleToFill;
-		[gl_view_controller addChildViewController:cgsh_view_controller];
-		[cgsh_view_controller didMoveToParentViewController:gl_view_controller];
-	} else if(self.gsPreference == 0) {
-		PPSSPPOGLViewController *cgsh_view_controller=[[PPSSPPOGLViewController alloc]
-													   initWithResFactor:self.resFactor
-													   videoWidth: self.videoWidth
-													   videoHeight: self.videoHeight
-													   core: self];
-		m_gl_layer=(CAEAGLLayer *)cgsh_view_controller.view.layer;
-		m_view_controller = (UIViewController *)cgsh_view_controller;
-		m_view=cgsh_view_controller.view;
-		m_view.contentMode = UIViewContentModeScaleToFill;
-		[gl_view_controller addChildViewController:cgsh_view_controller];
-		[cgsh_view_controller didMoveToParentViewController:gl_view_controller];
-		GLKView *glk_view=(GLKView *)m_view;
-		m_gl_context=[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
-		if (!m_gl_context) {
-			m_gl_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-		}
-		glk_view.context=m_gl_context;
-		glk_view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
-		glk_view.drawableStencilFormat = GLKViewDrawableStencilFormat8;
-		[EAGLContext setCurrentContext:m_gl_context];
-	}
-	if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
-		self.renderDelegate.mtlview.autoresizesSubviews=true;
-		self.renderDelegate.mtlview.clipsToBounds=true;
-		[self.renderDelegate.mtlview addSubview:m_view];
-    } else {
-		gl_view_controller.view.autoresizesSubviews=true;
-		gl_view_controller.view.clipsToBounds=true;
-		[gl_view_controller.view addSubview:m_view];
+    NSLog(@"Setup View");
+    if (m_view) {
+        NSLog(@"Restarting\n");
+        [self startVM:m_view];
+        return;
     }
-    if (IS_IPAD()) {
-        auto bounds=[[UIScreen mainScreen] bounds];
-        [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.widthAnchor].active=true;
-        [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;
-        [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
-        [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
-        [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
-        [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
-    } else {
-        auto bounds=[[UIScreen mainScreen] bounds];
-        [m_view.widthAnchor constraintGreaterThanOrEqualToConstant:bounds.size.width].active=true;
-        [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;;
-        [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
-        [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
-        [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
-        [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
+    NSLog(@"Setting Up View\n");
+    UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
+    auto screenBounds = [[UIScreen mainScreen] bounds];
+    UIViewController *rootController;
+    if(self.gsPreference == 3) {
+        PPSSPPVulkanViewController *cgsh_view_controller=[[PPSSPPVulkanViewController alloc]
+                                                      initWithResFactor:self.resFactor
+                                                      videoWidth: self.videoWidth
+                                                      videoHeight: self.videoHeight
+                                                      core: self];
+        m_view_controller = (UIViewController *)cgsh_view_controller;
+        m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
+        m_view=cgsh_view_controller.view;
+        m_view.contentMode = UIViewContentModeScaleToFill;
+        rootController = cgsh_view_controller;
+    } else if(self.gsPreference == 0) {
+        PPSSPPOGLViewController *cgsh_view_controller=[[PPSSPPOGLViewController alloc]
+                                                       initWithResFactor:self.resFactor
+                                                       videoWidth: self.videoWidth
+                                                       videoHeight: self.videoHeight
+                                                       core: self];
+        m_gl_layer=(CAEAGLLayer *)cgsh_view_controller.view.layer;
+        m_view_controller = (UIViewController *)cgsh_view_controller;
+        m_view=cgsh_view_controller.view;
+        m_view.contentMode = UIViewContentModeScaleToFill;
+        GLKView *glk_view=(GLKView *)m_view;
+        m_gl_context=[[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES3];
+        if (!m_gl_context) {
+            m_gl_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+        }
+        glk_view.context=m_gl_context;
+        glk_view.drawableDepthFormat = GLKViewDrawableDepthFormat24;
+        glk_view.drawableStencilFormat = GLKViewDrawableStencilFormat8;
+        [EAGLContext setCurrentContext:m_gl_context];
+        rootController = cgsh_view_controller;
     }
+    
+    [self setupVideo];
+    if (self.touchViewController) {
+        [self.touchViewController.view addSubview:m_view];
+        [self.touchViewController addChildViewController:rootController];
+        [rootController didMoveToParentViewController:self.touchViewController];
+        [self.touchViewController.view sendSubviewToBack:m_view];
+        [rootController.view setHidden:false];
+        if (IS_IPHONE())
+            rootController.view.translatesAutoresizingMaskIntoConstraints = true;
+        else {
+            rootController.view.translatesAutoresizingMaskIntoConstraints = false;
+            [[rootController.view.topAnchor constraintEqualToAnchor:self.touchViewController.view.topAnchor] setActive:YES];
+            [[rootController.view.bottomAnchor constraintEqualToAnchor:self.touchViewController.view.bottomAnchor] setActive:YES];
+            [[rootController.view.leadingAnchor constraintEqualToAnchor:self.touchViewController.view.leadingAnchor] setActive:YES];
+            [[rootController.view.trailingAnchor constraintEqualToAnchor:self.touchViewController.view.trailingAnchor] setActive:YES];
+        }
+        self.touchViewController.view.userInteractionEnabled=true;
+        self.touchViewController.view.autoresizesSubviews=true;
+        self.touchViewController.view.userInteractionEnabled=true;
+        self.touchViewController.view.multipleTouchEnabled=true;
+    } else {
+        [gl_view_controller addChildViewController:rootController];
+        [rootController didMoveToParentViewController:gl_view_controller];
+        if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
+            self.renderDelegate.mtlview.autoresizesSubviews=true;
+            self.renderDelegate.mtlview.clipsToBounds=true;
+            [self.renderDelegate.mtlview addSubview:m_view];
+        } else {
+            gl_view_controller.view.autoresizesSubviews=true;
+            gl_view_controller.view.clipsToBounds=true;
+            [gl_view_controller.view addSubview:m_view];
+        }
+        if (IS_IPAD()) {
+            auto bounds=[[UIScreen mainScreen] bounds];
+            [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.widthAnchor].active=true;
+            [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;
+            [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
+            [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
+            [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
+            [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
+        } else {
+            auto bounds=[[UIScreen mainScreen] bounds];
+            [m_view.widthAnchor constraintGreaterThanOrEqualToConstant:bounds.size.width].active=true;
+            [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;;
+            [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
+            [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
+            [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
+            [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
+        }
+    }
+     
     // Display connected
-	[[NSNotificationCenter defaultCenter] addObserverForName:UIScreenDidConnectNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
-			UIScreen *screen = (UIScreen *) notification.object;
-			NSLog(@"New display connected: %@", [screen debugDescription]);
-		[self refreshScreenSize];
-	}];
-	// Display disconnected
-	[[NSNotificationCenter defaultCenter] addObserverForName:UIScreenDidDisconnectNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
-		UIScreen *screen = (UIScreen *) notification.object;
-		NSLog(@"Display disconnected: %@", [screen debugDescription]);
-	}];
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIScreenDidConnectNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
+            UIScreen *screen = (UIScreen *) notification.object;
+            NSLog(@"New display connected: %@", [screen debugDescription]);
+        [self refreshScreenSize];
+    }];
+    // Display disconnected
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIScreenDidDisconnectNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
+        UIScreen *screen = (UIScreen *) notification.object;
+        NSLog(@"Display disconnected: %@", [screen debugDescription]);
+    }];
+    isViewReady = true;
 }
 
 - (void)setupVideo {
-	if (self.gsPreference == 0) {
-		// GPUCORE_GLES or GPUCORE_VULKAN
-		PSP_CoreParameter().gpuCore         = GPUCORE_GLES;
-		graphicsContext = new OGLGraphicsContext();
+    NSLog(@"Setup Video");
+    if (self.gsPreference == 0) {
+        // GPUCORE_GLES
+        g_Config.iGPUBackend = (int)GPUBackend::OPENGL;
+        PSP_CoreParameter().gpuCore         = GPUCORE_GLES;
+        graphicsContext = new OGLGraphicsContext();
         bindDefaultFBO();
-	}
-	graphicsContext->GetDrawContext()->SetErrorCallback([](const char *shortDesc, const char *details, void *userdata) {
-	   ELOG(@"Error %s\n", details);
-		   host->NotifyUserMessage(details, 5.0, 0xFFFFFFFF, "error_callback");
-	   }, nullptr);
-	graphicsContext->ThreadStart();
-	dp_xscale = (float)dp_xres / (float)pixel_xres;
-	dp_yscale = (float)dp_yres / (float)pixel_yres;
-	PSP_CoreParameter().graphicsContext = graphicsContext;
+        graphicsContext->ThreadStart();
+    } else if (self.gsPreference == 3) {
+        // GPUCORE_VULKAN
+        g_Config.iGPUBackend = (int)GPUBackend::VULKAN;
+        PSP_CoreParameter().gpuCore         = GPUCORE_VULKAN;
+        graphicsContext = new VulkanGraphicsContext(m_metal_layer, "@executable_path/Frameworks/libMoltenVK_PPSSPP.dylib");
+    }
+    graphicsContext->GetDrawContext()->SetErrorCallback([](const char *shortDesc, const char *details, void *userdata) {
+            System_NotifyUserMessage(details, 5.0, 0xFFFFFFFF, "error_callback");
+    }, nullptr);
+    dp_xscale = (float)g_display.dp_xres / (float)g_display.pixel_xres;
+    dp_yscale = (float)g_display.dp_yres / (float)g_display.pixel_yres;
+    PSP_CoreParameter().graphicsContext = graphicsContext;
 }
 
 - (void)runVM {
+    NSLog(@"Run VM");
 	threadEnabled=true;
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-		NativeInitGraphics(graphicsContext);
+        [self setupEmulation];
+        while (!isViewReady || !graphicsContext) {
+            sleep_ms(500);
+        }
+        NativeInitGraphics(graphicsContext);
 		_isInitialized=true;
         UpdateUIState(UISTATE_INGAME);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
             isPaused=false;
+            [self refreshScreenSize];
         });
-        ELOG(@"Emulation thread starting\n");
+        NSLog(@"Emulation thread starting\n");
 		while (threadEnabled) {
 			NativeUpdate();
 			NativeRender(graphicsContext);
 		}
-		ELOG(@"Emulation thread shutting down\n");
+		NSLog(@"Emulation thread shutting down\n");
 		NativeShutdownGraphics();
-		ELOG(@"Emulation thread stopping\n");
-		graphicsContext->StopThread();
+		NSLog(@"Emulation thread stopping\n");
+        if (self.gsPreference == 0) {
+            graphicsContext->StopThread();
+        }
 		threadStopped = true;
 	});
 }
 
 - (void)stopVM:(bool)deinitViews  {
+    NSLog(@"Stop VM");
+    PSP_Shutdown();
 	if (threadEnabled) {
 		threadEnabled = false;
-		if (graphicsContext) {
-			while (graphicsContext->ThreadFrame()) {
-				sleep_ms(100);
-				continue;
-			}
-			while (!threadStopped) {
-				sleep_ms(100);
-			}
-			graphicsContext->ThreadEnd();
-		}
+            if (graphicsContext) {
+                while (!threadStopped) {
+                    sleep_ms(100);
+                }
+                if (self.gsPreference == 0) {
+                    graphicsContext->ThreadEnd();
+                }
+            }
 	}
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	PSP_Shutdown();
-	VFSShutdown();
-	if (graphicsContext) {
+    if (graphicsContext && self.gsPreference == 0) {
 		graphicsContext->Shutdown();
 		delete graphicsContext;
 		graphicsContext = nullptr;
 		PSP_CoreParameter().graphicsContext = nullptr;
 	}
-    host->ShutdownGraphics();
-    System_SendMessage("finish", "");
-    net::Shutdown();
-    LogManager::Shutdown();
-	if (deinitViews) {
+    if (deinitViews) {
 		[m_view removeFromSuperview];
 		[m_view_controller dismissViewControllerAnimated:NO completion:nil];
 		m_gl_context = nullptr;

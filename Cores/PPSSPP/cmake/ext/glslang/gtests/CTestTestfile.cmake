@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: ../ppsspp/ext/glslang/gtests
+# Source directory: ../libretro_ppsspp/ext/glslang/gtests
 # Build directory: ../cmake/ext/glslang/gtests
 # 
 # This file includes the relevant testing commands required for 

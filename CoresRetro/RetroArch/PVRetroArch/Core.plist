@@ -20,11 +20,11 @@
 	<array>
 		<dict>
 			<key>PVCoreIdentifier</key>
-			<string>mednafen_psx_libretro_ios.dylib</string>
+			<string>mednafen_psx_hw_libretro_ios.dylib</string>
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArchCore</string>
 			<key>PVProjectName</key>
-			<string>RetroArch - Beetle PSX</string>
+			<string>RetroArch - Beetle PSX (HW Renderer)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.psx</string>
@@ -34,6 +34,22 @@
 			<key>PVProjectVersion</key>
 			<string>0.9.44.1</string>
 		</dict>
+		<dict>
+                        <key>PVCoreIdentifier</key>
+                        <string>mednafen_psx_libretro_ios.dylib</string>
+                        <key>PVPrincipleClass</key>
+                        <string>PVRetroArchCore</string>
+                        <key>PVProjectName</key>
+                        <string>RetroArch - Beetle PSX (SW Renderer)</string>
+                        <key>PVSupportedSystems</key>
+                        <array>
+                                <string>com.provenance.psx</string>
+                        </array>
+                        <key>PVProjectURL</key>
+                        <string>https://github.com/libretro/beetle-psx-libretro</string>
+                        <key>PVProjectVersion</key>
+                        <string>0.9.44.1</string>
+                </dict>
 		<dict>
 			<key>PVCoreIdentifier</key>
 			<string>snes9x_libretro_ios.dylib</string>
@@ -178,23 +194,176 @@
 			<key>PVProjectVersion</key>
 			<string>rev.22-145</string>
 		</dict>
-                <dict>
+		<dict>
+			<key>PVCoreIdentifier</key>
+			<string>mednafen_supergrafx_libretro_ios.dylib</string>
+			<key>PVPrincipleClass</key>
+			<string>PVRetroArchCore</string>
+			<key>PVSupportedSystems</key>
+			<array>
+				<string>com.provenance.sgfx</string>
+				<string>com.provenance.pce</string>
+				<string>com.provenance.pcecd</string>
+			</array>
+			<key>PVProjectName</key>
+			<string>RetroArch - Beetle Supergrafx (PC Engine)</string>
+			<key>PVProjectURL</key>
+			<string>https://github.com/libretro/beetle-supergrafx-libretro</string>
+			<key>PVProjectVersion</key>
+			<string>v1.29.0</string>
+		</dict>
+		<dict>
                         <key>PVCoreIdentifier</key>
-                        <string>mednafen_supergrafx_libretro_ios.dylib</string>
+                        <string>nestopia_libretro_ios.dylib</string>
                         <key>PVPrincipleClass</key>
                         <string>PVRetroArchCore</string>
                         <key>PVSupportedSystems</key>
                         <array>
-				<string>com.provenance.sgfx</string>
-                                <string>com.provenance.pce</string>
-                                <string>com.provenance.pcecd</string>
+                                <string>com.provenance.nes</string>
                         </array>
                         <key>PVProjectName</key>
-                        <string>RetroArch - Beetle Supergrafx (PC Engine)</string>
+                        <string>RetroArch - Nestopia</string> 
                         <key>PVProjectURL</key>
-                        <string>https://github.com/libretro/beetle-supergrafx-libretro</string>
+                        <string>https://github.com/libretro/nestopia</string>
                         <key>PVProjectVersion</key>
-                        <string>v1.29.0</string>
+                        <string>v1.51.1</string>
+                </dict>
+		<dict>
+                        <key>PVCoreIdentifier</key>
+                        <string>mednafen_saturn_libretro_ios.dylib</string>
+                        <key>PVPrincipleClass</key>
+                        <string>PVRetroArchCore</string>
+                        <key>PVSupportedSystems</key>
+                        <array>
+				<string>com.provenance.saturn</string>
+                        </array>
+                        <key>PVProjectName</key>
+                        <string>RetroArch - Beetle Saturn</string>
+                        <key>PVProjectURL</key>
+                        <string>https://github.com/libretro/beetle-saturn-libretro</string>
+                        <key>PVProjectVersion</key>
+                        <string>v0.9.45.1</string>
+                </dict>
+		<dict>
+                        <key>PVCoreIdentifier</key>
+                        <string>yabause_libretro_ios.dylib</string>
+                        <key>PVPrincipleClass</key>
+                        <string>PVRetroArchCore</string>
+                        <key>PVSupportedSystems</key>
+                        <array>
+                                <string>com.provenance.saturn</string>
+                        </array>
+                        <key>PVProjectName</key>
+                        <string>RetroArch - Yabause (Saturn)</string>
+                        <key>PVProjectURL</key>
+                        <string>https://github.com/libretro/yabause</string>
+                        <key>PVProjectVersion</key>
+                        <string>v0.9.15</string>
+                </dict>
+		<dict>
+                        <key>PVCoreIdentifier</key>
+                        <string>genesis_plus_gx_libretro_ios.dylib</string>
+                        <key>PVPrincipleClass</key>
+                        <string>PVRetroArchCore</string>
+                        <key>PVSupportedSystems</key>
+                        <array>
+                                <string>com.provenance.segacd</string>
+                                <string>com.provenance.genesis</string>
+                                <string>com.provenance.gamegear</string>
+				<string>com.provenance.sg1000</string>
+                                <string>com.provenance.mastersystem</string>
+                        </array>
+                        <key>PVProjectName</key>
+                        <string>RetroArch - Genesis Plus GX - MS/GG/MD/CD</string>
+                        <key>PVProjectURL</key>
+                        <string>https://github.com/libretro/Genesis-Plus-GX</string>
+                        <key>PVProjectVersion</key>
+                        <string>1.7.4</string>
+                </dict>
+		<dict>
+                        <key>PVCoreIdentifier</key>
+                        <string>fbneo_libretro_ios.dylib</string>
+                        <key>PVPrincipleClass</key>
+                        <string>PVRetroArchCore</string>
+                        <key>PVSupportedSystems</key>
+                        <array>
+                                <string>com.provenance.ngp</string>
+                                <string>com.provenance.ngpc</string>
+                                <string>com.provenance.neogeo</string>
+                        </array>
+                        <key>PVProjectName</key>
+                        <string>RetroArch - FBNeo</string>
+                        <key>PVProjectURL</key>
+                        <string>https://github.com/libretro/FBNeo</string>
+                        <key>PVProjectVersion</key>
+                        <string>v1.0.0.02</string>
+                </dict>
+		<dict>
+                        <key>PVCoreIdentifier</key>
+                        <string>mednafen_gba_libretro_ios.dylib</string>
+                        <key>PVPrincipleClass</key>
+                        <string>PVRetroArchCore</string>
+                        <key>PVSupportedSystems</key>
+                        <array>
+                                <string>com.provenance.gba</string>
+                        </array>
+                        <key>PVProjectName</key>
+                        <string>RetroArch - Beetle GBA</string>
+                        <key>PVProjectURL</key>
+                        <string>https://github.com/libretro/beetle-gba-libretro</string>
+                        <key>PVProjectVersion</key>
+                        <string>v0.9.36</string>
+                </dict>
+		<dict>
+                        <key>PVCoreIdentifier</key>
+                        <string>mednafen_vb_libretro_ios.dylib</string>
+                        <key>PVPrincipleClass</key>
+                        <string>PVRetroArchCore</string>
+                        <key>PVSupportedSystems</key>
+                        <array>
+                                <string>com.provenance.vb</string>
+                        </array>
+                        <key>PVProjectName</key>
+                        <string>RetroArch - Beetle VB</string>
+                        <key>PVProjectURL</key>
+                        <string>https://github.com/libretro/beetle-vb-libretro</string>
+                        <key>PVProjectVersion</key>
+                        <string>v0.9.36.1</string>
+                </dict>
+		<dict>
+                        <key>PVCoreIdentifier</key>
+                        <string>mgba_libretro_ios.dylib</string>
+                        <key>PVPrincipleClass</key>
+                        <string>PVRetroArchCore</string>
+                        <key>PVSupportedSystems</key>
+                        <array>   
+                                <string>com.provenance.gb</string>
+                                <string>com.provenance.gbc</string>
+                                <string>com.provenance.gba</string>
+                        </array>
+                        <key>PVProjectName</key>
+                        <string>RetroArch - mGBA</string>
+                        <key>PVProjectURL</key>
+                        <string>https://github.com/libretro/mgba</string>
+                        <key>PVProjectVersion</key>
+                        <string>v0.10-dev</string>
+                </dict>
+		<dict>
+                        <key>PVCoreIdentifier</key>
+                        <string>sameboy_libretro_ios.dylib</string>
+                        <key>PVPrincipleClass</key>
+                        <string>PVRetroArchCore</string>
+                        <key>PVSupportedSystems</key>
+                        <array>
+                                <string>com.provenance.gb</string>
+                                <string>com.provenance.gbc</string>
+                        </array>  
+                        <key>PVProjectName</key>
+                        <string>RetroArch - SameBoy</string>
+                        <key>PVProjectURL</key>
+                        <string>https://github.com/libretro/SameBoy</string>
+                        <key>PVProjectVersion</key>
+                        <string>v0.14.7</string>
                 </dict>
 	</array>
 </dict>

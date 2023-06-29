@@ -16,6 +16,9 @@
 // http://code.google.com/p/dolphin-emu/
 
 #include "ppsspp_config.h"
+
+#if defined(__APPLE__)
+
 #include <cstdint>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -37,7 +40,11 @@ size_t MemArena::roundup(size_t x) {
 
 bool MemArena::GrabMemSpace(size_t size) {
     vm_size = size;
+    
     kern_return_t retval = vm_allocate(mach_task_self(), &vm_mem, size, VM_FLAGS_ANYWHERE);
+    while (retval != KERN_SUCCESS) {
+        retval = vm_allocate(mach_task_self(), &vm_mem, size, VM_FLAGS_ANYWHERE);
+    }
     if (retval != KERN_SUCCESS) {
         ERROR_LOG(MEMMAP, "Failed to grab a block of virtual memory");
         return false;
@@ -83,21 +90,40 @@ void MemArena::ReleaseView(void* view, size_t size) {
 
 bool MemArena::NeedsProbing() {
     return false;
+#if PPSSPP_PLATFORM(IOS) && PPSSPP_ARCH(64BIT)
+    return true;
+#else
+    return false;
+#endif
 }
 
 u8* MemArena::Find4GBBase() {
-    size_t size;
-#if PPSSPP_ARCH(64BIT)
+    /*
+#if PPSSPP_PLATFORM(IOS) && PPSSPP_ARCH(64BIT)
+    // The caller will need to do probing, like on 32-bit Windows.
+    return nullptr;
+#else
+     */
+    size_t size = 256 * 1024 * 1024;
+/*#if PPSSPP_ARCH(64BIT)
     size = 0xE1000000;
 #else
     size = 0x10000000;
 #endif
+ */
+
     vm_address_t addr = 0;
-    kern_return_t retval;
+    kern_return_t retval = vm_allocate(mach_task_self(), &addr, size, VM_FLAGS_ANYWHERE);
     while (retval != KERN_SUCCESS) {
         retval = vm_allocate(mach_task_self(), &addr, size, VM_FLAGS_ANYWHERE);
-        // Don't need the memory now, was just probing.
     }
-    vm_deallocate(mach_task_self(), addr, size);
-    return (u8 *)addr;
+    if (retval == KERN_SUCCESS) {
+        // Don't need the memory now, was just probing.
+        vm_deallocate(mach_task_self(), addr, size);
+        return (u8 *)addr;
+    }
+//#endif
+    return nullptr;
 }
+
+#endif  // __APPLE__

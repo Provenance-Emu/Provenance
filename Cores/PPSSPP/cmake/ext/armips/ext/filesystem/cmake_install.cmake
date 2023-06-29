@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/ext/armips/ext/filesystem
+# Install script for directory: ../libretro_ppsspp/ext/armips/ext/filesystem
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

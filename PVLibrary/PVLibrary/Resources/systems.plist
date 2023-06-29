@@ -1307,6 +1307,8 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>ngp</string>
+			<string>7z</string>
+			<string>zip</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -1388,6 +1390,8 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>ng</string>
+			<string>zip</string>
+			<string>7z</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -1455,9 +1459,11 @@
 		<false/>
 		<key>PVSupportedExtensions</key>
 		<array>
+			<string>zip</string>
 			<string>ngc</string>
 			<string>ngpc</string>
 			<string>npc</string>
+			<string>7z</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -1524,6 +1530,8 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>vb</string>
+			<string>vboy</string>
+			<string>bin</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -2240,6 +2248,8 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>cue</string>
+			<string>bin</string>
+			<string>iso</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -2343,7 +2353,17 @@
 		<array>
 			<string>smd</string>
 			<string>md</string>
+			<string>mdx</string>
 			<string>gen</string>
+			<string>bin</string>
+			<string>sms</string>
+			<string>bms</string>
+			<string>gg</string>
+			<string>sg</string>
+			<string>68k</string>
+			<string>sgd</string>
+			<string>chd</string>
+			<string>m3u</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -2486,7 +2506,10 @@
 			<string>mds</string>
 			<string>cue</string>
 			<string>ccd</string>
+			<string>chd</string>
+			<string>toc</string>
 			<string>m3u</string>
+			<string>bin</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -3040,6 +3063,8 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>gba</string>
+			<string>agb</string>
+			<string>bin</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>
@@ -3449,6 +3474,9 @@
 		<key>PVSupportedExtensions</key>
 		<array>
 			<string>nes</string>
+			<string>fds</string>
+			<string>unf</string>
+			<string>unif</string>
 		</array>
 		<key>PVControlLayout</key>
 		<array>

@@ -126,6 +126,9 @@ final class PVCheatsViewController: UITableViewController {
             }
 
             let alert = UIAlertController(title: "Delete this Cheat Code?", message: nil, preferredStyle: .alert)
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            alert.popoverPresentationController?.sourceView = self.view
+            alert.popoverPresentationController?.sourceRect = UIScreen.main.bounds
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { [unowned self] _ in
                 do {
                     try  PVCheats.delete(saveState)

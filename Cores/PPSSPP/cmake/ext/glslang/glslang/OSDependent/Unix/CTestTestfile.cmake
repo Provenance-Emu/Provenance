@@ -1,5 +1,5 @@
 # CMake generated Testfile for 
-# Source directory: ../ppsspp/ext/glslang/glslang/OSDependent/Unix
+# Source directory: ../libretro_ppsspp/ext/glslang/glslang/OSDependent/Unix
 # Build directory: ../cmake/ext/glslang/glslang/OSDependent/Unix
 # 
 # This file includes the relevant testing commands required for 

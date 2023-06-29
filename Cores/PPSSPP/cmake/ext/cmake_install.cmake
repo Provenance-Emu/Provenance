@@ -1,4 +1,4 @@
-# Install script for directory: ../ppsspp/ext
+# Install script for directory: ../libretro_ppsspp/ext
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
