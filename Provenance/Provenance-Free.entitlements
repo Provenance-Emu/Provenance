@@ -8,7 +8,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.org.rf222.playunlimited.provenance</string>
+		<string>group.org.provenance-emu.provenance</string>
 	</array>
 	<key>com.apple.security.assets.pictures.read-write</key>
 	<true/>
