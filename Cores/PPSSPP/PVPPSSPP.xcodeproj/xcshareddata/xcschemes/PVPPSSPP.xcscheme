@@ -20,6 +20,20 @@
                ReferencedContainer = "container:PVPPSSPP.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
+               BuildableName = "PVSupport.framework"
+               BlueprintName = "PVSupport"
+               ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

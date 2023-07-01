@@ -93,7 +93,6 @@
 		93E741FF295B67C70028EB94 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		93E74200295B67C70028EB94 /* libpsp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libpsp.a */; };
 		93E74201295B67C70028EB94 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
-		93E74202295B67C70028EB94 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		93E74203295B67C70028EB94 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		93E74204295B67C70028EB94 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209029478A7600ED28E3 /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93E74205295B67C70028EB94 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); };
@@ -107,6 +106,7 @@
 		93E7427B295C53890028EB94 /* OGLGraphicsContext.h in Sources */ = {isa = PBXBuildFile; fileRef = 93E7427A295C53890028EB94 /* OGLGraphicsContext.h */; };
 		93F28DC3295E264700E4D464 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC2295E264600E4D464 /* MediaPlayer.framework */; };
 		93F6EC61298AC9FA00397536 /* PVDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F6EC60298AC9FA00397536 /* PVDebug.m */; };
+		B302CD0E2A50126700510493 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B302CD0D2A50126700510493 /* PVSupport.framework */; };
 		B3AFCF9E2977A86400A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF9D2977A86400A01010 /* PVLogging */; };
 /* End PBXBuildFile section */
 
@@ -646,16 +646,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		93E74211295B67C70028EB94 /* Embed Libraries */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Libraries";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B30178D1207C901D0051B93D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -706,6 +696,7 @@
 		93F5FBF32945D1B600493D4F /* PVPPSSPPCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPPSSPPCore.swift; sourceTree = "<group>"; };
 		93F6EC60298AC9FA00397536 /* PVDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PVDebug.m; path = ../../../Debug/PVDebug.m; sourceTree = "<group>"; };
 		B30178D3207C901D0051B93D /* libpsp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpsp.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B302CD0D2A50126700510493 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3135B2A26E4C6850047F338 /* PPSSPP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PPSSPP.xcodeproj; path = cmake/PPSSPP.xcodeproj; sourceTree = "<group>"; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -755,6 +746,7 @@
 				93E741F5295B67C70028EB94 /* libz.1.2.11.tbd in Frameworks */,
 				93E741F6295B67C70028EB94 /* CoreAudio.framework in Frameworks */,
 				93AEC060295E7FEB00F9381C /* GLKit.framework in Frameworks */,
+				B302CD0E2A50126700510493 /* PVSupport.framework in Frameworks */,
 				93E741F7295B67C70028EB94 /* libsqlite3.tbd in Frameworks */,
 				93E741F8295B67C70028EB94 /* CoreGraphics.framework in Frameworks */,
 				93F28DC3295E264700E4D464 /* MediaPlayer.framework in Frameworks */,
@@ -767,7 +759,6 @@
 				93E741FF295B67C70028EB94 /* AudioToolbox.framework in Frameworks */,
 				93E74200295B67C70028EB94 /* libpsp.a in Frameworks */,
 				93E74201295B67C70028EB94 /* libpthread.tbd in Frameworks */,
-				93E74202295B67C70028EB94 /* PVSupport.framework in Frameworks */,
 				93E74203295B67C70028EB94 /* Foundation.framework in Frameworks */,
 				93E74204295B67C70028EB94 /* Metal.framework in Frameworks */,
 				93E74205295B67C70028EB94 /* OpenGLES.framework in Frameworks */,
@@ -936,6 +927,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B302CD0D2A50126700510493 /* PVSupport.framework */,
 				93AA16E62A35E32A007E89E1 /* libavcodec.a */,
 				93AA16E22A35E329007E89E1 /* libavdevice.a */,
 				93AA16E52A35E329007E89E1 /* libavformat.a */,
@@ -1021,7 +1013,6 @@
 				93E741F3295B67C70028EB94 /* Frameworks */,
 				93E74206295B67C70028EB94 /* Headers */,
 				93E7420E295B67C70028EB94 /* Resources */,
-				93E74211295B67C70028EB94 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
