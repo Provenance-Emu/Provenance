@@ -46,12 +46,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #if os(iOS)
         let darkTheme = (PVSettingsModel.shared.theme == .auto && self.window?.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
         Theme.currentTheme = darkTheme ? Theme.darkTheme : Theme.lightTheme
-        #elseif os(tvOS)
-        if PVSettingsModel.shared.debugOptions.tvOSThemes {
-            DispatchQueue.main.async {
-                Theme.currentTheme = Theme.darkTheme
-            }
-        }
         #endif
     }
 

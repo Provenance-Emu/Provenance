@@ -46,11 +46,8 @@ protocol tvOSTheme {}
 public protocol iOSTheme {
     var theme: Themes { get }
 
-    #if !os(tvOS)
-    var navigationBarStyle: UIBarStyle { get }
-    var statusBarStyle: UIStatusBarStyle { get }
     var statusBarColor: UIColor { get }
-    #endif
+
     // Mandatory
     var gameLibraryBackground: UIColor { get }
     var gameLibraryText: UIColor { get }
@@ -61,8 +58,6 @@ public protocol iOSTheme {
     // Optional - Defaults to nil (OS chooses)
     var defaultTintColor: UIColor? { get }
 
-    var keyboardAppearance: UIKeyboardAppearance { get }
-
     var barButtonItemTint: UIColor? { get }
     var navigationBarBackgroundColor: UIColor? { get }
 
@@ -70,54 +65,32 @@ public protocol iOSTheme {
     var switchThumb: UIColor? { get }
 
     var settingsHeaderBackground: UIColor? { get }
-    var settingsSeperator: UIColor? { get }
     var settingsHeaderText: UIColor? { get }
 
     var settingsCellBackground: UIColor? { get }
     var settingsCellText: UIColor? { get }
-
-    // Doesn't seem to be themeable
-//    var alertViewBackground : UIColor {get}
-//    var alertViewText : UIColor {get}
-//    var alertViewTintColor : UIColor {get}
 }
 
 // Default implimentnations
 extension iOSTheme {
-    var keyboardAppearance: UIKeyboardAppearance { return .default }
-
+    var statusBarColor: UIColor? { return nil }
+        
     // Defaults to NIL will use iOS defaults
     var defaultTintColor: UIColor? { return nil }
     var switchThumb: UIColor? { return nil }
+    
     var navigationBarBackgroundColor: UIColor? { return nil }
 
     var settingsHeaderBackground: UIColor? { return nil }
     var settingsHeaderText: UIColor? { return nil }
+
     var settingsCellBackground: UIColor? { return nil }
     var settingsCellText: UIColor? { return nil }
-    var settingsSeperator: UIColor? { return nil }
-
-    #if !os(tvOS)
-    var navigationBarStyle: UIBarStyle { return .default }
-    var statusBarStyle: UIStatusBarStyle {
-        return UIStatusBarStyle.default
-    }
-    var statusBarColor: UIColor? { return nil }
-    #endif
 
     // Default to default tint (which defaults to nil)
     var barButtonItemTint: UIColor? { return defaultTintColor }
     var alertViewTintColor: UIColor? { return defaultTintColor }
     var switchON: UIColor? { return defaultTintColor }
-
-    func setGlobalTint() {
-        // Get app delegate
-        let sharedApp = UIApplication.shared
-
-        // Set tint color
-        sharedApp.delegate?.window??.tintColor = defaultTintColor
-    }
-
 }
 
 struct DarkTheme: iOSTheme {
@@ -128,13 +101,9 @@ struct DarkTheme: iOSTheme {
 
     let theme = Themes.dark
 
-    #if !os(tvOS)
-    var navigationBarStyle: UIBarStyle { return UIBarStyle.black }
-    var statusBarStyle: UIStatusBarStyle { return UIStatusBarStyle.lightContent }
     var statusBarColor: UIColor { return .grey1C }
-    #endif
+
     var defaultTintColor: UIColor? { return Colors.blueishGrey }
-    var keyboardAppearance: UIKeyboardAppearance = .dark
 
     var switchON: UIColor? { return Colors.lightBlue }
     var switchThumb: UIColor? { return .greyEEE }
@@ -148,16 +117,11 @@ struct DarkTheme: iOSTheme {
     var barButtonItemTint: UIColor? { return Colors.lightBlue }
     var navigationBarBackgroundColor: UIColor? { return .grey1C }
 
-    var alertViewBackground: UIColor { return .darkGray }
-    var alertViewText: UIColor { return .lightGray }
-
     var settingsHeaderBackground: UIColor? { return .black }
     var settingsHeaderText: UIColor? { return .middleGrey }
 
     var settingsCellBackground: UIColor? { return .grey29 }
     var settingsCellText: UIColor? { return .middleGrey  }
-
-    var settingsSeperator: UIColor? { return .black }
 }
 
 struct LightTheme: iOSTheme {
@@ -183,26 +147,18 @@ struct LightTheme: iOSTheme {
     var settingsCellTextDetail: UIColor? { return .gray }
 }
 
-// @available(iOS 9.0, *)
 public final class Theme {
     public static var currentTheme: iOSTheme = DarkTheme() {
         didSet {
-//            setTheme(currentTheme)
+            setTheme(currentTheme)
             UIApplication.shared.refreshAppearance(animated: true)
         }
     }
 
-    //	class func test() {
-    //		let light = AppearanceStyle("light")
-    //	}
-    static weak var statusBarView: UIView?
     private class func styleStatusBar(withColor color: UIColor) {
-        #if !os(tvOS)
+        #if os(iOS)
         DispatchQueue.main.async {
-            let keyWindow = UIApplication.shared.connectedScenes
-                .map({$0 as? UIWindowScene})
-                .compactMap({$0})
-                .first?.windows.first
+            let keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
 
             guard
                 let scene = keyWindow?.windowScene,
@@ -211,143 +167,27 @@ public final class Theme {
                 return
             }
 
-            let statusBar1 = statusBarView ?? UIView()
-            statusBar1.frame = manager.statusBarFrame
-            statusBar1.backgroundColor = color
-            statusBarView = statusBar1
-            keyWindow?.addSubview(statusBar1)
+            let statusBar = UIView()
+            statusBar.frame = manager.statusBarFrame
+            statusBar.backgroundColor = color
+            keyWindow?.addSubview(statusBar)
         }
         #endif
     }
 
     private class func setTheme(_ theme: iOSTheme) {
-//        UINavigationBar.appearance {
-//            $0.backgroundColor = theme.navigationBarBackgroundColor
-//            $0.tintColor = theme.barButtonItemTint
-//            #if !os(tvOS)
-//            $0.barStyle = theme.navigationBarStyle
-//            #endif
-//            $0.isTranslucent = true
-//        }
-
-//        UIView.appearance {
-//            $0.tintColor = theme.defaultTintColor
-//        }
-
-        UIBarButtonItem.appearance {
-            $0.tintColor = theme.barButtonItemTint
-        }
-
-        #if !os(tvOS)
+        #if os(iOS)
         UISwitch.appearance {
             $0.onTintColor = theme.switchON
 			#if !targetEnvironment(macCatalyst)
             $0.thumbTintColor = theme.switchThumb
 			#endif
         }
-
-//        UITableView.appearance {
-//            $0.backgroundColor = theme.settingsHeaderBackground
-//            $0.separatorColor = theme.settingsSeperator
-//        }
-
-        #endif
-
-        // Settings
-        appearance(inAny: [PVSettingsViewController.self, SystemsSettingsTableViewController.self, CoreOptionsViewController.self, PVAppearanceViewController.self, PVCoresTableViewController.self]) {
-            UITableViewCell.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.textColor = theme.settingsCellText
-                $0.detailTextLabel?.textColor = theme.settingsCellText
-            }
-
-            SwitchCell.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.textColor = theme.settingsCellText
-                $0.detailTextLabel?.textColor = theme.settingsCellText
-//                $0.switchControl.onTintColor = theme.switchON
-//                $0.switchControl.thumbTintColor = theme.switchThumb
-            }
-
-            TapActionCell.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.backgroundColor = theme.settingsCellBackground
-                $0.textLabel?.textColor = theme.settingsCellText
-                $0.detailTextLabel?.textColor = theme.settingsCellText
-            }
+        
+        UISlider.appearance {
+            $0.tintColor = theme.defaultTintColor
         }
 
-        appearance(in: [UITableViewCell.self, SwitchCell.self]) {
-            UILabel.appearance {
-                $0.textColor = theme.settingsCellText
-            }
-        }
-
-        let selectedView = UIView()
-        selectedView.backgroundColor = theme.defaultTintColor
-
-        SwitchCell.appearance().selectedBackgroundView = selectedView
-        UITableViewCell.appearance().selectedBackgroundView = selectedView
-
-        // Search bar
-//        appearance(in: UISearchBar.self) {
-//            UITextView.appearance {
-//                $0.textColor = theme.searchTextColor
-//            }
-//        }
-
-        // Game Library Headers
-        PVGameLibrarySectionHeaderView.appearance {
-            $0.backgroundColor = theme.gameLibraryHeaderBackground
-        }
-
-//        appearance(in: [PVGameLibrarySectionHeaderView.self]) {
-//            UILabel.appearance {
-//                $0.backgroundColor = theme.gameLibraryHeaderBackground
-//                $0.textColor = theme.gameLibraryHeaderText
-//            }
-//        }
-
-        // Game Library Main
-        appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {
-            UILabel.appearance {
-                $0.textColor = theme.gameLibraryText
-            }
-        }
-
-//        UICollectionView.appearance {
-//            $0.backgroundColor = theme.gameLibraryBackground
-//        }
-
-        // Keyboard Style
-        UITextField.appearance {
-            $0.keyboardAppearance = theme.keyboardAppearance
-        }
-
-        UISearchBar.appearance {
-            $0.keyboardAppearance = theme.keyboardAppearance
-        }
-
-        // Force touch sheet // _UIInterfaceActionSystemRepresentationView
-        if let actionSystemView = NSClassFromString("_UIInterfaceActionRepresentationsSequenceView") as? (UIView.Type) {
-            actionSystemView.appearance {
-                $0.backgroundColor = theme.settingsCellBackground
-//                $0.layer.borderColor = theme.settingsCellText?.withAlphaComponent(0.6).cgColor
-//                $0.layer.cornerRadius = 10.0
-//                $0.layer.borderWidth = 0.5
-                $0.tintColor = theme.gameLibraryText
-            }
-
-            appearance(inAny: [actionSystemView.self]) {
-                UILabel.appearance {
-                    $0.textColor = theme.gameLibraryText
-                }
-            }
-        }
-
-        #if os(iOS)
         // Status bar
         styleStatusBar(withColor: theme.statusBarColor)
         #endif

@@ -74,7 +74,7 @@ final class CoreOptionsViewController: QuickTableViewController {
 				switch option {
 				case let .bool(display, defaultValue):
 					let detailText: DetailText = display.description != nil ? DetailText.subtitle(display.description!) : .none
-					return SwitchRow<PVSwitchCell>(text: display.title, detailText: detailText, switchValue: core.storedValueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
+					return SwitchRow(text: display.title, detailText: detailText, switchValue: core.storedValueForOption(Bool.self, option.key) ?? defaultValue, action: { _ in
 						let value = self.core.storedValueForOption(Bool.self, option.key) ?? defaultValue
 						self.core.setValue(!value, forOption: option)
 					})
@@ -172,7 +172,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              action: { _ in
                     })
                     #else
-                    return SliderRow<PVSliderCell>(
+                    return SliderRow(
                         text: display.title,
                         detailText: detailText,
                         value: Float(value),
@@ -196,7 +196,7 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              action: { _ in
                     })
                     #else
-                    return SliderRow<PVSliderCell>(
+                    return SliderRow(
                         text: display.title,
                         detailText: detailText,
                         value: value,

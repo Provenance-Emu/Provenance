@@ -244,9 +244,6 @@ extension MirroredSettings {
 //        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
         @objc public dynamic var multiThreadedGL = true
         @objc public dynamic var multiSampling = true
-        #if os(tvOS)
-        @objc public dynamic var tvOSThemes = false
-        #endif
         #if os(macOS) || targetEnvironment(macCatalyst)
         @objc public dynamic var movableButtons = false
         @objc public dynamic var onscreenJoypad = false
