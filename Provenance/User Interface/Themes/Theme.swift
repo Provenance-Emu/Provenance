@@ -159,7 +159,6 @@ struct LightTheme: iOSTheme {
     var settingsCellTextDetail: UIColor? { return .gray }
 }
 
-// @available(iOS 9.0, *)
 public final class Theme {
     public static var currentTheme: iOSTheme = DarkTheme() {
         didSet {
@@ -168,17 +167,11 @@ public final class Theme {
         }
     }
 
-    //	class func test() {
-    //		let light = AppearanceStyle("light")
-    //	}
     static weak var statusBarView: UIView?
     private class func styleStatusBar(withColor color: UIColor) {
         #if !os(tvOS)
         DispatchQueue.main.async {
-            let keyWindow = UIApplication.shared.connectedScenes
-                .map({$0 as? UIWindowScene})
-                .compactMap({$0})
-                .first?.windows.first
+            let keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
 
             guard
                 let scene = keyWindow?.windowScene,
@@ -186,12 +179,12 @@ public final class Theme {
                 ELOG("check your tcp/ip's")
                 return
             }
-
-            let statusBar1 = statusBarView ?? UIView()
-            statusBar1.frame = manager.statusBarFrame
-            statusBar1.backgroundColor = color
-            statusBarView = statusBar1
-            keyWindow?.addSubview(statusBar1)
+            
+            let statusBar = statusBarView ?? UIView()
+            statusBar.frame = manager.statusBarFrame
+            statusBar.backgroundColor = color
+            statusBarView = statusBar
+            keyWindow?.addSubview(statusBar)
         }
         #endif
     }
