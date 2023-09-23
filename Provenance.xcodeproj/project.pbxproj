@@ -2128,15 +2128,6 @@
 		B316B4DB219265B700693472 /* PVVirtualJaguar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVirtualJaguar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B31A464D26B4C5060084A1D6 /* PVAltKitService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVAltKitService.h; sourceTree = "<group>"; };
 		B31A464E26B4C5060084A1D6 /* PVAltKitService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PVAltKitService.m; sourceTree = "<group>"; };
-		B31B35D8295970EB00E5AA3C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Default.xib; sourceTree = "<group>"; };
-		B31B35D9295970F700E5AA3C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Default.strings; sourceTree = "<group>"; };
-		B31B35DA295970FE00E5AA3C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Default.strings"; sourceTree = "<group>"; };
-		B31B35DB2959710300E5AA3C /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Default.strings; sourceTree = "<group>"; };
-		B31B35DC2959710A00E5AA3C /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Default.strings; sourceTree = "<group>"; };
-		B31B35DD2959711000E5AA3C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Default.strings; sourceTree = "<group>"; };
-		B31B35DE2959711A00E5AA3C /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Default.strings"; sourceTree = "<group>"; };
-		B31B35DF2959712000E5AA3C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Default.strings; sourceTree = "<group>"; };
-		B31B35E02959716600E5AA3C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Default.strings; sourceTree = "<group>"; };
 		B31B35E22959718E00E5AA3C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PVLogViewController.xib; sourceTree = "<group>"; };
 		B31B35E52959719800E5AA3C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/PVLogViewController.strings; sourceTree = "<group>"; };
 		B31B35E7295971BA00E5AA3C /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/PVLogViewController.strings; sourceTree = "<group>"; };
