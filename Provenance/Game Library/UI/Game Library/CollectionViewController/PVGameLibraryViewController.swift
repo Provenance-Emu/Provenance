@@ -744,17 +744,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
     fileprivate lazy var officialBundleID: Bool = Bundle.main.bundleIdentifier!.contains("org.provenance-emu.")
 
-    var transitioningToSize: CGSize?
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-
-        transitioningToSize = size
-        collectionView?.collectionViewLayout.invalidateLayout()
-        coordinator.notifyWhenInteractionChanges { [weak self] _ in
-            self?.transitioningToSize = nil
-        }
-    }
-
     #if os(iOS) && !targetEnvironment(macCatalyst)
         override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
             return .all
