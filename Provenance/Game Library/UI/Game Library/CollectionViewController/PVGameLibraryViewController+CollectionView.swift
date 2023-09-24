@@ -60,7 +60,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
     #if os(tvOS)
         private func tvos_collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
             let item: Section.Item = try! collectionView.rx.model(at: indexPath)
-            let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
+            let viewWidth = collectionView.bounds.size.width
             switch item {
             case .saves:
                 // TODO: Multirow?
