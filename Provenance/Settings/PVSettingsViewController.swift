@@ -414,10 +414,10 @@ final class PVSettingsViewController: QuickTableViewController {
                 }
             }
         )
-        let twitterRow = NavigationRow(
-            text: NSLocalizedString("Twitter", comment: ""),
-            detailText: .subtitle("Follow us on Twitter for release and other announcements."),
-            icon: .named("twitter"),
+        let xRow = NavigationRow(
+            text: NSLocalizedString("X", comment: ""),
+            detailText: .subtitle("Follow us on X for release and other announcements."),
+            icon: .named("x"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0
@@ -528,7 +528,7 @@ final class PVSettingsViewController: QuickTableViewController {
             }
         )
 
-        let socialLinksRows = [patreonRow, discordRow, twitterRow, youTubeRow, githubRow]
+        let socialLinksRows = [patreonRow, discordRow, xRow, youTubeRow, githubRow]
         let socialLinksSection = Section(title: NSLocalizedString("Socials", comment: ""), rows: socialLinksRows)
 
         let documentationLinksRow = [blogRow, faqRow, wikiRow]
