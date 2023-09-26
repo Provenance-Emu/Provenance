@@ -403,7 +403,7 @@ final class PVSettingsViewController: QuickTableViewController {
         let discordRow = NavigationRow(
             text: NSLocalizedString("Discord", comment: ""),
             detailText: .subtitle("Join our Discord server for help and community chat."),
-            icon: .named("Icons/discord"),
+            icon: .named("discord"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0
