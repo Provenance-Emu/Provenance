@@ -444,7 +444,7 @@ final class PVSettingsViewController: QuickTableViewController {
         )
         let patreonRow = NavigationRow(
             text: NSLocalizedString("Patreon", comment: ""),
-            detailText: .subtitle("Support us on Patreaon and receive special features and early access builds."),
+            detailText: .subtitle("Support us on Patreon and receive special features and early access builds."),
             icon: .named("patreon"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -457,7 +457,7 @@ final class PVSettingsViewController: QuickTableViewController {
             }
         )
         let youTubeRow = NavigationRow(
-            text: NSLocalizedString("YouTube!", comment: ""),
+            text: NSLocalizedString("YouTube", comment: ""),
             detailText: .subtitle("Help tutorial videos and new feature previews."),
             icon: .named("youtube"),
             customization: { cell, row in
