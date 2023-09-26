@@ -158,6 +158,7 @@
 		37EEA2A827BC7E610070E222 /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
 		37EEA2AB27BC81890070E222 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 37EEA2AA27BC81890070E222 /* Introspect */; };
 		42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
+		55B660D92AC33C7D00718B7A /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF992977A81F00A01010 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93102A4A2A30E879002C86C6 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93102A492A30E879002C86C6 /* PVLogging */; };
 		93102A4B2A30E879002C86C6 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 93102A492A30E879002C86C6 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93102A4D2A30E955002C86C6 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93102A4C2A30E955002C86C6 /* PVLogging */; };
@@ -1674,6 +1675,7 @@
 				B3FAC985292B475E005E8B11 /* PVAtari800.framework in Embed Frameworks */,
 				B3FAC99B292B476E005E8B11 /* PVLibRetro.framework in Embed Frameworks */,
 				B3FAC9AD292B477E005E8B11 /* PVOpera.framework in Embed Frameworks */,
+				55B660D92AC33C7D00718B7A /* PVLogging in Embed Frameworks */,
 				B3FAC9AB292B477D005E8B11 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3FAC9A5292B4778005E8B11 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3FAC999292B476C005E8B11 /* PVGME.framework in Embed Frameworks */,
