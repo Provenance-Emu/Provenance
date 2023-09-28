@@ -19,13 +19,6 @@ extension PVEmulatorViewController {
 
         let actionSheet = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
 
-        // only popup if sumoned from menuButton
-        if let menuButton = menuButton {
-            actionSheet.popoverPresentationController?.sourceView = menuButton
-            actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
-        } else {
-            return
-        }
 #if targetEnvironment(macCatalyst) || os(macOS)
         if let menuButton = menuButton, sender === menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
