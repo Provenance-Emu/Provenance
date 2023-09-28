@@ -71,6 +71,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #else
         let darkTheme = (PVSettingsModel.shared.theme == .auto && window.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
         window.overrideUserInterfaceStyle = darkTheme ? .dark : .light
+        UIApplication.shared.setStatusBarHidden(false, with: .none)
         #endif
 
         if #available(iOS 14, tvOS 14, macCatalyst 15.0, *),

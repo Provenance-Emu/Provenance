@@ -120,12 +120,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
     // MARK: - Lifecycle
 
-    #if os(iOS)
-        override var preferredStatusBarStyle: UIStatusBarStyle {
-            return .lightContent
-        }
-    #endif
-
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -667,6 +661,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     var transitioningToSize: CGSize?
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
+
+        Theme.currentTheme = Theme.currentTheme
 
         transitioningToSize = size
         collectionView?.collectionViewLayout.invalidateLayout()
