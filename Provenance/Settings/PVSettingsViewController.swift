@@ -411,6 +411,7 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://discord.gg/4TK7PU5") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
@@ -425,6 +426,7 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://twitter.com/provenanceapp") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
@@ -439,6 +441,7 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://github.com/Provenance-Emu/Provenance") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
@@ -453,6 +456,7 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://provenance-emu.com/patreon") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
@@ -467,6 +471,7 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://www.youtube.com/channel/UCKeN6unYKdayfgLWulXgB1w") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
