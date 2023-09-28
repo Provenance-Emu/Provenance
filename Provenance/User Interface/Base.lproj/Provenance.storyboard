@@ -13,7 +13,7 @@
         <!--Navigation Controller-->
         <scene sceneID="9Nl-1J-rrm">
             <objects>
-                <navigationController storyboardIdentifier="rootNavigationController" definesPresentationContext="YES" providesPresentationContextTransitionStyle="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="PpW-xz-Ouo" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="rootNavigationController" definesPresentationContext="YES" providesPresentationContextTransitionStyle="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="PpW-xz-Ouo" customClass="PVUINavigationController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="iLh-mO-joj">
                         <rect key="frame" x="0.0" y="47" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
