@@ -674,20 +674,18 @@ class HelperBarViewController: UIViewController {
 
 	var tappedIndicator = false
 
-	@objc func didTap(_ sender: UITapGestureRecognizer) {
-        	let scale = UIScreen.main.scale
-		let point = sender.location(in: view)
-        	indicatorImageView.layer.removeAllAnimations()
-        	indicatorImageView.alpha = 1.0
-        	tappedIndicator = false
-        	DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
-            		if !(self?.tappedIndicator ?? false) {
-                		self?.showIndicatorAndFadeAway()
-            		}
-        	}
+    @objc func didTap(_ sender: UITapGestureRecognizer) {
+        indicatorImageView.layer.removeAllAnimations()
+        indicatorImageView.alpha = 1.0
+        tappedIndicator = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            if !(self?.tappedIndicator ?? false) {
+                self?.showIndicatorAndFadeAway()
+            }
+        }
 	}
 
-	@objc func didTapIndicator(_ sender: UITapGestureRecognizer) {
+    @objc func didTapIndicator(_ sender: UITapGestureRecognizer) {
 		viewModel.didInteractWithBar = true
 		indicatorImageView.layer.removeAllAnimations()
 		indicatorImageView.alpha = 0

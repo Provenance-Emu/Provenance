@@ -103,25 +103,13 @@ extension PVAppDelegate {
                     return false
                 }
 
-                guard let a = queryItems["action"],
-                      let action = AppURLKeys.SaveKeys(rawValue: a) else {
+                guard let a = queryItems["action"] else {
                     return false
                 }
 
                 let md5QueryItem = queryItems["PVGameMD5Key"]
                 let systemItem = queryItems["system"]
                 let nameItem = queryItems["title"]
-
-                let saves = RomDatabase.sharedInstance.all(PVSaveState.self)
-                var filter: String
-                switch action {
-                case .lastAnySave:
-                    filter = ""
-                case .lastManualSave:
-                    filter = ""
-                case .lastQuickSave:
-                    filter = ""
-                }
 
                 if let md5QueryItem = md5QueryItem {
 
