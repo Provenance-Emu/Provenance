@@ -89,12 +89,6 @@ final class CoreOptionsViewController: QuickTableViewController {
 																 let currentSelection: String? = self.core.storedValueForOption(String.self, option.key) ?? option.defaultValue as? String
 																 let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
 
-																 if let popoverPresentationController = actionController.popoverPresentationController {
-																	let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
-																	popoverPresentationController.sourceView = self.tableView
-																	popoverPresentationController.sourceRect = cellRect
-																 }
-
 																 values.forEach { value in
 																	 var title = value.title
 																	 if currentSelection == value.title {
@@ -105,7 +99,6 @@ final class CoreOptionsViewController: QuickTableViewController {
 																	 })
 																	 actionController.addAction(action)
 																 }
-																 actionController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
 																 self.present(actionController, animated: true)
 
 																 if let indexPath = self.tableView.indexPathForSelectedRow {
