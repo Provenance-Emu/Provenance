@@ -609,8 +609,8 @@ final class PVSettingsViewController: QuickTableViewController {
         // Extra Info Section
         let extraInfoRows: [TableRow] = [
             SegueNavigationRow(text: NSLocalizedString("Cores", comment: "Cores"),
-                               detailText: .subtitle("Emulator cores provided by these projects"),
-                               icon: .sfSymbol("person.3.sequence"),
+                               detailText: .subtitle("Emulator cores provided by these projects."),
+                               icon: .sfSymbol("square.3.layers.3d.middle.filled"),
                                viewController: self,
                                segue: "coresSegue",
                                customization: nil),
