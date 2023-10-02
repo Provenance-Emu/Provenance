@@ -111,30 +111,34 @@ extension QuickTableViewController: SliderCellDelegate {
 				#endif
                 slider.setValue(row.value, animated: false)
             }
+            
+            guard let textLabel = textLabel else {
+                return
+            }
+
+            textLabel.translatesAutoresizingMaskIntoConstraints = false
+            textLabel.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
+
+            slider.translatesAutoresizingMaskIntoConstraints = false
+            slider.leadingAnchor.constraint(equalTo: textLabel.trailingAnchor, constant: 20).isActive = true
+            slider.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
+
+            if let detailTextLabel = detailTextLabel {
+                detailTextLabel.translatesAutoresizingMaskIntoConstraints = false
+                contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 69).isActive = true
+                detailTextLabel.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
+                detailTextLabel.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
+                detailTextLabel.topAnchor.constraint(equalTo: topAnchor, constant: 32).isActive = true
+                detailTextLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0).isActive = true
+                textLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12).isActive = true
+                slider.topAnchor.constraint(equalTo: textLabel.topAnchor, constant: -5).isActive = true
+            } else {
+                contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
+                textLabel.topAnchor.constraint(equalTo: topAnchor, constant: 0).isActive = true
+                textLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0).isActive = true
+                slider.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 0).isActive = true
+            }
         }
-
-    open override func layoutSubviews() {
-        super.layoutSubviews()
-        guard let textLabel = textLabel else {
-            return
-        }
-
-        contentView.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true
-
-        textLabel.translatesAutoresizingMaskIntoConstraints = false
-        if (contentView.bounds.height == 44.5) {
-            textLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 16).isActive = true
-        } else {
-            textLabel.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20).isActive = true
-        }
-        textLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
-        textLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
-
-        slider.translatesAutoresizingMaskIntoConstraints = false
-        slider.leadingAnchor.constraint(equalTo: textLabel.trailingAnchor, constant: 20).isActive = true
-        slider.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20).isActive = true
-        slider.centerYAnchor.constraint(equalTo: self.centerYAnchor, constant: 0).isActive = true
-    }
 
         // MARK: - Private
 
