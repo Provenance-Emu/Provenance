@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -22,7 +22,8 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 9396AEEF297305F800B1EA1C /* Build configuration list for PBXAggregateTarget "NP2KaiRetroArchCore" */;
 			buildPhases = (
-				9396AEF02973064500B1EA1C /* ShellScript */,
+				9396AEF02973064500B1EA1C /* Build NP2Kai RetroArch */,
+				9375571C2A81108A00ECC97D /* Copy NP2Kai RetroArch */,
 			);
 			dependencies = (
 			);
@@ -49,6 +50,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		936B947D2A8BBD1500CB7965 /* Makefile.libretro.TV */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.libretro.TV; sourceTree = "<group>"; };
+		936B947E2A8BBD1500CB7965 /* statsave.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = statsave.c; sourceTree = "<group>"; };
+		936B94802A8BBD1500CB7965 /* Makefile.libretro */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.libretro; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVNP2Kai.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVNP2Kai.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -63,9 +67,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		936B947C2A8BBD1500CB7965 /* cmake */ = {
+			isa = PBXGroup;
+			children = (
+				936B947D2A8BBD1500CB7965 /* Makefile.libretro.TV */,
+				936B947E2A8BBD1500CB7965 /* statsave.c */,
+				936B94802A8BBD1500CB7965 /* Makefile.libretro */,
+			);
+			path = cmake;
+			sourceTree = "<group>";
+		};
 		B3C7620620783162009950E4 = {
 			isa = PBXGroup;
 			children = (
+				936B947C2A8BBD1500CB7965 /* cmake */,
 				B3C7621120783162009950E4 /* Products */,
 				B3C7621B20783242009950E4 /* Frameworks */,
 			);
@@ -111,8 +126,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				9312496C298CE744002DE0C2 /* PBXTargetDependency */,
 				9396AEFA2973078600B1EA1C /* PBXTargetDependency */,
+				9312496C298CE744002DE0C2 /* PBXTargetDependency */,
 			);
 			name = PVNP2Kai;
 			packageProductDependencies = (
@@ -197,9 +212,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n\n# Create buildTV Environment\nif [ ! -d \"${SRCROOT}/cmake/buildTV\" ]; then\n    mkdir \"${SRCROOT}/cmake/buildTV\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-np2kai | head -n1 | awk '{print $1;}'`TVOS1\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/buildTV/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-np2kai/\"* \"${SRCROOT}/cmake/buildTV/\"\n    cp \"${SRCROOT}/cmake/Makefile.libretro.TV\" \"${SRCROOT}/cmake/buildTV/sdl/Makefile.libretro\"\nfi\n\n# buildTV\ncd \"${SRCROOT}/cmake/buildTV/sdl\"\n#make clean\nmake -j5\ncp np2kai_libretro_tvos.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/np2kai_libretro_tvos.dylib\"\n";
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n\n# Create buildTV Environment\nif [ ! -d \"${SRCROOT}/cmake/buildTV\" ]; then\n    mkdir \"${SRCROOT}/cmake/buildTV\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-np2kai | head -n1 | awk '{print $1;}'`TVOS1\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/buildTV/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-np2kai/\"* \"${SRCROOT}/cmake/buildTV/\"\n    cp \"${SRCROOT}/cmake/Makefile.libretro.TV\" \"${SRCROOT}/cmake/buildTV/sdl/Makefile\"\n    cp \"${SRCROOT}/cmake/\"statsave.c \"${SRCROOT}/cmake/buildTV/\"statsave.c\n    make clean\nfi\n\n# buildTV\ncd \"${SRCROOT}/cmake/buildTV/sdl\"\nmake -j5\ncp np2kai_libretro_tvos.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/np2kai_libretro_tvos.dylib\"\nexit 0\n";
 		};
-		9396AEF02973064500B1EA1C /* ShellScript */ = {
+		9375571C2A81108A00ECC97D /* Copy NP2Kai RetroArch */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/cmake/build/sdl/np2kai_libretro_ios.dylib",
+			);
+			name = "Copy NP2Kai RetroArch";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/np2kai_libretro_ios.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"${SRCROOT}/cmake/build/sdl/\"np2kai_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/\"np2kai_libretro_ios.dylib\nexit 0\n";
+		};
+		9396AEF02973064500B1EA1C /* Build NP2Kai RetroArch */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -208,13 +243,15 @@
 			);
 			inputPaths = (
 			);
+			name = "Build NP2Kai RetroArch";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${SRCROOT}/cmake/build/sdl/np2kai_libretro_ios.dylib",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-np2kai | head -n1 | awk '{print $1;}'`iOS1\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-np2kai/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/Makefile.libretro\" \"${SRCROOT}/cmake/build/sdl\"\n    cp \"${SRCROOT}/cmake/statsave.c\" \"${SRCROOT}/cmake/build/statsave.c\"\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build/sdl\"\n#make clean\nmake -j5\ncp np2kai_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/np2kai_libretro_ios.dylib\"\n";
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-np2kai | head -n1 | awk '{print $1;}'`iOS1.000\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-np2kai/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/\"Makefile.libretro \"${SRCROOT}/cmake/build/sdl/\"Makefile\n    cp \"${SRCROOT}/cmake/\"statsave.c \"${SRCROOT}/cmake/build/\"statsave.c\n    make clean\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build/sdl\"\n\nmake\n\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -239,35 +276,17 @@
 		};
 		9396AEFA2973078600B1EA1C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				driverkit,
-				ios,
-				maccatalyst,
-				macos,
-				watchos,
-			);
+			platformFilter = ios;
 			target = 9396AEEB297305F700B1EA1C /* NP2KaiRetroArchCore */;
 			targetProxy = 9396AEF92973078600B1EA1C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		93124969298CE6A5002DE0C2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				HEADER_SEARCH_PATHS = "";
-				LD_MAP_FILE_PATH = "";
-				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SHARED_PRECOMPS_DIR = "";
-			};
-			name = Debug;
-		};
 		9312496A298CE6A5002DE0C2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = "";
 				LD_MAP_FILE_PATH = "";
@@ -277,99 +296,23 @@
 				SHARED_PRECOMPS_DIR = "";
 			};
 			name = Release;
-		};
-		9396AEEC297305F800B1EA1C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				LD_MAP_FILE_PATH = "";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
 		};
 		9396AEED297305F800B1EA1C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_STYLE = Automatic;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				LD_MAP_FILE_PATH = "";
+				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
-		B3C7621620783162009950E4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_BITCODE = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					DEBUG,
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"\"$(SRCROOT)/dosbox-pure/include\"",
-				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
-				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
 		B3C7621720783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -426,6 +369,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SYMROOT = "${SRCROOT}/cmake";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -433,40 +377,6 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
-		};
-		B3C7621920783162009950E4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
-				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-				);
-				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVNP2Kai";
-				PRODUCT_NAME = PVNP2Kai;
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
 		};
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -508,7 +418,6 @@
 		93124968298CE6A5002DE0C2 /* Build configuration list for PBXAggregateTarget "NP2KaiRetroArchTV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				93124969298CE6A5002DE0C2 /* Debug */,
 				9312496A298CE6A5002DE0C2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -517,7 +426,6 @@
 		9396AEEF297305F800B1EA1C /* Build configuration list for PBXAggregateTarget "NP2KaiRetroArchCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9396AEEC297305F800B1EA1C /* Debug */,
 				9396AEED297305F800B1EA1C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -526,7 +434,6 @@
 		B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVNP2Kai" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C7621620783162009950E4 /* Debug */,
 				B3C7621720783162009950E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -535,7 +442,6 @@
 		B3C7621820783162009950E4 /* Build configuration list for PBXNativeTarget "PVNP2Kai" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B3C7621920783162009950E4 /* Debug */,
 				B3C7621A20783162009950E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

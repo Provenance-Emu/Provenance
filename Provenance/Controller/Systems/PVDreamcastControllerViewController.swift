@@ -40,7 +40,10 @@ class PVDreamcastControllerViewController: PVControllerViewController<PVDreamcas
         rightShoulderButton?.buttonTag = .r
         startButton?.buttonTag = .start
     }
-
+    override func prelayoutSettings() {
+        joyPadScale = 0.35
+        joyPad2Scale = 0.35
+    }
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)
@@ -72,32 +75,14 @@ class PVDreamcastControllerViewController: PVControllerViewController<PVDreamcas
         }
         super.dPad(dPad, didPress: direction)
     }
-
+    
     override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
-        var up:CGFloat = value.y < 0.5 ? CGFloat(1 - (value.y * 2)) : 0.0
-        var down:CGFloat = value.y > 0.5 ? CGFloat((value.y - 0.5) * 2) : 0.0
-        var left:CGFloat = value.x < 0.5 ? CGFloat(1 - (value.x * 2)) : 0.0
-        var right:CGFloat = value.x > 0.5 ? CGFloat((value.x - 0.5) * 2) : 0.0
+        var y:CGFloat = -CGFloat(value.y - 0.5) * 5
+        var x:CGFloat = CGFloat(value.x - 0.5) * 5
 
-        up = min(up, 1.0)
-        down = min(down, 1.0)
-        left = min(left, 1.0)
-        right = min(right, 1.0)
-
-        up = max(up, 0.0)
-        down = max(down, 0.0)
-        left = max(left, 0.0)
-        right = max(right, 0.0)
-
-        // print("x: \(value.x) , y: \(value.y), up:\(up), down:\(down), left:\(left), right:\(right), ")
-        emulatorCore.didMoveJoystick(.analogUp, withValue: up, forPlayer: 0)
-        if down != 0 {
-            emulatorCore.didMoveJoystick(.analogDown, withValue: down, forPlayer: 0)
-        }
-        emulatorCore.didMoveJoystick(.analogLeft, withValue: left, forPlayer: 0)
-        if right != 0 {
-            emulatorCore.didMoveJoystick(.analogRight, withValue: right, forPlayer: 0)
-        }
+        y = y < -1 ? -1 : y > 1 ? 1 : y;
+        x = x < -1 ? -1 : x > 1 ? 1 : x;
+        emulatorCore.didMoveJoystick(.leftAnalog, withXValue: x, withYValue: y, forPlayer: 0)
     }
 
     override func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection) {

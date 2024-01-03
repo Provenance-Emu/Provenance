@@ -52,13 +52,19 @@ public final class PVSaveState: Object, Identifiable, Filed, LocalFileProvider {
 
             let database = RomDatabase.sharedInstance
             try database.delete(state)
-
-            try FileManager.default.removeItem(at: fileURL)
-            if let imageURl = imageURl {
+            if FileManager.default.fileExists(atPath: fileURL.path) {
+                try FileManager.default.removeItem(atPath: fileURL.path)
+            } else {
+                print("PVSaveState:Delete:SaveState Not Found at ", fileURL.path)
+            }
+            if let imageURl = imageURl, FileManager.default.fileExists(atPath: imageURl.path){
                 try FileManager.default.removeItem(at: imageURl)
             }
+            if FileManager.default.fileExists(atPath: fileURL.path.appending(".json")) {
+                try FileManager.default.removeItem(atPath: fileURL.path.appending(".json"))
+            }
         } catch {
-            ELOG("Failed to delete PVState")
+            ELOG("PVSaveState:Delete:Failed to delete PVState")
             throw error
         }
     }

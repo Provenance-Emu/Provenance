@@ -28,20 +28,37 @@ jobs:
       fail-fast: false
       matrix:
         target:
-          - Provenance
-          - ProvenanceTV
+          - Provenance-Release
+          - ProvenanceTV-Release
+          - "Provenance-XL Release"
+          - Provenance-UnderDevelopment
         include:
-          - target: Provenance
+          - target: Provenance-Release
             sdk: iphoneos
-            scheme: Provenance
-          - target: ProvenanceTV
+            scheme: Provenance-Release
+            APP_NAME: Provenance
+            IPA_NAME: Provenance
+          - target: ProvenanceTV-Release
             sdk: appletvos
-            scheme: ProvenanceTV
+            scheme: ProvenanceTV-Release
+            APP_NAME: Provenance
+            IPA_NAME: ProvenanceTV
+          - target: "Provenance-XL Release"
+            sdk: iphoneos
+            scheme: "Provenance-XL Release"
+            APP_NAME: Provenance-XL
+            IPA_NAME: Provenance-XL
+          - target: Provenance-UnderDevelopment
+            sdk: iphoneos
+            scheme: Provenance-UnderDevelopment
+            APP_NAME: Provenance-UnderDevelopment
+            IPA_NAME: Provenance-UnderDevelopment
           # - target: macOS
           #   sdk: macosx
           #   scheme: Provenance
 
     runs-on: 'macos-12'
+    timeout-minutes: 300
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -69,7 +86,7 @@ jobs:
 
       - name: Build Provenance
         run: |
-          xcodebuild -workspace Provenance.xcworkspace -scheme ${{ matrix.scheme }} -sdk ${{ matrix.sdk }} archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=S32Z3HMYVQ ORG_IDENTIFIER=org.provenance-emu | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild -configuration Release -workspace Provenance.xcworkspace -scheme "${{ matrix.scheme }}" -sdk ${{ matrix.sdk }} archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=S32Z3HMYVQ ORG_IDENTIFIER=org.provenance-emu | xcpretty && exit ${PIPESTATUS[0]}
 
       # - name: Build Provenance
       #   run: |
@@ -80,21 +97,20 @@ jobs:
 
       - name: Fakesign app
         run: |
-          rm -rf archive.xcarchive/Products/Applications/Provenance.app/Frameworks/*.framework/Frameworks/
-          ldid -SProvenance/Provenance.entitlements archive.xcarchive/Products/Applications/Provenance.app/Provenance
+          #rm -rf archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/Frameworks/*.framework/Frameworks/
+          ldid -SProvenance/Provenance.entitlements archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}
 
       - name: Convert to IPA
         run: |
           mkdir Payload
-          mkdir Payload/${{ matrix.target }}.app
-          cp -R archive.xcarchive/Products/Applications/Provenance.app/ Payload/${{ matrix.target }}.app/
-          zip -r ${{ matrix.target }}.ipa Payload
+          cp -pR "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app" "Payload/${{ matrix.IPA_NAME }}.app"
+          zip -r "${{ matrix.IPA_NAME }}.ipa" Payload
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: ${{ matrix.target }}.ipa
-          path: ${{ matrix.target }}.ipa
+          name: "${{ matrix.IPA_NAME }}.ipa"
+          path: "${{ matrix.IPA_NAME }}.ipa"
 
       # - name: Upload IPA to S3
       #   if: ${{ github.branch == 'develop' }}

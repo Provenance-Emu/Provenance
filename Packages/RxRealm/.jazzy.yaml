@@ -1,0 +1,5 @@
+output: ../docs/RxRealm
+module: RxRealm
+xcodebuild_arguments: 
+  - -scheme
+  - RxRealm iOS

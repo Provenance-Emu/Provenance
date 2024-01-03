@@ -72,6 +72,7 @@ extern bool _isInitialized;
 }
 -(void)setupControllers {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(controllerConnected:)
                                                  name:GCKeyboardDidConnectNotification
@@ -256,6 +257,14 @@ extern bool _isInitialized;
 	[self sendPSPButtonInput:(PVPSPButton)button isPressed:false withValue:0.0 forPlayer:player];
 }
 
+- (void)didMovePSPJoystickDirection:(PVPSXButton)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    switch (button) {
+        case(PVPSPButtonLeftAnalog):
+            [self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_X value:CGFloat(xValue)];
+            [self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_Y value:CGFloat(-yValue)];
+            break;
+    }
+}
 - (void)didMovePSPJoystickDirection:(PVPSPButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
 	[self sendPSPButtonInput:(PVPSPButton)button isPressed:value != 0 withValue:value forPlayer:player];
 }
@@ -285,13 +294,13 @@ extern bool _isInitialized;
 			[self gamepadEventOnPad:player button:NKCODE_BUTTON_4 action:(pressed?1:0)]; // Square
 			break;
 		case(PVPSPButtonCross):
-			[self gamepadEventOnPad:player button:NKCODE_BUTTON_3 action:(pressed?1:0)]; // Cross
+			[self gamepadEventOnPad:player button:NKCODE_BUTTON_2 action:(pressed?1:0)]; // Cross
 			break;
 		case(PVPSPButtonTriangle):
 			[self gamepadEventOnPad:player button:NKCODE_BUTTON_1 action:(pressed?1:0)]; // Triangle
 			break;
 		case(PVPSPButtonCircle):
-			[self gamepadEventOnPad:player button:NKCODE_BUTTON_2 action:(pressed?1:0)]; // Circle
+			[self gamepadEventOnPad:player button:NKCODE_BUTTON_3 action:(pressed?1:0)]; // Circle
 			break;
 		case(PVPSPButtonL1):
 			[self gamepadEventOnPad:player button:NKCODE_BUTTON_7 action:(pressed?1:0)];
@@ -310,22 +319,6 @@ extern bool _isInitialized;
 			break;
 		case(PVPSPButtonR3):
 			[self gamepadEventOnPad:player button:NKCODE_BUTTON_12 action:(pressed?1:0)];
-			break;
-		case(PVPSPButtonLeftAnalogLeft):
-            value *= 3;
-			[self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_X value:CGFloat(-value)];
-			break;
-		case(PVPSPButtonLeftAnalogRight):
-            value *= 3;
-			[self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_X value:CGFloat(value)];
-			break;
-		case(PVPSPButtonLeftAnalogUp):
-            value *= 3;
-			[self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_Y value:CGFloat(-value)];
-			break;
-		case(PVPSPButtonLeftAnalogDown):
-            value *= 3;
-			[self gamepadMoveEventOnPad:player axis:JOYSTICK_AXIS_Y value:CGFloat(value)];
 			break;
 		case(PVPSPButtonLeft):
 			[self gamepadEventOnPad:player button:NKCODE_DPAD_LEFT action:(pressed?1:0)];

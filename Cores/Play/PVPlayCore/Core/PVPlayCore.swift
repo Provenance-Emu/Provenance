@@ -42,22 +42,41 @@ extension PVPlayCore: CoreOptional {
                description: "(Smaller Value is more accurate)",
                requiresRestart: true),
            values: [
-               .init(title: "20", description: "20", value: 20),
+               .init(title: "22", description: "22", value: 22),
                .init(title: "100", description: "100", value: 100),
-               .init(title: "200", description: "200", value: 200),
-               .init(title: "1000", description: "1000", value: 1000),
-               .init(title: "2000", description: "2000", value: 2000),
-               .init(title: "5000", description: "5000", value: 5000),
-               .init(title: "10000", description: "10000", value: 10000),
-               .init(title: "30000", description: "30000", value: 30000),
-               .init(title: "60000", description: "60000", value: 60000),
-               .init(title: "120000", description: "120000", value: 120000),
-               .init(title: "240000", description: "240000", value: 240000),
-               .init(title: "1000000", description: "1000000", value: 1000000),
+               .init(title: "222", description: "222", value: 222),
            ],
            defaultValue: 100)
            }()
     
+    static var volumeOption: CoreOption = {
+        .enumeration(.init(title: "Audio Volume",
+                           description: "",
+                           requiresRestart: false),
+                     values: [
+                        .init(title: "100%", description: "100%", value: 100),
+                        .init(title: "90%", description: "90%", value: 90),
+                        .init(title: "80%", description: "80%", value: 80),
+                        .init(title: "70%", description: "70%", value: 70),
+                        .init(title: "60%", description: "60%", value: 60),
+                        .init(title: "50%", description: "50%", value: 50),
+                        .init(title: "40%", description: "40%", value: 40),
+                        .init(title: "30%", description: "30%", value: 30),
+                        .init(title: "20%", description: "20%", value: 20),
+                        .init(title: "10%", description: "10%", value: 10),
+                        .init(title: "9%", description: "9%", value: 9),
+                        .init(title: "8%", description: "8%", value: 8),
+                        .init(title: "7%", description: "7%", value: 7),
+                        .init(title: "6%", description: "6%", value: 6),
+                        .init(title: "5%", description: "5%", value: 5),
+                        .init(title: "4%", description: "4%", value: 4),
+                        .init(title: "3%", description: "3%", value: 3),
+                        .init(title: "2%", description: "2%", value: 2),
+                        .init(title: "1%", description: "1%", value: 1),
+                        .init(title: "0%", description: "0%", value: 0),
+                     ],
+                     defaultValue: 100)
+    }()
     static var limitFPSOption: CoreOption = {
         .bool(.init(
             title: "Limit FPS to 60 FPS",
@@ -68,7 +87,7 @@ extension PVPlayCore: CoreOptional {
     
     public static var options: [CoreOption] {
         var options = [CoreOption]()
-        let coreOptions: [CoreOption] = [resolutionOption, gsOption, forceBilinearFilteringOption, spuOption, limitFPSOption]
+        let coreOptions: [CoreOption] = [resolutionOption, gsOption, forceBilinearFilteringOption, spuOption, limitFPSOption, volumeOption]
         let coreGroup:CoreOption = .group(.init(title: "Play! Core",
                                                 description: "Global options for Play!"),
                                           subOptions: coreOptions)
@@ -97,7 +116,8 @@ extension PVPlayCore: CoreOptional {
         self.gsPreference = NSNumber(value: gs).int8Value
         self.resFactor = NSNumber(value: resolution).int8Value
         self.limitFPS = NSNumber(value:fps).boolValue
-        self.spuCount=NSNumber(value:spu).int8Value
+        self.spuCount = NSNumber(value:spu).int8Value
+        self.volume = NSNumber(value:PVPlayCore.valueForOption(PVPlayCore.volumeOption).asInt ?? 100).int8Value
     }
 }
 

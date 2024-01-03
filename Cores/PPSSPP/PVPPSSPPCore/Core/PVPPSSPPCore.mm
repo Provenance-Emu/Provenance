@@ -70,6 +70,7 @@
 
 #include "Core/Config.h"
 #include "Core/ConfigValues.h"
+#include "Core/ConfigSettings.h"
 #include "Core/Core.h"
 #include "Core/CoreParameter.h"
 #include "Core/HW/MemoryStick.h"
@@ -110,10 +111,11 @@
 			_videoHeight = 480;
 		}
         isPaused = true;
-		sampleRate = 44100;
+        sampleRate = 44100;
 		isNTSC = YES;
 		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
 		_callbackQueue = dispatch_queue_create("org.provenance-emu.PPSSPP.CallbackHandlerQueue", queueAttributes);
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
 		[self parseOptions];
 	}
     _current = self;
@@ -184,6 +186,13 @@
 }
 
 /* Config */
+- (void)setVolume {
+    [self parseOptions];
+    g_Config.iGlobalVolume = self.volume;
+    g_Config.bEnableSound = self.volume != 0;
+    PSP_CoreParameter().enableSound = self.volume != 0;
+    ConfigSetting("GlobalVolume", &g_Config.iGlobalVolume, VOLUME_FULL, CfgFlag::PER_GAME);
+}
 - (void)setOptionValues {
     NSLog(@"Set Option Values");
 	[self parseOptions];
@@ -198,7 +207,8 @@
 	g_Config.bFastMemory = self.fastMemory;
 	g_Config.iGPUBackend = self.gsPreference;
 	g_Config.bDisplayStretch = self.stretchOption;
-
+    g_Config.iButtonPreference = self.buttonPref;
+    
 	// Internal Options
 	g_Config.bEnableCheats = true;
 	g_Config.bEnableNetworkChat = false;
@@ -230,6 +240,7 @@
 		PSP_CoreParameter().gpuCore  =   GPUCORE_GLES;
     else if (self.gsPreference == 3)
         PSP_CoreParameter().gpuCore  =   GPUCORE_VULKAN;
+    [self setVolume];
     if (g_Config.bEnableSound) {
            iOSCoreAudioShutdown();
            iOSCoreAudioInit();
@@ -243,9 +254,24 @@
 	NSLog(@"VM Started\n");
 }
 
+-(void) prepareAudio {
+    NSError *error = nil;
+    [[AVAudioSession sharedInstance]
+     setCategory:AVAudioSessionCategoryAmbient
+     mode:AVAudioSessionModeDefault
+     options:AVAudioSessionCategoryOptionAllowBluetooth |
+     AVAudioSessionCategoryOptionAllowAirPlay |
+     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+     AVAudioSessionCategoryOptionMixWithOthers
+     error:&error];
+    [[AVAudioSession sharedInstance] setActive:YES error:&error];
+}
+
 - (void)startEmulation {
     NSLog(@"Start Emulation");
-    isViewReady = false;
+    [self prepareAudio];
+    self.isViewReady = false;
+    self.isGFXReady = false;
     _isInitialized = false;
 	g_threadManager.Init(cpu_info.num_cores, cpu_info.logical_cpu_count);
 	[self startGame];
@@ -257,12 +283,13 @@
     if (flag == isPaused) return;
     if (flag != isPaused || flag != self.isEmulationPaused) {
         Core_EnableStepping(flag, "ui.lost_focus", 0);
-        isPaused=flag;
 	}
+    isPaused=flag;
     [super setPauseEmulation:flag];
 }
 
 - (void)stopEmulation {
+    [self setPauseEmulation:true];
 	_isInitialized = false;
 	self->shouldStop = true;
 	[self stopGame:true];
@@ -287,12 +314,32 @@
 }
 
 - (void)resetEmulation {
-    NativeSetRestarting();
     [self stopGame:false];
-	[self startGame];
-    //std::string error_string;
-    //PSP_Reboot(&error_string);
-    
+    sleep(3);
+    [self startGame];
+}
+
+-(void)optionUpdated:(NSNotification *)notification {
+    NSLog(@"Option Updated\n");
+    NSDictionary *info = notification.userInfo;
+    for (NSString* key in info.allKeys) {
+        NSString *value=[info valueForKey:key];
+        [self processOption:key value:value];
+        NSLog(@"Received Option key:%s value:%s\n",key.UTF8String, value.UTF8String);
+    }
+}
+
+-(void)processOption:(NSString *)key value:(NSString*)value {
+    typedef void (^Process)();
+    NSDictionary *actions = @{
+        @"Audio Volume":
+        ^{
+            [self setVolume];
+        },
+    };
+    Process action=[actions objectForKey:key];
+    if (action)
+        action();
 }
 @end
 

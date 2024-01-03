@@ -56,21 +56,21 @@
         }
       },
       {
+        "package": "Realm",
+        "repositoryURL": "https://github.com/realm/realm-cocoa.git",
+        "state": {
+          "branch": "master",
+          "revision": "752f8ae418f97c7e90c2c83ebeeb534c0357df4d",
+          "version": null
+        }
+      },
+      {
         "package": "RealmDatabase",
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "b77443ca7fa25407869ca537bf3ae912b1427bff",
-          "version": "12.13.0"
-        }
-      },
-      {
-        "package": "Realm",
-        "repositoryURL": "https://github.com/realm/realm-swift.git",
-        "state": {
-          "branch": null,
-          "revision": "d63923f1c912b564f2c16e04ddc280cdb71dbbdd",
-          "version": "10.34.0"
+          "revision": "c04f5e401a1ec682e6b08b1ee157e19a0f834a5f",
+          "version": "13.17.1"
         }
       },
       {
@@ -83,21 +83,12 @@
         }
       },
       {
-        "package": "RxRealm",
-        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm.git",
-        "state": {
-          "branch": null,
-          "revision": "a7de576348d48286d8b100a501f757a1c531f1dd",
-          "version": "5.0.5"
-        }
-      },
-      {
         "package": "RxSwift",
         "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
         "state": {
-          "branch": null,
-          "revision": "b4307ba0b6425c0ba4178e138799946c3da594f8",
-          "version": "6.5.0"
+          "branch": "main",
+          "revision": "2ff073fc1b9c600ac9b54734aff3348110437c19",
+          "version": null
         }
       },
       {
@@ -128,11 +119,11 @@
         }
       },
       {
-        "package": "Introspect",
+        "package": "swiftui-introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
         "state": {
           "branch": "master",
-          "revision": "d3cbf32788250741d397cfb5bcd532c37aa1096d",
+          "revision": "8bf15ad33a529359200bd419a72ca2dda841089b",
           "version": null
         }
       },
@@ -143,6 +134,15 @@
           "branch": null,
           "revision": "3016df0730fb7daa85d73e29ec9d02851db831ae",
           "version": "2.5.3"
+        }
+      },
+      {
+        "package": "zstd",
+        "repositoryURL": "https://github.com/facebook/zstd",
+        "state": {
+          "branch": "dev",
+          "revision": "de6b46dfc80d950a32176c7eca79bb229d47f501",
+          "version": null
         }
       }
     ]
