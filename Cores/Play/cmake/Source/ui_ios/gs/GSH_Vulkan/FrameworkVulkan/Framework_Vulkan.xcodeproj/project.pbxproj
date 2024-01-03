@@ -7,45 +7,9 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		0C166A68102548AEB1781C34 /* install */ = {
+		8BCD176C8FFF461D905EA9CD /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = C3275D7A33FE4D998367C542 /* Build configuration list for PBXAggregateTarget "install" */;
-			buildPhases = (
-				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
-			);
-			dependencies = (
-				EBC2ED0379BB43438C243560 /* PBXTargetDependency */,
-			);
-			name = install;
-			productName = install;
-		};
-		813B9411ED6148CBBF6FDF45 /* ALL_BUILD */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 0097EC484B8A4B93B5FC960B /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
-			buildPhases = (
-				3990CACF3C96E2C439460A69 /* Generate CMakeFiles/ALL_BUILD */,
-			);
-			dependencies = (
-				1C2978E4C09D4BD7B14833BF /* PBXTargetDependency */,
-				1543782688514449BAF903D9 /* PBXTargetDependency */,
-			);
-			name = ALL_BUILD;
-			productName = ALL_BUILD;
-		};
-		81A7140D8C2040F2ACDF825B /* ZERO_CHECK */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = E24767FF034449FF8BDA9609 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
-			buildPhases = (
-				2237C4502DB7ED7E1F12B272 /* Generate CMakeFiles/ZERO_CHECK */,
-			);
-			dependencies = (
-			);
-			name = ZERO_CHECK;
-			productName = ZERO_CHECK;
-		};
-		B7CC82741C444EE0A7828070 /* RUN_TESTS */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = E024F1681992485683766847 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 22DA8131732343EA9FC73978 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -54,141 +18,177 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
-		D771A2D4BE7846D7BB9D5A72 /* package */ = {
+		A3F400094DE749EEB922DD52 /* package */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 84D8557514DF47DBBBBCABC6 /* Build configuration list for PBXAggregateTarget "package" */;
+			buildConfigurationList = 69641F1D258342EABC7A52DE /* Build configuration list for PBXAggregateTarget "package" */;
 			buildPhases = (
 				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				A02549498E304147935477AE /* PBXTargetDependency */,
+				746D3A5F77374E599E5C2F41 /* PBXTargetDependency */,
 			);
 			name = package;
 			productName = package;
 		};
+		DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9DC61721E93B409588D80803 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				DBC248BCC139D52CF15215A4 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		F79EE59899544A67B12CB8F2 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = E4C65464B3C44700A245588D /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				5AA044C26E1AF633911A4B6F /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				9B0692F08B994C928405E422 /* PBXTargetDependency */,
+				A965377FBEE9444F96B0A9B6 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		FC9CD7A99A534051BEB8AC72 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 509AAB9F40144B06A7786FA7 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				943646BC14E240BAA6E1DBC1 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		11238858974442299EF8D29E /* ../Play-/deps/Framework/include/vulkan/Loader.h */ = {isa = PBXBuildFile; fileRef = 97762A52367E4EBDA510895C /* ../Play-/deps/Framework/include/vulkan/Loader.h */; };
-		13309C25EF2F43AC9D3EE0F1 /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */ = {isa = PBXBuildFile; fileRef = 7EF5B9D6FB8641F3BDA5F87F /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */; };
-		266F749DD437409F8982F29D /* ../Play-/deps/Framework/include/vulkan/Device.h */ = {isa = PBXBuildFile; fileRef = 3F89DDCA06CC4A8A8D67310F /* ../Play-/deps/Framework/include/vulkan/Device.h */; };
-		2B09A3F0262C47498828D62D /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */ = {isa = PBXBuildFile; fileRef = 198C050EBD50472C93E8DBDE /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */; };
-		36F1444E4A0F4C1981E60668 /* ../Play-/deps/Framework/include/vulkan/StructChain.h */ = {isa = PBXBuildFile; fileRef = 0FA64D4A286F41358C75EFE8 /* ../Play-/deps/Framework/include/vulkan/StructChain.h */; };
-		4D391EBCFE654BFAB732C2F6 /* ../Play-/deps/Framework/include/vulkan/Utils.h */ = {isa = PBXBuildFile; fileRef = 3636606D2B3F4564AAB3AF27 /* ../Play-/deps/Framework/include/vulkan/Utils.h */; };
-		5C840E725ACE437A8DE9C04B /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 7E98DE2DD8624A4392E7DC76 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */; };
-		5D7AEE9A8DC4434491ECD8BE /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */ = {isa = PBXBuildFile; fileRef = 182B7B3AB5984860889B8048 /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */; };
-		7A7E65AEE80B46318C0CD3FE /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */ = {isa = PBXBuildFile; fileRef = AD45FC014F5140BB805146A2 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */; };
-		7EA6F0DDE66D423D9E0A7304 /* ../Play-/deps/Framework/include/vulkan/Image.h */ = {isa = PBXBuildFile; fileRef = 01F08A45D47A4E5D9190DD09 /* ../Play-/deps/Framework/include/vulkan/Image.h */; };
-		819B329FC8304A7C841497DB /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */ = {isa = PBXBuildFile; fileRef = 0F9716787B7148068C6FCD55 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */; };
-		8B4B967155494071A3BB4C4A /* ../Play-/deps/Framework/include/vulkan/Buffer.h */ = {isa = PBXBuildFile; fileRef = 6DE2E518A97B40299ABA7025 /* ../Play-/deps/Framework/include/vulkan/Buffer.h */; };
-		8B8DD61BF9B14393AF56873E /* ../Play-/deps/Framework/include/vulkan/Instance.h */ = {isa = PBXBuildFile; fileRef = 2188485FF91142BAAEBFB784 /* ../Play-/deps/Framework/include/vulkan/Instance.h */; };
-		8BDE24AEF9A547ADAFC7869F /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */ = {isa = PBXBuildFile; fileRef = 6CFB967E2138414E9B158892 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */; };
-		8FECDECC67764C589863DB6C /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */ = {isa = PBXBuildFile; fileRef = 41658C4CF49F411084FF8C31 /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */; };
-		9983429846334AEA80D043DA /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */ = {isa = PBXBuildFile; fileRef = C289AD15FF8E48F587357F65 /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */; };
-		A156380039D346089613493D /* ../Play-/deps/Framework/src/vulkan/Image.cpp */ = {isa = PBXBuildFile; fileRef = CB1688BE96DC4ECEA8745CF9 /* ../Play-/deps/Framework/src/vulkan/Image.cpp */; };
-		B4FA267095D041C88F376B5E /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */ = {isa = PBXBuildFile; fileRef = DA2A0B222DD346A9B0F0E2F7 /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */; };
-		B5B020C1B5C1472AB336C3AD /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */ = {isa = PBXBuildFile; fileRef = 60104438D86048BAA014916D /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */; };
-		C23F2F79828D4B96A6974FE0 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */ = {isa = PBXBuildFile; fileRef = 24B311168AD14F9A9CF21842 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */; };
-		CA9400B50781440CB60E2B28 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 674A6DBCDD74432C885900A2 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */; };
+		0092DC2F379349EBAED7C23F /* ../Play-/deps/Framework/src/vulkan/Image.cpp */ = {isa = PBXBuildFile; fileRef = BBA2A1BD34DC4A939034D0C4 /* ../Play-/deps/Framework/src/vulkan/Image.cpp */; };
+		12E92FE6D044435B8524011B /* ../Play-/deps/Framework/include/vulkan/Instance.h */ = {isa = PBXBuildFile; fileRef = C92A7EB7F1E64CBA91361585 /* ../Play-/deps/Framework/include/vulkan/Instance.h */; };
+		25F893058F144CB8A48AC74E /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = EBF91B7CB30F4EF3AF629DF3 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */; };
+		2F851F223D2E45B98F7E6D9F /* ../Play-/deps/Framework/include/vulkan/Loader.h */ = {isa = PBXBuildFile; fileRef = F28DE7B9A055441FA4FBAECC /* ../Play-/deps/Framework/include/vulkan/Loader.h */; };
+		3794BB9210D04E69B9888632 /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */ = {isa = PBXBuildFile; fileRef = E6F8222B5DFC4E38AEA50C56 /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */; };
+		385397B281DA4F91A98AB2D7 /* ../Play-/deps/Framework/include/vulkan/Image.h */ = {isa = PBXBuildFile; fileRef = 3CA3F272D0E142A2BD17B0EC /* ../Play-/deps/Framework/include/vulkan/Image.h */; };
+		41CACCC66C414183AFAD0989 /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */ = {isa = PBXBuildFile; fileRef = C244757FDB3C4718820AEB9C /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */; };
+		4F5E314748664746B157F6C8 /* ../Play-/deps/Framework/include/vulkan/Device.h */ = {isa = PBXBuildFile; fileRef = 9C28C5DD6E7C4D508DE59ADC /* ../Play-/deps/Framework/include/vulkan/Device.h */; };
+		51E3A864870E45C381BB252D /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */ = {isa = PBXBuildFile; fileRef = 1413141BFFA14A3BAFEAE184 /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */; };
+		53EBCCC297234F7D95DA5F5D /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */ = {isa = PBXBuildFile; fileRef = B777B372E5B74143BB2783B2 /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */; };
+		554AD80B15A14C3B9607BDDA /* ../Play-/deps/Framework/include/vulkan/Utils.h */ = {isa = PBXBuildFile; fileRef = 027DF341217D4E1286E77881 /* ../Play-/deps/Framework/include/vulkan/Utils.h */; };
+		7A8D43DE6B244E0EAFFE826E /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */ = {isa = PBXBuildFile; fileRef = 0B8308F95E1549F3AF3C1EC4 /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */; };
+		7D46927E6EF645C39D3CBDE5 /* ../Play-/deps/Framework/include/vulkan/Buffer.h */ = {isa = PBXBuildFile; fileRef = C183410B38F749BD8531BC51 /* ../Play-/deps/Framework/include/vulkan/Buffer.h */; };
+		89E14D1812B74E3298A50757 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */ = {isa = PBXBuildFile; fileRef = 41D316AAA1ED4AC489AB70F3 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */; };
+		929B352185134A98B5C12CD6 /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */ = {isa = PBXBuildFile; fileRef = FCB3BC703ED445A6A8D7206B /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */; };
+		93F620399B3C4A8B9E89F955 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */ = {isa = PBXBuildFile; fileRef = 538F0950BC5644BB88B05988 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */; };
+		A76571F93E4C4B4C8ACB9C0B /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 9111B5A3CF92404687B775F0 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */; };
+		AF4B476B349B4F158B0B00F2 /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */ = {isa = PBXBuildFile; fileRef = BC2E72E5B4A343978447F19C /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */; };
+		EAC2E5C5C24F4A01A2A4B089 /* ../Play-/deps/Framework/include/vulkan/StructChain.h */ = {isa = PBXBuildFile; fileRef = 5A6CA0D3A4CD4AAEB6A97609 /* ../Play-/deps/Framework/include/vulkan/StructChain.h */; };
+		ED593665BF554283BFE461AC /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */ = {isa = PBXBuildFile; fileRef = EDA767FE26F3442E95579CD1 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */; };
+		FE44757A08A0478E81AE35C1 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */ = {isa = PBXBuildFile; fileRef = BCC96D9107D3462DB67D9511 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		2E0D83B63A3B45168F37A49D /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		76E4C170D2594874AF8B44A2 /* MinSizeRel */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = MinSizeRel;
-		};
-		9452E49294AE44B881046B74 /* RelWithDebInfo */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = RelWithDebInfo;
-		};
-		B4176467F2F94C118ADC6234 /* Release */ = {
+		54AF8122A55A4EB69DAAF3CA /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
+		92DEDF5E63C849B1ACAEAFCB /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		A87EFB42EFE64EE0AE417C41 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		CB8FDBA60A914BC895D833E2 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		32B64CDC49304874AFB79EE2 /* PBXContainerItemProxy */ = {
+		2855D41D71FD415890323D54 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 126C173BE28541A6A3744083 /* Project object */;
+			containerPortal = EF009B7941174FE5A011B8B8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 81A7140D8C2040F2ACDF825B;
-			remoteInfo = ZERO_CHECK;
-		};
-		57FCC294BA164FBF9F7FC853 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 126C173BE28541A6A3744083 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 813B9411ED6148CBBF6FDF45;
+			remoteGlobalIDString = F79EE59899544A67B12CB8F2;
 			remoteInfo = ALL_BUILD;
 		};
-		72DF6C7DBA784622A1C1ACEC /* PBXContainerItemProxy */ = {
+		7744641470EC458AAC7415FF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 126C173BE28541A6A3744083 /* Project object */;
+			containerPortal = EF009B7941174FE5A011B8B8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 81A7140D8C2040F2ACDF825B;
+			remoteGlobalIDString = F79EE59899544A67B12CB8F2;
+			remoteInfo = ALL_BUILD;
+		};
+		B23AFC2ADC72408D866DE7B2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EF009B7941174FE5A011B8B8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DAB69F6DD3114DF6A6B504DB;
 			remoteInfo = ZERO_CHECK;
 		};
-		8BE1EA620A904D3EA36F6026 /* PBXContainerItemProxy */ = {
+		E105F59FF0E64197BAAC4A11 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 126C173BE28541A6A3744083 /* Project object */;
+			containerPortal = EF009B7941174FE5A011B8B8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0EC6F3A540D344D4B65A3DEB;
+			remoteGlobalIDString = EBDF8B38FCFC408DAFF76235;
 			remoteInfo = Framework_Vulkan;
 		};
-		8F38E2C5E03940189E240FCB /* PBXContainerItemProxy */ = {
+		F366295738864CEDAA7404AD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 126C173BE28541A6A3744083 /* Project object */;
+			containerPortal = EF009B7941174FE5A011B8B8 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 813B9411ED6148CBBF6FDF45;
-			remoteInfo = ALL_BUILD;
+			remoteGlobalIDString = DAB69F6DD3114DF6A6B504DB;
+			remoteInfo = ZERO_CHECK;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01F08A45D47A4E5D9190DD09 /* ../Play-/deps/Framework/include/vulkan/Image.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Image.h; path = "../Play-/deps/Framework/include/vulkan/Image.h"; sourceTree = "<absolute>"; };
-		0F9716787B7148068C6FCD55 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CommandBufferPool.cpp; path = "../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp"; sourceTree = "<absolute>"; };
-		0FA64D4A286F41358C75EFE8 /* ../Play-/deps/Framework/include/vulkan/StructChain.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StructChain.h; path = "../Play-/deps/Framework/include/vulkan/StructChain.h"; sourceTree = "<absolute>"; };
-		182B7B3AB5984860889B8048 /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ShaderModule.cpp; path = "../Play-/deps/Framework/src/vulkan/ShaderModule.cpp"; sourceTree = "<absolute>"; };
-		198C050EBD50472C93E8DBDE /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StructDefs.h; path = "../Play-/deps/Framework/include/vulkan/StructDefs.h"; sourceTree = "<absolute>"; };
-		2188485FF91142BAAEBFB784 /* ../Play-/deps/Framework/include/vulkan/Instance.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Instance.h; path = "../Play-/deps/Framework/include/vulkan/Instance.h"; sourceTree = "<absolute>"; };
-		24B311168AD14F9A9CF21842 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Device.cpp; path = "../Play-/deps/Framework/src/vulkan/Device.cpp"; sourceTree = "<absolute>"; };
-		3636606D2B3F4564AAB3AF27 /* ../Play-/deps/Framework/include/vulkan/Utils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Utils.h; path = "../Play-/deps/Framework/include/vulkan/Utils.h"; sourceTree = "<absolute>"; };
-		3F89DDCA06CC4A8A8D67310F /* ../Play-/deps/Framework/include/vulkan/Device.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Device.h; path = "../Play-/deps/Framework/include/vulkan/Device.h"; sourceTree = "<absolute>"; };
-		41658C4CF49F411084FF8C31 /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CommandBufferPool.h; path = "../Play-/deps/Framework/include/vulkan/CommandBufferPool.h"; sourceTree = "<absolute>"; };
-		60104438D86048BAA014916D /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Loader.cpp; path = "../Play-/deps/Framework/src/vulkan/Loader.cpp"; sourceTree = "<absolute>"; };
-		674A6DBCDD74432C885900A2 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist; sourceTree = "<absolute>"; };
-		699644809B754ACCAD2DF79F /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		6CFB967E2138414E9B158892 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Utils.cpp; path = "../Play-/deps/Framework/src/vulkan/Utils.cpp"; sourceTree = "<absolute>"; };
-		6DE2E518A97B40299ABA7025 /* ../Play-/deps/Framework/include/vulkan/Buffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Buffer.h; path = "../Play-/deps/Framework/include/vulkan/Buffer.h"; sourceTree = "<absolute>"; };
-		7E98DE2DD8624A4392E7DC76 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		7EF5B9D6FB8641F3BDA5F87F /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ShaderModule.h; path = "../Play-/deps/Framework/include/vulkan/ShaderModule.h"; sourceTree = "<absolute>"; };
-		97762A52367E4EBDA510895C /* ../Play-/deps/Framework/include/vulkan/Loader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Loader.h; path = "../Play-/deps/Framework/include/vulkan/Loader.h"; sourceTree = "<absolute>"; };
-		AD45FC014F5140BB805146A2 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Instance.cpp; path = "../Play-/deps/Framework/src/vulkan/Instance.cpp"; sourceTree = "<absolute>"; };
-		C289AD15FF8E48F587357F65 /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VulkanDef.h; path = "../Play-/deps/Framework/include/vulkan/VulkanDef.h"; sourceTree = "<absolute>"; };
-		CB1688BE96DC4ECEA8745CF9 /* ../Play-/deps/Framework/src/vulkan/Image.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Image.cpp; path = "../Play-/deps/Framework/src/vulkan/Image.cpp"; sourceTree = "<absolute>"; };
-		DA2A0B222DD346A9B0F0E2F7 /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Buffer.cpp; path = "../Play-/deps/Framework/src/vulkan/Buffer.cpp"; sourceTree = "<absolute>"; };
-		E0C981516BC34409A0FD6CD1 /* Framework_Vulkan */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFramework_Vulkan.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		027DF341217D4E1286E77881 /* ../Play-/deps/Framework/include/vulkan/Utils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Utils.h; path = "../Play-/deps/Framework/include/vulkan/Utils.h"; sourceTree = "<absolute>"; };
+		0B8308F95E1549F3AF3C1EC4 /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Loader.cpp; path = "../Play-/deps/Framework/src/vulkan/Loader.cpp"; sourceTree = "<absolute>"; };
+		1413141BFFA14A3BAFEAE184 /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Buffer.cpp; path = "../Play-/deps/Framework/src/vulkan/Buffer.cpp"; sourceTree = "<absolute>"; };
+		3CA3F272D0E142A2BD17B0EC /* ../Play-/deps/Framework/include/vulkan/Image.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Image.h; path = "../Play-/deps/Framework/include/vulkan/Image.h"; sourceTree = "<absolute>"; };
+		41D316AAA1ED4AC489AB70F3 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CommandBufferPool.cpp; path = "../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp"; sourceTree = "<absolute>"; };
+		538F0950BC5644BB88B05988 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Device.cpp; path = "../Play-/deps/Framework/src/vulkan/Device.cpp"; sourceTree = "<absolute>"; };
+		5A6CA0D3A4CD4AAEB6A97609 /* ../Play-/deps/Framework/include/vulkan/StructChain.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StructChain.h; path = "../Play-/deps/Framework/include/vulkan/StructChain.h"; sourceTree = "<absolute>"; };
+		9111B5A3CF92404687B775F0 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist; sourceTree = "<absolute>"; };
+		9C28C5DD6E7C4D508DE59ADC /* ../Play-/deps/Framework/include/vulkan/Device.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Device.h; path = "../Play-/deps/Framework/include/vulkan/Device.h"; sourceTree = "<absolute>"; };
+		9C2F0E93BEED4B73A6A6E217 /* Framework_Vulkan */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFramework_Vulkan.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B777B372E5B74143BB2783B2 /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CommandBufferPool.h; path = "../Play-/deps/Framework/include/vulkan/CommandBufferPool.h"; sourceTree = "<absolute>"; };
+		BBA2A1BD34DC4A939034D0C4 /* ../Play-/deps/Framework/src/vulkan/Image.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Image.cpp; path = "../Play-/deps/Framework/src/vulkan/Image.cpp"; sourceTree = "<absolute>"; };
+		BC15B976D7754C908899CA53 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		BC2E72E5B4A343978447F19C /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VulkanDef.h; path = "../Play-/deps/Framework/include/vulkan/VulkanDef.h"; sourceTree = "<absolute>"; };
+		BCC96D9107D3462DB67D9511 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Instance.cpp; path = "../Play-/deps/Framework/src/vulkan/Instance.cpp"; sourceTree = "<absolute>"; };
+		C183410B38F749BD8531BC51 /* ../Play-/deps/Framework/include/vulkan/Buffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Buffer.h; path = "../Play-/deps/Framework/include/vulkan/Buffer.h"; sourceTree = "<absolute>"; };
+		C244757FDB3C4718820AEB9C /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StructDefs.h; path = "../Play-/deps/Framework/include/vulkan/StructDefs.h"; sourceTree = "<absolute>"; };
+		C92A7EB7F1E64CBA91361585 /* ../Play-/deps/Framework/include/vulkan/Instance.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Instance.h; path = "../Play-/deps/Framework/include/vulkan/Instance.h"; sourceTree = "<absolute>"; };
+		E6F8222B5DFC4E38AEA50C56 /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ShaderModule.cpp; path = "../Play-/deps/Framework/src/vulkan/ShaderModule.cpp"; sourceTree = "<absolute>"; };
+		EBF91B7CB30F4EF3AF629DF3 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		EDA767FE26F3442E95579CD1 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Utils.cpp; path = "../Play-/deps/Framework/src/vulkan/Utils.cpp"; sourceTree = "<absolute>"; };
+		F28DE7B9A055441FA4FBAECC /* ../Play-/deps/Framework/include/vulkan/Loader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Loader.h; path = "../Play-/deps/Framework/include/vulkan/Loader.h"; sourceTree = "<absolute>"; };
+		FCB3BC703ED445A6A8D7206B /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ShaderModule.h; path = "../Play-/deps/Framework/include/vulkan/ShaderModule.h"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		257A9960BDD04BDDAE568BC7 /* Frameworks */ = {
+		481706BF0DCC47368AEAD399 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -198,149 +198,149 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0D455E2F388A4A1C80FD2EDD /* Framework_Vulkan */ = {
+		3D4F802B298E4B29BD64641E /* Framework_Vulkan */ = {
 			isa = PBXGroup;
 			children = (
-				6AA80257E49641A595A62698 /* Source Files */,
-				29AF0C89379D40389253A032 /* Header Files */,
-				864F1F8E576A4A9D85FAA2A9 /* Resources */,
-				7E98DE2DD8624A4392E7DC76 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */,
+				70B7EEF62142459C9EA41BD5 /* Source Files */,
+				F6BAFB56841E4E6A8B225821 /* Header Files */,
+				C9735CEDF9564EB8925419CF /* Resources */,
+				EBF91B7CB30F4EF3AF629DF3 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */,
 			);
 			name = Framework_Vulkan;
 			sourceTree = "<group>";
 		};
-		29AF0C89379D40389253A032 /* Header Files */ = {
+		70B7EEF62142459C9EA41BD5 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				6DE2E518A97B40299ABA7025 /* ../Play-/deps/Framework/include/vulkan/Buffer.h */,
-				41658C4CF49F411084FF8C31 /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */,
-				3F89DDCA06CC4A8A8D67310F /* ../Play-/deps/Framework/include/vulkan/Device.h */,
-				01F08A45D47A4E5D9190DD09 /* ../Play-/deps/Framework/include/vulkan/Image.h */,
-				2188485FF91142BAAEBFB784 /* ../Play-/deps/Framework/include/vulkan/Instance.h */,
-				97762A52367E4EBDA510895C /* ../Play-/deps/Framework/include/vulkan/Loader.h */,
-				7EF5B9D6FB8641F3BDA5F87F /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */,
-				0FA64D4A286F41358C75EFE8 /* ../Play-/deps/Framework/include/vulkan/StructChain.h */,
-				198C050EBD50472C93E8DBDE /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */,
-				3636606D2B3F4564AAB3AF27 /* ../Play-/deps/Framework/include/vulkan/Utils.h */,
-				C289AD15FF8E48F587357F65 /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		41A9414B79DC4E33B4AC0340 /* CMake Rules */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "CMake Rules";
-			sourceTree = "<group>";
-		};
-		4211DE4209F8444F85FA64A2 = {
-			isa = PBXGroup;
-			children = (
-				0D455E2F388A4A1C80FD2EDD /* Framework_Vulkan */,
-				FBF1482375AC4913BE5AF273 /* ALL_BUILD */,
-				598051911EFF40A2B258A3CA /* Products */,
-				A312FFAC1FFF4D02A024C567 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		598051911EFF40A2B258A3CA /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				E0C981516BC34409A0FD6CD1 /* Framework_Vulkan */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		6AA80257E49641A595A62698 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				DA2A0B222DD346A9B0F0E2F7 /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */,
-				0F9716787B7148068C6FCD55 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */,
-				24B311168AD14F9A9CF21842 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */,
-				CB1688BE96DC4ECEA8745CF9 /* ../Play-/deps/Framework/src/vulkan/Image.cpp */,
-				AD45FC014F5140BB805146A2 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */,
-				60104438D86048BAA014916D /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */,
-				182B7B3AB5984860889B8048 /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */,
-				6CFB967E2138414E9B158892 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */,
+				1413141BFFA14A3BAFEAE184 /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */,
+				41D316AAA1ED4AC489AB70F3 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */,
+				538F0950BC5644BB88B05988 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */,
+				BBA2A1BD34DC4A939034D0C4 /* ../Play-/deps/Framework/src/vulkan/Image.cpp */,
+				BCC96D9107D3462DB67D9511 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */,
+				0B8308F95E1549F3AF3C1EC4 /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */,
+				E6F8222B5DFC4E38AEA50C56 /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */,
+				EDA767FE26F3442E95579CD1 /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		864F1F8E576A4A9D85FAA2A9 /* Resources */ = {
+		84BB901E3DC540DAA419967B /* ALL_BUILD */ = {
 			isa = PBXGroup;
 			children = (
-				674A6DBCDD74432C885900A2 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */,
+				E81E5E4570F94D0DA241DAE3 /* CMake Rules */,
+				BC15B976D7754C908899CA53 /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		BB347392A80140EC8CC794FC = {
+			isa = PBXGroup;
+			children = (
+				3D4F802B298E4B29BD64641E /* Framework_Vulkan */,
+				84BB901E3DC540DAA419967B /* ALL_BUILD */,
+				CC000136EC7441B8B4249A1E /* Products */,
+				E4F68A3B159C483FBEBBDAFB /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		C9735CEDF9564EB8925419CF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				9111B5A3CF92404687B775F0 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/Framework_Vulkan.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		A312FFAC1FFF4D02A024C567 /* Frameworks */ = {
+		CC000136EC7441B8B4249A1E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9C2F0E93BEED4B73A6A6E217 /* Framework_Vulkan */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E4F68A3B159C483FBEBBDAFB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		FBF1482375AC4913BE5AF273 /* ALL_BUILD */ = {
+		E81E5E4570F94D0DA241DAE3 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
-				41A9414B79DC4E33B4AC0340 /* CMake Rules */,
-				699644809B754ACCAD2DF79F /* ../Play-/deps/Framework/build_cmake/FrameworkVulkan/CMakeLists.txt */,
 			);
-			name = ALL_BUILD;
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		F6BAFB56841E4E6A8B225821 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				C183410B38F749BD8531BC51 /* ../Play-/deps/Framework/include/vulkan/Buffer.h */,
+				B777B372E5B74143BB2783B2 /* ../Play-/deps/Framework/include/vulkan/CommandBufferPool.h */,
+				9C28C5DD6E7C4D508DE59ADC /* ../Play-/deps/Framework/include/vulkan/Device.h */,
+				3CA3F272D0E142A2BD17B0EC /* ../Play-/deps/Framework/include/vulkan/Image.h */,
+				C92A7EB7F1E64CBA91361585 /* ../Play-/deps/Framework/include/vulkan/Instance.h */,
+				F28DE7B9A055441FA4FBAECC /* ../Play-/deps/Framework/include/vulkan/Loader.h */,
+				FCB3BC703ED445A6A8D7206B /* ../Play-/deps/Framework/include/vulkan/ShaderModule.h */,
+				5A6CA0D3A4CD4AAEB6A97609 /* ../Play-/deps/Framework/include/vulkan/StructChain.h */,
+				C244757FDB3C4718820AEB9C /* ../Play-/deps/Framework/include/vulkan/StructDefs.h */,
+				027DF341217D4E1286E77881 /* ../Play-/deps/Framework/include/vulkan/Utils.h */,
+				BC2E72E5B4A343978447F19C /* ../Play-/deps/Framework/include/vulkan/VulkanDef.h */,
+			);
+			name = "Header Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0EC6F3A540D344D4B65A3DEB /* Framework_Vulkan */ = {
+		EBDF8B38FCFC408DAFF76235 /* Framework_Vulkan */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F5631C35805F4385B81DE197 /* Build configuration list for PBXNativeTarget "Framework_Vulkan" */;
+			buildConfigurationList = 13F4B1A0B6BA4D18AE139847 /* Build configuration list for PBXNativeTarget "Framework_Vulkan" */;
 			buildPhases = (
-				068612CE4FD6474A9C0D77C6 /* Sources */,
-				257A9960BDD04BDDAE568BC7 /* Frameworks */,
+				63460A624316439BAE17EA63 /* Sources */,
+				481706BF0DCC47368AEAD399 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				F4A981B892FF4E1D8F3F5535 /* PBXTargetDependency */,
+				86DD70BE8AD04B6AA69FB3EF /* PBXTargetDependency */,
 			);
 			name = Framework_Vulkan;
 			productName = Framework_Vulkan;
-			productReference = E0C981516BC34409A0FD6CD1 /* Framework_Vulkan */;
+			productReference = 9C2F0E93BEED4B73A6A6E217 /* Framework_Vulkan */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		126C173BE28541A6A3744083 /* Project object */ = {
+		EF009B7941174FE5A011B8B8 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1500;
 			};
-			buildConfigurationList = 21D5A10C8E974ACD8D27874C /* Build configuration list for PBXProject "Framework_Vulkan" */;
+			buildConfigurationList = 26C03B50DDFF4A2E8B3628E3 /* Build configuration list for PBXProject "Framework_Vulkan" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				2E0D83B63A3B45168F37A49D /* Debug */,
-				B4176467F2F94C118ADC6234 /* Release */,
-				76E4C170D2594874AF8B44A2 /* MinSizeRel */,
-				9452E49294AE44B881046B74 /* RelWithDebInfo */,
+				A87EFB42EFE64EE0AE417C41 /* Debug */,
+				54AF8122A55A4EB69DAAF3CA /* Release */,
+				92DEDF5E63C849B1ACAEAFCB /* MinSizeRel */,
+				CB8FDBA60A914BC895D833E2 /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 4211DE4209F8444F85FA64A2;
+			mainGroup = BB347392A80140EC8CC794FC;
 			projectDirPath = "../Play-";
 			projectRoot = "";
 			targets = (
-				813B9411ED6148CBBF6FDF45 /* ALL_BUILD */,
-				0EC6F3A540D344D4B65A3DEB /* Framework_Vulkan */,
-				B7CC82741C444EE0A7828070 /* RUN_TESTS */,
-				81A7140D8C2040F2ACDF825B /* ZERO_CHECK */,
-				0C166A68102548AEB1781C34 /* install */,
-				D771A2D4BE7846D7BB9D5A72 /* package */,
+				F79EE59899544A67B12CB8F2 /* ALL_BUILD */,
+				EBDF8B38FCFC408DAFF76235 /* Framework_Vulkan */,
+				8BCD176C8FFF461D905EA9CD /* RUN_TESTS */,
+				DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */,
+				FC9CD7A99A534051BEB8AC72 /* install */,
+				A3F400094DE749EEB922DD52 /* package */,
 			);
 		};
 /* End PBXProject section */
@@ -360,85 +360,19 @@
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
-fi
-";
-			showEnvVarsInLog = 0;
-		};
-		2237C4502DB7ED7E1F12B272 /* Generate CMakeFiles/ZERO_CHECK */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ZERO_CHECK";
-			outputPaths = (
-../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/ZERO_CHECK			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeScripts/ReRunCMake.make
-fi
-";
-			showEnvVarsInLog = 0;
-		};
-		3990CACF3C96E2C439460A69 /* Generate CMakeFiles/ALL_BUILD */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ALL_BUILD";
-			outputPaths = (
-../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/ALL_BUILD			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  echo Build\\ all\\ projects
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -472,19 +406,52 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		5AA044C26E1AF633911A4B6F /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
+  echo Build\\ all\\ projects
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -548,19 +515,19 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -580,58 +547,229 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
+		DBC248BCC139D52CF15215A4 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
+  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
+  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
+  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan
+  make -f ../cmake/Source/ui_ios/gs/GSH_Vulkan/FrameworkVulkan/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		068612CE4FD6474A9C0D77C6 /* Sources */ = {
+		63460A624316439BAE17EA63 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B4FA267095D041C88F376B5E /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */,
-				819B329FC8304A7C841497DB /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */,
-				C23F2F79828D4B96A6974FE0 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */,
-				A156380039D346089613493D /* ../Play-/deps/Framework/src/vulkan/Image.cpp */,
-				7A7E65AEE80B46318C0CD3FE /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */,
-				B5B020C1B5C1472AB336C3AD /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */,
-				5D7AEE9A8DC4434491ECD8BE /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */,
-				8BDE24AEF9A547ADAFC7869F /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */,
+				51E3A864870E45C381BB252D /* ../Play-/deps/Framework/src/vulkan/Buffer.cpp */,
+				89E14D1812B74E3298A50757 /* ../Play-/deps/Framework/src/vulkan/CommandBufferPool.cpp */,
+				93F620399B3C4A8B9E89F955 /* ../Play-/deps/Framework/src/vulkan/Device.cpp */,
+				0092DC2F379349EBAED7C23F /* ../Play-/deps/Framework/src/vulkan/Image.cpp */,
+				FE44757A08A0478E81AE35C1 /* ../Play-/deps/Framework/src/vulkan/Instance.cpp */,
+				7A8D43DE6B244E0EAFFE826E /* ../Play-/deps/Framework/src/vulkan/Loader.cpp */,
+				3794BB9210D04E69B9888632 /* ../Play-/deps/Framework/src/vulkan/ShaderModule.cpp */,
+				ED593665BF554283BFE461AC /* ../Play-/deps/Framework/src/vulkan/Utils.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1543782688514449BAF903D9 /* PBXTargetDependency */ = {
+		746D3A5F77374E599E5C2F41 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 81A7140D8C2040F2ACDF825B /* ZERO_CHECK */;
-			targetProxy = 32B64CDC49304874AFB79EE2 /* PBXContainerItemProxy */;
+			target = F79EE59899544A67B12CB8F2 /* ALL_BUILD */;
+			targetProxy = 2855D41D71FD415890323D54 /* PBXContainerItemProxy */;
 		};
-		1C2978E4C09D4BD7B14833BF /* PBXTargetDependency */ = {
+		86DD70BE8AD04B6AA69FB3EF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0EC6F3A540D344D4B65A3DEB /* Framework_Vulkan */;
-			targetProxy = 8BE1EA620A904D3EA36F6026 /* PBXContainerItemProxy */;
+			target = DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */;
+			targetProxy = B23AFC2ADC72408D866DE7B2 /* PBXContainerItemProxy */;
 		};
-		A02549498E304147935477AE /* PBXTargetDependency */ = {
+		943646BC14E240BAA6E1DBC1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 813B9411ED6148CBBF6FDF45 /* ALL_BUILD */;
-			targetProxy = 57FCC294BA164FBF9F7FC853 /* PBXContainerItemProxy */;
+			target = F79EE59899544A67B12CB8F2 /* ALL_BUILD */;
+			targetProxy = 7744641470EC458AAC7415FF /* PBXContainerItemProxy */;
 		};
-		EBC2ED0379BB43438C243560 /* PBXTargetDependency */ = {
+		9B0692F08B994C928405E422 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 813B9411ED6148CBBF6FDF45 /* ALL_BUILD */;
-			targetProxy = 8F38E2C5E03940189E240FCB /* PBXContainerItemProxy */;
+			target = DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */;
+			targetProxy = F366295738864CEDAA7404AD /* PBXContainerItemProxy */;
 		};
-		F4A981B892FF4E1D8F3F5535 /* PBXTargetDependency */ = {
+		A965377FBEE9444F96B0A9B6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 81A7140D8C2040F2ACDF825B /* ZERO_CHECK */;
-			targetProxy = 72DF6C7DBA784622A1C1ACEC /* PBXContainerItemProxy */;
+			target = EBDF8B38FCFC408DAFF76235 /* Framework_Vulkan */;
+			targetProxy = E105F59FF0E64197BAAC4A11 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		1380A36BB74D4B36A3BDC537 /* Release */ = {
+		01BA3D14A667418698D75ECF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		098FE46590804D7492BFA9C7 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		1472F65B22D24FE28B8D827F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		21ADBD767FD6430497D1F553 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		226E1E2D01474CD4979A70FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		27C781DCA16B463683FB6F6D /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		2C738F71EB184ADEA4859BED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
+			};
+			name = Debug;
+		};
+		3DFE1DFE1CBC4709812A5C7B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -643,11 +781,11 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++        -DNDEBUG -DNDEBUG -DNDEBUG '-std=gnu++17' ";
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2 -x objective-c++        -DNDEBUG -DNDEBUG -DNDEBUG '-std=gnu++17' ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Framework_Vulkan;
@@ -658,496 +796,10 @@ exit 0";
 			};
 			name = Release;
 		};
-		1DFABA9346154256B60FEF6F /* MinSizeRel */ = {
+		4829EB5F09DA48968C80DE49 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		22A57883268041FE9DC5A7B0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		2B793C2193BA439388C4ACA0 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		31833BB8296D4A7191125204 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = MinSizeRel;
-		};
-		4710EBC88BFF46B3A10EA79D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		4B5987CDB04647CB9AD04EDD /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		4BEFCEF355AD46BE8A591AFB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		51F80A97D80C46108145A200 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		56015F321C1E47B8B625FEB7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		5C4E4688EB114CDE87E9414C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		80C448FEC83D4A4EB18E088B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		91F010A0A5F244DE968EAEEF /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		993A2DDE96984A5790A4D351 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		999B27DC1CCC4C8995DD7C70 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = Debug;
-		};
-		9E2A70EA58C14C7C81DE1AFD /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		9F7E5C63186C4869BD4EE019 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++    -D_DEBUG -D_DEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Framework_Vulkan;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		9F8F40D58CEA4369811FBF14 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Framework_Vulkan;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		BBA2A69B332D40BB8BB47980 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		C234557653BE4047B9DAAF92 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = Release;
-		};
-		C8B759DAF8D9470F8B7849BF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		D3930488301E4AACA39FE087 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		DC2E0326FE87424D8E675E71 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = RelWithDebInfo;
-		};
-		E98789FA39774206AE6EC56E /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		EF9A470C0A7F4FD281912FB4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		F44C004F208448AD9559609A /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		FAC995807E6A4F0DAE83E1F5 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1164,9 +816,10 @@ exit 0";
 			};
 			name = Release;
 		};
-		FE3CCDAEC0CD48BB9DCA0999 /* RelWithDebInfo */ = {
+		5727F4FFCE694881AAC4B8A8 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1178,11 +831,11 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++        -DNDEBUG '-std=gnu++17' ";
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2 -x objective-c++        -DNDEBUG '-std=gnu++17' ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Framework_Vulkan;
@@ -1193,87 +846,461 @@ exit 0";
 			};
 			name = RelWithDebInfo;
 		};
+		586B0D7AAD8C42D8A20B37BB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
+			};
+			name = Release;
+		};
+		698D8600CB734E05891B5B51 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		6C3A3D6D6107482D90E1968E /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		6C630E3BFD4748A99B6C46FE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		7F23A54FAA80469D92120424 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2 -x objective-c++    -D_DEBUG -D_DEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework_Vulkan;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		881DA31140544EE0AAF6D9ED /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		8E918F53F44D43C2B9A9C1C6 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2 -x objective-c++     -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework_Vulkan;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		8FDA59F8DB2E474BB7B7F1B3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		912B712255444A6D835EA00A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		A63B850D547B418F9BF21366 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		A978FB520C1048059B31A643 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		C98DD6F458724632BD76C48C /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		D3AFAAC193C946C08618C5DC /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
+			};
+			name = RelWithDebInfo;
+		};
+		D6C75EA187A349BC9F8B2B2D /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		F6576FC2838241CE9E79C08D /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
+			};
+			name = MinSizeRel;
+		};
+		F9B91CAB60E240EDB7687FC2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		FADDE851AFD54976A7874AC9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		FF0FAB4046E7418EA0F3472B /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0097EC484B8A4B93B5FC960B /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		13F4B1A0B6BA4D18AE139847 /* Build configuration list for PBXNativeTarget "Framework_Vulkan" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				22A57883268041FE9DC5A7B0 /* Debug */,
-				5C4E4688EB114CDE87E9414C /* Release */,
-				1DFABA9346154256B60FEF6F /* MinSizeRel */,
-				F44C004F208448AD9559609A /* RelWithDebInfo */,
+				7F23A54FAA80469D92120424 /* Debug */,
+				3DFE1DFE1CBC4709812A5C7B /* Release */,
+				8E918F53F44D43C2B9A9C1C6 /* MinSizeRel */,
+				5727F4FFCE694881AAC4B8A8 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		21D5A10C8E974ACD8D27874C /* Build configuration list for PBXProject "Framework_Vulkan" */ = {
+		22DA8131732343EA9FC73978 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				999B27DC1CCC4C8995DD7C70 /* Debug */,
-				C234557653BE4047B9DAAF92 /* Release */,
-				31833BB8296D4A7191125204 /* MinSizeRel */,
-				DC2E0326FE87424D8E675E71 /* RelWithDebInfo */,
+				912B712255444A6D835EA00A /* Debug */,
+				4829EB5F09DA48968C80DE49 /* Release */,
+				698D8600CB734E05891B5B51 /* MinSizeRel */,
+				098FE46590804D7492BFA9C7 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		84D8557514DF47DBBBBCABC6 /* Build configuration list for PBXAggregateTarget "package" */ = {
+		26C03B50DDFF4A2E8B3628E3 /* Build configuration list for PBXProject "Framework_Vulkan" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EF9A470C0A7F4FD281912FB4 /* Debug */,
-				56015F321C1E47B8B625FEB7 /* Release */,
-				BBA2A69B332D40BB8BB47980 /* MinSizeRel */,
-				91F010A0A5F244DE968EAEEF /* RelWithDebInfo */,
+				2C738F71EB184ADEA4859BED /* Debug */,
+				586B0D7AAD8C42D8A20B37BB /* Release */,
+				F6576FC2838241CE9E79C08D /* MinSizeRel */,
+				D3AFAAC193C946C08618C5DC /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C3275D7A33FE4D998367C542 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		509AAB9F40144B06A7786FA7 /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C8B759DAF8D9470F8B7849BF /* Debug */,
-				4710EBC88BFF46B3A10EA79D /* Release */,
-				9E2A70EA58C14C7C81DE1AFD /* MinSizeRel */,
-				993A2DDE96984A5790A4D351 /* RelWithDebInfo */,
+				F9B91CAB60E240EDB7687FC2 /* Debug */,
+				226E1E2D01474CD4979A70FD /* Release */,
+				27C781DCA16B463683FB6F6D /* MinSizeRel */,
+				A978FB520C1048059B31A643 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E024F1681992485683766847 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		69641F1D258342EABC7A52DE /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4BEFCEF355AD46BE8A591AFB /* Debug */,
-				FAC995807E6A4F0DAE83E1F5 /* Release */,
-				4B5987CDB04647CB9AD04EDD /* MinSizeRel */,
-				51F80A97D80C46108145A200 /* RelWithDebInfo */,
+				21ADBD767FD6430497D1F553 /* Debug */,
+				01BA3D14A667418698D75ECF /* Release */,
+				A63B850D547B418F9BF21366 /* MinSizeRel */,
+				D6C75EA187A349BC9F8B2B2D /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E24767FF034449FF8BDA9609 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		9DC61721E93B409588D80803 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D3930488301E4AACA39FE087 /* Debug */,
-				80C448FEC83D4A4EB18E088B /* Release */,
-				2B793C2193BA439388C4ACA0 /* MinSizeRel */,
-				E98789FA39774206AE6EC56E /* RelWithDebInfo */,
+				6C630E3BFD4748A99B6C46FE /* Debug */,
+				8FDA59F8DB2E474BB7B7F1B3 /* Release */,
+				C98DD6F458724632BD76C48C /* MinSizeRel */,
+				FF0FAB4046E7418EA0F3472B /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F5631C35805F4385B81DE197 /* Build configuration list for PBXNativeTarget "Framework_Vulkan" */ = {
+		E4C65464B3C44700A245588D /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9F7E5C63186C4869BD4EE019 /* Debug */,
-				1380A36BB74D4B36A3BDC537 /* Release */,
-				9F8F40D58CEA4369811FBF14 /* MinSizeRel */,
-				FE3CCDAEC0CD48BB9DCA0999 /* RelWithDebInfo */,
+				1472F65B22D24FE28B8D827F /* Debug */,
+				FADDE851AFD54976A7874AC9 /* Release */,
+				881DA31140544EE0AAF6D9ED /* MinSizeRel */,
+				6C3A3D6D6107482D90E1968E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 126C173BE28541A6A3744083 /* Project object */;
+	rootObject = EF009B7941174FE5A011B8B8 /* Project object */;
 }

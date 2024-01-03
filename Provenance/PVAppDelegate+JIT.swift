@@ -94,6 +94,7 @@ extension PVAppDelegate {
         }
         
         DispatchQueue.main.async { [unowned self] in
+            print("Error: Failed to Contact AltJIT\n")
             let alert = UIAlertController.init(title: "Failed to Contact AltJIT", message: error_string, preferredStyle: .alert)
             
             alert.addAction(UIAlertAction.init(title: "Wait for Other Debugger", style: .default, handler: { _ in

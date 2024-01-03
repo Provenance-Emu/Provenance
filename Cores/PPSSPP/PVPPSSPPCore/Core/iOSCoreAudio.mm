@@ -66,6 +66,14 @@ OSStatus iOSCoreAudioCallback(void *inRefCon,
 void iOSCoreAudioInit()
 {
 	NSError *error = nil;
+    [[AVAudioSession sharedInstance]
+     setCategory:AVAudioSessionCategoryAmbient
+     mode:AVAudioSessionModeDefault
+     options:AVAudioSessionCategoryOptionAllowBluetooth |
+     AVAudioSessionCategoryOptionAllowAirPlay |
+     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+     AVAudioSessionCategoryOptionMixWithOthers
+     error:&error];
 	AVAudioSession *session = [AVAudioSession sharedInstance];
 	if (![session setActive:YES error:&error]) {
 		ERROR_LOG(SYSTEM, "Failed to activate AVFoundation audio session");

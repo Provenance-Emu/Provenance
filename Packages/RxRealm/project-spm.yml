@@ -1,0 +1,187 @@
+name: RxRealm-SPM
+options:
+  minimumXcodeGenVersion: "2.15.1"
+  developmentLanguage: en
+  usesTabs: false
+  indentWidth: 2
+  tabWidth: 2
+  xcodeVersion: "1220"
+  deploymentTarget:
+    iOS: "11.0"
+    macOS: "10.10"
+    tvOS: "9.0"
+    watchOS: "3.0"
+  carthageExecutablePath: "`which carthage`"
+  defaultConfig: "Release"
+configs:
+  Debug: debug
+  Release: release
+attributes:
+  ORGANIZATIONNAME: RxSwiftCommunity
+schemes:
+  RxRealm iOS:
+    scheme: {}
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        RxRealm iOS: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+  RxRealm macOS:
+    scheme: {}
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        RxRealm macOS: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+  RxRealm watchOS:
+    scheme: {}
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        RxRealm watchOS: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+  RxRealm tvOS:
+    scheme: {}
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        RxRealm tvOS: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+packages:
+  RxSwift:
+    url: https://github.com/ReactiveX/RxSwift.git
+    from: 6.0.0
+  Realm:
+    url: https://github.com/realm/realm-cocoa.git
+    from: 10.21.1
+targets:
+  RxRealm iOS:
+    settings:
+      PRODUCT_NAME: RxRealm
+      PRODUCT_BUNDLE_IDENTIFIER: RxSwiftCommunity.RxRealm.RxRealm-iOS
+      BUILD_LIBRARY_FOR_DISTRIBUTION: YES
+      SKIP_INSTALL: NO
+      SUPPORTS_MACCATALYST: NO
+    platform: iOS
+    type: framework
+    sources:
+      - Sources/RxRealm
+    dependencies:
+      - package: Realm
+        product: Realm
+      - package: Realm
+        product: RealmSwift
+      - package: RxSwift
+        product: RxSwift
+      - package: RxSwift
+        product: RxCocoa
+      - package: RxSwift
+        product: RxRelay
+  RxRealm macOS:
+    settings:
+      PRODUCT_NAME: RxRealm
+      PRODUCT_BUNDLE_IDENTIFIER: RxSwiftCommunity.RxRealm.RxRealm-macOS
+      BUILD_LIBRARY_FOR_DISTRIBUTION: YES
+      SKIP_INSTALL: NO
+    platform: macOS
+    type: framework
+    sources:
+      - Sources/RxRealm
+    dependencies:
+      - package: Realm
+        product: Realm
+      - package: Realm
+        product: RealmSwift
+      - package: RxSwift
+        product: RxSwift
+      - package: RxSwift
+        product: RxCocoa
+      - package: RxSwift
+        product: RxRelay
+  RxRealm tvOS:
+    settings:
+      PRODUCT_NAME: RxRealm
+      PRODUCT_BUNDLE_IDENTIFIER: RxSwiftCommunity.RxRealm.RxRealm-tvOS
+      BUILD_LIBRARY_FOR_DISTRIBUTION: YES
+      SKIP_INSTALL: NO
+    platform: tvOS
+    type: framework
+    sources:
+      - Sources/RxRealm
+    dependencies:
+      - package: Realm
+        product: Realm
+      - package: Realm
+        product: RealmSwift
+      - package: RxSwift
+        product: RxSwift
+      - package: RxSwift
+        product: RxCocoa
+      - package: RxSwift
+        product: RxRelay
+  RxRealm watchOS:
+    settings:
+      PRODUCT_NAME: RxRealm
+      PRODUCT_BUNDLE_IDENTIFIER: RxSwiftCommunity.RxRealm.RxRealm-watchOS
+      BUILD_LIBRARY_FOR_DISTRIBUTION: YES
+      SKIP_INSTALL: NO
+    platform: watchOS
+    type: framework
+    sources:
+      - Sources/RxRealm
+    dependencies:
+      - package: Realm
+        product: Realm
+      - package: Realm
+        product: RealmSwift
+      - package: RxSwift
+        product: RxSwift
+      - package: RxSwift
+        product: RxCocoa
+      - package: RxSwift
+        product: RxRelay

@@ -3,30 +3,31 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		93124966298CE6A5002DE0C2 /* RetroArchTV */ = {
+		93124966298CE6A5002DE0C2 /* SupergrafxTV */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 93124968298CE6A5002DE0C2 /* Build configuration list for PBXAggregateTarget "RetroArchTV" */;
+			buildConfigurationList = 93124968298CE6A5002DE0C2 /* Build configuration list for PBXAggregateTarget "SupergrafxTV" */;
 			buildPhases = (
 				93124967298CE6A5002DE0C2 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = RetroArchTV;
+			name = SupergrafxTV;
 			productName = BuildDosBox;
 		};
-		9396AEEB297305F700B1EA1C /* RetroArchCore */ = {
+		9396AEEB297305F700B1EA1C /* SupergrafxiOS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 9396AEEF297305F800B1EA1C /* Build configuration list for PBXAggregateTarget "RetroArchCore" */;
+			buildConfigurationList = 9396AEEF297305F800B1EA1C /* Build configuration list for PBXAggregateTarget "SupergrafxiOS" */;
 			buildPhases = (
-				9396AEF02973064500B1EA1C /* ShellScript */,
+				9396AEF02973064500B1EA1C /* Build Supergrafx RetroArch */,
+				937557842A811AEE00ECC97D /* Copy Supergrafx RetroArch */,
 			);
 			dependencies = (
 			);
-			name = RetroArchCore;
+			name = SupergrafxiOS;
 			productName = BuildDosBox;
 		};
 /* End PBXAggregateTarget section */
@@ -165,8 +166,8 @@
 			projectRoot = "";
 			targets = (
 				B3C7620F20783162009950E4 /* PVSupergrafx */,
-				9396AEEB297305F700B1EA1C /* RetroArchCore */,
-				93124966298CE6A5002DE0C2 /* RetroArchTV */,
+				9396AEEB297305F700B1EA1C /* SupergrafxiOS */,
+				93124966298CE6A5002DE0C2 /* SupergrafxTV */,
 			);
 		};
 /* End PBXProject section */
@@ -199,7 +200,27 @@
 			shellPath = /bin/sh;
 			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\nif [[ \"${CODE_SIGNING_ALLOWED}\" = \"NO\" && ! -f \"${SRCROOT}/../../CodeSigning.xcconfig\" ]]; then\n    exit 0\nfi\n\n# Create buildTV Environment\nif [ ! -d \"${SRCROOT}/cmake/buildTV\" ]; then\n    mkdir \"${SRCROOT}/cmake/buildTV\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-supergrafx | head -n1 | awk '{print $1;}'`TVOS\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/buildTV/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-supergrafx/\"* \"${SRCROOT}/cmake/buildTV/\"\n    cp \"${SRCROOT}/cmake/Makefile.TV\" \"${SRCROOT}/cmake/buildTV/Makefile\"\nfi\n\n# buildTV\ncd \"${SRCROOT}/cmake/buildTV\"\n#make clean\nmake -j5\ncp mednafen_supergrafx_libretro_tvos.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_supergrafx_libretro_tvos.dylib\"\n";
 		};
-		9396AEF02973064500B1EA1C /* ShellScript */ = {
+		937557842A811AEE00ECC97D /* Copy Supergrafx RetroArch */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/cmake/build/mednafen_supergrafx_libretro_ios.dylib",
+			);
+			name = "Copy Supergrafx RetroArch";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_supergrafx_libretro_ios.dylib",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp \"${SRCROOT}/cmake/build/\"mednafen_supergrafx_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/\"mednafen_supergrafx_libretro_ios.dylib\nexit 0\n";
+		};
+		9396AEF02973064500B1EA1C /* Build Supergrafx RetroArch */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -208,13 +229,15 @@
 			);
 			inputPaths = (
 			);
+			name = "Build Supergrafx RetroArch";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${SRCROOT}/cmake/build/mednafen_supergrafx_libretro_ios.dylib",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-supergrafx | head -n1 | awk '{print $1;}'`iOS\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-supergrafx/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/Makefile\" \"${SRCROOT}/cmake/build\"\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build\"\n#make clean\nmake -j5\ncp mednafen_supergrafx_libretro_ios.dylib \"${SRCROOT}/../../CoresRetro/RetroArch/modules/mednafen_supergrafx_libretro_ios.dylib\"\n";
+			shellScript = "# Update Repository\nif [ \"${TARGET_DEVICE_PLATFORM_NAME}\" = \"iphonesimulator\" ] ; then\n        exit 0\nfi\n\n# Create Build Environment\nif [ ! -d \"${SRCROOT}/cmake/build\" ]; then\n    mkdir \"${SRCROOT}/cmake/build\"\nfi\ncd \"${SRCROOT}\"\nexport LATEST=`git submodule status libretro-supergrafx | head -n1 | awk '{print $1;}'`iOS\nif [ ! -f \"${SRCROOT}/cmake/${LATEST}\" ]; then\n    rm -fr \"${SRCROOT}/cmake/build/\"*\n    touch \"${SRCROOT}/cmake/${LATEST}\"\n    cp -pR \"${SRCROOT}/libretro-supergrafx/\"* \"${SRCROOT}/cmake/build/\"\n    cp \"${SRCROOT}/cmake/Makefile\" \"${SRCROOT}/cmake/build\"\nfi\n\n# Build\ncd \"${SRCROOT}/cmake/build\"\n#make clean\nmake -j5\nexit 0\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -234,19 +257,13 @@
 			platformFilters = (
 				tvos,
 			);
-			target = 93124966298CE6A5002DE0C2 /* RetroArchTV */;
+			target = 93124966298CE6A5002DE0C2 /* SupergrafxTV */;
 			targetProxy = 9312496B298CE744002DE0C2 /* PBXContainerItemProxy */;
 		};
 		9396AEFA2973078600B1EA1C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilters = (
-				driverkit,
-				ios,
-				maccatalyst,
-				macos,
-				watchos,
-			);
-			target = 9396AEEB297305F700B1EA1C /* RetroArchCore */;
+			platformFilter = ios;
+			target = 9396AEEB297305F700B1EA1C /* SupergrafxiOS */;
 			targetProxy = 9396AEF92973078600B1EA1C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -360,6 +377,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SYMROOT = "${SRCROOT}/cmake";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -426,6 +444,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SYMROOT = "${SRCROOT}/cmake";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -445,6 +464,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -479,6 +499,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -505,7 +526,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		93124968298CE6A5002DE0C2 /* Build configuration list for PBXAggregateTarget "RetroArchTV" */ = {
+		93124968298CE6A5002DE0C2 /* Build configuration list for PBXAggregateTarget "SupergrafxTV" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				93124969298CE6A5002DE0C2 /* Debug */,
@@ -514,7 +535,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9396AEEF297305F800B1EA1C /* Build configuration list for PBXAggregateTarget "RetroArchCore" */ = {
+		9396AEEF297305F800B1EA1C /* Build configuration list for PBXAggregateTarget "SupergrafxiOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9396AEEC297305F800B1EA1C /* Debug */,

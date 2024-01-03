@@ -127,16 +127,31 @@ final class PVCheatsViewController: UITableViewController {
 
             let alert = UIAlertController(title: "Delete this Cheat Code?", message: nil, preferredStyle: .alert)
             alert.preferredContentSize = CGSize(width: 300, height: 150)
-            alert.popoverPresentationController?.sourceView = self.view
-            alert.popoverPresentationController?.sourceRect = UIScreen.main.bounds
+            alert.popoverPresentationController?.sourceView = tableView?.cellForRow(at: indexPath)?.contentView
+            alert.popoverPresentationController?.sourceRect = tableView?.cellForRow(at: indexPath)?.contentView.bounds ?? UIScreen.main.bounds
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { [unowned self] _ in
+                do {
+                    if let app = UIApplication.shared as? PVApplication,
+                       let core = app.core,
+                       let saveStatesPath = core.saveStatesPath {
+                        let fileURL = saveStatesPath.appendingFormat("/%@", saveState.file.url.lastPathComponent)
+                        if FileManager.default.fileExists(atPath: fileURL) {
+                            try FileManager.default.removeItem(atPath: fileURL)
+                        }
+                        if FileManager.default.fileExists(atPath: fileURL.appending(".json")) {
+                            try FileManager.default.removeItem(atPath: fileURL.appending(".json"))
+                        }
+                    }
+                } catch {
+                    NSLog("PVSaveState:Delete:Failed to delete PVState")
+                }
                 do {
                     try  PVCheats.delete(saveState)
 
                         self.tableView.reloadData()
                         self.tableView.layoutIfNeeded()
                 } catch {
-                    self.presentError("Error deleting CheatCode: \(error.localizedDescription)")
+                    self.presentError("Error deleting CheatCode: \(error.localizedDescription)", source: self.view)
                 }
             })
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
@@ -171,7 +186,7 @@ final class PVCheatsViewController: UITableViewController {
                     break
                 case let .error(error):
                     let reason = (error as NSError).localizedFailureReason ?? ""
-                    self.presentError("Error creating CheatCode: \(error.localizedDescription) \(reason)")
+                    self.presentError("Error creating CheatCode: \(error.localizedDescription) \(reason)", source: self.view)
                 }
         }
     }

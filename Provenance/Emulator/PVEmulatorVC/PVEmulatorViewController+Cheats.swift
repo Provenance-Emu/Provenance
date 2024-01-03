@@ -51,7 +51,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     func setCheatState(code: String, type: String, codeType: String, cheatIndex: UInt8, enabled: Bool, completion: @escaping CheatsCompletion) {
         if let gameWithCheat = core as? GameWithCheat {
             // convert space to +
-            var regex = try! NSRegularExpression(pattern: "[^a-zA-Z0-9-:+]+|[\\s]+", options: NSRegularExpression.Options.caseInsensitive)
+            var regex = try! NSRegularExpression(pattern: "[^a-zA-Z0-9-\\[\\]:+]+|[\\s]+", options: NSRegularExpression.Options.caseInsensitive)
             var range = NSRange(location: 0, length: code.count)
             var modString = regex.stringByReplacingMatches(in: code.uppercased(), options: [], range: range, withTemplate: "+")
             // clean +++
@@ -65,7 +65,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             NSLog("Formatted CheatCode \(modString)")
             if (gameWithCheat.setCheat(code: modString, type:type, codeType: codeType, cheatIndex: cheatIndex, enabled:enabled)) {
                 DLOG("Succeeded applying cheat: \(modString) \(type) \(enabled)")
-                let realm = try! Realm()
+                let realm = RomDatabase.sharedInstance.realm
                 guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: self.core.coreIdentifier) else {
                     completion(.error(.noCoreFound(self.core.coreIdentifier ?? "nil")))
                     return
@@ -82,7 +82,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                     }
                     var cheatsState: PVCheats!
                     try realm.write {
-                        cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: saveType, enabled: enabled, file: saveFile)
+                        cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: saveType, enabled: false, file: saveFile)
                         realm.add(cheatsState)
                     }
                     LibrarySerializer.storeMetadata(cheatsState, completion: { result in
@@ -163,6 +163,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     }
 
     @objc func showCheatsMenu() {
+        recoverCheatCodes()
         guard let cheatsNavController = UIStoryboard(name: "Cheats", bundle: nil).instantiateViewController(withIdentifier: "PVCheatsViewControllerNav") as? UINavigationController else {
             return
         }
@@ -174,10 +175,16 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         }
         cheatsNavController.modalPresentationStyle = .overCurrentContext
 
+        self.core.resetCheatCodes();
         #if os(iOS)
             if traitCollection.userInterfaceIdiom == .pad {
                 cheatsNavController.modalPresentationStyle = .formSheet
             }
+            self.enableControllerInput(false)
+            let ui=UIViewController()
+            ui.addChildViewController(cheatsNavController, toContainerView: ui.view)
+            present(ui, animated: true)
+            return
         #endif
         #if os(tvOS)
             cheatsNavController.modalPresentationStyle = .blurOverFullScreen
@@ -190,6 +197,54 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
             return []
         }
         return gameWithCheat.cheatCodeTypes
+    }
+
+    func recoverCheatCodes() {
+        do {
+            let fileManager = FileManager.default
+            let directoryContents = try fileManager.contentsOfDirectory(
+                at: saveStatePath,
+                includingPropertiesForKeys:[.contentModificationDateKey]
+            ).filter { $0.lastPathComponent.hasSuffix(".svc.json") }
+            .sorted(by: {
+                let date0 = try $0.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
+                let date1 = try $1.promisedItemResourceValues(forKeys:[.contentModificationDateKey]).contentModificationDate!
+                return date0.compare(date1) == .orderedAscending
+            })
+            let realm = RomDatabase.sharedInstance.realm
+            var cheats:[String:Bool]=[:]
+            game.realm?.refresh()
+            for code in game.cheats {
+                cheats[code.file.url.lastPathComponent.lowercased()]=true;
+                cheats[code.id]=true;
+            }
+            for url in directoryContents {
+                let file = url.lastPathComponent.lowercased()
+                if (fileManager.fileExists(atPath: url.path) &&
+                    file.contains("svc.json") &&
+                    cheats.index(forKey: file.replacingOccurrences(of: "svc.json", with: "svc")) == nil) {
+                    do {
+                        guard let core = realm.object(ofType: PVCore.self, forPrimaryKey: core.coreIdentifier) else {
+                            presentError("No core in database with id \(self.core.coreIdentifier ?? "null")", source: self.view)
+                            return
+                        }
+                        let cheat = try LibrarySerializer.retrieve(url, as: PVCheats.DomainType.self)
+                        if cheat.id.count > 0,
+                           let _ = realm.object(ofType: PVCheats.self, forPrimaryKey: cheat.id) {
+                            continue
+                        } else {
+                            try realm.write {
+                                realm.add(cheat.asRealm())
+                            }
+                        }
+                    } catch {
+                        NSLog(error.localizedDescription)
+                    }
+                }
+            }
+        } catch {
+            print(error)
+        }
     }
 }
 
@@ -212,5 +267,7 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
         cheatIndex: UInt8,
         enabled: Bool) -> Bool {
         return self.setCheat(code:code, type:type, enabled:enabled)
+    }
+    @objc public func resetCheatCodes() {
     }
 }

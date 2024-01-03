@@ -24,7 +24,7 @@ private var hapticEngines: [CHHapticEngine?] = [CHHapticEngine?].init(repeating:
 
 @objc
 public extension PVEmulatorCore {
-	var supportsRumble: Bool { false }
+    var supportsRumble: Bool { false }
 
 	func rumble() {
 		rumble(player: 0)
@@ -135,3 +135,6 @@ private extension UIDevice {
 }
 #endif
 #endif
+public extension PVEmulatorCore {
+    static var status: [String:Bool] = [:]
+}

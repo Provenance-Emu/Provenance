@@ -181,7 +181,7 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
         // *maybe* convert into a two-collumn stack
         let traits = UIApplication.shared.windows.first { $0.isKeyWindow }?.traitCollection
         if actions.count >= 8 && textFields == nil &&
-            (traits?.verticalSizeClass == .compact || traits?.horizontalSizeClass == .regular) {
+            (traits?.verticalSizeClass == .compact || traits?.horizontalSizeClass == .regular || UIDevice.current.userInterfaceIdiom == .phone) {
             doubleStack()
         }
 
@@ -233,7 +233,8 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
          }
     }
 
-    #if !os(tvOS)
+    #if !os(tvOS) && !os(iOS)
+    /*
     override var popoverPresentationController: UIPopoverPresentationController? {
 
         // if caller is asking for a ppc, they must want a popup!
@@ -249,6 +250,7 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
 
         return super.popoverPresentationController
     }
+     */
     #endif
 
     // MARK: layout and size
@@ -329,8 +331,33 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
         return nil
     }
 
+    struct Pressed {
+            static var timestamp:Int?
+    }
     @objc func buttonPress(_ sender:UIButton?) {
         guard let action = action(for: sender) else {return}
+#if os(iOS)
+        if autoDismiss {
+            cancelAction = nil  // if we did the dismiss clear this
+            preferredAction = nil
+            let now:Int = Int(Date().timeIntervalSince1970 * 1000)
+            if (Pressed.timestamp == nil) {
+                Pressed.timestamp = now
+            }
+            print("Action Button Pressed ", now, Pressed.timestamp)
+            self.dismiss(animated:true, completion: {
+                if let timestamp = Pressed.timestamp,
+                   (now == timestamp || now - timestamp > 500) {
+                    Pressed.timestamp = now
+                    action.callActionHandler()
+                } else {
+                    print("Action Doubled: Skipped ", now, Pressed.timestamp)
+                }
+            })
+        } else {
+            action.callActionHandler()
+        }
+#else
         if autoDismiss {
             cancelAction = nil  // if we did the dismiss clear this
             self.presentingViewController?.dismiss(animated:true, completion: {
@@ -339,6 +366,7 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
         } else {
             action.callActionHandler()
         }
+#endif
     }
     @objc func buttonTap(_ sender:UITapGestureRecognizer) {
         buttonPress(sender.view as? UIButton)
@@ -390,7 +418,9 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
     // MARK: dismiss
 
     @objc func afterDismiss() {
+#if !os(iOS)
         cancelAction?.callActionHandler()
+#endif
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -405,7 +435,12 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
         #endif
         // only automaticly dismiss if there is a cancel button
         if cancelAction != nil && autoDismiss {
+#if os(iOS)
+            cancelAction?.callActionHandler()
+            self.dismiss(animated:true, completion:nil)
+#else
             presentingViewController?.dismiss(animated:true, completion:nil)
+#endif
         }
     }
 
@@ -602,16 +637,18 @@ extension UIAlertController : ControllerButtonPress {
         switch type {
         case .select:   // (aka A or ENTER)
             dismiss(with: preferredAction, animated: true)
+            break;
         case .back:     // (aka B or ESC)
-            let cancelAction = actions.first(where: {$0.style == .cancel})
-            dismiss(with: cancelAction, animated: true)
+            dismiss(with: preferredAction, animated: true)
+            break;
         default:
             break
         }
     }
     private func dismiss(with action:UIAlertAction?, animated: Bool) {
         if let action = action {
-            presentingViewController?.dismiss(animated: animated, completion: {
+            preferredAction = nil
+            self.dismiss(animated: animated, completion: {
                 action.callActionHandler()
             })
         }

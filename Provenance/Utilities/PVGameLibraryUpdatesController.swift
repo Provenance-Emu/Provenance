@@ -16,6 +16,7 @@ import CoreSpotlight
 // Responsible for handling updates to game library, finding conflicts and resolving them
 struct PVGameLibraryUpdatesController {
     public let hudState: Observable<HudState>
+    public let hudStateWatcher: Observable<HudState>
     public let conflicts: Observable<[Conflict]>
 
     private let gameImporter: GameImporter
@@ -44,10 +45,11 @@ struct PVGameLibraryUpdatesController {
         let filesToImport = Observable.merge(initialScan, directoryWatcherExtractedFiles)
 
         // We use a hacky combineLatest here since we need to do the bind to `gameImporter.startImport` somewhere, so we hack it into the hudState definition
-        let o1 = Self.hudState(from: directoryWatcher, gameImporterEvents: gameImporterEvents, scheduler: scheduler)
+        // bind hudState to hudState, separate from startImport
+        let o1 = Self.hudStateInit(from: directoryWatcher, gameImporterEvents: gameImporterEvents, scheduler: scheduler)
         let o2 = filesToImport.do(onNext: gameImporter.startImport)
-        hudState = Observable.combineLatest(o1, o2) { _hudState, _ in return _hudState }
-
+        self.hudState = Observable.combineLatest(o1, o2) { _hudState, _ in return _hudState }
+        self.hudStateWatcher = o1
         let gameImporterConflicts = gameImporterEvents
             .compactMap({ event -> Void? in
                 if case .completed = event {
@@ -56,7 +58,7 @@ struct PVGameLibraryUpdatesController {
                 return nil
             })
 
-        let systemDirsConflicts = Observable.just(PVSystem.all.map { $0 })
+        let _systemDirsConflicts = Observable.just(PVSystem.all.map { $0 })
             .map({ systems -> [(System, [URL])] in
                 systems
                     .map { $0.asDomain() }
@@ -75,20 +77,50 @@ struct PVGameLibraryUpdatesController {
                 })
             })
 
-        let potentialConflicts = Observable.merge(gameImporterConflicts, systemDirsConflicts, updateConflicts).startWith(())
-
+        let potentialConflicts = Observable.merge( gameImporterConflicts, updateConflicts ).startWith(())
         conflicts = potentialConflicts
             .map { gameImporter.conflictedFiles ?? [] }
             .map({ filesInConflictsFolder -> [Conflict] in
-                filesInConflictsFolder.map { file in
-                    (
+                PVEmulatorConfiguration.sortImportURLs(urls: filesInConflictsFolder)
+                    .map { file in (
                         path: file,
-                        candidates: PVSystem.all.filter { $0.supportedExtensions.contains(file.pathExtension.lowercased() )}.map { $0.asDomain() }
+                        candidates: RomDatabase.sharedInstance.getSystemCache().values
+                            .filter{ $0.supportedExtensions.contains(file.pathExtension.lowercased() )}
+                            .map{ $0.asDomain() }
+                        //PVSystem.all.filter { $0.supportedExtensions.contains(file.pathExtension.lowercased() )}.map { $0.asDomain() }
                     )
                 }
             })
             .map { conflicts in conflicts.filter { !$0.candidates.isEmpty }}
             .share(replay: 1, scope: .forever)
+    }
+
+    func importROMDirectories() {
+            NSLog("PVGameLibrary: Starting Import")
+            RomDatabase.sharedInstance.reloadCache()
+            RomDatabase.sharedInstance.reloadFileSystemROMCache()
+            let dbGames: [AnyHashable: PVGame] = RomDatabase.sharedInstance.getGamesCache()
+            let dbSystems: [AnyHashable: PVSystem] = RomDatabase.sharedInstance.getSystemCache()
+            let disposeBag = DisposeBag()
+            dbSystems.values.forEach({ system in
+                NSLog("PVGameLibrary: Importing \(system.identifier)")
+                let files = RomDatabase.sharedInstance.getFileSystemROMCache(for: system)
+                let newGames = files.keys.filter({
+                        return dbGames.index(forKey:
+                                                (system.identifier as NSString)
+                            .appendingPathComponent($0.lastPathComponent)) == nil
+                    })
+                if newGames.count > 0 {
+                    print("PVGameLibraryUpdatesController: Importing ", newGames)
+                    GameImporter.shared.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
+#if os(iOS) || os(macOS)
+                    addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
+#endif
+                }
+                NSLog("PVGameLibrary: Imported OK \(system.identifier)")
+
+            })
+            NSLog("PVGameLibrary: Import Complete")
     }
 
     #if os(iOS)
@@ -113,16 +145,16 @@ struct PVGameLibraryUpdatesController {
     }
     #endif
 
-    private static func hudState(from directoryWatcher: RxDirectoryWatcher, gameImporterEvents: Observable<GameImporter.Event>, scheduler: SchedulerType) -> Observable<HudState> {
+    private static func hudStateInit(from directoryWatcher: RxDirectoryWatcher, gameImporterEvents: Observable<GameImporter.Event>, scheduler: SchedulerType) -> Observable<HudState> {
         let stateFromGameImporter = gameImporterEvents
             .compactMap({ event -> HudState? in
                 switch event {
                 case .initialized, .finishedArtwork, .completed:
                     return nil
                 case .started(let path):
-                    return .title("Importing: \(path.lastPathComponent)")
+                    return .title("Checking Import: \(path.lastPathComponent)")
                 case .finished:
-                    return .hidden
+                    return .title("Import Successful")
                 }
             })
 
@@ -156,6 +188,14 @@ struct PVGameLibraryUpdatesController {
 extension PVGameLibraryUpdatesController: ConflictsController {
     func resolveConflicts(withSolutions solutions: [URL : System]) {
         gameImporter.resolveConflicts(withSolutions: solutions)
+        updateConflicts.onNext(())
+    }
+    func deleteConflict(path: URL) {
+        do {
+            try FileManager.default.removeItem(at: path)
+        } catch {
+            ELOG("\(error.localizedDescription)")
+        }
         updateConflicts.onNext(())
     }
 }
