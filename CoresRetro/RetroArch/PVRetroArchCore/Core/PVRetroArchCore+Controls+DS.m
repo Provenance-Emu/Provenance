@@ -95,6 +95,9 @@ extern GCController *touch_controller;
         case(PVDSButtonScreenSwap):
             [touch_controller.extendedGamepad.rightTrigger setValue:pressed?1:0];
             break;
+        case(PVDSButtonRotate):
+            [touch_controller.extendedGamepad.leftTrigger setValue:pressed?1:0];
+            break;
         case(PVDSButtonSelect):
             [touch_controller.extendedGamepad.buttonOptions setValue:pressed?1:0];
             [touch_controller.extendedGamepad.buttonHome setValue:pressed?1:0];

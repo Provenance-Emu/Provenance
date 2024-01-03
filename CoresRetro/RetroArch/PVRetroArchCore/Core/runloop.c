@@ -19,6 +19,7 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Local Changes: Disable hotkey if small keyboard on
 #ifdef _WIN32
 #ifdef _XBOX
 #include <xtl.h>
@@ -5263,7 +5264,8 @@ static bool display_menu_libretro(
    { \
       static bool old_pressed                   = false; \
       bool pressed                              = BIT256_GET(current_bits, cmd1); \
-      if (pressed && !old_pressed) \
+      settings_t *settings         = config_get_ptr(); \
+      if (!settings->bools.input_small_keyboard_enable && pressed && !old_pressed) \
          if (cond) \
             command_event(cmd2, cond2); \
       old_pressed                               = pressed; \
@@ -5277,12 +5279,15 @@ static bool display_menu_libretro(
       bool pressed                              = BIT256_GET(current_bits, cmd1); \
       bool pressed2                             = BIT256_GET(current_bits, cmd3); \
       bool pressed3                             = BIT256_GET(current_bits, cmd5); \
-      if (pressed && !old_pressed) \
-         command_event(cmd2, (void*)(intptr_t)0); \
-      else if (pressed2 && !old_pressed2) \
-         command_event(cmd4, (void*)(intptr_t)0); \
-      else if (pressed3 && !old_pressed3) \
-         command_event(cmd6, (void*)(intptr_t)0); \
+      settings_t *settings         = config_get_ptr(); \
+      if (!settings->bools.input_small_keyboard_enable) { \
+          if (pressed && !old_pressed) \
+             command_event(cmd2, (void*)(intptr_t)0); \
+          else if (pressed2 && !old_pressed2) \
+             command_event(cmd4, (void*)(intptr_t)0); \
+          else if (pressed3 && !old_pressed3) \
+             command_event(cmd6, (void*)(intptr_t)0); \
+      } \
       old_pressed                               = pressed; \
       old_pressed2                              = pressed2; \
       old_pressed3                              = pressed3; \

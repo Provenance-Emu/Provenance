@@ -39,7 +39,7 @@ variables:
 jobs:
 # Builds
 - job: iOS
-  timeoutInMinutes: 120
+  timeoutInMinutes: 300
   steps:
     - checkout: self # self represents the repo where the initial Pipelines YAML file was found
       clean: false  # if true, run `execute git clean -ffdx && git reset --hard HEAD` before fetching

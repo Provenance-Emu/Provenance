@@ -1287,11 +1287,11 @@
 		2251BD902D0A46E4B6B43DD9 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = dep/fmt/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		226265F35C9547498AE609A1 /* LzmaDec.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaDec.h; path = dep/lzma/include/LzmaDec.h; sourceTree = SOURCE_ROOT; };
 		22B5DD77A1384BD48167E656 /* scmversion.cpp.rule */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = scmversion.cpp.rule; path = ../cmake/src/scmversion/scmversion.cpp.rule; sourceTree = "<absolute>"; };
-		230A7951D2094657B1224C52 /* libglad.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libglad.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		230A7951D2094657B1224C52 /* libgladDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgladDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		234B1BA7B61B4B6CADA52B5B /* analog_joystick.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = analog_joystick.cpp; path = src/core/analog_joystick.cpp; sourceTree = SOURCE_ROOT; };
 		236978E78BE24CDAB1276F93 /* assembler-aarch64.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "assembler-aarch64.h"; path = "dep/vixl/include/vixl/aarch64/assembler-aarch64.h"; sourceTree = SOURCE_ROOT; };
 		23CAE571367C447FBEB11358 /* rc_api_user.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = rc_api_user.c; path = dep/rcheevos/src/rapi/rc_api_user.c; sourceTree = SOURCE_ROOT; };
-		23DDD6E64BF84E489C1E22E0 /* libxxhash.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libxxhash.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		23DDD6E64BF84E489C1E22E0 /* libxxhashDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libxxhashDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2463411E68A1450BB6092A4B /* huffman.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = huffman.h; path = dep/libchdr/include/libchdr/huffman.h; sourceTree = SOURCE_ROOT; };
 		248CA3069DD341B695ADB24B /* resources.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = resources.h; path = src/core/resources.h; sourceTree = SOURCE_ROOT; };
 		255725FD570D4DB7AD4EFE83 /* save_state_version.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = save_state_version.h; path = src/core/save_state_version.h; sourceTree = SOURCE_ROOT; };
@@ -1310,7 +1310,7 @@
 		2A6C3C95453F4BA99775F8C1 /* texture.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = texture.cpp; path = src/common/gl/texture.cpp; sourceTree = SOURCE_ROOT; };
 		2A850B21D0774ED7BF37F99F /* libchdr_bitstream.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = libchdr_bitstream.c; path = dep/libchdr/src/libchdr_bitstream.c; sourceTree = SOURCE_ROOT; };
 		2A9E28D54096422E9E7CB362 /* inflate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = inflate.h; path = dep/zlib/src/inflate.h; sourceTree = SOURCE_ROOT; };
-		2BDEE27B5FDB4DF882713594 /* libstb.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libstb.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BDEE27B5FDB4DF882713594 /* libstbDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libstbDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BFF0C078B80429EAE05541D /* 7zTypes.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = 7zTypes.h; path = dep/lzma/include/7zTypes.h; sourceTree = SOURCE_ROOT; };
 		2C3529803D804BD9B7E5D4E9 /* dimensional_array.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = dimensional_array.h; path = src/common/dimensional_array.h; sourceTree = SOURCE_ROOT; };
 		2C3F482FCCDC4AA68D901E1F /* zip.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zip.c; path = dep/minizip/src/zip.c; sourceTree = SOURCE_ROOT; };
@@ -1321,7 +1321,7 @@
 		2E64FB5A64434F349F8863DE /* shadergen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = shadergen.cpp; path = src/core/shadergen.cpp; sourceTree = SOURCE_ROOT; };
 		2EEF4FEFE21B4837AC8F7D9C /* mmx_optimized.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = mmx_optimized.cpp; path = dep/soundtouch/source/SoundTouch/mmx_optimized.cpp; sourceTree = SOURCE_ROOT; };
 		2FF72E820C2E41D2972F76E6 /* game_database.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = game_database.cpp; path = src/core/game_database.cpp; sourceTree = SOURCE_ROOT; };
-		2FFCF692D13F41AE849069F9 /* libcommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2FFCF692D13F41AE849069F9 /* libcommonDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcommonDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		301E94E5473847118BFC27DB /* imgui_fullscreen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = imgui_fullscreen.cpp; path = "src/frontend-common/imgui_fullscreen.cpp"; sourceTree = SOURCE_ROOT; };
 		3064090C124B41C4AA0972A4 /* zstd_lazy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_lazy.c; path = dep/zstd/lib/compress/zstd_lazy.c; sourceTree = SOURCE_ROOT; };
 		30B9621CCF9B4C99839CB9ED /* minizip_helpers.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = minizip_helpers.h; path = src/common/minizip_helpers.h; sourceTree = SOURCE_ROOT; };
@@ -1357,7 +1357,7 @@
 		3D6CC2AAC92B4982A6410BF2 /* platform_misc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = platform_misc.h; path = "src/frontend-common/platform_misc.h"; sourceTree = SOURCE_ROOT; };
 		3E3724707D8945AC8C85EE4A /* loader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = loader.cpp; path = src/common/vulkan/loader.cpp; sourceTree = SOURCE_ROOT; };
 		3F5D4FEC49B64DC1AB79FF0F /* scmversion.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = scmversion.h; path = src/scmversion/scmversion.h; sourceTree = SOURCE_ROOT; };
-		3F7C6933D42C47C781805C5F /* libtinyxml2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libtinyxml2.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3F7C6933D42C47C781805C5F /* libtinyxml2Duckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libtinyxml2Duckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		40212CC986F74EB59647D218 /* cd_image_mds.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cd_image_mds.cpp; path = src/util/cd_image_mds.cpp; sourceTree = SOURCE_ROOT; };
 		40462B1455DB43859A30EAD9 /* loader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = loader.h; path = src/common/vulkan/loader.h; sourceTree = SOURCE_ROOT; };
 		4095087DCB5441C39AA51721 /* FIFOSampleBuffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FIFOSampleBuffer.cpp; path = dep/soundtouch/source/SoundTouch/FIFOSampleBuffer.cpp; sourceTree = SOURCE_ROOT; };
@@ -1371,7 +1371,7 @@
 		44A37DC0C95848D88F03903C /* vulkan_host_display.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = vulkan_host_display.cpp; path = "src/frontend-common/vulkan_host_display.cpp"; sourceTree = SOURCE_ROOT; };
 		44CB23ADB12041CCB8B4883B /* memory_card_image.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = memory_card_image.cpp; path = src/core/memory_card_image.cpp; sourceTree = SOURCE_ROOT; };
 		453D99B82B9F49C196FD6310 /* cd_image_m3u.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cd_image_m3u.cpp; path = src/util/cd_image_m3u.cpp; sourceTree = SOURCE_ROOT; };
-		454362D1D1F44AA98A8A0570 /* libclog.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libclog.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		454362D1D1F44AA98A8A0570 /* libclogDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libclogDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		464CD80AFA8C4E60A62E0804 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = dep/cpuinfo/deps/clog/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		4702A405C9F848ACBD4C8BC7 /* zutil.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zutil.c; path = dep/zlib/src/zutil.c; sourceTree = SOURCE_ROOT; };
 		473C22F0B7EE4F08B9757C4D /* uarch.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = uarch.c; path = dep/cpuinfo/src/arm/uarch.c; sourceTree = SOURCE_ROOT; };
@@ -1391,10 +1391,10 @@
 		4E8920F73E0F455F9A6743C0 /* psf_loader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = psf_loader.cpp; path = src/core/psf_loader.cpp; sourceTree = SOURCE_ROOT; };
 		4EAF42458C964E80BE60DBB8 /* gtest-matchers.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = "gtest-matchers.cc"; path = "dep/googletest/src/gtest-matchers.cc"; sourceTree = SOURCE_ROOT; };
 		4EF01E9AC8314733A5853081 /* thread_pool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = thread_pool.h; path = src/common/thirdparty/thread_pool.h; sourceTree = SOURCE_ROOT; };
-		4F1074848D814515B3B73842 /* libcpuinfo_internals.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcpuinfo_internals.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F1074848D814515B3B73842 /* libcpuinfo_internalsDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcpuinfo_internalsDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F1B1FEF78274BD7AE66E1A6 /* input_manager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = input_manager.cpp; path = "src/frontend-common/input_manager.cpp"; sourceTree = SOURCE_ROOT; };
 		4FB5489B0ABF4768BD8DA855 /* system.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = system.h; path = src/core/system.h; sourceTree = SOURCE_ROOT; };
-		4FFA4B19AD00409A9F4E45B5 /* libzstd.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzstd.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FFA4B19AD00409A9F4E45B5 /* libzstdDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzstdDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		50104E2A15624B5AA0F0A96C /* decoder-aarch64.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = "decoder-aarch64.cc"; path = "dep/vixl/src/aarch64/decoder-aarch64.cc"; sourceTree = SOURCE_ROOT; };
 		51095E75E3AA4EDAB4204A6F /* cpu_disasm.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cpu_disasm.cpp; path = src/core/cpu_disasm.cpp; sourceTree = SOURCE_ROOT; };
 		519A47437E624845AF392338 /* minizip_helpers.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = minizip_helpers.cpp; path = src/common/minizip_helpers.cpp; sourceTree = SOURCE_ROOT; };
@@ -1412,15 +1412,15 @@
 		5AA6CEA9212B4CE581F8DB0E /* trigger.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = trigger.c; path = dep/rcheevos/src/rcheevos/trigger.c; sourceTree = SOURCE_ROOT; };
 		5AAA556D1BD648E68100CED0 /* zstd_compress_literals.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_literals.c; path = dep/zstd/lib/compress/zstd_compress_literals.c; sourceTree = SOURCE_ROOT; };
 		5AF08083FDC247E198321717 /* gdb_protocol.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gdb_protocol.h; path = src/core/gdb_protocol.h; sourceTree = SOURCE_ROOT; };
-		5B5E7995CB7049E9822193CB /* libimgui.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libimgui.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B5E7995CB7049E9822193CB /* libimguiDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libimguiDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B6A4A2E7B10474184C28F5B /* cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = dep/cpuinfo/src/arm/cache.c; sourceTree = SOURCE_ROOT; };
 		5C34FED5A57F4C52BDA8A44F /* rc_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = rc_internal.h; path = dep/rcheevos/src/rcheevos/rc_internal.h; sourceTree = SOURCE_ROOT; };
-		5C72181F656145D8B3AFE695 /* liblzma.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblzma.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5C72181F656145D8B3AFE695 /* liblzmaDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblzmaDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CE8E742CA524C33ADCDF955 /* cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = dep/cpuinfo/src/cache.c; sourceTree = SOURCE_ROOT; };
 		5D21F3F4A74D456192825E81 /* memory_card.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = memory_card.cpp; path = src/core/memory_card.cpp; sourceTree = SOURCE_ROOT; };
 		5D2D7BDA33214E47B0C27829 /* printf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = printf.h; path = dep/fmt/include/fmt/printf.h; sourceTree = SOURCE_ROOT; };
 		5D70204636904B4CB6A6D67A /* SpvPostProcess.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SpvPostProcess.cpp; path = dep/glslang/SPIRV/SpvPostProcess.cpp; sourceTree = SOURCE_ROOT; };
-		5DAFB3F4DBA64C9E9883AED7 /* libsoundtouch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libsoundtouch.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DAFB3F4DBA64C9E9883AED7 /* libsoundtouchDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libsoundtouchDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5DF7B492F0BC4B05A69E1614 /* error.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = error.h; path = src/common/error.h; sourceTree = SOURCE_ROOT; };
 		5EE82C7852E2400D859F1245 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/zstd/CMakeFiles/zstd.dir/Info.plist; sourceTree = "<absolute>"; };
 		5F6FEF6BDD7E406B9AA201E4 /* InterpolateCubic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = InterpolateCubic.cpp; path = dep/soundtouch/source/SoundTouch/InterpolateCubic.cpp; sourceTree = SOURCE_ROOT; };
@@ -1439,7 +1439,7 @@
 		689A4B117EA8427C9E01588C /* util.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = util.cpp; path = src/common/vulkan/util.cpp; sourceTree = SOURCE_ROOT; };
 		68E428C233264797B8149A84 /* cd_xa.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cd_xa.cpp; path = src/util/cd_xa.cpp; sourceTree = SOURCE_ROOT; };
 		69084AEDEA034575945400EA /* zlib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zlib.h; path = dep/zlib/include/zlib.h; sourceTree = SOURCE_ROOT; };
-		69A5A67EF34941F2B83AD308 /* libfrontend-common.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libfrontend-common.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		69A5A67EF34941F2B83AD308 /* libfrontend-commonDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libfrontend-commonDuckstation.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A60ABDEC377475C9D4AF9E1 /* cpu_recompiler_register_cache.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu_recompiler_register_cache.h; path = src/core/cpu_recompiler_register_cache.h; sourceTree = SOURCE_ROOT; };
 		6A6F0C40DB6C47A5BDD5AF77 /* gzclose.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = gzclose.c; path = dep/zlib/src/gzclose.c; sourceTree = SOURCE_ROOT; };
 		6A7A0C29DD494BE394E88B2B /* BraIA64.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = BraIA64.c; path = dep/lzma/src/BraIA64.c; sourceTree = SOURCE_ROOT; };
@@ -1493,7 +1493,7 @@
 		7A912A2EB59C444D9E6C6291 /* analog_joystick.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = analog_joystick.h; path = src/core/analog_joystick.h; sourceTree = SOURCE_ROOT; };
 		7AEFBBA7F4EB493DB31704C7 /* program.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = program.h; path = src/common/gl/program.h; sourceTree = SOURCE_ROOT; };
 		7AF66822FD204B58B26E4D39 /* ShaderLang.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ShaderLang.cpp; path = dep/glslang/glslang/MachineIndependent/ShaderLang.cpp; sourceTree = SOURCE_ROOT; };
-		7B11D425D304461A9D6B27A9 /* libgtest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B11D425D304461A9D6B27A9 /* libgtestDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgtestDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B18FA35580F466092908E5F /* LzHash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzHash.h; path = dep/lzma/include/LzHash.h; sourceTree = SOURCE_ROOT; };
 		7B355B17156B4ADEB66DCDFD /* postprocessing_shader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = postprocessing_shader.cpp; path = "src/frontend-common/postprocessing_shader.cpp"; sourceTree = SOURCE_ROOT; };
 		7B435A913B6045D0A092F37F /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
@@ -1560,13 +1560,13 @@
 		92ED17D28CEA487194DE9B3E /* bitfield.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bitfield.h; path = src/common/bitfield.h; sourceTree = SOURCE_ROOT; };
 		9370A89F311844509D288F4A /* host.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = host.cpp; path = src/core/host.cpp; sourceTree = SOURCE_ROOT; };
 		93B52573199C4C0B9265BAC9 /* gpu_hw_vulkan.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = gpu_hw_vulkan.cpp; path = src/core/gpu_hw_vulkan.cpp; sourceTree = SOURCE_ROOT; };
-		93EB51B1DB6C4BB2B2B86A49 /* libvixl.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libvixl.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		93EB51B1DB6C4BB2B2B86A49 /* libvixlDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libvixlDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F961BD33BF4E54B26317CD /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/imgui/CMakeFiles/imgui.dir/Info.plist; sourceTree = "<absolute>"; };
-		9438A88462504FDEBEEC6B70 /* libutil.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libutil.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9438A88462504FDEBEEC6B70 /* libutilDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libutilDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		94B86B6FB9AB48A79C8DCA6F /* window_info.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = window_info.cpp; path = src/common/window_info.cpp; sourceTree = SOURCE_ROOT; };
 		951D1FDB7E1C43969412BAC3 /* decoder-aarch64.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "decoder-aarch64.h"; path = "dep/vixl/include/vixl/aarch64/decoder-aarch64.h"; sourceTree = SOURCE_ROOT; };
 		95D1A1C7CBFE402B964A764C /* string.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = string.cpp; path = src/common/string.cpp; sourceTree = SOURCE_ROOT; };
-		95D29D265A3648BDA6A3262B /* libcore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcore.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		95D29D265A3648BDA6A3262B /* libcoreDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcoreDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		96168DA126FC478DAF0BBBAC /* instructions-aarch64.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "instructions-aarch64.h"; path = "dep/vixl/include/vixl/aarch64/instructions-aarch64.h"; sourceTree = SOURCE_ROOT; };
 		968D3C9CDA444A3087971EB4 /* settings.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = settings.h; path = src/core/settings.h; sourceTree = SOURCE_ROOT; };
 		9751AF3F221A43B89591FD57 /* cd_image_device.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cd_image_device.cpp; path = src/util/cd_image_device.cpp; sourceTree = SOURCE_ROOT; };
@@ -1574,7 +1574,7 @@
 		97B986DF2F6C4140915D41E3 /* xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = dep/zstd/lib/common/xxhash.c; sourceTree = SOURCE_ROOT; };
 		97F894CF600747D5A40666A7 /* gpu_hw_shadergen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = gpu_hw_shadergen.h; path = src/core/gpu_hw_shadergen.h; sourceTree = SOURCE_ROOT; };
 		9810E3B84F0041CDA9B2379A /* FIRFilter.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FIRFilter.cpp; path = dep/soundtouch/source/SoundTouch/FIRFilter.cpp; sourceTree = SOURCE_ROOT; };
-		98675E0938414DF7ABCAA346 /* liblibchdr.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibchdr.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		98675E0938414DF7ABCAA346 /* liblibchdrDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblibchdrDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		98AB3124F4264F419049326E /* imstb_rectpack.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = imstb_rectpack.h; path = dep/imgui/src/imstb_rectpack.h; sourceTree = SOURCE_ROOT; };
 		98B2747DDFFD41BABE1C1959 /* tinyxml2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = tinyxml2.h; path = dep/tinyxml2/include/tinyxml2.h; sourceTree = SOURCE_ROOT; };
 		98E0C08A1E23415FBD732F96 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/cpuinfo/CMakeFiles/cpuinfo.dir/Info.plist; sourceTree = "<absolute>"; };
@@ -1593,7 +1593,7 @@
 		A01539B1C4EB4D9CA60E8F0A /* pad.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = pad.cpp; path = src/core/pad.cpp; sourceTree = SOURCE_ROOT; };
 		A078E027189546B59991259B /* operand.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = operand.c; path = dep/rcheevos/src/rcheevos/operand.c; sourceTree = SOURCE_ROOT; };
 		A0B6A7AF6A5343D8823926DF /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/src/util/CMakeFiles/util.dir/Info.plist; sourceTree = "<absolute>"; };
-		A11160C52FD647C2BE9D7EC5 /* librcheevos.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = librcheevos.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A11160C52FD647C2BE9D7EC5 /* librcheevosDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = librcheevosDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A198DD9DD5D541A381EB3044 /* stb_image_write.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stb_image_write.h; path = dep/stb/include/stb_image_write.h; sourceTree = SOURCE_ROOT; };
 		A1993D1ED1814487933114F4 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = dep/tinyxml2/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		A19A60A974CE4502BEA59B39 /* cache.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = cache.c; path = dep/cpuinfo/src/cache.c; sourceTree = SOURCE_ROOT; };
@@ -1664,7 +1664,7 @@
 		B93C381C28514026ADE5E5FA /* LzmaLib.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LzmaLib.h; path = dep/lzma/include/LzmaLib.h; sourceTree = SOURCE_ROOT; };
 		B9952FBAAF2742FDB0897C1C /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/lzma/CMakeFiles/lzma.dir/Info.plist; sourceTree = "<absolute>"; };
 		B9AC6882BCC94DF29F35400E /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../cmake/src/common-tests/CMakeFiles/common-tests.dir/Info.plist"; sourceTree = "<absolute>"; };
-		BA36469E1CBA40658E25AF22 /* libcpuinfo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcpuinfo.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BA36469E1CBA40658E25AF22 /* libcpuinfoDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libcpuinfoDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB042CAD4C7D4A4383A91CAC /* os.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = os.cc; path = dep/fmt/src/os.cc; sourceTree = SOURCE_ROOT; };
 		BB503C8E06234FEBB4DF9F7F /* layered_settings_interface.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = layered_settings_interface.h; path = src/common/layered_settings_interface.h; sourceTree = SOURCE_ROOT; };
 		BC7B490D272642B8A28454AC /* stream_buffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = stream_buffer.h; path = src/common/vulkan/stream_buffer.h; sourceTree = SOURCE_ROOT; };
@@ -1682,7 +1682,7 @@
 		C11073D66F8343B29771E390 /* sha1_digest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sha1_digest.h; path = src/common/sha1_digest.h; sourceTree = SOURCE_ROOT; };
 		C12F3B6DE5A943ED9FBA726C /* zstd_compress_superblock.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_superblock.c; path = dep/zstd/lib/compress/zstd_compress_superblock.c; sourceTree = SOURCE_ROOT; };
 		C13158111D844925902AEE60 /* fse_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_decompress.c; path = dep/zstd/lib/common/fse_decompress.c; sourceTree = SOURCE_ROOT; };
-		C21512611FE444C3914F1356 /* libzlib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzlib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		C21512611FE444C3914F1356 /* libzlibDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzlibDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C241A7CF540E406F9FFAF4E0 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/cpuinfo/CMakeFiles/cpuinfo_internals.dir/Info.plist; sourceTree = "<absolute>"; };
 		C26846B6E6524529A86B0D8C /* multitap.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = multitap.cpp; path = src/core/multitap.cpp; sourceTree = SOURCE_ROOT; };
 		C278FDC5FDAC495AB845A6DB /* imgui_tables.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = imgui_tables.cpp; path = dep/imgui/src/imgui_tables.cpp; sourceTree = SOURCE_ROOT; };
@@ -1792,7 +1792,7 @@
 		E031E6A7F4DA4510BF7C6A21 /* path.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = path.h; path = src/common/path.h; sourceTree = SOURCE_ROOT; };
 		E08E00F98EB64FFA8EAB11B8 /* ioapi.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ioapi.h; path = dep/minizip/include/ioapi.h; sourceTree = SOURCE_ROOT; };
 		E0C2F715AF954BCB9391F887 /* stb_image.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = stb_image.c; path = dep/stb/src/stb_image.c; sourceTree = SOURCE_ROOT; };
-		E0EFBA810C1449A7BE9C3F31 /* libglslang.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libglslang.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		E0EFBA810C1449A7BE9C3F31 /* libglslangDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libglslangDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1830109AB06400989BBDDC3 /* disasm-aarch64.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "disasm-aarch64.h"; path = "dep/vixl/include/vixl/aarch64/disasm-aarch64.h"; sourceTree = SOURCE_ROOT; };
 		E19D94995E1147A89CFC9119 /* compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = compress.c; path = dep/zlib/src/compress.c; sourceTree = SOURCE_ROOT; };
 		E1CB681C41484F319B78E708 /* init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = dep/cpuinfo/src/arm/mach/init.c; sourceTree = SOURCE_ROOT; };
@@ -1823,7 +1823,7 @@
 		EA1C99E57AEB49CCB3C88D8C /* cue_parser.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = cue_parser.cpp; path = src/util/cue_parser.cpp; sourceTree = SOURCE_ROOT; };
 		EA5889317D3C4002B5CCEA91 /* imgui_demo.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = imgui_demo.cpp; path = dep/imgui/src/imgui_demo.cpp; sourceTree = SOURCE_ROOT; };
 		EB92D41E6666457693D7A6CF /* entropy_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = entropy_common.c; path = dep/zstd/lib/common/entropy_common.c; sourceTree = SOURCE_ROOT; };
-		EC04D281B8134722A50A4F8B /* libscmversion.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libscmversion.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		EC04D281B8134722A50A4F8B /* libscmversionDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libscmversionDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC1C944553994D1697CCC473 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/rcheevos/CMakeFiles/rcheevos.dir/Info.plist; sourceTree = "<absolute>"; };
 		ECC6E96BC5D94FD99A3B8DBB /* gzwrite.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = gzwrite.c; path = dep/zlib/src/gzwrite.c; sourceTree = SOURCE_ROOT; };
 		EDDDE36C37594273A59B4832 /* macro-assembler-interface.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "macro-assembler-interface.h"; path = "dep/vixl/include/vixl/macro-assembler-interface.h"; sourceTree = SOURCE_ROOT; };
@@ -1840,7 +1840,7 @@
 		F3AB11F63E0943E18C530890 /* flac.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = flac.h; path = dep/libchdr/include/libchdr/flac.h; sourceTree = SOURCE_ROOT; };
 		F3C2087F0058473CABCFEE06 /* imgui_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = imgui_internal.h; path = dep/imgui/include/imgui_internal.h; sourceTree = SOURCE_ROOT; };
 		F3D13B4601A746748D0A38A9 /* input_types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = input_types.h; path = src/core/input_types.h; sourceTree = SOURCE_ROOT; };
-		F566F4266318483A8A5A834A /* libminizip.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libminizip.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F566F4266318483A8A5A834A /* libminizipDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libminizipDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5C829F34DA844E9ADCF6F37 /* InReadableOrder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = InReadableOrder.cpp; path = dep/glslang/SPIRV/InReadableOrder.cpp; sourceTree = SOURCE_ROOT; };
 		F655D263357849629A9845BD /* color.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = color.h; path = dep/fmt/include/fmt/color.h; sourceTree = SOURCE_ROOT; };
 		F661F70C9A3A44B4AF309DFC /* init.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = init.c; path = dep/cpuinfo/src/init.c; sourceTree = SOURCE_ROOT; };
@@ -1855,12 +1855,12 @@
 		F9AC02DBF58649B2A0F0668B /* CpuArch.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = CpuArch.c; path = dep/lzma/src/CpuArch.c; sourceTree = SOURCE_ROOT; };
 		FA2D2AF902A84E51B7374A39 /* Intermediate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Intermediate.cpp; path = dep/glslang/glslang/MachineIndependent/Intermediate.cpp; sourceTree = SOURCE_ROOT; };
 		FA6D8232D82B4B4A81A2D7A5 /* Compiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Compiler.h; path = dep/lzma/include/Compiler.h; sourceTree = SOURCE_ROOT; };
-		FA7DAD69735D4C4BA66C091D /* libgtest_main.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgtest_main.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA7DAD69735D4C4BA66C091D /* libgtest_mainDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libgtest_mainDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FAB34EB442F340FCABE7AB23 /* bitutils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bitutils.h; path = src/common/bitutils.h; sourceTree = SOURCE_ROOT; };
 		FB798F2412ED4C728E932A5D /* postprocessing_shadergen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = postprocessing_shadergen.cpp; path = "src/frontend-common/postprocessing_shadergen.cpp"; sourceTree = SOURCE_ROOT; };
-		FC379F3F82D44519B77ADA73 /* libfmt.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libfmt.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FC379F3F82D44519B77ADA73 /* libfmtDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libfmtDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD3FD758BA9543B0B8BD130E /* file_system.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = file_system.h; path = src/common/file_system.h; sourceTree = SOURCE_ROOT; };
-		FD708555795D4E13940BF5C0 /* libsimpleini.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libsimpleini.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD708555795D4E13940BF5C0 /* libsimpleiniDuckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libsimpleiniDuckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF9A49EB641C4453A3484105 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/dep/googletest/CMakeFiles/gtest.dir/Info.plist; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -3421,32 +3421,32 @@
 		E95EF9FFFBEC455A96CF8EC5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				454362D1D1F44AA98A8A0570 /* libclog.a */,
-				2FFCF692D13F41AE849069F9 /* libcommon.a */,
-				95D29D265A3648BDA6A3262B /* libcore.a */,
-				BA36469E1CBA40658E25AF22 /* libcpuinfo.a */,
-				4F1074848D814515B3B73842 /* libcpuinfo_internals.a */,
-				FC379F3F82D44519B77ADA73 /* libfmt.a */,
-				69A5A67EF34941F2B83AD308 /* libfrontend-common.a */,
-				230A7951D2094657B1224C52 /* libglad.a */,
-				E0EFBA810C1449A7BE9C3F31 /* libglslang.a */,
-				7B11D425D304461A9D6B27A9 /* libgtest.a */,
-				FA7DAD69735D4C4BA66C091D /* libgtest_main.a */,
-				5B5E7995CB7049E9822193CB /* libimgui.a */,
-				98675E0938414DF7ABCAA346 /* liblibchdr.a */,
-				5C72181F656145D8B3AFE695 /* liblzma.a */,
-				F566F4266318483A8A5A834A /* libminizip.a */,
-				A11160C52FD647C2BE9D7EC5 /* librcheevos.a */,
-				EC04D281B8134722A50A4F8B /* libscmversion.a */,
-				FD708555795D4E13940BF5C0 /* libsimpleini.a */,
-				5DAFB3F4DBA64C9E9883AED7 /* libsoundtouch.a */,
-				2BDEE27B5FDB4DF882713594 /* libstb.a */,
-				3F7C6933D42C47C781805C5F /* libtinyxml2.a */,
-				9438A88462504FDEBEEC6B70 /* libutil.a */,
-				93EB51B1DB6C4BB2B2B86A49 /* libvixl.a */,
-				23DDD6E64BF84E489C1E22E0 /* libxxhash.a */,
-				C21512611FE444C3914F1356 /* libzlib.a */,
-				4FFA4B19AD00409A9F4E45B5 /* libzstd.a */,
+				454362D1D1F44AA98A8A0570 /* libclogDuckstation.a */,
+				2FFCF692D13F41AE849069F9 /* libcommonDuckstation.a */,
+				95D29D265A3648BDA6A3262B /* libcoreDuckstation.a */,
+				BA36469E1CBA40658E25AF22 /* libcpuinfoDuckstation.a */,
+				4F1074848D814515B3B73842 /* libcpuinfo_internalsDuckstation.a */,
+				FC379F3F82D44519B77ADA73 /* libfmtDuckstation.a */,
+				69A5A67EF34941F2B83AD308 /* libfrontend-commonDuckstation.a */,
+				230A7951D2094657B1224C52 /* libgladDuckstation.a */,
+				E0EFBA810C1449A7BE9C3F31 /* libglslangDuckstation.a */,
+				7B11D425D304461A9D6B27A9 /* libgtestDuckstation.a */,
+				FA7DAD69735D4C4BA66C091D /* libgtest_mainDuckstation.a */,
+				5B5E7995CB7049E9822193CB /* libimguiDuckstation.a */,
+				98675E0938414DF7ABCAA346 /* liblibchdrDuckstation.a */,
+				5C72181F656145D8B3AFE695 /* liblzmaDuckstation.a */,
+				F566F4266318483A8A5A834A /* libminizipDuckstation.a */,
+				A11160C52FD647C2BE9D7EC5 /* librcheevosDuckstation.a */,
+				EC04D281B8134722A50A4F8B /* libscmversionDuckstation.a */,
+				FD708555795D4E13940BF5C0 /* libsimpleiniDuckstation.a */,
+				5DAFB3F4DBA64C9E9883AED7 /* libsoundtouchDuckstation.a */,
+				2BDEE27B5FDB4DF882713594 /* libstbDuckstation.a */,
+				3F7C6933D42C47C781805C5F /* libtinyxml2Duckstation.a */,
+				9438A88462504FDEBEEC6B70 /* libutilDuckstation.a */,
+				93EB51B1DB6C4BB2B2B86A49 /* libvixlDuckstation.a */,
+				23DDD6E64BF84E489C1E22E0 /* libxxhashDuckstation.a */,
+				C21512611FE444C3914F1356 /* libzlibDuckstation.a */,
+				4FFA4B19AD00409A9F4E45B5 /* libzstdDuckstation.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3552,9 +3552,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0BB499B40F9445E0920DDE69 /* xxhash */ = {
+		0BB499B40F9445E0920DDE69 /* xxhashDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4A175C64B6C04F03A4E67B08 /* Build configuration list for PBXNativeTarget "xxhash" */;
+			buildConfigurationList = 4A175C64B6C04F03A4E67B08 /* Build configuration list for PBXNativeTarget "xxhashDuckstation" */;
 			buildPhases = (
 				17932F88112A45A0971F1C25 /* Sources */,
 				07A0A321D78A410FAFD9DA60 /* Frameworks */,
@@ -3564,14 +3564,14 @@
 			dependencies = (
 				0BBCB7205A9E4B3BA000ADEF /* PBXTargetDependency */,
 			);
-			name = xxhash;
+			name = xxhashDuckstation;
 			productName = xxhash;
-			productReference = 23DDD6E64BF84E489C1E22E0 /* libxxhash.a */;
+			productReference = 23DDD6E64BF84E489C1E22E0 /* libxxhashDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		244A17668611473AB19B5BF5 /* core */ = {
+		244A17668611473AB19B5BF5 /* coreDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F258F4D262E94234880244B0 /* Build configuration list for PBXNativeTarget "core" */;
+			buildConfigurationList = F258F4D262E94234880244B0 /* Build configuration list for PBXNativeTarget "coreDuckstation" */;
 			buildPhases = (
 				D3EF4EBC850143288F8CE4E1 /* Sources */,
 				722C5E4F4A8B43CCB45B11AC /* Frameworks */,
@@ -3598,14 +3598,14 @@
 				B8F0A042EFE84038A092E090 /* PBXTargetDependency */,
 				ACFFE52D58634957B93E10D4 /* PBXTargetDependency */,
 			);
-			name = core;
+			name = coreDuckstation;
 			productName = core;
-			productReference = 95D29D265A3648BDA6A3262B /* libcore.a */;
+			productReference = 95D29D265A3648BDA6A3262B /* libcoreDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		2FB8944901B4437DB3EAFA7B /* gtest_main */ = {
+		2FB8944901B4437DB3EAFA7B /* gtest_mainDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 64A8BCD7EC84475898770B29 /* Build configuration list for PBXNativeTarget "gtest_main" */;
+			buildConfigurationList = 64A8BCD7EC84475898770B29 /* Build configuration list for PBXNativeTarget "gtest_mainDuckstation" */;
 			buildPhases = (
 				490E950C18744122A059BF98 /* Sources */,
 				CA1CFAC6D9CA496DBC3D873D /* Frameworks */,
@@ -3615,14 +3615,14 @@
 			dependencies = (
 				2528190574A94F7AA0E91A37 /* PBXTargetDependency */,
 			);
-			name = gtest_main;
+			name = gtest_mainDuckstation;
 			productName = gtest_main;
-			productReference = FA7DAD69735D4C4BA66C091D /* libgtest_main.a */;
+			productReference = FA7DAD69735D4C4BA66C091D /* libgtest_mainDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		3211640BED084B21BDB35192 /* cpuinfo_internals */ = {
+		3211640BED084B21BDB35192 /* cpuinfo_internalsDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5841EBE393D341A895BB4C51 /* Build configuration list for PBXNativeTarget "cpuinfo_internals" */;
+			buildConfigurationList = 5841EBE393D341A895BB4C51 /* Build configuration list for PBXNativeTarget "cpuinfo_internalsDuckstation" */;
 			buildPhases = (
 				0591EA792F904F9493DA8CF9 /* Sources */,
 				66008DD833F247B98CA637F6 /* Frameworks */,
@@ -3632,14 +3632,14 @@
 			dependencies = (
 				83EBD85330B541F399C0113F /* PBXTargetDependency */,
 			);
-			name = cpuinfo_internals;
+			name = cpuinfo_internalsDuckstation;
 			productName = cpuinfo_internals;
-			productReference = 4F1074848D814515B3B73842 /* libcpuinfo_internals.a */;
+			productReference = 4F1074848D814515B3B73842 /* libcpuinfo_internalsDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		3A85A43CEFD746F3AB4F100D /* vixl */ = {
+		3A85A43CEFD746F3AB4F100D /* vixlDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 17290EE99A1742B3A33D1F90 /* Build configuration list for PBXNativeTarget "vixl" */;
+			buildConfigurationList = 17290EE99A1742B3A33D1F90 /* Build configuration list for PBXNativeTarget "vixlDuckstation" */;
 			buildPhases = (
 				C25B44BC942347FEBB6C0BCD /* Sources */,
 				E53EFF6A9A294816AD7F3F13 /* Frameworks */,
@@ -3649,14 +3649,14 @@
 			dependencies = (
 				22FB9E4FA64F45B3B27CF36D /* PBXTargetDependency */,
 			);
-			name = vixl;
+			name = vixlDuckstation;
 			productName = vixl;
-			productReference = 93EB51B1DB6C4BB2B2B86A49 /* libvixl.a */;
+			productReference = 93EB51B1DB6C4BB2B2B86A49 /* libvixlDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		46FD74744C1446F19C253DC3 /* soundtouch */ = {
+		46FD74744C1446F19C253DC3 /* soundtouchDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CEE1E780E1D64FE28FED518E /* Build configuration list for PBXNativeTarget "soundtouch" */;
+			buildConfigurationList = CEE1E780E1D64FE28FED518E /* Build configuration list for PBXNativeTarget "soundtouchDuckstation" */;
 			buildPhases = (
 				0CBA95100EA44A93A390B77F /* Sources */,
 				16D92C00125E4851AF800A23 /* Frameworks */,
@@ -3666,14 +3666,14 @@
 			dependencies = (
 				F186AC80D1014D2782235DF2 /* PBXTargetDependency */,
 			);
-			name = soundtouch;
+			name = soundtouchDuckstation;
 			productName = soundtouch;
-			productReference = 5DAFB3F4DBA64C9E9883AED7 /* libsoundtouch.a */;
+			productReference = 5DAFB3F4DBA64C9E9883AED7 /* libsoundtouchDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		4B33B9A70F7B4499B71C41B3 /* simpleini */ = {
+		4B33B9A70F7B4499B71C41B3 /* simpleiniDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0BBFE74DC59F489DAD2050A2 /* Build configuration list for PBXNativeTarget "simpleini" */;
+			buildConfigurationList = 0BBFE74DC59F489DAD2050A2 /* Build configuration list for PBXNativeTarget "simpleiniDuckstation" */;
 			buildPhases = (
 				610E557F815C46B6BD0EB458 /* Sources */,
 				006598DE4BB94B77AF36A034 /* Frameworks */,
@@ -3683,14 +3683,14 @@
 			dependencies = (
 				426771B9E7D64BFF9CE9301F /* PBXTargetDependency */,
 			);
-			name = simpleini;
+			name = simpleiniDuckstation;
 			productName = simpleini;
-			productReference = FD708555795D4E13940BF5C0 /* libsimpleini.a */;
+			productReference = FD708555795D4E13940BF5C0 /* libsimpleiniDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		5296A89E016A4718AA226D85 /* libchdr */ = {
+		5296A89E016A4718AA226D85 /* libchdrDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6A585A35323540458D0AA96D /* Build configuration list for PBXNativeTarget "libchdr" */;
+			buildConfigurationList = 6A585A35323540458D0AA96D /* Build configuration list for PBXNativeTarget "libchdrDuckstation" */;
 			buildPhases = (
 				7816C7B6D2814D09A54CED54 /* Sources */,
 				890B5ADC7F3A475CA50F18B0 /* Frameworks */,
@@ -3702,14 +3702,14 @@
 				259A4030C9FB4BE58C0FF50C /* PBXTargetDependency */,
 				35B773581E7049A79E71971A /* PBXTargetDependency */,
 			);
-			name = libchdr;
+			name = libchdrDuckstation;
 			productName = libchdr;
-			productReference = 98675E0938414DF7ABCAA346 /* liblibchdr.a */;
+			productReference = 98675E0938414DF7ABCAA346 /* liblibchdrDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		6014C3A8A2A94F2EB213F868 /* scmversion */ = {
+		6014C3A8A2A94F2EB213F868 /* scmversionDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 96F25156229444CBB09670EA /* Build configuration list for PBXNativeTarget "scmversion" */;
+			buildConfigurationList = 96F25156229444CBB09670EA /* Build configuration list for PBXNativeTarget "scmversionDuckstation" */;
 			buildPhases = (
 				4AD1D3279895A5F4E6C8B701 /* Generate src/scmversion/_scmversion.cpp */,
 				6C4B9570CF42494AAF940563 /* Sources */,
@@ -3720,14 +3720,14 @@
 			dependencies = (
 				BEB73DEDE49D4D57A81746F8 /* PBXTargetDependency */,
 			);
-			name = scmversion;
+			name = scmversionDuckstation;
 			productName = scmversion;
-			productReference = EC04D281B8134722A50A4F8B /* libscmversion.a */;
+			productReference = EC04D281B8134722A50A4F8B /* libscmversionDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		6D255B0D69F542B6BDDA5074 /* frontend-common */ = {
+		6D255B0D69F542B6BDDA5074 /* frontend-commonDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 67A69B76A4A54EA3BA4C11DD /* Build configuration list for PBXNativeTarget "frontend-common" */;
+			buildConfigurationList = 67A69B76A4A54EA3BA4C11DD /* Build configuration list for PBXNativeTarget "frontend-commonDuckstation" */;
 			buildPhases = (
 				4B2A161343F34679A1CE40F7 /* Sources */,
 				0D2D8B0A185B447C919C35C5 /* Frameworks */,
@@ -3758,14 +3758,14 @@
 				06C7CCFFC814441AA9950AD8 /* PBXTargetDependency */,
 				E74693B14E6749829275DD5C /* PBXTargetDependency */,
 			);
-			name = "frontend-common";
+			name = "frontend-commonDuckstation";
 			productName = "frontend-common";
-			productReference = 69A5A67EF34941F2B83AD308 /* libfrontend-common.a */;
+			productReference = 69A5A67EF34941F2B83AD308 /* libfrontend-commonDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		6E8E2535F5424CABA027573F /* clog */ = {
+		6E8E2535F5424CABA027573F /* clogDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 216FBC6C6107438D9EE4EC6F /* Build configuration list for PBXNativeTarget "clog" */;
+			buildConfigurationList = 216FBC6C6107438D9EE4EC6F /* Build configuration list for PBXNativeTarget "clogDuckstation" */;
 			buildPhases = (
 				C5CFEBFD66094BAFA0C08C3D /* Sources */,
 				048A7A33BC914D82B487E3CA /* Frameworks */,
@@ -3774,14 +3774,14 @@
 			);
 			dependencies = (
 			);
-			name = clog;
+			name = clogDuckstation;
 			productName = clog;
-			productReference = 454362D1D1F44AA98A8A0570 /* libclog.a */;
+			productReference = 454362D1D1F44AA98A8A0570 /* libclogDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		75FA30DD63C04BF2A2448D49 /* common */ = {
+		75FA30DD63C04BF2A2448D49 /* commonDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E5DDBAEFF2F840298DB0A322 /* Build configuration list for PBXNativeTarget "common" */;
+			buildConfigurationList = E5DDBAEFF2F840298DB0A322 /* Build configuration list for PBXNativeTarget "commonDuckstation" */;
 			buildPhases = (
 				87F890D5FBAC4444B568862A /* Sources */,
 				4642220DC01A4C6B8FD9BF42 /* Frameworks */,
@@ -3800,14 +3800,14 @@
 				42B7C83F3D9A49818A782058 /* PBXTargetDependency */,
 				B0C67A3AD4B54E4CA09783D3 /* PBXTargetDependency */,
 			);
-			name = common;
+			name = commonDuckstation;
 			productName = common;
-			productReference = 2FFCF692D13F41AE849069F9 /* libcommon.a */;
+			productReference = 2FFCF692D13F41AE849069F9 /* libcommonDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		7ECF1ED040A545AFB4E4C34C /* imgui */ = {
+		7ECF1ED040A545AFB4E4C34C /* imguiDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A727C46D144E4782ABCA3EDE /* Build configuration list for PBXNativeTarget "imgui" */;
+			buildConfigurationList = A727C46D144E4782ABCA3EDE /* Build configuration list for PBXNativeTarget "imguiDuckstation" */;
 			buildPhases = (
 				C91C4255D70A4A52A76F8BFF /* Sources */,
 				E5D5484B4ABD4663B6ED7797 /* Frameworks */,
@@ -3817,14 +3817,14 @@
 			dependencies = (
 				058AFC421E564AEDA3DD5B75 /* PBXTargetDependency */,
 			);
-			name = imgui;
+			name = imguiDuckstation;
 			productName = imgui;
-			productReference = 5B5E7995CB7049E9822193CB /* libimgui.a */;
+			productReference = 5B5E7995CB7049E9822193CB /* libimguiDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		80E7BFAF8EE34EECB9E30C22 /* glad */ = {
+		80E7BFAF8EE34EECB9E30C22 /* gladDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = ABEA7C1DADCA4392A8BB3F9D /* Build configuration list for PBXNativeTarget "glad" */;
+			buildConfigurationList = ABEA7C1DADCA4392A8BB3F9D /* Build configuration list for PBXNativeTarget "gladDuckstation" */;
 			buildPhases = (
 				98945E81C0C64F7B86D33CEE /* Sources */,
 				64840B52583948009021814C /* Frameworks */,
@@ -3834,14 +3834,14 @@
 			dependencies = (
 				EA7402CD8E474AC4864BC368 /* PBXTargetDependency */,
 			);
-			name = glad;
+			name = gladDuckstation;
 			productName = glad;
-			productReference = 230A7951D2094657B1224C52 /* libglad.a */;
+			productReference = 230A7951D2094657B1224C52 /* libgladDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		882E6F6D7C714D45831AC65F /* fmt */ = {
+		882E6F6D7C714D45831AC65F /* fmtDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EE2BBE083B354BBFA84CC9DA /* Build configuration list for PBXNativeTarget "fmt" */;
+			buildConfigurationList = EE2BBE083B354BBFA84CC9DA /* Build configuration list for PBXNativeTarget "fmtDuckstation" */;
 			buildPhases = (
 				71B2116BBA334D0ABF91B0B0 /* Sources */,
 				09D5CCB2129A4C18BE34A2F8 /* Frameworks */,
@@ -3850,14 +3850,14 @@
 			);
 			dependencies = (
 			);
-			name = fmt;
+			name = fmtDuckstation;
 			productName = fmt;
-			productReference = FC379F3F82D44519B77ADA73 /* libfmt.a */;
+			productReference = FC379F3F82D44519B77ADA73 /* libfmtDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		8BA24853EB47437D8324CA7D /* glslang */ = {
+		8BA24853EB47437D8324CA7D /* glslangDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F9DCCAFBF0F143F4B237D6AA /* Build configuration list for PBXNativeTarget "glslang" */;
+			buildConfigurationList = F9DCCAFBF0F143F4B237D6AA /* Build configuration list for PBXNativeTarget "glslangDuckstation" */;
 			buildPhases = (
 				4D80D2EBE9CF4BF4B137E0B8 /* Sources */,
 				B9E824A2A491443995C31BEB /* Frameworks */,
@@ -3867,14 +3867,14 @@
 			dependencies = (
 				39CF26343FB2433EA6D8779B /* PBXTargetDependency */,
 			);
-			name = glslang;
+			name = glslangDuckstation;
 			productName = glslang;
-			productReference = E0EFBA810C1449A7BE9C3F31 /* libglslang.a */;
+			productReference = E0EFBA810C1449A7BE9C3F31 /* libglslangDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		93A9D9192B344435BBD44F48 /* zstd */ = {
+		93A9D9192B344435BBD44F48 /* zstdDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 02484B071E574CACA093EE31 /* Build configuration list for PBXNativeTarget "zstd" */;
+			buildConfigurationList = 02484B071E574CACA093EE31 /* Build configuration list for PBXNativeTarget "zstdDuckstation" */;
 			buildPhases = (
 				5FA08D22FB0E4366A2F6004F /* Sources */,
 				AFE1DBEA1722467DB833AEE5 /* Frameworks */,
@@ -3884,14 +3884,14 @@
 			dependencies = (
 				3B7F0D1C7B9E40FF88FFAB20 /* PBXTargetDependency */,
 			);
-			name = zstd;
+			name = zstdDuckstation;
 			productName = zstd;
-			productReference = 4FFA4B19AD00409A9F4E45B5 /* libzstd.a */;
+			productReference = 4FFA4B19AD00409A9F4E45B5 /* libzstdDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		9ADB9CD17A1B4201AAE6137C /* tinyxml2 */ = {
+		9ADB9CD17A1B4201AAE6137C /* tinyxml2Duckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F0C44A7F76D44458A216AE27 /* Build configuration list for PBXNativeTarget "tinyxml2" */;
+			buildConfigurationList = F0C44A7F76D44458A216AE27 /* Build configuration list for PBXNativeTarget "tinyxml2Duckstation" */;
 			buildPhases = (
 				5BFC5E737EE047D2AE4C7C5B /* Sources */,
 				8D7C92DC8602484687D3AD4B /* Frameworks */,
@@ -3901,14 +3901,14 @@
 			dependencies = (
 				E167C7AC14AC4FC9942C1FD5 /* PBXTargetDependency */,
 			);
-			name = tinyxml2;
+			name = tinyxml2Duckstation;
 			productName = tinyxml2;
-			productReference = 3F7C6933D42C47C781805C5F /* libtinyxml2.a */;
+			productReference = 3F7C6933D42C47C781805C5F /* libtinyxml2Duckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		A7A8C73886A145DF93568F69 /* gtest */ = {
+		A7A8C73886A145DF93568F69 /* gtestDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 144E36E9D21D4A818F049C10 /* Build configuration list for PBXNativeTarget "gtest" */;
+			buildConfigurationList = 144E36E9D21D4A818F049C10 /* Build configuration list for PBXNativeTarget "gtestDuckstation" */;
 			buildPhases = (
 				ABB5D62D0FEC4120B923177C /* Sources */,
 				AB0CCAE93865495797A10C6E /* Frameworks */,
@@ -3918,14 +3918,14 @@
 			dependencies = (
 				BE877B7EB1704169BEFE1272 /* PBXTargetDependency */,
 			);
-			name = gtest;
+			name = gtestDuckstation;
 			productName = gtest;
-			productReference = 7B11D425D304461A9D6B27A9 /* libgtest.a */;
+			productReference = 7B11D425D304461A9D6B27A9 /* libgtestDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B1CB54C27877414EBDA67287 /* zlib */ = {
+		B1CB54C27877414EBDA67287 /* zlibDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AECE0C9170364D5193A227DC /* Build configuration list for PBXNativeTarget "zlib" */;
+			buildConfigurationList = AECE0C9170364D5193A227DC /* Build configuration list for PBXNativeTarget "zlibDuckstation" */;
 			buildPhases = (
 				55740A3A43CD415FA07C3B47 /* Sources */,
 				6DDDCF76BADA42F0B629639D /* Frameworks */,
@@ -3935,14 +3935,14 @@
 			dependencies = (
 				6907EA1F91EC4EEEB0F54A6D /* PBXTargetDependency */,
 			);
-			name = zlib;
+			name = zlibDuckstation;
 			productName = zlib;
-			productReference = C21512611FE444C3914F1356 /* libzlib.a */;
+			productReference = C21512611FE444C3914F1356 /* libzlibDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B621125D0D2245F880AC192B /* rcheevos */ = {
+		B621125D0D2245F880AC192B /* rcheevosDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 57D1C9319B3C438EA4F3899E /* Build configuration list for PBXNativeTarget "rcheevos" */;
+			buildConfigurationList = 57D1C9319B3C438EA4F3899E /* Build configuration list for PBXNativeTarget "rcheevosDuckstation" */;
 			buildPhases = (
 				EFC83DC699A640148CFFAEB6 /* Sources */,
 				5E85AD1AF69F455CB940124F /* Frameworks */,
@@ -3952,14 +3952,14 @@
 			dependencies = (
 				88A06315DD2A4C5DBF83E4D2 /* PBXTargetDependency */,
 			);
-			name = rcheevos;
+			name = rcheevosDuckstation;
 			productName = rcheevos;
-			productReference = A11160C52FD647C2BE9D7EC5 /* librcheevos.a */;
+			productReference = A11160C52FD647C2BE9D7EC5 /* librcheevosDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		BA12F9A6815346E7994B237F /* stb */ = {
+		BA12F9A6815346E7994B237F /* stbDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F72EF289565945978CB21D0E /* Build configuration list for PBXNativeTarget "stb" */;
+			buildConfigurationList = F72EF289565945978CB21D0E /* Build configuration list for PBXNativeTarget "stbDuckstation" */;
 			buildPhases = (
 				A8F5D5A1F5584F9DB8536640 /* Sources */,
 				2C8A36C360F24B959D44E26C /* Frameworks */,
@@ -3970,14 +3970,14 @@
 				F6405F6C79314836AB4DD1B3 /* PBXTargetDependency */,
 				EB1398763DF145ABB2E006D1 /* PBXTargetDependency */,
 			);
-			name = stb;
+			name = stbDuckstation;
 			productName = stb;
-			productReference = 2BDEE27B5FDB4DF882713594 /* libstb.a */;
+			productReference = 2BDEE27B5FDB4DF882713594 /* libstbDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		BA17DBD409614D8C9CC7724B /* lzma */ = {
+		BA17DBD409614D8C9CC7724B /* lzmaDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4B099CCF609644C6A9D4388C /* Build configuration list for PBXNativeTarget "lzma" */;
+			buildConfigurationList = 4B099CCF609644C6A9D4388C /* Build configuration list for PBXNativeTarget "lzmaDuckstation" */;
 			buildPhases = (
 				0E561086B7CB440CBE46FFCF /* Sources */,
 				626EB8F00BF64AE89CBCEDF4 /* Frameworks */,
@@ -3987,14 +3987,14 @@
 			dependencies = (
 				E443005C99E74CCA98EBE9C1 /* PBXTargetDependency */,
 			);
-			name = lzma;
+			name = lzmaDuckstation;
 			productName = lzma;
-			productReference = 5C72181F656145D8B3AFE695 /* liblzma.a */;
+			productReference = 5C72181F656145D8B3AFE695 /* liblzmaDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		D42A93AC530C487BA726CDD5 /* util */ = {
+		D42A93AC530C487BA726CDD5 /* utilDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9A9C36F77D6C4E3D8C67A57A /* Build configuration list for PBXNativeTarget "util" */;
+			buildConfigurationList = 9A9C36F77D6C4E3D8C67A57A /* Build configuration list for PBXNativeTarget "utilDuckstation" */;
 			buildPhases = (
 				9AAB6CEB20DD4277BF9E7BDD /* Sources */,
 				8C66625BB1C44ABABC41C9DE /* Frameworks */,
@@ -4016,14 +4016,14 @@
 				6A1C9C95CC794C4FAA5DEC01 /* PBXTargetDependency */,
 				3CCC9C55226F4A2E85A60B3F /* PBXTargetDependency */,
 			);
-			name = util;
+			name = utilDuckstation;
 			productName = util;
-			productReference = 9438A88462504FDEBEEC6B70 /* libutil.a */;
+			productReference = 9438A88462504FDEBEEC6B70 /* libutilDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		E2A774B159364460AC24E39B /* cpuinfo */ = {
+		E2A774B159364460AC24E39B /* cpuinfoDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 812AB893EC584ECF88AD3A88 /* Build configuration list for PBXNativeTarget "cpuinfo" */;
+			buildConfigurationList = 812AB893EC584ECF88AD3A88 /* Build configuration list for PBXNativeTarget "cpuinfoDuckstation" */;
 			buildPhases = (
 				FCF8D4E64AFA4A8FBC99CB77 /* Sources */,
 				C8F75414266146689F1DB141 /* Frameworks */,
@@ -4033,14 +4033,14 @@
 			dependencies = (
 				7838CEB399784C33973A0BE8 /* PBXTargetDependency */,
 			);
-			name = cpuinfo;
+			name = cpuinfoDuckstation;
 			productName = cpuinfo;
-			productReference = BA36469E1CBA40658E25AF22 /* libcpuinfo.a */;
+			productReference = BA36469E1CBA40658E25AF22 /* libcpuinfoDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		F2FB3078DD5B4EAF95B4A19B /* minizip */ = {
+		F2FB3078DD5B4EAF95B4A19B /* minizipDuckstation */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 776217C4328A4626889EAB79 /* Build configuration list for PBXNativeTarget "minizip" */;
+			buildConfigurationList = 776217C4328A4626889EAB79 /* Build configuration list for PBXNativeTarget "minizipDuckstation" */;
 			buildPhases = (
 				839BBB47AE5A4DF8B7745C50 /* Sources */,
 				04AF28D7F9624FBCAD92DB10 /* Frameworks */,
@@ -4051,9 +4051,9 @@
 				ED35911335464C6796AB06DE /* PBXTargetDependency */,
 				CF6F12AE26D843D09C90E237 /* PBXTargetDependency */,
 			);
-			name = minizip;
+			name = minizipDuckstation;
 			productName = minizip;
-			productReference = F566F4266318483A8A5A834A /* libminizip.a */;
+			productReference = F566F4266318483A8A5A834A /* libminizipDuckstation.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -4079,32 +4079,32 @@
 				35CA8D716BC042C0B3F45F29 /* ALL_BUILD */,
 				25766FAB9C284E9085E23F41 /* RUN_TESTS */,
 				DE1E496239DD4B7D82AF7C19 /* ZERO_CHECK */,
-				6E8E2535F5424CABA027573F /* clog */,
-				75FA30DD63C04BF2A2448D49 /* common */,
-				244A17668611473AB19B5BF5 /* core */,
-				E2A774B159364460AC24E39B /* cpuinfo */,
-				3211640BED084B21BDB35192 /* cpuinfo_internals */,
-				882E6F6D7C714D45831AC65F /* fmt */,
-				6D255B0D69F542B6BDDA5074 /* frontend-common */,
-				80E7BFAF8EE34EECB9E30C22 /* glad */,
-				8BA24853EB47437D8324CA7D /* glslang */,
-				A7A8C73886A145DF93568F69 /* gtest */,
-				2FB8944901B4437DB3EAFA7B /* gtest_main */,
-				7ECF1ED040A545AFB4E4C34C /* imgui */,
-				5296A89E016A4718AA226D85 /* libchdr */,
-				BA17DBD409614D8C9CC7724B /* lzma */,
-				F2FB3078DD5B4EAF95B4A19B /* minizip */,
-				B621125D0D2245F880AC192B /* rcheevos */,
-				6014C3A8A2A94F2EB213F868 /* scmversion */,
-				4B33B9A70F7B4499B71C41B3 /* simpleini */,
-				46FD74744C1446F19C253DC3 /* soundtouch */,
-				BA12F9A6815346E7994B237F /* stb */,
-				9ADB9CD17A1B4201AAE6137C /* tinyxml2 */,
-				D42A93AC530C487BA726CDD5 /* util */,
-				3A85A43CEFD746F3AB4F100D /* vixl */,
-				0BB499B40F9445E0920DDE69 /* xxhash */,
-				B1CB54C27877414EBDA67287 /* zlib */,
-				93A9D9192B344435BBD44F48 /* zstd */,
+				6E8E2535F5424CABA027573F /* clogDuckstation */,
+				75FA30DD63C04BF2A2448D49 /* commonDuckstation */,
+				244A17668611473AB19B5BF5 /* coreDuckstation */,
+				E2A774B159364460AC24E39B /* cpuinfoDuckstation */,
+				3211640BED084B21BDB35192 /* cpuinfo_internalsDuckstation */,
+				882E6F6D7C714D45831AC65F /* fmtDuckstation */,
+				6D255B0D69F542B6BDDA5074 /* frontend-commonDuckstation */,
+				80E7BFAF8EE34EECB9E30C22 /* gladDuckstation */,
+				8BA24853EB47437D8324CA7D /* glslangDuckstation */,
+				A7A8C73886A145DF93568F69 /* gtestDuckstation */,
+				2FB8944901B4437DB3EAFA7B /* gtest_mainDuckstation */,
+				7ECF1ED040A545AFB4E4C34C /* imguiDuckstation */,
+				5296A89E016A4718AA226D85 /* libchdrDuckstation */,
+				BA17DBD409614D8C9CC7724B /* lzmaDuckstation */,
+				F2FB3078DD5B4EAF95B4A19B /* minizipDuckstation */,
+				B621125D0D2245F880AC192B /* rcheevosDuckstation */,
+				6014C3A8A2A94F2EB213F868 /* scmversionDuckstation */,
+				4B33B9A70F7B4499B71C41B3 /* simpleiniDuckstation */,
+				46FD74744C1446F19C253DC3 /* soundtouchDuckstation */,
+				BA12F9A6815346E7994B237F /* stbDuckstation */,
+				9ADB9CD17A1B4201AAE6137C /* tinyxml2Duckstation */,
+				D42A93AC530C487BA726CDD5 /* utilDuckstation */,
+				3A85A43CEFD746F3AB4F100D /* vixlDuckstation */,
+				0BB499B40F9445E0920DDE69 /* xxhashDuckstation */,
+				B1CB54C27877414EBDA67287 /* zlibDuckstation */,
+				93A9D9192B344435BBD44F48 /* zstdDuckstation */,
 			);
 		};
 /* End PBXProject section */
@@ -4694,22 +4694,22 @@
 		};
 		06C7CCFFC814441AA9950AD8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6014C3A8A2A94F2EB213F868 /* scmversion */;
+			target = 6014C3A8A2A94F2EB213F868 /* scmversionDuckstation */;
 			targetProxy = 24668EAF273748DEA7C33426 /* PBXContainerItemProxy */;
 		};
 		08D7817055424F3285C7EC8A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B1CB54C27877414EBDA67287 /* zlib */;
+			target = B1CB54C27877414EBDA67287 /* zlibDuckstation */;
 			targetProxy = CC56198DC5504F66B381B35C /* PBXContainerItemProxy */;
 		};
 		0A94C8640B634E60BCB49D09 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D42A93AC530C487BA726CDD5 /* util */;
+			target = D42A93AC530C487BA726CDD5 /* utilDuckstation */;
 			targetProxy = 6FF27C37A35A459A8DB4E2B8 /* PBXContainerItemProxy */;
 		};
 		0ADC2414444E4079A48A7517 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 882E6F6D7C714D45831AC65F /* fmt */;
+			target = 882E6F6D7C714D45831AC65F /* fmtDuckstation */;
 			targetProxy = D635B4CE87874A4B8CD73A81 /* PBXContainerItemProxy */;
 		};
 		0BBCB7205A9E4B3BA000ADEF /* PBXTargetDependency */ = {
@@ -4719,57 +4719,57 @@
 		};
 		0EBC4C9DDFC846699B0ED506 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B1CB54C27877414EBDA67287 /* zlib */;
+			target = B1CB54C27877414EBDA67287 /* zlibDuckstation */;
 			targetProxy = B24C8DCB36504A81A07E8125 /* PBXContainerItemProxy */;
 		};
 		0EC65B9C54F545E5964E467B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA12F9A6815346E7994B237F /* stb */;
+			target = BA12F9A6815346E7994B237F /* stbDuckstation */;
 			targetProxy = 398C75124BB84F54B807CA6D /* PBXContainerItemProxy */;
 		};
 		0FC9207FCC8F42D197A7B89E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F2FB3078DD5B4EAF95B4A19B /* minizip */;
+			target = F2FB3078DD5B4EAF95B4A19B /* minizipDuckstation */;
 			targetProxy = EF41FDC7B809429D96EB2716 /* PBXContainerItemProxy */;
 		};
 		0FCD7DA89E3C4D5BA8704D77 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8BA24853EB47437D8324CA7D /* glslang */;
+			target = 8BA24853EB47437D8324CA7D /* glslangDuckstation */;
 			targetProxy = 3A239A7047A34A209DE57833 /* PBXContainerItemProxy */;
 		};
 		10441CB0643D45CEBB766672 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 80E7BFAF8EE34EECB9E30C22 /* glad */;
+			target = 80E7BFAF8EE34EECB9E30C22 /* gladDuckstation */;
 			targetProxy = F636992005FD485298F9F75F /* PBXContainerItemProxy */;
 		};
 		11028435ABD3474492009A41 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA12F9A6815346E7994B237F /* stb */;
+			target = BA12F9A6815346E7994B237F /* stbDuckstation */;
 			targetProxy = 7BC53D0A0C104EA0B9DE08DD /* PBXContainerItemProxy */;
 		};
 		13A58874DF8C4A23BBAD6C48 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9ADB9CD17A1B4201AAE6137C /* tinyxml2 */;
+			target = 9ADB9CD17A1B4201AAE6137C /* tinyxml2Duckstation */;
 			targetProxy = 27C50B2CE5E94FD8B4FEF0B4 /* PBXContainerItemProxy */;
 		};
 		13DF54E6BA574F08BEA0AFC4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 244A17668611473AB19B5BF5 /* core */;
+			target = 244A17668611473AB19B5BF5 /* coreDuckstation */;
 			targetProxy = B659735538FA41F3B53AA5B8 /* PBXContainerItemProxy */;
 		};
 		176280CDD6884F6EAEC0B792 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8BA24853EB47437D8324CA7D /* glslang */;
+			target = 8BA24853EB47437D8324CA7D /* glslangDuckstation */;
 			targetProxy = 42587A2AEDFF4F7687E8F491 /* PBXContainerItemProxy */;
 		};
 		1C0402C4CECF47E38641AA93 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA17DBD409614D8C9CC7724B /* lzma */;
+			target = BA17DBD409614D8C9CC7724B /* lzmaDuckstation */;
 			targetProxy = 68BB519A21A44A539CDAF3C8 /* PBXContainerItemProxy */;
 		};
 		20AC53F39BC94CF6B41EE00B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6014C3A8A2A94F2EB213F868 /* scmversion */;
+			target = 6014C3A8A2A94F2EB213F868 /* scmversionDuckstation */;
 			targetProxy = 0F5A8B7AB4564EBF8D7581BB /* PBXContainerItemProxy */;
 		};
 		22FB9E4FA64F45B3B27CF36D /* PBXTargetDependency */ = {
@@ -4784,22 +4784,22 @@
 		};
 		259A4030C9FB4BE58C0FF50C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA17DBD409614D8C9CC7724B /* lzma */;
+			target = BA17DBD409614D8C9CC7724B /* lzmaDuckstation */;
 			targetProxy = 345E56F376E44E138EEA2101 /* PBXContainerItemProxy */;
 		};
 		27EC3D258350415FB624B3C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6D255B0D69F542B6BDDA5074 /* frontend-common */;
+			target = 6D255B0D69F542B6BDDA5074 /* frontend-commonDuckstation */;
 			targetProxy = BE919A7304414C1681EDB03B /* PBXContainerItemProxy */;
 		};
 		298C744C8C9E4AFFAAE95300 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 46FD74744C1446F19C253DC3 /* soundtouch */;
+			target = 46FD74744C1446F19C253DC3 /* soundtouchDuckstation */;
 			targetProxy = B81B2BB410F042DC868BB066 /* PBXContainerItemProxy */;
 		};
 		2CC82F70A30F4DB4BF5C52F2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B1CB54C27877414EBDA67287 /* zlib */;
+			target = B1CB54C27877414EBDA67287 /* zlibDuckstation */;
 			targetProxy = 053EF0A5478D4C10A430B0FF /* PBXContainerItemProxy */;
 		};
 		2FAA6E71C22248DB9E572789 /* PBXTargetDependency */ = {
@@ -4809,17 +4809,17 @@
 		};
 		300780A5BE7D4955838E874A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 882E6F6D7C714D45831AC65F /* fmt */;
+			target = 882E6F6D7C714D45831AC65F /* fmtDuckstation */;
 			targetProxy = 973935CAC50F4B6EB3DB8660 /* PBXContainerItemProxy */;
 		};
 		310C63A0DB414693993455C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B33B9A70F7B4499B71C41B3 /* simpleini */;
+			target = 4B33B9A70F7B4499B71C41B3 /* simpleiniDuckstation */;
 			targetProxy = 0D974BA1E14643209678F12E /* PBXContainerItemProxy */;
 		};
 		3123B33A1A394BEAB627C51F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA17DBD409614D8C9CC7724B /* lzma */;
+			target = BA17DBD409614D8C9CC7724B /* lzmaDuckstation */;
 			targetProxy = 36667AB9C7FD4689AF6E5A61 /* PBXContainerItemProxy */;
 		};
 		35B773581E7049A79E71971A /* PBXTargetDependency */ = {
@@ -4834,7 +4834,7 @@
 		};
 		3B215CD8074348BFB91D208D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5296A89E016A4718AA226D85 /* libchdr */;
+			target = 5296A89E016A4718AA226D85 /* libchdrDuckstation */;
 			targetProxy = F5746E622A654C1BA4F6B73A /* PBXContainerItemProxy */;
 		};
 		3B7F0D1C7B9E40FF88FFAB20 /* PBXTargetDependency */ = {
@@ -4849,7 +4849,7 @@
 		};
 		3FEB6033B6EA4C7FAB8C2ABC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA12F9A6815346E7994B237F /* stb */;
+			target = BA12F9A6815346E7994B237F /* stbDuckstation */;
 			targetProxy = 91D89F543C824770B13929DC /* PBXContainerItemProxy */;
 		};
 		426771B9E7D64BFF9CE9301F /* PBXTargetDependency */ = {
@@ -4859,42 +4859,42 @@
 		};
 		42B7C83F3D9A49818A782058 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8BA24853EB47437D8324CA7D /* glslang */;
+			target = 8BA24853EB47437D8324CA7D /* glslangDuckstation */;
 			targetProxy = 628BF12DC51B4BF1A7615894 /* PBXContainerItemProxy */;
 		};
 		4952BF11B4B14E7190EE738B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D42A93AC530C487BA726CDD5 /* util */;
+			target = D42A93AC530C487BA726CDD5 /* utilDuckstation */;
 			targetProxy = D6ED0E2E463647BC86D7526E /* PBXContainerItemProxy */;
 		};
 		504395B8EC7244F6B59A4FCE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8BA24853EB47437D8324CA7D /* glslang */;
+			target = 8BA24853EB47437D8324CA7D /* glslangDuckstation */;
 			targetProxy = 3C2232F05E5F4F88A404CA14 /* PBXContainerItemProxy */;
 		};
 		569C0CD5CDBD43E09DA72039 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5296A89E016A4718AA226D85 /* libchdr */;
+			target = 5296A89E016A4718AA226D85 /* libchdrDuckstation */;
 			targetProxy = 6A6028206C474EB3B0E871D4 /* PBXContainerItemProxy */;
 		};
 		5E4444456F654DCC95D47B60 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 93A9D9192B344435BBD44F48 /* zstd */;
+			target = 93A9D9192B344435BBD44F48 /* zstdDuckstation */;
 			targetProxy = 67044A7833374EE8926E6501 /* PBXContainerItemProxy */;
 		};
 		6152AB0BA26D443B93F6A699 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2FB8944901B4437DB3EAFA7B /* gtest_main */;
+			target = 2FB8944901B4437DB3EAFA7B /* gtest_mainDuckstation */;
 			targetProxy = 2B090E8840024FB6B487ECBF /* PBXContainerItemProxy */;
 		};
 		63DDA03AB7AA40708F35FBEE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3A85A43CEFD746F3AB4F100D /* vixl */;
+			target = 3A85A43CEFD746F3AB4F100D /* vixlDuckstation */;
 			targetProxy = B00B5A1D350D43738B9B7A9D /* PBXContainerItemProxy */;
 		};
 		6505B32032764D6FB02053CD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 46FD74744C1446F19C253DC3 /* soundtouch */;
+			target = 46FD74744C1446F19C253DC3 /* soundtouchDuckstation */;
 			targetProxy = 89AC83FBED334AEE979BCC1F /* PBXContainerItemProxy */;
 		};
 		6907EA1F91EC4EEEB0F54A6D /* PBXTargetDependency */ = {
@@ -4904,57 +4904,57 @@
 		};
 		6A1C9C95CC794C4FAA5DEC01 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 75FA30DD63C04BF2A2448D49 /* common */;
+			target = 75FA30DD63C04BF2A2448D49 /* commonDuckstation */;
 			targetProxy = AE2B842A93BC4ED5BBF6DB46 /* PBXContainerItemProxy */;
 		};
 		6CC626AB2F0D429CB4128008 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9ADB9CD17A1B4201AAE6137C /* tinyxml2 */;
+			target = 9ADB9CD17A1B4201AAE6137C /* tinyxml2Duckstation */;
 			targetProxy = 6982A18F98D5446F83E0307A /* PBXContainerItemProxy */;
 		};
 		778A15617A6149A1BD911F82 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 46FD74744C1446F19C253DC3 /* soundtouch */;
+			target = 46FD74744C1446F19C253DC3 /* soundtouchDuckstation */;
 			targetProxy = 78677951FB0445CC97114D87 /* PBXContainerItemProxy */;
 		};
 		7838CEB399784C33973A0BE8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6E8E2535F5424CABA027573F /* clog */;
+			target = 6E8E2535F5424CABA027573F /* clogDuckstation */;
 			targetProxy = 9744211ED7FE46D69116E182 /* PBXContainerItemProxy */;
 		};
 		78EB4946D4D54C71ABD7330E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F2FB3078DD5B4EAF95B4A19B /* minizip */;
+			target = F2FB3078DD5B4EAF95B4A19B /* minizipDuckstation */;
 			targetProxy = D0F309982D864C7E86D2F292 /* PBXContainerItemProxy */;
 		};
 		7FE18F365EBB4D7481390775 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 882E6F6D7C714D45831AC65F /* fmt */;
+			target = 882E6F6D7C714D45831AC65F /* fmtDuckstation */;
 			targetProxy = 9B180E8105264F2680099938 /* PBXContainerItemProxy */;
 		};
 		803ADA0758214780A490FC2F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B33B9A70F7B4499B71C41B3 /* simpleini */;
+			target = 4B33B9A70F7B4499B71C41B3 /* simpleiniDuckstation */;
 			targetProxy = 1AD8C627D48F40E8970B6EC8 /* PBXContainerItemProxy */;
 		};
 		81B0FF16CCB8419191C6C767 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5296A89E016A4718AA226D85 /* libchdr */;
+			target = 5296A89E016A4718AA226D85 /* libchdrDuckstation */;
 			targetProxy = 7546F46684F14FAEB1989E17 /* PBXContainerItemProxy */;
 		};
 		83EBD85330B541F399C0113F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6E8E2535F5424CABA027573F /* clog */;
+			target = 6E8E2535F5424CABA027573F /* clogDuckstation */;
 			targetProxy = 63624EEFCF6E4695BB660F99 /* PBXContainerItemProxy */;
 		};
 		856D5A6B888648369D20BCFE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B33B9A70F7B4499B71C41B3 /* simpleini */;
+			target = 4B33B9A70F7B4499B71C41B3 /* simpleiniDuckstation */;
 			targetProxy = FCC66BDB736F4D9EAD7C586D /* PBXContainerItemProxy */;
 		};
 		86C17F3999ED4DF89EE0AEED /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 4B33B9A70F7B4499B71C41B3 /* simpleini */;
+			target = 4B33B9A70F7B4499B71C41B3 /* simpleiniDuckstation */;
 			targetProxy = 87D4373D5DE14F499C349BDC /* PBXContainerItemProxy */;
 		};
 		88A06315DD2A4C5DBF83E4D2 /* PBXTargetDependency */ = {
@@ -4964,62 +4964,62 @@
 		};
 		88D7799C20B6470082DEB940 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 93A9D9192B344435BBD44F48 /* zstd */;
+			target = 93A9D9192B344435BBD44F48 /* zstdDuckstation */;
 			targetProxy = CB02F6C9913D4724B6B7F082 /* PBXContainerItemProxy */;
 		};
 		90CD41792DCF44BE90DE0580 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 93A9D9192B344435BBD44F48 /* zstd */;
+			target = 93A9D9192B344435BBD44F48 /* zstdDuckstation */;
 			targetProxy = 1BDBCF513B154F99B75940C9 /* PBXContainerItemProxy */;
 		};
 		94AB4F9C3ACA48B8A6D67353 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6E8E2535F5424CABA027573F /* clog */;
+			target = 6E8E2535F5424CABA027573F /* clogDuckstation */;
 			targetProxy = 39C0E8B18EDE4CA58EDE424E /* PBXContainerItemProxy */;
 		};
 		969D906608B74CBAAA900476 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 882E6F6D7C714D45831AC65F /* fmt */;
+			target = 882E6F6D7C714D45831AC65F /* fmtDuckstation */;
 			targetProxy = F7F50B625C574797A4AD29D3 /* PBXContainerItemProxy */;
 		};
 		983A67B75E6F45BBAF94B380 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7ECF1ED040A545AFB4E4C34C /* imgui */;
+			target = 7ECF1ED040A545AFB4E4C34C /* imguiDuckstation */;
 			targetProxy = 83C6AF0DFBCA4019B2E51522 /* PBXContainerItemProxy */;
 		};
 		98D2440E69A94D66829D6B5B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A7A8C73886A145DF93568F69 /* gtest */;
+			target = A7A8C73886A145DF93568F69 /* gtestDuckstation */;
 			targetProxy = E833517823BF4B9F941B76C4 /* PBXContainerItemProxy */;
 		};
 		9ECCB2C18FD64A39B593612E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F2FB3078DD5B4EAF95B4A19B /* minizip */;
+			target = F2FB3078DD5B4EAF95B4A19B /* minizipDuckstation */;
 			targetProxy = 6A9D138526884A82B4FDBAF7 /* PBXContainerItemProxy */;
 		};
 		A446C9884D854327BDD5A697 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 46FD74744C1446F19C253DC3 /* soundtouch */;
+			target = 46FD74744C1446F19C253DC3 /* soundtouchDuckstation */;
 			targetProxy = 9745467A79CE44EAAD7599AE /* PBXContainerItemProxy */;
 		};
 		A4A550643D9747E78AFC4289 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3211640BED084B21BDB35192 /* cpuinfo_internals */;
+			target = 3211640BED084B21BDB35192 /* cpuinfo_internalsDuckstation */;
 			targetProxy = DBB9DEA044CB40148048D7F0 /* PBXContainerItemProxy */;
 		};
 		A5579FBFF6E04F60BD38FBB7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5296A89E016A4718AA226D85 /* libchdr */;
+			target = 5296A89E016A4718AA226D85 /* libchdrDuckstation */;
 			targetProxy = 10F438D5542D43D9B93A41D0 /* PBXContainerItemProxy */;
 		};
 		A91C2A502A0D48E68340488F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9ADB9CD17A1B4201AAE6137C /* tinyxml2 */;
+			target = 9ADB9CD17A1B4201AAE6137C /* tinyxml2Duckstation */;
 			targetProxy = E047E908775D4C43A21E2295 /* PBXContainerItemProxy */;
 		};
 		AA2264C4A2CC4EC9967AFCFD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 882E6F6D7C714D45831AC65F /* fmt */;
+			target = 882E6F6D7C714D45831AC65F /* fmtDuckstation */;
 			targetProxy = 738C223D2F8A44D097A05817 /* PBXContainerItemProxy */;
 		};
 		ACFFE52D58634957B93E10D4 /* PBXTargetDependency */ = {
@@ -5029,12 +5029,12 @@
 		};
 		AE6C4B45E3DD4F6CB7039419 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B1CB54C27877414EBDA67287 /* zlib */;
+			target = B1CB54C27877414EBDA67287 /* zlibDuckstation */;
 			targetProxy = D7B4CB96EB93450ABDE61FC1 /* PBXContainerItemProxy */;
 		};
 		AF131750A09D48178FFB9F0E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 75FA30DD63C04BF2A2448D49 /* common */;
+			target = 75FA30DD63C04BF2A2448D49 /* commonDuckstation */;
 			targetProxy = 7CDA637031F5453582F85180 /* PBXContainerItemProxy */;
 		};
 		B0C67A3AD4B54E4CA09783D3 /* PBXTargetDependency */ = {
@@ -5044,27 +5044,27 @@
 		};
 		B379016E9CEB4DBDA9211E2C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3A85A43CEFD746F3AB4F100D /* vixl */;
+			target = 3A85A43CEFD746F3AB4F100D /* vixlDuckstation */;
 			targetProxy = 1B2CAE2214B64F15A7855D84 /* PBXContainerItemProxy */;
 		};
 		B8C195CFF261468ABA769A97 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5296A89E016A4718AA226D85 /* libchdr */;
+			target = 5296A89E016A4718AA226D85 /* libchdrDuckstation */;
 			targetProxy = 97D083A8838442C2915C843A /* PBXContainerItemProxy */;
 		};
 		B8F0A042EFE84038A092E090 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D42A93AC530C487BA726CDD5 /* util */;
+			target = D42A93AC530C487BA726CDD5 /* utilDuckstation */;
 			targetProxy = 46DB17B3535C4C91AADA149F /* PBXContainerItemProxy */;
 		};
 		BCFF5CEC2D61457F899D6233 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA17DBD409614D8C9CC7724B /* lzma */;
+			target = BA17DBD409614D8C9CC7724B /* lzmaDuckstation */;
 			targetProxy = 4A0673426B7F4D5A9232F188 /* PBXContainerItemProxy */;
 		};
 		BD6A76773E8547B18C321429 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8BA24853EB47437D8324CA7D /* glslang */;
+			target = 8BA24853EB47437D8324CA7D /* glslangDuckstation */;
 			targetProxy = AA2F89B033B442F19A446652 /* PBXContainerItemProxy */;
 		};
 		BE877B7EB1704169BEFE1272 /* PBXTargetDependency */ = {
@@ -5079,37 +5079,37 @@
 		};
 		C06B6A6AA9084A15AF8FF0D1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 80E7BFAF8EE34EECB9E30C22 /* glad */;
+			target = 80E7BFAF8EE34EECB9E30C22 /* gladDuckstation */;
 			targetProxy = D4F48F49394E41E3AAE85900 /* PBXContainerItemProxy */;
 		};
 		C275046DB51B4225AFCC3A14 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 75FA30DD63C04BF2A2448D49 /* common */;
+			target = 75FA30DD63C04BF2A2448D49 /* commonDuckstation */;
 			targetProxy = A99267EE4FC4404FA4B61A71 /* PBXContainerItemProxy */;
 		};
 		C410368301EA48319616C085 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7ECF1ED040A545AFB4E4C34C /* imgui */;
+			target = 7ECF1ED040A545AFB4E4C34C /* imguiDuckstation */;
 			targetProxy = BF90392FF5374BB0886A1271 /* PBXContainerItemProxy */;
 		};
 		C7E81E7466D9464E92ACC9BA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0BB499B40F9445E0920DDE69 /* xxhash */;
+			target = 0BB499B40F9445E0920DDE69 /* xxhashDuckstation */;
 			targetProxy = 32451E1778CC486AAE51F9CD /* PBXContainerItemProxy */;
 		};
 		C856E62A1C4D4E0286AEDBF0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0BB499B40F9445E0920DDE69 /* xxhash */;
+			target = 0BB499B40F9445E0920DDE69 /* xxhashDuckstation */;
 			targetProxy = A83C7411AD0C4CD2AC4A9C19 /* PBXContainerItemProxy */;
 		};
 		CADE611F19454EFDBB3E3972 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 80E7BFAF8EE34EECB9E30C22 /* glad */;
+			target = 80E7BFAF8EE34EECB9E30C22 /* gladDuckstation */;
 			targetProxy = D3EA296B3F3F4F189FDA498C /* PBXContainerItemProxy */;
 		};
 		CEF31FC39FAF44289C890B9B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7ECF1ED040A545AFB4E4C34C /* imgui */;
+			target = 7ECF1ED040A545AFB4E4C34C /* imguiDuckstation */;
 			targetProxy = DB4E2D740F464EC49711F426 /* PBXContainerItemProxy */;
 		};
 		CF6F12AE26D843D09C90E237 /* PBXTargetDependency */ = {
@@ -5119,32 +5119,32 @@
 		};
 		CFD647AB5DDC4328B1460AD2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3A85A43CEFD746F3AB4F100D /* vixl */;
+			target = 3A85A43CEFD746F3AB4F100D /* vixlDuckstation */;
 			targetProxy = 654CA64DE0D94CA19F01E408 /* PBXContainerItemProxy */;
 		};
 		D01DFC07C7E740EB9738537E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 93A9D9192B344435BBD44F48 /* zstd */;
+			target = 93A9D9192B344435BBD44F48 /* zstdDuckstation */;
 			targetProxy = F09F11665E3A496FA8899B69 /* PBXContainerItemProxy */;
 		};
 		DE7872978D754B12A4CE8E85 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 80E7BFAF8EE34EECB9E30C22 /* glad */;
+			target = 80E7BFAF8EE34EECB9E30C22 /* gladDuckstation */;
 			targetProxy = 3EECE91699BB457C8D854FF3 /* PBXContainerItemProxy */;
 		};
 		E03385F682F143B584EC7A84 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 75FA30DD63C04BF2A2448D49 /* common */;
+			target = 75FA30DD63C04BF2A2448D49 /* commonDuckstation */;
 			targetProxy = 3F448F3AABDC4A8098E9A11B /* PBXContainerItemProxy */;
 		};
 		E09BACFF9E5F47D2A403CA5A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B1CB54C27877414EBDA67287 /* zlib */;
+			target = B1CB54C27877414EBDA67287 /* zlibDuckstation */;
 			targetProxy = 16ED40CABF194574B0985F26 /* PBXContainerItemProxy */;
 		};
 		E142DA3BE278414D96B35030 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B1CB54C27877414EBDA67287 /* zlib */;
+			target = B1CB54C27877414EBDA67287 /* zlibDuckstation */;
 			targetProxy = 54A509C4B6BC4F879D32FBC6 /* PBXContainerItemProxy */;
 		};
 		E167C7AC14AC4FC9942C1FD5 /* PBXTargetDependency */ = {
@@ -5154,12 +5154,12 @@
 		};
 		E346DD901FB64476BCBD8D60 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA12F9A6815346E7994B237F /* stb */;
+			target = BA12F9A6815346E7994B237F /* stbDuckstation */;
 			targetProxy = BB0D9CD17FEE4E4C8A6E2129 /* PBXContainerItemProxy */;
 		};
 		E411F9B60A8B4F329C2518C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA17DBD409614D8C9CC7724B /* lzma */;
+			target = BA17DBD409614D8C9CC7724B /* lzmaDuckstation */;
 			targetProxy = 39A4CDCD9585499B86D9636B /* PBXContainerItemProxy */;
 		};
 		E443005C99E74CCA98EBE9C1 /* PBXTargetDependency */ = {
@@ -5169,12 +5169,12 @@
 		};
 		E46DF2C3752D4564BCD8429B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0BB499B40F9445E0920DDE69 /* xxhash */;
+			target = 0BB499B40F9445E0920DDE69 /* xxhashDuckstation */;
 			targetProxy = 78855A0E59074DD891BF0B63 /* PBXContainerItemProxy */;
 		};
 		E514640AEF66481FB046C7EA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F2FB3078DD5B4EAF95B4A19B /* minizip */;
+			target = F2FB3078DD5B4EAF95B4A19B /* minizipDuckstation */;
 			targetProxy = 12476FB701654165B65A63DE /* PBXContainerItemProxy */;
 		};
 		E74693B14E6749829275DD5C /* PBXTargetDependency */ = {
@@ -5189,7 +5189,7 @@
 		};
 		EA9FE61D48AC4F90A3EA85D6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 80E7BFAF8EE34EECB9E30C22 /* glad */;
+			target = 80E7BFAF8EE34EECB9E30C22 /* gladDuckstation */;
 			targetProxy = 5DA9E9C48C464D16B8AFDD27 /* PBXContainerItemProxy */;
 		};
 		EB1398763DF145ABB2E006D1 /* PBXTargetDependency */ = {
@@ -5199,27 +5199,27 @@
 		};
 		ED35911335464C6796AB06DE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B1CB54C27877414EBDA67287 /* zlib */;
+			target = B1CB54C27877414EBDA67287 /* zlibDuckstation */;
 			targetProxy = 8D782C0FB1174BE8A787889A /* PBXContainerItemProxy */;
 		};
 		EDA0A2033CFA468DB45237B3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B621125D0D2245F880AC192B /* rcheevos */;
+			target = B621125D0D2245F880AC192B /* rcheevosDuckstation */;
 			targetProxy = 3B4FD9EFE146453C87BC39CC /* PBXContainerItemProxy */;
 		};
 		EF2E60F3A57A4ECAB0FD8200 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 93A9D9192B344435BBD44F48 /* zstd */;
+			target = 93A9D9192B344435BBD44F48 /* zstdDuckstation */;
 			targetProxy = 29BD7E6304184AFC9B0A9FAE /* PBXContainerItemProxy */;
 		};
 		F0119E2AC5AD4C82B86C3F5E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F2FB3078DD5B4EAF95B4A19B /* minizip */;
+			target = F2FB3078DD5B4EAF95B4A19B /* minizipDuckstation */;
 			targetProxy = 3FB323E06352469ABA6BD211 /* PBXContainerItemProxy */;
 		};
 		F14119AF36AA46E6985172AE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA17DBD409614D8C9CC7724B /* lzma */;
+			target = BA17DBD409614D8C9CC7724B /* lzmaDuckstation */;
 			targetProxy = 46E0B0FA1C1341D49B6A48C5 /* PBXContainerItemProxy */;
 		};
 		F186AC80D1014D2782235DF2 /* PBXTargetDependency */ = {
@@ -5229,27 +5229,27 @@
 		};
 		F2BE671AF42D409485ED5BA4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E2A774B159364460AC24E39B /* cpuinfo */;
+			target = E2A774B159364460AC24E39B /* cpuinfoDuckstation */;
 			targetProxy = 8A16DA217EB647B9BE88ABA2 /* PBXContainerItemProxy */;
 		};
 		F5FBC5DF4B664F09A6853D0E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B621125D0D2245F880AC192B /* rcheevos */;
+			target = B621125D0D2245F880AC192B /* rcheevosDuckstation */;
 			targetProxy = E24D8C6EA2F0480798A55243 /* PBXContainerItemProxy */;
 		};
 		F6405F6C79314836AB4DD1B3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B1CB54C27877414EBDA67287 /* zlib */;
+			target = B1CB54C27877414EBDA67287 /* zlibDuckstation */;
 			targetProxy = DA73E441E3BF4A95BD9A69E8 /* PBXContainerItemProxy */;
 		};
 		F94DEE4DF8534BBB94BF8A06 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 244A17668611473AB19B5BF5 /* core */;
+			target = 244A17668611473AB19B5BF5 /* coreDuckstation */;
 			targetProxy = 69CBA38B01E149F29147B471 /* PBXContainerItemProxy */;
 		};
 		FC8B911750824EA2A3F9C9DA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BA12F9A6815346E7994B237F /* stb */;
+			target = BA12F9A6815346E7994B237F /* stbDuckstation */;
 			targetProxy = 8ECFAC6D6624402E8A3FB60F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -5293,7 +5293,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gtest;
+				PRODUCT_NAME = gtestDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -5366,7 +5366,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = core;
+				PRODUCT_NAME = coreDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -5465,7 +5465,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = core;
+				PRODUCT_NAME = coreDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -5513,7 +5513,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = glslangDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -5555,7 +5555,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = clog;
+				PRODUCT_NAME = clogDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -5599,7 +5599,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = stb;
+				PRODUCT_NAME = stbDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -5639,7 +5639,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = scmversion;
+				PRODUCT_NAME = scmversionDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -5683,7 +5683,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo;
+				PRODUCT_NAME = cpuinfoDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -5726,7 +5726,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = simpleini;
+				PRODUCT_NAME = simpleiniDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -5780,7 +5780,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = util;
+				PRODUCT_NAME = utilDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -5799,7 +5799,7 @@
 					arm64,
 					x86_64,
 				);
-				BUILD_DIR = ./lib;
+				BUILD_DIR = "$(SRCROOT)/../lib";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
@@ -5811,6 +5811,8 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/../lib/duckstation";
+				TARGET_BUILD_DIR = "$(SRCROOT)/../lib";
 			};
 			name = Debug;
 		};
@@ -5849,7 +5851,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = zstdDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -5894,7 +5896,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gtest;
+				PRODUCT_NAME = gtestDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -5938,7 +5940,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fmt;
+				PRODUCT_NAME = fmtDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6002,7 +6004,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zlib;
+				PRODUCT_NAME = zlibDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6066,7 +6068,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zlib;
+				PRODUCT_NAME = zlibDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6109,7 +6111,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = minizip;
+				PRODUCT_NAME = minizipDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6180,7 +6182,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "frontend-common";
+				PRODUCT_NAME = "frontend-commonDuckstation";
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -6248,7 +6250,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = xxhashDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6285,7 +6287,7 @@
 					arm64,
 					x86_64,
 				);
-				BUILD_DIR = ./lib;
+				BUILD_DIR = "$(SRCROOT)/../lib";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
@@ -6297,6 +6299,8 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/../lib/duckstation";
+				TARGET_BUILD_DIR = "$(SRCROOT)/../lib";
 			};
 			name = RelWithDebInfo;
 		};
@@ -6336,7 +6340,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = lzma;
+				PRODUCT_NAME = lzmaDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6379,7 +6383,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = rcheevos;
+				PRODUCT_NAME = rcheevosDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6450,7 +6454,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "frontend-common";
+				PRODUCT_NAME = "frontend-commonDuckstation";
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -6498,7 +6502,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo;
+				PRODUCT_NAME = cpuinfoDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6561,7 +6565,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = common;
+				PRODUCT_NAME = commonDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -6605,7 +6609,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = scmversion;
+				PRODUCT_NAME = scmversionDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6650,7 +6654,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = imgui;
+				PRODUCT_NAME = imguiDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6695,7 +6699,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gtest;
+				PRODUCT_NAME = gtestDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6738,7 +6742,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = lzma;
+				PRODUCT_NAME = lzmaDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6783,7 +6787,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = imgui;
+				PRODUCT_NAME = imguiDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6827,7 +6831,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = stb;
+				PRODUCT_NAME = stbDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6871,7 +6875,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo;
+				PRODUCT_NAME = cpuinfoDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6915,7 +6919,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = glslangDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -6957,7 +6961,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = xxhashDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7004,7 +7008,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = soundtouch;
+				PRODUCT_NAME = soundtouchDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7044,7 +7048,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glad;
+				PRODUCT_NAME = gladDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7086,7 +7090,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = clog;
+				PRODUCT_NAME = clogDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7140,7 +7144,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = util;
+				PRODUCT_NAME = utilDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -7187,7 +7191,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = simpleini;
+				PRODUCT_NAME = simpleiniDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7241,7 +7245,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = util;
+				PRODUCT_NAME = utilDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -7288,7 +7292,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = rcheevos;
+				PRODUCT_NAME = rcheevosDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7331,7 +7335,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = rcheevos;
+				PRODUCT_NAME = rcheevosDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7385,7 +7389,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = util;
+				PRODUCT_NAME = utilDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -7437,7 +7441,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = vixl;
+				PRODUCT_NAME = vixlDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7503,7 +7507,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = glslangDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7547,7 +7551,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fmt;
+				PRODUCT_NAME = fmtDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7610,7 +7614,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = common;
+				PRODUCT_NAME = commonDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -7680,7 +7684,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = libchdr;
+				PRODUCT_NAME = libchdrDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7723,7 +7727,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = simpleini;
+				PRODUCT_NAME = simpleiniDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7763,7 +7767,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glad;
+				PRODUCT_NAME = gladDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7811,7 +7815,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = vixl;
+				PRODUCT_NAME = vixlDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7877,7 +7881,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo_internals;
+				PRODUCT_NAME = cpuinfo_internalsDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7919,7 +7923,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zlib;
+				PRODUCT_NAME = zlibDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -7962,7 +7966,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = lzma;
+				PRODUCT_NAME = lzmaDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8025,7 +8029,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = common;
+				PRODUCT_NAME = commonDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -8074,7 +8078,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gtest_main;
+				PRODUCT_NAME = gtest_mainDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8119,7 +8123,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gtest_main;
+				PRODUCT_NAME = gtest_mainDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8163,7 +8167,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo_internals;
+				PRODUCT_NAME = cpuinfo_internalsDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8207,7 +8211,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = tinyxml2;
+				PRODUCT_NAME = tinyxml2Duckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8251,7 +8255,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo_internals;
+				PRODUCT_NAME = cpuinfo_internalsDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8291,7 +8295,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glad;
+				PRODUCT_NAME = gladDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8331,7 +8335,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = scmversion;
+				PRODUCT_NAME = scmversionDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8376,7 +8380,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = imgui;
+				PRODUCT_NAME = imguiDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8420,7 +8424,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glslang;
+				PRODUCT_NAME = glslangDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8464,7 +8468,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo;
+				PRODUCT_NAME = cpuinfoDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8509,7 +8513,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = imgui;
+				PRODUCT_NAME = imguiDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8554,7 +8558,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gtest;
+				PRODUCT_NAME = gtestDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8596,7 +8600,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = zstdDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8611,7 +8615,7 @@
 					arm64,
 					x86_64,
 				);
-				BUILD_DIR = ./lib;
+				BUILD_DIR = "$(SRCROOT)/../lib";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
@@ -8623,6 +8627,8 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/../lib/duckstation";
+				TARGET_BUILD_DIR = "$(SRCROOT)/../lib";
 			};
 			name = MinSizeRel;
 		};
@@ -8663,7 +8669,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fmt;
+				PRODUCT_NAME = fmtDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8707,7 +8713,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = libchdr;
+				PRODUCT_NAME = libchdrDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8749,7 +8755,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = clog;
+				PRODUCT_NAME = clogDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8793,7 +8799,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = cpuinfo_internals;
+				PRODUCT_NAME = cpuinfo_internalsDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8864,7 +8870,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "frontend-common";
+				PRODUCT_NAME = "frontend-commonDuckstation";
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -8913,7 +8919,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gtest_main;
+				PRODUCT_NAME = gtest_mainDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -8977,7 +8983,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = zstdDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9025,7 +9031,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = vixl;
+				PRODUCT_NAME = vixlDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9065,7 +9071,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = glad;
+				PRODUCT_NAME = gladDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9109,7 +9115,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fmt;
+				PRODUCT_NAME = fmtDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9149,7 +9155,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = scmversion;
+				PRODUCT_NAME = scmversionDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9193,7 +9199,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = libchdr;
+				PRODUCT_NAME = libchdrDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9236,7 +9242,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = rcheevos;
+				PRODUCT_NAME = rcheevosDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9280,7 +9286,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = tinyxml2;
+				PRODUCT_NAME = tinyxml2Duckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9324,7 +9330,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = tinyxml2;
+				PRODUCT_NAME = tinyxml2Duckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9367,7 +9373,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = minizip;
+				PRODUCT_NAME = minizipDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9431,7 +9437,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = xxhashDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9474,7 +9480,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = minizip;
+				PRODUCT_NAME = minizipDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9547,7 +9553,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = core;
+				PRODUCT_NAME = coreDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -9599,7 +9605,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = vixl;
+				PRODUCT_NAME = vixlDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9643,7 +9649,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = libchdr;
+				PRODUCT_NAME = libchdrDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9687,7 +9693,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = tinyxml2;
+				PRODUCT_NAME = tinyxml2Duckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9734,7 +9740,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = soundtouch;
+				PRODUCT_NAME = soundtouchDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9777,7 +9783,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = simpleini;
+				PRODUCT_NAME = simpleiniDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9843,7 +9849,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = stb;
+				PRODUCT_NAME = stbDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -9916,7 +9922,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = core;
+				PRODUCT_NAME = coreDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -9935,7 +9941,7 @@
 					arm64,
 					x86_64,
 				);
-				BUILD_DIR = ./lib;
+				BUILD_DIR = "$(SRCROOT)/../lib";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = XXXXXXXXXX;
@@ -9947,6 +9953,8 @@
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/../lib/duckstation";
+				TARGET_BUILD_DIR = "$(SRCROOT)/../lib";
 			};
 			name = Release;
 		};
@@ -9988,7 +9996,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = gtest_main;
+				PRODUCT_NAME = gtest_mainDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -10031,7 +10039,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = lzma;
+				PRODUCT_NAME = lzmaDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -10073,7 +10081,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = clog;
+				PRODUCT_NAME = clogDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -10120,7 +10128,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = soundtouch;
+				PRODUCT_NAME = soundtouchDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -10163,7 +10171,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = minizip;
+				PRODUCT_NAME = minizipDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -10232,7 +10240,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = soundtouch;
+				PRODUCT_NAME = soundtouchDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -10303,7 +10311,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = "frontend-common";
+				PRODUCT_NAME = "frontend-commonDuckstation";
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -10349,7 +10357,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
+				PRODUCT_NAME = zstdDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -10412,7 +10420,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = " ../cmake/build/glad.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/$(CURRENT_ARCH)/glad.o";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = common;
+				PRODUCT_NAME = commonDuckstation;
 				SECTORDER_FLAGS = "";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../duckstation/dep/gsl/include,
@@ -10458,7 +10466,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zlib;
+				PRODUCT_NAME = zlibDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -10502,7 +10510,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = stb;
+				PRODUCT_NAME = stbDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -10544,7 +10552,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = xxhash;
+				PRODUCT_NAME = xxhashDuckstation;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = "$(inherited)";
@@ -10554,7 +10562,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		02484B071E574CACA093EE31 /* Build configuration list for PBXNativeTarget "zstd" */ = {
+		02484B071E574CACA093EE31 /* Build configuration list for PBXNativeTarget "zstdDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B34D2E0EFEF541FAA82377F5 /* Debug */,
@@ -10565,7 +10573,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		0BBFE74DC59F489DAD2050A2 /* Build configuration list for PBXNativeTarget "simpleini" */ = {
+		0BBFE74DC59F489DAD2050A2 /* Build configuration list for PBXNativeTarget "simpleiniDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DD80F2B61972481D90CFB579 /* Debug */,
@@ -10576,7 +10584,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		144E36E9D21D4A818F049C10 /* Build configuration list for PBXNativeTarget "gtest" */ = {
+		144E36E9D21D4A818F049C10 /* Build configuration list for PBXNativeTarget "gtestDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				236E4E3630C24EA28111C244 /* Debug */,
@@ -10587,7 +10595,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		17290EE99A1742B3A33D1F90 /* Build configuration list for PBXNativeTarget "vixl" */ = {
+		17290EE99A1742B3A33D1F90 /* Build configuration list for PBXNativeTarget "vixlDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3B2BBF8EE78436381B7DE46 /* Debug */,
@@ -10609,7 +10617,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		216FBC6C6107438D9EE4EC6F /* Build configuration list for PBXNativeTarget "clog" */ = {
+		216FBC6C6107438D9EE4EC6F /* Build configuration list for PBXNativeTarget "clogDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A8774C42E89E43EBB2B21A82 /* Debug */,
@@ -10620,7 +10628,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		4A175C64B6C04F03A4E67B08 /* Build configuration list for PBXNativeTarget "xxhash" */ = {
+		4A175C64B6C04F03A4E67B08 /* Build configuration list for PBXNativeTarget "xxhashDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D5C5AC5B2025492C85602744 /* Debug */,
@@ -10631,7 +10639,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		4B099CCF609644C6A9D4388C /* Build configuration list for PBXNativeTarget "lzma" */ = {
+		4B099CCF609644C6A9D4388C /* Build configuration list for PBXNativeTarget "lzmaDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3CB2EDCE331C4372A2D7E9F3 /* Debug */,
@@ -10642,7 +10650,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		57D1C9319B3C438EA4F3899E /* Build configuration list for PBXNativeTarget "rcheevos" */ = {
+		57D1C9319B3C438EA4F3899E /* Build configuration list for PBXNativeTarget "rcheevosDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6119807E680D41A68D449DCA /* Debug */,
@@ -10653,7 +10661,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		5841EBE393D341A895BB4C51 /* Build configuration list for PBXNativeTarget "cpuinfo_internals" */ = {
+		5841EBE393D341A895BB4C51 /* Build configuration list for PBXNativeTarget "cpuinfo_internalsDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8E295E0479D742EDA951DB36 /* Debug */,
@@ -10664,7 +10672,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		64A8BCD7EC84475898770B29 /* Build configuration list for PBXNativeTarget "gtest_main" */ = {
+		64A8BCD7EC84475898770B29 /* Build configuration list for PBXNativeTarget "gtest_mainDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				886AFD5EA3214F8CA323E208 /* Debug */,
@@ -10675,7 +10683,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		67A69B76A4A54EA3BA4C11DD /* Build configuration list for PBXNativeTarget "frontend-common" */ = {
+		67A69B76A4A54EA3BA4C11DD /* Build configuration list for PBXNativeTarget "frontend-commonDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				390B3F2395FD468CADDC6D8D /* Debug */,
@@ -10686,7 +10694,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		6A585A35323540458D0AA96D /* Build configuration list for PBXNativeTarget "libchdr" */ = {
+		6A585A35323540458D0AA96D /* Build configuration list for PBXNativeTarget "libchdrDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A444A4F97B3A4EE1B163F6CB /* Debug */,
@@ -10697,7 +10705,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		776217C4328A4626889EAB79 /* Build configuration list for PBXNativeTarget "minizip" */ = {
+		776217C4328A4626889EAB79 /* Build configuration list for PBXNativeTarget "minizipDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				36DFABDFD143457F9EFD005F /* Debug */,
@@ -10719,7 +10727,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		812AB893EC584ECF88AD3A88 /* Build configuration list for PBXNativeTarget "cpuinfo" */ = {
+		812AB893EC584ECF88AD3A88 /* Build configuration list for PBXNativeTarget "cpuinfoDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				539E5065A6AD45BD917720A4 /* Debug */,
@@ -10741,7 +10749,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		96F25156229444CBB09670EA /* Build configuration list for PBXNativeTarget "scmversion" */ = {
+		96F25156229444CBB09670EA /* Build configuration list for PBXNativeTarget "scmversionDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C24884EAEC1F4675BD82B826 /* Debug */,
@@ -10752,7 +10760,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		9A9C36F77D6C4E3D8C67A57A /* Build configuration list for PBXNativeTarget "util" */ = {
+		9A9C36F77D6C4E3D8C67A57A /* Build configuration list for PBXNativeTarget "utilDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2107FA01E0B7440F8FD1ABC7 /* Debug */,
@@ -10774,7 +10782,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		A727C46D144E4782ABCA3EDE /* Build configuration list for PBXNativeTarget "imgui" */ = {
+		A727C46D144E4782ABCA3EDE /* Build configuration list for PBXNativeTarget "imguiDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9955EB9E82FD47E28AAA00C3 /* Debug */,
@@ -10785,7 +10793,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		ABEA7C1DADCA4392A8BB3F9D /* Build configuration list for PBXNativeTarget "glad" */ = {
+		ABEA7C1DADCA4392A8BB3F9D /* Build configuration list for PBXNativeTarget "gladDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B57186DF86BB41AD84809064 /* Debug */,
@@ -10796,7 +10804,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		AECE0C9170364D5193A227DC /* Build configuration list for PBXNativeTarget "zlib" */ = {
+		AECE0C9170364D5193A227DC /* Build configuration list for PBXNativeTarget "zlibDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				861546FABD0945048E9F3355 /* Debug */,
@@ -10807,7 +10815,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		CEE1E780E1D64FE28FED518E /* Build configuration list for PBXNativeTarget "soundtouch" */ = {
+		CEE1E780E1D64FE28FED518E /* Build configuration list for PBXNativeTarget "soundtouchDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DC23E88710874B468573B3C8 /* Debug */,
@@ -10818,7 +10826,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E5DDBAEFF2F840298DB0A322 /* Build configuration list for PBXNativeTarget "common" */ = {
+		E5DDBAEFF2F840298DB0A322 /* Build configuration list for PBXNativeTarget "commonDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				43C9AD1AFBD642049E270EC6 /* Debug */,
@@ -10829,7 +10837,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		EE2BBE083B354BBFA84CC9DA /* Build configuration list for PBXNativeTarget "fmt" */ = {
+		EE2BBE083B354BBFA84CC9DA /* Build configuration list for PBXNativeTarget "fmtDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A3B3D1E93F9B436392044B50 /* Debug */,
@@ -10840,7 +10848,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F0C44A7F76D44458A216AE27 /* Build configuration list for PBXNativeTarget "tinyxml2" */ = {
+		F0C44A7F76D44458A216AE27 /* Build configuration list for PBXNativeTarget "tinyxml2Duckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CA8FC3DEFA894B25B65819F7 /* Debug */,
@@ -10851,7 +10859,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F258F4D262E94234880244B0 /* Build configuration list for PBXNativeTarget "core" */ = {
+		F258F4D262E94234880244B0 /* Build configuration list for PBXNativeTarget "coreDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0A9D937C45F7460AA18816A9 /* Debug */,
@@ -10862,7 +10870,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F72EF289565945978CB21D0E /* Build configuration list for PBXNativeTarget "stb" */ = {
+		F72EF289565945978CB21D0E /* Build configuration list for PBXNativeTarget "stbDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5126E70AF8C547A78197BCA7 /* Debug */,
@@ -10873,7 +10881,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F9DCCAFBF0F143F4B237D6AA /* Build configuration list for PBXNativeTarget "glslang" */ = {
+		F9DCCAFBF0F143F4B237D6AA /* Build configuration list for PBXNativeTarget "glslangDuckstation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9A9CC92FF6624DD198FDFA07 /* Debug */,

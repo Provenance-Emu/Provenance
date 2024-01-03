@@ -58,6 +58,8 @@ extension QuickTableViewController: SliderCellDelegate {
     /// A `UITableViewCell` subclass that shows a `UISlider`. Not available on tvOS.
     @available(tvOS, unavailable, message: "SliderCell is not available on tvOS.")
     open class SliderCell: UITableViewCell, Configurable {
+        var row:  SliderRowCompatible?
+
         /// A `UISlider`.
         public private(set) lazy var slider: UISlider = {
             let control = UISlider()
@@ -100,6 +102,7 @@ extension QuickTableViewController: SliderCellDelegate {
         /// Set up the slider control with the provided row.
         open func configure(with row: Row & RowStyle) {
             if let row = row as? SliderRowCompatible {
+                self.row = row
                 slider.minimumValue = row.valueLimits.min
                 slider.maximumValue = row.valueLimits.max
 				#if !targetEnvironment(macCatalyst)
@@ -137,6 +140,7 @@ extension QuickTableViewController: SliderCellDelegate {
 
         @objc
         private func didChangeValue(_ sender: UISlider) {
+            self.row?.value = sender.value
             delegate?.sliderCell(self, didChangeValue: sender.value)
         }
     }

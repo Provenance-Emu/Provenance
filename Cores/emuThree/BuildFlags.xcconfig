@@ -1,0 +1,34 @@
+//  BuildFlags.xcconfig
+//  Created by Joseph Mattiello on 11/1/18.
+
+// All
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
+OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fpermissive -fsingle-precision-constant -DTARGET_NO_NIXPROF
+OTHER_LDFLAGS = $(inherited) -ObjC -DIPHONEOS
+
+// Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) 
+
+// Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = *
+INCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = PVDebug.c
+
+// tvOS Device
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvos*] = $(inherited) TARGET_IPHONE=1
+//EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*][arch=*] = *
+//INCLUDED_SOURCE_FILE_NAMES[sdk=appletvos*][arch=*] = PVDebug.c
+
+// tvOS Simulator
+GCC_PREPROCESSOR_DEFINITIONS[sdk=appletvsimulator*] = $(inherited) TARGET_IPHONE_SIMULATOR=1
+EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
+INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.c
+
+//Kept in same TARGET_BUILD_DIR as others
+//BUILD_DIR = $(SRCROOT)/lib
+OBJROOT = $(SRCROOT)/lib/emuthree
+SYMROOT = $(SRCROOT)/lib/emuthree
+PROJECT_TEMP_DIR = $(SRCROOT)/lib/emuthree/build/$(PROJECT_NAME).build
+CACHE_ROOT = $(SRCROOT)/lib/cache
+DERIVED_FILE_DIR = $(SRCROOT)/lib/emuthree/build/derived/$(PROJECT_NAME).build

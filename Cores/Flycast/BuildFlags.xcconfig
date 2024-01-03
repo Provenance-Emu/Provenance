@@ -16,7 +16,8 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) REICAST_VERSION=15.0 GLES=1 GLES3=1 
 // TARGET_ARM_MAC=1
 // NO_ASM=1
 
-OTHER_CFLAGS = -Xclang -fopenmp -fobjc-arc -fmodules -fno-strict-aliasing -Wall $(inherited) -fomit-frame-pointer
+OTHER_CFLAGS = $(inherited)
+//-Xclang -fopenmp -fobjc-arc -fmodules -fno-strict-aliasing -fomit-frame-pointer
 //-mno-thumb -mfpu=neon -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fno-operator-names -fsingle-precision-constant
 OTHER_LDFLAGS = $(inherited)
 // -ObjC -Wl,-all_load -all_load

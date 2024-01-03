@@ -39,6 +39,7 @@ final class PVDSControllerViewController: PVControllerViewController<PVDSSystemR
         }
 
         leftShoulderButton?.buttonTag = .l
+        leftShoulderButton2?.buttonTag = .rotate
         rightShoulderButton?.buttonTag = .r
         rightShoulderButton2?.buttonTag = .screenSwap
         startButton?.buttonTag = .start

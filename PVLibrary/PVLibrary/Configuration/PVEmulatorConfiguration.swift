@@ -54,6 +54,7 @@ public struct SystemDictionaryKeys {
 public enum SystemIdentifier: String, CaseIterable, Codable {
     case _3DO = "com.provenance.3DO"
     case _3DS = "com.provenance.3ds"
+    case AppleII = "com.provenance.appleII"
     case Atari2600 = "com.provenance.2600"
     case Atari5200 = "com.provenance.5200"
     case Atari7800 = "com.provenance.7800"
@@ -77,6 +78,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
     case Intellivision = "com.provenance.intellivision"
     case Lynx = "com.provenance.lynx"
     case Macintosh = "com.provenance.macintosh"
+    case MAME = "com.provenance.mame"
     case MasterSystem = "com.provenance.mastersystem"
     case MegaDuck = "com.provenance.megaduck"
     case MSX = "com.provenance.msx"
@@ -141,7 +143,6 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
 
     static public let unsupported: [SystemIdentifier] =
     [
-        .PS3
     ]
     // MARK: Assistance accessors for properties
 
@@ -383,7 +384,7 @@ public final class PVEmulatorConfiguration: NSObject {
         }
     }
 
-    public static let archiveExtensions: [String] = ["zip", "7z", "rar", "7zip", "gz", "gzip"]
+    public static let archiveExtensions: [String] = ["7z"]
     public static let artworkExtensions: [String] = ["png", "jpg", "jpeg"]
     public static let specialExtensions: [String] = ["cue", "m3u", "svs", "mcr", "plist", "ccd", "img", "iso", "sub", "bin"]
     public static let allKnownExtensions: [String] = {
@@ -415,6 +416,19 @@ public final class PVEmulatorConfiguration: NSObject {
     }
 
     public class func systems(forFileExtension fileExtension: String) -> [PVSystem]? {
+        return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
+            if system.supportedExtensions.contains(fileExtension.lowercased()) {
+                var newSystems: [PVSystem] = systems ?? [PVSystem]() // Create initial if doesn't exist
+                newSystems.append(system)
+                return newSystems
+            } else {
+                return systems
+            }
+        })
+    }
+    
+    public class func systemsFromCache(forFileExtension fileExtension: String) -> [PVSystem]? {
+        let systems = RomDatabase.sharedInstance.getSystemCache().values;
         return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
                 var newSystems: [PVSystem] = systems ?? [PVSystem]() // Create initial if doesn't exist
@@ -613,71 +627,77 @@ public extension PVEmulatorConfiguration {
     class func batterySavesPath(forGame game: PVGame) -> URL {
         return batterySavesPath(forROM: game.url)
     }
-
+    
     class func batterySavesPath(forROM romPath: URL) -> URL {
         let romName: String = romPath.deletingPathExtension().lastPathComponent
         let batterySavesDirectory = Paths.batterySavesPath.appendingPathComponent(romName, isDirectory: true)
-
+        
         do {
             try FileManager.default.createDirectory(at: Paths.batterySavesPath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             ELOG("Error creating save state directory: \(batterySavesDirectory.path) : \(error.localizedDescription)")
         }
-
+        
         return batterySavesDirectory
     }
-
+    
     class func saveStatePath(forGame game: PVGame) -> URL {
         return saveStatePath(forROM: game.url)
     }
-
+    
     class func saveStatePath(forROM romPath: URL) -> URL {
         let romName: String = romPath.deletingPathExtension().lastPathComponent
         let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
-
+        
         do {
             try FileManager.default.createDirectory(at: saveSavesPath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             ELOG("Error creating save state directory: \(saveSavesPath.path) : \(error.localizedDescription)")
         }
-
+        
         return saveSavesPath
     }
-
+    
     class func saveStatePath(forROMFilename romName: String) -> URL {
         let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
-
+        
         do {
             try FileManager.default.createDirectory(at: saveSavesPath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             ELOG("Error creating save state directory: \(saveSavesPath.path) : \(error.localizedDescription)")
         }
-
+        
         return saveSavesPath
     }
-
+    
     class func screenshotsPath(forGame game: PVGame) -> URL {
         let screenshotsPath = Paths.screenShotsPath.appendingPathComponent(game.system.shortName, isDirectory: true).appendingPathComponent(game.title, isDirectory: true)
-
+        
         do {
             try FileManager.default.createDirectory(at: screenshotsPath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             ELOG("Error creating screenshots directory: \(screenshotsPath.path) : \(error.localizedDescription)")
         }
-
+        
         return screenshotsPath
     }
-
+    
     class func path(forGame game: PVGame) -> URL {
-        return game.file.url
+        return documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(game.file.url.lastPathComponent)
     }
+    class func path(forGame game: PVGame, url:URL) -> URL {
+        return documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(url.lastPathComponent)
+    }
+
 }
 
 // MARK: m3u
 
 public extension PVEmulatorConfiguration {
     class func stripDiscNames(fromFilename filename: String) -> String {
-        return filename.replacingOccurrences(of: "\\ \\(Disc.*\\)", with: "", options: .regularExpression)
+        var altName = filename.replacingOccurrences(of: "(Disk|Disc|CD|Track|disc|track|cd|disk)[\\s]*[\\d]+", with: "", options: .regularExpression)
+        altName = altName.replacingOccurrences(of: "[\\s]*[\\(\\[][\\s]*[\\)\\]]", with: "", options: .regularExpression)
+        return altName
     }
 
     @objc
@@ -723,41 +743,66 @@ public extension PVEmulatorConfiguration {
         }
     }
 
-    class func sortImportURLs(urls: [URL]) -> [URL] {
-        let sortedPaths = urls.sorted { (obj1, obj2) -> Bool in
-
-            let obj1Filename = obj1.lastPathComponent
-            let obj2Filename = obj2.lastPathComponent
-
-            let obj1Extension = obj1.pathExtension.lowercased()
-            let obj2Extension = obj2.pathExtension.lowercased()
-
-            // Check m3u, put last
-            if obj1Extension == "m3u" && obj2Extension != "m3u" {
-                return obj1Filename > obj2Filename
-            } else if obj1Extension == "m3u" {
-                return false
-            } else if obj2Extension == "m3u" {
-                return true
-            } // Check cue/ccd
-            else if (obj1Extension == "cue" && obj2Extension != "cue") || (obj1Extension == "ccd" && obj2Extension != "ccd") {
+    class func cmpSpecialExt(obj1Extension: String, obj2Extension: String) -> Bool {
+        if obj1Extension == "m3u" && obj2Extension != "m3u" {
+            return obj1Extension > obj2Extension
+        } else if obj1Extension == "m3u" {
+            return false
+        } else if obj2Extension == "m3u" {
+            return true
+        }
+        if artworkExtensions.contains(obj1Extension) {
+            return false
+        } else if artworkExtensions.contains(obj2Extension) {
+            return true
+        }
+        return obj1Extension > obj2Extension
+    }
+    class func cmp(obj1: URL, obj2: URL) -> Bool {
+        let obj1Filename = obj1.lastPathComponent
+        let obj2Filename = obj2.lastPathComponent
+        let obj1Extension = obj1.pathExtension.lowercased()
+        let obj2Extension = obj2.pathExtension.lowercased()
+        let name1=PVEmulatorConfiguration.stripDiscNames(fromFilename: obj1Filename)
+        let name2=PVEmulatorConfiguration.stripDiscNames(fromFilename: obj2Filename)
+        if name1 == name2 {
+             // Standard sort
+            if obj1Extension == obj2Extension {
                 return obj1Filename < obj2Filename
-            } else if obj1Extension == "cue" || obj1Extension == "ccd" {
-                return true
-            } else if obj2Extension == "cue" || obj2Extension == "ccd" {
-                return false
-            } // Check if image, put last
-            else if artworkExtensions.contains(obj1Extension) {
-                return false
-            } else if artworkExtensions.contains(obj2Extension) {
-                return true
-            } // Standard sort
-            else {
-                return obj1Filename > obj2Filename
+            }
+            return obj1Extension > obj2Extension
+        } else {
+            return name1 < name2
+        }
+    }
+    class func sortImportURLs(urls: [URL]) -> [URL] {
+        var ext:[String:[URL]] = [:]
+        // separate array by file extension
+        urls.forEach({ (url) in
+            if var urls = ext[url.pathExtension.lowercased()] {
+                urls.append(url)
+                ext[url.pathExtension.lowercased()]=urls
+            } else {
+                ext[url.pathExtension.lowercased()]=[url]
+            }
+        })
+        // sort
+        var sorted: [URL] = []
+        ext.keys
+            .sorted(by: cmpSpecialExt)
+            .forEach {
+            if let values = ext[$0] {
+                let values = values.sorted { (obj1, obj2) -> Bool in
+                    return cmp(obj1: obj1, obj2: obj2)
+                }
+                sorted.append(contentsOf: values)
+                ext[$0] = values
             }
         }
-
-        return sortedPaths
+        sorted.forEach {
+            print("sorted ", $0.lastPathComponent)
+        }
+        return sorted
     }
 }
 

@@ -17,11 +17,12 @@ import UIKit
 
 final class PVApplication: UIApplication {
     var core: PVEmulatorCore?
+    var emulator: PVEmulatorViewController?
+    var isInBackground: Bool = false;
     override func sendEvent(_ event: UIEvent) {
-        if (core != nil) {
-            core!.send(event)
+        if let core=self.core {
+            core.send(event)
         }
-
         super.sendEvent(event)
     }
 }
@@ -128,6 +129,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
+
         _initLogging()
         _initAppCenter()
         setDefaultsFromSettingsBundle()
@@ -149,6 +151,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             try RomDatabase.initDefaultDatabase()
         } catch {
             let appName: String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
+            print("Error: Database Error\n")
             let alert = UIAlertController(title: NSLocalizedString("Database Error", comment: ""), message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
             ELOG(error.localizedDescription)
             alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
@@ -191,18 +194,12 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #endif
 
         // Handle refreshing library
-        NotificationCenter.default.rx.notification(.PVRefreshLibrary)
-            .flatMapLatest { _ in
-                // Clear the database, then the user has to restart to re-scan
-//                gameLibrary.clearLibrary()
-                gameLibrary.clearROMs()
-            }
-            .subscribe().disposed(by: disposeBag)
-
+        self.handleNotifications()
         _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
 
         let database = RomDatabase.sharedInstance
         database.refresh()
+        database.reloadCache()
 
         #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
         // SteamController is build with STEAMCONTROLLER_NO_PRIVATE_API, so dont call this! ??
@@ -223,13 +220,115 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func applicationWillResignActive(_: UIApplication) {}
+    func saveCoreState(_ application: PVApplication) {
+        if let core = application.core {
+            if core.isOn, let emulator = application.emulator {
+                if PVSettingsModel.shared.autoSave, core.supportsSaveStates {
+                    NSLog("PVAppDelegate: Saving Core State\n")
+                    emulator.autoSaveState { result in
+                        switch result {
+                            case .success:
+                                NSLog("PVAppDelegate: Save Successful")
+                                break
+                            case let .error(error):
+                                NSLog("PVAppDelegate: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    func pauseCore(_ application: PVApplication) {
+        if let core = application.core {
+            if core.isOn && core.isRunning {
+                NSLog("PVAppDelegate: Pausing Core\n")
+                core.setPauseEmulation(true)
+            }
+        }
+    }
 
-    func applicationDidEnterBackground(_: UIApplication) {}
+    func stopCore(_ application: PVApplication) {
+        if let core = application.core {
+            if core.isOn {
+                NSLog("PVAppDelegate: Stopping Core\n")
+                core.stopEmulation()
+            }
+        }
+    }
+
+    func applicationWillResignActive(_ application: UIApplication) {
+        if let app=application as? PVApplication {
+            app.isInBackground = true;
+
+            pauseCore(app)
+            sleep(1)
+            saveCoreState(app)
+        }
+    }
+
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        if let app=application as? PVApplication {
+            app.isInBackground = true;
+            pauseCore(app)
+        }
+    }
 
     func applicationWillEnterForeground(_: UIApplication) {}
 
-    func applicationDidBecomeActive(_: UIApplication) {}
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        if let app=application as? PVApplication {
+            app.isInBackground = false;
+        }
+    }
 
-    func applicationWillTerminate(_: UIApplication) {}
+    func applicationWillTerminate(_ application: UIApplication) {
+        if let app=application as? PVApplication {
+            stopCore(app)
+        }
+    }
+    func handleNotifications() {
+        NotificationCenter.default.rx.notification(.PVReimportLibrary)
+            .flatMapLatest { _ in
+                return Completable.create { observer in
+                    RomDatabase.sharedInstance.refresh()
+                    self.gameLibraryViewController?.checkROMs(false)
+
+                    observer(.completed)
+                    return Disposables.create()
+                }
+            }
+            .subscribe(onCompleted: {}).disposed(by: disposeBag)
+        NotificationCenter.default.rx.notification(.PVRefreshLibrary)
+            .flatMapLatest { _ in
+                return Completable.create { observer in
+                    do {
+                        try RomDatabase.sharedInstance.deleteAllGames()
+                        self.gameLibraryViewController?.checkROMs(false)
+                        observer(.completed)
+                    } catch {
+                        NSLog("Failed to refresh all objects. \(error.localizedDescription)")
+                        observer(.error(error))
+                    }
+                    return Disposables.create()
+                }
+            }
+            .subscribe(onCompleted: {}).disposed(by: disposeBag)
+        NotificationCenter.default.rx.notification(.PVResetLibrary)
+            .flatMapLatest { _ in
+                return Completable.create { observer in
+                    do {
+                        NSLog("PVAppDelegate: Completed ResetLibrary, Re-Importing")
+                        try RomDatabase.sharedInstance.deleteAllData()
+                        GameImporter.shared.initSystems()
+                        self.gameLibraryViewController?.checkROMs(false)
+                        observer(.completed)
+                    } catch {
+                        NSLog("Failed to delete all objects. \(error.localizedDescription)")
+                        observer(.error(error))
+                    }
+                    return Disposables.create()
+                }
+            }
+            .subscribe(onCompleted: {}).disposed(by: disposeBag)
+    }
 }

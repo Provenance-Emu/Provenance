@@ -15,3 +15,6 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = *
 INCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = PVDebug.c
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
 INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.c
+PROJECT_TEMP_DIR = $(SRCROOT)/lib/retroarch/build/$(PROJECT_NAME).build
+DERIVED_FILE_DIR = $(SRCROOT)/lib/retroarch/build/derived/$(PROJECT_NAME).build
+CACHE_ROOT = $(SRCROOT)/lib/cache

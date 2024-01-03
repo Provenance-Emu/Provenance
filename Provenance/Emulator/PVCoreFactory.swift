@@ -199,11 +199,25 @@ public final class PVCoreFactory: NSObject {
                 fatalError("Core doesn't implement PVPCFXSystemResponderClient")
             }
             break;
-        case .NeoGeo, .NGP, .NGPC:
+        case .NGP, .NGPC:
             if let core = core as? PVNeoGeoPocketSystemResponderClient {
                 return PVNeoGeoPocketControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
             } else if (!skipError) {
                 fatalError("Core doesn't implement PVNeoGeoPocketSystemResponderClient")
+            }
+            break;
+        case .NeoGeo:
+            if let core = core as? PVNeoGeoSystemResponderClient {
+                return PVNeoGeoControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else if (!skipError) {
+                fatalError("Core doesn't implement PVNeoGeoSystemResponderClient")
+            }
+            break;
+        case .MAME:
+            if let core = core as? PVMAMESystemResponderClient {
+                return PVMAMEControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else if (!skipError) {
+                fatalError("Core doesn't implement PVMAMESystemResponderClient")
             }
             break;
         case .Saturn:
@@ -290,6 +304,13 @@ public final class PVCoreFactory: NSObject {
                 fatalError("Core doesn't implement PVDSSystemResponderClient")
             }
             break;
+        case ._3DS:
+            if let core = core as? PV3DSSystemResponderClient {
+                return PV3DSControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
+            } else if (!skipError) {
+                fatalError("Core doesn't implement PV3DSSystemResponderClient")
+            }
+            break;
         case .DOS:
             if let core = core as? PVDOSSystemResponderClient {
                 return PVDOSControllerViewController(controlLayout: controllerLayout, system: system, responder: core)
@@ -329,6 +350,9 @@ public final class PVCoreFactory: NSObject {
                 assertionFailure("No known system named: \(system.name) id: \(system.identifier)")
             }
             break;
+        }
+        if let core = core as? PVRetroArchCoreResponderClient {
+            return PVRetroArchControllerViewController(controlLayout: [], system: system, responder: core)
         }
         return nil
     }
