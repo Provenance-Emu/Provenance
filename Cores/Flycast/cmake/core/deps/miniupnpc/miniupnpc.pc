@@ -1,0 +1,18 @@
+# this template is filled-in by CMake `configure_file(... @ONLY)`
+# the `` are filled in by CMake configure_file(), 
+# from variables set in your CMakeLists.txt or by CMake itself
+#
+# Good tutoral for understanding .pc files: 
+# https://people.freedesktop.org/~dbn/pkg-config-guide.html
+
+prefix="/usr/local"
+exec_prefix="${prefix}"
+libdir="${prefix}/lib"
+includedir="${prefix}/include"
+
+Name: miniupnpc
+Description: UPnP IGD client lightweight library
+URL: https://miniupnp.tuxfamily.org/
+Version: 2.2.5
+Libs: -L"${libdir}" -lminiupnpc
+Cflags: -I"${includedir}"

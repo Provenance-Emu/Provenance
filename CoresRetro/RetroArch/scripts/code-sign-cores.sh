@@ -19,13 +19,7 @@ if [ "${CODE_SIGNING_ALLOWED}" = "NO" ] ; then
 fi
 
 ITEMS=""
-
-if [ "$1" = "tvos" ]; then
-    CORES_DIR="${SRCROOT}/CoresRetro/RetroArch/modules/"
-else
-    CORES_DIR="${SRCROOT}/CoresRetro/RetroArch/modules/"
-fi
-
+CORES_DIR="${SRCROOT}/CoresRetro/RetroArch/modules/"
 echo "Cores dir: ${CORES_DIR}"
 if [ -d "$CORES_DIR" ] ; then
     CORES=$(find "${CORES_DIR}" -depth -type d -name "*.framework" -or -name "*.dylib" -or -name "*.bundle" | sed -e "s/\(.*framework\)/\1\/Versions\/A\//")

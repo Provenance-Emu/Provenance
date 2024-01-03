@@ -28,3 +28,5 @@ OTHER_CFLAGS[sdk=iphoneos*][arch=armv7] = $(inherited) -DVIXL_INCLUDE_TARGET_A32
 OTHER_CFLAGS[sdk=iphoneos*][arch=armv7s] = $(inherited) -DVIXL_INCLUDE_TARGET_A32
 OTHER_CFLAGS[sdk=iphoneos*][arch=armv6] = $(inherited) -DVIXL_INCLUDE_TARGET_A32
 OTHER_CFLAGS[sdk=iphoneos*][arch=arm64] = $(inherited) -DVIXL_INCLUDE_TARGET_A64
+PROJECT_TEMP_DIR = $(SRCROOT)/lib/duckstation/build/$(PROJECT_NAME).build
+DERIVED_FILE_DIR = $(SRCROOT)/lib/duckstation/build/derived/$(PROJECT_NAME).build

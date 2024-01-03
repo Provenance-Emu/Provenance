@@ -14,8 +14,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
     var systemsToken: NotificationToken?
 
     func generateViewModels() {
-        let realm = try! Realm()
-        let systems = realm.objects(PVSystem.self).sorted(byKeyPath: "name")
+        let systems = RomDatabase.sharedInstance.all(PVSystem.self).sorted(byKeyPath: "identifier")
         let systemsModels = systems.map { SystemOverviewViewModel(withSystem: $0) }
 
         tableContents = systemsModels.map { systemModel in
@@ -129,8 +128,7 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
             splitViewController?.title = "Systems"
         #endif
 
-        let realm = try! Realm()
-        systemsToken = realm.objects(PVSystem.self).observe { _ in
+        systemsToken = RomDatabase.sharedInstance.realm.objects(PVSystem.self).observe { _ in
             self.generateViewModels()
             self.tableView.reloadData()
         }

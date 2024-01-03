@@ -59,12 +59,15 @@ public struct PVGameLibrary {
 
     public func searchResults(for searchText: String) -> Results<PVGame> {
         // Search first by title, and a broader search if that one's empty
-        let titleResults = self.database.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText]))
-        let results = !titleResults.isEmpty ?
+        if searchText.count == 0 {
+            return self.database.all(PVGame.self).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+        } else {
+            let titleResults = self.database.all(PVGame.self, filter: NSPredicate(format: "title CONTAINS[c] %@", argumentArray: [searchText]))
+            let results = !titleResults.isEmpty ?
             titleResults :
             self.database.all(PVGame.self, filter: NSPredicate(format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@", argumentArray: [searchText, searchText, searchText, searchText, searchText]))
-
-        return results.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+            return results.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+        }
     }
 
     public func systems(sortedBy sortOptions: SortOptions) -> Observable<[System]> {
@@ -127,10 +130,10 @@ public struct PVGameLibrary {
     public func clearLibrary() -> Completable {
         Completable.create { observer in
             do {
-                try self.database.deleteAll()
+                try self.database.deleteAllData()
                 observer(.completed)
             } catch {
-                ELOG("Failed to delete all objects. \(error.localizedDescription)")
+                NSLog("Failed to delete all objects. \(error.localizedDescription)")
                 observer(.error(error))
             }
             return Disposables.create()
@@ -149,7 +152,18 @@ public struct PVGameLibrary {
             return Disposables.create()
         }
     }
-
+    public func refreshLibrary() -> Completable {
+        Completable.create { observer in
+            do {
+                try self.database.refresh()
+                observer(.completed)
+            } catch {
+                NSLog("Failed to refresh all objects. \(error.localizedDescription)")
+                observer(.error(error))
+            }
+            return Disposables.create()
+        }
+    }
     public func gamesForSystem(systemIdentifier: String) -> Results<PVGame> {
         return database.all(PVGame.self).filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [systemIdentifier]))
     }

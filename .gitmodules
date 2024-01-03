@@ -31,9 +31,6 @@
 [submodule "Cores/Dolphin/dolphin-ios"]
 	path = Cores/Dolphin/dolphin-ios
 	url = https://github.com/OatmealDome/dolphin.git
-[submodule "Cores/Play/Play-"]
-	path = Cores/Play/Play-
-	url = https://github.com/Provenance-Emu/Play-.git
 [submodule "Cores/DuckStation/duckstation"]
 	path = Cores/DuckStation/duckstation
 	url = https://github.com/stenzek/duckstation.git
@@ -175,3 +172,21 @@
 [submodule "Cores/PPSSPP/libretro_ppsspp"]
 	path = Cores/PPSSPP/libretro_ppsspp
 	url = https://github.com/hrydgard/ppsspp.git
+[submodule "Cores/Play/Play-"]
+	path = Cores/Play/Play-
+	url = https://github.com/jpd002/Play-.git
+[submodule "Cores/emuThree/emuthree"]
+	path = Cores/emuThree/emuthree
+	url = https://github.com/emuPlace/emuThreeDS.git
+[submodule "Cores/emuThree/cmake/zstd"]
+	path = Cores/emuThree/cmake/zstd
+	url = https://github.com/facebook/zstd.git
+[submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/UnrarKit"]
+	path = CoresRetro/RetroArch/PVRetroArchCore/Archive/UnrarKit
+	url = https://github.com/abbeycode/UnrarKit.git
+[submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/lhasa"]
+	path = CoresRetro/RetroArch/PVRetroArchCore/Archive/lhasa
+	url = https://github.com/fragglet/lhasa.git
+[submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/ZipArchive"]
+	path = CoresRetro/RetroArch/PVRetroArchCore/Archive/ZipArchive
+	url = https://github.com/ZipArchive/ZipArchive.git

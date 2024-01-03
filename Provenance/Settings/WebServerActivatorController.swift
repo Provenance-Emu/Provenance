@@ -12,7 +12,7 @@ import Reachability
 import UIKit
 
 protocol WebServerActivatorController: AnyObject {
-    func showServerActiveAlert()
+    func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?)
 }
 
 #if os(iOS)
@@ -35,8 +35,12 @@ protocol WebServerActivatorController: AnyObject {
             return message
         }
 
-        func showServerActiveAlert() {
+        func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?) {
             let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
+            alert.popoverPresentationController?.barButtonItem = barButtonItem
+            alert.popoverPresentationController?.sourceView = sender
+            alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
+            alert.preferredContentSize = CGSize(width: 300, height: 150)            
             alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
                 PVWebServer.shared.stopServers()
             }))
@@ -89,7 +93,7 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
         return message
     }
 
-    func showServerActiveAlert() {
+    func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?) {
         // Start Webserver
         // Check to see if we are connected to WiFi. Cannot continue otherwise.
         let reachability = try! Reachability()
@@ -105,6 +109,12 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
             // start web transfer service
             if PVWebServer.shared.startServers() {
                 let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
+                alert.preferredContentSize = CGSize(width: 300, height: 150)
+#if !os(tvOS)
+                alert.popoverPresentationController?.barButtonItem = barButtonItem
+                alert.popoverPresentationController?.sourceView = sender
+                alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
+#endif
                 alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
                     PVWebServer.shared.stopServers()
                 }))
@@ -121,12 +131,24 @@ extension WebServerActivatorController where Self: WebServerActivatorControllerR
             } else {
                 // Display error
                 let alert = UIAlertController(title: "Unable to start web server!", message: "Check your network connection or settings and free up ports: 80, 81.", preferredStyle: .alert)
+                alert.preferredContentSize = CGSize(width: 300, height: 150)
+#if !os(tvOS)
+                alert.popoverPresentationController?.barButtonItem = barButtonItem
+                alert.popoverPresentationController?.sourceView = sender
+                alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
+#endif
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                 }))
                 present(alert, animated: true) { () -> Void in }
             }
         } else {
             let alert = UIAlertController(title: "Unable to start web server!", message: "Your device needs to be connected to a WiFi network to continue!", preferredStyle: .alert)
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            alert.popoverPresentationController?.barButtonItem = barButtonItem
+#if !os(tvOS)
+            alert.popoverPresentationController?.sourceView = sender
+            alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
+#endif
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) { () -> Void in }

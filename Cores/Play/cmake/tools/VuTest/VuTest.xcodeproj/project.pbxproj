@@ -7,45 +7,9 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		0C166A68102548AEB1781C34 /* install */ = {
+		8BCD176C8FFF461D905EA9CD /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = A25A71E1EF2B4163A55261C3 /* Build configuration list for PBXAggregateTarget "install" */;
-			buildPhases = (
-				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
-			);
-			dependencies = (
-				3B7FEE1A9B3F40C4B08F8094 /* PBXTargetDependency */,
-			);
-			name = install;
-			productName = install;
-		};
-		813B9411ED6148CBBF6FDF45 /* ALL_BUILD */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = EC34ACA34E4F48A7AA42F406 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
-			buildPhases = (
-				3012FD34A152F9081F9CCA41 /* Generate CMakeFiles/ALL_BUILD */,
-			);
-			dependencies = (
-				8C135BAA4F954BA791B5CDAD /* PBXTargetDependency */,
-				87941B51E28244F291729258 /* PBXTargetDependency */,
-			);
-			name = ALL_BUILD;
-			productName = ALL_BUILD;
-		};
-		81A7140D8C2040F2ACDF825B /* ZERO_CHECK */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = D1414B1C28544C1E9A0F87B7 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
-			buildPhases = (
-				B2AB6962F8E930525E846576 /* Generate CMakeFiles/ZERO_CHECK */,
-			);
-			dependencies = (
-			);
-			name = ZERO_CHECK;
-			productName = ZERO_CHECK;
-		};
-		B7CC82741C444EE0A7828070 /* RUN_TESTS */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 3DD1C03B1D0541C5A5F914DE /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 6C836EF6AEEC4BEC879F6228 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -54,183 +18,223 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
-		D771A2D4BE7846D7BB9D5A72 /* package */ = {
+		A3F400094DE749EEB922DD52 /* package */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 75DC8775F1FB4369A1724C31 /* Build configuration list for PBXAggregateTarget "package" */;
+			buildConfigurationList = 7F047D17E008432BAAEA8792 /* Build configuration list for PBXAggregateTarget "package" */;
 			buildPhases = (
 				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				4C4A3845175A44AA8D04A741 /* PBXTargetDependency */,
+				3628EC0D10B246078622C8A5 /* PBXTargetDependency */,
 			);
 			name = package;
 			productName = package;
 		};
+		DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 8A9B918E589242CDA861AA9E /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				614EAFE5856D7B35C8822764 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		F79EE59899544A67B12CB8F2 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = EA4D298550CC4014946BBAB4 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				C3B8AA698C84B6A1D8F0FB70 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				D15B3769228E46F388574063 /* PBXTargetDependency */,
+				8D3C77E04F5147868E8D1F5B /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		FC9CD7A99A534051BEB8AC72 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 34F867E0DEF341B6BCFB9ADD /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				994CDFE44A194E5AA264D800 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		08750454ED3A413DB24B04A6 /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */ = {isa = PBXBuildFile; fileRef = 267F7EF7661744598356D39B /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */; };
-		10609BDD94AA4C2BAFADBA53 /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */ = {isa = PBXBuildFile; fileRef = 071CEC07D35944E0B366F813 /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */; };
-		17F4306523C5418D8297D74F /* ../Play-/tools/VuTest/FlagsTest2.h */ = {isa = PBXBuildFile; fileRef = A3FC67824C16489C9EBBA8C2 /* ../Play-/tools/VuTest/FlagsTest2.h */; };
-		1B5BD42B73A44F3AA58E057E /* ../Play-/tools/VuTest/StallTest6.cpp */ = {isa = PBXBuildFile; fileRef = F59C4DA784E14A3FA63A31D8 /* ../Play-/tools/VuTest/StallTest6.cpp */; };
-		1BC714A58DF947F29EAC1380 /* ../Play-/tools/VuTest/FlagsTest2.cpp */ = {isa = PBXBuildFile; fileRef = 845F6D5D4481418BAF807E21 /* ../Play-/tools/VuTest/FlagsTest2.cpp */; };
-		226C257C39E0412EA3404146 /* ../Play-/tools/VuTest/AddTest.h */ = {isa = PBXBuildFile; fileRef = FF9B0FF739764107888F00D0 /* ../Play-/tools/VuTest/AddTest.h */; };
-		2571F5CAE8B84386AB298849 /* ../Play-/tools/VuTest/StallTest4.cpp */ = {isa = PBXBuildFile; fileRef = 537FBD542B344555965EFB69 /* ../Play-/tools/VuTest/StallTest4.cpp */; };
-		34C55E4DFDBF4B6FA213BFD2 /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 2FD2769AC21B4EAEAE041D1B /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */; };
-		4347B2600E9A4F83A8E21116 /* ../Play-/tools/VuTest/StallTest2.h */ = {isa = PBXBuildFile; fileRef = 244C8236ECD14DA29C224F67 /* ../Play-/tools/VuTest/StallTest2.h */; };
-		44A7E6C95156481691217BAF /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */ = {isa = PBXBuildFile; fileRef = DE8004768CA44559B66D74F8 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */; };
-		49808EB40BE041D5BF9DFEB5 /* ../Play-/tools/VuTest/StallTest3.h */ = {isa = PBXBuildFile; fileRef = 8AFA8A48D58B4FF5B360F9B2 /* ../Play-/tools/VuTest/StallTest3.h */; };
-		514E2DE3103046AD9690458B /* ../Play-/tools/VuTest/VuAssembler.h */ = {isa = PBXBuildFile; fileRef = 723B298C9E574C5183E36E91 /* ../Play-/tools/VuTest/VuAssembler.h */; };
-		5905AC8960B34CE786AC9F8F /* ../Play-/tools/VuTest/IntBranchDelayTest.h */ = {isa = PBXBuildFile; fileRef = ABADD879FE26416C8C6D0715 /* ../Play-/tools/VuTest/IntBranchDelayTest.h */; };
-		5D9B2728B9664976BA11CA34 /* ../Play-/tools/VuTest/VuAssembler.cpp */ = {isa = PBXBuildFile; fileRef = FA396B1077674C049B05B0BA /* ../Play-/tools/VuTest/VuAssembler.cpp */; };
-		5E39EDAEE76041D8A06A2EB0 /* ../Play-/tools/VuTest/MinMaxTest.h */ = {isa = PBXBuildFile; fileRef = 7EFBFEEB5668439EA5D18725 /* ../Play-/tools/VuTest/MinMaxTest.h */; };
-		628B4E9D639D442C9328A34B /* ../Play-/tools/VuTest/BranchTest.cpp */ = {isa = PBXBuildFile; fileRef = 21B63F2714CC4BF4845954D0 /* ../Play-/tools/VuTest/BranchTest.cpp */; };
-		640EE478BF4D464D97E4E319 /* ../Play-/tools/VuTest/StallTest6.h */ = {isa = PBXBuildFile; fileRef = A91EC985D24B4E469AB80B0A /* ../Play-/tools/VuTest/StallTest6.h */; };
-		6BD3CC244F054ED29F80B177 /* ../Play-/tools/VuTest/TestVm.cpp */ = {isa = PBXBuildFile; fileRef = 4D6A2E3B12C84BF2B7EE3905 /* ../Play-/tools/VuTest/TestVm.cpp */; };
-		6E44145116E94A17A62EA050 /* ../Play-/tools/VuTest/FlagsTest4.cpp */ = {isa = PBXBuildFile; fileRef = 2A5A70B6363C40E6813A9DE0 /* ../Play-/tools/VuTest/FlagsTest4.cpp */; };
-		726DE638CFBF4FB4B500FC0F /* ../Play-/tools/VuTest/FlagsTest3.h */ = {isa = PBXBuildFile; fileRef = 9B5ED9F4044B47B9B0E24A5F /* ../Play-/tools/VuTest/FlagsTest3.h */; };
-		76499B2A67EB4C1DA812E2FD /* ../Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = F6AF6CE842D94032A5BD2A03 /* ../Play-/tools/VuTest/CMakeLists.txt */; };
-		77977C6390784827AC6E0DDA /* ../Play-/tools/VuTest/AddTest.cpp */ = {isa = PBXBuildFile; fileRef = C80EF7560A7442D7AF56BF3A /* ../Play-/tools/VuTest/AddTest.cpp */; };
-		7F572F02F16E4B14A071A1F4 /* ../Play-/tools/VuTest/Main.cpp */ = {isa = PBXBuildFile; fileRef = 7700312652C1458993632214 /* ../Play-/tools/VuTest/Main.cpp */; };
-		83F0882FCE6F4581A8A5F7FF /* ../Play-/tools/VuTest/MinMaxTest.cpp */ = {isa = PBXBuildFile; fileRef = 50CEF1F4E0AD455F8A7322D9 /* ../Play-/tools/VuTest/MinMaxTest.cpp */; };
-		919E7FE954F146EFA3A52342 /* ../Play-/tools/VuTest/StallTest4.h */ = {isa = PBXBuildFile; fileRef = 7FC6DB153FDF489FA79C37C5 /* ../Play-/tools/VuTest/StallTest4.h */; };
-		95B9DEE234FE42C6A2D77659 /* ../Play-/tools/VuTest/TriAceTest.cpp */ = {isa = PBXBuildFile; fileRef = AB7F83EA2A904B7D9C17EF04 /* ../Play-/tools/VuTest/TriAceTest.cpp */; };
-		9A5746EC2FD1408FA6001469 /* ../Play-/tools/VuTest/FlagsTest3.cpp */ = {isa = PBXBuildFile; fileRef = A4F3E2B4C0F14E158DCB1827 /* ../Play-/tools/VuTest/FlagsTest3.cpp */; };
-		A23D5DE0BF644FB4983DDC81 /* ../Play-/tools/VuTest/StallTest.cpp */ = {isa = PBXBuildFile; fileRef = 6E0AE9A6DE2E4BCABE2849E3 /* ../Play-/tools/VuTest/StallTest.cpp */; };
-		A67D4EFB9260445EBB5864D0 /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */ = {isa = PBXBuildFile; fileRef = E312E50E760647C5B6192CAC /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */; };
-		B336BBFAF063468CB92C06ED /* ../Play-/tools/VuTest/StallTest3.cpp */ = {isa = PBXBuildFile; fileRef = A16FA96EB775435EA51AD2AC /* ../Play-/tools/VuTest/StallTest3.cpp */; };
-		B4392722E7954364AC073AFA /* ../Play-/tools/VuTest/TestVm.h */ = {isa = PBXBuildFile; fileRef = CF253FE0445F4713AE69E31F /* ../Play-/tools/VuTest/TestVm.h */; };
-		B6315FAEFE0C4D59B8BB368D /* ../Play-/tools/VuTest/BranchTest.h */ = {isa = PBXBuildFile; fileRef = 142EF9693E564373B9E877AC /* ../Play-/tools/VuTest/BranchTest.h */; };
-		C81B33A5A84D4B6BB7E69887 /* ../Play-/tools/VuTest/TriAceTest.h */ = {isa = PBXBuildFile; fileRef = C68EADB23BE347068F3BE341 /* ../Play-/tools/VuTest/TriAceTest.h */; };
-		C8DCBB199B2C4B7799B2C27D /* ../Play-/tools/VuTest/FlagsTest.cpp */ = {isa = PBXBuildFile; fileRef = D378A992465A434792B2D587 /* ../Play-/tools/VuTest/FlagsTest.cpp */; };
-		E04141434EDA450CB8E16F1D /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */ = {isa = PBXBuildFile; fileRef = 417A7601282048F4B593AA51 /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */; };
-		E13A094EAC514EE4848E73F4 /* ../Play-/tools/VuTest/Test.h */ = {isa = PBXBuildFile; fileRef = 06D3AA95BFF743D7A3991AD3 /* ../Play-/tools/VuTest/Test.h */; };
-		E15B3A08BB2040078C02EC21 /* ../Play-/tools/VuTest/StallTest5.h */ = {isa = PBXBuildFile; fileRef = CB01964D3A924C49976A87BC /* ../Play-/tools/VuTest/StallTest5.h */; };
-		E1A51F8D431D4E9D90525D34 /* ../Play-/tools/VuTest/StallTest2.cpp */ = {isa = PBXBuildFile; fileRef = 40AF18918A7B46C487F5D9EC /* ../Play-/tools/VuTest/StallTest2.cpp */; };
-		E27740DF65A54ABEA62FDA0E /* ../Play-/tools/VuTest/FlagsTest4.h */ = {isa = PBXBuildFile; fileRef = 692507D669A34E3D858DE4B3 /* ../Play-/tools/VuTest/FlagsTest4.h */; };
-		F305B08C2B9D4BA58346013E /* ../Play-/tools/VuTest/StallTest5.cpp */ = {isa = PBXBuildFile; fileRef = 44345161995D41648E7E08FE /* ../Play-/tools/VuTest/StallTest5.cpp */; };
-		F63FB4D61C5F476388145E3F /* ../Play-/tools/VuTest/FlagsTest.h */ = {isa = PBXBuildFile; fileRef = 15BB1CB7DFE14EC8B2A69D69 /* ../Play-/tools/VuTest/FlagsTest.h */; };
-		FC41D3ADB2D24DFA96C69D29 /* ../Play-/tools/VuTest/StallTest.h */ = {isa = PBXBuildFile; fileRef = 3380D3203B3F4F04B5B9DE28 /* ../Play-/tools/VuTest/StallTest.h */; };
+		016AA0FFBBB34A96B8C561CA /* ../Play-/tools/VuTest/FlagsTest.cpp */ = {isa = PBXBuildFile; fileRef = 920AE28B92E749B38A55770A /* ../Play-/tools/VuTest/FlagsTest.cpp */; };
+		0402A59609CD458686BA0D30 /* ../Play-/tools/VuTest/FlagsTest3.h */ = {isa = PBXBuildFile; fileRef = E1652E14EDF3443DB481ACC5 /* ../Play-/tools/VuTest/FlagsTest3.h */; };
+		07AF8AC93AB24B94B5DC63B8 /* ../Play-/tools/VuTest/TriAceTest.cpp */ = {isa = PBXBuildFile; fileRef = CCBA5DD7BA874565B4B1C856 /* ../Play-/tools/VuTest/TriAceTest.cpp */; };
+		14C1FFBA2BB54A6AB32B8BDA /* ../Play-/tools/VuTest/StallTest3.cpp */ = {isa = PBXBuildFile; fileRef = 7CA1166FBE0044B9A577DBE6 /* ../Play-/tools/VuTest/StallTest3.cpp */; };
+		1C38D40BA174405482DA057B /* ../Play-/tools/VuTest/BranchTest.cpp */ = {isa = PBXBuildFile; fileRef = A418B3894C4C4DB5BB7C30DE /* ../Play-/tools/VuTest/BranchTest.cpp */; };
+		1C74813EB898461C93CFE2B4 /* ../Play-/tools/VuTest/FlagsTest.h */ = {isa = PBXBuildFile; fileRef = 89E3A604921342FF949D6E89 /* ../Play-/tools/VuTest/FlagsTest.h */; };
+		2472B5FF07FB4FB0A5EC4E14 /* ../Play-/tools/VuTest/StallTest6.cpp */ = {isa = PBXBuildFile; fileRef = C3AA07BF814841D3895ADEF2 /* ../Play-/tools/VuTest/StallTest6.cpp */; };
+		24D9185744014A81A25BAF31 /* ../Play-/tools/VuTest/StallTest5.cpp */ = {isa = PBXBuildFile; fileRef = FAC7B7BAF84F48698562310C /* ../Play-/tools/VuTest/StallTest5.cpp */; };
+		2CD7FDF833394C4693EBADE6 /* ../Play-/tools/VuTest/StallTest6.h */ = {isa = PBXBuildFile; fileRef = B74AD08B054140198BE36B46 /* ../Play-/tools/VuTest/StallTest6.h */; };
+		3785B765230F4111968D410A /* ../Play-/tools/VuTest/Test.h */ = {isa = PBXBuildFile; fileRef = B65C92F717FF4EC79CC131AB /* ../Play-/tools/VuTest/Test.h */; };
+		4B274F97062F4E93BD6BDFB1 /* ../Play-/tools/VuTest/AddTest.h */ = {isa = PBXBuildFile; fileRef = E20E8B0B37E34DDB8F029509 /* ../Play-/tools/VuTest/AddTest.h */; };
+		4C985BBF23AF497C81342F70 /* ../Play-/tools/VuTest/Main.cpp */ = {isa = PBXBuildFile; fileRef = C869E1EC613B4934A4138C7E /* ../Play-/tools/VuTest/Main.cpp */; };
+		56DEE26E8C7C47AFA3E648DC /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */ = {isa = PBXBuildFile; fileRef = 0F09A4E195184B8C9C266B08 /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */; };
+		5E23863F5ACD4988A7326523 /* ../Play-/tools/VuTest/FlagsTest4.h */ = {isa = PBXBuildFile; fileRef = 157A435C4B354FF7974873AD /* ../Play-/tools/VuTest/FlagsTest4.h */; };
+		61AFB430FBA7451CB91786E6 /* ../Play-/tools/VuTest/MinMaxTest.h */ = {isa = PBXBuildFile; fileRef = 44088AB4FF95496F8735A743 /* ../Play-/tools/VuTest/MinMaxTest.h */; };
+		63B2D0324E9C4135B1DEEE3B /* ../Play-/tools/VuTest/StallTest.h */ = {isa = PBXBuildFile; fileRef = B0F93A9F1634437998B4D5E2 /* ../Play-/tools/VuTest/StallTest.h */; };
+		6C05A593CDB240C4ACB730D1 /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 0057AB88D6F14E46B4C771DA /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */; };
+		6E479BA7AC3F4A1DB611FCC9 /* ../Play-/tools/VuTest/FdivEfuMixTest.h */ = {isa = PBXBuildFile; fileRef = 4E8C17C4987C464CBC59DD6E /* ../Play-/tools/VuTest/FdivEfuMixTest.h */; };
+		7216BC899B014D7E9333E575 /* ../Play-/tools/VuTest/BranchTest.h */ = {isa = PBXBuildFile; fileRef = 993407627CB54D92801D3F52 /* ../Play-/tools/VuTest/BranchTest.h */; };
+		782B25FB4D3549B9B5A6CC54 /* ../Play-/tools/VuTest/StallTest4.h */ = {isa = PBXBuildFile; fileRef = 7DC6247E0D9D40BDB9B1D60F /* ../Play-/tools/VuTest/StallTest4.h */; };
+		7A44F24F01D645A0AE2C11E0 /* ../Play-/tools/VuTest/MinMaxTest.cpp */ = {isa = PBXBuildFile; fileRef = 90B1F92B51C14F2C826D40B3 /* ../Play-/tools/VuTest/MinMaxTest.cpp */; };
+		82F243310BC547E1AE712BDC /* ../Play-/tools/VuTest/TestVm.cpp */ = {isa = PBXBuildFile; fileRef = 94C1C1B13986411DA69A1A79 /* ../Play-/tools/VuTest/TestVm.cpp */; };
+		887551F961EF4038AA631BDB /* ../Play-/tools/VuTest/StallTest4.cpp */ = {isa = PBXBuildFile; fileRef = 56769E927C3846928AB5B6AD /* ../Play-/tools/VuTest/StallTest4.cpp */; };
+		8C284A8A9CBC45498A6B84EC /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */ = {isa = PBXBuildFile; fileRef = 36426A816B4A4698AFDF8174 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */; };
+		8E33E25770A749BEA8FF8777 /* ../Play-/tools/VuTest/AddTest.cpp */ = {isa = PBXBuildFile; fileRef = 944DAB1570B844338E743D4B /* ../Play-/tools/VuTest/AddTest.cpp */; };
+		8E4D0090E4164B26AD51FA7D /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */ = {isa = PBXBuildFile; fileRef = 2ECC8C2601474E23807972E9 /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */; };
+		8FC4CBBF3627406A84823E54 /* ../Play-/tools/VuTest/TestVm.h */ = {isa = PBXBuildFile; fileRef = 3EE117AF94714A7EA0AC9056 /* ../Play-/tools/VuTest/TestVm.h */; };
+		95682CDA0FC24617B9812C7B /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */ = {isa = PBXBuildFile; fileRef = D0D48C449FB440A0B1A2790A /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */; };
+		9ED25A9F411946C6AC51428D /* ../Play-/tools/VuTest/StallTest3.h */ = {isa = PBXBuildFile; fileRef = 73F121C34C084FC9BDB2908D /* ../Play-/tools/VuTest/StallTest3.h */; };
+		9FAE3B23CE73498CAA139692 /* ../Play-/tools/VuTest/TriAceTest.h */ = {isa = PBXBuildFile; fileRef = 03DA85595A56426FAB7642A2 /* ../Play-/tools/VuTest/TriAceTest.h */; };
+		A66A6CEE45FA43F58FA032A1 /* ../Play-/tools/VuTest/IntBranchDelayTest.h */ = {isa = PBXBuildFile; fileRef = E2D823B5E0BD4A34A28C6D15 /* ../Play-/tools/VuTest/IntBranchDelayTest.h */; };
+		AE68893A3FEE4ACAB06648A1 /* ../Play-/tools/VuTest/FlagsTest2.cpp */ = {isa = PBXBuildFile; fileRef = 866A20B9389D474D86BBADAE /* ../Play-/tools/VuTest/FlagsTest2.cpp */; };
+		B393CA3E41C34A80BB8A37E4 /* ../Play-/tools/VuTest/FlagsTest3.cpp */ = {isa = PBXBuildFile; fileRef = 14FB54DF3C5D4BC4AA6A06A9 /* ../Play-/tools/VuTest/FlagsTest3.cpp */; };
+		B3AF5A2BEAD3434EB6E30BE6 /* ../Play-/tools/VuTest/FdivEfuMixTest.cpp */ = {isa = PBXBuildFile; fileRef = F6BBA4AAF06840B4822721C6 /* ../Play-/tools/VuTest/FdivEfuMixTest.cpp */; };
+		B7669C6DCE594220878CCB99 /* ../Play-/tools/VuTest/VuAssembler.cpp */ = {isa = PBXBuildFile; fileRef = D073A3FA04DB422FB6ACD571 /* ../Play-/tools/VuTest/VuAssembler.cpp */; };
+		C2BD4019D3494A3FA9EE9B70 /* ../Play-/tools/VuTest/FlagsTest2.h */ = {isa = PBXBuildFile; fileRef = 662F8B6DF5954DD29BD56D9F /* ../Play-/tools/VuTest/FlagsTest2.h */; };
+		C2F2860023B14B67BB7BDECF /* ../Play-/tools/VuTest/StallTest.cpp */ = {isa = PBXBuildFile; fileRef = 83452CF6F1B940608164F370 /* ../Play-/tools/VuTest/StallTest.cpp */; };
+		C83575456CB74CD5AC0B5F9A /* ../Play-/tools/VuTest/StallTest2.h */ = {isa = PBXBuildFile; fileRef = 3BBF4B23040649ECBF39ECA9 /* ../Play-/tools/VuTest/StallTest2.h */; };
+		CAE269B55B4C447191395042 /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */ = {isa = PBXBuildFile; fileRef = 9FC9FEDEE69F44B08886249B /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */; };
+		D4C89F7C01B546FFB425BB8B /* ../Play-/tools/VuTest/StallTest5.h */ = {isa = PBXBuildFile; fileRef = BC4B811FF6D247239C5F7FFD /* ../Play-/tools/VuTest/StallTest5.h */; };
+		DFEC5910F0104B7EA1BFB7E3 /* ../Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = E61D3B6D7E9F479D9B9529B2 /* ../Play-/tools/VuTest/CMakeLists.txt */; };
+		E0BBEE0EC8374E55B3C6CB31 /* ../Play-/tools/VuTest/StallTest2.cpp */ = {isa = PBXBuildFile; fileRef = F6472DA33F6C4F2CA8CCB4AB /* ../Play-/tools/VuTest/StallTest2.cpp */; };
+		EAABD355AB3043AB99FDFBF0 /* ../Play-/tools/VuTest/FlagsTest4.cpp */ = {isa = PBXBuildFile; fileRef = 349ECDB92B0A4DBB80355225 /* ../Play-/tools/VuTest/FlagsTest4.cpp */; };
+		FB45496EF01C4D55A3E6CF0C /* ../Play-/tools/VuTest/VuAssembler.h */ = {isa = PBXBuildFile; fileRef = 5CF2AE1673FB404E82BCD7DC /* ../Play-/tools/VuTest/VuAssembler.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		0EF21127B67C4BC6AFD9722E /* MinSizeRel */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = MinSizeRel;
-		};
-		183BAA8A9F0B40468276CB3E /* RelWithDebInfo */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = RelWithDebInfo;
-		};
-		4D9D0B6BCE0E4AB78335E868 /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		67683D75B14F42D0A9038393 /* Release */ = {
+		46DCFC42BA324BB19B91BDF9 /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
+		53D57D01B4F24D1DA4DAD37E /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		684BC3EB40594BC9B1D96BD2 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+		FD5BDC9DB26E48028DE0FC32 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		660418250BD04F648A299FFB /* PBXContainerItemProxy */ = {
+		13D624A902AC4AE497352032 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = FCEB3A8C602E4EF9A13CC4B9 /* Project object */;
+			containerPortal = 138AD8DA46D3454B9CCBEB18 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 81A7140D8C2040F2ACDF825B;
+			remoteGlobalIDString = DAB69F6DD3114DF6A6B504DB;
 			remoteInfo = ZERO_CHECK;
 		};
-		9DD6865E6C35456FB4A0BF01 /* PBXContainerItemProxy */ = {
+		160C19A4D8A147E19E74DBCC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = FCEB3A8C602E4EF9A13CC4B9 /* Project object */;
+			containerPortal = 138AD8DA46D3454B9CCBEB18 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 813B9411ED6148CBBF6FDF45;
+			remoteGlobalIDString = DAB69F6DD3114DF6A6B504DB;
+			remoteInfo = ZERO_CHECK;
+		};
+		2A003370E3A3476CB87AAEDC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 138AD8DA46D3454B9CCBEB18 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F79EE59899544A67B12CB8F2;
 			remoteInfo = ALL_BUILD;
 		};
-		BE0247C2A9D9459091CB5971 /* PBXContainerItemProxy */ = {
+		3DF5E4825818494F83593DA7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = FCEB3A8C602E4EF9A13CC4B9 /* Project object */;
+			containerPortal = 138AD8DA46D3454B9CCBEB18 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = EA01C321529F4843A0F166D9;
+			remoteGlobalIDString = F79EE59899544A67B12CB8F2;
+			remoteInfo = ALL_BUILD;
+		};
+		C2AAB81CD34145E0AE3FE8EE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 138AD8DA46D3454B9CCBEB18 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 866B100CCC274E248AA45223;
 			remoteInfo = VuTest;
-		};
-		C7A29B526CE44DC9B0D75A1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FCEB3A8C602E4EF9A13CC4B9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 813B9411ED6148CBBF6FDF45;
-			remoteInfo = ALL_BUILD;
-		};
-		E0CC38B4A1624DD994CF4FFD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FCEB3A8C602E4EF9A13CC4B9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 81A7140D8C2040F2ACDF825B;
-			remoteInfo = ZERO_CHECK;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		06D3AA95BFF743D7A3991AD3 /* ../Play-/tools/VuTest/Test.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Test.h; path = Test.h; sourceTree = SOURCE_ROOT; };
-		071CEC07D35944E0B366F813 /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IntBranchDelayTest.cpp; path = IntBranchDelayTest.cpp; sourceTree = SOURCE_ROOT; };
-		142EF9693E564373B9E877AC /* ../Play-/tools/VuTest/BranchTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BranchTest.h; path = BranchTest.h; sourceTree = SOURCE_ROOT; };
-		15BB1CB7DFE14EC8B2A69D69 /* ../Play-/tools/VuTest/FlagsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest.h; path = FlagsTest.h; sourceTree = SOURCE_ROOT; };
-		21B63F2714CC4BF4845954D0 /* ../Play-/tools/VuTest/BranchTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BranchTest.cpp; path = BranchTest.cpp; sourceTree = SOURCE_ROOT; };
-		244C8236ECD14DA29C224F67 /* ../Play-/tools/VuTest/StallTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest2.h; path = StallTest2.h; sourceTree = SOURCE_ROOT; };
-		267F7EF7661744598356D39B /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IntBranchDelayTest2.cpp; path = IntBranchDelayTest2.cpp; sourceTree = SOURCE_ROOT; };
-		2A5A70B6363C40E6813A9DE0 /* ../Play-/tools/VuTest/FlagsTest4.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest4.cpp; path = FlagsTest4.cpp; sourceTree = SOURCE_ROOT; };
-		2FD2769AC21B4EAEAE041D1B /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist; sourceTree = "<absolute>"; };
-		3380D3203B3F4F04B5B9DE28 /* ../Play-/tools/VuTest/StallTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest.h; path = StallTest.h; sourceTree = SOURCE_ROOT; };
-		3FAAB08989B84A0CB9F9FC14 /* ../Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		40AF18918A7B46C487F5D9EC /* ../Play-/tools/VuTest/StallTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest2.cpp; path = StallTest2.cpp; sourceTree = SOURCE_ROOT; };
-		417A7601282048F4B593AA51 /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntBranchDelayTest2.h; path = IntBranchDelayTest2.h; sourceTree = SOURCE_ROOT; };
-		44345161995D41648E7E08FE /* ../Play-/tools/VuTest/StallTest5.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest5.cpp; path = StallTest5.cpp; sourceTree = SOURCE_ROOT; };
-		4D6A2E3B12C84BF2B7EE3905 /* ../Play-/tools/VuTest/TestVm.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TestVm.cpp; path = TestVm.cpp; sourceTree = SOURCE_ROOT; };
-		50CEF1F4E0AD455F8A7322D9 /* ../Play-/tools/VuTest/MinMaxTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MinMaxTest.cpp; path = MinMaxTest.cpp; sourceTree = SOURCE_ROOT; };
-		537FBD542B344555965EFB69 /* ../Play-/tools/VuTest/StallTest4.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest4.cpp; path = StallTest4.cpp; sourceTree = SOURCE_ROOT; };
-		692507D669A34E3D858DE4B3 /* ../Play-/tools/VuTest/FlagsTest4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest4.h; path = FlagsTest4.h; sourceTree = SOURCE_ROOT; };
-		6E0AE9A6DE2E4BCABE2849E3 /* ../Play-/tools/VuTest/StallTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest.cpp; path = StallTest.cpp; sourceTree = SOURCE_ROOT; };
-		723B298C9E574C5183E36E91 /* ../Play-/tools/VuTest/VuAssembler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VuAssembler.h; path = VuAssembler.h; sourceTree = SOURCE_ROOT; };
-		7700312652C1458993632214 /* ../Play-/tools/VuTest/Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Main.cpp; path = Main.cpp; sourceTree = SOURCE_ROOT; };
-		7EFBFEEB5668439EA5D18725 /* ../Play-/tools/VuTest/MinMaxTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MinMaxTest.h; path = MinMaxTest.h; sourceTree = SOURCE_ROOT; };
-		7FC6DB153FDF489FA79C37C5 /* ../Play-/tools/VuTest/StallTest4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest4.h; path = StallTest4.h; sourceTree = SOURCE_ROOT; };
-		845F6D5D4481418BAF807E21 /* ../Play-/tools/VuTest/FlagsTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest2.cpp; path = FlagsTest2.cpp; sourceTree = SOURCE_ROOT; };
-		8AFA8A48D58B4FF5B360F9B2 /* ../Play-/tools/VuTest/StallTest3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest3.h; path = StallTest3.h; sourceTree = SOURCE_ROOT; };
-		91543F7A1524482DA127EE40 /* VuTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = VuTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9B5ED9F4044B47B9B0E24A5F /* ../Play-/tools/VuTest/FlagsTest3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest3.h; path = FlagsTest3.h; sourceTree = SOURCE_ROOT; };
-		A16FA96EB775435EA51AD2AC /* ../Play-/tools/VuTest/StallTest3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest3.cpp; path = StallTest3.cpp; sourceTree = SOURCE_ROOT; };
-		A3FC67824C16489C9EBBA8C2 /* ../Play-/tools/VuTest/FlagsTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest2.h; path = FlagsTest2.h; sourceTree = SOURCE_ROOT; };
-		A4F3E2B4C0F14E158DCB1827 /* ../Play-/tools/VuTest/FlagsTest3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest3.cpp; path = FlagsTest3.cpp; sourceTree = SOURCE_ROOT; };
-		A91EC985D24B4E469AB80B0A /* ../Play-/tools/VuTest/StallTest6.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest6.h; path = StallTest6.h; sourceTree = SOURCE_ROOT; };
-		AB7F83EA2A904B7D9C17EF04 /* ../Play-/tools/VuTest/TriAceTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TriAceTest.cpp; path = TriAceTest.cpp; sourceTree = SOURCE_ROOT; };
-		ABADD879FE26416C8C6D0715 /* ../Play-/tools/VuTest/IntBranchDelayTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntBranchDelayTest.h; path = IntBranchDelayTest.h; sourceTree = SOURCE_ROOT; };
-		C68EADB23BE347068F3BE341 /* ../Play-/tools/VuTest/TriAceTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TriAceTest.h; path = TriAceTest.h; sourceTree = SOURCE_ROOT; };
-		C80EF7560A7442D7AF56BF3A /* ../Play-/tools/VuTest/AddTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = AddTest.cpp; path = AddTest.cpp; sourceTree = SOURCE_ROOT; };
-		CB01964D3A924C49976A87BC /* ../Play-/tools/VuTest/StallTest5.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest5.h; path = StallTest5.h; sourceTree = SOURCE_ROOT; };
-		CF253FE0445F4713AE69E31F /* ../Play-/tools/VuTest/TestVm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TestVm.h; path = TestVm.h; sourceTree = SOURCE_ROOT; };
-		D378A992465A434792B2D587 /* ../Play-/tools/VuTest/FlagsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest.cpp; path = FlagsTest.cpp; sourceTree = SOURCE_ROOT; };
-		DE8004768CA44559B66D74F8 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MinMaxFlagsTest.cpp; path = MinMaxFlagsTest.cpp; sourceTree = SOURCE_ROOT; };
-		E312E50E760647C5B6192CAC /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MinMaxFlagsTest.h; path = MinMaxFlagsTest.h; sourceTree = SOURCE_ROOT; };
-		F59C4DA784E14A3FA63A31D8 /* ../Play-/tools/VuTest/StallTest6.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest6.cpp; path = StallTest6.cpp; sourceTree = SOURCE_ROOT; };
-		F6AF6CE842D94032A5BD2A03 /* ../Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		FA396B1077674C049B05B0BA /* ../Play-/tools/VuTest/VuAssembler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = VuAssembler.cpp; path = VuAssembler.cpp; sourceTree = SOURCE_ROOT; };
-		FF9B0FF739764107888F00D0 /* ../Play-/tools/VuTest/AddTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = AddTest.h; path = AddTest.h; sourceTree = SOURCE_ROOT; };
+		0057AB88D6F14E46B4C771DA /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist; sourceTree = "<absolute>"; };
+		03DA85595A56426FAB7642A2 /* ../Play-/tools/VuTest/TriAceTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TriAceTest.h; path = TriAceTest.h; sourceTree = SOURCE_ROOT; };
+		0F09A4E195184B8C9C266B08 /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntBranchDelayTest2.h; path = IntBranchDelayTest2.h; sourceTree = SOURCE_ROOT; };
+		14FB54DF3C5D4BC4AA6A06A9 /* ../Play-/tools/VuTest/FlagsTest3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest3.cpp; path = FlagsTest3.cpp; sourceTree = SOURCE_ROOT; };
+		157A435C4B354FF7974873AD /* ../Play-/tools/VuTest/FlagsTest4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest4.h; path = FlagsTest4.h; sourceTree = SOURCE_ROOT; };
+		2ECC8C2601474E23807972E9 /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IntBranchDelayTest2.cpp; path = IntBranchDelayTest2.cpp; sourceTree = SOURCE_ROOT; };
+		349ECDB92B0A4DBB80355225 /* ../Play-/tools/VuTest/FlagsTest4.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest4.cpp; path = FlagsTest4.cpp; sourceTree = SOURCE_ROOT; };
+		36426A816B4A4698AFDF8174 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MinMaxFlagsTest.cpp; path = MinMaxFlagsTest.cpp; sourceTree = SOURCE_ROOT; };
+		3BBF4B23040649ECBF39ECA9 /* ../Play-/tools/VuTest/StallTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest2.h; path = StallTest2.h; sourceTree = SOURCE_ROOT; };
+		3EE117AF94714A7EA0AC9056 /* ../Play-/tools/VuTest/TestVm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TestVm.h; path = TestVm.h; sourceTree = SOURCE_ROOT; };
+		44088AB4FF95496F8735A743 /* ../Play-/tools/VuTest/MinMaxTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MinMaxTest.h; path = MinMaxTest.h; sourceTree = SOURCE_ROOT; };
+		4E8C17C4987C464CBC59DD6E /* ../Play-/tools/VuTest/FdivEfuMixTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FdivEfuMixTest.h; path = FdivEfuMixTest.h; sourceTree = SOURCE_ROOT; };
+		56769E927C3846928AB5B6AD /* ../Play-/tools/VuTest/StallTest4.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest4.cpp; path = StallTest4.cpp; sourceTree = SOURCE_ROOT; };
+		5CF2AE1673FB404E82BCD7DC /* ../Play-/tools/VuTest/VuAssembler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VuAssembler.h; path = VuAssembler.h; sourceTree = SOURCE_ROOT; };
+		662F8B6DF5954DD29BD56D9F /* ../Play-/tools/VuTest/FlagsTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest2.h; path = FlagsTest2.h; sourceTree = SOURCE_ROOT; };
+		6FE3CE77AA9B407A82EC1EC9 /* ../Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		73F121C34C084FC9BDB2908D /* ../Play-/tools/VuTest/StallTest3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest3.h; path = StallTest3.h; sourceTree = SOURCE_ROOT; };
+		7CA1166FBE0044B9A577DBE6 /* ../Play-/tools/VuTest/StallTest3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest3.cpp; path = StallTest3.cpp; sourceTree = SOURCE_ROOT; };
+		7DC6247E0D9D40BDB9B1D60F /* ../Play-/tools/VuTest/StallTest4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest4.h; path = StallTest4.h; sourceTree = SOURCE_ROOT; };
+		83452CF6F1B940608164F370 /* ../Play-/tools/VuTest/StallTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest.cpp; path = StallTest.cpp; sourceTree = SOURCE_ROOT; };
+		866A20B9389D474D86BBADAE /* ../Play-/tools/VuTest/FlagsTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest2.cpp; path = FlagsTest2.cpp; sourceTree = SOURCE_ROOT; };
+		89E3A604921342FF949D6E89 /* ../Play-/tools/VuTest/FlagsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest.h; path = FlagsTest.h; sourceTree = SOURCE_ROOT; };
+		90B1F92B51C14F2C826D40B3 /* ../Play-/tools/VuTest/MinMaxTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MinMaxTest.cpp; path = MinMaxTest.cpp; sourceTree = SOURCE_ROOT; };
+		920AE28B92E749B38A55770A /* ../Play-/tools/VuTest/FlagsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest.cpp; path = FlagsTest.cpp; sourceTree = SOURCE_ROOT; };
+		944DAB1570B844338E743D4B /* ../Play-/tools/VuTest/AddTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = AddTest.cpp; path = AddTest.cpp; sourceTree = SOURCE_ROOT; };
+		94C1C1B13986411DA69A1A79 /* ../Play-/tools/VuTest/TestVm.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TestVm.cpp; path = TestVm.cpp; sourceTree = SOURCE_ROOT; };
+		993407627CB54D92801D3F52 /* ../Play-/tools/VuTest/BranchTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BranchTest.h; path = BranchTest.h; sourceTree = SOURCE_ROOT; };
+		9FC9FEDEE69F44B08886249B /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MinMaxFlagsTest.h; path = MinMaxFlagsTest.h; sourceTree = SOURCE_ROOT; };
+		A418B3894C4C4DB5BB7C30DE /* ../Play-/tools/VuTest/BranchTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BranchTest.cpp; path = BranchTest.cpp; sourceTree = SOURCE_ROOT; };
+		B0F93A9F1634437998B4D5E2 /* ../Play-/tools/VuTest/StallTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest.h; path = StallTest.h; sourceTree = SOURCE_ROOT; };
+		B65C92F717FF4EC79CC131AB /* ../Play-/tools/VuTest/Test.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Test.h; path = Test.h; sourceTree = SOURCE_ROOT; };
+		B74AD08B054140198BE36B46 /* ../Play-/tools/VuTest/StallTest6.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest6.h; path = StallTest6.h; sourceTree = SOURCE_ROOT; };
+		BC4B811FF6D247239C5F7FFD /* ../Play-/tools/VuTest/StallTest5.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest5.h; path = StallTest5.h; sourceTree = SOURCE_ROOT; };
+		C3AA07BF814841D3895ADEF2 /* ../Play-/tools/VuTest/StallTest6.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest6.cpp; path = StallTest6.cpp; sourceTree = SOURCE_ROOT; };
+		C869E1EC613B4934A4138C7E /* ../Play-/tools/VuTest/Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Main.cpp; path = Main.cpp; sourceTree = SOURCE_ROOT; };
+		CCBA5DD7BA874565B4B1C856 /* ../Play-/tools/VuTest/TriAceTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TriAceTest.cpp; path = TriAceTest.cpp; sourceTree = SOURCE_ROOT; };
+		D073A3FA04DB422FB6ACD571 /* ../Play-/tools/VuTest/VuAssembler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = VuAssembler.cpp; path = VuAssembler.cpp; sourceTree = SOURCE_ROOT; };
+		D0D48C449FB440A0B1A2790A /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IntBranchDelayTest.cpp; path = IntBranchDelayTest.cpp; sourceTree = SOURCE_ROOT; };
+		E1652E14EDF3443DB481ACC5 /* ../Play-/tools/VuTest/FlagsTest3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest3.h; path = FlagsTest3.h; sourceTree = SOURCE_ROOT; };
+		E20E8B0B37E34DDB8F029509 /* ../Play-/tools/VuTest/AddTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = AddTest.h; path = AddTest.h; sourceTree = SOURCE_ROOT; };
+		E2D823B5E0BD4A34A28C6D15 /* ../Play-/tools/VuTest/IntBranchDelayTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntBranchDelayTest.h; path = IntBranchDelayTest.h; sourceTree = SOURCE_ROOT; };
+		E61D3B6D7E9F479D9B9529B2 /* ../Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F4C3B64B7EF8402492EAF536 /* VuTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = VuTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6472DA33F6C4F2CA8CCB4AB /* ../Play-/tools/VuTest/StallTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest2.cpp; path = StallTest2.cpp; sourceTree = SOURCE_ROOT; };
+		F6BBA4AAF06840B4822721C6 /* ../Play-/tools/VuTest/FdivEfuMixTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FdivEfuMixTest.cpp; path = FdivEfuMixTest.cpp; sourceTree = SOURCE_ROOT; };
+		FAC7B7BAF84F48698562310C /* ../Play-/tools/VuTest/StallTest5.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest5.cpp; path = StallTest5.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		F2177C49FF2E471CA5B83D17 /* Frameworks */ = {
+		97B52D96D11647438EBC8EB0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -240,170 +244,172 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3B35E1E6C9F5476BABD38629 /* Source Files */ = {
+		015D76908F7F4F0D95D35C77 /* VuTest */ = {
 			isa = PBXGroup;
 			children = (
-				C80EF7560A7442D7AF56BF3A /* ../Play-/tools/VuTest/AddTest.cpp */,
-				21B63F2714CC4BF4845954D0 /* ../Play-/tools/VuTest/BranchTest.cpp */,
-				D378A992465A434792B2D587 /* ../Play-/tools/VuTest/FlagsTest.cpp */,
-				845F6D5D4481418BAF807E21 /* ../Play-/tools/VuTest/FlagsTest2.cpp */,
-				A4F3E2B4C0F14E158DCB1827 /* ../Play-/tools/VuTest/FlagsTest3.cpp */,
-				2A5A70B6363C40E6813A9DE0 /* ../Play-/tools/VuTest/FlagsTest4.cpp */,
-				071CEC07D35944E0B366F813 /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */,
-				267F7EF7661744598356D39B /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */,
-				7700312652C1458993632214 /* ../Play-/tools/VuTest/Main.cpp */,
-				DE8004768CA44559B66D74F8 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */,
-				50CEF1F4E0AD455F8A7322D9 /* ../Play-/tools/VuTest/MinMaxTest.cpp */,
-				6E0AE9A6DE2E4BCABE2849E3 /* ../Play-/tools/VuTest/StallTest.cpp */,
-				40AF18918A7B46C487F5D9EC /* ../Play-/tools/VuTest/StallTest2.cpp */,
-				A16FA96EB775435EA51AD2AC /* ../Play-/tools/VuTest/StallTest3.cpp */,
-				537FBD542B344555965EFB69 /* ../Play-/tools/VuTest/StallTest4.cpp */,
-				44345161995D41648E7E08FE /* ../Play-/tools/VuTest/StallTest5.cpp */,
-				F59C4DA784E14A3FA63A31D8 /* ../Play-/tools/VuTest/StallTest6.cpp */,
-				4D6A2E3B12C84BF2B7EE3905 /* ../Play-/tools/VuTest/TestVm.cpp */,
-				AB7F83EA2A904B7D9C17EF04 /* ../Play-/tools/VuTest/TriAceTest.cpp */,
-				FA396B1077674C049B05B0BA /* ../Play-/tools/VuTest/VuAssembler.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		66A196B4201647BB816715CC /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				91543F7A1524482DA127EE40 /* VuTest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		6748AF63BB3D4D63AC618B92 /* VuTest */ = {
-			isa = PBXGroup;
-			children = (
-				3B35E1E6C9F5476BABD38629 /* Source Files */,
-				C7F8BA09C5F54A25B739CABA /* Header Files */,
-				C36F32A4704240EF98ED15DD /* Resources */,
-				F6AF6CE842D94032A5BD2A03 /* ../Play-/tools/VuTest/CMakeLists.txt */,
+				8A62462EAD4A4FF3BD8F6466 /* Source Files */,
+				84A5EFE357784F178CE819DF /* Header Files */,
+				8FC93AAA60AF4AAD9F9AABD7 /* Resources */,
+				E61D3B6D7E9F479D9B9529B2 /* ../Play-/tools/VuTest/CMakeLists.txt */,
 			);
 			name = VuTest;
 			sourceTree = "<group>";
 		};
-		8E665C9519B54D72B5BEC35F /* ALL_BUILD */ = {
-			isa = PBXGroup;
-			children = (
-				B47CE1CDCCD54F7CB232A46C /* CMake Rules */,
-				3FAAB08989B84A0CB9F9FC14 /* ../Play-/tools/VuTest/CMakeLists.txt */,
-			);
-			name = ALL_BUILD;
-			sourceTree = "<group>";
-		};
-		9D9CEA78934A45908DE58968 /* Frameworks */ = {
+		478CCA4F25E54D9B9A80DA22 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		B47CE1CDCCD54F7CB232A46C /* CMake Rules */ = {
+		4EE81FDE48BD4E9B8D802224 = {
+			isa = PBXGroup;
+			children = (
+				015D76908F7F4F0D95D35C77 /* VuTest */,
+				BC2CF8C0A7E74483BE060BBC /* ALL_BUILD */,
+				5DBCBB761E4E462B9F25130C /* Products */,
+				478CCA4F25E54D9B9A80DA22 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		5DBCBB761E4E462B9F25130C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F4C3B64B7EF8402492EAF536 /* VuTest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6C7E8562E2834BB488EBDD22 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		C36F32A4704240EF98ED15DD /* Resources */ = {
+		84A5EFE357784F178CE819DF /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				2FD2769AC21B4EAEAE041D1B /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		C7F8BA09C5F54A25B739CABA /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				FF9B0FF739764107888F00D0 /* ../Play-/tools/VuTest/AddTest.h */,
-				142EF9693E564373B9E877AC /* ../Play-/tools/VuTest/BranchTest.h */,
-				15BB1CB7DFE14EC8B2A69D69 /* ../Play-/tools/VuTest/FlagsTest.h */,
-				A3FC67824C16489C9EBBA8C2 /* ../Play-/tools/VuTest/FlagsTest2.h */,
-				9B5ED9F4044B47B9B0E24A5F /* ../Play-/tools/VuTest/FlagsTest3.h */,
-				692507D669A34E3D858DE4B3 /* ../Play-/tools/VuTest/FlagsTest4.h */,
-				ABADD879FE26416C8C6D0715 /* ../Play-/tools/VuTest/IntBranchDelayTest.h */,
-				417A7601282048F4B593AA51 /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */,
-				E312E50E760647C5B6192CAC /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */,
-				7EFBFEEB5668439EA5D18725 /* ../Play-/tools/VuTest/MinMaxTest.h */,
-				3380D3203B3F4F04B5B9DE28 /* ../Play-/tools/VuTest/StallTest.h */,
-				244C8236ECD14DA29C224F67 /* ../Play-/tools/VuTest/StallTest2.h */,
-				8AFA8A48D58B4FF5B360F9B2 /* ../Play-/tools/VuTest/StallTest3.h */,
-				7FC6DB153FDF489FA79C37C5 /* ../Play-/tools/VuTest/StallTest4.h */,
-				CB01964D3A924C49976A87BC /* ../Play-/tools/VuTest/StallTest5.h */,
-				A91EC985D24B4E469AB80B0A /* ../Play-/tools/VuTest/StallTest6.h */,
-				06D3AA95BFF743D7A3991AD3 /* ../Play-/tools/VuTest/Test.h */,
-				CF253FE0445F4713AE69E31F /* ../Play-/tools/VuTest/TestVm.h */,
-				C68EADB23BE347068F3BE341 /* ../Play-/tools/VuTest/TriAceTest.h */,
-				723B298C9E574C5183E36E91 /* ../Play-/tools/VuTest/VuAssembler.h */,
+				E20E8B0B37E34DDB8F029509 /* ../Play-/tools/VuTest/AddTest.h */,
+				993407627CB54D92801D3F52 /* ../Play-/tools/VuTest/BranchTest.h */,
+				4E8C17C4987C464CBC59DD6E /* ../Play-/tools/VuTest/FdivEfuMixTest.h */,
+				89E3A604921342FF949D6E89 /* ../Play-/tools/VuTest/FlagsTest.h */,
+				662F8B6DF5954DD29BD56D9F /* ../Play-/tools/VuTest/FlagsTest2.h */,
+				E1652E14EDF3443DB481ACC5 /* ../Play-/tools/VuTest/FlagsTest3.h */,
+				157A435C4B354FF7974873AD /* ../Play-/tools/VuTest/FlagsTest4.h */,
+				E2D823B5E0BD4A34A28C6D15 /* ../Play-/tools/VuTest/IntBranchDelayTest.h */,
+				0F09A4E195184B8C9C266B08 /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */,
+				9FC9FEDEE69F44B08886249B /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */,
+				44088AB4FF95496F8735A743 /* ../Play-/tools/VuTest/MinMaxTest.h */,
+				B0F93A9F1634437998B4D5E2 /* ../Play-/tools/VuTest/StallTest.h */,
+				3BBF4B23040649ECBF39ECA9 /* ../Play-/tools/VuTest/StallTest2.h */,
+				73F121C34C084FC9BDB2908D /* ../Play-/tools/VuTest/StallTest3.h */,
+				7DC6247E0D9D40BDB9B1D60F /* ../Play-/tools/VuTest/StallTest4.h */,
+				BC4B811FF6D247239C5F7FFD /* ../Play-/tools/VuTest/StallTest5.h */,
+				B74AD08B054140198BE36B46 /* ../Play-/tools/VuTest/StallTest6.h */,
+				B65C92F717FF4EC79CC131AB /* ../Play-/tools/VuTest/Test.h */,
+				3EE117AF94714A7EA0AC9056 /* ../Play-/tools/VuTest/TestVm.h */,
+				03DA85595A56426FAB7642A2 /* ../Play-/tools/VuTest/TriAceTest.h */,
+				5CF2AE1673FB404E82BCD7DC /* ../Play-/tools/VuTest/VuAssembler.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
 		};
-		D9206D7487B34BDA91A3C83C = {
+		8A62462EAD4A4FF3BD8F6466 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				6748AF63BB3D4D63AC618B92 /* VuTest */,
-				8E665C9519B54D72B5BEC35F /* ALL_BUILD */,
-				66A196B4201647BB816715CC /* Products */,
-				9D9CEA78934A45908DE58968 /* Frameworks */,
+				944DAB1570B844338E743D4B /* ../Play-/tools/VuTest/AddTest.cpp */,
+				A418B3894C4C4DB5BB7C30DE /* ../Play-/tools/VuTest/BranchTest.cpp */,
+				F6BBA4AAF06840B4822721C6 /* ../Play-/tools/VuTest/FdivEfuMixTest.cpp */,
+				920AE28B92E749B38A55770A /* ../Play-/tools/VuTest/FlagsTest.cpp */,
+				866A20B9389D474D86BBADAE /* ../Play-/tools/VuTest/FlagsTest2.cpp */,
+				14FB54DF3C5D4BC4AA6A06A9 /* ../Play-/tools/VuTest/FlagsTest3.cpp */,
+				349ECDB92B0A4DBB80355225 /* ../Play-/tools/VuTest/FlagsTest4.cpp */,
+				D0D48C449FB440A0B1A2790A /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */,
+				2ECC8C2601474E23807972E9 /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */,
+				C869E1EC613B4934A4138C7E /* ../Play-/tools/VuTest/Main.cpp */,
+				36426A816B4A4698AFDF8174 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */,
+				90B1F92B51C14F2C826D40B3 /* ../Play-/tools/VuTest/MinMaxTest.cpp */,
+				83452CF6F1B940608164F370 /* ../Play-/tools/VuTest/StallTest.cpp */,
+				F6472DA33F6C4F2CA8CCB4AB /* ../Play-/tools/VuTest/StallTest2.cpp */,
+				7CA1166FBE0044B9A577DBE6 /* ../Play-/tools/VuTest/StallTest3.cpp */,
+				56769E927C3846928AB5B6AD /* ../Play-/tools/VuTest/StallTest4.cpp */,
+				FAC7B7BAF84F48698562310C /* ../Play-/tools/VuTest/StallTest5.cpp */,
+				C3AA07BF814841D3895ADEF2 /* ../Play-/tools/VuTest/StallTest6.cpp */,
+				94C1C1B13986411DA69A1A79 /* ../Play-/tools/VuTest/TestVm.cpp */,
+				CCBA5DD7BA874565B4B1C856 /* ../Play-/tools/VuTest/TriAceTest.cpp */,
+				D073A3FA04DB422FB6ACD571 /* ../Play-/tools/VuTest/VuAssembler.cpp */,
 			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		8FC93AAA60AF4AAD9F9AABD7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0057AB88D6F14E46B4C771DA /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		BC2CF8C0A7E74483BE060BBC /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				6C7E8562E2834BB488EBDD22 /* CMake Rules */,
+				6FE3CE77AA9B407A82EC1EC9 /* ../Play-/tools/VuTest/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		EA01C321529F4843A0F166D9 /* VuTest */ = {
+		866B100CCC274E248AA45223 /* VuTest */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 810CCB74162644D0A83F2719 /* Build configuration list for PBXNativeTarget "VuTest" */;
+			buildConfigurationList = F4ED3E78C3F64E5DA4CB3615 /* Build configuration list for PBXNativeTarget "VuTest" */;
 			buildPhases = (
-				0750DB48BEAF409D80917A79 /* Sources */,
-				F2177C49FF2E471CA5B83D17 /* Frameworks */,
+				16CFA33933454859AEC291CD /* Sources */,
+				97B52D96D11647438EBC8EB0 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				1E56C44C47DC47219D4266C5 /* PBXTargetDependency */,
+				E45711750BA84AE791DCF555 /* PBXTargetDependency */,
 			);
 			name = VuTest;
 			productName = VuTest;
-			productReference = 91543F7A1524482DA127EE40 /* VuTest */;
+			productReference = F4C3B64B7EF8402492EAF536 /* VuTest */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		FCEB3A8C602E4EF9A13CC4B9 /* Project object */ = {
+		138AD8DA46D3454B9CCBEB18 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1500;
 			};
-			buildConfigurationList = FCF76570D8EF4FDFBBE9679D /* Build configuration list for PBXProject "VuTest" */;
+			buildConfigurationList = A666CC4A580C41BFBC6EB53C /* Build configuration list for PBXProject "VuTest" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				4D9D0B6BCE0E4AB78335E868 /* Debug */,
-				67683D75B14F42D0A9038393 /* Release */,
-				0EF21127B67C4BC6AFD9722E /* MinSizeRel */,
-				183BAA8A9F0B40468276CB3E /* RelWithDebInfo */,
+				53D57D01B4F24D1DA4DAD37E /* Debug */,
+				46DCFC42BA324BB19B91BDF9 /* Release */,
+				684BC3EB40594BC9B1D96BD2 /* MinSizeRel */,
+				FD5BDC9DB26E48028DE0FC32 /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = D9206D7487B34BDA91A3C83C;
+			mainGroup = 4EE81FDE48BD4E9B8D802224;
 			projectDirPath = "../Play-";
 			projectRoot = "";
 			targets = (
-				813B9411ED6148CBBF6FDF45 /* ALL_BUILD */,
-				B7CC82741C444EE0A7828070 /* RUN_TESTS */,
-				EA01C321529F4843A0F166D9 /* VuTest */,
-				81A7140D8C2040F2ACDF825B /* ZERO_CHECK */,
-				0C166A68102548AEB1781C34 /* install */,
-				D771A2D4BE7846D7BB9D5A72 /* package */,
+				F79EE59899544A67B12CB8F2 /* ALL_BUILD */,
+				8BCD176C8FFF461D905EA9CD /* RUN_TESTS */,
+				866B100CCC274E248AA45223 /* VuTest */,
+				DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */,
+				FC9CD7A99A534051BEB8AC72 /* install */,
+				A3F400094DE749EEB922DD52 /* package */,
 			);
 		};
 /* End PBXProject section */
@@ -423,52 +429,19 @@
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/tools/VuTest
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/tools/VuTest
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/tools/VuTest
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/tools/VuTest
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
-fi
-";
-			showEnvVarsInLog = 0;
-		};
-		3012FD34A152F9081F9CCA41 /* Generate CMakeFiles/ALL_BUILD */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ALL_BUILD";
-			outputPaths = (
-../cmake/tools/VuTest/CMakeFiles/ALL_BUILD			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/tools/VuTest
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/tools/VuTest
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/tools/VuTest
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/tools/VuTest
-  echo Build\\ all\\ projects
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -502,19 +475,52 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+fi
+";
+			showEnvVarsInLog = 0;
+		};
+		614EAFE5856D7B35C8822764 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+../cmake/tools/VuTest/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/tools/VuTest
+  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/tools/VuTest
+  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/tools/VuTest
+  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/tools/VuTest
+  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -578,19 +584,19 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/tools/VuTest
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/tools/VuTest
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/tools/VuTest
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/tools/VuTest
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -610,7 +616,7 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		B2AB6962F8E930525E846576 /* Generate CMakeFiles/ZERO_CHECK */ = {
+		C3B8AA698C84B6A1D8F0FB70 /* Generate CMakeFiles/ALL_BUILD */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -618,27 +624,27 @@ exit 0";
 			);
 			inputPaths = (
 			);
-			name = "Generate CMakeFiles/ZERO_CHECK";
+			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-../cmake/tools/VuTest/CMakeFiles/ZERO_CHECK			);
+../cmake/tools/VuTest/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/tools/VuTest
-  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+  echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/tools/VuTest
-  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+  echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/tools/VuTest
-  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+  echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/tools/VuTest
-  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+  echo Build\\ all\\ projects
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -646,67 +652,69 @@ fi
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0750DB48BEAF409D80917A79 /* Sources */ = {
+		16CFA33933454859AEC291CD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				77977C6390784827AC6E0DDA /* ../Play-/tools/VuTest/AddTest.cpp */,
-				628B4E9D639D442C9328A34B /* ../Play-/tools/VuTest/BranchTest.cpp */,
-				C8DCBB199B2C4B7799B2C27D /* ../Play-/tools/VuTest/FlagsTest.cpp */,
-				1BC714A58DF947F29EAC1380 /* ../Play-/tools/VuTest/FlagsTest2.cpp */,
-				9A5746EC2FD1408FA6001469 /* ../Play-/tools/VuTest/FlagsTest3.cpp */,
-				6E44145116E94A17A62EA050 /* ../Play-/tools/VuTest/FlagsTest4.cpp */,
-				10609BDD94AA4C2BAFADBA53 /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */,
-				08750454ED3A413DB24B04A6 /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */,
-				7F572F02F16E4B14A071A1F4 /* ../Play-/tools/VuTest/Main.cpp */,
-				44A7E6C95156481691217BAF /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */,
-				83F0882FCE6F4581A8A5F7FF /* ../Play-/tools/VuTest/MinMaxTest.cpp */,
-				A23D5DE0BF644FB4983DDC81 /* ../Play-/tools/VuTest/StallTest.cpp */,
-				E1A51F8D431D4E9D90525D34 /* ../Play-/tools/VuTest/StallTest2.cpp */,
-				B336BBFAF063468CB92C06ED /* ../Play-/tools/VuTest/StallTest3.cpp */,
-				2571F5CAE8B84386AB298849 /* ../Play-/tools/VuTest/StallTest4.cpp */,
-				F305B08C2B9D4BA58346013E /* ../Play-/tools/VuTest/StallTest5.cpp */,
-				1B5BD42B73A44F3AA58E057E /* ../Play-/tools/VuTest/StallTest6.cpp */,
-				6BD3CC244F054ED29F80B177 /* ../Play-/tools/VuTest/TestVm.cpp */,
-				95B9DEE234FE42C6A2D77659 /* ../Play-/tools/VuTest/TriAceTest.cpp */,
-				5D9B2728B9664976BA11CA34 /* ../Play-/tools/VuTest/VuAssembler.cpp */,
+				8E33E25770A749BEA8FF8777 /* ../Play-/tools/VuTest/AddTest.cpp */,
+				1C38D40BA174405482DA057B /* ../Play-/tools/VuTest/BranchTest.cpp */,
+				B3AF5A2BEAD3434EB6E30BE6 /* ../Play-/tools/VuTest/FdivEfuMixTest.cpp */,
+				016AA0FFBBB34A96B8C561CA /* ../Play-/tools/VuTest/FlagsTest.cpp */,
+				AE68893A3FEE4ACAB06648A1 /* ../Play-/tools/VuTest/FlagsTest2.cpp */,
+				B393CA3E41C34A80BB8A37E4 /* ../Play-/tools/VuTest/FlagsTest3.cpp */,
+				EAABD355AB3043AB99FDFBF0 /* ../Play-/tools/VuTest/FlagsTest4.cpp */,
+				95682CDA0FC24617B9812C7B /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */,
+				8E4D0090E4164B26AD51FA7D /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */,
+				4C985BBF23AF497C81342F70 /* ../Play-/tools/VuTest/Main.cpp */,
+				8C284A8A9CBC45498A6B84EC /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */,
+				7A44F24F01D645A0AE2C11E0 /* ../Play-/tools/VuTest/MinMaxTest.cpp */,
+				C2F2860023B14B67BB7BDECF /* ../Play-/tools/VuTest/StallTest.cpp */,
+				E0BBEE0EC8374E55B3C6CB31 /* ../Play-/tools/VuTest/StallTest2.cpp */,
+				14C1FFBA2BB54A6AB32B8BDA /* ../Play-/tools/VuTest/StallTest3.cpp */,
+				887551F961EF4038AA631BDB /* ../Play-/tools/VuTest/StallTest4.cpp */,
+				24D9185744014A81A25BAF31 /* ../Play-/tools/VuTest/StallTest5.cpp */,
+				2472B5FF07FB4FB0A5EC4E14 /* ../Play-/tools/VuTest/StallTest6.cpp */,
+				82F243310BC547E1AE712BDC /* ../Play-/tools/VuTest/TestVm.cpp */,
+				07AF8AC93AB24B94B5DC63B8 /* ../Play-/tools/VuTest/TriAceTest.cpp */,
+				B7669C6DCE594220878CCB99 /* ../Play-/tools/VuTest/VuAssembler.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1E56C44C47DC47219D4266C5 /* PBXTargetDependency */ = {
+		3628EC0D10B246078622C8A5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 81A7140D8C2040F2ACDF825B /* ZERO_CHECK */;
-			targetProxy = E0CC38B4A1624DD994CF4FFD /* PBXContainerItemProxy */;
+			target = F79EE59899544A67B12CB8F2 /* ALL_BUILD */;
+			targetProxy = 2A003370E3A3476CB87AAEDC /* PBXContainerItemProxy */;
 		};
-		3B7FEE1A9B3F40C4B08F8094 /* PBXTargetDependency */ = {
+		8D3C77E04F5147868E8D1F5B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 813B9411ED6148CBBF6FDF45 /* ALL_BUILD */;
-			targetProxy = 9DD6865E6C35456FB4A0BF01 /* PBXContainerItemProxy */;
+			target = DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */;
+			targetProxy = 13D624A902AC4AE497352032 /* PBXContainerItemProxy */;
 		};
-		4C4A3845175A44AA8D04A741 /* PBXTargetDependency */ = {
+		994CDFE44A194E5AA264D800 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 813B9411ED6148CBBF6FDF45 /* ALL_BUILD */;
-			targetProxy = C7A29B526CE44DC9B0D75A1A /* PBXContainerItemProxy */;
+			target = F79EE59899544A67B12CB8F2 /* ALL_BUILD */;
+			targetProxy = 3DF5E4825818494F83593DA7 /* PBXContainerItemProxy */;
 		};
-		87941B51E28244F291729258 /* PBXTargetDependency */ = {
+		D15B3769228E46F388574063 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = EA01C321529F4843A0F166D9 /* VuTest */;
-			targetProxy = BE0247C2A9D9459091CB5971 /* PBXContainerItemProxy */;
+			target = 866B100CCC274E248AA45223 /* VuTest */;
+			targetProxy = C2AAB81CD34145E0AE3FE8EE /* PBXContainerItemProxy */;
 		};
-		8C135BAA4F954BA791B5CDAD /* PBXTargetDependency */ = {
+		E45711750BA84AE791DCF555 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 81A7140D8C2040F2ACDF825B /* ZERO_CHECK */;
-			targetProxy = 660418250BD04F648A299FFB /* PBXContainerItemProxy */;
+			target = DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */;
+			targetProxy = 160C19A4D8A147E19E74DBCC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0DA0E67231D34655BADF5EA3 /* RelWithDebInfo */ = {
+		08ECDEDC3ADA4D878DE8F8CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -721,26 +729,9 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
-		};
-		109653FB414C44939D570BF9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
 			name = Release;
 		};
-		1588EC6CDC1045CC960D9FF6 /* MinSizeRel */ = {
+		09EFB2DA836E4F78A8514270 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -752,33 +743,16 @@ fi
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 4.0;
 				BUILD_DIR = ../lib;
 			};
 			name = MinSizeRel;
 		};
-		17E91E367E614AABBF4C93EF /* Release */ = {
+		0BBB7DF2FE1E436595629449 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		1C98C9CF181F4EE7BADEC7A9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -793,9 +767,9 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
+			name = MinSizeRel;
 		};
-		26D91EC6734E4B9A88857353 /* RelWithDebInfo */ = {
+		1721B1F75205448C8D270553 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -807,14 +781,16 @@ fi
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 4.0;
 				BUILD_DIR = ../lib;
 			};
 			name = RelWithDebInfo;
 		};
-		3855D1B9742140A898E0568E /* Release */ = {
+		1AE61B6355314677B08155A3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -824,140 +800,17 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
+				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
-		4345766BB9F2410D9C31845E /* MinSizeRel */ = {
+		20A65EB1D3E2484A9E19D95C /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		4A8582B1658A4CBB9AEE104E /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		4F2E3FB54EDC475CAFD0CB1A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		551C509CF4724E90BAAA64D7 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		59EEEE3358854FC2A1353D56 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		5B14023D11BF46F18278D8C0 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
-				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/CodeGen/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/Framework/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","../cmake/Source/ui_ios/Source/xxHash/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = VuTest;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		6D541A5C195D43F080F40F5F /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -973,8 +826,8 @@ fi
 				INFOPLIST_FILE = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/CodeGen/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/Framework/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","../cmake/Source/ui_ios/Source/xxHash/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/CodeGen/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/Framework/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/usr/lib/libbz2.tbd,"../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/usr/lib/libz.tbd,"../cmake/Source/ui_ios/Source/xxHash/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = VuTest;
 				SECTORDER_FLAGS = "";
@@ -984,9 +837,10 @@ fi
 			};
 			name = RelWithDebInfo;
 		};
-		7E87096F6DC2492CA7AAB0B8 /* RelWithDebInfo */ = {
+		2BD8142619B04EDCA2DE464E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1001,30 +855,12 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = Release;
 		};
-		7FFD77565EE74D6EAB1AA62F /* MinSizeRel */ = {
+		2D5E68BD5FCF451489D10E08 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		81DA28CA36EA49CE9CD6E57B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1039,11 +875,92 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
+			name = MinSizeRel;
 		};
-		894E84C79B0947E698C27B91 /* MinSizeRel */ = {
+		41E98C1300094CD1B9A57070 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		4C188EA8ED054F7783483C70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		4FC5A7DCB4A54BDA8B0F2EFA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		60A027A8222C4B309E8A7C29 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		615875B044F14AB68AD5B7DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1058,38 +975,107 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = Debug;
 		};
-		9CA9D2CFBA8A4305BEADCBBE /* Release */ = {
+		63F1B442D3354F7EAA26D2D3 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = "";
-				EXECUTABLE_SUFFIX = "";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = fast;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
 				INSTALL_PATH = "";
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2        -DNDEBUG -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Release${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/CodeGen/Release${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/Framework/Release${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Release${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Release${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","../cmake/Source/ui_ios/Source/xxHash/Release${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Release${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = VuTest;
+				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
-				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		654429D0AAEB40CD908AFB11 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		6EB367BBCF0D407598465731 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
-		9F428BE9AF704E7C8F2DC501 /* Debug */ = {
+		709F493EA09A45F1A0722102 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		724B4A16B9D843C4BA752309 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
+			};
+			name = Release;
+		};
+		88A531507BAB4BB4AEC174E0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -1106,9 +1092,50 @@ fi
 			};
 			name = Debug;
 		};
-		A419D46C3A6242B48AB2AE9A /* Debug */ = {
+		8A60782DB04342858F3CC252 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		A17D44E494CB4030A8052C5A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		A37A454140BC4FE1A2E0D319 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1123,11 +1150,12 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
+			name = RelWithDebInfo;
 		};
-		AD997C1524AD44B28B1AD549 /* Debug */ = {
+		B2EF77B90B2F4A8C9EB16EA3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1143,8 +1171,8 @@ fi
 				INFOPLIST_FILE = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2    -D_DEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Debug${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/CodeGen/Debug${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libbz2.tbd","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Debug${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Debug${EFFECTIVE_PLATFORM_NAME}/libzstd.a","/Applications/Xcode-14.2.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/usr/lib/libz.tbd","../cmake/Source/ui_ios/Source/xxHash/Debug${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-19.00/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.11/Debug${EFFECTIVE_PLATFORM_NAME}/libzlib.a","$(inherited)");
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2    -D_DEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Debug${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/CodeGen/Debug${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/usr/lib/libbz2.tbd,"../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Debug${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Debug${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/usr/lib/libz.tbd,"../cmake/Source/ui_ios/Source/xxHash/Debug${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/Debug${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = VuTest;
 				SECTORDER_FLAGS = "";
@@ -1154,9 +1182,10 @@ fi
 			};
 			name = Debug;
 		};
-		B909121CB46F48EBB31E7631 /* MinSizeRel */ = {
+		BDAEE3AA313E4EC6AAE72B1A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1168,187 +1197,192 @@ fi
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		CC11DD042CA346E29CE8C86C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		D1BCB2E4F1D34672B4830D57 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		DEA9C8B12EA84579A65E5D13 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
+				INSTALL_PATH = "";
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/CodeGen/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/Framework/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/usr/lib/libbz2.tbd,"../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/usr/lib/libz.tbd,"../cmake/Source/ui_ios/Source/xxHash/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = VuTest;
+				SECTORDER_FLAGS = "";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = MinSizeRel;
 		};
-		C986978D46C84D62AAF5A787 /* Release */ = {
+		F9C23F207D084842BB0BE96C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
 				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2        -DNDEBUG -DNDEBUG '-std=gnu++17' ";
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Release${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/FrameworkHttp/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/CodeGen/Release${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/Framework/Release${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/usr/lib/libbz2.tbd,"../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Release${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Release${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/usr/lib/libz.tbd,"../cmake/Source/ui_ios/Source/xxHash/Release${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/Release${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
+				PRODUCT_NAME = VuTest;
 				SECTORDER_FLAGS = "";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
-		};
-		CED6948862704E64AAE56112 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		DBAB71E2BC8446BE80DD59D0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		EDC892D629BF43A7BAEF51DD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		F31DE51D74D0408C82C70AF7 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3DD1C03B1D0541C5A5F914DE /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		34F867E0DEF341B6BCFB9ADD /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CED6948862704E64AAE56112 /* Debug */,
-				3855D1B9742140A898E0568E /* Release */,
-				7FFD77565EE74D6EAB1AA62F /* MinSizeRel */,
-				F31DE51D74D0408C82C70AF7 /* RelWithDebInfo */,
+				CC11DD042CA346E29CE8C86C /* Debug */,
+				08ECDEDC3ADA4D878DE8F8CD /* Release */,
+				63F1B442D3354F7EAA26D2D3 /* MinSizeRel */,
+				709F493EA09A45F1A0722102 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		75DC8775F1FB4369A1724C31 /* Build configuration list for PBXAggregateTarget "package" */ = {
+		6C836EF6AEEC4BEC879F6228 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4F2E3FB54EDC475CAFD0CB1A /* Debug */,
-				1C98C9CF181F4EE7BADEC7A9 /* Release */,
-				894E84C79B0947E698C27B91 /* MinSizeRel */,
-				7E87096F6DC2492CA7AAB0B8 /* RelWithDebInfo */,
+				4FC5A7DCB4A54BDA8B0F2EFA /* Debug */,
+				4C188EA8ED054F7783483C70 /* Release */,
+				8A60782DB04342858F3CC252 /* MinSizeRel */,
+				41E98C1300094CD1B9A57070 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		810CCB74162644D0A83F2719 /* Build configuration list for PBXNativeTarget "VuTest" */ = {
+		7F047D17E008432BAAEA8792 /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AD997C1524AD44B28B1AD549 /* Debug */,
-				9CA9D2CFBA8A4305BEADCBBE /* Release */,
-				5B14023D11BF46F18278D8C0 /* MinSizeRel */,
-				6D541A5C195D43F080F40F5F /* RelWithDebInfo */,
+				615875B044F14AB68AD5B7DA /* Debug */,
+				2BD8142619B04EDCA2DE464E /* Release */,
+				0BBB7DF2FE1E436595629449 /* MinSizeRel */,
+				A17D44E494CB4030A8052C5A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		A25A71E1EF2B4163A55261C3 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		8A9B918E589242CDA861AA9E /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EDC892D629BF43A7BAEF51DD /* Debug */,
-				DBAB71E2BC8446BE80DD59D0 /* Release */,
-				551C509CF4724E90BAAA64D7 /* MinSizeRel */,
-				0DA0E67231D34655BADF5EA3 /* RelWithDebInfo */,
+				D1BCB2E4F1D34672B4830D57 /* Debug */,
+				1AE61B6355314677B08155A3 /* Release */,
+				2D5E68BD5FCF451489D10E08 /* MinSizeRel */,
+				654429D0AAEB40CD908AFB11 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		D1414B1C28544C1E9A0F87B7 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		A666CC4A580C41BFBC6EB53C /* Build configuration list for PBXProject "VuTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				81DA28CA36EA49CE9CD6E57B /* Debug */,
-				17E91E367E614AABBF4C93EF /* Release */,
-				4345766BB9F2410D9C31845E /* MinSizeRel */,
-				4A8582B1658A4CBB9AEE104E /* RelWithDebInfo */,
+				88A531507BAB4BB4AEC174E0 /* Debug */,
+				724B4A16B9D843C4BA752309 /* Release */,
+				09EFB2DA836E4F78A8514270 /* MinSizeRel */,
+				1721B1F75205448C8D270553 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		EC34ACA34E4F48A7AA42F406 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		EA4D298550CC4014946BBAB4 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A419D46C3A6242B48AB2AE9A /* Debug */,
-				C986978D46C84D62AAF5A787 /* Release */,
-				B909121CB46F48EBB31E7631 /* MinSizeRel */,
-				59EEEE3358854FC2A1353D56 /* RelWithDebInfo */,
+				BDAEE3AA313E4EC6AAE72B1A /* Debug */,
+				6EB367BBCF0D407598465731 /* Release */,
+				60A027A8222C4B309E8A7C29 /* MinSizeRel */,
+				A37A454140BC4FE1A2E0D319 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		FCF76570D8EF4FDFBBE9679D /* Build configuration list for PBXProject "VuTest" */ = {
+		F4ED3E78C3F64E5DA4CB3615 /* Build configuration list for PBXNativeTarget "VuTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9F428BE9AF704E7C8F2DC501 /* Debug */,
-				109653FB414C44939D570BF9 /* Release */,
-				1588EC6CDC1045CC960D9FF6 /* MinSizeRel */,
-				26D91EC6734E4B9A88857353 /* RelWithDebInfo */,
+				B2EF77B90B2F4A8C9EB16EA3 /* Debug */,
+				F9C23F207D084842BB0BE96C /* Release */,
+				DEA9C8B12EA84579A65E5D13 /* MinSizeRel */,
+				20A65EB1D3E2484A9E19D95C /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = FCEB3A8C602E4EF9A13CC4B9 /* Project object */;
+	rootObject = 138AD8DA46D3454B9CCBEB18 /* Project object */;
 }

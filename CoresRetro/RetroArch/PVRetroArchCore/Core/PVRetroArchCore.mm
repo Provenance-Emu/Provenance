@@ -58,8 +58,8 @@ extern int g_gs_preference;
 }
 - (instancetype)init {
 	if (self = [super init]) {
-        self.alwaysUseMetal = true;
         self.skipLayout = true;
+        self.extractArchive = false;
         PVRetroArchCore.systemName = self.systemIdentifier;
         PVRetroArchCore.className = self.coreIdentifier;
         [self parseOptions];
@@ -69,7 +69,9 @@ extern int g_gs_preference;
 		_videoBitDepth = 32;
 		sampleRate = 44100;
 		self->resFactor = 1;
-		isNTSC = YES;
+        self.ffSpeed = 300;
+        self.smSpeed = 300;
+        isNTSC = YES;
 		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
 		_callbackQueue = dispatch_queue_create("org.provenance-emu.pvretroarchcore.CallbackHandlerQueue", queueAttributes);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
@@ -80,7 +82,10 @@ extern int g_gs_preference;
 	_current=self;
 	return self;
 }
-
+- (void)initialize {
+    [self parseOptions];
+    NSLog(@"RetroArch: Extract %d\n", self.extractArchive);
+}
 - (void)dealloc {
 	_current = nil;
 }
@@ -89,6 +94,10 @@ extern int g_gs_preference;
 - (BOOL)loadFileAtPath:(NSString *)path error:(NSError**)error {
     self.alwaysUseMetal = true;
     self.skipLayout = true;
+    self.extractArchive = false;
+    PVRetroArchCore.systemName = self.systemIdentifier;
+    PVRetroArchCore.className = self.coreIdentifier;
+    [self parseOptions];
 	NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];
 	NSString *configPath = self.saveStatesPath;
 	const char * dataPath = [[coreBundle resourcePath] fileSystemRepresentation];
@@ -128,9 +137,36 @@ extern int g_gs_preference;
         ^{
             self.bindAnalogKeys=[value isEqualToString:@"true"];
         },
+        @ENABLE_NUM_KEY:
+        ^{
+            self.bindNumKeys=[value isEqualToString:@"true"];
+        },
+        @ENABLE_ANALOG_DPAD:
+        ^{
+            self.bindAnalogDpad=[value isEqualToString:@"true"];
+            [self setupJoypad];
+        },
+        @"Audio Volume":
+        ^{
+            [self setVolume];
+        },
         @USE_SECOND_SCREEN:
         ^{
             [value isEqualToString:@"true"] ? [self useSecondaryScreen] : [self usePrimaryScreen];
+        },
+        @"Fast Forward Speed":
+        ^{
+            self.ffSpeed = value.intValue;
+            [self setSpeed];
+        },
+        @"Slow Motion Speed":
+        ^{
+            self.smSpeed = value.intValue;
+            [self setSpeed];
+        },
+        @"System Model":
+        ^{
+            [self parseOptions];
         }
     };
     Process action=[actions objectForKey:key];

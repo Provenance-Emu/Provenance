@@ -47,9 +47,13 @@ PVCORE
 @property (nonatomic, assign) int8_t spuCount;
 @property (nonatomic, assign) bool limitFPS;
 
+@property (nonatomic, assign) int8_t volume;
+
 -(void)setupControllers;
 -(void)executeFrameSkippingFrame:(BOOL)skip;
+-(void) optionUpdated:(NSNotification *)notification;
 
+-(void)setupPad;
 @end
 
 @interface PVPlayCore (Cheats)
