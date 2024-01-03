@@ -93,7 +93,6 @@
 		081A45981B95604700565444 /* PVPokeMiniEmulatorCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PVPokeMiniEmulatorCore.m; path = PokeMini/PVPokeMiniEmulatorCore.m; sourceTree = SOURCE_ROOT; };
 		081A46191B95660100565444 /* freebios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = freebios.c; sourceTree = "<group>"; };
 		081A461A1B95660100565444 /* freebios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = freebios.h; sourceTree = "<group>"; };
-		B311B1C027A52EE800D1DE41 /* PVPokeMini-iOS copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVPokeMini-iOS copy-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/PokeMini/PVPokeMini-iOS copy-Info.plist"; sourceTree = "<absolute>"; };
 		B34AB5632106D5EB00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB5652106D5F700C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3532B5621A919F1006CDA0F /* MinxTimers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MinxTimers.c; sourceTree = "<group>"; };
@@ -203,7 +202,6 @@
 				B3CB854A1E9BECBF009155A6 /* PVPokeMini Supporting Files */,
 				081A45F71B9563EF00565444 /* Frameworks */,
 				081A458D1B955FA800565444 /* Products */,
-				B311B1C027A52EE800D1DE41 /* PVPokeMini-iOS copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
