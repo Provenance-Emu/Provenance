@@ -212,6 +212,8 @@
 		<string>audio</string>
 		<string>processing</string>
 	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreenTV.storyboard</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>arm64</string>

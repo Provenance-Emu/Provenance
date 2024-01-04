@@ -343,10 +343,13 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
 #undef controllerForNum
 }
 
-- (void)didMoveN64JoystickDirection:(PVN64Button)button withValue:(CGFloat)value forPlayer:(NSUInteger)player {
+- (void)didMoveN64JoystickDirection:(PVN64Button)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSUInteger)player {
     if (self.dualJoystickOption && player == 0) {
         player = 1;
     }
+    yAxis[player] = yValue * N64_ANALOG_MAX;
+    xAxis[player] = xValue * N64_ANALOG_MAX;
+    /*
     switch (button) {
         case PVN64ButtonAnalogUp:
 //            NSLog(@"Up: %f", round(value * N64_ANALOG_MAX));
@@ -365,6 +368,7 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
         default:
             break;
     }
+   */
 }
 
 - (void)didPushN64Button:(PVN64Button)button forPlayer:(NSUInteger)player {

@@ -44,6 +44,8 @@ public extension NSNotification {
 }
 
 public extension Notification.Name {
+    static let PVResetLibrary = Notification.Name("kResetLibraryNotification")
+    static let PVReimportLibrary = Notification.Name("kReimportLibraryNotification")
     static let PVRefreshLibrary = Notification.Name("kRefreshLibraryNotification")
     static let PVInterfaceDidChangeNotification = Notification.Name("kInterfaceDidChangeNotification")
 }
@@ -85,6 +87,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     @IBOutlet var getMoreRomsBarButtonItem: UIBarButtonItem!
     @IBOutlet var sortOptionBarButtonItem: UIBarButtonItem!
     @IBOutlet var conflictsBarButtonItem: UIBarButtonItem!
+    @IBOutlet var refreshOptionBarButtonItem: UIBarButtonItem!
 
     #if os(iOS)
         @IBOutlet var libraryInfoContainerView: UIStackView!
@@ -92,15 +95,16 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     #endif
 
     var isInitialAppearance = false
+    var isLoaded = false
 
     // add or remove the conflict button (iff it is in the storyboard)
     func updateConflictsButton(_ hasConflicts: Bool) {
         if let conflictsBarButtonItem = conflictsBarButtonItem {
             conflictsBarButtonItem.isEnabled = hasConflicts
             #if os(tvOS)
-            let items: [UIBarButtonItem] = hasConflicts ? [ getMoreRomsBarButtonItem, conflictsBarButtonItem ] : [getMoreRomsBarButtonItem]
+            let items: [UIBarButtonItem] = hasConflicts ? [ getMoreRomsBarButtonItem, refreshOptionBarButtonItem, conflictsBarButtonItem ] : [getMoreRomsBarButtonItem, refreshOptionBarButtonItem]
             #else
-            let items: [UIBarButtonItem] = hasConflicts ? [ settingsBarButtonItem, conflictsBarButtonItem ] : [settingsBarButtonItem]
+            let items: [UIBarButtonItem] = hasConflicts ? [ settingsBarButtonItem, sortOptionBarButtonItem, conflictsBarButtonItem ] : [settingsBarButtonItem, sortOptionBarButtonItem]
             #endif
             navigationItem.leftBarButtonItems = items
         }
@@ -119,12 +123,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     let showRecentGames = BehaviorSubject(value: PVSettingsModel.shared.showRecentGames)
 
     // MARK: - Lifecycle
-
-    #if os(iOS)
-        override var preferredStatusBarStyle: UIStatusBarStyle {
-            return .lightContent
-        }
-    #endif
 
     deinit {
         NotificationCenter.default.removeObserver(self)
@@ -166,6 +164,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     var searchController: UISearchController!
     #endif
 
+    var hud: MBProgressHUD!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
@@ -255,7 +255,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             let stack =  UIStackView(arrangedSubviews:[logo, name])
             stack.alignment = .center
             stack.frame = CGRect(origin:.zero, size:stack.systemLayoutSizeFitting(.zero))
+            stack.isHidden=false;
             navigationItem.titleView = stack
+            navigationItem.titleView?.isHidden=false;
         }
 
         // Persist some settings, could probably be done in a better way
@@ -379,11 +381,10 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 fatalError("Don't support type \(kind)")
             }
         }
-
         let favoritesSection = gameLibrary.favorites
             .map { favorites in favorites.isEmpty ? nil : Section(header: "Favorites", items: [.favorites(favorites)], collapsable: nil)}
 
-        let saveStateSection = Observable.combineLatest(showSaveStates, gameLibrary.saveStates) { $0 ? $1 : [] }
+        let saveStateSection = Observable.combineLatest(showSaveStates, gameLibrary.saveStates) { $0 ? $1.filter { FileManager.default.fileExists(atPath: $0.file.url.path) } : [] }
             .map { saveStates in saveStates.isEmpty ? nil : Section(header: "Recently Saved", items: [.saves(saveStates)], collapsable: nil) }
 
         let recentsSection = Observable.combineLatest(showRecentGames, gameLibrary.recents) { $0 ? $1 : [] }
@@ -403,7 +404,17 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 return Section(header: "Search Results", items: games.map { .game($0) }, collapsable: nil)
             })
             .startWith(nil)
-
+        let hideBios:[String:Bool] = RomDatabase.sharedInstance.getBIOSCache().values.joined()
+            .reduce(into: [:]){
+                (hideBios, bios) in
+                let biosInfo=bios.components(separatedBy: "|")
+                if biosInfo.count >= 3 {
+                    let (path, visibility)=(biosInfo[1], biosInfo[2])
+                    hideBios[path.lowercased()] = visibility == "hide"
+                } else {
+                    hideBios[bios.lowercased()] = true
+                }
+            }
         let systemSections = currentSort
             .flatMapLatest { Observable.combineLatest(self.gameLibrary.systems(sortedBy: $0), self.collapsedSystems) }
             .map({ systems, collapsedSystems in
@@ -412,7 +423,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             .mapMany({ system, isCollapsed -> Section? in
                 guard !system.sortedGames.isEmpty else { return nil }
                 let header = "\(system.manufacturer) : \(system.shortName)" + (system.isBeta ? " ⚠️ Beta" : "") + (system.unsupported ? " 🚫 Unsupported" : "")
-                let items = isCollapsed ? [] : system.sortedGames.map { Section.Item.game($0) }
+                let items = isCollapsed ? [] : system.sortedGames.filter{ !$0.isInvalidated && $0.genres != "hidden" && hideBios[$0.romPath.lowercased()] != true }.map { Section.Item.game($0) }
 
                 return Section(header: header, items: items,
                                collapsable: isCollapsed ? .collapsed(systemToken: system.identifier) : .notCollapsed(systemToken: system.identifier))
@@ -503,27 +514,73 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             view.bringSubviewToFront(libraryInfoContainerView)
             layout.sectionInsetReference = .fromSafeArea
         #endif
-
-        let hud = MBProgressHUD(view: view)!
-        hud.isUserInteractionEnabled = false
-        view.addSubview(hud)
+        
+        self.hud = MBProgressHUD(view: view)!
+        self.hud.isUserInteractionEnabled = true
+        view.addSubview(self.hud)
+        
         updatesController.hudState
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { state in
-                switch state {
-                case .hidden:
-                    hud.hide(true)
-                case .title(let title):
-                    hud.show(true)
-                    hud.mode = .indeterminate
-                    hud.labelText = title
-                case .titleAndProgress(let title, let progress):
-                    hud.show(true)
-                    hud.mode = .annularDeterminate
-                    hud.progress = progress
-                    hud.labelText = title
-                }
-            })
+                    switch state {
+                    case .hidden:
+                        self.hud.hide(true, afterDelay: 1.0)
+                        break;
+                    case .title(let title):
+                        self.hud.mode = .indeterminate
+                        self.hud.labelText = title
+                        self.hud.show(true)
+                        self.hud.hide(true, afterDelay: 1.0)
+                        break;
+                    case .titleAndProgress(let title, let progress):
+                        self.hud.mode = .annularDeterminate
+                        self.hud.progress = progress
+                        self.hud.labelText = title
+                        self.hud.show(true)
+                        if (progress == 1.0) {
+                            self.hud.hide(true, afterDelay: 1.0)
+                        }
+                        break;
+                    }
+            }, onError: { (err) in
+                print("Error")
+            }, onCompleted: {
+                print("Completed")
+            }) {
+                print("Disposed")
+            }
+            .disposed(by: disposeBag)
+
+        updatesController.hudStateWatcher
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { state in
+                    switch state {
+                    case .hidden:
+                        self.hud.hide(true, afterDelay: 1.0)
+                        break;  
+                    case .title(let title):
+                        self.hud.mode = .indeterminate
+                        self.hud.labelText = title
+                        self.hud.show(true)
+                        self.hud.hide(true, afterDelay: 1.0)
+                        break;
+                    case .titleAndProgress(let title, let progress):
+                        self.hud.mode = .annularDeterminate
+                        self.hud.progress = progress
+                        self.hud.labelText = title
+                        self.hud.show(true)
+                        if (progress == 1) {
+                            self.hud.hide(true, afterDelay: 1.0)
+                        }
+                        break;
+                    }
+            }, onError: { (err) in
+                print("Error")
+            }, onCompleted: {
+                print("Completed")
+            }) {
+                print("Disposed")
+            }
             .disposed(by: disposeBag)
 
         updatesController.conflicts
@@ -537,8 +594,25 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             })
             .disposed(by: disposeBag)
 
+        self.hud.mode = .indeterminate
+        self.hud.labelText = "Initializing Games Library..."
+        self.hud.show(true)
+        self.hud.hide(true, afterDelay: TimeInterval(1))
+        self.checkROMs(true)
+
         loadGameFromShortcut()
         becomeFirstResponder()
+    }
+    
+    public func checkROMs(_ once:Bool) {
+        self.hud.mode = .indeterminate
+        self.hud.labelText = "Initializing ROM Database..."
+        self.hud.show(true)
+        if !once || !isLoaded {
+            self.updatesController.importROMDirectories()
+        }
+        self.hud.hide(true)
+        isLoaded = true
     }
 
     #if os(tvOS)
@@ -668,6 +742,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
+        Theme.currentTheme = Theme.currentTheme
+
         transitioningToSize = size
         collectionView?.collectionViewLayout.invalidateLayout()
         coordinator.notifyWhenInteractionChanges { [weak self] _ in
@@ -675,11 +751,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         }
     }
 
-    #if os(iOS) && !targetEnvironment(macCatalyst)
-        override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-            return .all
-        }
-    #endif
+#if os(iOS) && !targetEnvironment(macCatalyst)
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .all
+    }
+#endif
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "SettingsSegue" {
@@ -777,6 +853,10 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         #endif
     }
 
+    @IBAction func refreshButtonTapped(_ sender: Any?) {
+        self.checkROMs(false)
+    }
+
     @objc func dismissVC() {
         dismiss(animated: true, completion: nil)
     }
@@ -796,6 +876,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             // connected via wifi, let's continue
 
             let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
+            actionSheet.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
 
             actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
                 let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data, UTI.rar].map { $0.rawValue }
@@ -811,7 +892,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             }))
 
             let webServerAction = UIAlertAction(title: "Web Server", style: .default, handler: { _ in
-                self.startWebServer()
+                self.startWebServer(sender: sender as? UIView)
             })
 
             actionSheet.addAction(webServerAction)
@@ -853,16 +934,16 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 WLOG("No WiFi. Cannot start web server.")
                 present(alert, animated: true) { () -> Void in }
             } else {
-                startWebServer()
+                startWebServer(sender: sender as? UIView)
             }
         #endif
     }
 
-    func startWebServer() {
+    func startWebServer(sender: UIView?) {
         // start web transfer service
         if PVWebServer.shared.startServers() {
             // show alert view
-            showServerActiveAlert()
+            showServerActiveAlert(sender: self.collectionView, barButtonItem: navigationItem.rightBarButtonItem)
         } else {
 			#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
 			let message = "Check your network connection or settings and free up ports: 8080, 8081."
@@ -870,6 +951,10 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 			let message = "Check your network connection or settings and free up ports: 80, 81."
 			#endif
             let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            alert.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+            alert.popoverPresentationController?.sourceView = self.collectionView
+            alert.popoverPresentationController?.sourceRect = self.collectionView?.bounds ?? UIScreen.main.bounds
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) { () -> Void in }
@@ -882,24 +967,32 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     func handleLibraryMigration() {
         UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
         if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
-            let hud = MBProgressHUD.showAdded(to: view, animated: true)!
+            if (hud == nil) {
+                self.hud = MBProgressHUD.init(view: view)!
+            }
             gameLibrary.migrate()
                 .observe(on: MainScheduler.instance)
                 .subscribe(onNext: { event in
                     switch event {
                     case .starting:
-                        hud.isUserInteractionEnabled = false
-                        hud.mode = .indeterminate
-                        hud.labelText = "Migrating Game Library"
-                        hud.detailsLabelText = "Please be patient, this may take a while…"
+                        self.hud.isUserInteractionEnabled = true
+                        self.hud.mode = .indeterminate
+                        self.hud.labelText = "Migrating Game Library"
+                        self.hud.detailsLabelText = "Please be patient, this could take a while…"
+                        self.hud.show(true)
+                        self.hud.hide(true, afterDelay: 1.0)
+                        break;
                     case .pathsToImport(let paths):
-                        hud.hide(true)
+                        self.hud.labelText = "Checking " + paths.description
+                        self.hud.show(true)
+                        self.hud.hide(true, afterDelay: 1.0)
                         _ = self.gameImporter.importFiles(atPaths: paths)
+                        break;
                     }
                 }, onError: { error in
                     ELOG(error.localizedDescription)
                 }, onCompleted: {
-                    hud.hide(true)
+                    self.hud.hide(true)
                     UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
                 })
                 .disposed(by: disposeBag)
@@ -908,6 +1001,10 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
     fileprivate func showConflictsAlert() {
         let alert = UIAlertController(title: "Oops!", message: "There was a conflict while importing your game.", preferredStyle: .alert)
+        alert.preferredContentSize = CGSize(width: 300, height: 150)
+        alert.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
+        alert.popoverPresentationController?.sourceView = self.collectionView
+        alert.popoverPresentationController?.sourceRect = self.collectionView?.bounds ?? UIScreen.main.bounds
         alert.addAction(UIAlertAction(title: "Let's go fix it!", style: .default, handler: { [unowned self] (_: UIAlertAction) -> Void in
             self.displayConflictVC()
         }))
@@ -949,6 +1046,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
     @objc func handleArchiveInflationFailed(_: Notification) {
         let alert = UIAlertController(title: "Failed to extract archive", message: "There was a problem extracting the archive. Perhaps the download was corrupt? Try downloading it again.", preferredStyle: .alert)
+        alert.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
+        alert.popoverPresentationController?.sourceView = self.collectionView
+        alert.popoverPresentationController?.sourceRect = self.collectionView?.bounds ?? UIScreen.main.bounds
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true) { () -> Void in }
     }
@@ -1032,6 +1132,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 actionSheet.addAction(UIAlertAction(title: "Reset default core selection (\(coreName))", symbol:"bolt.circle", style: .default, handler: { [unowned self] _ in
 
                     let resetAlert = UIAlertController(title: "Reset core?", message: "Are you sure you want to reset \(game.title) to no longer default to use \(coreName)?", preferredStyle: .alert)
+                    resetAlert.preferredContentSize = CGSize(width: 300, height: 150)
+                    resetAlert.popoverPresentationController?.sourceView = sender
+                    resetAlert.popoverPresentationController?.sourceRect = sender.bounds ?? UIScreen.main.bounds
                     resetAlert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                     resetAlert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { _ in
                         try! RomDatabase.sharedInstance.writeTransaction {
@@ -1060,7 +1163,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 self.showCoreOptions(forCore: coreClass, withTitle:pvcore.projectName)
             }))
         }
-
+        if game.relatedFiles.count > 0 {
+            actionSheet.addAction(UIAlertAction(title: "Choose Disc…", symbol: "opticaldiscdrive", style: .default, handler: { (_: UIAlertAction) -> Void in
+                self.discSelection(forGame: game, system: game.system, sender: sender)
+            }))
+        }
         actionSheet.addAction(UIAlertAction(title: "Game Info", symbol: "info.circle", style: .default, handler: { (_: UIAlertAction) -> Void in
             self.moreInfo(for: game)
         }))
@@ -1074,9 +1181,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         actionSheet.addAction(UIAlertAction(title: favoriteTitle, symbol:favoriteSymbol, style: .default, handler: { (_: UIAlertAction) -> Void in
             self.toggleFavorite(for: game)
         }))
-
         actionSheet.addAction(UIAlertAction(title: "Rename", symbol: "rectangle.and.pencil.and.ellipsis", style: .default, handler: { (_: UIAlertAction) -> Void in
-            self.renameGame(game)
+            self.renameGame(game, sender: sender)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Hide", symbol: "rectangle.and.pencil.and.ellipsis", style: .default, handler: { (_: UIAlertAction) -> Void in
+            self.hideGame(game, sender: sender)
         }))
         #if os(iOS)
 
@@ -1084,6 +1193,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             let md5URL = "provenance://open?md5=\(game.md5Hash)"
             UIPasteboard.general.string = md5URL
             let alert = UIAlertController(title: nil, message: "URL copied to clipboard.", preferredStyle: .alert)
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            alert.popoverPresentationController?.sourceView = sender
+            alert.popoverPresentationController?.sourceRect = sender.bounds ?? UIScreen.main.bounds
             self.present(alert, animated: true)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                 alert.dismiss(animated: true, completion: nil)
@@ -1154,12 +1266,15 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
         actionSheet.addAction(UIAlertAction(title: "Delete", symbol:"trash", style: .destructive, handler: { (_: UIAlertAction) -> Void in
             let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            alert.popoverPresentationController?.sourceView = sender
+            alert.popoverPresentationController?.sourceRect = sender.bounds
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_: UIAlertAction) -> Void in
                 // Delete from Realm
                 do {
                     try self.delete(game: game)
                 } catch {
-                    self.presentError(error.localizedDescription)
+                    self.presentError(error.localizedDescription, source: self.view)
                 }
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
@@ -1180,7 +1295,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             do {
                 try PVSaveState.delete(saveState)
             } catch {
-                self.presentError("Error deleting save state: \(error.localizedDescription)")
+                self.presentError("Error deleting save state: \(error.localizedDescription)", source: self.view)
             }
         })
         actionSheet.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
@@ -1206,9 +1321,43 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             performSegue(withIdentifier: "gameMoreInfoSegue", sender: game)
         #endif
     }
-
-    func renameGame(_ game: PVGame) {
+    func discSelection(forGame game: PVGame, system: PVSystem, sender: Any?) {
+        var discs:[PVFile] = game.relatedFiles.toArray().filter {
+            system.supportedExtensions.contains($0.pathExtension)
+        }
+        if discs.filter({ return $0.url.lastPathComponent == game.file.url.lastPathComponent }).count == 0 {
+            discs.append(game.file)
+        }
+        discs = discs.sorted(by: { (obj1, obj2) in
+            return obj1.url.lastPathComponent < obj2.url.lastPathComponent
+        })
+        let coreChoiceAlert = UIAlertController(title: "Please Select the Disc to Launch",
+                                                message: "",
+                                                preferredStyle: .actionSheet)
+        if let senderView = sender as? UIView ?? self.view {
+            coreChoiceAlert.popoverPresentationController?.sourceView = senderView
+            coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
+        }
+        for disc in discs {
+            let action = UIAlertAction(title: disc.fileName, style:.default) { [unowned self] _ in
+                UserDefaults.standard.set(disc.url, forKey: game.romPath)
+            }
+            if let url = UserDefaults.standard.url(forKey: game.romPath) {
+                if url.lastPathComponent == disc.url.lastPathComponent {
+                    coreChoiceAlert.preferredAction = action
+                }
+            } else if disc.url.lastPathComponent == game.file.url.lastPathComponent {
+                coreChoiceAlert.preferredAction = action
+            }
+            coreChoiceAlert.addAction(action)
+        }
+        present(coreChoiceAlert, animated: true)
+    }
+    func renameGame(_ game: PVGame, sender: UIView) {
         let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title):", preferredStyle: .alert)
+        alert.preferredContentSize = CGSize(width: 300, height: 150)
+        alert.popoverPresentationController?.sourceView = sender
+        alert.popoverPresentationController?.sourceRect = sender.bounds ?? UIScreen.main.bounds
         alert.addTextField(configurationHandler: { (_ textField: UITextField) -> Void in
             textField.placeholder = game.title
             textField.text = game.title
@@ -1217,7 +1366,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
             if let title = alert.textFields?.first?.text {
                 guard !title.isEmpty else {
-                    self.presentError("Cannot set a blank title.")
+                    self.presentError("Cannot set a blank title.", source: self.view)
                     return
                 }
 
@@ -1225,9 +1374,17 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             }
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
+#if os(iOS)
+        let ui=UIViewController()
+        ui.addChildViewController(alert, toContainerView: ui.view)
+        present(ui, animated:true) { ()-> Void in }
+#else
         present(alert, animated: true) { () -> Void in }
+#endif
     }
-
+    func hideGame(_ game: PVGame, sender: UIView) {
+        RomDatabase.sharedInstance.hideGame(game)
+    }
     func delete(game: PVGame) throws {
         try RomDatabase.sharedInstance.delete(game: game)
     }
@@ -1236,7 +1393,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     private func chooseCustomArtwork(for game: PVGame, sourceView: UIView) {
             weak var weakSelf: PVGameLibraryViewController? = self
             let imagePickerActionSheet = UIAlertController(title: "Choose Artwork", message: "Choose the location of the artwork.\n\nUse Latest Photo: Use the last image in the camera roll.\nTake Photo: Use the camera to take a photo.\nChoose Photo: Use the camera roll to choose an image.", preferredStyle: .actionSheet)
-
+            imagePickerActionSheet.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
+       
             let cameraIsAvailable: Bool = UIImagePickerController.isSourceTypeAvailable(.camera)
             let photoLibraryIsAvaialble: Bool = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
 
@@ -1401,15 +1559,18 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
 extension PVGameLibraryViewController {
     @objc public func databaseMigrationStarted(_: Notification) {
-        let hud = MBProgressHUD.showAdded(to: view, animated: true)!
-        hud.isUserInteractionEnabled = false
-        hud.mode = .indeterminate
-        hud.labelText = "Migrating Game Library"
-        hud.detailsLabelText = "Please be patient, this may take a while…"
+        if (self.hud == nil) {
+            self.hud = MBProgressHUD.init(view: view)!
+        }
+        self.hud.isUserInteractionEnabled = true
+        self.hud.mode = .indeterminate
+        self.hud.labelText = "Migrating Game Library..."
+        self.hud.detailsLabelText = "Please be patient, this could take a while…"
+        self.hud.show(true);
     }
 
     @objc public func databaseMigrationFinished(_: Notification) {
-        MBProgressHUD.hide(for: view!, animated: true)
+        self.hud.hide(true)
     }
 }
 
@@ -1586,6 +1747,7 @@ extension PVGameLibraryViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
         if indexPath.section == 0 {
             currentSort.onNext(SortOptions.optionForRow(UInt(indexPath.row)))
             // dont call reloadSections or we will loose focus on tvOS
@@ -1721,12 +1883,6 @@ extension PVGameLibraryViewController {
         return true
     }
 
-    override func traitCollectionDidChange(_: UITraitCollection?) {
-        #if os(iOS)
-            viewDidLoad()
-        #endif
-    }
-
     #if os(tvOS)
         @objc
         func showMoreInfoCommand() {
@@ -1749,7 +1905,7 @@ extension PVGameLibraryViewController {
             guard let focusedGame = focusedGame else {
                 return
             }
-            renameGame(focusedGame)
+            renameGame(focusedGame, sender: self.collectionView!)
         }
 
         @objc
@@ -1807,6 +1963,9 @@ extension PVGameLibraryViewController {
 extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
     func promptToDeleteGame(_ game: PVGame, completion: ((Bool) -> Void)? = nil) {
         let alert = UIAlertController(title: "Delete \(game.title)", message: "Any save states and battery saves will also be deleted, are you sure?", preferredStyle: .alert)
+        alert.preferredContentSize = CGSize(width: 300, height: 150)
+        alert.popoverPresentationController?.sourceView = self.collectionView
+        alert.popoverPresentationController?.sourceRect = self.collectionView?.bounds ?? UIScreen.main.bounds
         alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_: UIAlertAction) -> Void in
             // Delete from Realm
             do {
@@ -1814,7 +1973,7 @@ extension PVGameLibraryViewController: GameLibraryCollectionViewDelegate {
                 completion?(true)
             } catch {
                 completion?(false)
-                self.presentError(error.localizedDescription)
+                self.presentError(error.localizedDescription, source: self.view)
             }
         }))
         alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: { (_: UIAlertAction) -> Void in
@@ -2010,6 +2169,7 @@ extension PVGameLibraryViewController: ControllerButtonPress {
     }
     private func options() {
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        actionSheet.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
 
         if _selectedIndexPath != nil {
             // get the title of the game from the contextMenu!

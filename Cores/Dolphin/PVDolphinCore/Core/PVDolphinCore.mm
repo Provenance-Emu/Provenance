@@ -7,9 +7,6 @@
 //
 
 #import "PVDolphinCore.h"
-//#include "DolHost.h"
-//#include "OpenEmuAudioStream.h"
-//#include <stdatomic.h>
 #import "PVDolphinCore+Controls.h"
 #import "PVDolphinCore+Audio.h"
 #import "PVDolphinCore+Video.h"
@@ -17,6 +14,10 @@
 
 #import <Foundation/Foundation.h>
 #import <PVSupport/PVSupport.h>
+
+#import <AudioToolbox/AudioToolbox.h>
+#import <AudioUnit/AudioUnit.h>
+#import <AVFoundation/AVFoundation.h>
 
 /* Dolphin Includes */
 #include "AudioCommon/AudioCommon.h"
@@ -91,6 +92,7 @@
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
+#define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
 static Common::Flag s_running{true};
 static Common::Flag s_shutdown_requested{false};
@@ -132,6 +134,8 @@ static void UpdateWiiPointer();
 
 - (instancetype)init {
     if (self = [super init]) {
+        self.alwaysUseMetal = true;
+        self.skipLayout = true;
         _videoWidth  = 640;
         _videoHeight = 480;
         _videoBitDepth = 32; // ignored
@@ -141,7 +145,6 @@ static void UpdateWiiPointer();
         dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
         _callbackQueue = dispatch_queue_create("org.provenance-emu.dolphin.CallbackHandlerQueue", queueAttributes);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
-        //dol_host = DolHost::GetInstance();
         [self parseOptions];
     }
     _current=self;
@@ -202,7 +205,7 @@ static void UpdateWiiPointer();
     // Resolution upscaling
     Config::SetBase(Config::GFX_EFB_SCALE, self.resFactor);
     Config::SetBase(Config::GFX_MAX_EFB_SCALE, 8); // 16 but dolphini uses 8
-    
+
     // Graphics renderer
     if (self.gsPreference == 0) {
         Config::SetBase(Config::MAIN_GFX_BACKEND, "Vulkan");
@@ -212,6 +215,7 @@ static void UpdateWiiPointer();
         Config::SetBase(Config::MAIN_OSD_MESSAGES, false);
     }
     VideoBackendBase::PopulateBackendInfoFromUI();
+
     // CPU
     if (self.cpuType == 0) {
         SConfig::GetInstance().cpu_core = PowerPC::CPUCore::Interpreter;
@@ -223,26 +227,15 @@ static void UpdateWiiPointer();
 #else
         Config::SetBase(Config::MAIN_CPU_CORE, PowerPC::CPUCore::JITARM64);
 #endif
-        /*
-        SConfig::GetInstance().m_DSPEnableJIT = true;
-        SConfig::GetInstance().bJITOff = false;
-        SConfig::GetInstance().bJITLoadStoreOff=false;
-        SConfig::GetInstance().bJITLoadStoreFloatingOff=false;
-        SConfig::GetInstance().bJITLoadStorePairedOff=false;
-        SConfig::GetInstance().bJITFloatingPointOff=false;
-        SConfig::GetInstance().bJITIntegerOff=false;
-        SConfig::GetInstance().bJITPairedOff=false;
-        SConfig::GetInstance().bJITSystemRegistersOff=false;
-        SConfig::GetInstance().bJITBranchOff=false;
-        SConfig::GetInstance().bJITRegisterCacheOff=false;
-        Config::SetBase(Config::MAIN_JIT_FOLLOW_BRANCH, true);
-         Config::SetBase(Config::MAIN_DSP_JIT, true);
-        */
     }
+
+    // SDCard
     SConfig::GetInstance().m_WiiSDCard = true;
     SConfig::GetInstance().bEnableMemcardSdWriting = true;
+
     // Filtering
     Config::SetBase(Config::GFX_ENHANCE_FORCE_FILTERING, self.isBilinear);
+
     // Fast Mem
     if (self.fastMemory) {
         Config::SetBase(Config::MAIN_FASTMEM, self.fastMemory);
@@ -252,6 +245,7 @@ static void UpdateWiiPointer();
         }
     }
     Config::SetBase(Config::GFX_SHOW_FPS, false);
+
     // Anti Aliasing
     if (self.gsPreference == 0) {
         Config::SetBase(Config::GFX_MSAA, self.msaa);
@@ -260,60 +254,41 @@ static void UpdateWiiPointer();
         Config::SetBase(Config::GFX_MSAA, 1);
         Config::SetBase(Config::GFX_SSAA, false);
     }
+
     // Cheats
     SConfig::GetInstance().bEnableCheats = self.enableCheatCode;
+
     // CPU Overclock
     Config::SetBase(Config::MAIN_CPU_THREAD, true);
     SConfig::GetInstance().m_OCFactor = self.cpuOClock;
     SConfig::GetInstance().m_OCEnable = self.cpuOClock > 1;
-    // CPU High Level / Low Level Emulation (Low Level is slower but better)
+
+    // CPU High Level / Low Level Emulation
     SConfig::GetInstance().bDSPHLE = true;
-    //Core::SetIsThrottlerTempDisabled(true);
+    Core::SetIsThrottlerTempDisabled(false);
+
     // Wait for Shaders
-    //Config::SetBase(Config::GFX_WAIT_FOR_SHADERS_BEFORE_STARTING, true);
+    Config::SetBase(Config::GFX_WAIT_FOR_SHADERS_BEFORE_STARTING, true);
+
     // Wiimote
+    Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, false);
     SConfig::GetInstance().m_WiiKeyboard = false;
     SConfig::GetInstance().m_WiimoteContinuousScanning = false;
-    Config::SetBase(Config::SYSCONF_WIIMOTE_MOTOR, false);
     SConfig::GetInstance().m_bt_passthrough_enabled = false;
+
     // Social
     Discord::SetDiscordPresenceEnabled(false);
+
     // Alerts
     Common::SetEnableAlert(false);
-    /*
-    //Audio
-    Config::SetBase(Config::MAIN_AUDIO_LATENCY, 22);
+
+    // Audio
+    SConfig::GetInstance().m_Volume = self.volume;
     SConfig::GetInstance().bAutomaticStart = true;
-    // Must be set to false (will crash / disable fastmem / slow things down..etc if set to other values)
-    SConfig::GetInstance().bMMU = false;
-    //SConfig::GetInstance().bDSPThread = false;
-    //Config::SetBase(Config::GFX_ENABLE_GPU_TEXTURE_DECODING, false);
-    // Sync
-    Config::SetBase(Config::MAIN_SYNC_ON_SKIP_IDLE, true);
-    Config::SetBase(Config::MAIN_SYNC_GPU, false);
-    Config::SetBase(Config::MAIN_SYNC_GPU_MAX_DISTANCE, 200000);
-    Config::SetBase(Config::MAIN_SYNC_GPU_MIN_DISTANCE, -200000);
-    Config::SetBase(Config::MAIN_SYNC_GPU_OVERCLOCK, 1.0);
-    Config::SetBase(Config::MAIN_FPRF, false);
-    Config::SetBase(Config::MAIN_ACCURATE_NANS, false);
-    Config::SetBase(Config::MAIN_TIMING_VARIANCE, 40);
-    Config::SetBase(Config::MAIN_SKIP_IPL, true);
-    //Debug Settings
+
+    // Debug Settings
     SConfig::GetInstance().bEnableDebugging = false;
     SConfig::GetInstance().m_ShowFrameCount = false;
-    // Graphics Multithreading
-    //Config::SetBase(Config::GFX_BACKEND_MULTITHREADING, false);
-    //Config::SetBase(Config::GFX_SAVE_TEXTURE_CACHE_TO_STATE, false);
-    //Config::SetBase(Config::GFX_SHADER_COMPILATION_MODE, ShaderCompilationMode::Synchronous);
-    //Config::SetBase(Config::GFX_SHADER_COMPILER_THREADS, 1);
-    //Config::SetBase(Config::GFX_SHADER_PRECOMPILER_THREADS, 1);
-    // Other
-    //Config::SetBase(Config::GFX_HACK_EFB_EMULATE_FORMAT_CHANGES, 1);
-    //Config::SetBase(Config::GFX_HACK_DEFER_EFB_COPIES, 0);
-    //Config::SetBase(Config::GFX_HACK_FORCE_LOGICOPS_FALLBACK, 1);
-    //Config::SetBase(Config::GFX_STEREO_CONVERGENCE, 613);
-    */
-    //SConfig::GetInstance().SaveSettings();
 }
 
 #pragma mark - Running
@@ -321,6 +296,7 @@ static void UpdateWiiPointer();
     NSError *error;
     NSFileManager *fm = [[NSFileManager alloc] init];
     NSString* saveDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData" ];
+
     // Copy Sys Bundle
     NSString *sysPath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Sys" ofType:nil];
     if (![fm fileExistsAtPath: saveDirectory]) {
@@ -328,10 +304,12 @@ static void UpdateWiiPointer();
             NSLog(@"Error copying the sys files: %@", [error description]);
         }
     }
+
     // Copy Wii Files (needed to boot some games)
     NSString *wiiPath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Sys/Wii" ofType:nil];
     NSString* wiiDestDirectory = [self.batterySavesPath stringByAppendingPathComponent:@"../DolphinData/Wii" ];
     [self syncResources:wiiPath to:wiiDestDirectory overWrite:false];
+
     // Copy gecko code handler from resource bundle
     NSString *filePath = [[NSBundle bundleForClass:[PVDolphinCore class]] pathForResource:@"Sys/codehandler.bin" ofType:nil];
     NSString *codeHandler = [saveDirectory stringByAppendingPathComponent:@"codehandler.bin"];
@@ -430,9 +408,10 @@ static void UpdateWiiPointer();
 }
 
 - (void)startEmulation {
-    // Skip Emulation Loop since the core has its own loop
     self.skipEmulationLoop = true;
+    [self prepareAudio];
     [self setupEmulation];
+
     [self setOptionValues];
     [self setupView];
     [super startEmulation];
@@ -458,7 +437,6 @@ static void UpdateWiiPointer();
            Core::GetState() != Core::State::Uninitialized ||
            !_isOff) {
         sleep(1);
-        //Common::SleepCurrentThread(100);
     }
     Core::Shutdown();
     VertexLoaderManager::Clear();
@@ -489,55 +467,110 @@ static void UpdateWiiPointer();
     if (Core::IsRunningAndStarted() && g_renderer)
         g_renderer->ResizeSurface();
 }
-
+-(void) prepareAudio {
+    NSError *error = nil;
+    [[AVAudioSession sharedInstance]
+     setCategory:AVAudioSessionCategoryAmbient
+     mode:AVAudioSessionModeDefault
+     options:AVAudioSessionCategoryOptionAllowBluetooth |
+     AVAudioSessionCategoryOptionAllowAirPlay |
+     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+     AVAudioSessionCategoryOptionMixWithOthers
+     error:&error];
+    [[AVAudioSession sharedInstance] setActive:YES error:&error];
+}
 - (void)setupView {
 	UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
 	auto screenBounds = [[UIScreen mainScreen] bounds];
-	if(self.gsPreference == 0)
-	{
-		DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
-													  initWithResFactor:self.resFactor
-													  videoWidth: self.videoWidth
-													  videoHeight: self.videoHeight
-													  core: self];
-		m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
-        m_view_controller=(UIViewController *)cgsh_view_controller;
-		m_view=cgsh_view_controller.view;
-        m_view.contentMode = UIViewContentModeScaleToFill;
-        [gl_view_controller addChildViewController:cgsh_view_controller];
-        [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
-	} else if(self.gsPreference == 1) {
-		DolphinOGLViewController *cgsh_view_controller=[[DolphinOGLViewController alloc]
-													  initWithResFactor:self.resFactor
-													  videoWidth: self.videoWidth
-													  videoHeight: self.videoHeight
-													  core: self];
-		m_gl_layer=(CAEAGLLayer *)cgsh_view_controller.view.layer;
-        m_view_controller=(UIViewController *)cgsh_view_controller;
-		m_view=cgsh_view_controller.view;
-		m_view.contentMode = UIViewContentModeScaleToFill;
-        [gl_view_controller addChildViewController:cgsh_view_controller];
-        [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
-	}
-	if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
-        self.renderDelegate.mtlview.autoresizesSubviews=true;
-        self.renderDelegate.mtlview.clipsToBounds=true;
-		[self.renderDelegate.mtlview addSubview:m_view];
-		[m_view.topAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.topAnchor constant:0].active = true;
-		[m_view.leadingAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.leadingAnchor constant:0].active = true;
-		[m_view.trailingAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.trailingAnchor constant:0].active = true;
-		[m_view.bottomAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.bottomAnchor constant:0].active = true;
-	} else {
-        gl_view_controller.view.autoresizesSubviews=true;
-        gl_view_controller.view.clipsToBounds=true;
-		[gl_view_controller.view addSubview:m_view];
-        [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.widthAnchor].active=true;
-        [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;
-		[m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
-		[m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
-		[m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
-		[m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
-	}
+    if (self.touchViewController) {
+        UIViewController *gl_view_controller = (UIViewController *)self.renderDelegate;
+        CGRect screenBounds = [[UIScreen mainScreen] bounds];
+        if(self.gsPreference == 0)
+        {
+            DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
+                                                               initWithResFactor:self.resFactor
+                                                               videoWidth: self.videoWidth
+                                                               videoHeight: self.videoHeight
+                                                               core: self];
+            m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
+            m_view_controller=(UIViewController *)cgsh_view_controller;
+            m_view=cgsh_view_controller.view;
+            m_view.contentMode = UIViewContentModeScaleToFill;
+        } else if(self.gsPreference == 1) {
+            DolphinOGLViewController *cgsh_view_controller=[[DolphinOGLViewController alloc]
+                                                            initWithResFactor:self.resFactor
+                                                            videoWidth: self.videoWidth
+                                                            videoHeight: self.videoHeight
+                                                            core: self];
+            m_gl_layer=(CAEAGLLayer *)cgsh_view_controller.view.layer;
+            m_view_controller=(UIViewController *)cgsh_view_controller;
+            m_view=cgsh_view_controller.view;
+            m_view.contentMode = UIViewContentModeScaleToFill;
+        }
+        
+        m_view=m_view_controller.view;
+        UIViewController *rootController = m_view_controller;
+        [self.touchViewController.view addSubview:m_view];
+        [self.touchViewController addChildViewController:rootController];
+        [rootController didMoveToParentViewController:self.touchViewController];
+        [self.touchViewController.view sendSubviewToBack:m_view];
+        [rootController.view setHidden:false];
+        rootController.view.translatesAutoresizingMaskIntoConstraints = false;
+        [[rootController.view.topAnchor constraintEqualToAnchor:self.touchViewController.view.topAnchor] setActive:YES];
+        [[rootController.view.bottomAnchor constraintEqualToAnchor:self.touchViewController.view.bottomAnchor] setActive:YES];
+        [[rootController.view.leadingAnchor constraintEqualToAnchor:self.touchViewController.view.leadingAnchor] setActive:YES];
+        [[rootController.view.trailingAnchor constraintEqualToAnchor:self.touchViewController.view.trailingAnchor] setActive:YES];
+        self.touchViewController.view.userInteractionEnabled=true;
+        self.touchViewController.view.autoresizesSubviews=true;
+        self.touchViewController.view.userInteractionEnabled=true;
+        self.touchViewController.view.multipleTouchEnabled=true;
+    } else {
+        if(self.gsPreference == 0)
+        {
+            DolphinVulkanViewController *cgsh_view_controller=[[DolphinVulkanViewController alloc]
+                                                               initWithResFactor:self.resFactor
+                                                               videoWidth: self.videoWidth
+                                                               videoHeight: self.videoHeight
+                                                               core: self];
+            m_metal_layer=(CAMetalLayer *)cgsh_view_controller.view.layer;
+            m_view_controller=(UIViewController *)cgsh_view_controller;
+            m_view=cgsh_view_controller.view;
+            m_view.contentMode = UIViewContentModeScaleToFill;
+            [gl_view_controller addChildViewController:cgsh_view_controller];
+            [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
+        } else if(self.gsPreference == 1) {
+            DolphinOGLViewController *cgsh_view_controller=[[DolphinOGLViewController alloc]
+                                                            initWithResFactor:self.resFactor
+                                                            videoWidth: self.videoWidth
+                                                            videoHeight: self.videoHeight
+                                                            core: self];
+            m_gl_layer=(CAEAGLLayer *)cgsh_view_controller.view.layer;
+            m_view_controller=(UIViewController *)cgsh_view_controller;
+            m_view=cgsh_view_controller.view;
+            m_view.contentMode = UIViewContentModeScaleToFill;
+            [gl_view_controller addChildViewController:cgsh_view_controller];
+            [cgsh_view_controller didMoveToParentViewController:gl_view_controller];
+        }
+        if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
+            self.renderDelegate.mtlview.autoresizesSubviews=true;
+            self.renderDelegate.mtlview.clipsToBounds=true;
+            [self.renderDelegate.mtlview addSubview:m_view];
+            [m_view.topAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.topAnchor constant:0].active = true;
+            [m_view.leadingAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.leadingAnchor constant:0].active = true;
+            [m_view.trailingAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.trailingAnchor constant:0].active = true;
+            [m_view.bottomAnchor constraintEqualToAnchor:self.renderDelegate.mtlview.bottomAnchor constant:0].active = true;
+        } else {
+            gl_view_controller.view.autoresizesSubviews=true;
+            gl_view_controller.view.clipsToBounds=true;
+            [gl_view_controller.view addSubview:m_view];
+            [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.widthAnchor].active=true;
+            [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;
+            [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
+            [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
+            [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
+            [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
+        }
+    }
 }
 -(void)optionUpdated:(NSNotification *)notification {
     NSDictionary *info = notification.userInfo;
@@ -554,7 +587,11 @@ static void UpdateWiiPointer();
         ^{
             self.multiPlayer = [value isEqualToString:@"true"];
             [self setupControllers];
-        }
+        },
+        @"Audio Volume":
+        ^{
+            [self setOptionValues];
+        },
     };
     Process action=[actions objectForKey:key];
     if (action)

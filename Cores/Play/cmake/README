@@ -1,0 +1,8 @@
+Installation Steps
+1. run update.sh
+2. Append 'Play' to module names
+3. change build directory to $SRCROOT/lib/play
+4. Erase Loader from Framework_Vulkan, replace with Loader inn PVPlayCore/Core
+5. Run python3 	xcode_absolute_path_to_relative.py  
+6. Erase CMakefiles / .cmake / .make files
+7. Add Loader.cpp / and other files in PVPlayCore/Play to appropriate project (PlayCore)

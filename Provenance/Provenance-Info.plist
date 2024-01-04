@@ -140,14 +140,14 @@
 		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
-			<key>69.69.0.1</key>
+			<key>127.0.0.1</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 				<key>NSIncludesSubdomains</key>
 				<true/>
 			</dict>
-			<key>127.0.0.1</key>
+			<key>69.69.0.1</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
@@ -207,19 +207,19 @@
 		<string>_webdav._tcp</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Used for album artwork</string>
+	<string>Used for album artwork.</string>
 	<key>NSExtensionFileProviderSupportsEnumeration</key>
 	<true/>
 	<key>NSFileProviderDomainUsageDescription</key>
-	<string>Provenance uses file provider for loading roms.</string>
+	<string>Provenance uses file provider for loading ROMs.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Provenance uses the local network to find and communicate with AltServer.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Provenance uses the Microphone for systems that support audio input (eg; Famicom)</string>
+	<string>Provenance uses the microphone for systems that support audio input (eg. Famicom).</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
+	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Provenance can set custom artworks from your photos or save screenshots to your photos library.</string>
+	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
 	<key>NSSupportsPurgeableLocalStorage</key>
 	<true/>
 	<key>NSUbiquitousContainers</key>
@@ -254,7 +254,7 @@
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
-	<string>Default</string>
+	<string>LaunchScreen.storyboard</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -263,9 +263,11 @@
 		<string>arm64</string>
 	</array>
 	<key>UIStatusBarHidden</key>
-	<false/>
+	<true/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -40,7 +40,7 @@ public extension PVEmulatorConfiguration {
 
         let superclasses = ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]
         for i in 0 ..< Int(count) {
-            if let classInfo = ClassInfo(classList[i], withSuperclass: superclasses), let superclassesInfo = classInfo.superclassesInfo, motherClassInfo.intersects(with: motherClassInfo) {
+            if let classInfo = ClassInfo(classList[i], withSuperclass: superclasses), motherClassInfo.intersects(with: motherClassInfo) {
                 subclassList.append(classInfo)
             }
         }

@@ -51,12 +51,12 @@ extension PVRootViewController: PVRootDelegate {
         do {
             try self.delete(game: game)
         } catch {
-            self.presentError(error.localizedDescription)
+            self.presentError(error.localizedDescription, source: self.view)
         }
     }
 
     func showUnderConstructionAlert() {
-        self.presentMessage("Please try again in a future update.", title: "⚠️ Under Construction ⚠️")
+        self.presentMessage("Please try again in a future update.", title: "⚠️ Under Construction ⚠️", source: self.view)
     }
 }
 

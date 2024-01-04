@@ -46,6 +46,26 @@
 
 @implementation PVPPSSPPCore (Cheats)
 #pragma mark - Cheats
+- (void)resetCheatCodes {
+    NSLog(@"Reset Cheat Codes\n");
+    // Init Cheat Engine
+    CWCheatEngine *cheatEngine = new CWCheatEngine(g_paramSFO.GetDiscID());
+    Path file=cheatEngine->CheatFilename();
+
+    // Output cheats to cheat file
+    std::ofstream outFile;
+    outFile.open(file.c_str());
+    outFile << "_S " << g_paramSFO.GetDiscID() << std::endl;
+    outFile.close();
+
+    g_Config.bReloadCheats = true;
+
+    // Parse and Run the Cheats
+    cheatEngine->ParseCheats();
+    if (cheatEngine->HasCheats()) {
+       cheatEngine->Run();
+    }
+}
 - (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType: (NSString *)codeType
 		  setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled  error:(NSError**)error {
 	// Initialize Cheat Engine

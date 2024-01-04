@@ -376,7 +376,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
         } else {
             allButtons.forEach {
                 $0.isHidden = isHidden
+                $0.alpha = CGFloat(PVSettingsModel.shared.controllerOpacity)
             }
+            print("Controller Alpha Set ", CGFloat(PVSettingsModel.shared.controllerOpacity))
             dPad2?.isHidden = isHidden
             setupTouchControls()
         }
@@ -392,7 +394,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		} else {
 			allButtons.forEach {
 				$0.isHidden = false
+                $0.alpha = CGFloat(PVSettingsModel.shared.controllerOpacity)
 			}
+            print("Controller Alpha Set ", CGFloat(PVSettingsModel.shared.controllerOpacity))
 			dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
 		}
 		setupTouchControls()
@@ -411,7 +415,9 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		} else {
 			allButtons.forEach {
 				$0.isHidden = false
+                $0.alpha = CGFloat(PVSettingsModel.shared.controllerOpacity)
 			}
+            print("Controller Alpha Set", CGFloat(PVSettingsModel.shared.controllerOpacity))
 			dPad2?.isHidden = traitCollection.verticalSizeClass == .compact
 		}
 		setupTouchControls()
@@ -855,7 +861,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	func layoutLeftShoulderButtons(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = view.safeAreaInsets.left + 10
-        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		var leftShoulderFrame: CGRect!
 		if dPad != nil {
             leftShoulderFrame = CGRect(x: xPadding, y: (dPad?.frame.minY)!, width: controlSize.width, height: controlSize.height)
@@ -985,7 +990,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	func layoutStartButton(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let yPadding: CGFloat = view.safeAreaInsets.bottom
-        let xPadding: CGFloat = view.safeAreaInsets.right
 		let spacing: CGFloat = 20
 		var startFrame = CGRect(x: (view.frame.size.width / 2) + controlSize.width + (spacing / 2),
 								y: view.frame.height - yPadding - controlSize.height,
@@ -1226,7 +1230,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 }
             }
             // Align Joypad Little more than halfway of Dpad Horizontally
-            joyPadFrame.origin.x = dPad.frame.maxX - joyPadFrame.size.width * joyPadScale + spacing
+            joyPadFrame.origin.x = dPad.frame.maxX - joyPadFrame.size.width * joyPadScale + spacing * 6
+            joyPadFrame.origin.y -= spacing * 2
         } else {
             // portrait joystick settings
             if joystickOverDPad {
@@ -1309,7 +1314,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 }
                 startButton?.frame.origin.x = view.frame.size.width / 2 - (startButton?.frame.size.width)! / 2
             } else {
-                startButton?.frame.origin.x = minX
+                startButton?.frame.origin.x = view.frame.size.width - (startButton?.frame.size.width)!
             }
         }
         guard  let joyPad2 = joyPad2, (joyPad2 != nil && !joyPad2.isCustomMoved) else {
@@ -1324,7 +1329,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 if joystickOverDPad {
                     joyPad2Frame.origin.x = (buttonGroup?.frame.minX)! - joyPad2Frame.size.width * joyPad2Scale
                 } else {
-                    joyPad2Frame.origin.x = (buttonGroup?.frame.minX)! - joyPad2Frame.size.width * joyPad2Scale
+                    joyPad2Frame.origin.x = (buttonGroup?.frame.minX)! - joyPad2Frame.size.width * joyPad2Scale - spacing * 6
                     if buttonGroup != nil, let buttonGroup = buttonGroup {
                         var buttonGroupFrame = buttonGroup.frame
                         buttonGroupFrame.origin.y = view.frame.height - buttonGroupFrame.size.height - joyPad2Frame.size.height * joyPad2Scale / 2 - spacing * 6

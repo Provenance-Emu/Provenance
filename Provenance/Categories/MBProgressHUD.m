@@ -179,11 +179,11 @@ static const CGFloat kDetailsLabelFontSize = 12.f;
 		self.activityIndicatorColor = [UIColor whiteColor];
 		self.xOffset = 0.0f;
 		self.yOffset = 0.0f;
-		self.dimBackground = NO;
+		self.dimBackground = YES;
 		self.margin = 20.0f;
 		self.cornerRadius = 10.0f;
 		self.graceTime = 0.0f;
-		self.minShowTime = 0.0f;
+		self.minShowTime = 1.0f;
 		self.removeFromSuperViewOnHide = NO;
 		self.minSize = CGSizeZero;
 		self.square = NO;
@@ -326,6 +326,13 @@ static const CGFloat kDetailsLabelFontSize = 12.f;
 	else {
 		self.alpha = 1.0f;
 	}
+    if (!self.progress || self.progress == 1.0) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^(void){
+            if (!self.progress || self.progress == 1.0) {
+                [self hideUsingAnimation:true];
+            }
+        });
+    }
 }
 
 - (void)hideUsingAnimation:(BOOL)animated {

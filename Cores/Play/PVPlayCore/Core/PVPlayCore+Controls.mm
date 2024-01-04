@@ -77,6 +77,7 @@ s8 joyx[4], joyy[4];
 }
 -(void)setupControllers {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(controllerConnected:)
                                                  name:GCKeyboardDidConnectNotification
@@ -443,40 +444,29 @@ s8 joyx[4], joyy[4];
 
 -(void)didPushPS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
     [self sendButtonInput:button isPressed:true withValue:1 forPlayer:player];
-//    // FIXME: Player 2 is not yet supported.
-//    if (player != 1) {
-//        return;
-//    }
-//    for(auto bindingIterator(std::begin(_bindings));
-//        bindingIterator != std::end(_bindings); bindingIterator++)
-//    {
-//        const auto& binding = (*bindingIterator);
-//        if(!binding) continue;
-//        binding->ProcessEvent(button, 1);
-//    }
 }
 
 - (void)didReleasePS2Button:(enum PVPS2Button)button forPlayer:(NSInteger)player {
     [self sendButtonInput:button isPressed:false withValue:0 forPlayer:player];
-//    // FIXME: Player 2 is not yet supported.
-//    if (player != 1) {
-//        return;
-//    }
-//    for(auto bindingIterator(std::begin(_bindings));
-//        bindingIterator != std::end(_bindings); bindingIterator++)
-//    {
-//        const auto& binding = (*bindingIterator);
-//        if(!binding) continue;
-//        binding->ProcessEvent(button, 0);
-//    }
 }
 
-- (void)didMovePS2JoystickDirection:(enum PVPS2Button)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self sendButtonInput:button isPressed:true withValue:value forPlayer:player];
+- (void)didMovePS2JoystickDirection:(enum PVPS2Button)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    switch (button) {
+        case(PVPS2ButtonLeftAnalog):
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_LEFT_X, xValue);
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_LEFT_Y, -yValue);
+            break;
+        case(PVPS2ButtonRightAnalog):
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_RIGHT_X, xValue);
+            padHandler->SetAxisState(PS2::CControllerInfo::ANALOG_RIGHT_Y, -yValue);
+            break;
+        default:
+            break;
+    }
 }
 
--(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-    [self didMovePS2JoystickDirection:(enum PVPS2Button)button withValue:value forPlayer:player];
+-(void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    [self didMovePS2JoystickDirection:(enum PVPS2Button)button withXValue:xValue withYValue:yValue forPlayer:player];
 }
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
