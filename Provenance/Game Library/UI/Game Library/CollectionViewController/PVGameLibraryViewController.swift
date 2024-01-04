@@ -751,11 +751,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         }
     }
 
-    #if os(iOS) && !targetEnvironment(macCatalyst)
-        override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-            return .all
-        }
-    #endif
+#if os(iOS) && !targetEnvironment(macCatalyst)
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .all
+    }
+#endif
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "SettingsSegue" {

@@ -12090,8 +12090,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
 			requirement = {
-				branch = master;
-				kind = branch;
+				kind = revision;
+				revision = d3cbf32788250741d397cfb5bcd532c37aa1096d;
 			};
 		};
 		930498C62A93073800BF257F /* XCRemoteSwiftPackageReference "AltKit" */ = {
