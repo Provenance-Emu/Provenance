@@ -135,15 +135,6 @@
           "revision": "3016df0730fb7daa85d73e29ec9d02851db831ae",
           "version": "2.5.3"
         }
-      },
-      {
-        "package": "zstd",
-        "repositoryURL": "https://github.com/facebook/zstd",
-        "state": {
-          "branch": "dev",
-          "revision": "de6b46dfc80d950a32176c7eca79bb229d47f501",
-          "version": null
-        }
       }
     ]
   },

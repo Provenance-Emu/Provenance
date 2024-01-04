@@ -157,6 +157,8 @@
 		37EEA2A727BC7E610070E222 /* ConsolesWrapperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29827BC7E610070E222 /* ConsolesWrapperView.swift */; };
 		37EEA2A827BC7E610070E222 /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
 		37EEA2AB27BC81890070E222 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 37EEA2AA27BC81890070E222 /* Introspect */; };
+		551DA2FC2ABF7E99004BA3E9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
+		551DA2FE2ABF8006004BA3E9 /* LaunchImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FD2ABF8006004BA3E9 /* LaunchImage.png */; };
 		930498CF2A93073800BF257F /* RadioSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0A276B470B00D85327 /* RadioSection.swift */; };
 		930498D02A93073800BF257F /* PVSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225B21D32FCC0077E86F /* PVSliderCell.swift */; };
 		930498D12A93073800BF257F /* PVSaveStatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB108206EE8A700A1F942 /* PVSaveStatesViewController.swift */; };
@@ -455,8 +457,6 @@
 		93049A882A931E3A00BF257F /* PVMiniVMacRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93049A802A930C6F00BF257F /* PVMiniVMacRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93049A892A931E4E00BF257F /* PVMelonDSRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93049A7E2A930C6000BF257F /* PVMelonDSRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93049A8A2A931E5E00BF257F /* PVDosBoxRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93049A242A9309FB00BF257F /* PVDosBoxRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		551DA2FC2ABF7E99004BA3E9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
-		551DA2FE2ABF8006004BA3E9 /* LaunchImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FD2ABF8006004BA3E9 /* LaunchImage.png */; };
 		93102A4A2A30E879002C86C6 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93102A492A30E879002C86C6 /* PVLogging */; };
 		93102A4B2A30E879002C86C6 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 93102A492A30E879002C86C6 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93102A4D2A30E955002C86C6 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93102A4C2A30E955002C86C6 /* PVLogging */; };
@@ -6655,7 +6655,6 @@
 				1A2FB10C206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift in Sources */,
 				B3AB37422187F569009D9244 /* PVNeoGeoPocketControllerViewController.swift in Sources */,
 				B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */,
-				42BC83A917E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B300DED2295FECDC0049F2AB /* LocalizerUtils.m in Sources */,
 				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
 				37EEA2A427BC7E610070E222 /* SearchBar.swift in Sources */,
