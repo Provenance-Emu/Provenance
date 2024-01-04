@@ -89,13 +89,8 @@ final class CoreOptionsViewController: QuickTableViewController {
 															 action: { _ in
 																 let currentSelection: String? = self.core.storedValueForOption(String.self, option.key) ?? option.defaultValue as? String
 																 let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
-                                                                 actionController.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
-                                                                 actionController.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
-																 if let popoverPresentationController = actionController.popoverPresentationController {
-																	let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
-																	popoverPresentationController.sourceView = self.tableView
-																	popoverPresentationController.sourceRect = cellRect
-																 }
+                                 actionController.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
+                                 actionController.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
 
 																 values.forEach { value in
 																	 var title = value.title
@@ -107,7 +102,6 @@ final class CoreOptionsViewController: QuickTableViewController {
 																	 })
 																	 actionController.addAction(action)
 																 }
-																 actionController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
 																 self.present(actionController, animated: true)
 
 																 if let indexPath = self.tableView.indexPathForSelectedRow {
@@ -124,25 +118,8 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              action: { row in
                                                                  let currentSelection: Int = self.core.storedValueForOption(Int.self, option.key) ?? option.defaultValue as? Int ?? defaultValue
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
-                        actionController.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
-                        actionController.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
-                        #if !os(tvOS)
-                            if #available(iOS 15.0, *), let sheetPresentationController = actionController.sheetPresentationController {
-//                                let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
-                                sheetPresentationController.sourceView = self.tableView
-//                                sheetPresentationController.sourceRect = cellRect
-                            } else if let popoverPresentationController = actionController.popoverPresentationController {
-                                let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
-                                popoverPresentationController.sourceView = self.tableView
-                                popoverPresentationController.sourceRect = cellRect
-                             }
-                        #else
-                        if let popoverPresentationController = actionController.popoverPresentationController {
-                            let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
-                            popoverPresentationController.sourceView = self.tableView
-                            popoverPresentationController.sourceRect = cellRect
-                         }
-                        #endif
+                                                                  actionController.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
+                                                                  actionController.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
 
                                                                  values.forEach { value in
                                                                      var title = value.title
@@ -154,7 +131,6 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                                      })
                                                                      actionController.addAction(action)
                                                                  }
-                                                                 actionController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                                                                  self.present(actionController, animated: true)
 
                                                                  if let indexPath = self.tableView.indexPathForSelectedRow {
