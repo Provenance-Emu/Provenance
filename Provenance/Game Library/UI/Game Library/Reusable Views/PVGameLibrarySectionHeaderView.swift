@@ -20,7 +20,8 @@ internal struct GameLibrarySectionViewModel {
 
 final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
     private(set) var titleLabel: UILabel = UILabel()
-    let collapseButton: UIButton = {
+    private(set) var bottomSeparator: UIView = UIView()
+    private(set) var collapseButton: UIButton = {
         let button = UIButton()
 
         button.setImage(UIImage(named: "chevron_down"), for: .normal)
@@ -85,10 +86,9 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
 //
 //        addSubview(topSeparator)
 
-            let bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height - 1, width: bounds.size.width, height: 1.0))
+            bottomSeparator = UIView(frame: CGRect(x: 0, y: bounds.size.height - 1, width: bounds.size.width, height: 1.0))
             bottomSeparator.backgroundColor = Theme.currentTheme.gameLibraryHeaderText
             bottomSeparator.autoresizingMask = .flexibleWidth
-
             addSubview(bottomSeparator)
 
             // Style
@@ -117,15 +117,22 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
         isOpaque = true
     }
 
+    override func traitCollectionDidChange(_: UITraitCollection?) {
+        #if os(tvOS)
+        titleLabel.textColor = colorForText
+        #else
+        backgroundColor = Theme.currentTheme.gameLibraryHeaderBackground
+        titleLabel.textColor = Theme.currentTheme.gameLibraryHeaderText
+        collapseButton.tintColor = Theme.currentTheme.gameLibraryHeaderText
+        bottomSeparator.backgroundColor = Theme.currentTheme.gameLibraryHeaderText
+        #endif
+    }
+    
     required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
     #if os(tvOS)
-        override func traitCollectionDidChange(_: UITraitCollection?) {
-            titleLabel.textColor = colorForText
-        }
-
         var colorForText: UIColor {
             if traitCollection.userInterfaceStyle == .dark {
             return UIColor(white: 1.0, alpha: 0.5) // After being focussed the UIColor should return to our default UIColor(white: 1.0, alpha: 0.5) for Ui consistency
