@@ -268,9 +268,9 @@ public final class Theme {
 //        }
 
         // Game Library Headers
-        PVGameLibrarySectionHeaderView.appearance {
-            $0.backgroundColor = theme.gameLibraryHeaderBackground
-        }
+//        PVGameLibrarySectionHeaderView.appearance {
+//            $0.backgroundColor = theme.gameLibraryHeaderBackground
+//        }
 
 //        appearance(in: [PVGameLibrarySectionHeaderView.self]) {
 //            UILabel.appearance {
