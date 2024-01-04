@@ -124,12 +124,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
     // MARK: - Lifecycle
 
-    #if os(iOS)
-        override var preferredStatusBarStyle: UIStatusBarStyle {
-            return .lightContent
-        }
-    #endif
-
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -744,11 +738,24 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
     fileprivate lazy var officialBundleID: Bool = Bundle.main.bundleIdentifier!.contains("org.provenance-emu.")
 
-    #if os(iOS) && !targetEnvironment(macCatalyst)
-        override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-            return .all
+    var transitioningToSize: CGSize?
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+
+        Theme.currentTheme = Theme.currentTheme
+
+        transitioningToSize = size
+        collectionView?.collectionViewLayout.invalidateLayout()
+        coordinator.notifyWhenInteractionChanges { [weak self] _ in
+            self?.transitioningToSize = nil
         }
-    #endif
+    }
+
+#if os(iOS) && !targetEnvironment(macCatalyst)
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .all
+    }
+#endif
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "SettingsSegue" {

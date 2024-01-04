@@ -27,6 +27,12 @@ final class PVApplication: UIApplication {
     }
 }
 
+final class PVUINavigationController: UINavigationController {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+}
+
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     internal var window: UIWindow?
     var shortcutItemGame: PVGame?
