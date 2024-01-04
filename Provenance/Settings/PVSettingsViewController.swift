@@ -402,8 +402,8 @@ final class PVSettingsViewController: QuickTableViewController {
         // - Social links
         let discordRow = NavigationRow(
             text: NSLocalizedString("Discord", comment: ""),
-            detailText: .value2("Join our Discord server for help and community chat."),
-            icon: .named("Icons/discord"),
+            detailText: .subtitle("Join our Discord server for help and community chat."),
+            icon: .named("discord"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0
@@ -411,13 +411,14 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://discord.gg/4TK7PU5") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
-        let twitterRow = NavigationRow(
-            text: NSLocalizedString("Twitter", comment: ""),
-            detailText: .value2("Follow us on Twitter for release and other announcements."),
-            icon: .named("twitter"),
+        let xRow = NavigationRow(
+            text: NSLocalizedString("X", comment: ""),
+            detailText: .subtitle("Follow us on X for release and other announcements."),
+            icon: .named("x"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0
@@ -425,12 +426,13 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://twitter.com/provenanceapp") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
         let githubRow = NavigationRow(
             text: NSLocalizedString("GitHub", comment: ""),
-            detailText: .value2("Check out GitHub for code, reporting bugs and contributing."),
+            detailText: .subtitle("Check out GitHub for code, reporting bugs and contributing."),
             icon: .named("github"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -439,12 +441,13 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://github.com/Provenance-Emu/Provenance") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
         let patreonRow = NavigationRow(
             text: NSLocalizedString("Patreon", comment: ""),
-            detailText: .value2("Support us on Patreaon and receive special features and early access builds."),
+            detailText: .subtitle("Support us on Patreon and receive special features and early access builds."),
             icon: .named("patreon"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -453,12 +456,13 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://provenance-emu.com/patreon") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
         let youTubeRow = NavigationRow(
-            text: NSLocalizedString("YouTube!", comment: ""),
-            detailText: .value2("Help tutorial videos and new feature previews."),
+            text: NSLocalizedString("YouTube", comment: ""),
+            detailText: .subtitle("Help tutorial videos and new feature previews."),
             icon: .named("youtube"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -467,12 +471,13 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://www.youtube.com/channel/UCKeN6unYKdayfgLWulXgB1w") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
         let blogRow = NavigationRow(
             text: NSLocalizedString("Blog", comment: ""),
-            detailText: .value2("Release annoucements and full changelogs and screenshots posted to our blog."),
+            detailText: .subtitle("Release annoucements and full changelogs and screenshots posted to our blog."),
             icon: .sfSymbol("square.and.pencil"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -491,7 +496,7 @@ final class PVSettingsViewController: QuickTableViewController {
         )
         let faqRow = NavigationRow(
             text: NSLocalizedString("FAQ", comment: ""),
-            detailText: .value2("Frequently asked questions."),
+            detailText: .subtitle("Frequently asked questions."),
             icon: .sfSymbol("questionmark.folder.fill"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -510,7 +515,7 @@ final class PVSettingsViewController: QuickTableViewController {
         )
         let wikiRow = NavigationRow(
             text: NSLocalizedString("Wiki", comment: ""),
-            detailText: .value2("Full usage documentation, tips and tricks on our Wiki."),
+            detailText: .subtitle("Full usage documentation, tips and tricks on our Wiki."),
             icon: .sfSymbol("books.vertical.fill"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -528,7 +533,7 @@ final class PVSettingsViewController: QuickTableViewController {
             }
         )
 
-        let socialLinksRows = [patreonRow, discordRow, twitterRow, youTubeRow, githubRow]
+        let socialLinksRows = [patreonRow, discordRow, xRow, youTubeRow, githubRow]
         let socialLinksSection = Section(title: NSLocalizedString("Socials", comment: ""), rows: socialLinksRows)
 
         let documentationLinksRow = [blogRow, faqRow, wikiRow]
