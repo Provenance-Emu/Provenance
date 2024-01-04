@@ -651,6 +651,7 @@
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B33468D620AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
 		B33468D720AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
+		B33589AC2B464D51000CCAC5 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
 		B3411BF8276B37DE00D85327 /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
@@ -6658,6 +6659,7 @@
 				1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3AB37382187F569009D9244 /* PVGBAControllerViewController.swift in Sources */,
 				1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */,
+				B33589AC2B464D51000CCAC5 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B36D9DF8203562E000D583C4 /* PVControllerViewController.swift in Sources */,
 				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
 				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
@@ -8025,15 +8027,6 @@
 		B3296EE426CAC2B10088AC32 /* Default.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B31B35D8295970EB00E5AA3C /* Base */,
-				B31B35D9295970F700E5AA3C /* en */,
-				B31B35DA295970FE00E5AA3C /* zh-Hans */,
-				B31B35DB2959710300E5AA3C /* nl */,
-				B31B35DC2959710A00E5AA3C /* it */,
-				B31B35DD2959711000E5AA3C /* ja */,
-				B31B35DE2959711A00E5AA3C /* pt-BR */,
-				B31B35DF2959712000E5AA3C /* ru */,
-				B31B35E02959716600E5AA3C /* es */,
 			);
 			name = Default.xib;
 			sourceTree = "<group>";
