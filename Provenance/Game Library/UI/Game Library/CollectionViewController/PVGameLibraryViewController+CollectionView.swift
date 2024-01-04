@@ -37,9 +37,9 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
     #if os(iOS)
         private func ios_collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
             var height: CGFloat = PVSettingsModel.shared.showGameTitles ? 144 : 100
-            let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
-            let itemsPerRow: CGFloat = viewWidth > 800 ? 6 : 3
 
+            let viewWidth = collectionView.bounds.size.width
+            let itemsPerRow: CGFloat = viewWidth > 700 ? 6 : 3
             var width: CGFloat = (viewWidth / itemsPerRow) - (minimumInteritemSpacing * itemsPerRow * 0.67)
 
             let item: Section.Item = try! collectionView.rx.model(at: indexPath)
@@ -60,7 +60,7 @@ extension PVGameLibraryViewController: UICollectionViewDelegateFlowLayout {
     #if os(tvOS)
         private func tvos_collectionView(_ collectionView: UICollectionView, layout _: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
             let item: Section.Item = try! collectionView.rx.model(at: indexPath)
-            let viewWidth = transitioningToSize?.width ?? collectionView.bounds.size.width
+            let viewWidth = collectionView.bounds.size.width
             switch item {
             case .saves:
                 // TODO: Multirow?

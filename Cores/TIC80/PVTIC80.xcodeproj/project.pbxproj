@@ -1602,7 +1602,7 @@
 			buildPhases = (
 			);
 			buildToolPath = cmake;
-			buildWorkingDirectory = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/TIC80/TIC-80/build";
+			buildWorkingDirectory = "Provenance/Cores/TIC80/TIC-80/build";
 			dependencies = (
 			);
 			name = "tic80-cmake";

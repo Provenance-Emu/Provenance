@@ -27,6 +27,12 @@ final class PVApplication: UIApplication {
     }
 }
 
+final class PVUINavigationController: UINavigationController {
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+}
+
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     internal var window: UIWindow?
     var shortcutItemGame: PVGame?
@@ -46,6 +52,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #if os(iOS)
         let darkTheme = (PVSettingsModel.shared.theme == .auto && self.window?.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
         Theme.currentTheme = darkTheme ? Theme.darkTheme : Theme.lightTheme
+        self.window?.window?.overrideUserInterfaceStyle = darkTheme ? .dark : .light
         #elseif os(tvOS)
         if PVSettingsModel.shared.debugOptions.tvOSThemes {
             DispatchQueue.main.async {
@@ -60,17 +67,14 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         gameImporter: GameImporter,
         gameLibrary: PVGameLibrary
     ) {
-        _initUITheme()
-
         // Set root view controller and make windows visible
         let window = UIWindow.init(frame: UIScreen.main.bounds)
         self.window = window
 
+        _initUITheme()
+        
         #if os(tvOS)
         window.tintColor = .provenanceBlue
-        #else
-        let darkTheme = (PVSettingsModel.shared.theme == .auto && window.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
-        window.overrideUserInterfaceStyle = darkTheme ? .dark : .light
         #endif
 
         if #available(iOS 14, tvOS 14, macCatalyst 15.0, *),

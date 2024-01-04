@@ -124,12 +124,6 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
     // MARK: - Lifecycle
 
-    #if os(iOS)
-        override var preferredStatusBarStyle: UIStatusBarStyle {
-            return .lightContent
-        }
-    #endif
-
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -748,6 +742,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
+        Theme.currentTheme = Theme.currentTheme
+
         transitioningToSize = size
         collectionView?.collectionViewLayout.invalidateLayout()
         coordinator.notifyWhenInteractionChanges { [weak self] _ in
@@ -755,11 +751,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         }
     }
 
-    #if os(iOS) && !targetEnvironment(macCatalyst)
-        override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-            return .all
-        }
-    #endif
+#if os(iOS) && !targetEnvironment(macCatalyst)
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .all
+    }
+#endif
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "SettingsSegue" {
@@ -1751,6 +1747,7 @@ extension PVGameLibraryViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
         if indexPath.section == 0 {
             currentSort.onNext(SortOptions.optionForRow(UInt(indexPath.row)))
             // dont call reloadSections or we will loose focus on tvOS

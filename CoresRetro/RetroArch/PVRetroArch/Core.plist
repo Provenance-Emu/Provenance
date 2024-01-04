@@ -56,7 +56,7 @@
 			<key>PVPrincipleClass</key>
 			<string>PVRetroArchCore</string>
 			<key>PVProjectName</key>
-			<string>SNES9x (RetroArch)</string>
+			<string>Snes9x (RetroArch)</string>
 			<key>PVSupportedSystems</key>
 			<array>
 				<string>com.provenance.snes</string>
