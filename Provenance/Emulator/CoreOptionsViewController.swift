@@ -54,6 +54,7 @@ final class CoreOptionsViewController: QuickTableViewController {
         super.viewDidLoad()
         generateTableViewViewModels()
         tableView.reloadData()
+        tableView.layoutIfNeeded()
     }
 
     func generateTableViewViewModels() {
