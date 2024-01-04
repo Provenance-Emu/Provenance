@@ -290,7 +290,7 @@ typedef unsigned int   u32;
 static bool rotateControls = false;
 static bool rotateIr = false;
 CGFloat adj=10;
-CGFloat adj2=3;
+CGFloat adj2=5;
 constexpr auto INPUT_DETECT_INITIAL_TIME = std::chrono::seconds(3);
 constexpr auto INPUT_DETECT_CONFIRMATION_TIME = std::chrono::milliseconds(0);
 constexpr auto INPUT_DETECT_MAXIMUM_TIME = std::chrono::seconds(5);
@@ -370,21 +370,7 @@ s8 joyx[4], joyy[4];
 		}
 		if (controller.extendedGamepad != nil)
 		{
-			controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                    [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1
-                         action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_FORWARD value:-value*adj2];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_BACKWARD value:CGFloat(-value*adj2)];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_X value:value];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Y value:value];
-                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
-                    [self gamepadEventOnPad:port
-                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_A
-                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_A
-                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.extendedGamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+            controller.extendedGamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_A
                      action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
                     [self gamepadEventOnPad:port
@@ -392,32 +378,41 @@ s8 joyx[4], joyy[4];
                      action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
                     [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_B
                      action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.extendedGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                    [self gamepadEventOnPad:port
-                     button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2
-                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_SWING_FORWARD value:CGFloat(value)];
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_SWING_BACKWARD value:CGFloat(value)];
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_SHAKE_X value:CGFloat(value)];
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_SHAKE_Y value:CGFloat(value)];
-                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_SHAKE_Z value:CGFloat(value)];
-                    [self gamepadEventOnPad:port
-                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_X
-                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_X
-                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.extendedGamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+            };
+            controller.extendedGamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                     [self gamepadEventOnPad:port
                      button:ButtonManager::ButtonType::WIIMOTE_BUTTON_B
                      action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
                     [self gamepadEventOnPad:port
                      button:ButtonManager::ButtonType::CLASSIC_BUTTON_Y
                      action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-				    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_Y action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_Y action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+			controller.extendedGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1
+                         action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_A
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_A
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
+            controller.extendedGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Y value:value];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_X value:value];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_X
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_X
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
 			controller.extendedGamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
                     [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_PLUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
                     [self gamepadEventOnPad:port
 					 button:ButtonManager::ButtonType::CLASSIC_BUTTON_ZL
@@ -425,6 +420,8 @@ s8 joyx[4], joyy[4];
 					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::TRIGGER_L action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
 			controller.extendedGamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_X value:value];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Y value:value];
                     [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_MINUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
                     [self gamepadEventOnPad:port
 					 button:ButtonManager::ButtonType::CLASSIC_BUTTON_ZR
@@ -439,6 +436,8 @@ s8 joyx[4], joyy[4];
                     [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::TRIGGER_L action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
 			controller.extendedGamepad.rightTrigger.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_FORWARD value:pressed?1.0:0];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Y value:pressed?1.0:0];
                     [self gamepadEventOnPad:port button:ButtonManager::ButtonType::NUNCHUK_BUTTON_Z action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
                     [self gamepadEventOnPad:port
 					 button:ButtonManager::ButtonType::CLASSIC_TRIGGER_R
@@ -489,73 +488,58 @@ s8 joyx[4], joyy[4];
                          action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			};
-            controller.extendedGamepad.leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput* xAxis, float value) {
+            controller.extendedGamepad.leftThumbstick.valueChangedHandler = ^(GCControllerDirectionPad* leftJoypad, float xValue, float yValue) {
+                [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_FORWARD value:xValue];
+                [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_BACKWARD value:xValue];
+                
                 if (!rotateIr) {
-                        [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:value];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_LEFT value:value];
-                        [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:value];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_RIGHT value:value];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:xValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_LEFT value:xValue];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:xValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_RIGHT value:xValue];
                 } else {
-                        [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:-value];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_RIGHT value:-value];
-                        [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:-value];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_LEFT value:-value];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:-xValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_RIGHT value:-xValue];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:-xValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_LEFT value:-xValue];
                 }
-					// GC
-                    [self gamepadMoveEventOnPad:gcPort axis:13 value:CGFloat(value)];
-                    [self gamepadMoveEventOnPad:gcPort axis:14 value:CGFloat(value)];
+                if (!rotateIr) {
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:-yValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_DOWN value:-yValue];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:-yValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_UP value:-yValue];
+                } else {
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:yValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_UP value:yValue];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:yValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_DOWN value:yValue];
+                }
+                // GC
+                [self gamepadMoveEventOnPad:gcPort axis:11 value:CGFloat(-yValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:12 value:CGFloat(-yValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:13 value:CGFloat(xValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:14 value:CGFloat(xValue)];
+ 
             };
-            controller.extendedGamepad.leftThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput* yAxis, float value) {
+            controller.extendedGamepad.rightThumbstick.valueChangedHandler = ^(GCControllerDirectionPad* rightJoypad, float xValue, float yValue) {
+                [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_FORWARD value:xValue/adj];
+                [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_BACKWARD value:xValue/adj];
                 if (!rotateIr) {
-                        [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:-value];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_DOWN value:-value];
-                        [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:-value];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_UP value:-value];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_LEFT value:xValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_RIGHT value:xValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_UP value:-yValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_DOWN value:-yValue/adj];
                 } else {
-                        [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:value];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_UP value:value];
-                        [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:value];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_DOWN value:value];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_RIGHT value:-xValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_LEFT value:-xValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_UP value:yValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_DOWN value:yValue/adj];
                 }
-					// GC
-                    [self gamepadMoveEventOnPad:gcPort axis:11 value:CGFloat(-value)];
-                    [self gamepadMoveEventOnPad:gcPort axis:12 value:CGFloat(-value)];
-            };
-            controller.extendedGamepad.rightThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput* xAxis, float value) {
-                [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_FORWARD value:value*adj2];
-                [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_BACKWARD value:value*adj2];
-                if (!rotateIr) {
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_ACCEL_LEFT value:value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_LEFT value:value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_ACCEL_RIGHT value:value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_RIGHT value:value/adj];
-                } else {
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_ACCEL_RIGHT value:-value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_RIGHT value:-value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_ACCEL_LEFT value:-value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_LEFT value:-value/adj];
-                }
-					// GC
-                    [self gamepadMoveEventOnPad:gcPort axis:18 value:CGFloat(value)];
-                    [self gamepadMoveEventOnPad:gcPort axis:19 value:CGFloat(value)];
-            };
-            controller.extendedGamepad.rightThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput* yAxis, float value) {
-                [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_FORWARD value:-value*adj2];
-                [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_BACKWARD value:-value*adj2];
-                if (!rotateIr) {
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_ACCEL_DOWN value:-value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_DOWN value:-value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_ACCEL_UP value:-value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_UP value:-value/adj];
-                } else {
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_ACCEL_UP value:value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_UP value:value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_ACCEL_DOWN value:value/adj];
-                        [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_DOWN value:value/adj];
-                }
-					// GC
-                    [self gamepadMoveEventOnPad:gcPort axis:16 value:CGFloat(-value)];
-                    [self gamepadMoveEventOnPad:gcPort axis:17 value:CGFloat(-value)];
+                // GC
+                [self gamepadMoveEventOnPad:gcPort axis:16 value:CGFloat(-yValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:17 value:CGFloat(-yValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:18 value:CGFloat(xValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:19 value:CGFloat(xValue)];
             };
             controller.extendedGamepad.leftThumbstickButton.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 NSLog(@"Rotating (opt) controls %d\n", rotateControls);
@@ -576,88 +560,184 @@ s8 joyx[4], joyy[4];
                 NSLog(@"Rotating (opt) controls %d\n", rotateControls);
                 [self rotate:pressed];
             };
-            
             controller.extendedGamepad.buttonHome.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
                 [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_HOME
                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
                 [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_IR_RECENTER action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
                 [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_START action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
             };
-		}
-		else if (controller.gamepad != nil)
-		{
-            controller.gamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                    [self gamepadEventOnPad:port
-					 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2
-					 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_A action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-            };
+		} else if (controller.gamepad != nil) {
             controller.gamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                    [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_A action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_B action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_A
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_B
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_B
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            
+            controller.gamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::WIIMOTE_BUTTON_B
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_Y
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_Y action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.gamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1
+                         action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_A
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_A
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
             };
             controller.gamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                    [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_X action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-            };
-            controller.gamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                   [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_B action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-                   [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_Y action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Y value:value];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_X value:value];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_X
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_X
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
             };
             controller.gamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
                     [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_PLUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_ZL
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
                     [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::TRIGGER_L action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
             };
             controller.gamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_X value:value];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Y value:value];
                     [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_MINUS action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_ZR
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
                     [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::TRIGGER_R action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
             };
-			controller.gamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-					[self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_UP action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-
-			};
-			controller.gamepad.dpad.left.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-					[self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_UP action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.gamepad.dpad.right.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-					[self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.gamepad.dpad.down.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-					[self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-		}
-		else if (controller.microGamepad != nil)
-		{
-            controller.microGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {                if (self.isWii)
+            controller.gamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    if (rotateControls) {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    } else {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_UP action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    }
                     [self gamepadEventOnPad:port
-					 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2
-					 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_A action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                     button:ButtonManager::ButtonType::CLASSIC_DPAD_UP
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_UP action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.gamepad.dpad.left.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    if (rotateControls) {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_UP action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    } else {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    }
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_DPAD_LEFT
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.gamepad.dpad.right.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    if (rotateControls) {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    } else {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    }
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_DPAD_RIGHT
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.gamepad.dpad.down.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    if (rotateControls) {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    } else {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    }
+                    [self gamepadEventOnPad:port
+                         button:ButtonManager::ButtonType::CLASSIC_DPAD_DOWN
+                         action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+		} else if (controller.microGamepad != nil) {
+            controller.microGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1
+                         action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_A
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_A
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
             };
             controller.microGamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                    [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1 action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_X action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Z value:value];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_Y value:value];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SHAKE_X value:value];
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_BUTTON_X
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_X
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
             };
-			controller.microGamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-					[self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_UP action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.microGamepad.dpad.left.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-					[self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_UP action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.microGamepad.dpad.right.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-					[self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
-			controller.microGamepad.dpad.down.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-					[self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-					[self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			};
+            controller.microGamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    if (rotateControls) {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    } else {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_UP action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    }
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_DPAD_UP
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_UP action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.microGamepad.dpad.left.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    if (rotateControls) {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_UP action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    } else {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    }
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_DPAD_LEFT
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.microGamepad.dpad.right.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    if (rotateControls) {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    } else {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    }
+                    [self gamepadEventOnPad:port
+                     button:ButtonManager::ButtonType::CLASSIC_DPAD_RIGHT
+                     action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_RIGHT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
+            controller.microGamepad.dpad.down.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
+                    if (rotateControls) {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_LEFT action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    } else {
+                        [self gamepadEventOnPad:port button:ButtonManager::ButtonType::WIIMOTE_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    }
+                    [self gamepadEventOnPad:port
+                         button:ButtonManager::ButtonType::CLASSIC_DPAD_DOWN
+                         action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+                    [self gamepadEventOnPad:gcPort button:ButtonManager::ButtonType::BUTTON_DOWN action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+            };
 		}
         if (self.multiPlayer) {
             port += 1;
@@ -709,10 +789,65 @@ s8 joyx[4], joyy[4];
 	}
 }
 
-- (void)didMoveWiiJoystickDirection:(PVWiiMoteButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-	if(_isInitialized)
-		[self sendWiiButtonInput:(PVWiiMoteButton)button isPressed:true withValue:value
-				forPlayer:player];
+- (void)didMoveWiiJoystickDirection:(PVWiiMoteButton)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    if(_isInitialized) {
+        int port = 4;
+        int gcPort = 0;
+        switch (button) {
+            case(PVWiiMoteButtonLeftAnalog):
+                [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_FORWARD value:xValue];
+                [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_BACKWARD value:xValue];
+
+                if (!rotateIr) {
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:xValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_LEFT value:xValue];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:xValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_RIGHT value:xValue];
+                } else {
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_RIGHT value:-xValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_RIGHT value:-xValue];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_LEFT value:-xValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_LEFT value:-xValue];
+                }
+                if (!rotateIr) {
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:-yValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_DOWN value:-yValue];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:-yValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_UP value:-yValue];
+                } else {
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_UP value:yValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_UP value:yValue];
+                    [self gamepadMoveEventOnPad:port axis:NUNCHUK_STICK_DOWN value:yValue];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_IR_DOWN value:yValue];
+                }
+                // GC
+                [self gamepadMoveEventOnPad:gcPort axis:11 value:CGFloat(-yValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:12 value:CGFloat(-yValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:13 value:CGFloat(xValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:14 value:CGFloat(xValue)];
+                break;
+            case(PVWiiMoteButtonRightAnalog):
+                [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_FORWARD value:xValue/adj];
+                [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_BACKWARD value:xValue/adj];
+                if (!rotateIr) {
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_LEFT value:xValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_RIGHT value:xValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_UP value:-yValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_DOWN value:-yValue/adj];
+                } else {
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_RIGHT value:-xValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_LEFT value:-xValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_UP value:yValue/adj];
+                    [self gamepadMoveEventOnPad:port axis:WIIMOTE_SWING_DOWN value:yValue/adj];
+                }
+                // GC
+                [self gamepadMoveEventOnPad:gcPort axis:16 value:CGFloat(-yValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:17 value:CGFloat(-yValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:18 value:CGFloat(xValue)];
+                [self gamepadMoveEventOnPad:gcPort axis:19 value:CGFloat(xValue)];
+                break;
+        }
+    }
 }
 
 -(void)didPushGameCubeButton:(NSInteger)button forPlayer:(NSInteger)player {
@@ -729,14 +864,31 @@ s8 joyx[4], joyy[4];
 	}
 }
 
-- (void)didMoveGameCubeJoystickDirection:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-	if(_isInitialized)
-		[self sendGCButtonInput:(enum PVGCButton)button isPressed:true withValue:value forPlayer:player];
-
+- (void)didMoveGameCubeJoystickDirection:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    if(_isInitialized) {
+            int port = 4;
+            int gcPort = 0;
+            switch (button) {
+                case(PVGCLeftAnalog):
+                    // GC
+                    [self gamepadMoveEventOnPad:gcPort axis:11 value:CGFloat(-yValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:12 value:CGFloat(-yValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:13 value:CGFloat(xValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:14 value:CGFloat(xValue)];
+                    break;
+                case(PVGCRightAnalog):
+                    // GC
+                    [self gamepadMoveEventOnPad:gcPort axis:16 value:CGFloat(-yValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:17 value:CGFloat(-yValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:18 value:CGFloat(xValue)];
+                    [self gamepadMoveEventOnPad:gcPort axis:19 value:CGFloat(xValue)];
+                    break;
+            }
+    }
 }
 
--(void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
-	[self didMoveWiiJoystickDirection:(PVWiiMoteButton)button withValue:value forPlayer:player];
+-(void)didMoveJoystick:(NSInteger)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+	[self didMoveWiiJoystickDirection:(PVWiiMoteButton)button withXValue:xValue withYValue: yValue forPlayer:player];
 }
 
 - (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
@@ -756,93 +908,11 @@ s8 joyx[4], joyy[4];
 		case(PVWiiMoteButtonWiiHome):
             [self gamepadEventOnPad:4 button:ButtonManager::ButtonType::WIIMOTE_IR_RECENTER
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-            [self gamepadEventOnPad:4 button:ButtonManager::ButtonType::WIIMOTE_IR_HIDE
-             action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			[self gamepadEventOnPad:4 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_HOME
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
             [self gamepadEventOnPad:0 button:ButtonManager::ButtonType::BUTTON_START
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			break;
-        case(PVWiiMoteButtonWiiSwingUp):
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_FORWARD value:value*adj2];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_BACKWARD value:value*adj2];
-            if (!rotateIr) {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_ACCEL_UP value:-value/adj];
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_UP value:-value/adj];
-            } else {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_ACCEL_DOWN value:value/adj];
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_DOWN value:value/adj];
-            }
-            break;
-        case(PVWiiMoteButtonWiiSwingDown):
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_FORWARD value:value*adj2];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_BACKWARD value:value*adj2];
-            if (!rotateIr) {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_ACCEL_DOWN value:value/adj];
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_DOWN value:value/adj];
-            } else {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_ACCEL_UP value:-value/adj];
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_UP value:-value/adj];
-            }
-            break;
-        case(PVWiiMoteButtonWiiSwingLeft):
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_FORWARD value:-value*adj2];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_BACKWARD value:-value*adj2];
-            if (!rotateIr) {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_ACCEL_LEFT value:-value/adj];
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_LEFT value:-value/adj];
-            } else {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_ACCEL_RIGHT value:value/adj];
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_RIGHT value:value/adj];
-            }
-            break;
-        case(PVWiiMoteButtonWiiSwingRight):
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_FORWARD value:-value*adj2];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_BACKWARD value:-value*adj2];
-            if (!rotateIr) {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_ACCEL_RIGHT value:value/adj];
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_RIGHT value:value/adj];
-            } else {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_ACCEL_LEFT value:-value/adj];
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_LEFT value:-value/adj];
-            }
-            break;
-        case(PVWiiMoteButtonNunchukStickLeft):
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_LEFT value:-value];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_RIGHT value:-value];
-            if (!rotateIr) {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_IR_LEFT value:-value];
-            } else {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_IR_RIGHT value:value];
-            }
-            break;
-        case(PVWiiMoteButtonNunchukStickRight):
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_LEFT value:value];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_RIGHT value:value];
-            if (!rotateIr) {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_IR_RIGHT value:value];
-            } else {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_IR_LEFT value:-value];
-            }
-            break;
-        case(PVWiiMoteButtonNunchukStickUp):
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_UP value:-value];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_DOWN value:-value];
-            if (!rotateIr) {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_IR_UP value:-value];
-            } else {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_IR_DOWN value:value];
-            }
-            break;
-        case(PVWiiMoteButtonNunchukStickDown):
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_UP value:value];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_DOWN value:value];
-            if (!rotateIr) {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_IR_DOWN value:value];
-            } else {
-                [self gamepadMoveEventOnPad:4 axis:WIIMOTE_IR_UP value:-value];
-            }
-            break;
 		case(PVWiiMoteButtonWiiDPadLeft):
             [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_LEFT value:-value];
             [self gamepadMoveEventOnPad:4 axis:NUNCHUK_STICK_RIGHT value:-value];
@@ -906,45 +976,43 @@ s8 joyx[4], joyy[4];
 		case(PVWiiMoteButtonWiiOne):
 			[self gamepadEventOnPad:4 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_1
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_FORWARD value:-value];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_BACKWARD value:-value];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_X value:value];
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Y value:value];
             [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Z value:value];
 			[self gamepadEventOnPad:0 button:ButtonManager::ButtonType::BUTTON_Y
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
             break;
         case(PVWiiMoteButtonWiiTwo):
+            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_X value:value];
+            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Y value:value];
+            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Z value:value];
             [self gamepadEventOnPad:4 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_2
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_SWING_FORWARD value:CGFloat(value)];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_SWING_BACKWARD value:CGFloat(value)];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_SHAKE_X value:CGFloat(value)];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_SHAKE_Y value:CGFloat(value)];
-            [self gamepadMoveEventOnPad:4 axis:NUNCHUK_SHAKE_Z value:CGFloat(value)];
 			[self gamepadEventOnPad:0 button:ButtonManager::ButtonType::BUTTON_X
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
             break;
 		case(PVWiiMoteButtonWiiPlus):
-            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_FORWARD value:-value];
-			[self gamepadEventOnPad:4 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_PLUS
-             action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			[self gamepadEventOnPad:0 button:ButtonManager::ButtonType::TRIGGER_R
-             action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
-			break;
-		case(PVWiiMoteButtonWiiMinus):
-			[self gamepadEventOnPad:4 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_MINUS
+            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Z value:value];
+            [self gamepadEventOnPad:4 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_PLUS
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			[self gamepadEventOnPad:0 button:ButtonManager::ButtonType::TRIGGER_L
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			break;
+		case(PVWiiMoteButtonWiiMinus):
+            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_X value:value];
+            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Y value:value];
+			[self gamepadEventOnPad:4 button:ButtonManager::ButtonType::WIIMOTE_BUTTON_MINUS
+             action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+			[self gamepadEventOnPad:0 button:ButtonManager::ButtonType::TRIGGER_R
+             action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
+			break;
 		case(PVWiiMoteButtonNunchukC):
-			[self gamepadEventOnPad:4 button:ButtonManager::ButtonType::NUNCHUK_BUTTON_C
+		[self gamepadEventOnPad:4 button:ButtonManager::ButtonType::NUNCHUK_BUTTON_C
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			[self gamepadEventOnPad:0 button:ButtonManager::ButtonType::TRIGGER_R
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			break;
 		case(PVWiiMoteButtonNunchukZ):
+            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SWING_FORWARD value:value];
+            [self gamepadMoveEventOnPad:4 axis:WIIMOTE_SHAKE_Y value:value];
 			[self gamepadEventOnPad:4 button:ButtonManager::ButtonType::NUNCHUK_BUTTON_Z
              action:(pressed?ButtonManager::BUTTON_PRESSED:ButtonManager::BUTTON_RELEASED)];
 			[self gamepadEventOnPad:0 button:ButtonManager::ButtonType::BUTTON_Z

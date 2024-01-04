@@ -56,12 +56,12 @@ public:
 
 	VulkanGraphicsContext(CAMetalLayer* layer, const char* vulkan_path) {
 		bool success = false;
-		NSLog(@"Init");
+		NSLog(@"VulkanGraphicsContext: Init");
 		init_glslang();
-		NSLog(@"Creating Vulkan context");
+		NSLog(@"VulkanGraphicsContext: Creating Vulkan context");
 		Version gitVer(PPSSPP_GIT_VERSION);
 		if (!this->VulkanLoad(vulkan_path)) {
-			NSLog(@"Failed to load Vulkan driver library");
+			NSLog(@"VulkanGraphicsContext: Failed to load Vulkan driver library");
 			return;
 		}
 		if (!g_Vulkan) {
@@ -73,7 +73,7 @@ public:
 		info.flags = this->flags;
 		VkResult res = g_Vulkan->CreateInstance(info);
 		if (res != VK_SUCCESS) {
-			NSLog(@"Failed to create vulkan context: %s", g_Vulkan->InitError().c_str());
+			NSLog(@"VulkanGraphicsContext: Failed to create vulkan context: %s", g_Vulkan->InitError().c_str());
 			VulkanSetAvailable(false);
 			delete g_Vulkan;
 			g_Vulkan = nullptr;
@@ -81,38 +81,38 @@ public:
 		}
 		int physicalDevice = g_Vulkan->GetBestPhysicalDevice();
 		if (physicalDevice < 0) {
-			NSLog(@"No usable Vulkan device found.");
+			NSLog(@"VulkanGraphicsContext: No usable Vulkan device found.");
 			g_Vulkan->DestroyInstance();
 			delete g_Vulkan;
 			g_Vulkan = nullptr;
 			return;
 		}
 		g_Vulkan->ChooseDevice(physicalDevice);
-		NSLog(@"Creating Vulkan device");
+		NSLog(@"VulkanGraphicsContext: Creating Vulkan device");
 		if (g_Vulkan->CreateDevice() != VK_SUCCESS) {
-			NSLog(@"Failed to create vulkan device: %s", g_Vulkan->InitError().c_str());
+			NSLog(@"VulkanGraphicsContext: Failed to create vulkan device: %s", g_Vulkan->InitError().c_str());
 			g_Vulkan->DestroyInstance();
 			delete g_Vulkan;
 			g_Vulkan = nullptr;
 			return;
 		}
-		NSLog(@"Vulkan device created!");
+		NSLog(@"VulkanGraphicsContext: Vulkan device created!");
 		g_Config.iGPUBackend = (int)GPUBackend::VULKAN;
 		SetGPUBackend(GPUBackend::VULKAN);
 		if (!g_Vulkan) {
-			NSLog(@"InitFromRenderThread: No Vulkan context");
+			NSLog(@"VulkanGraphicsContext: InitFromRenderThread: No Vulkan context");
 			return;
 		}
 		res = g_Vulkan->InitSurface(WINDOWSYSTEM_METAL_EXT, (__bridge void *)layer, nullptr);
 		if (res != VK_SUCCESS) {
-			NSLog(@"g_Vulkan->InitSurface failed: '%s'", VulkanResultToString(res));
+			NSLog(@"VulkanGraphicsContext: g_Vulkan->InitSurface failed: '%s'", VulkanResultToString(res));
 			return;
 		}
 		if (g_Vulkan->InitSwapchain()) {
 			draw_ = Draw::T3DCreateVulkanContext(g_Vulkan);
 			SetGPUBackend(GPUBackend::VULKAN);
 			success = draw_->CreatePresets();  // Doesn't fail, we ship the compiler.
-			_assert_msg_(success, "Failed to compile preset shaders");
+			_assert_msg_(success, "VulkanGraphicsContext: Failed to compile preset shaders");
 			draw_->HandleEvent(Draw::Event::GOT_BACKBUFFER, g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
 			VulkanRenderManager *renderManager = (VulkanRenderManager *)draw_->GetNativeObject(Draw::NativeObject::RENDER_MANAGER);
 			renderManager->SetInflightFrames(g_Config.iInflightFrames);
@@ -120,7 +120,7 @@ public:
 		} else {
 			success = false;
 		}
-		NSLog(@"Vulkan Init completed, %s", success ? "successfully" : "but failed");
+		NSLog(@"VulkanGraphicsContext: Vulkan Init completed, %s", success ? "successfully" : "but failed");
 		if (!success) {
 			g_Vulkan->DestroySwapchain();
 			g_Vulkan->DestroySurface();
@@ -134,7 +134,7 @@ public:
 	}
 
 	void Shutdown() override {
-        NSLog(@"Shutdown");
+        NSLog(@"VulkanGraphicsContext: Shutdown");
         draw_->HandleEvent(Draw::Event::LOST_BACKBUFFER, g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
         delete draw_;
         draw_ = nullptr;
@@ -142,20 +142,20 @@ public:
         g_Vulkan->PerformPendingDeletes();
         g_Vulkan->DestroySwapchain();
         g_Vulkan->DestroySurface();
-        NSLog(@"Done with ShutdownFromRenderThread");
-		NSLog(@"Calling NativeShutdownGraphics");
+        NSLog(@"VulkanGraphicsContext: Done with ShutdownFromRenderThread");
+		NSLog(@"VulkanGraphicsContext: Calling NativeShutdownGraphics");
 		g_Vulkan->DestroyDevice();
 		g_Vulkan->DestroyInstance();
 		// We keep the g_Vulkan context around to avoid invalidating a ton of pointers around the app.
 		finalize_glslang();
-		NSLog(@"Shutdown completed");
+		NSLog(@"VulkanGraphicsContext: Shutdown completed");
 	}
 
 	void SwapBuffers() override {
 	}
 
 	void Resize() override {
-		NSLog(@"Resize begin (oldsize: %dx%d)", g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
+		NSLog(@"VulkanGraphicsContext: Resize begin (oldsize: %dx%d)", g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
 		draw_->HandleEvent(Draw::Event::LOST_BACKBUFFER, g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
 		g_Vulkan->DestroySwapchain();
 		g_Vulkan->DestroySurface();
@@ -163,7 +163,7 @@ public:
 		g_Vulkan->ReinitSurface();
 		g_Vulkan->InitSwapchain();
 		draw_->HandleEvent(Draw::Event::GOT_BACKBUFFER, g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
-		NSLog(@"Resize end (final size: %dx%d)", g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
+		NSLog(@"VulkanGraphicsContext: Resize end (final size: %dx%d)", g_Vulkan->GetBackbufferWidth(), g_Vulkan->GetBackbufferHeight());
 	}
 
 	void SwapInterval(int interval) override {
@@ -180,9 +180,9 @@ public:
     bool VulkanLoad(const char* path) {
         void *lib = dlopen(path, RTLD_NOW | RTLD_LOCAL);
         if (lib) {
-            NSLog(@"%s: Library loaded\n", path);
+            NSLog(@"VulkanGraphicsContext: %s: Library loaded\n", path);
         } else {
-            NSLog(@"Faield path %s: Library not loaded\n", path);
+            NSLog(@"VulkanGraphicsContext: Failed path %s: Library not loaded\n", path);
         }
         vulkanLibrary = lib;
         LOAD_GLOBAL_FUNC(vkCreateInstance);
@@ -192,10 +192,10 @@ public:
         LOAD_GLOBAL_FUNC(vkEnumerateInstanceExtensionProperties);
         LOAD_GLOBAL_FUNC(vkEnumerateInstanceLayerProperties);
         if (vkCreateInstance && vkGetInstanceProcAddr && vkGetDeviceProcAddr && vkEnumerateInstanceExtensionProperties && vkEnumerateInstanceLayerProperties) {
-            NSLog(@"VulkanLoad: Base functions loaded.");
+            NSLog(@"VulkanGraphicsContext: VulkanLoad: Base functions loaded.");
             return true;
         } else {
-            NSLog(@"VulkanLoad: Failed to load Vulkan base functions.");
+            NSLog(@"VulkanGraphicsContext: VulkanLoad: Failed to load Vulkan base functions.");
             return false;
         }
     }

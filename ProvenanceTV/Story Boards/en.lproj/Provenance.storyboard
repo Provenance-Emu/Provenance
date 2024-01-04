@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="19529" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="7Iz-AI-QKl">
+<document type="com.apple.InterfaceBuilder.AppleTV.Storyboard" version="3.0" toolsVersion="22154" targetRuntime="AppleTV" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="7Iz-AI-QKl">
     <device id="appleTV" appearance="dark"/>
     <dependencies>
         <deployment identifier="tvOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22129"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
@@ -385,6 +385,12 @@
                                     <action selector="getMoreROMs:" destination="In9-6L-5FX" id="Pje-W7-Ltl"/>
                                 </connections>
                             </barButtonItem>
+                            <barButtonItem systemItem="refresh" id="swX-Zy-hzD" userLabel="Refresh Roms">
+                                <color key="tintColor" red="0.10000000000000001" green="0.5" blue="0.94999999999999996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <connections>
+                                    <action selector="refreshButtonTapped:" destination="In9-6L-5FX" id="2op-mo-lan"/>
+                                </connections>
+                            </barButtonItem>
                             <barButtonItem image="caution-icon" id="Dsv-oR-lbw">
                                 <color key="tintColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <connections>
@@ -418,6 +424,7 @@
                     <connections>
                         <outlet property="conflictsBarButtonItem" destination="Dsv-oR-lbw" id="Ztu-t8-0xP"/>
                         <outlet property="getMoreRomsBarButtonItem" destination="qjY-qw-buq" id="exm-wG-N87"/>
+                        <outlet property="refreshOptionBarButtonItem" destination="swX-Zy-hzD" id="7GU-31-EyC"/>
                         <outlet property="settingsBarButtonItem" destination="d3P-nN-WL5" id="J6I-TX-4u5"/>
                         <outlet property="sortOptionBarButtonItem" destination="d9C-DJ-Fuv" id="yHy-GM-GMA"/>
                         <outlet property="sortOptionsTableView" destination="YhY-ua-og3" id="hcg-6Z-b08"/>
@@ -519,9 +526,6 @@
         <image name="sort" width="42" height="42"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="tableCellGroupedBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
     </resources>
 </document>

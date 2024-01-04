@@ -27,7 +27,7 @@
     bool retroArchControls;
     bool bindAnalogKeys;
     bool hasSecondScreen;
-	bool coreOptionOverwrite;
+    bool coreOptionOverwrite;
     NSString* coreOptionConfigPath;
     NSString* coreOptionConfig;
 @public
@@ -38,11 +38,17 @@
 @property (nonatomic, assign) int videoBitDepth;
 @property (nonatomic, assign) int8_t resFactor;
 @property (nonatomic, assign) int8_t gsPreference;
+@property (nonatomic, assign) int volume;
+@property (nonatomic, assign) int ffSpeed;
+@property (nonatomic, assign) int smSpeed;
 @property (nonatomic, assign) bool isRootView;
 @property (nonatomic, assign) bool retroArchControls;
 @property (nonatomic, assign) bool hasTouchControls;
 @property (nonatomic, assign) bool bindAnalogKeys;
+@property (nonatomic, assign) bool bindNumKeys;
+@property (nonatomic, assign) bool bindAnalogDpad;
 @property (nonatomic, assign) bool hasSecondScreen;
+@property (nonatomic, assign) int machineType;
 @property (nonatomic) NSString* coreIdentifier;
 @property (nonatomic) NSString* coreOptionConfigPath;
 @property (nonatomic) NSString* coreOptionConfig;
@@ -83,6 +89,10 @@
 - (void) controllerConnected:(NSNotification *)notification;
 - (void) controllerDisconnected:(NSNotification *)notification;
 - (void) processKeyPress:(int)key pressed:(bool)pressed;
+- (void) setVolume;
+- (void) setSpeed;
+- (void) syncResources:(NSString*)from to:(NSString*)to;
+- (void) setupJoypad;
 @end
 
 /* iOS UI */
@@ -317,11 +327,15 @@ void apple_input_keyboard_event(bool down,
 		unsigned code, uint32_t character, uint32_t mod, unsigned device);
 void apple_direct_input_keyboard_event(bool down,
 		unsigned code, uint32_t character, uint32_t mod, unsigned device);
+void apple_init_small_keyboard();
+void menuToggle();
 #endif
 
 // Options
 #define USE_SECOND_SCREEN "Move Display to Mirrored Display"
 #define USE_RETROARCH_CONTROLLER "Use Retro Arch Controller Overlay"
-#define ENABLE_ANALOG_KEY "Enable WASD -> Analog Key Bindings"
+#define ENABLE_ANALOG_KEY "Enable Keyboard Keys -> Joypad Controller Bindings"
+#define ENABLE_NUM_KEY "Enable ZXCASDQWE/Arrow Keys -> Numpad Key Bindings"
+#define ENABLE_ANALOG_DPAD "Enable Joypad Analog -> Dpad Bindings"
 #define RETROARCH_PVOVERLAY "/RetroArch/overlays/pv_ui_overlay/pv_ui.cfg"
 #define RETROARCH_DEFAULT_OVERLAY "/RetroArch/overlays/gamepads/neo-retropad/neo-retropad-clear.cfg"

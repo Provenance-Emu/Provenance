@@ -47,10 +47,8 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
         do {
             let database = RomDatabase.sharedInstance
             try database.delete(state)
-
         } catch {
-            ELOG("Failed to delete PVState")
-            throw error
+            NSLog("Failed to delete PVState")
         }
     }
 
@@ -106,7 +104,7 @@ extension Cheats: RealmRepresentable {
             object.lastOpened = lastOpened
             object.code=code
             object.type=type
-            object.enabled=enabled
+            object.enabled=false
         }
     }
 }

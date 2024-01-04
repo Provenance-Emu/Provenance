@@ -49,9 +49,10 @@ open class SwitchCell: UITableViewCell, Configurable {
   #endif
 
   /// The switch cell's delegate object, which should conform to `SwitchCellDelegate`. Not available on tvOS.
+#if !os(tvOS)
   @available(tvOS, unavailable, message: "SwitchCellDelegate is not available on tvOS.")
   open weak var delegate: SwitchCellDelegate?
-
+#endif
   // MARK: - Initializer
 
   /**
@@ -99,7 +100,9 @@ open class SwitchCell: UITableViewCell, Configurable {
   @available(tvOS, unavailable, message: "UISwitch is not available on tvOS.")
   @objc
   private func didToggleSwitch(_ sender: UISwitch) {
+#if !os(tvOS)
     delegate?.switchCell(self, didToggleSwitch: sender.isOn)
+#endif
   }
 
   private func setUpAppearance() {

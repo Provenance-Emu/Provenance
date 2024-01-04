@@ -124,7 +124,7 @@ final class PVSaveStateInfoViewController: UIViewController, GameLaunchingViewCo
 
     func play(_ sender: Any) {
         guard let saveState = self.saveState else {
-            presentError("No save state instance")
+            presentError("No save state instance", source: sender as! UIView)
             return
         }
 
@@ -174,7 +174,7 @@ extension PVSaveStateInfoViewController {
                     do {
                         try PVSaveState.delete(saveState)
                     } catch {
-                        self.presentError("Error deleting save state: " + error.localizedDescription)
+                        self.presentError("Error deleting save state: " + error.localizedDescription, source: self.view)
                     }
                 } else {
                     ELOG("Save state var was nil, can't delete")

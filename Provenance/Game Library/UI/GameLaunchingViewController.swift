@@ -169,7 +169,7 @@ extension GameSharingViewController where Self: UIViewController {
             hud.isUserInteractionEnabled = false
             hud.mode = .indeterminate
             hud.labelText = "Creating ZIP"
-            hud.detailsLabelText = "Please be patient, this may take a while…"
+            hud.detailsLabelText = "Please be patient, this could take a while…"
 
             DispatchQueue.global(qos: .background).async {
                 let success = SSZipArchive.createZipFile(atPath: zipPath.path, withFilesAtPaths: paths)
@@ -274,6 +274,13 @@ public enum GameLaunchingError: Error {
     let textEditBlocker = TextFieldEditBlocker()
 #endif
 extension GameLaunchingViewController where Self: UIViewController {
+    private func getExpectedFilename(_ bios:BIOS) -> String {
+        var expectedFilename=bios.expectedFilename
+        if expectedFilename.contains("|") {
+            expectedFilename=expectedFilename.components(separatedBy: "|")[0]
+        }
+        return expectedFilename
+    }
     private func biosCheck(system: PVSystem) throws {
         guard system.requiresBIOS else {
             // Nothing to do
@@ -292,7 +299,9 @@ extension GameLaunchingViewController where Self: UIViewController {
             biosPathContents = try FileManager.default.contentsOfDirectory(at: system.biosDirectory, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants]).compactMap { $0.isFileURL ? $0.lastPathComponent : nil }
         } catch {
             try? FileManager.default.createDirectory(at: system.biosDirectory, withIntermediateDirectories: true, attributes: nil)
-            let biosFiles = biosEntries.map { $0.expectedFilename }.joined(separator: ", ")
+            let biosFiles = biosEntries.map {
+                return self.getExpectedFilename($0.asDomain())
+            }.joined(separator: ", ")
 
             let documentsPath = PVEmulatorConfiguration.documentsPath.path
             let biosDirectory = system.biosDirectory.path.replacingOccurrences(of: documentsPath, with: "")
@@ -307,13 +316,30 @@ extension GameLaunchingViewController where Self: UIViewController {
         var biosPathContentsMD5Cache: [String: String]?
 
         var missingBIOSES = [String]()
+        var entries:Array<BIOS> = biosEntries.map({ $0.asDomain() })
+        // Search for additional conditional bios requirements stored as JSON file
+        if FileManager.default.fileExists(atPath: system.biosDirectory.appendingPathComponent("requirements.json").path) {
+            let additionalBios=try LibrarySerializer.retrieve(system.biosDirectory.appendingPathComponent("requirements.json"), as: [String:[String:Int]].self)
+            additionalBios.keys.forEach({
+                file in
+                if let biosInfo = additionalBios[file],
+                   let md5=biosInfo.keys.first,
+                   let size=biosInfo[md5] {
+                    var bios=PVBIOS(withSystem: system, descriptionText: file, expectedMD5: md5, expectedSize: size, expectedFilename: file)
+                    bios.optional=false
+                    entries.append(bios.asDomain())
+                }
+            })
+        }
 
         // Go through each BIOSEntry struct and see if all non-optional BIOS's were found in the BIOS dir
         // Try to match MD5s for files that don't match by name, and rename them to what's expected if found
         // Warn on files that have filename match but MD5 doesn't match expected
-        let canLoad = biosEntries.all {
+        var canLoad = true
+        entries.forEach {
+            let expectedFilename=self.getExpectedFilename($0)
             // Check for a direct filename match and that it isn't an optional BIOS if we don't find it
-            if !biosPathContents.contains($0.expectedFilename), !$0.optional {
+            if !biosPathContents.contains(expectedFilename), !$0.optional {
                 // Didn't match by files name, now we generate all the md5's and see if any match, if they do, move the matching file to the correct filename
 
                 // 1 - Lazily generate the hashes of files in the BIOS directory
@@ -337,30 +363,28 @@ extension GameLaunchingViewController where Self: UIViewController {
                     // Rename the file to what we expected
                     do {
                         let from = system.biosDirectory.appendingPathComponent(filenameOfFoundFile, isDirectory: false)
-                        let to = system.biosDirectory.appendingPathComponent($0.expectedFilename, isDirectory: false)
+                        let to = system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false)
                         try FileManager.default.moveItem(at: from, to: to)
                         // Succesfully move the file, mark this BIOSEntry as true in the .all{} loop
-                        ILOG("Rename file \(filenameOfFoundFile) to \($0.expectedFilename) because it matched by MD5 \($0.expectedMD5.uppercased())")
-                        return true
+                        ILOG("Rename file \(filenameOfFoundFile) to \(expectedFilename) because it matched by MD5 \($0.expectedMD5.uppercased())")
                     } catch {
-                        ELOG("Failed to rename \(filenameOfFoundFile) to \($0.expectedFilename)\n\(error.localizedDescription)")
+                        ELOG("Failed to rename \(filenameOfFoundFile) to \(expectedFilename)\n\(error.localizedDescription)")
                         // Since we couldn't rename, mark this as a false
-                        missingBIOSES.append("\($0.expectedFilename) (MD5: \($0.expectedMD5))")
-                        return false
+                        missingBIOSES.append("\(expectedFilename) (MD5: \($0.expectedMD5))")
+                        canLoad = false
                     }
                 } else {
                     // No MD5 matches either
-                    missingBIOSES.append("\($0.expectedFilename) (MD5: \($0.expectedMD5))")
-                    return false
+                    missingBIOSES.append("\(expectedFilename) (MD5: \($0.expectedMD5))")
+                    canLoad = false
                 }
             } else {
                 // Not as important, but log if MD5 is mismatched.
                 // Cores care about filenames for some reason, not MD5s
-                let fileMD5 = FileManager.default.md5ForFile(atPath: system.biosDirectory.appendingPathComponent($0.expectedFilename, isDirectory: false).path, fromOffset: 0) ?? ""
+                let fileMD5 = FileManager.default.md5ForFile(atPath: system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false).path, fromOffset: 0) ?? ""
                 if fileMD5 != $0.expectedMD5.uppercased() {
-                    WLOG("MD5 hash for \($0.expectedFilename) didn't match the expected value.\nGot {\(fileMD5)} expected {\($0.expectedMD5.uppercased())}")
+                    WLOG("MD5 hash for \(expectedFilename) didn't match the expected value.\nGot {\(fileMD5)} expected {\($0.expectedMD5.uppercased())}")
                 }
-                return true
             }
         } // End canLoad .all loop
 
@@ -381,6 +405,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         ELOG(message)
 
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
         customActions?.forEach { alertController.addAction($0) }
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alertController, animated: true)
@@ -442,19 +467,19 @@ extension GameLaunchingViewController where Self: UIViewController {
                 }
         #endif
 
-                let thisTimeOnlyAction = UIAlertAction(title: "This time", style: .default, handler: { _ in self.presentEMU(withCore: core, forGame: game) })
+                let thisTimeOnlyAction = UIAlertAction(title: "This time", style: .default, handler: { _ in self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view) })
                 let alwaysThisGameAction = UIAlertAction(title: "Always for this game", style: .default, handler: { [unowned self] _ in
                     try! RomDatabase.sharedInstance.writeTransaction {
                         game.userPreferredCoreID = core.identifier
                     }
-                    self.presentEMU(withCore: core, forGame: game)
+                    self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
 
                 })
                 let alwaysThisSytemAction = UIAlertAction(title: "Always for this system", style: .default, handler: { [unowned self] _ in
                     try! RomDatabase.sharedInstance.writeTransaction {
                         system.userPreferredCoreID = core.identifier
                     }
-                    self.presentEMU(withCore: core, forGame: game)
+                    self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
                 })
 
                 alwaysUseAlert.addAction(thisTimeOnlyAction)
@@ -542,14 +567,14 @@ extension GameLaunchingViewController where Self: UIViewController {
                 if let userSelecion = game.userPreferredCoreID ?? system.userPreferredCoreID,
                     let chosenCore = cores.first(where: { $0.identifier == userSelecion }) {
                     ILOG("User has already selected core \(chosenCore.projectName) for \(system.shortName)")
-                    presentEMU(withCore: chosenCore, forGame: game)
+                    presentEMU(withCore: chosenCore, forGame: game, source: sender as? UIView ?? self.view)
                     return
                 }
 
                 // User has no core preference, present dialogue to pick
                 presentCoreSelection(forGame: game, sender: sender)
             } else {
-                presentEMU(withCore: selectedCore ?? cores.first!, forGame: game, fromSaveState: saveState)
+                presentEMU(withCore: selectedCore ?? cores.first!, forGame: game, fromSaveState: saveState, source: sender as? UIView ?? self.view)
 //                let contentId : String = "\(system.shortName):\(game.title)"
 //                let customAttributes : [String : Any] = ["timeSpent" : game.timeSpentInGame, "md5" : game.md5Hash]
 //                Answers.logContentView(withName: "Play ROM",
@@ -582,7 +607,13 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
     }
 
-    private func presentEMU(withCore core: PVCore, forGame game: PVGame, fromSaveState saveState: PVSaveState? = nil) {
+    private func presentEMU(withCore core: PVCore, forGame game: PVGame, fromSaveState saveState: PVSaveState? = nil, source: UIView?) {
+        guard let game = RomDatabase.sharedInstance.realm.object(ofType: PVGame.self, forPrimaryKey: game.md5Hash) else {
+            return
+        }
+        guard let core = RomDatabase.sharedInstance.realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) else {
+            return
+        }
         guard let coreInstance = core.createInstance(forSystem: game.system) else {
             displayAndLogError(withTitle: "Cannot open game", message: "Failed to create instance of core '\(core.projectName)'.")
             ELOG("Failed to init core instance")
@@ -592,15 +623,13 @@ extension GameLaunchingViewController where Self: UIViewController {
         let emulatorViewController = PVEmulatorViewController(game: game, core: coreInstance)
 
         // Check if Save State exists
-        /*
-         if saveState == nil, emulatorViewController.core.supportsSaveStates {
-            checkForSaveStateThenRun(withCore: core, forGame: game) { optionallyChosenSaveState in
+        if saveState == nil, emulatorViewController.core.supportsSaveStates {
+            checkForSaveStateThenRun(withCore: core, forGame: game, source: source) { optionallyChosenSaveState in
                 self.presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: optionallyChosenSaveState)
             }
         } else {
-         */
             presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: saveState)
-        //}
+        }
     }
 
     // Used to just show and then optionally quickly load any passed in PVSaveStates
@@ -645,8 +674,18 @@ extension GameLaunchingViewController where Self: UIViewController {
         updateRecentGames(game)
     }
 
-    private func checkForSaveStateThenRun(withCore core: PVCore, forGame game: PVGame, completion: @escaping (PVSaveState?) -> Void) {
-        if let latestSaveState = game.saveStates.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).first {
+    private func checkForSaveStateThenRun(withCore core: PVCore, forGame game: PVGame, source: UIView?, completion: @escaping (PVSaveState?) -> Void) {
+        var foundSave = false
+        var saveState : PVSaveState?
+        var saves = game.saveStates.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).toArray() + game.autoSaves.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).toArray()
+        saves = saves.sorted(by: { $0.date.compare($1.date) == .orderedDescending })
+        for save in saves {
+            if !foundSave && FileManager.default.fileExists(atPath: save.file.url.path) && save.core.identifier == core.identifier {
+                foundSave = true
+                saveState = save
+            }
+        }
+        if foundSave, let latestSaveState = saveState {
             let shouldAskToLoadSaveState: Bool = PVSettingsModel.shared.askToAutoLoad
             let shouldAutoLoadSaveState: Bool = PVSettingsModel.shared.autoLoadSaves
 
@@ -657,8 +696,8 @@ extension GameLaunchingViewController where Self: UIViewController {
                 let alert = UIAlertController(title: "Save State Detected", message: nil, preferredStyle: .actionSheet)
                 // TODO: XCode15/iOS17 Requires actual source view here
                 alert.preferredContentSize = CGSize(width: 300, height: 150)
-                alert.popoverPresentationController?.sourceView = self.view
-                alert.popoverPresentationController?.sourceRect = UIScreen.main.bounds
+                alert.popoverPresentationController?.sourceView = source
+                alert.popoverPresentationController?.sourceRect = source?.bounds ?? UIScreen.main.bounds
                 #if os(iOS)
                     let switchControl = UISwitch()
                     switchControl.isOn = !PVSettingsModel.shared.askToAutoLoad
@@ -801,7 +840,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                     let description = maybeError?.localizedDescription ?? "No reason given"
                     let reason = (maybeError as NSError?)?.localizedFailureReason
 
-                    self.presentError("Failed to load save state: \(description) \(reason ?? "")") {
+                    self.presentError("Failed to load save state: \(description) \(reason ?? "")", source: self.view) {
                         gameVC.core.setPauseEmulation(false)
                     }
 
@@ -811,7 +850,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                 gameVC.core.setPauseEmulation(false)
             }
         } else {
-            presentWarning("No core loaded")
+            presentWarning("No core loaded", source: self.view)
         }
     }
 }

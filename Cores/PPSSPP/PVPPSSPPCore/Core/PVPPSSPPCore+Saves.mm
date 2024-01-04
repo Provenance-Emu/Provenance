@@ -167,7 +167,7 @@ static bool processed;
     @autoreleasepool
     {
         //Wait here until we get the signal for full initialization
-        while (!_isInitialized && GetUIState() == UISTATE_INGAME) {
+        while (!_isInitialized || GetUIState() != UISTATE_INGAME) {
             sleep_ms(WAIT_INTERVAL);
         }
         if(_isInitialized && GetUIState() == UISTATE_INGAME) {

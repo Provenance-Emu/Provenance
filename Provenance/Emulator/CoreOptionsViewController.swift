@@ -54,6 +54,7 @@ final class CoreOptionsViewController: QuickTableViewController {
         super.viewDidLoad()
         generateTableViewViewModels()
         tableView.reloadData()
+        tableView.layoutIfNeeded()
     }
 
     func generateTableViewViewModels() {
@@ -88,6 +89,8 @@ final class CoreOptionsViewController: QuickTableViewController {
 															 action: { _ in
 																 let currentSelection: String? = self.core.storedValueForOption(String.self, option.key) ?? option.defaultValue as? String
 																 let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
+                                 actionController.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
+                                 actionController.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
 
 																 values.forEach { value in
 																	 var title = value.title
@@ -115,6 +118,8 @@ final class CoreOptionsViewController: QuickTableViewController {
                                                              action: { row in
                                                                  let currentSelection: Int = self.core.storedValueForOption(Int.self, option.key) ?? option.defaultValue as? Int ?? defaultValue
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
+                                                                  actionController.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
+                                                                  actionController.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
 
                                                                  values.forEach { value in
                                                                      var title = value.title
@@ -192,8 +197,9 @@ final class CoreOptionsViewController: QuickTableViewController {
 //                        cell.textLabel?.text = value
                                                              },
                                                              action: { cell in
-                                                                 let currentValue: String = value // self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String ?? ""
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
+                        actionController.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
+                        actionController.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
                         let cellRect = self.tableView.rectForRow(at: IndexPath(row: rowIndex, section: sectionIndex))
 
                         let textField = UITextField()

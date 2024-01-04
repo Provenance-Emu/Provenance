@@ -98,6 +98,9 @@ final class PVSettingsViewController: QuickTableViewController {
         }
         let themeRow = NavigationRow(text: NSLocalizedString("Theme", comment: "Theme"), detailText: .value1(PVSettingsModel.shared.theme.description), icon: .sfSymbol("paintbrush"), action: { row in
             let alert = UIAlertController(title: "Theme", message: "", preferredStyle: .actionSheet)
+            alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
+            alert.popoverPresentationController?.sourceView = self.tableView
+            alert.popoverPresentationController?.sourceRect = self.tableView.bounds ?? UIScreen.main.bounds
             ThemeOptions.themes.forEach { mode in
                 let modeLabel = mode == .auto ? mode.description + " (\(systemMode))" : mode.description
                 let action = UIAlertAction(title: modeLabel, style: .default, handler: { _ in
@@ -204,7 +207,7 @@ final class PVSettingsViewController: QuickTableViewController {
         var controllerRows = [TableRow]()
 
         #if os(iOS)
-        controllerRows.append(PVSettingsSliderRow(text: NSLocalizedString("Opacity", comment: "Opacity"), detailText: .subtitle("Transparency amount of on-screen controls overlays."), valueLimits: (min: 0.5, max: 1.0), valueImages: (.sfSymbol("sun.min"), .sfSymbol("sun.max")), key: \PVSettingsModel.controllerOpacity))
+        controllerRows.append(PVSettingsSliderRow(text: NSLocalizedString("Opacity", comment: "Opacity"), detailText: .subtitle("Transparency amount of on-screen controls overlays."), valueLimits: (min: 0.0, max: 1.0), valueImages: (.sfSymbol("sun.min"), .sfSymbol("sun.max")), key: \PVSettingsModel.controllerOpacity))
 
             controllerRows.append(contentsOf: [
                 PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), detailText: .subtitle("Color the on-screen controls to be similiar to their original system controller colors where applicable."), key: \PVSettingsModel.buttonTints, icon: .sfSymbol("paintpalette")),
@@ -271,6 +274,24 @@ final class PVSettingsViewController: QuickTableViewController {
 
         // Game Library 2
         let library2Rows: [TableRow] = [
+            NavigationRow(
+                text: NSLocalizedString("Re-import all ROMs Directories", comment: ""),
+                detailText: .subtitle("Re-import all ROMs from all ROM Directories (e.g. com.provenance.snes)"),
+                icon: .sfSymbol("triangle.circle.fill"),
+                customization: nil,
+                action: { [weak self] _ in
+                    self?.reimportROMsAction()
+                }
+            ),
+            NavigationRow(
+                text: NSLocalizedString("Reset Everything", comment: ""),
+                detailText: .subtitle("Delete All Settings, Re-import ROMs ⚠️ Very Slow"),
+                icon: .sfSymbol("delete.forward.fill"),
+                customization: nil,
+                action: { [weak self] _ in
+                    self?.resetDataAction()
+                }
+            ),
             NavigationRow(
                 text: NSLocalizedString("Refresh Game Library", comment: ""),
                 detailText: .subtitle("Re-import ROMs ⚠️ Slow"),
@@ -381,8 +402,8 @@ final class PVSettingsViewController: QuickTableViewController {
         // - Social links
         let discordRow = NavigationRow(
             text: NSLocalizedString("Discord", comment: ""),
-            detailText: .value2("Join our Discord server for help and community chat."),
-            icon: .named("Icons/discord"),
+            detailText: .subtitle("Join our Discord server for help and community chat."),
+            icon: .named("discord"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0
@@ -390,13 +411,14 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://discord.gg/4TK7PU5") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
-        let twitterRow = NavigationRow(
-            text: NSLocalizedString("Twitter", comment: ""),
-            detailText: .value2("Follow us on Twitter for release and other announcements."),
-            icon: .named("twitter"),
+        let xRow = NavigationRow(
+            text: NSLocalizedString("X", comment: ""),
+            detailText: .subtitle("Follow us on X for release and other announcements."),
+            icon: .named("x"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
                 detailTextLabel.numberOfLines = 0
@@ -404,12 +426,13 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://twitter.com/provenanceapp") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
         let githubRow = NavigationRow(
             text: NSLocalizedString("GitHub", comment: ""),
-            detailText: .value2("Check out GitHub for code, reporting bugs and contributing."),
+            detailText: .subtitle("Check out GitHub for code, reporting bugs and contributing."),
             icon: .named("github"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -418,12 +441,13 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://github.com/Provenance-Emu/Provenance") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
         let patreonRow = NavigationRow(
             text: NSLocalizedString("Patreon", comment: ""),
-            detailText: .value2("Support us on Patreaon and receive special features and early access builds."),
+            detailText: .subtitle("Support us on Patreon and receive special features and early access builds."),
             icon: .named("patreon"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -432,12 +456,13 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://provenance-emu.com/patreon") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
         let youTubeRow = NavigationRow(
-            text: NSLocalizedString("YouTube!", comment: ""),
-            detailText: .value2("Help tutorial videos and new feature previews."),
+            text: NSLocalizedString("YouTube", comment: ""),
+            detailText: .subtitle("Help tutorial videos and new feature previews."),
             icon: .named("youtube"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -446,12 +471,13 @@ final class PVSettingsViewController: QuickTableViewController {
             action: { _ in
                 if let url = URL(string: "https://www.youtube.com/channel/UCKeN6unYKdayfgLWulXgB1w") {
                     UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    self.tableView.deselectRow(at: self.tableView.indexPathForSelectedRow!, animated: false)
                 }
             }
         )
         let blogRow = NavigationRow(
             text: NSLocalizedString("Blog", comment: ""),
-            detailText: .value2("Release annoucements and full changelogs and screenshots posted to our blog."),
+            detailText: .subtitle("Release annoucements and full changelogs and screenshots posted to our blog."),
             icon: .sfSymbol("square.and.pencil"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -470,7 +496,7 @@ final class PVSettingsViewController: QuickTableViewController {
         )
         let faqRow = NavigationRow(
             text: NSLocalizedString("FAQ", comment: ""),
-            detailText: .value2("Frequently asked questions."),
+            detailText: .subtitle("Frequently asked questions."),
             icon: .sfSymbol("questionmark.folder.fill"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -489,7 +515,7 @@ final class PVSettingsViewController: QuickTableViewController {
         )
         let wikiRow = NavigationRow(
             text: NSLocalizedString("Wiki", comment: ""),
-            detailText: .value2("Full usage documentation, tips and tricks on our Wiki."),
+            detailText: .subtitle("Full usage documentation, tips and tricks on our Wiki."),
             icon: .sfSymbol("books.vertical.fill"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
@@ -507,7 +533,7 @@ final class PVSettingsViewController: QuickTableViewController {
             }
         )
 
-        let socialLinksRows = [patreonRow, discordRow, twitterRow, youTubeRow, githubRow]
+        let socialLinksRows = [patreonRow, discordRow, xRow, youTubeRow, githubRow]
         let socialLinksSection = Section(title: NSLocalizedString("Socials", comment: ""), rows: socialLinksRows)
 
         let documentationLinksRow = [blogRow, faqRow, wikiRow]
@@ -588,8 +614,8 @@ final class PVSettingsViewController: QuickTableViewController {
         // Extra Info Section
         let extraInfoRows: [TableRow] = [
             SegueNavigationRow(text: NSLocalizedString("Cores", comment: "Cores"),
-                               detailText: .subtitle("Emulator cores provided by these projects"),
-                               icon: .sfSymbol("person.3.sequence"),
+                               detailText: .subtitle("Emulator cores provided by these projects."),
+                               icon: .sfSymbol("square.3.layers.3d.middle.filled"),
                                viewController: self,
                                segue: "coresSegue",
                                customization: nil),
@@ -630,12 +656,15 @@ final class PVSettingsViewController: QuickTableViewController {
             // start web transfer service
             if PVWebServer.shared.startServers() {
                 // show alert view
-                showServerActiveAlert()
+                showServerActiveAlert(sender: self.tableView, barButtonItem: nil)
             } else {
                 // Display error
                 let alert = UIAlertController(title: "Unable to start web server!",
                                               message: "Check your network connection or settings and free up ports: 80, 81.",
                                               preferredStyle: .alert)
+                alert.popoverPresentationController?.sourceView = tableView
+                alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+                alert.preferredContentSize = CGSize(width: 500, height: 150)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                 }))
                 present(alert, animated: true) { () -> Void in }
@@ -644,25 +673,78 @@ final class PVSettingsViewController: QuickTableViewController {
             let alert = UIAlertController(title: "Unable to start web server!",
                                           message: "Your device needs to be connected to a WiFi network to continue!",
                                           preferredStyle: .alert)
+            alert.popoverPresentationController?.sourceView = tableView
+            alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+            alert.preferredContentSize = CGSize(width: 500, height: 150)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
             present(alert, animated: true) { () -> Void in }
         }
     }
-
+    func reimportROMsAction() {
+        tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
+        let alert = UIAlertController(title: "Re-Scan all ROM Directories?",
+                                      message: """
+                                        Attempt scan all ROM Directories (e.g. com.provenance.snes),
+                                        import all new ROMs found, and update existing ROMs
+                                      """,
+                                      preferredStyle: .alert)
+        alert.popoverPresentationController?.sourceView = tableView
+        alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+        alert.preferredContentSize = CGSize(width: 500, height: 300)
+        alert.addAction(UIAlertAction(title: "Yes",
+                                      style: .default,
+                                      handler: { (_: UIAlertAction) -> Void in
+            NotificationCenter.default.post(name: NSNotification.Name.PVReimportLibrary, object: nil)
+            self.done(self)
+        }))
+        alert.addAction(UIAlertAction(title: "No",
+                                      style: .cancel,
+                                      handler: nil))
+        present(alert, animated: true) { () -> Void in }
+    }
+    func resetDataAction() {
+        tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
+        let alert = UIAlertController(title: "Reset Everything?",
+                                      message: """
+                                        Attempt to delete all settings / configurations, then
+                                        reimport everything.
+                                      """,
+                                      preferredStyle: .alert)
+        alert.popoverPresentationController?.sourceView = tableView
+        alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+        alert.preferredContentSize = CGSize(width: 500, height: 300)
+        alert.addAction(UIAlertAction(title: "Yes",
+                                      style: .default,
+                                      handler: { (_: UIAlertAction) -> Void in
+            NotificationCenter.default.post(name: NSNotification.Name.PVResetLibrary, object: nil)
+            self.done(self)
+        }))
+        alert.addAction(UIAlertAction(title: "No",
+                                      style: .cancel,
+                                      handler: nil))
+        present(alert, animated: true) { () -> Void in }
+    }
     func refreshGameLibraryAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
         let alert = UIAlertController(title: "Refresh Game Library?",
                                       message: """
-Attempt to reload the artwork and title information for your entire library. This can be a slow process, especially for large libraries. Only do this if you really, really want to try and get more artwork or update the information.
-
-You will need to completely relaunch the App to start the library rebuild process.
-""",
+                                        Attempt to reload the artwork and title
+                                        information for your entire library.
+                                        This can be a slow process, especially for
+                                        large libraries.
+                                        Only do this if you really, really want to
+                                        try and get more artwork or update the information.
+                                      """,
                                       preferredStyle: .alert)
+        alert.popoverPresentationController?.sourceView = tableView
+        alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+        alert.preferredContentSize = CGSize(width: 500, height: 300)
         alert.addAction(UIAlertAction(title: "Yes",
                                       style: .default,
                                       handler: { (_: UIAlertAction) -> Void in
             NotificationCenter.default.post(name: NSNotification.Name.PVRefreshLibrary, object: nil)
+            self.done(self)
         }))
         alert.addAction(UIAlertAction(title: "No",
                                       style: .cancel,
@@ -673,8 +755,14 @@ You will need to completely relaunch the App to start the library rebuild proces
     func emptyImageCacheAction() {
         tableView.deselectRow(at: tableView.indexPathForSelectedRow ?? IndexPath(row: 0, section: 0), animated: true)
         let alert = UIAlertController(title: NSLocalizedString("Empty Image Cache?", comment: ""),
-                                      message: "Empty the image cache to free up disk space. Images will be redownloaded on demand.",
+                                      message: """
+                                      Empty the image cache to free up disk space.
+                                      Images will be redownloaded on demand.
+                                      """,
                                       preferredStyle: .alert)
+        alert.popoverPresentationController?.sourceView = tableView
+        alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+        alert.preferredContentSize = CGSize(width: 500, height: 150)
         alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""),
                                       style: .default,
                                       handler: { (_: UIAlertAction) -> Void in

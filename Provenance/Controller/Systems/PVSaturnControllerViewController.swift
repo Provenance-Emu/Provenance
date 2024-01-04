@@ -43,7 +43,18 @@ final class PVSaturnControllerViewController: PVControllerViewController<PVSatur
         rightShoulderButton?.buttonTag = .r
         startButton?.buttonTag = .start
     }
+    override func prelayoutSettings() {
+        joyPadScale = 0.35
+        joyPad2Scale = 0.35
+    }
+    override func dPad(_ dPad: JSDPad, joystick value: JoystickValue) {
+        var y:CGFloat = -CGFloat(value.y - 0.5) * 5
+        var x:CGFloat = CGFloat(value.x - 0.5) * 5
 
+        y = y < -1 ? -1 : y > 1 ? 1 : y;
+        x = x < -1 ? -1 : x > 1 ? 1 : x;
+        emulatorCore.didMoveJoystick(.leftAnalog, withXValue: x, withYValue: y, forPlayer: 0)
+    }
     override func dPad(_ dPad: JSDPad, didPress direction: JSDPadDirection) {
         emulatorCore.didRelease(.up, forPlayer: 0)
         emulatorCore.didRelease(.down, forPlayer: 0)

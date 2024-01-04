@@ -22,10 +22,6 @@ extension PVGenesisEmulatorCore: CoreOptional {
 
             static var allOptions: [CoreOption] = [noSpriteLimit]
         }
-
-        enum Input {
-            static var allOptions: [CoreOption] = []
-        }
         
         enum Video {
             static let gg_extra: CoreOption =
@@ -131,15 +127,8 @@ extension PVGenesisEmulatorCore: CoreOptional {
         let videoOptions: CoreOption = .group(.init(title: "Video",
                                                       description: nil),
                                                 subOptions: Options.Video.allOptions)
-            
-        
-        // MARK: -- Input
-        let inputOptions: CoreOption = .group(.init(title: "Input",
-                                                      description: nil),
-                                                subOptions: Options.Input.allOptions)
 
-        
-        options.append(contentsOf: [systemOptions, videoOptions, soundOptions, inputOptions])
+        options.append(contentsOf: [systemOptions, videoOptions, soundOptions])
         return options
     }
 }

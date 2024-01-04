@@ -112,22 +112,17 @@ final class PVConflictViewController: UITableViewController {
                 let alertController = UIAlertController(title: "Choose a System", message: nil, preferredStyle: .actionSheet)
                 alertController.popoverPresentationController?.sourceView = self.view
                 alertController.popoverPresentationController?.sourceRect = self.tableView.rectForRow(at: indexPath)
-                conflict.candidates.filter { $0.supported || showsUnsupportedSystems }.forEach { system in
-                    alertController.addAction(.init(title: system.name, style: .default, handler: { _ in
-                        self.conflictsController.resolveConflicts(withSolutions: [conflict.path: system])
-                    }))
-                }
-
-				alertController.addAction(.init(title: NSLocalizedString("Delete", comment: "Delete file"), style: .destructive, handler: { _ in
-					let fm = FileManager.default
-					do {
-						try fm.removeItem(at: conflict.path)
-						self.tableView.reloadData()
-					} catch {
-						ELOG("\(error.localizedDescription)")
-					}
-				}))
-
+                conflict.candidates
+                    .filter { $0.supported || showsUnsupportedSystems }
+                    .sorted(by: { sys1,sys2 in sys1.identifier < sys2.identifier })
+                    .forEach { system in
+                        alertController.addAction(.init(title: system.name, style: .default, handler: { _ in
+                            self.conflictsController.resolveConflicts(withSolutions: [conflict.path: system])
+                        }))
+                    }
+                alertController.addAction(.init(title: NSLocalizedString("Delete", comment: "Delete file"), style: .destructive, handler: { _ in
+                    self.conflictsController.deleteConflict(path: conflict.path)
+                }))
                 alertController.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                 self.present(alertController, animated: true) { () -> Void in
                     self.tableView.reloadData()

@@ -103,7 +103,7 @@ public final class LibrarySerializer {
 
 // MARK: Disk save / load
 
-extension LibrarySerializer {
+public extension LibrarySerializer {
     /// Store an encodable struct to the specified directory on disk
     ///
     /// - Parameters:

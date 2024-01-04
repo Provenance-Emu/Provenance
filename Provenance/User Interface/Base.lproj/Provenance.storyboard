@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PpW-xz-Ouo">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22154" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="PpW-xz-Ouo">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22129"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -13,9 +13,9 @@
         <!--Navigation Controller-->
         <scene sceneID="9Nl-1J-rrm">
             <objects>
-                <navigationController storyboardIdentifier="rootNavigationController" definesPresentationContext="YES" providesPresentationContextTransitionStyle="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="PpW-xz-Ouo" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="rootNavigationController" definesPresentationContext="YES" providesPresentationContextTransitionStyle="YES" useStoryboardIdentifierAsRestorationIdentifier="YES" id="PpW-xz-Ouo" customClass="PVUINavigationController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="black" id="iLh-mO-joj">
-                        <rect key="frame" x="0.0" y="47" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="50" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="nEd-Yc-NCf">
@@ -71,7 +71,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" restorationIdentifier="artworkImageView" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sD7-l1-Ret">
-                                <rect key="frame" x="16" y="99" width="343" height="152"/>
+                                <rect key="frame" x="16" y="102" width="343" height="152"/>
                                 <accessibility key="accessibilityConfiguration" hint="The box art for this game" label="Game Artwork">
                                     <bool key="isElement" value="YES"/>
                                 </accessibility>
@@ -86,7 +86,7 @@
                                 </connections>
                             </imageView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="top" spacing="29" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mGN-BI-qeR">
-                                <rect key="frame" x="8" y="259" width="359" height="252.33333333333337"/>
+                                <rect key="frame" x="8" y="262" width="359" height="252.33333333333337"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacingType="standard" baselineRelativeArrangement="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Mmz-if-q1Q">
                                         <rect key="frame" x="0.0" y="0.0" width="359" height="20.333333333333332"/>
@@ -282,7 +282,7 @@
                                 </constraints>
                             </stackView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="interactive" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F6k-po-NkI">
-                                <rect key="frame" x="8" y="519.33333333333337" width="359" height="258.66666666666663"/>
+                                <rect key="frame" x="8" y="522.33333333333337" width="359" height="255.66666666666663"/>
                                 <gestureRecognizers/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <color key="textColor" systemColor="labelColor"/>
@@ -418,11 +418,11 @@
             <objects>
                 <viewController restorationIdentifier="gameLibrary" storyboardIdentifier="PVGameLibraryViewController" id="40z-oi-2L6" customClass="PVGameLibraryViewController" customModule="Provenance" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ooJ-sW-pgf">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="721"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="718"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ooQ-n9-WR1">
-                                <rect key="frame" x="113.00000000000001" y="314.33333333333331" width="149.33333333333337" height="58.333333333333314"/>
+                                <rect key="frame" x="113.00000000000001" y="313" width="149.33333333333337" height="58.333333333333314"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Game library empty" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DrX-UD-xpk">
                                         <rect key="frame" x="0.0" y="0.0" width="149.33333333333334" height="20.333333333333332"/>
@@ -430,7 +430,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="StB-ig-807">
-                                        <rect key="frame" x="29" y="28.333333333333371" width="91" height="30"/>
+                                        <rect key="frame" x="29" y="28.333333333333314" width="91" height="30"/>
                                         <state key="normal" title="Import ROMs">
                                             <color key="titleColor" red="0.10980392160000001" green="0.51372549020000002" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
@@ -457,6 +457,11 @@
                                     <segue destination="dRa-ou-OcL" kind="modal" identifier="SettingsSegue" modalPresentationStyle="formSheet" id="PHC-9h-QIz"/>
                                 </connections>
                             </barButtonItem>
+                            <barButtonItem image="sort" id="TUE-QR-fbw">
+                                <connections>
+                                    <action selector="sortButtonTapped:" destination="40z-oi-2L6" id="poc-Sm-FpJ"/>
+                                </connections>
+                            </barButtonItem>
                             <barButtonItem title="⚠" width="36" id="uuP-n9-A2Y">
                                 <color key="tintColor" systemColor="systemYellowColor"/>
                                 <connections>
@@ -470,9 +475,9 @@
                                     <action selector="getMoreROMs:" destination="40z-oi-2L6" id="ydQ-wq-lC9"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem image="sort" id="TUE-QR-fbw">
+                            <barButtonItem systemItem="refresh" id="6WY-mR-Dsw" userLabel="Refresh Bar Button">
                                 <connections>
-                                    <action selector="sortButtonTapped:" destination="40z-oi-2L6" id="poc-Sm-FpJ"/>
+                                    <action selector="refreshButtonTapped:" destination="40z-oi-2L6" id="8zE-uS-KfN"/>
                                 </connections>
                             </barButtonItem>
                         </rightBarButtonItems>
@@ -482,6 +487,7 @@
                         <outlet property="getMoreRomsBarButtonItem" destination="6tp-vr-cci" id="S4H-KA-RPh"/>
                         <outlet property="libraryInfoContainerView" destination="ooQ-n9-WR1" id="evK-sO-hvR"/>
                         <outlet property="libraryInfoLabel" destination="DrX-UD-xpk" id="KxD-Px-PED"/>
+                        <outlet property="refreshOptionBarButtonItem" destination="6WY-mR-Dsw" id="Ksd-7m-Syf"/>
                         <outlet property="settingsBarButtonItem" destination="daz-L9-06G" id="54P-oe-3Jd"/>
                         <outlet property="sortOptionBarButtonItem" destination="TUE-QR-fbw" id="mnz-yR-SpN"/>
                         <outlet property="sortOptionsTableView" destination="yd6-6I-GtS" id="YlW-da-mCM"/>
@@ -556,7 +562,7 @@
         <image name="gear" catalog="system" width="128" height="122"/>
         <image name="sort" width="20" height="20"/>
         <systemColor name="labelColor">
-            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
