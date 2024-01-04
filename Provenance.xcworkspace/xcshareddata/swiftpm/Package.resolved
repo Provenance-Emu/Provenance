@@ -128,11 +128,11 @@
         }
       },
       {
-        "package": "swiftui-introspect",
+        "package": "Introspect",
         "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
         "state": {
-          "branch": "master",
-          "revision": "8bf15ad33a529359200bd419a72ca2dda841089b",
+          "branch": null,
+          "revision": "d3cbf32788250741d397cfb5bcd532c37aa1096d",
           "version": null
         }
       },
@@ -150,7 +150,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "de6b46dfc80d950a32176c7eca79bb229d47f501",
+          "revision": "ffde100b68bcfa76bc62e3ac7421068dba927f0e",
           "version": null
         }
       }
