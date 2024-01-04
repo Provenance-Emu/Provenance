@@ -779,7 +779,11 @@ static inline NSString* _EncodeBase64(NSString* string) {
     }
     _options = nil;
   } else {
-    GWS_DNOT_REACHED();
+#if TARGET_OS_TV
+      //[self _stop];
+#else
+      GWS_DNOT_REACHED();
+#endif
   }
 }
 

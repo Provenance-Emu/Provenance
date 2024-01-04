@@ -270,10 +270,31 @@ Provenance would not be possible without the great work of those who came before
 <table>
 <tr>
     <td align="center">
-        <a href="https://github.com/rf2222222">
-            <img src="https://avatars.githubusercontent.com/u/6903427?v=4" width="100;" alt="rf2222222"/>
+        <a href="https://github.com/jasarien">
+            <img src="https://avatars.githubusercontent.com/u/104444?v=4" width="100;" alt="jasarien"/>
             <br />
-            <sub><b>Richard</b></sub>
+            <sub><b>James Addyman</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/JoeMatt">
+            <img src="https://avatars.githubusercontent.com/u/399864?v=4" width="100;" alt="JoeMatt"/>
+            <br />
+            <sub><b>Joe Mattiello</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/sevdestruct">
+            <img src="https://avatars.githubusercontent.com/u/3118097?v=4" width="100;" alt="sevdestruct"/>
+            <br />
+            <sub><b>Sev</b></sub>
+        </a>
+    </td>
+    <td align="center">
+        <a href="https://github.com/mrjschulte">
+            <img src="https://avatars.githubusercontent.com/u/30782821?v=4" width="100;" alt="mrjschulte"/>
+            <br />
+            <sub><b>MrJs</b></sub>
         </a>
     </td></tr>
 </table>

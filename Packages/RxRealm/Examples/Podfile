@@ -1,0 +1,26 @@
+source "https://cdn.cocoapods.org/"
+project "RxRealmDemo.xcodeproj"
+use_frameworks!
+
+def common
+  pod "RxRealm", :path => "../"
+end
+
+def common_tests
+  pod "RxBlocking", "~> 6.0"
+end
+
+target "RxRealmDemo-iOS" do
+  platform :ios, "11.0"
+  common
+end
+
+# target "RxRealmDemo-macOS" do
+#   platform :osx, "10.12"
+#   common
+# end
+
+# target "RxRealmDemo-tvOS" do
+#   platform :tvos, "9.0"
+#   common
+# end

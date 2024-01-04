@@ -7,39 +7,43 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		934D873C2A777AB300C3107A /* libclogDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C22A777A3700C3107A /* libclogDuckstation.a */; };
+		934D873D2A777AB300C3107A /* libcommonDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C42A777A3700C3107A /* libcommonDuckstation.a */; };
+		934D873E2A777AB300C3107A /* libcoreDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C62A777A3700C3107A /* libcoreDuckstation.a */; };
+		934D873F2A777AB300C3107A /* libcpuinfo_internalsDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86CA2A777A3700C3107A /* libcpuinfo_internalsDuckstation.a */; };
+		934D87402A777AB300C3107A /* libcpuinfoDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86C82A777A3700C3107A /* libcpuinfoDuckstation.a */; };
+		934D87412A777AB300C3107A /* libfmtDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86CC2A777A3700C3107A /* libfmtDuckstation.a */; };
+		934D87422A777AB300C3107A /* libfrontend-commonDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86CE2A777A3700C3107A /* libfrontend-commonDuckstation.a */; };
+		934D87432A777AB300C3107A /* libgladDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D02A777A3700C3107A /* libgladDuckstation.a */; };
+		934D87442A777AB300C3107A /* libglslangDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D22A777A3700C3107A /* libglslangDuckstation.a */; };
+		934D87452A777AB300C3107A /* libgtest_mainDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D62A777A3700C3107A /* libgtest_mainDuckstation.a */; };
+		934D87462A777AB300C3107A /* libgtestDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D42A777A3700C3107A /* libgtestDuckstation.a */; };
+		934D87472A777AB300C3107A /* libimguiDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86D82A777A3700C3107A /* libimguiDuckstation.a */; };
+		934D87482A777AB300C3107A /* liblibchdrDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86DA2A777A3700C3107A /* liblibchdrDuckstation.a */; };
+		934D87492A777AB300C3107A /* liblzmaDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86DC2A777A3700C3107A /* liblzmaDuckstation.a */; };
+		934D874A2A777AB300C3107A /* libminizipDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86DE2A777A3700C3107A /* libminizipDuckstation.a */; };
+		934D874B2A777AB300C3107A /* librcheevosDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E02A777A3700C3107A /* librcheevosDuckstation.a */; };
+		934D874C2A777AB300C3107A /* libscmversionDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E22A777A3700C3107A /* libscmversionDuckstation.a */; };
+		934D874D2A777AB300C3107A /* libsimpleiniDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E42A777A3700C3107A /* libsimpleiniDuckstation.a */; };
+		934D874E2A777AB300C3107A /* libsoundtouchDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E62A777A3700C3107A /* libsoundtouchDuckstation.a */; };
+		934D874F2A777AB300C3107A /* libstbDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86E82A777A3700C3107A /* libstbDuckstation.a */; };
+		934D87502A777AB300C3107A /* libtinyxml2Duckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86EA2A777A3700C3107A /* libtinyxml2Duckstation.a */; };
+		934D87512A777AB300C3107A /* libutilDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86EC2A777A3700C3107A /* libutilDuckstation.a */; };
+		934D87522A777AB300C3107A /* libvixlDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86EE2A777A3700C3107A /* libvixlDuckstation.a */; };
+		934D87532A777AB300C3107A /* libxxhashDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F02A777A3700C3107A /* libxxhashDuckstation.a */; };
+		934D87542A777AB300C3107A /* libzlibDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F22A777A3700C3107A /* libzlibDuckstation.a */; };
+		934D87552A777AB300C3107A /* libzstdDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F42A777A3700C3107A /* libzstdDuckstation.a */; };
+		939AAF6D2A791EC7007709E5 /* libduckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8A54026BE55780096A354 /* libduckstation.a */; };
 		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (Weak, ); }; };
 		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
 		B34C2BF4296F9B24002146BB /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
-		B34C2C11296FBDAC002146BB /* libduckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8A54026BE55780096A354 /* libduckstation.a */; };
 		B34C2C13296FBEDA002146BB /* duckstation_null.c in Sources */ = {isa = PBXBuildFile; fileRef = B34C2C12296FBEDA002146BB /* duckstation_null.c */; };
 		B34C2C14296FBFBD002146BB /* PlayStationGameHacks.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */; };
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
-		B373CD7A296F9983005D110B /* libclog.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD43296F9819005D110B /* libclog.a */; };
-		B373CD7B296F9983005D110B /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD45296F9819005D110B /* libcommon.a */; };
-		B373CD7D296F9983005D110B /* libcpuinfo_internals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4D296F9819005D110B /* libcpuinfo_internals.a */; };
-		B373CD7E296F9983005D110B /* libcpuinfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD4B296F9819005D110B /* libcpuinfo.a */; };
-		B373CD80296F9983005D110B /* libfrontend-common.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD51296F9819005D110B /* libfrontend-common.a */; };
-		B373CD81296F9983005D110B /* libglad.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD53296F9819005D110B /* libglad.a */; };
-		B373CD82296F9983005D110B /* libglslang.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD55296F9819005D110B /* libglslang.a */; };
-		B373CD85296F9983005D110B /* libimgui.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD5B296F9819005D110B /* libimgui.a */; };
-		B373CD86296F9983005D110B /* liblibchdr.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD5D296F9819005D110B /* liblibchdr.a */; };
-		B373CD87296F9983005D110B /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD5F296F9819005D110B /* liblzma.a */; };
-		B373CD88296F9983005D110B /* libminizip.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD61296F9819005D110B /* libminizip.a */; };
-		B373CD89296F9983005D110B /* librcheevos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD63296F9819005D110B /* librcheevos.a */; };
-		B373CD8B296F9983005D110B /* libsimpleini.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD67296F9819005D110B /* libsimpleini.a */; };
-		B373CD8C296F9983005D110B /* libsoundtouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD69296F9819005D110B /* libsoundtouch.a */; };
-		B373CD8D296F9983005D110B /* libstb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD6B296F9819005D110B /* libstb.a */; };
-		B373CD8E296F9983005D110B /* libtinyxml2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD6D296F9819005D110B /* libtinyxml2.a */; };
-		B373CD8F296F9983005D110B /* libutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD6F296F9819005D110B /* libutil.a */; };
-		B373CD90296F9983005D110B /* libvixl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD71296F9819005D110B /* libvixl.a */; };
-		B373CD91296F9983005D110B /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD73296F9819005D110B /* libxxhash.a */; };
-		B373CD92296F9983005D110B /* libzlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD75296F9819005D110B /* libzlib.a */; };
-		B373CD93296F9983005D110B /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD77296F9819005D110B /* libzstd.a */; };
 		B373CD98296F99B6005D110B /* PVDuckStation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */; };
 		B373CD99296F99B6005D110B /* PVDuckStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */; };
-		B37D612C29762C1D00B6FE7C /* libfmtd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B37D612B29762ACA00B6FE7C /* libfmtd.a */; };
 		B392F761296F6B2B008BAEF1 /* EAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = B392F75F296F6B2B008BAEF1 /* EAGL.h */; };
 		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilter = ios; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924526DEFFD8003CB9D4 /* GLKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -51,191 +55,190 @@
 		B3D8A52F26BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52526BE48C90096A354 /* PVDuckStation.h */; };
 		B3D8A53126BE48CA0096A354 /* DuckStation-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52626BE48C90096A354 /* DuckStation-Info.plist */; };
 		B3D8A53326BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52826BE48C90096A354 /* PVDuckStation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3F8DFCC2975F0D600C24FD1 /* libcore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B373CD49296F9819005D110B /* libcore.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		B373CD42296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86C12A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 4FF87FC94D6747AAA00E93DA;
-			remoteInfo = clog;
+			remoteGlobalIDString = 454362D1D1F44AA98A8A0570;
+			remoteInfo = clogDuckstation;
 		};
-		B373CD44296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86C32A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 1808D88A333E42ED9D6146B5;
-			remoteInfo = common;
+			remoteGlobalIDString = 2FFCF692D13F41AE849069F9;
+			remoteInfo = commonDuckstation;
 		};
-		B373CD48296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86C52A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = A09F0A80B75A44578B68CA77;
-			remoteInfo = core;
+			remoteGlobalIDString = 95D29D265A3648BDA6A3262B;
+			remoteInfo = coreDuckstation;
 		};
-		B373CD4A296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86C72A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = D60AA1AB09D84D76849382DE;
-			remoteInfo = cpuinfo;
+			remoteGlobalIDString = BA36469E1CBA40658E25AF22;
+			remoteInfo = cpuinfoDuckstation;
 		};
-		B373CD4C296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86C92A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 6397764A1D5141FA96337E95;
-			remoteInfo = cpuinfo_internals;
+			remoteGlobalIDString = 4F1074848D814515B3B73842;
+			remoteInfo = cpuinfo_internalsDuckstation;
 		};
-		B373CD50296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86CB2A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 14B56A338E1C499BA97ACE15;
-			remoteInfo = "frontend-common";
+			remoteGlobalIDString = FC379F3F82D44519B77ADA73;
+			remoteInfo = fmtDuckstation;
 		};
-		B373CD52296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86CD2A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 89DDC47938204CACBD3D2198;
-			remoteInfo = glad;
+			remoteGlobalIDString = 69A5A67EF34941F2B83AD308;
+			remoteInfo = "frontend-commonDuckstation";
 		};
-		B373CD54296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86CF2A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = B214255E013343158E8EF63E;
-			remoteInfo = glslang;
+			remoteGlobalIDString = 230A7951D2094657B1224C52;
+			remoteInfo = gladDuckstation;
 		};
-		B373CD56296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86D12A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 5A3DF470DB8342ABB6BA3169;
-			remoteInfo = gtest;
+			remoteGlobalIDString = E0EFBA810C1449A7BE9C3F31;
+			remoteInfo = glslangDuckstation;
 		};
-		B373CD58296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86D32A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 6C09FDBE31004D7E808F8B0C;
-			remoteInfo = gtest_main;
+			remoteGlobalIDString = 7B11D425D304461A9D6B27A9;
+			remoteInfo = gtestDuckstation;
 		};
-		B373CD5A296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86D52A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 1DE5E89AB1CA47A1BAB7492C;
-			remoteInfo = imgui;
+			remoteGlobalIDString = FA7DAD69735D4C4BA66C091D;
+			remoteInfo = gtest_mainDuckstation;
 		};
-		B373CD5C296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86D72A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = D16A3E1E1DA445A2AC769463;
-			remoteInfo = libchdr;
+			remoteGlobalIDString = 5B5E7995CB7049E9822193CB;
+			remoteInfo = imguiDuckstation;
 		};
-		B373CD5E296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86D92A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = F4C64F60FB6A49D7AD9A3889;
-			remoteInfo = lzma;
+			remoteGlobalIDString = 98675E0938414DF7ABCAA346;
+			remoteInfo = libchdrDuckstation;
 		};
-		B373CD60296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86DB2A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 2CCAA592DC19452897C4512F;
-			remoteInfo = minizip;
+			remoteGlobalIDString = 5C72181F656145D8B3AFE695;
+			remoteInfo = lzmaDuckstation;
 		};
-		B373CD62296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86DD2A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 886DDFE31F144FBFBF7130B1;
-			remoteInfo = rcheevos;
+			remoteGlobalIDString = F566F4266318483A8A5A834A;
+			remoteInfo = minizipDuckstation;
 		};
-		B373CD64296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86DF2A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 57EDC613C6874719BCC773C7;
-			remoteInfo = scmversion;
+			remoteGlobalIDString = A11160C52FD647C2BE9D7EC5;
+			remoteInfo = rcheevosDuckstation;
 		};
-		B373CD66296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86E12A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 07E5498E0C2941D09B45E535;
-			remoteInfo = simpleini;
+			remoteGlobalIDString = EC04D281B8134722A50A4F8B;
+			remoteInfo = scmversionDuckstation;
 		};
-		B373CD68296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86E32A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 7E209F1366FD4B5DA3612747;
-			remoteInfo = soundtouch;
+			remoteGlobalIDString = FD708555795D4E13940BF5C0;
+			remoteInfo = simpleiniDuckstation;
 		};
-		B373CD6A296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86E52A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = ED127689A2AA4694AE38478A;
-			remoteInfo = stb;
+			remoteGlobalIDString = 5DAFB3F4DBA64C9E9883AED7;
+			remoteInfo = soundtouchDuckstation;
 		};
-		B373CD6C296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86E72A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = F8A2FE0426D647C8B8EFA11E;
-			remoteInfo = tinyxml2;
+			remoteGlobalIDString = 2BDEE27B5FDB4DF882713594;
+			remoteInfo = stbDuckstation;
 		};
-		B373CD6E296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86E92A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 9E61B314BA3C4ACE93FF4EFD;
-			remoteInfo = util;
+			remoteGlobalIDString = 3F7C6933D42C47C781805C5F;
+			remoteInfo = tinyxml2Duckstation;
 		};
-		B373CD70296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86EB2A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = B73958094FBE4C8EBF45D6E4;
-			remoteInfo = vixl;
+			remoteGlobalIDString = 9438A88462504FDEBEEC6B70;
+			remoteInfo = utilDuckstation;
 		};
-		B373CD72296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86ED2A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = CD3861666E5747EFAF1B61B3;
-			remoteInfo = xxhash;
+			remoteGlobalIDString = 93EB51B1DB6C4BB2B2B86A49;
+			remoteInfo = vixlDuckstation;
 		};
-		B373CD74296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86EF2A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = AB015F6C139D405CB2BA2F90;
-			remoteInfo = zlib;
+			remoteGlobalIDString = 23DDD6E64BF84E489C1E22E0;
+			remoteInfo = xxhashDuckstation;
 		};
-		B373CD76296F9819005D110B /* PBXContainerItemProxy */ = {
+		934D86F12A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = FB4296A2DFE5445E9D9CED66;
-			remoteInfo = zstd;
+			remoteGlobalIDString = C21512611FE444C3914F1356;
+			remoteInfo = zlibDuckstation;
 		};
-		B37D612A29762ACA00B6FE7C /* PBXContainerItemProxy */ = {
+		934D86F32A777A3700C3107A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = B9A4B4FD5D9E490B87EA1D40;
-			remoteInfo = fmt;
+			remoteGlobalIDString = 4FFA4B19AD00409A9F4E45B5;
+			remoteInfo = zstdDuckstation;
 		};
 		B3D8AD4E26BE55E20096A354 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -248,154 +251,154 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 4E8292C26DF947238757E5C2;
+			remoteGlobalIDString = 6E8E2535F5424CABA027573F;
 			remoteInfo = clog;
 		};
 		B3F8DF992975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = B10924A46A6549028D4AF398;
+			remoteGlobalIDString = 75FA30DD63C04BF2A2448D49;
 			remoteInfo = common;
 		};
 		B3F8DF9B2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 9F1D33155E1C4AFC856FAD72;
+			remoteGlobalIDString = 244A17668611473AB19B5BF5;
 			remoteInfo = core;
 		};
 		B3F8DF9D2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C62408ACF1774C5D8C997ACE;
+			remoteGlobalIDString = E2A774B159364460AC24E39B;
 			remoteInfo = cpuinfo;
 		};
 		B3F8DF9F2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 416650834D8243AA99EA6EB4;
+			remoteGlobalIDString = 3211640BED084B21BDB35192;
 			remoteInfo = cpuinfo_internals;
 		};
 		B3F8DFA32975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = DA671430D65D41BD9E86D5E7;
+			remoteGlobalIDString = 6D255B0D69F542B6BDDA5074;
 			remoteInfo = "frontend-common";
 		};
 		B3F8DFA52975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 913AA7DCDD154339A20A99A6;
+			remoteGlobalIDString = 80E7BFAF8EE34EECB9E30C22;
 			remoteInfo = glad;
 		};
 		B3F8DFA72975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 99A9306E62284A51AE836D91;
+			remoteGlobalIDString = 8BA24853EB47437D8324CA7D;
 			remoteInfo = glslang;
 		};
 		B3F8DFAD2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5B78F661C60B42E196444FEE;
+			remoteGlobalIDString = 7ECF1ED040A545AFB4E4C34C;
 			remoteInfo = imgui;
 		};
 		B3F8DFAF2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5C49043510EE40B1AECEF7E4;
+			remoteGlobalIDString = 5296A89E016A4718AA226D85;
 			remoteInfo = libchdr;
 		};
 		B3F8DFB12975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 3FACE4C582A3422FAD0C78DC;
+			remoteGlobalIDString = BA17DBD409614D8C9CC7724B;
 			remoteInfo = lzma;
 		};
 		B3F8DFB32975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = D747197EC4AD4DFCAAD30085;
+			remoteGlobalIDString = F2FB3078DD5B4EAF95B4A19B;
 			remoteInfo = minizip;
 		};
 		B3F8DFB52975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = D8CBB839B80948298B262937;
+			remoteGlobalIDString = B621125D0D2245F880AC192B;
 			remoteInfo = rcheevos;
 		};
 		B3F8DFB92975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 4B0ADF636E2E4EF0932AC0B0;
+			remoteGlobalIDString = 4B33B9A70F7B4499B71C41B3;
 			remoteInfo = simpleini;
 		};
 		B3F8DFBB2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = E98CCD2E71E541C1B16B7925;
+			remoteGlobalIDString = 46FD74744C1446F19C253DC3;
 			remoteInfo = soundtouch;
 		};
 		B3F8DFBD2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 86B1B9784B7A4649966B3E4E;
+			remoteGlobalIDString = BA12F9A6815346E7994B237F;
 			remoteInfo = stb;
 		};
 		B3F8DFBF2975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 137025FE442345B5A520307E;
+			remoteGlobalIDString = 9ADB9CD17A1B4201AAE6137C;
 			remoteInfo = tinyxml2;
 		};
 		B3F8DFC12975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = CDD03B3712A94106BA41379B;
+			remoteGlobalIDString = D42A93AC530C487BA726CDD5;
 			remoteInfo = util;
 		};
 		B3F8DFC32975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = F1228B4AED45465689F0197A;
+			remoteGlobalIDString = 3A85A43CEFD746F3AB4F100D;
 			remoteInfo = vixl;
 		};
 		B3F8DFC52975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = B78A183F9E8544DD95004E45;
+			remoteGlobalIDString = 0BB499B40F9445E0920DDE69;
 			remoteInfo = xxhash;
 		};
 		B3F8DFC72975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 17D1E5F7A6CA4B608896CAE5;
+			remoteGlobalIDString = B1CB54C27877414EBDA67287;
 			remoteInfo = zlib;
 		};
 		B3F8DFC92975EFEB00C24FD1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B373CD21296F9818005D110B /* duckstation.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 56CCF674FFEA4DCA9B29E6AE;
+			remoteGlobalIDString = 93A9D9192B344435BBD44F48;
 			remoteInfo = zstd;
 		};
 /* End PBXContainerItemProxy section */
@@ -413,6 +416,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		934FA1BE2A7906F00019C951 /* libduckstation.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libduckstation.a; path = lib/libduckstation.a; sourceTree = "<group>"; };
 		B30172BC274A33BB00B0E695 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/GLKit.framework; sourceTree = DEVELOPER_DIR; };
 		B30172BD274A33BB00B0E695 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		B30172C0274A33C600B0E695 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
@@ -534,7 +538,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B34C2C11296FBDAC002146BB /* libduckstation.a in Frameworks */,
+				939AAF6D2A791EC7007709E5 /* libduckstation.a in Frameworks */,
 				B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */,
 				B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */,
 				B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */,
@@ -551,29 +555,32 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37D612C29762C1D00B6FE7C /* libfmtd.a in Frameworks */,
-				B3F8DFCC2975F0D600C24FD1 /* libcore.a in Frameworks */,
-				B373CD7A296F9983005D110B /* libclog.a in Frameworks */,
-				B373CD7B296F9983005D110B /* libcommon.a in Frameworks */,
-				B373CD7D296F9983005D110B /* libcpuinfo_internals.a in Frameworks */,
-				B373CD7E296F9983005D110B /* libcpuinfo.a in Frameworks */,
-				B373CD80296F9983005D110B /* libfrontend-common.a in Frameworks */,
-				B373CD81296F9983005D110B /* libglad.a in Frameworks */,
-				B373CD82296F9983005D110B /* libglslang.a in Frameworks */,
-				B373CD85296F9983005D110B /* libimgui.a in Frameworks */,
-				B373CD86296F9983005D110B /* liblibchdr.a in Frameworks */,
-				B373CD87296F9983005D110B /* liblzma.a in Frameworks */,
-				B373CD88296F9983005D110B /* libminizip.a in Frameworks */,
-				B373CD89296F9983005D110B /* librcheevos.a in Frameworks */,
-				B373CD8B296F9983005D110B /* libsimpleini.a in Frameworks */,
-				B373CD8C296F9983005D110B /* libsoundtouch.a in Frameworks */,
-				B373CD8D296F9983005D110B /* libstb.a in Frameworks */,
-				B373CD8E296F9983005D110B /* libtinyxml2.a in Frameworks */,
-				B373CD8F296F9983005D110B /* libutil.a in Frameworks */,
-				B373CD90296F9983005D110B /* libvixl.a in Frameworks */,
-				B373CD91296F9983005D110B /* libxxhash.a in Frameworks */,
-				B373CD92296F9983005D110B /* libzlib.a in Frameworks */,
-				B373CD93296F9983005D110B /* libzstd.a in Frameworks */,
+				934D873C2A777AB300C3107A /* libclogDuckstation.a in Frameworks */,
+				934D873D2A777AB300C3107A /* libcommonDuckstation.a in Frameworks */,
+				934D873E2A777AB300C3107A /* libcoreDuckstation.a in Frameworks */,
+				934D873F2A777AB300C3107A /* libcpuinfo_internalsDuckstation.a in Frameworks */,
+				934D87402A777AB300C3107A /* libcpuinfoDuckstation.a in Frameworks */,
+				934D87412A777AB300C3107A /* libfmtDuckstation.a in Frameworks */,
+				934D87422A777AB300C3107A /* libfrontend-commonDuckstation.a in Frameworks */,
+				934D87432A777AB300C3107A /* libgladDuckstation.a in Frameworks */,
+				934D87442A777AB300C3107A /* libglslangDuckstation.a in Frameworks */,
+				934D87452A777AB300C3107A /* libgtest_mainDuckstation.a in Frameworks */,
+				934D87462A777AB300C3107A /* libgtestDuckstation.a in Frameworks */,
+				934D87472A777AB300C3107A /* libimguiDuckstation.a in Frameworks */,
+				934D87482A777AB300C3107A /* liblibchdrDuckstation.a in Frameworks */,
+				934D87492A777AB300C3107A /* liblzmaDuckstation.a in Frameworks */,
+				934D874A2A777AB300C3107A /* libminizipDuckstation.a in Frameworks */,
+				934D874B2A777AB300C3107A /* librcheevosDuckstation.a in Frameworks */,
+				934D874C2A777AB300C3107A /* libscmversionDuckstation.a in Frameworks */,
+				934D874D2A777AB300C3107A /* libsimpleiniDuckstation.a in Frameworks */,
+				934D874E2A777AB300C3107A /* libsoundtouchDuckstation.a in Frameworks */,
+				934D874F2A777AB300C3107A /* libstbDuckstation.a in Frameworks */,
+				934D87502A777AB300C3107A /* libtinyxml2Duckstation.a in Frameworks */,
+				934D87512A777AB300C3107A /* libutilDuckstation.a in Frameworks */,
+				934D87522A777AB300C3107A /* libvixlDuckstation.a in Frameworks */,
+				934D87532A777AB300C3107A /* libxxhashDuckstation.a in Frameworks */,
+				934D87542A777AB300C3107A /* libzlibDuckstation.a in Frameworks */,
+				934D87552A777AB300C3107A /* libzstdDuckstation.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -603,6 +610,7 @@
 		02695363143169EB003A07D4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				934FA1BE2A7906F00019C951 /* libduckstation.a */,
 				B39F685D295D9A230048CEAD /* PVLibrary.framework */,
 				B30A2009278FC9FF009E08C9 /* OpenGL.framework */,
 				B30172C0274A33C600B0E695 /* Metal.framework */,
@@ -744,32 +752,32 @@
 		B373CD22296F9818005D110B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B373CD43296F9819005D110B /* libclog.a */,
-				B373CD45296F9819005D110B /* libcommon.a */,
-				B373CD49296F9819005D110B /* libcore.a */,
-				B373CD4B296F9819005D110B /* libcpuinfo.a */,
-				B373CD4D296F9819005D110B /* libcpuinfo_internals.a */,
-				B37D612B29762ACA00B6FE7C /* libfmtd.a */,
-				B373CD51296F9819005D110B /* libfrontend-common.a */,
-				B373CD53296F9819005D110B /* libglad.a */,
-				B373CD55296F9819005D110B /* libglslang.a */,
-				B373CD57296F9819005D110B /* libgtest.a */,
-				B373CD59296F9819005D110B /* libgtest_main.a */,
-				B373CD5B296F9819005D110B /* libimgui.a */,
-				B373CD5D296F9819005D110B /* liblibchdr.a */,
-				B373CD5F296F9819005D110B /* liblzma.a */,
-				B373CD61296F9819005D110B /* libminizip.a */,
-				B373CD63296F9819005D110B /* librcheevos.a */,
-				B373CD65296F9819005D110B /* libscmversion.a */,
-				B373CD67296F9819005D110B /* libsimpleini.a */,
-				B373CD69296F9819005D110B /* libsoundtouch.a */,
-				B373CD6B296F9819005D110B /* libstb.a */,
-				B373CD6D296F9819005D110B /* libtinyxml2.a */,
-				B373CD6F296F9819005D110B /* libutil.a */,
-				B373CD71296F9819005D110B /* libvixl.a */,
-				B373CD73296F9819005D110B /* libxxhash.a */,
-				B373CD75296F9819005D110B /* libzlib.a */,
-				B373CD77296F9819005D110B /* libzstd.a */,
+				934D86C22A777A3700C3107A /* libclogDuckstation.a */,
+				934D86C42A777A3700C3107A /* libcommonDuckstation.a */,
+				934D86C62A777A3700C3107A /* libcoreDuckstation.a */,
+				934D86C82A777A3700C3107A /* libcpuinfoDuckstation.a */,
+				934D86CA2A777A3700C3107A /* libcpuinfo_internalsDuckstation.a */,
+				934D86CC2A777A3700C3107A /* libfmtDuckstation.a */,
+				934D86CE2A777A3700C3107A /* libfrontend-commonDuckstation.a */,
+				934D86D02A777A3700C3107A /* libgladDuckstation.a */,
+				934D86D22A777A3700C3107A /* libglslangDuckstation.a */,
+				934D86D42A777A3700C3107A /* libgtestDuckstation.a */,
+				934D86D62A777A3700C3107A /* libgtest_mainDuckstation.a */,
+				934D86D82A777A3700C3107A /* libimguiDuckstation.a */,
+				934D86DA2A777A3700C3107A /* liblibchdrDuckstation.a */,
+				934D86DC2A777A3700C3107A /* liblzmaDuckstation.a */,
+				934D86DE2A777A3700C3107A /* libminizipDuckstation.a */,
+				934D86E02A777A3700C3107A /* librcheevosDuckstation.a */,
+				934D86E22A777A3700C3107A /* libscmversionDuckstation.a */,
+				934D86E42A777A3700C3107A /* libsimpleiniDuckstation.a */,
+				934D86E62A777A3700C3107A /* libsoundtouchDuckstation.a */,
+				934D86E82A777A3700C3107A /* libstbDuckstation.a */,
+				934D86EA2A777A3700C3107A /* libtinyxml2Duckstation.a */,
+				934D86EC2A777A3700C3107A /* libutilDuckstation.a */,
+				934D86EE2A777A3700C3107A /* libvixlDuckstation.a */,
+				934D86F02A777A3700C3107A /* libxxhashDuckstation.a */,
+				934D86F22A777A3700C3107A /* libzlibDuckstation.a */,
+				934D86F42A777A3700C3107A /* libzstdDuckstation.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -924,186 +932,186 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B373CD43296F9819005D110B /* libclog.a */ = {
+		934D86C22A777A3700C3107A /* libclogDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libclog.a;
-			remoteRef = B373CD42296F9819005D110B /* PBXContainerItemProxy */;
+			path = libclogDuckstation.a;
+			remoteRef = 934D86C12A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD45296F9819005D110B /* libcommon.a */ = {
+		934D86C42A777A3700C3107A /* libcommonDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libcommon.a;
-			remoteRef = B373CD44296F9819005D110B /* PBXContainerItemProxy */;
+			path = libcommonDuckstation.a;
+			remoteRef = 934D86C32A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD49296F9819005D110B /* libcore.a */ = {
+		934D86C62A777A3700C3107A /* libcoreDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libcore.a;
-			remoteRef = B373CD48296F9819005D110B /* PBXContainerItemProxy */;
+			path = libcoreDuckstation.a;
+			remoteRef = 934D86C52A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD4B296F9819005D110B /* libcpuinfo.a */ = {
+		934D86C82A777A3700C3107A /* libcpuinfoDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libcpuinfo.a;
-			remoteRef = B373CD4A296F9819005D110B /* PBXContainerItemProxy */;
+			path = libcpuinfoDuckstation.a;
+			remoteRef = 934D86C72A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD4D296F9819005D110B /* libcpuinfo_internals.a */ = {
+		934D86CA2A777A3700C3107A /* libcpuinfo_internalsDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libcpuinfo_internals.a;
-			remoteRef = B373CD4C296F9819005D110B /* PBXContainerItemProxy */;
+			path = libcpuinfo_internalsDuckstation.a;
+			remoteRef = 934D86C92A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD51296F9819005D110B /* libfrontend-common.a */ = {
+		934D86CC2A777A3700C3107A /* libfmtDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libfrontend-common.a";
-			remoteRef = B373CD50296F9819005D110B /* PBXContainerItemProxy */;
+			path = libfmtDuckstation.a;
+			remoteRef = 934D86CB2A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD53296F9819005D110B /* libglad.a */ = {
+		934D86CE2A777A3700C3107A /* libfrontend-commonDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libglad.a;
-			remoteRef = B373CD52296F9819005D110B /* PBXContainerItemProxy */;
+			path = "libfrontend-commonDuckstation.a";
+			remoteRef = 934D86CD2A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD55296F9819005D110B /* libglslang.a */ = {
+		934D86D02A777A3700C3107A /* libgladDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libglslang.a;
-			remoteRef = B373CD54296F9819005D110B /* PBXContainerItemProxy */;
+			path = libgladDuckstation.a;
+			remoteRef = 934D86CF2A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD57296F9819005D110B /* libgtest.a */ = {
+		934D86D22A777A3700C3107A /* libglslangDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libgtest.a;
-			remoteRef = B373CD56296F9819005D110B /* PBXContainerItemProxy */;
+			path = libglslangDuckstation.a;
+			remoteRef = 934D86D12A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD59296F9819005D110B /* libgtest_main.a */ = {
+		934D86D42A777A3700C3107A /* libgtestDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libgtest_main.a;
-			remoteRef = B373CD58296F9819005D110B /* PBXContainerItemProxy */;
+			path = libgtestDuckstation.a;
+			remoteRef = 934D86D32A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD5B296F9819005D110B /* libimgui.a */ = {
+		934D86D62A777A3700C3107A /* libgtest_mainDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libimgui.a;
-			remoteRef = B373CD5A296F9819005D110B /* PBXContainerItemProxy */;
+			path = libgtest_mainDuckstation.a;
+			remoteRef = 934D86D52A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD5D296F9819005D110B /* liblibchdr.a */ = {
+		934D86D82A777A3700C3107A /* libimguiDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = liblibchdr.a;
-			remoteRef = B373CD5C296F9819005D110B /* PBXContainerItemProxy */;
+			path = libimguiDuckstation.a;
+			remoteRef = 934D86D72A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD5F296F9819005D110B /* liblzma.a */ = {
+		934D86DA2A777A3700C3107A /* liblibchdrDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = liblzma.a;
-			remoteRef = B373CD5E296F9819005D110B /* PBXContainerItemProxy */;
+			path = liblibchdrDuckstation.a;
+			remoteRef = 934D86D92A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD61296F9819005D110B /* libminizip.a */ = {
+		934D86DC2A777A3700C3107A /* liblzmaDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libminizip.a;
-			remoteRef = B373CD60296F9819005D110B /* PBXContainerItemProxy */;
+			path = liblzmaDuckstation.a;
+			remoteRef = 934D86DB2A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD63296F9819005D110B /* librcheevos.a */ = {
+		934D86DE2A777A3700C3107A /* libminizipDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = librcheevos.a;
-			remoteRef = B373CD62296F9819005D110B /* PBXContainerItemProxy */;
+			path = libminizipDuckstation.a;
+			remoteRef = 934D86DD2A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD65296F9819005D110B /* libscmversion.a */ = {
+		934D86E02A777A3700C3107A /* librcheevosDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libscmversion.a;
-			remoteRef = B373CD64296F9819005D110B /* PBXContainerItemProxy */;
+			path = librcheevosDuckstation.a;
+			remoteRef = 934D86DF2A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD67296F9819005D110B /* libsimpleini.a */ = {
+		934D86E22A777A3700C3107A /* libscmversionDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libsimpleini.a;
-			remoteRef = B373CD66296F9819005D110B /* PBXContainerItemProxy */;
+			path = libscmversionDuckstation.a;
+			remoteRef = 934D86E12A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD69296F9819005D110B /* libsoundtouch.a */ = {
+		934D86E42A777A3700C3107A /* libsimpleiniDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libsoundtouch.a;
-			remoteRef = B373CD68296F9819005D110B /* PBXContainerItemProxy */;
+			path = libsimpleiniDuckstation.a;
+			remoteRef = 934D86E32A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD6B296F9819005D110B /* libstb.a */ = {
+		934D86E62A777A3700C3107A /* libsoundtouchDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libstb.a;
-			remoteRef = B373CD6A296F9819005D110B /* PBXContainerItemProxy */;
+			path = libsoundtouchDuckstation.a;
+			remoteRef = 934D86E52A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD6D296F9819005D110B /* libtinyxml2.a */ = {
+		934D86E82A777A3700C3107A /* libstbDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libtinyxml2.a;
-			remoteRef = B373CD6C296F9819005D110B /* PBXContainerItemProxy */;
+			path = libstbDuckstation.a;
+			remoteRef = 934D86E72A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD6F296F9819005D110B /* libutil.a */ = {
+		934D86EA2A777A3700C3107A /* libtinyxml2Duckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libutil.a;
-			remoteRef = B373CD6E296F9819005D110B /* PBXContainerItemProxy */;
+			path = libtinyxml2Duckstation.a;
+			remoteRef = 934D86E92A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD71296F9819005D110B /* libvixl.a */ = {
+		934D86EC2A777A3700C3107A /* libutilDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libvixl.a;
-			remoteRef = B373CD70296F9819005D110B /* PBXContainerItemProxy */;
+			path = libutilDuckstation.a;
+			remoteRef = 934D86EB2A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD73296F9819005D110B /* libxxhash.a */ = {
+		934D86EE2A777A3700C3107A /* libvixlDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libxxhash.a;
-			remoteRef = B373CD72296F9819005D110B /* PBXContainerItemProxy */;
+			path = libvixlDuckstation.a;
+			remoteRef = 934D86ED2A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD75296F9819005D110B /* libzlib.a */ = {
+		934D86F02A777A3700C3107A /* libxxhashDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libzlib.a;
-			remoteRef = B373CD74296F9819005D110B /* PBXContainerItemProxy */;
+			path = libxxhashDuckstation.a;
+			remoteRef = 934D86EF2A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B373CD77296F9819005D110B /* libzstd.a */ = {
+		934D86F22A777A3700C3107A /* libzlibDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libzstd.a;
-			remoteRef = B373CD76296F9819005D110B /* PBXContainerItemProxy */;
+			path = libzlibDuckstation.a;
+			remoteRef = 934D86F12A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B37D612B29762ACA00B6FE7C /* libfmtd.a */ = {
+		934D86F42A777A3700C3107A /* libzstdDuckstation.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libfmtd.a;
-			remoteRef = B37D612A29762ACA00B6FE7C /* PBXContainerItemProxy */;
+			path = libzstdDuckstation.a;
+			remoteRef = 934D86F32A777A3700C3107A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1333,6 +1341,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Debug;
@@ -1394,6 +1403,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Release;
@@ -1454,6 +1464,7 @@
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Archive;
@@ -1527,6 +1538,11 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/lib",
+					"$(PROJECT_DIR)/lib",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
@@ -1534,6 +1550,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1611,6 +1628,11 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/lib",
+					"$(PROJECT_DIR)/lib",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
@@ -1618,6 +1640,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1693,6 +1716,11 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/lib",
+					"$(PROJECT_DIR)/lib",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
@@ -1700,6 +1728,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1747,6 +1776,10 @@
 					"\"$(SRCROOT)/duckstation/dep/xbyak\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/lib",
+					"$(inherited)",
+				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -1758,6 +1791,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 			};
 			name = Debug;
@@ -1802,6 +1836,10 @@
 					"\"$(SRCROOT)/duckstation/dep/xbyak\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/lib",
+					"$(inherited)",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -1813,6 +1851,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1858,6 +1897,10 @@
 					"\"$(SRCROOT)/duckstation/dep/xbyak\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/lib",
+					"$(inherited)",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -1869,6 +1912,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SYMROOT = "$(SRCROOT)/lib/duckstation";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				VALIDATE_PRODUCT = YES;
 			};

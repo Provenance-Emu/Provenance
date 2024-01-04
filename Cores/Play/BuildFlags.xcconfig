@@ -41,3 +41,6 @@ OTHER_CFLAGS[sdk=iphonesimulator*][arch=*] = ""
 EXCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = *
 INCLUDED_SOURCE_FILE_NAMES[sdk=appletvsimulator*][arch=*] = PVDebug.c
 OTHER_CFLAGS[sdk=appletvsimulator*][arch=*] = ""
+PROJECT_TEMP_DIR = $(SRCROOT)/lib/play/build/$(PROJECT_NAME).build
+DERIVED_FILE_DIR = $(SRCROOT)/lib/play/build/derived/$(PROJECT_NAME).build
+CACHE_ROOT = $(SRCROOT)/lib/cache

@@ -635,13 +635,12 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
             } else if submittedValue != currentValue, let newValue = submittedValue {
                 do {
                     try RomDatabase.sharedInstance.writeTransaction {
+                        self.game.realm?.refresh()
                         self.game![keyPath: key] = newValue
-                    }
-
-                    label.text = newValue
-
-                    if reloadGameInfoAfter, self.game.releaseID == nil || self.game.releaseID!.isEmpty {
-                        GameImporter.shared.lookupInfo(for: self.game, overwrite: false)
+                        label.text = newValue
+                        if reloadGameInfoAfter, self.game.releaseID == nil || self.game.releaseID!.isEmpty {
+                            self.game = GameImporter.shared.lookupInfo(for: self.game, overwrite: false)
+                        }
                     }
                 } catch {
                     ELOG("Failed to update value of \(key) to \(newValue). \(error.localizedDescription)")
@@ -706,7 +705,7 @@ extension PVGameMoreInfoViewController {
                 do {
                     try RomDatabase.sharedInstance.delete(game: game)
                 } catch {
-                    self.presentError(error.localizedDescription)
+                    self.presentError(error.localizedDescription, source: self.view)
                 }
             }))
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))

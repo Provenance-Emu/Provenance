@@ -13,19 +13,20 @@ import UIKit
 
 extension PVEmulatorViewController {
     @objc func showMenu(_ sender: AnyObject?) {
+        if (!core.isOn) {
+            return;
+        }
         enableControllerInput(true)
         core.setPauseEmulation(true)
         isShowingMenu = true
 
         let actionSheet = UIAlertController(title: "Game Options", message: nil, preferredStyle: .actionSheet)
-
+        actionSheet.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
         // only popup if sumoned from menuButton
         if let menuButton = menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
-        } else {
-            return
-        }
+        } 
 #if targetEnvironment(macCatalyst) || os(macOS)
         if let menuButton = menuButton, sender === menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
@@ -35,7 +36,7 @@ extension PVEmulatorViewController {
             actionSheet.popoverPresentationController?.sourceRect = self.view.bounds
         }
 #else
-        if traitCollection.userInterfaceIdiom == .pad, let menuButton = menuButton, sender === menuButton {
+        if let menuButton = menuButton {
             actionSheet.popoverPresentationController?.sourceView = menuButton
             actionSheet.popoverPresentationController?.sourceRect = menuButton.bounds
         }
@@ -140,7 +141,7 @@ extension PVEmulatorViewController {
 
         if let actionableCore = core as? CoreActions, let actions = actionableCore.coreActions {
             actions.forEach { coreAction in
-                actionSheet.addAction(UIAlertAction(title: coreAction.title, style: .destructive, handler: { action in
+                actionSheet.addAction(UIAlertAction(title: coreAction.title, style: coreAction.style, handler: { action in
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
                         actionableCore.selected(action: coreAction)
                         self.core.setPauseEmulation(false)
@@ -230,8 +231,13 @@ extension PVEmulatorViewController {
             }))
         }
 
-            // make sure this item is marked .cancel so it will be called even if user dismises popup
+        // make sure this item is marked .cancel so it will be called even if user dismises popup
         let resumeAction = UIAlertAction(title: "Resume", style: .cancel, handler: { action in
+            if let appDelegate = UIApplication.shared as? PVApplication,
+               appDelegate.isInBackground {
+                return // don't resume if in background
+            }
+
             self.core.setPauseEmulation(false)
             self.isShowingMenu = false
             self.enableControllerInput(false)

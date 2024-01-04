@@ -7,45 +7,9 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		0C166A68102548AEB1781C34 /* install */ = {
+		8BCD176C8FFF461D905EA9CD /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = EFD2FD811D4C423B869475B8 /* Build configuration list for PBXAggregateTarget "install" */;
-			buildPhases = (
-				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
-			);
-			dependencies = (
-				7658911DF51946A1A716A0AB /* PBXTargetDependency */,
-			);
-			name = install;
-			productName = install;
-		};
-		813B9411ED6148CBBF6FDF45 /* ALL_BUILD */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = C6AAE846D29D460BA27F94A2 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
-			buildPhases = (
-				F8B906FC87CCBEAA4F8FE555 /* Generate CMakeFiles/ALL_BUILD */,
-			);
-			dependencies = (
-				B9D10EB94FBE451A8C42FE27 /* PBXTargetDependency */,
-				9828BD5F8D1B472CBAD40F81 /* PBXTargetDependency */,
-			);
-			name = ALL_BUILD;
-			productName = ALL_BUILD;
-		};
-		81A7140D8C2040F2ACDF825B /* ZERO_CHECK */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 4C0BD708D7D74490AC590618 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
-			buildPhases = (
-				A796725DC22DBE8DF209F270 /* Generate CMakeFiles/ZERO_CHECK */,
-			);
-			dependencies = (
-			);
-			name = ZERO_CHECK;
-			productName = ZERO_CHECK;
-		};
-		B7CC82741C444EE0A7828070 /* RUN_TESTS */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 4A18239546D444C8BBDC0A71 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = DF101BF5B078417FAEC39AC6 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -54,80 +18,116 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
-		D771A2D4BE7846D7BB9D5A72 /* package */ = {
+		A3F400094DE749EEB922DD52 /* package */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 10725E11767441EC8AF44CB7 /* Build configuration list for PBXAggregateTarget "package" */;
+			buildConfigurationList = 48D255EBF1244B23A47F67A6 /* Build configuration list for PBXAggregateTarget "package" */;
 			buildPhases = (
 				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				4B7266433A3B4A6181788704 /* PBXTargetDependency */,
+				D7BBE3DE093940CD8270AA28 /* PBXTargetDependency */,
 			);
 			name = package;
 			productName = package;
 		};
+		DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 2E1F9EA9BE3C4E82A3055BB7 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				C2AB573C2869493D978369C3 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		F79EE59899544A67B12CB8F2 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 1A78AB427A9E4059A0249A16 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				84F0DAAD9612C1CB75F46C48 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				55E5E9A48E4241179E3C25C6 /* PBXTargetDependency */,
+				18DAE4704D74441FB7101103 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		FC9CD7A99A534051BEB8AC72 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 1B9DD1C89B3A4B6B8018FBA8 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				63CC529450824BBF82F90CC2 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		00EB5D3EA262471A9A5656C9 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = 76D4385E143645C29EDAEAA6 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */; };
-		059CF5FA75964330B63EAEDA /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = 8CCA83C1BB934536A1712505 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */; };
-		06E2877754204F138A4F9480 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */ = {isa = PBXBuildFile; fileRef = D27A7ACCF6364BA3BD54BF16 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */; };
-		0914D1FB64634580B05BFCC9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = 99D67903149D4556B65D833A /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */; };
-		0EA827012A994CD694172291 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */ = {isa = PBXBuildFile; fileRef = 9F3AFFFC28BA464BAE258D19 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */; };
-		1514A0DBC2554B299DF0F9BF /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 572FF930EE08410E84753B6B /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */; };
-		2FE04D11CDD94D179DBC7977 /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */ = {isa = PBXBuildFile; fileRef = 8EB4CA1CBF1743ECB07F20C3 /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */; };
-		33DD51B4B1AC47D6AC8EB9BB /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */ = {isa = PBXBuildFile; fileRef = D6F5B5FCB96746F5B4AE403E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */; };
-		3585B94F6BFC4ADA84D9005F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */ = {isa = PBXBuildFile; fileRef = 3306116FD2A14E7D8A99A333 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */; };
-		36CED866AE0344F7897E2F3E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = 97897BCD15234893A6F7657A /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */; };
-		3F030336A3EF470CBC619105 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */ = {isa = PBXBuildFile; fileRef = 3EEB285141224A0BBC3868F9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */; };
-		427A12568691488785CE3154 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */ = {isa = PBXBuildFile; fileRef = BBBAB38640A74357AFE0E51F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */; };
-		45061EAFDAEE406CAC0B79C8 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */ = {isa = PBXBuildFile; fileRef = 1F7605C438CB41319803E541 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */; };
-		4961631518D14CBAA997D5CF /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */ = {isa = PBXBuildFile; fileRef = 3048606494A64052986D2D0A /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */; };
-		5B24F44C8DCE4249A361B242 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = DFD89E134FFE40819607C470 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */; };
-		6EA390600CAC4692B20AF202 /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */ = {isa = PBXBuildFile; fileRef = 6FE863AC6E874003B704A90E /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */; };
-		70D3EAB570F44BE6B24410AB /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */ = {isa = PBXBuildFile; fileRef = 42E6A0F0B8664DDE836236FF /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */; };
-		7DE6EEEF1415438B9381646D /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = AB6528AD17C643DE8555D42D /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */; };
-		83A429C1AC8441D5B799258D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */ = {isa = PBXBuildFile; fileRef = C03B61145F2C470FBB55EE3D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */; };
-		84D19AA516234B7D877A013B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */ = {isa = PBXBuildFile; fileRef = C73D371A0875412F89C67F4B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */; };
-		88AEA90CBB2E498B98D6DB4A /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 74204189530942CCBFF1B6B1 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */; };
-		902D9ADA3D3D4AE9B970CE49 /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */ = {isa = PBXBuildFile; fileRef = 5C26A3F579A44325B3C03DFF /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */; };
-		AA65DBF8CD2E4D33977069A9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */ = {isa = PBXBuildFile; fileRef = 92B8F27B7AFE4E5396FC037D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */; };
-		B7E3D6454E5B421CA03A0CB1 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */ = {isa = PBXBuildFile; fileRef = D44E73E6850A4AEBA26DC5B2 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */; };
-		C02DAF96725B4519B92EAB0C /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */ = {isa = PBXBuildFile; fileRef = 72C8F5A416B14C2994AEC153 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */; };
-		C22B69D955BD4F72B6980007 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */ = {isa = PBXBuildFile; fileRef = 9C14BB605EED46889FCBCACD /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */; };
-		C6691E849256426BBF1116EC /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = 0FA1F71180D8482D89D8EB8E /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */; };
-		DC6CF941C6CF4E48BDD2F20D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */ = {isa = PBXBuildFile; fileRef = 2089CCD7F4374BD291B681E6 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */; };
-		DD165A85388C443499F15889 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */ = {isa = PBXBuildFile; fileRef = 75AF732BB7944394891DFDB2 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */; };
-		DE0A3BE8411A46989CFD9806 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */ = {isa = PBXBuildFile; fileRef = 4019AECF97F749A5BBF4D2BD /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */; };
-		EA4B234465EE412EB4A4890E /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = 849C946734BD42EAB5511AEA /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */; };
-		EA8AF4E4636A42D3950A8871 /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = B1539CF1FFEF402EA09A0A34 /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */; };
-		F3E8F2513F9E4F9C983A4936 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */ = {isa = PBXBuildFile; fileRef = DD1D2DCB0A964078BF1B3228 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */; };
-		FFA6CF0293B348D0B91BF491 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */ = {isa = PBXBuildFile; fileRef = 61950595EF9A42A6A398753B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */; };
+		08D31B1F95A54B1A97DD4EAB /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = 212718EB447C401CBBA30B65 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */; };
+		1CC838563F91440DAF381577 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */ = {isa = PBXBuildFile; fileRef = 14923942245543B293F6483D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */; };
+		2543583913AA42B497285C79 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */ = {isa = PBXBuildFile; fileRef = AE7A5E19424549AE9007B281 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */; };
+		33C0776F018442289A982ABD /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = EAF5956932DC433CAD887C7D /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */; };
+		38BB14DDD47A49D1A4A18EFC /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = 19C1ABCBF1654E07A53986DE /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */; };
+		425910E371724B4483FAF478 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = 6ADA64FEA25547F39D1F5305 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */; };
+		4757EAB1DCAF4554BB2AC5E4 /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */ = {isa = PBXBuildFile; fileRef = F6B130F9AB8A4F4ABC43F17B /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */; };
+		5FC11524FDBC414F93431581 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */ = {isa = PBXBuildFile; fileRef = 4FBEA01A9E8C417199B438AC /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */; };
+		655CD3BD264C45E0948DDD83 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */ = {isa = PBXBuildFile; fileRef = 357C152479EF4B64B1A16BB8 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */; };
+		672FAC2B764A42ECB7F270A6 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */ = {isa = PBXBuildFile; fileRef = 545AAC09F4C84C269674780E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */; };
+		6923A733CAF14F9BA20F43C9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */ = {isa = PBXBuildFile; fileRef = F2AD15F30F7E4221B7611E7C /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */; };
+		6D4D17E16E9A4557A449C10D /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */ = {isa = PBXBuildFile; fileRef = D15A23DFC25F4746A2EAED7C /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */; };
+		6D505FD5FF144926B58EBA63 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */ = {isa = PBXBuildFile; fileRef = 5D85BE6FF7B8437ABEB94623 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */; };
+		71515A8AA71247A19389ADF8 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */ = {isa = PBXBuildFile; fileRef = 02D6B4EEA73B47D0BC940546 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */; };
+		72B3A3EBBA284BF1BE80A89F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */ = {isa = PBXBuildFile; fileRef = 6968F5BF0FB74A3C81741193 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */; };
+		77E6A8C3A627471FAE90281C /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 97FA91FF83FD420B87BC53AE /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */; };
+		8AE78D6D17684D28817A19F6 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */ = {isa = PBXBuildFile; fileRef = AC7A18A28439453CA70335E6 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */; };
+		92328D9C6CD44C2BB28CCA48 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */ = {isa = PBXBuildFile; fileRef = F4C39E589C0346FE8C324C1B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */; };
+		9457D840B8B04599A06549A7 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */ = {isa = PBXBuildFile; fileRef = A7182DEBA949457BBDB9694E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */; };
+		9A8FF4D227E04D3AB808201A /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */ = {isa = PBXBuildFile; fileRef = 6DA0D33F0934499488F671F3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */; };
+		9E063A7DCC1D4305979A1761 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */ = {isa = PBXBuildFile; fileRef = 295ED2F51E634282B28B0804 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */; };
+		AAB0FA6724E04E8BA7373008 /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */ = {isa = PBXBuildFile; fileRef = DDF5D6F70C194954B4814797 /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */; };
+		ADF255E4D1814E86B8A15D73 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = 138C2155E7E14D7A81B01E55 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */; };
+		B6C2BE285D2544408361CE75 /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = 6F48315734C54072AEDCCFFA /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */; };
+		BD409764C0CE4ED5B28B8E35 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */ = {isa = PBXBuildFile; fileRef = ECF0EFA7F0974C998A50FE75 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */; };
+		C885B850017A4586AA947FC4 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */ = {isa = PBXBuildFile; fileRef = F2DC28FB1C264D2AAA86B657 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */; };
+		CE076A408C484521AC97F40C /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */ = {isa = PBXBuildFile; fileRef = 2F3DFF26F31743DEBAC0BACC /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */; };
+		DCC467B707F243CB82C455DC /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */ = {isa = PBXBuildFile; fileRef = BFB44EF8FBF042498DC7B5D3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */; };
+		DCF3F9E876D14300BB1B355C /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */ = {isa = PBXBuildFile; fileRef = B82FC94FCC5D4C3E9A5B010D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */; };
+		E030458753B148A4B96F5260 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = C071166BD6CD405A9E071698 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */; };
+		F3852B376A7540EDB8502C1B /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */ = {isa = PBXBuildFile; fileRef = 21E7B45A0C9144E184B3DF46 /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */; };
+		F4251A2ED77145FFAB15D34F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */ = {isa = PBXBuildFile; fileRef = 67D2C26D06C441E6805E61BD /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */; };
+		F5FB5E076A0243EFAFF2EEF9 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */ = {isa = PBXBuildFile; fileRef = BCFF3189053346FABF925578 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */; };
+		F8DBB2C4F9794A609EA7D260 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */ = {isa = PBXBuildFile; fileRef = 79BE9D45562C4C428E9221A3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		5392DF91DF96412EA5A7634A /* RelWithDebInfo */ = {
+		40162635A43B4C7191205DE7 /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
-		5B591774C00742E683D8E70C /* Debug */ = {
+		8099C2E558C843DCABFCFE02 /* Debug */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Debug;
 		};
-		6071E414BDA944069E892630 /* MinSizeRel */ = {
+		AF9CDA0B1CE44709B7B299E9 /* MinSizeRel */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = MinSizeRel;
 		};
-		91A7B757E11F41BEA889349B /* Release */ = {
+		E12EEB59ABE0461598CF622A /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -137,84 +137,84 @@
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		3DABA7F8B8FA481088331B6E /* PBXContainerItemProxy */ = {
+		4A327C4B791E4146919F8EBF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = D8F50F292FF24E37A92CE842 /* Project object */;
+			containerPortal = CEEAC285576944738064FD28 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 0528C63AEE3C4EA1B1C2EB66;
+			remoteGlobalIDString = DAB69F6DD3114DF6A6B504DB;
+			remoteInfo = ZERO_CHECK;
+		};
+		96E8D2501E5D4F0A9CFC025E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CEEAC285576944738064FD28 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DAB69F6DD3114DF6A6B504DB;
+			remoteInfo = ZERO_CHECK;
+		};
+		C0500EC18A2A4E27BBD88F35 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CEEAC285576944738064FD28 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 670FE74582934BBEBB0248E6;
 			remoteInfo = Nuanceur;
 		};
-		40CD5BF64AD943ADAE8AB64E /* PBXContainerItemProxy */ = {
+		D3CFAC68163E4335BF543AFE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = D8F50F292FF24E37A92CE842 /* Project object */;
+			containerPortal = CEEAC285576944738064FD28 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 81A7140D8C2040F2ACDF825B;
-			remoteInfo = ZERO_CHECK;
-		};
-		768AFA8B843D41BCB14C65DB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D8F50F292FF24E37A92CE842 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 813B9411ED6148CBBF6FDF45;
+			remoteGlobalIDString = F79EE59899544A67B12CB8F2;
 			remoteInfo = ALL_BUILD;
 		};
-		D5B0E1064065410784BB3085 /* PBXContainerItemProxy */ = {
+		E684A6CAED6E4AC5813F6B35 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = D8F50F292FF24E37A92CE842 /* Project object */;
+			containerPortal = CEEAC285576944738064FD28 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 813B9411ED6148CBBF6FDF45;
+			remoteGlobalIDString = F79EE59899544A67B12CB8F2;
 			remoteInfo = ALL_BUILD;
-		};
-		EE60E0580425408EA2F7C9B4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D8F50F292FF24E37A92CE842 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 81A7140D8C2040F2ACDF825B;
-			remoteInfo = ZERO_CHECK;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0FA1F71180D8482D89D8EB8E /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SpirvShaderGenerator.h; path = "../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h"; sourceTree = "<absolute>"; };
-		1F7605C438CB41319803E541 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float4Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h"; sourceTree = "<absolute>"; };
-		2089CCD7F4374BD291B681E6 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Uint4Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h"; sourceTree = "<absolute>"; };
-		3048606494A64052986D2D0A /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Operations.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h"; sourceTree = "<absolute>"; };
-		3306116FD2A14E7D8A99A333 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int2Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h"; sourceTree = "<absolute>"; };
-		37C772DB162A4D2090B8FEF7 /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		3812417AF55F421FAD106AE3 /* Nuanceur */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libNuanceur.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3EEB285141224A0BBC3868F9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int3Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h"; sourceTree = "<absolute>"; };
-		4019AECF97F749A5BBF4D2BD /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatSwizzleSelector.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h"; sourceTree = "<absolute>"; };
-		42E6A0F0B8664DDE836236FF /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int4Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h"; sourceTree = "<absolute>"; };
-		572FF930EE08410E84753B6B /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		5C26A3F579A44325B3C03DFF /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Operations.cpp; path = "../Play-/deps/Nuanceur/src/builder/Operations.cpp"; sourceTree = "<absolute>"; };
-		61950595EF9A42A6A398753B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float3Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h"; sourceTree = "<absolute>"; };
-		6FE863AC6E874003B704A90E /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Builder.h; path = "../Play-/deps/Nuanceur/include/nuanceur/Builder.h"; sourceTree = "<absolute>"; };
-		72C8F5A416B14C2994AEC153 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ShaderBuilder.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h"; sourceTree = "<absolute>"; };
-		74204189530942CCBFF1B6B1 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist; sourceTree = "<absolute>"; };
-		75AF732BB7944394891DFDB2 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float2Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h"; sourceTree = "<absolute>"; };
-		76D4385E143645C29EDAEAA6 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GlslShaderGenerator.cpp; path = "../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp"; sourceTree = "<absolute>"; };
-		849C946734BD42EAB5511AEA /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = HlslShaderGenerator.cpp; path = "../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp"; sourceTree = "<absolute>"; };
-		8CCA83C1BB934536A1712505 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GlslShaderGenerator.h; path = "../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h"; sourceTree = "<absolute>"; };
-		8EB4CA1CBF1743ECB07F20C3 /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ShaderBuilder.cpp; path = "../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp"; sourceTree = "<absolute>"; };
-		92B8F27B7AFE4E5396FC037D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SubpassInputValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h"; sourceTree = "<absolute>"; };
-		97897BCD15234893A6F7657A /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatSwizzleSelector4.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h"; sourceTree = "<absolute>"; };
-		99D67903149D4556B65D833A /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntSwizzleSelector4.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h"; sourceTree = "<absolute>"; };
-		9C14BB605EED46889FCBCACD /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArrayUintValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h"; sourceTree = "<absolute>"; };
-		9F3AFFFC28BA464BAE258D19 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h"; sourceTree = "<absolute>"; };
-		AB6528AD17C643DE8555D42D /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = HlslShaderGenerator.h; path = "../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h"; sourceTree = "<absolute>"; };
-		B1539CF1FFEF402EA09A0A34 /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SpirvShaderGenerator.cpp; path = "../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp"; sourceTree = "<absolute>"; };
-		BBBAB38640A74357AFE0E51F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Matrix44Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h"; sourceTree = "<absolute>"; };
-		C03B61145F2C470FBB55EE3D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h"; sourceTree = "<absolute>"; };
-		C73D371A0875412F89C67F4B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Texture2DValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h"; sourceTree = "<absolute>"; };
-		D27A7ACCF6364BA3BD54BF16 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BoolValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h"; sourceTree = "<absolute>"; };
-		D44E73E6850A4AEBA26DC5B2 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Uint3Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h"; sourceTree = "<absolute>"; };
-		D6F5B5FCB96746F5B4AE403E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ImageUint2DValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h"; sourceTree = "<absolute>"; };
-		DD1D2DCB0A964078BF1B3228 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = UintValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h"; sourceTree = "<absolute>"; };
-		DFD89E134FFE40819607C470 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = UintSwizzleSelector4.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h"; sourceTree = "<absolute>"; };
+		02D6B4EEA73B47D0BC940546 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ShaderBuilder.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h"; sourceTree = "<absolute>"; };
+		138C2155E7E14D7A81B01E55 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SpirvShaderGenerator.h; path = "../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h"; sourceTree = "<absolute>"; };
+		14923942245543B293F6483D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Uint4Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h"; sourceTree = "<absolute>"; };
+		19C1ABCBF1654E07A53986DE /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = HlslShaderGenerator.h; path = "../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h"; sourceTree = "<absolute>"; };
+		212718EB447C401CBBA30B65 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatSwizzleSelector4.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h"; sourceTree = "<absolute>"; };
+		21E7B45A0C9144E184B3DF46 /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = HlslShaderGenerator.cpp; path = "../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp"; sourceTree = "<absolute>"; };
+		295ED2F51E634282B28B0804 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int2Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h"; sourceTree = "<absolute>"; };
+		2F3DFF26F31743DEBAC0BACC /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ImageUint2DValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h"; sourceTree = "<absolute>"; };
+		357C152479EF4B64B1A16BB8 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int3Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h"; sourceTree = "<absolute>"; };
+		4FBEA01A9E8C417199B438AC /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float4Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h"; sourceTree = "<absolute>"; };
+		545AAC09F4C84C269674780E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntSwizzleSelector4.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h"; sourceTree = "<absolute>"; };
+		5D85BE6FF7B8437ABEB94623 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float2Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h"; sourceTree = "<absolute>"; };
+		624D9E0C546E41C7A1083659 /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		67D2C26D06C441E6805E61BD /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Matrix44Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h"; sourceTree = "<absolute>"; };
+		6968F5BF0FB74A3C81741193 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Int4Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h"; sourceTree = "<absolute>"; };
+		6ADA64FEA25547F39D1F5305 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = UintSwizzleSelector4.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h"; sourceTree = "<absolute>"; };
+		6DA0D33F0934499488F671F3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatSwizzleSelector.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h"; sourceTree = "<absolute>"; };
+		6F48315734C54072AEDCCFFA /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SpirvShaderGenerator.cpp; path = "../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp"; sourceTree = "<absolute>"; };
+		79BE9D45562C4C428E9221A3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArrayUintValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h"; sourceTree = "<absolute>"; };
+		97FA91FF83FD420B87BC53AE /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		99330B3FEB4E47A6A72A7CCA /* Nuanceur */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libNuanceur.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7182DEBA949457BBDB9694E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Operations.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h"; sourceTree = "<absolute>"; };
+		AC7A18A28439453CA70335E6 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SubpassInputValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h"; sourceTree = "<absolute>"; };
+		AE7A5E19424549AE9007B281 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Uint3Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h"; sourceTree = "<absolute>"; };
+		B82FC94FCC5D4C3E9A5B010D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = UintValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h"; sourceTree = "<absolute>"; };
+		BCFF3189053346FABF925578 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GlslShaderGenerator.h; path = "../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h"; sourceTree = "<absolute>"; };
+		BFB44EF8FBF042498DC7B5D3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BoolValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h"; sourceTree = "<absolute>"; };
+		C071166BD6CD405A9E071698 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GlslShaderGenerator.cpp; path = "../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp"; sourceTree = "<absolute>"; };
+		D15A23DFC25F4746A2EAED7C /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ShaderBuilder.cpp; path = "../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp"; sourceTree = "<absolute>"; };
+		DDF5D6F70C194954B4814797 /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Operations.cpp; path = "../Play-/deps/Nuanceur/src/builder/Operations.cpp"; sourceTree = "<absolute>"; };
+		EAF5956932DC433CAD887C7D /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist; sourceTree = "<absolute>"; };
+		ECF0EFA7F0974C998A50FE75 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Texture2DValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h"; sourceTree = "<absolute>"; };
+		F2AD15F30F7E4221B7611E7C /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FloatValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h"; sourceTree = "<absolute>"; };
+		F2DC28FB1C264D2AAA86B657 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Float3Value.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h"; sourceTree = "<absolute>"; };
+		F4C39E589C0346FE8C324C1B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntValue.h; path = "../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h"; sourceTree = "<absolute>"; };
+		F6B130F9AB8A4F4ABC43F17B /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Builder.h; path = "../Play-/deps/Nuanceur/include/nuanceur/Builder.h"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CF772ACA15EF41C9ABFB7679 /* Frameworks */ = {
+		055431EA8FDF42378E0DF5DD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -224,108 +224,108 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		059F0EB51B364555B853D1F3 /* CMake Rules */ = {
+		116D9B2C4C9D406CAB4535B1 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				DDF5D6F70C194954B4814797 /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */,
+				D15A23DFC25F4746A2EAED7C /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */,
+				C071166BD6CD405A9E071698 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */,
+				21E7B45A0C9144E184B3DF46 /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */,
+				6F48315734C54072AEDCCFFA /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		1E7803B8FC124654A53F0B44 = {
+			isa = PBXGroup;
+			children = (
+				9B9441830D2F470C80848C73 /* Nuanceur */,
+				711D598EBBB34786A1458E55 /* ALL_BUILD */,
+				9CA52ADCE75C43B9B6787AF7 /* Products */,
+				99CB6E1FFEEF4254BB5E21CE /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		6A881700D4604FD7B8F11B5D /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		45A3E53277DA45CC859522FF /* ALL_BUILD */ = {
+		711D598EBBB34786A1458E55 /* ALL_BUILD */ = {
 			isa = PBXGroup;
 			children = (
-				059F0EB51B364555B853D1F3 /* CMake Rules */,
-				37C772DB162A4D2090B8FEF7 /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */,
+				6A881700D4604FD7B8F11B5D /* CMake Rules */,
+				624D9E0C546E41C7A1083659 /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
 		};
-		73B9ED57BAF3472EA8FB7794 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				74204189530942CCBFF1B6B1 /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		7FCD124840D84AC6908F0F0F /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				5C26A3F579A44325B3C03DFF /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */,
-				8EB4CA1CBF1743ECB07F20C3 /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */,
-				76D4385E143645C29EDAEAA6 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */,
-				849C946734BD42EAB5511AEA /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */,
-				B1539CF1FFEF402EA09A0A34 /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		ADB30A5B83694DB182BA06FA /* Nuanceur */ = {
-			isa = PBXGroup;
-			children = (
-				7FCD124840D84AC6908F0F0F /* Source Files */,
-				EF1D514361CC49AE9AF19858 /* Header Files */,
-				73B9ED57BAF3472EA8FB7794 /* Resources */,
-				572FF930EE08410E84753B6B /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */,
-			);
-			name = Nuanceur;
-			sourceTree = "<group>";
-		};
-		AFBC330AA0B341C89F7D858D /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3812417AF55F421FAD106AE3 /* Nuanceur */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		BE45F5EE4F6F40D88371679A = {
-			isa = PBXGroup;
-			children = (
-				ADB30A5B83694DB182BA06FA /* Nuanceur */,
-				45A3E53277DA45CC859522FF /* ALL_BUILD */,
-				AFBC330AA0B341C89F7D858D /* Products */,
-				E6CDB52E989649AAA0520C79 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		E6CDB52E989649AAA0520C79 /* Frameworks */ = {
+		99CB6E1FFEEF4254BB5E21CE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		EF1D514361CC49AE9AF19858 /* Header Files */ = {
+		9B9441830D2F470C80848C73 /* Nuanceur */ = {
 			isa = PBXGroup;
 			children = (
-				6FE863AC6E874003B704A90E /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */,
-				9C14BB605EED46889FCBCACD /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */,
-				D27A7ACCF6364BA3BD54BF16 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */,
-				75AF732BB7944394891DFDB2 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */,
-				61950595EF9A42A6A398753B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */,
-				1F7605C438CB41319803E541 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */,
-				4019AECF97F749A5BBF4D2BD /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */,
-				97897BCD15234893A6F7657A /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */,
-				9F3AFFFC28BA464BAE258D19 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */,
-				D6F5B5FCB96746F5B4AE403E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */,
-				3306116FD2A14E7D8A99A333 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */,
-				3EEB285141224A0BBC3868F9 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */,
-				42E6A0F0B8664DDE836236FF /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */,
-				99D67903149D4556B65D833A /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */,
-				C03B61145F2C470FBB55EE3D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */,
-				BBBAB38640A74357AFE0E51F /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */,
-				3048606494A64052986D2D0A /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */,
-				72C8F5A416B14C2994AEC153 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */,
-				92B8F27B7AFE4E5396FC037D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */,
-				C73D371A0875412F89C67F4B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */,
-				D44E73E6850A4AEBA26DC5B2 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */,
-				2089CCD7F4374BD291B681E6 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */,
-				DFD89E134FFE40819607C470 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */,
-				DD1D2DCB0A964078BF1B3228 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */,
-				8CCA83C1BB934536A1712505 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */,
-				AB6528AD17C643DE8555D42D /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */,
-				0FA1F71180D8482D89D8EB8E /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */,
+				116D9B2C4C9D406CAB4535B1 /* Source Files */,
+				E071B1B1747C4A09A97F0A37 /* Header Files */,
+				BA7D9D7C0B704B9F80B4595D /* Resources */,
+				97FA91FF83FD420B87BC53AE /* ../Play-/deps/Nuanceur/build_cmake/CMakeLists.txt */,
+			);
+			name = Nuanceur;
+			sourceTree = "<group>";
+		};
+		9CA52ADCE75C43B9B6787AF7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				99330B3FEB4E47A6A72A7CCA /* Nuanceur */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BA7D9D7C0B704B9F80B4595D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				EAF5956932DC433CAD887C7D /* ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/Nuanceur.dir/Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		E071B1B1747C4A09A97F0A37 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				F6B130F9AB8A4F4ABC43F17B /* ../Play-/deps/Nuanceur/include/nuanceur/Builder.h */,
+				79BE9D45562C4C428E9221A3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ArrayUintValue.h */,
+				BFB44EF8FBF042498DC7B5D3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/BoolValue.h */,
+				5D85BE6FF7B8437ABEB94623 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float2Value.h */,
+				F2DC28FB1C264D2AAA86B657 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float3Value.h */,
+				4FBEA01A9E8C417199B438AC /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Float4Value.h */,
+				6DA0D33F0934499488F671F3 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector.h */,
+				212718EB447C401CBBA30B65 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatSwizzleSelector4.h */,
+				F2AD15F30F7E4221B7611E7C /* ../Play-/deps/Nuanceur/include/nuanceur/builder/FloatValue.h */,
+				2F3DFF26F31743DEBAC0BACC /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ImageUint2DValue.h */,
+				295ED2F51E634282B28B0804 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int2Value.h */,
+				357C152479EF4B64B1A16BB8 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int3Value.h */,
+				6968F5BF0FB74A3C81741193 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Int4Value.h */,
+				545AAC09F4C84C269674780E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntSwizzleSelector4.h */,
+				F4C39E589C0346FE8C324C1B /* ../Play-/deps/Nuanceur/include/nuanceur/builder/IntValue.h */,
+				67D2C26D06C441E6805E61BD /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Matrix44Value.h */,
+				A7182DEBA949457BBDB9694E /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Operations.h */,
+				02D6B4EEA73B47D0BC940546 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/ShaderBuilder.h */,
+				AC7A18A28439453CA70335E6 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/SubpassInputValue.h */,
+				ECF0EFA7F0974C998A50FE75 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Texture2DValue.h */,
+				AE7A5E19424549AE9007B281 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint3Value.h */,
+				14923942245543B293F6483D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/Uint4Value.h */,
+				6ADA64FEA25547F39D1F5305 /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintSwizzleSelector4.h */,
+				B82FC94FCC5D4C3E9A5B010D /* ../Play-/deps/Nuanceur/include/nuanceur/builder/UintValue.h */,
+				BCFF3189053346FABF925578 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/GlslShaderGenerator.h */,
+				19C1ABCBF1654E07A53986DE /* ../Play-/deps/Nuanceur/include/nuanceur/generators/HlslShaderGenerator.h */,
+				138C2155E7E14D7A81B01E55 /* ../Play-/deps/Nuanceur/include/nuanceur/generators/SpirvShaderGenerator.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -333,53 +333,53 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0528C63AEE3C4EA1B1C2EB66 /* Nuanceur */ = {
+		670FE74582934BBEBB0248E6 /* Nuanceur */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EE20D2DC19A247BA9C446BA8 /* Build configuration list for PBXNativeTarget "Nuanceur" */;
+			buildConfigurationList = A76E9E5C39D849C2B62AAF39 /* Build configuration list for PBXNativeTarget "Nuanceur" */;
 			buildPhases = (
-				733D32A7BE2E48EDA5AD16BF /* Sources */,
-				CF772ACA15EF41C9ABFB7679 /* Frameworks */,
+				0C1CE9636B9B4243B2CC8818 /* Sources */,
+				055431EA8FDF42378E0DF5DD /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				DA906E67C10F4652B1BA4EBE /* PBXTargetDependency */,
+				F25A2C0BFD924259AE78EAF9 /* PBXTargetDependency */,
 			);
 			name = Nuanceur;
 			productName = Nuanceur;
-			productReference = 3812417AF55F421FAD106AE3 /* Nuanceur */;
+			productReference = 99330B3FEB4E47A6A72A7CCA /* Nuanceur */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		D8F50F292FF24E37A92CE842 /* Project object */ = {
+		CEEAC285576944738064FD28 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1500;
 			};
-			buildConfigurationList = 3776EBF9F48C47D287A5B21F /* Build configuration list for PBXProject "Nuanceur" */;
+			buildConfigurationList = FA8F35F467194B2CB2254F50 /* Build configuration list for PBXProject "Nuanceur" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				5B591774C00742E683D8E70C /* Debug */,
-				91A7B757E11F41BEA889349B /* Release */,
-				6071E414BDA944069E892630 /* MinSizeRel */,
-				5392DF91DF96412EA5A7634A /* RelWithDebInfo */,
+				8099C2E558C843DCABFCFE02 /* Debug */,
+				E12EEB59ABE0461598CF622A /* Release */,
+				AF9CDA0B1CE44709B7B299E9 /* MinSizeRel */,
+				40162635A43B4C7191205DE7 /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = BE45F5EE4F6F40D88371679A;
+			mainGroup = 1E7803B8FC124654A53F0B44;
 			projectDirPath = "../Play-";
 			projectRoot = "";
 			targets = (
-				813B9411ED6148CBBF6FDF45 /* ALL_BUILD */,
-				0528C63AEE3C4EA1B1C2EB66 /* Nuanceur */,
-				B7CC82741C444EE0A7828070 /* RUN_TESTS */,
-				81A7140D8C2040F2ACDF825B /* ZERO_CHECK */,
-				0C166A68102548AEB1781C34 /* install */,
-				D771A2D4BE7846D7BB9D5A72 /* package */,
+				F79EE59899544A67B12CB8F2 /* ALL_BUILD */,
+				670FE74582934BBEBB0248E6 /* Nuanceur */,
+				8BCD176C8FFF461D905EA9CD /* RUN_TESTS */,
+				DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */,
+				FC9CD7A99A534051BEB8AC72 /* install */,
+				A3F400094DE749EEB922DD52 /* package */,
 			);
 		};
 /* End PBXProject section */
@@ -399,19 +399,19 @@
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -445,19 +445,19 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -475,6 +475,39 @@ fi
 			shellPath = /bin/sh;
 			shellScript = "# shell script goes here
 exit 0";
+			showEnvVarsInLog = 0;
+		};
+		84F0DAAD9612C1CB75F46C48 /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
+  echo Build\\ all\\ projects
+fi
+";
 			showEnvVarsInLog = 0;
 		};
 		87AF4882E018677E2624B544 = {
@@ -521,19 +554,19 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -553,7 +586,7 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
-		A796725DC22DBE8DF209F270 /* Generate CMakeFiles/ZERO_CHECK */ = {
+		C2AB573C2869493D978369C3 /* Generate CMakeFiles/ZERO_CHECK */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -586,237 +619,56 @@ fi
 ";
 			showEnvVarsInLog = 0;
 		};
-		F8B906FC87CCBEAA4F8FE555 /* Generate CMakeFiles/ALL_BUILD */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ALL_BUILD";
-			outputPaths = (
-../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur/CMakeFiles/ALL_BUILD			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/Source/ui_ios/gs/GSH_Vulkan/Nuanceur
-  echo Build\\ all\\ projects
-fi
-";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		733D32A7BE2E48EDA5AD16BF /* Sources */ = {
+		0C1CE9636B9B4243B2CC8818 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				902D9ADA3D3D4AE9B970CE49 /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */,
-				2FE04D11CDD94D179DBC7977 /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */,
-				00EB5D3EA262471A9A5656C9 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */,
-				EA4B234465EE412EB4A4890E /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */,
-				EA8AF4E4636A42D3950A8871 /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */,
+				AAB0FA6724E04E8BA7373008 /* ../Play-/deps/Nuanceur/src/builder/Operations.cpp */,
+				6D4D17E16E9A4557A449C10D /* ../Play-/deps/Nuanceur/src/builder/ShaderBuilder.cpp */,
+				E030458753B148A4B96F5260 /* ../Play-/deps/Nuanceur/src/generators/GlslShaderGenerator.cpp */,
+				F3852B376A7540EDB8502C1B /* ../Play-/deps/Nuanceur/src/generators/HlslShaderGenerator.cpp */,
+				B6C2BE285D2544408361CE75 /* ../Play-/deps/Nuanceur/src/generators/SpirvShaderGenerator.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		4B7266433A3B4A6181788704 /* PBXTargetDependency */ = {
+		18DAE4704D74441FB7101103 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 813B9411ED6148CBBF6FDF45 /* ALL_BUILD */;
-			targetProxy = 768AFA8B843D41BCB14C65DB /* PBXContainerItemProxy */;
+			target = DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */;
+			targetProxy = 96E8D2501E5D4F0A9CFC025E /* PBXContainerItemProxy */;
 		};
-		7658911DF51946A1A716A0AB /* PBXTargetDependency */ = {
+		55E5E9A48E4241179E3C25C6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 813B9411ED6148CBBF6FDF45 /* ALL_BUILD */;
-			targetProxy = D5B0E1064065410784BB3085 /* PBXContainerItemProxy */;
+			target = 670FE74582934BBEBB0248E6 /* Nuanceur */;
+			targetProxy = C0500EC18A2A4E27BBD88F35 /* PBXContainerItemProxy */;
 		};
-		9828BD5F8D1B472CBAD40F81 /* PBXTargetDependency */ = {
+		63CC529450824BBF82F90CC2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0528C63AEE3C4EA1B1C2EB66 /* Nuanceur */;
-			targetProxy = 3DABA7F8B8FA481088331B6E /* PBXContainerItemProxy */;
+			target = F79EE59899544A67B12CB8F2 /* ALL_BUILD */;
+			targetProxy = E684A6CAED6E4AC5813F6B35 /* PBXContainerItemProxy */;
 		};
-		B9D10EB94FBE451A8C42FE27 /* PBXTargetDependency */ = {
+		D7BBE3DE093940CD8270AA28 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 81A7140D8C2040F2ACDF825B /* ZERO_CHECK */;
-			targetProxy = EE60E0580425408EA2F7C9B4 /* PBXContainerItemProxy */;
+			target = F79EE59899544A67B12CB8F2 /* ALL_BUILD */;
+			targetProxy = D3CFAC68163E4335BF543AFE /* PBXContainerItemProxy */;
 		};
-		DA906E67C10F4652B1BA4EBE /* PBXTargetDependency */ = {
+		F25A2C0BFD924259AE78EAF9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 81A7140D8C2040F2ACDF825B /* ZERO_CHECK */;
-			targetProxy = 40CD5BF64AD943ADAE8AB64E /* PBXContainerItemProxy */;
+			target = DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */;
+			targetProxy = 4A327C4B791E4146919F8EBF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0315DFA8F1F247F5AC33A2A2 /* RelWithDebInfo */ = {
+		02D71A9CA27D469EAD5C01DF /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = RelWithDebInfo;
-		};
-		03D487D7ED574CC3865D848F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2    -D_DEBUG -D_DEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Nuanceur;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		052726CD353F4E96B1B6CD52 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Nuanceur;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		07E329DA7BFF45ADB159B67D /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		151BFB20CB294587B9E56FF4 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		1558CB04D57D441BB292ECD1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = Debug;
-		};
-		375C92EF980242F3AC355E30 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		3B47D6B27E8C4319BBD9F393 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -831,11 +683,32 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = RelWithDebInfo;
 		};
-		4A180C0AE31D47B9A2CB510A /* Release */ = {
+		082E50AF410A4945BEB1C4A8 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		234F0EBB20BB41E4971B5F0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -851,7 +724,7 @@ fi
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2        -DNDEBUG -DNDEBUG -DNDEBUG '-std=gnu++17' ";
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2        -DNDEBUG -DNDEBUG -DNDEBUG '-std=gnu++17' ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Nuanceur;
@@ -862,9 +735,10 @@ fi
 			};
 			name = Release;
 		};
-		56AC31D1321143DCB7023F9F /* RelWithDebInfo */ = {
+		3D84421D8ED044449249FEE8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -874,16 +748,17 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
+				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = Debug;
 		};
-		59E513ADB4E443A7B31588FF /* Release */ = {
+		3D86F1687EF24FD9B0E92DE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -893,35 +768,17 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
+				PRODUCT_NAME = install;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
+			name = Debug;
 		};
-		5CA97F9325FF427D9868DCC5 /* Release */ = {
+		401A1C4222D34BE394BC3C09 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		66C554C2F6C144ED9247DC0C /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -937,7 +794,7 @@ fi
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Nuanceur;
@@ -948,140 +805,10 @@ fi
 			};
 			name = RelWithDebInfo;
 		};
-		6861CCBDFA854742BD91C0AB /* RelWithDebInfo */ = {
+		404026E374CF44AA8BC95CC0 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		6F7038FB594647D682FAB162 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		76A77A2B6C684CFDAFECD465 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		76FE99E64555454C925E398C /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		7976C3AE891A40D0A1CB717F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		953C421B60204AE0937312E3 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = Release;
-		};
-		9C7F8AF0C9CF4999BDD5B274 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		AD49F599B35F44AEAF181A34 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1096,11 +823,12 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = MinSizeRel;
 		};
-		B36E15F9348E433BA2DEB4D3 /* Release */ = {
+		41F019CD50F24C4A84D7E3F0 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1110,14 +838,54 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		4205CA6364164B5F8541C3D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
-		B7B0A1BAB6EE462BA964AC8A /* MinSizeRel */ = {
+		59AB7742EB8D4ABBAFA7943A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		5B5D3204E47948E9A8018E33 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -1132,11 +900,12 @@ fi
 				SWIFT_VERSION = 4.0;
 				BUILD_DIR = ../lib;
 			};
-			name = MinSizeRel;
+			name = Debug;
 		};
-		BA7D34A1A53340F2ACCB260B /* Debug */ = {
+		61AF0F1C3C9B4CC1BD489950 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1151,11 +920,12 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
+			name = MinSizeRel;
 		};
-		C0D59CD00D204E4DAF2D125B /* Release */ = {
+		6BA2BF2F7A154E5CB9BF5C90 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1165,35 +935,17 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
+				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
-		C21D77A773D749239B0B9626 /* RelWithDebInfo */ = {
+		A2650ACDF6DB47D9BC488647 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		C6489B766D47464BBA7F3A26 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1210,9 +962,118 @@ fi
 			};
 			name = Debug;
 		};
-		F006644B119849A3A9246107 /* Release */ = {
+		A3FE68B0541B4957837E8B56 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
+			};
+			name = MinSizeRel;
+		};
+		B01E1DB88E224638AAE00C0C /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		B6EA142A1D7E4C8D84D4431E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		B9BDF4FEA3DE489E8D53A39F /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Nuanceur;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		BBCF17AFFE2D405D88754F5C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		C01475D1E43C45B99AEDE38F /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1226,90 +1087,256 @@ fi
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		D392C22E76ED4FD1ABBB62A5 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
+			};
+			name = RelWithDebInfo;
+		};
+		DE30B85EB03F43A78C8987D7 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		DEA142F2AF60437BB270953A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		E258DBC9BCF7418B96890B20 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		EA802852DC30418A99B43AFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		EB76D048E78E4DF5A5A35973 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2    -D_DEBUG -D_DEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Nuanceur;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		F6F00513D8684A35952B0B2E /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		F79F92EBA90341F5B88F3865 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		10725E11767441EC8AF44CB7 /* Build configuration list for PBXAggregateTarget "package" */ = {
+		1A78AB427A9E4059A0249A16 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7976C3AE891A40D0A1CB717F /* Debug */,
-				F006644B119849A3A9246107 /* Release */,
-				76FE99E64555454C925E398C /* MinSizeRel */,
-				56AC31D1321143DCB7023F9F /* RelWithDebInfo */,
+				3D84421D8ED044449249FEE8 /* Debug */,
+				EA802852DC30418A99B43AFF /* Release */,
+				61AF0F1C3C9B4CC1BD489950 /* MinSizeRel */,
+				DEA142F2AF60437BB270953A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		3776EBF9F48C47D287A5B21F /* Build configuration list for PBXProject "Nuanceur" */ = {
+		1B9DD1C89B3A4B6B8018FBA8 /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1558CB04D57D441BB292ECD1 /* Debug */,
-				953C421B60204AE0937312E3 /* Release */,
-				B7B0A1BAB6EE462BA964AC8A /* MinSizeRel */,
-				0315DFA8F1F247F5AC33A2A2 /* RelWithDebInfo */,
+				3D86F1687EF24FD9B0E92DE5 /* Debug */,
+				BBCF17AFFE2D405D88754F5C /* Release */,
+				41F019CD50F24C4A84D7E3F0 /* MinSizeRel */,
+				B01E1DB88E224638AAE00C0C /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		4A18239546D444C8BBDC0A71 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		2E1F9EA9BE3C4E82A3055BB7 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C6489B766D47464BBA7F3A26 /* Debug */,
-				59E513ADB4E443A7B31588FF /* Release */,
-				151BFB20CB294587B9E56FF4 /* MinSizeRel */,
-				AD49F599B35F44AEAF181A34 /* RelWithDebInfo */,
+				B6EA142A1D7E4C8D84D4431E /* Debug */,
+				6BA2BF2F7A154E5CB9BF5C90 /* Release */,
+				F6F00513D8684A35952B0B2E /* MinSizeRel */,
+				02D71A9CA27D469EAD5C01DF /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		4C0BD708D7D74490AC590618 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		48D255EBF1244B23A47F67A6 /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				76A77A2B6C684CFDAFECD465 /* Debug */,
-				5CA97F9325FF427D9868DCC5 /* Release */,
-				3B47D6B27E8C4319BBD9F393 /* MinSizeRel */,
-				6861CCBDFA854742BD91C0AB /* RelWithDebInfo */,
+				59AB7742EB8D4ABBAFA7943A /* Debug */,
+				E258DBC9BCF7418B96890B20 /* Release */,
+				DE30B85EB03F43A78C8987D7 /* MinSizeRel */,
+				C01475D1E43C45B99AEDE38F /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C6AAE846D29D460BA27F94A2 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		A76E9E5C39D849C2B62AAF39 /* Build configuration list for PBXNativeTarget "Nuanceur" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BA7D34A1A53340F2ACCB260B /* Debug */,
-				B36E15F9348E433BA2DEB4D3 /* Release */,
-				6F7038FB594647D682FAB162 /* MinSizeRel */,
-				375C92EF980242F3AC355E30 /* RelWithDebInfo */,
+				EB76D048E78E4DF5A5A35973 /* Debug */,
+				234F0EBB20BB41E4971B5F0D /* Release */,
+				B9BDF4FEA3DE489E8D53A39F /* MinSizeRel */,
+				401A1C4222D34BE394BC3C09 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		EE20D2DC19A247BA9C446BA8 /* Build configuration list for PBXNativeTarget "Nuanceur" */ = {
+		DF101BF5B078417FAEC39AC6 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				03D487D7ED574CC3865D848F /* Debug */,
-				4A180C0AE31D47B9A2CB510A /* Release */,
-				052726CD353F4E96B1B6CD52 /* MinSizeRel */,
-				66C554C2F6C144ED9247DC0C /* RelWithDebInfo */,
+				A2650ACDF6DB47D9BC488647 /* Debug */,
+				4205CA6364164B5F8541C3D7 /* Release */,
+				404026E374CF44AA8BC95CC0 /* MinSizeRel */,
+				082E50AF410A4945BEB1C4A8 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		EFD2FD811D4C423B869475B8 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		FA8F35F467194B2CB2254F50 /* Build configuration list for PBXProject "Nuanceur" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9C7F8AF0C9CF4999BDD5B274 /* Debug */,
-				C0D59CD00D204E4DAF2D125B /* Release */,
-				07E329DA7BFF45ADB159B67D /* MinSizeRel */,
-				C21D77A773D749239B0B9626 /* RelWithDebInfo */,
+				5B5D3204E47948E9A8018E33 /* Debug */,
+				F79F92EBA90341F5B88F3865 /* Release */,
+				A3FE68B0541B4957837E8B56 /* MinSizeRel */,
+				D392C22E76ED4FD1ABBB62A5 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = D8F50F292FF24E37A92CE842 /* Project object */;
+	rootObject = CEEAC285576944738064FD28 /* Project object */;
 }

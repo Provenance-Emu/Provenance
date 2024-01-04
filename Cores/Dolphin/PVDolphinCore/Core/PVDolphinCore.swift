@@ -106,11 +106,39 @@ extension PVDolphinCore: CoreOptional {
             requiresRestart: false),
               defaultValue: false)
     }()
+    static var volumeOption: CoreOption = {
+        .enumeration(.init(title: "Audio Volume",
+                           description: "",
+                           requiresRestart: false),
+                     values: [
+                        .init(title: "100%", description: "100%", value: 100),
+                        .init(title: "90%", description: "90%", value: 90),
+                        .init(title: "80%", description: "80%", value: 80),
+                        .init(title: "70%", description: "70%", value: 70),
+                        .init(title: "60%", description: "60%", value: 60),
+                        .init(title: "50%", description: "50%", value: 50),
+                        .init(title: "40%", description: "40%", value: 40),
+                        .init(title: "30%", description: "30%", value: 30),
+                        .init(title: "20%", description: "20%", value: 20),
+                        .init(title: "10%", description: "10%", value: 10),
+                        .init(title: "9%", description: "9%", value: 9),
+                        .init(title: "8%", description: "8%", value: 8),
+                        .init(title: "7%", description: "7%", value: 7),
+                        .init(title: "6%", description: "6%", value: 6),
+                        .init(title: "5%", description: "5%", value: 5),
+                        .init(title: "4%", description: "4%", value: 4),
+                        .init(title: "3%", description: "3%", value: 3),
+                        .init(title: "2%", description: "2%", value: 2),
+                        .init(title: "1%", description: "1%", value: 1),
+                        .init(title: "0%", description: "0%", value: 0),
+                     ],
+                     defaultValue: 100)
+    }()
 	public static var options: [CoreOption] {
 		var options = [CoreOption]()
 		let coreOptions: [CoreOption] = [
 			resolutionOption, gsOption, forceBilinearFilteringOption,
-			cpuOption, msaaOption, ssaaOption, cpuClockOption,
+			cpuOption, msaaOption, ssaaOption, cpuClockOption, volumeOption,
 			fastMemoryOption, enableCheatOption, multiPlayerOption]
 		let coreGroup:CoreOption = .group(.init(title: "Dolphin! Core",
 												description: "Global options for Dolphin!"),
@@ -166,6 +194,7 @@ extension PVDolphinCore: CoreOptional {
 		self.fastMemory = fastMemoryOption
 		self.cpuOClock = NSNumber(value: cpuClock).int8Value
         self.multiPlayer = multiPlayerOption
+        self.volume = NSNumber(value: PVDolphinCore.valueForOption(PVDolphinCore.volumeOption).asInt ?? 100).int8Value;
 	}
 }
 

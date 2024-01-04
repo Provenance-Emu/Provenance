@@ -546,9 +546,9 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
             return
         }
 
-        let multiDisc = game.isCD && game.discCount > 1
+        let multiDisc = game.diskCount > 1
         discCountContainerView.isHidden = !multiDisc
-        discCountLabel.text = "\(game.discCount)"
+        discCountLabel.text = "\(game.diskCount)"
         discCountLabel.textColor = UIColor.white
     }
 
@@ -789,7 +789,12 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         #endif
 
         let height: CGFloat = CGFloat(PVThumbnailMaxResolution)
-        let ratio: CGFloat = game?.boxartAspectRatio.rawValue ?? 1.0
+        var ratio: CGFloat = 1.0
+        do {
+            ratio = try game?.boxartAspectRatio.rawValue ?? 1.0
+        } catch {
+            ratio = 1.0
+        }
         let width: CGFloat = height * ratio
         let size = CGSize(width: width, height: height)
         let missingArtworkImage = UIImage.image(withSize: size, color: backgroundColor, text: attributedText)

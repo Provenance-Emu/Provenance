@@ -61,6 +61,7 @@
 @property (nonatomic, assign) bool fastMemory;
 @property (nonatomic, assign) bool enableCheatCode;
 @property (nonatomic, assign) bool multiPlayer;
+@property (nonatomic, assign) int8_t volume;
 - (void) refreshScreenSize;
 - (void) startVM:(UIView *)view;
 - (void) setupControllers;

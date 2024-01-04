@@ -7,45 +7,9 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		0C166A68102548AEB1781C34 /* install */ = {
+		8BCD176C8FFF461D905EA9CD /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = C47824CE51A44B62AB912690 /* Build configuration list for PBXAggregateTarget "install" */;
-			buildPhases = (
-				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
-			);
-			dependencies = (
-				BF0F0EF74CCE4AEBAAE06AF0 /* PBXTargetDependency */,
-			);
-			name = install;
-			productName = install;
-		};
-		813B9411ED6148CBBF6FDF45 /* ALL_BUILD */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 87CDE61470BA40CFBB65CFCC /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
-			buildPhases = (
-				65A7392DA9823182F0726A8D /* Generate CMakeFiles/ALL_BUILD */,
-			);
-			dependencies = (
-				3AE143818C5F4A38A4CF15DA /* PBXTargetDependency */,
-				820E3E9AD45F460092B1DC39 /* PBXTargetDependency */,
-			);
-			name = ALL_BUILD;
-			productName = ALL_BUILD;
-		};
-		81A7140D8C2040F2ACDF825B /* ZERO_CHECK */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 3DCDA23A4C9D422899F8AFBA /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
-			buildPhases = (
-				57E276BFE6E8DCEADB70A216 /* Generate CMakeFiles/ZERO_CHECK */,
-			);
-			dependencies = (
-			);
-			name = ZERO_CHECK;
-			productName = ZERO_CHECK;
-		};
-		B7CC82741C444EE0A7828070 /* RUN_TESTS */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = C63B88EFE2954CA190D84FDD /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 5AE0CC695F9E45C8BDB5517E /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -54,139 +18,175 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
-		D771A2D4BE7846D7BB9D5A72 /* package */ = {
+		A3F400094DE749EEB922DD52 /* package */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 30D1B05F2EC2453DA74D715D /* Build configuration list for PBXAggregateTarget "package" */;
+			buildConfigurationList = B677A6F02B7843138259A4B0 /* Build configuration list for PBXAggregateTarget "package" */;
 			buildPhases = (
 				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				4F66539DA2584AC1B513B616 /* PBXTargetDependency */,
+				6C5E55DBCC3945F1AEA29E52 /* PBXTargetDependency */,
 			);
 			name = package;
 			productName = package;
 		};
+		DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 529BA792AA1F4148A6DCA76D /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				C4176D3ACBB5632AA4C3B3C7 /* Generate CMakeFiles/ZERO_CHECK */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		F79EE59899544A67B12CB8F2 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = CA0A462EB6ED4D329AF95653 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				91A3459481C6D33A6036A14A /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				CBEAEC5CC1DA490DAAB7291F /* PBXTargetDependency */,
+				B15C92B03D5046BF9F84A1A8 /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		FC9CD7A99A534051BEB8AC72 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 3181164FB83C49949894068C /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				BBB0FC9A9BA84338A0C116A3 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		02C21939357B46D494DDB3C6 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m */ = {isa = PBXBuildFile; fileRef = 1FDB0982FA544520A22BEF2B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m */; };
-		137C6CAF002D407CB13D779E /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m */ = {isa = PBXBuildFile; fileRef = F8916B102E1D41FDBD4A24FA /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m */; };
-		1734A97811BC4AA7A6031F08 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m */ = {isa = PBXBuildFile; fileRef = 7D5FE6C584924094A267868F /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m */; };
-		367507E20E844338BB1D2F49 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m */ = {isa = PBXBuildFile; fileRef = 7E81DDD1F985490BBD04F478 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m */; };
-		3BE982DA26844E27B07D666A /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m */ = {isa = PBXBuildFile; fileRef = 2FA8199896104F21AF684CC0 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m */; };
-		3D4ABB1F9FD94A7C873F8A7F /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m */ = {isa = PBXBuildFile; fileRef = 0787DD8C2AED4E44B944DD40 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m */; };
-		631C118A8DC44AA9B9DB08E5 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m */ = {isa = PBXBuildFile; fileRef = E324EEA2D7D44B98956E333B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m */; };
-		66E6ABA24F9545EF8A8A2605 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m */ = {isa = PBXBuildFile; fileRef = 81CCDF5F078444DFAD399E2D /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m */; };
-		6C837511699141EB9FF3D136 /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = CCE057445E2E4965AB722BEA /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */; };
-		7C24A9ECFCC64C7EABEAD716 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m */ = {isa = PBXBuildFile; fileRef = 5AEE18F37C5C45AE929B58A7 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m */; };
-		8B75DB85852A4E3FB625810B /* ../cmake/Source/ui_ios/SDWebImage/CMakeFiles/SDWebImage_Static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = E7BD66DB710C45EA860DD213 /* ../cmake/Source/ui_ios/SDWebImage/CMakeFiles/SDWebImage_Static.dir/Info.plist */; };
-		8D329F8DF6CE4667866D79A9 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m */ = {isa = PBXBuildFile; fileRef = 5D2927EF6A1340D984BC0CA6 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m */; };
-		91FB10F7368A4361AAE0344E /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m */ = {isa = PBXBuildFile; fileRef = D41979C436154298A0D44927 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m */; };
-		93B6535AC5CF4E0D882DBA00 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m */ = {isa = PBXBuildFile; fileRef = 10AA5F2DC01D405184B7BFEA /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m */; };
-		BA0BBB8148B949F88E8AAEF9 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m */ = {isa = PBXBuildFile; fileRef = 181CDC9507F14C35B6A9FCC7 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m */; };
-		BBC382590D4E449A99F523E1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m */ = {isa = PBXBuildFile; fileRef = 68FF1E40876A4FAC81F1524E /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m */; };
-		C1088063C8F44A64BC520D1F /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m */ = {isa = PBXBuildFile; fileRef = D3ABA7D85A074AB59A326D9F /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m */; };
-		DC5AF66793C54C7193084F3C /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m */ = {isa = PBXBuildFile; fileRef = 6FFFE6BD6866475EA0C977F4 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m */; };
-		E4D8DC32818146C39066A09A /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m */ = {isa = PBXBuildFile; fileRef = C2D9DDF71FCF42F5AA16BA96 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m */; };
-		FD6468FAF0CD4D51B126FDC1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m */ = {isa = PBXBuildFile; fileRef = 320C5330A01744218FD250A7 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m */; };
+		0F399F00550C4C20A0BB523D /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m */ = {isa = PBXBuildFile; fileRef = ACDDA9AAB0504F7B92B4E787 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m */; };
+		10156CCFE2E14C7D9147374B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m */ = {isa = PBXBuildFile; fileRef = 28C4BBF2160F46BC90632484 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m */; };
+		2C50895CCD314E3A84759300 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m */ = {isa = PBXBuildFile; fileRef = E9BADA12514F481F8D498279 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m */; };
+		3339106FB7CA495296966133 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m */ = {isa = PBXBuildFile; fileRef = 33BC67799A8C45C5A0826717 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m */; };
+		344E52A70F40409989B238A9 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m */ = {isa = PBXBuildFile; fileRef = 050D98153AAC41EB818A9454 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m */; };
+		3870B817649A4D07894A3CEF /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m */ = {isa = PBXBuildFile; fileRef = 9ABEC5588C084461B7F44AB1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m */; };
+		4A32C0B491E24C359CF6B13D /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m */ = {isa = PBXBuildFile; fileRef = 9C86DFC8E0BC4BF5B5E72467 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m */; };
+		514FCF840B74499E85E7D94C /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = E0F01A01FC4D4C93BAF0CA30 /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */; };
+		589590961A1347E5A87FCF50 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m */ = {isa = PBXBuildFile; fileRef = 492B708D9A2847D980BE459B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m */; };
+		5E48636B2C5142DC885BED68 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m */ = {isa = PBXBuildFile; fileRef = 4BCC72EBC1B54F09889AAF04 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m */; };
+		7503C30E9F534A08B32FBFBD /* ../cmake/Source/ui_ios/SDWebImage/CMakeFiles/SDWebImage_Static.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = A5575BB9589240BCB001DF3D /* ../cmake/Source/ui_ios/SDWebImage/CMakeFiles/SDWebImage_Static.dir/Info.plist */; };
+		751009833B8D4C97A20D388D /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m */ = {isa = PBXBuildFile; fileRef = 5BEE82B204064657BB4472C3 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m */; };
+		7AD9CA575318428F852F039B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m */ = {isa = PBXBuildFile; fileRef = 997BED55D3ED4E5BBB36D8DA /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m */; };
+		7DE53EDD886F4A2DAB8ADDC1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m */ = {isa = PBXBuildFile; fileRef = A220A8E9290E44F79500E1E2 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m */; };
+		A4513A7994FF4AEC91FB57AC /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m */ = {isa = PBXBuildFile; fileRef = 1085ABBBAB944F9C8FD5ABFE /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m */; };
+		AA288B54F70E45458196208C /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m */ = {isa = PBXBuildFile; fileRef = B97F5C6163814A71A3C1ACE1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m */; };
+		BAD0FE19B06B49B9A12D9E13 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m */ = {isa = PBXBuildFile; fileRef = 23F699FED515491FADB13110 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m */; };
+		C254EF0478EB445B93145DA3 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m */ = {isa = PBXBuildFile; fileRef = 56F65F8C92C149569AD9EC7A /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m */; };
+		F894D73BF65A42B2B4FA8839 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m */ = {isa = PBXBuildFile; fileRef = E5082B4E28444422AA36F5AB /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m */; };
+		FC8C585CDD48443DBFD46D28 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m */ = {isa = PBXBuildFile; fileRef = BBC558619AF04C3294709F68 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		2750E76CE08148EDB05E2CBB /* RelWithDebInfo */ = {
+		21B9DC2838124621B9AC2A48 /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
-		74D763CB9B2545F084E0AE87 /* MinSizeRel */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = MinSizeRel;
-		};
-		B7593D88EE63443AB4B90CF7 /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		B9A4AF3B7BBC4E4C85281FEF /* Release */ = {
+		3905D78EE7C247458C691E72 /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
+		63CCE4D00FF54861BACFC976 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		F107F0278A594EE7809CC464 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		46ED5E6E965C46B893CBD387 /* PBXContainerItemProxy */ = {
+		08F848A7A6D64B2B81C08427 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 76AFC6FA4ABD4CF482148847 /* Project object */;
+			containerPortal = 2C86BA3BF9E4410D842030CF /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 813B9411ED6148CBBF6FDF45;
-			remoteInfo = ALL_BUILD;
-		};
-		7DD707CB1BE144E4966F7A2E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 76AFC6FA4ABD4CF482148847 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 813B9411ED6148CBBF6FDF45;
-			remoteInfo = ALL_BUILD;
-		};
-		8B9FE62C79BF42AEA5A24C48 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 76AFC6FA4ABD4CF482148847 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 81A7140D8C2040F2ACDF825B;
+			remoteGlobalIDString = DAB69F6DD3114DF6A6B504DB;
 			remoteInfo = ZERO_CHECK;
 		};
-		9EACCBF1883C4D138B342A10 /* PBXContainerItemProxy */ = {
+		3228F1C30E884052AD3389F7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 76AFC6FA4ABD4CF482148847 /* Project object */;
+			containerPortal = 2C86BA3BF9E4410D842030CF /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 7F22BB4B24C54C32A3B2A3FF;
+			remoteGlobalIDString = F79EE59899544A67B12CB8F2;
+			remoteInfo = ALL_BUILD;
+		};
+		C190DF5233B643FF95235E94 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2C86BA3BF9E4410D842030CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 07B3C656C0D34C63B6C5A52C;
 			remoteInfo = SDWebImage_Static;
 		};
-		C94502636593407F8A1FE660 /* PBXContainerItemProxy */ = {
+		EF18E3CA1705494EB3C4E591 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 76AFC6FA4ABD4CF482148847 /* Project object */;
+			containerPortal = 2C86BA3BF9E4410D842030CF /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 81A7140D8C2040F2ACDF825B;
+			remoteGlobalIDString = DAB69F6DD3114DF6A6B504DB;
 			remoteInfo = ZERO_CHECK;
+		};
+		F3C7BE30DAE7438F977D6B4C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2C86BA3BF9E4410D842030CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F79EE59899544A67B12CB8F2;
+			remoteInfo = ALL_BUILD;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0787DD8C2AED4E44B944DD40 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIImage+WebP.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m"; sourceTree = "<absolute>"; };
-		10AA5F2DC01D405184B7BFEA /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "NSImage+WebCache.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m"; sourceTree = "<absolute>"; };
-		181CDC9507F14C35B6A9FCC7 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIButton+WebCache.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m"; sourceTree = "<absolute>"; };
-		1FDB0982FA544520A22BEF2B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIImageView+HighlightedWebCache.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m"; sourceTree = "<absolute>"; };
-		2FA8199896104F21AF684CC0 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImagePrefetcher.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m"; sourceTree = "<absolute>"; };
-		320C5330A01744218FD250A7 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImageDownloader.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m"; sourceTree = "<absolute>"; };
-		42C80CA699FA461482BD98DF /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		5AEE18F37C5C45AE929B58A7 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImageManager.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m"; sourceTree = "<absolute>"; };
-		5D2927EF6A1340D984BC0CA6 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIImage+GIF.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m"; sourceTree = "<absolute>"; };
-		68FF1E40876A4FAC81F1524E /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIView+WebCache.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m"; sourceTree = "<absolute>"; };
-		6FFFE6BD6866475EA0C977F4 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDImageCacheConfig.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m"; sourceTree = "<absolute>"; };
-		7D5FE6C584924094A267868F /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImageDownloaderOperation.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m"; sourceTree = "<absolute>"; };
-		7E81DDD1F985490BBD04F478 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIImageView+WebCache.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m"; sourceTree = "<absolute>"; };
-		81CCDF5F078444DFAD399E2D /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImageCompat.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m"; sourceTree = "<absolute>"; };
-		C2D9DDF71FCF42F5AA16BA96 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIImage+MultiFormat.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m"; sourceTree = "<absolute>"; };
-		C4F25D0628B742C9A4B870B6 /* SDWebImage_Static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSDWebImage_Static.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		CCE057445E2E4965AB722BEA /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		D3ABA7D85A074AB59A326D9F /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImageDecoder.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m"; sourceTree = "<absolute>"; };
-		D41979C436154298A0D44927 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "NSData+ImageContentType.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m"; sourceTree = "<absolute>"; };
-		E324EEA2D7D44B98956E333B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIView+WebCacheOperation.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m"; sourceTree = "<absolute>"; };
-		E7BD66DB710C45EA860DD213 /* ../cmake/Source/ui_ios/SDWebImage/CMakeFiles/SDWebImage_Static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/SDWebImage/CMakeFiles/SDWebImage_Static.dir/Info.plist; sourceTree = "<absolute>"; };
-		F8916B102E1D41FDBD4A24FA /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDImageCache.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m"; sourceTree = "<absolute>"; };
+		050D98153AAC41EB818A9454 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDImageCache.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m"; sourceTree = "<absolute>"; };
+		1085ABBBAB944F9C8FD5ABFE /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIView+WebCacheOperation.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m"; sourceTree = "<absolute>"; };
+		23F699FED515491FADB13110 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "NSImage+WebCache.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m"; sourceTree = "<absolute>"; };
+		28C4BBF2160F46BC90632484 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImageCompat.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m"; sourceTree = "<absolute>"; };
+		33BC67799A8C45C5A0826717 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImageDownloader.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m"; sourceTree = "<absolute>"; };
+		492B708D9A2847D980BE459B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIImageView+WebCache.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m"; sourceTree = "<absolute>"; };
+		4BCC72EBC1B54F09889AAF04 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImageDecoder.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m"; sourceTree = "<absolute>"; };
+		56F65F8C92C149569AD9EC7A /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIView+WebCache.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m"; sourceTree = "<absolute>"; };
+		5BEE82B204064657BB4472C3 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImagePrefetcher.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m"; sourceTree = "<absolute>"; };
+		87F841A0603549D1BA425DB9 /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		997BED55D3ED4E5BBB36D8DA /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDImageCacheConfig.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m"; sourceTree = "<absolute>"; };
+		99D7F89820844654A9DF17CE /* SDWebImage_Static */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libSDWebImage_Static.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9ABEC5588C084461B7F44AB1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIImageView+HighlightedWebCache.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m"; sourceTree = "<absolute>"; };
+		9C86DFC8E0BC4BF5B5E72467 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "NSData+ImageContentType.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m"; sourceTree = "<absolute>"; };
+		A220A8E9290E44F79500E1E2 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIButton+WebCache.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m"; sourceTree = "<absolute>"; };
+		A5575BB9589240BCB001DF3D /* ../cmake/Source/ui_ios/SDWebImage/CMakeFiles/SDWebImage_Static.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/SDWebImage/CMakeFiles/SDWebImage_Static.dir/Info.plist; sourceTree = "<absolute>"; };
+		ACDDA9AAB0504F7B92B4E787 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIImage+MultiFormat.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m"; sourceTree = "<absolute>"; };
+		B97F5C6163814A71A3C1ACE1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImageDownloaderOperation.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m"; sourceTree = "<absolute>"; };
+		BBC558619AF04C3294709F68 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIImage+WebP.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m"; sourceTree = "<absolute>"; };
+		E0F01A01FC4D4C93BAF0CA30 /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		E5082B4E28444422AA36F5AB /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = "UIImage+GIF.m"; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m"; sourceTree = "<absolute>"; };
+		E9BADA12514F481F8D498279 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = SDWebImageManager.m; path = "../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		60A667F777A849D7B6B9BA29 /* Frameworks */ = {
+		E233FC7E2E884B3EABD4BCF7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -196,140 +196,140 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		24BA616204CA407EA9D3E4F0 /* ALL_BUILD */ = {
+		15383F4D382D47B0800CF82B /* ALL_BUILD */ = {
 			isa = PBXGroup;
 			children = (
-				C75D5F4D10BA44A380A4DA10 /* CMake Rules */,
-				42C80CA699FA461482BD98DF /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */,
+				1E79ADBB4BFC4A66B101CE79 /* CMake Rules */,
+				87F841A0603549D1BA425DB9 /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
 		};
-		42BA089F95574CEC8B6FD027 = {
-			isa = PBXGroup;
-			children = (
-				5245AEF357E84A43AF8CE2BB /* SDWebImage_Static */,
-				24BA616204CA407EA9D3E4F0 /* ALL_BUILD */,
-				F6A167B769344E218A394C8E /* Products */,
-				F06CE2CBC5AE401F8AFEEDA9 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		5245AEF357E84A43AF8CE2BB /* SDWebImage_Static */ = {
-			isa = PBXGroup;
-			children = (
-				E43CC276202E4F46A430700F /* Source Files */,
-				A23B257378C341CE858A5E14 /* Resources */,
-				CCE057445E2E4965AB722BEA /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */,
-			);
-			name = SDWebImage_Static;
-			sourceTree = "<group>";
-		};
-		A23B257378C341CE858A5E14 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				E7BD66DB710C45EA860DD213 /* ../cmake/Source/ui_ios/SDWebImage/CMakeFiles/SDWebImage_Static.dir/Info.plist */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		C75D5F4D10BA44A380A4DA10 /* CMake Rules */ = {
+		1E79ADBB4BFC4A66B101CE79 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		E43CC276202E4F46A430700F /* Source Files */ = {
+		4D9E4F7A1B87490BBB8A073B /* SDWebImage_Static */ = {
 			isa = PBXGroup;
 			children = (
-				D41979C436154298A0D44927 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m */,
-				10AA5F2DC01D405184B7BFEA /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m */,
-				F8916B102E1D41FDBD4A24FA /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m */,
-				6FFFE6BD6866475EA0C977F4 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m */,
-				81CCDF5F078444DFAD399E2D /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m */,
-				D3ABA7D85A074AB59A326D9F /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m */,
-				320C5330A01744218FD250A7 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m */,
-				7D5FE6C584924094A267868F /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m */,
-				5AEE18F37C5C45AE929B58A7 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m */,
-				2FA8199896104F21AF684CC0 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m */,
-				181CDC9507F14C35B6A9FCC7 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m */,
-				5D2927EF6A1340D984BC0CA6 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m */,
-				C2D9DDF71FCF42F5AA16BA96 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m */,
-				0787DD8C2AED4E44B944DD40 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m */,
-				1FDB0982FA544520A22BEF2B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m */,
-				7E81DDD1F985490BBD04F478 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m */,
-				68FF1E40876A4FAC81F1524E /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m */,
-				E324EEA2D7D44B98956E333B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m */,
+				DD9798067EC34C89B45C60B7 /* Source Files */,
+				E868B40249D3443C955E3AFF /* Resources */,
+				E0F01A01FC4D4C93BAF0CA30 /* ../Play-/deps/Dependencies/build_cmake/SDWebImage/CMakeLists.txt */,
 			);
-			name = "Source Files";
+			name = SDWebImage_Static;
 			sourceTree = "<group>";
 		};
-		F06CE2CBC5AE401F8AFEEDA9 /* Frameworks */ = {
+		B7495DE879BA4E61B6F2C18A = {
+			isa = PBXGroup;
+			children = (
+				4D9E4F7A1B87490BBB8A073B /* SDWebImage_Static */,
+				15383F4D382D47B0800CF82B /* ALL_BUILD */,
+				C3A6B2D08DD94511BFABE884 /* Products */,
+				BA75E6E2A514443F8EFC4256 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		BA75E6E2A514443F8EFC4256 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		F6A167B769344E218A394C8E /* Products */ = {
+		C3A6B2D08DD94511BFABE884 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C4F25D0628B742C9A4B870B6 /* SDWebImage_Static */,
+				99D7F89820844654A9DF17CE /* SDWebImage_Static */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DD9798067EC34C89B45C60B7 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				9C86DFC8E0BC4BF5B5E72467 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m */,
+				23F699FED515491FADB13110 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m */,
+				050D98153AAC41EB818A9454 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m */,
+				997BED55D3ED4E5BBB36D8DA /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m */,
+				28C4BBF2160F46BC90632484 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m */,
+				4BCC72EBC1B54F09889AAF04 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m */,
+				33BC67799A8C45C5A0826717 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m */,
+				B97F5C6163814A71A3C1ACE1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m */,
+				E9BADA12514F481F8D498279 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m */,
+				5BEE82B204064657BB4472C3 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m */,
+				A220A8E9290E44F79500E1E2 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m */,
+				E5082B4E28444422AA36F5AB /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m */,
+				ACDDA9AAB0504F7B92B4E787 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m */,
+				BBC558619AF04C3294709F68 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m */,
+				9ABEC5588C084461B7F44AB1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m */,
+				492B708D9A2847D980BE459B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m */,
+				56F65F8C92C149569AD9EC7A /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m */,
+				1085ABBBAB944F9C8FD5ABFE /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		E868B40249D3443C955E3AFF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A5575BB9589240BCB001DF3D /* ../cmake/Source/ui_ios/SDWebImage/CMakeFiles/SDWebImage_Static.dir/Info.plist */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7F22BB4B24C54C32A3B2A3FF /* SDWebImage_Static */ = {
+		07B3C656C0D34C63B6C5A52C /* SDWebImage_Static */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0C1705B29C934DF68A06CAC7 /* Build configuration list for PBXNativeTarget "SDWebImage_Static" */;
+			buildConfigurationList = 970D9E01C1C448CC9904220F /* Build configuration list for PBXNativeTarget "SDWebImage_Static" */;
 			buildPhases = (
-				5D973A10813D4070A848922A /* Sources */,
-				60A667F777A849D7B6B9BA29 /* Frameworks */,
+				A287CF6EE5E84858B40BC1F2 /* Sources */,
+				E233FC7E2E884B3EABD4BCF7 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				D53F36F7E7F64B68AA8275E7 /* PBXTargetDependency */,
+				78BD1A9EED124073A10A9860 /* PBXTargetDependency */,
 			);
 			name = SDWebImage_Static;
 			productName = SDWebImage_Static;
-			productReference = C4F25D0628B742C9A4B870B6 /* SDWebImage_Static */;
+			productReference = 99D7F89820844654A9DF17CE /* SDWebImage_Static */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		76AFC6FA4ABD4CF482148847 /* Project object */ = {
+		2C86BA3BF9E4410D842030CF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1500;
 			};
-			buildConfigurationList = 31372C5A12B64D1B84FBDACC /* Build configuration list for PBXProject "SDWebImage" */;
+			buildConfigurationList = 5AFFBF5582F54F86B328768C /* Build configuration list for PBXProject "SDWebImage" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				B7593D88EE63443AB4B90CF7 /* Debug */,
-				B9A4AF3B7BBC4E4C85281FEF /* Release */,
-				74D763CB9B2545F084E0AE87 /* MinSizeRel */,
-				2750E76CE08148EDB05E2CBB /* RelWithDebInfo */,
+				63CCE4D00FF54861BACFC976 /* Debug */,
+				3905D78EE7C247458C691E72 /* Release */,
+				F107F0278A594EE7809CC464 /* MinSizeRel */,
+				21B9DC2838124621B9AC2A48 /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 42BA089F95574CEC8B6FD027;
+			mainGroup = B7495DE879BA4E61B6F2C18A;
 			projectDirPath = "../Play-";
 			projectRoot = "";
 			targets = (
-				813B9411ED6148CBBF6FDF45 /* ALL_BUILD */,
-				B7CC82741C444EE0A7828070 /* RUN_TESTS */,
-				7F22BB4B24C54C32A3B2A3FF /* SDWebImage_Static */,
-				81A7140D8C2040F2ACDF825B /* ZERO_CHECK */,
-				0C166A68102548AEB1781C34 /* install */,
-				D771A2D4BE7846D7BB9D5A72 /* package */,
+				F79EE59899544A67B12CB8F2 /* ALL_BUILD */,
+				8BCD176C8FFF461D905EA9CD /* RUN_TESTS */,
+				07B3C656C0D34C63B6C5A52C /* SDWebImage_Static */,
+				DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */,
+				FC9CD7A99A534051BEB8AC72 /* install */,
+				A3F400094DE749EEB922DD52 /* package */,
 			);
 		};
 /* End PBXProject section */
@@ -349,19 +349,19 @@
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/Source/ui_ios/SDWebImage
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/Source/ui_ios/SDWebImage
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/Source/ui_ios/SDWebImage
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/Source/ui_ios/SDWebImage
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -395,85 +395,19 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
-fi
-";
-			showEnvVarsInLog = 0;
-		};
-		57E276BFE6E8DCEADB70A216 /* Generate CMakeFiles/ZERO_CHECK */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ZERO_CHECK";
-			outputPaths = (
-../cmake/Source/ui_ios/SDWebImage/CMakeFiles/ZERO_CHECK			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/Source/ui_ios/SDWebImage
-  make -f ../cmake/Source/ui_ios/SDWebImage/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/Source/ui_ios/SDWebImage
-  make -f ../cmake/Source/ui_ios/SDWebImage/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/Source/ui_ios/SDWebImage
-  make -f ../cmake/Source/ui_ios/SDWebImage/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/Source/ui_ios/SDWebImage
-  make -f ../cmake/Source/ui_ios/SDWebImage/CMakeScripts/ReRunCMake.make
-fi
-";
-			showEnvVarsInLog = 0;
-		};
-		65A7392DA9823182F0726A8D /* Generate CMakeFiles/ALL_BUILD */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ALL_BUILD";
-			outputPaths = (
-../cmake/Source/ui_ios/SDWebImage/CMakeFiles/ALL_BUILD			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/Source/ui_ios/SDWebImage
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/Source/ui_ios/SDWebImage
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/Source/ui_ios/SDWebImage
-  echo Build\\ all\\ projects
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/Source/ui_ios/SDWebImage
-  echo Build\\ all\\ projects
+  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -523,6 +457,39 @@ exit 0";
 exit 0";
 			showEnvVarsInLog = 0;
 		};
+		91A3459481C6D33A6036A14A /* Generate CMakeFiles/ALL_BUILD */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ALL_BUILD";
+			outputPaths = (
+../cmake/Source/ui_ios/SDWebImage/CMakeFiles/ALL_BUILD			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Source/ui_ios/SDWebImage
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Source/ui_ios/SDWebImage
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Source/ui_ios/SDWebImage
+  echo Build\\ all\\ projects
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Source/ui_ios/SDWebImage
+  echo Build\\ all\\ projects
+fi
+";
+			showEnvVarsInLog = 0;
+		};
 		93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -537,19 +504,19 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/Source/ui_ios/SDWebImage
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/Source/ui_ios/SDWebImage
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/Source/ui_ios/SDWebImage
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/Source/ui_ios/SDWebImage
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -569,104 +536,99 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
+		C4176D3ACBB5632AA4C3B3C7 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+../cmake/Source/ui_ios/SDWebImage/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd ../cmake/Source/ui_ios/SDWebImage
+  make -f ../cmake/Source/ui_ios/SDWebImage/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd ../cmake/Source/ui_ios/SDWebImage
+  make -f ../cmake/Source/ui_ios/SDWebImage/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd ../cmake/Source/ui_ios/SDWebImage
+  make -f ../cmake/Source/ui_ios/SDWebImage/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd ../cmake/Source/ui_ios/SDWebImage
+  make -f ../cmake/Source/ui_ios/SDWebImage/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		5D973A10813D4070A848922A /* Sources */ = {
+		A287CF6EE5E84858B40BC1F2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				91FB10F7368A4361AAE0344E /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m */,
-				93B6535AC5CF4E0D882DBA00 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m */,
-				137C6CAF002D407CB13D779E /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m */,
-				DC5AF66793C54C7193084F3C /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m */,
-				66E6ABA24F9545EF8A8A2605 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m */,
-				C1088063C8F44A64BC520D1F /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m */,
-				FD6468FAF0CD4D51B126FDC1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m */,
-				1734A97811BC4AA7A6031F08 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m */,
-				7C24A9ECFCC64C7EABEAD716 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m */,
-				3BE982DA26844E27B07D666A /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m */,
-				BA0BBB8148B949F88E8AAEF9 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m */,
-				8D329F8DF6CE4667866D79A9 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m */,
-				E4D8DC32818146C39066A09A /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m */,
-				3D4ABB1F9FD94A7C873F8A7F /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m */,
-				02C21939357B46D494DDB3C6 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m */,
-				367507E20E844338BB1D2F49 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m */,
-				BBC382590D4E449A99F523E1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m */,
-				631C118A8DC44AA9B9DB08E5 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m */,
+				4A32C0B491E24C359CF6B13D /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSData+ImageContentType.m */,
+				BAD0FE19B06B49B9A12D9E13 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/NSImage+WebCache.m */,
+				344E52A70F40409989B238A9 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCache.m */,
+				7AD9CA575318428F852F039B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDImageCacheConfig.m */,
+				10156CCFE2E14C7D9147374B /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageCompat.m */,
+				5E48636B2C5142DC885BED68 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDecoder.m */,
+				3339106FB7CA495296966133 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloader.m */,
+				AA288B54F70E45458196208C /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageDownloaderOperation.m */,
+				2C50895CCD314E3A84759300 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImageManager.m */,
+				751009833B8D4C97A20D388D /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/SDWebImagePrefetcher.m */,
+				7DE53EDD886F4A2DAB8ADDC1 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIButton+WebCache.m */,
+				F894D73BF65A42B2B4FA8839 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+GIF.m */,
+				0F399F00550C4C20A0BB523D /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+MultiFormat.m */,
+				FC8C585CDD48443DBFD46D28 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImage+WebP.m */,
+				3870B817649A4D07894A3CEF /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+HighlightedWebCache.m */,
+				589590961A1347E5A87FCF50 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIImageView+WebCache.m */,
+				C254EF0478EB445B93145DA3 /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCache.m */,
+				A4513A7994FF4AEC91FB57AC /* ../Play-/deps/Dependencies/SDWebImage/SDWebImage/UIView+WebCacheOperation.m */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		3AE143818C5F4A38A4CF15DA /* PBXTargetDependency */ = {
+		6C5E55DBCC3945F1AEA29E52 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 7F22BB4B24C54C32A3B2A3FF /* SDWebImage_Static */;
-			targetProxy = 9EACCBF1883C4D138B342A10 /* PBXContainerItemProxy */;
+			target = F79EE59899544A67B12CB8F2 /* ALL_BUILD */;
+			targetProxy = F3C7BE30DAE7438F977D6B4C /* PBXContainerItemProxy */;
 		};
-		4F66539DA2584AC1B513B616 /* PBXTargetDependency */ = {
+		78BD1A9EED124073A10A9860 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 813B9411ED6148CBBF6FDF45 /* ALL_BUILD */;
-			targetProxy = 7DD707CB1BE144E4966F7A2E /* PBXContainerItemProxy */;
+			target = DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */;
+			targetProxy = 08F848A7A6D64B2B81C08427 /* PBXContainerItemProxy */;
 		};
-		820E3E9AD45F460092B1DC39 /* PBXTargetDependency */ = {
+		B15C92B03D5046BF9F84A1A8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 81A7140D8C2040F2ACDF825B /* ZERO_CHECK */;
-			targetProxy = 8B9FE62C79BF42AEA5A24C48 /* PBXContainerItemProxy */;
+			target = DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */;
+			targetProxy = EF18E3CA1705494EB3C4E591 /* PBXContainerItemProxy */;
 		};
-		BF0F0EF74CCE4AEBAAE06AF0 /* PBXTargetDependency */ = {
+		BBB0FC9A9BA84338A0C116A3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 813B9411ED6148CBBF6FDF45 /* ALL_BUILD */;
-			targetProxy = 46ED5E6E965C46B893CBD387 /* PBXContainerItemProxy */;
+			target = F79EE59899544A67B12CB8F2 /* ALL_BUILD */;
+			targetProxy = 3228F1C30E884052AD3389F7 /* PBXContainerItemProxy */;
 		};
-		D53F36F7E7F64B68AA8275E7 /* PBXTargetDependency */ = {
+		CBEAEC5CC1DA490DAAB7291F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 81A7140D8C2040F2ACDF825B /* ZERO_CHECK */;
-			targetProxy = C94502636593407F8A1FE660 /* PBXContainerItemProxy */;
+			target = 07B3C656C0D34C63B6C5A52C /* SDWebImage_Static */;
+			targetProxy = C190DF5233B643FF95235E94 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0B8790DB57834284B2853523 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		19FE1BE7529D4A769B5299AD /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		1D5CF961749C4A0DB48AE448 /* Debug */ = {
+		11709F71EB10484E94B64896 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -678,154 +640,16 @@ exit 0";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 4.0;
 				BUILD_DIR = ../lib;
-			};
-			name = Debug;
-		};
-		20DD21B6544A41AAA464C45D /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = MinSizeRel;
-		};
-		2FBCBFE848DD4AD884D6EE01 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		30201E21528142959730238A /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		37D4D1F39C424D5FB475AA4F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		3FE9CCE2E00749ACB743413F /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		57E5C5E78561497CBDCA8AD9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=12.2    -x objective-c -fobjc-arc ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = SDWebImage_Static;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		728CD9F483344D29AAE29F87 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
-		7D25AB4FD62643718E0969ED /* Debug */ = {
+		1A9AB339B1344C48903947E9 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -835,16 +659,17 @@ exit 0";
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
+				PRODUCT_NAME = RUN_TESTS;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
+			name = MinSizeRel;
 		};
-		7E79597AEBD84E769EFB89C5 /* MinSizeRel */ = {
+		2CFA38D8E9134242854C6B68 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -861,54 +686,10 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		884ABF8E84CC475ABC0B7E0C /* RelWithDebInfo */ = {
+		2E4503C8905A4FBF954B9EB2 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = RelWithDebInfo;
-		};
-		9748A64DBB1B4E8D8036D5F8 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=12.2        -DNDEBUG -x objective-c -fobjc-arc ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = SDWebImage_Static;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		A0DBD8CCE70542A9B138C33F /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -918,52 +699,17 @@ exit 0";
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
+				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = RelWithDebInfo;
 		};
-		B76C69DCB92F43ABA9B1C8C3 /* Release */ = {
+		2EC2CFB12848413A81799372 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = Release;
-		};
-		B87760FEFFC24256930EAC42 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		BBBABC811E9E42A68B772CD7 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -974,72 +720,16 @@ exit 0";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		BD804C0D602B49138D71BCDF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		CE3EB9A5F77A4CAE97860762 /* Release */ = {
+		3DD105EAF6784DEE90537EE1 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		D85B988AEB8A490BBACFD810 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		E5F6B904E0E44B159BF75C1C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1054,11 +744,12 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
+			name = MinSizeRel;
 		};
-		EA1502D90D364CF7B16BE180 /* MinSizeRel */ = {
+		4497DA13A03F48BE8D742E19 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1073,11 +764,12 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = RelWithDebInfo;
 		};
-		ECB55EB54B95449183ECD2B9 /* MinSizeRel */ = {
+		5462BD254DC1401B9157A8DA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1087,35 +779,17 @@ exit 0";
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		F0067944584F4106BBC593E8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
+				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
 		};
-		F41975BADAD945D19AD0B632 /* Release */ = {
+		57FDF9B1BB1949D0933466A9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
 				
@@ -1130,7 +804,7 @@ exit 0";
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=12.2        -DNDEBUG -x objective-c -fobjc-arc ","$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=12.2 -mios-version-min=12.2        -DNDEBUG -x objective-c -fobjc-arc ","$(inherited)");
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SDWebImage_Static;
@@ -1141,9 +815,10 @@ exit 0";
 			};
 			name = Release;
 		};
-		FB63827BCAF44F989FF0A895 /* Release */ = {
+		5C1DA08CAF5F4F16AD187060 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1158,11 +833,41 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
+			name = Debug;
 		};
-		FCAB79E0800447DD9BFF7150 /* MinSizeRel */ = {
+		7D2D1ECF0EE04EDC9BD37609 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=12.2 -mios-version-min=12.2    -x objective-c -fobjc-arc ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = SDWebImage_Static;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		86C1C6E6EB9445D284347FE9 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = arm64;
 				COMBINE_HIDPI_IMAGES = YES;
 				
@@ -1177,7 +882,7 @@ exit 0";
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (" -mios-version-min=12.2     -DNDEBUG -x objective-c -fobjc-arc ","$(inherited)");
+				OTHER_CFLAGS = (" -mios-version-min=12.2 -mios-version-min=12.2     -DNDEBUG -x objective-c -fobjc-arc ","$(inherited)");
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = SDWebImage_Static;
@@ -1188,87 +893,409 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
+		87353C5CC32943159442BD65 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		8C601AC67C214ABDB1B69905 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
+			};
+			name = MinSizeRel;
+		};
+		8E9C40DA7B81452C96F8CC64 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		A4A64003EBBE4322B0291D9C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		A56D513EF27747CEA73D71F4 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Dependencies/build_cmake/SDWebImage/../../SDWebImage","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (" -mios-version-min=12.2 -mios-version-min=12.2        -DNDEBUG -x objective-c -fobjc-arc ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = SDWebImage_Static;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		B3408DC1556E4862A184F813 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		B91795A087924D77B11ECD0A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
+			};
+			name = Debug;
+		};
+		B92310A695B9462DB0818CBB /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
+			};
+			name = RelWithDebInfo;
+		};
+		C5FB63C69EC34E0D8D70815C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		C5FBB8059C5E45038A51F691 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		D24E38EF5C8443C59DD2F9EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E0E82F621BA549929D6E1ACC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		EF4B27DE220347FB825AEC6A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		F244FFC3C1F04190B6A4172A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		FA2C4E70BC46450681039972 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		FD0DEA5DE6FD489E828F334F /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0C1705B29C934DF68A06CAC7 /* Build configuration list for PBXNativeTarget "SDWebImage_Static" */ = {
+		3181164FB83C49949894068C /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				57E5C5E78561497CBDCA8AD9 /* Debug */,
-				F41975BADAD945D19AD0B632 /* Release */,
-				FCAB79E0800447DD9BFF7150 /* MinSizeRel */,
-				9748A64DBB1B4E8D8036D5F8 /* RelWithDebInfo */,
+				C5FB63C69EC34E0D8D70815C /* Debug */,
+				A4A64003EBBE4322B0291D9C /* Release */,
+				FA2C4E70BC46450681039972 /* MinSizeRel */,
+				F244FFC3C1F04190B6A4172A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		30D1B05F2EC2453DA74D715D /* Build configuration list for PBXAggregateTarget "package" */ = {
+		529BA792AA1F4148A6DCA76D /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				37D4D1F39C424D5FB475AA4F /* Debug */,
-				E5F6B904E0E44B159BF75C1C /* Release */,
-				BBBABC811E9E42A68B772CD7 /* MinSizeRel */,
-				30201E21528142959730238A /* RelWithDebInfo */,
+				5C1DA08CAF5F4F16AD187060 /* Debug */,
+				5462BD254DC1401B9157A8DA /* Release */,
+				2CFA38D8E9134242854C6B68 /* MinSizeRel */,
+				2E4503C8905A4FBF954B9EB2 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		31372C5A12B64D1B84FBDACC /* Build configuration list for PBXProject "SDWebImage" */ = {
+		5AE0CC695F9E45C8BDB5517E /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1D5CF961749C4A0DB48AE448 /* Debug */,
-				B76C69DCB92F43ABA9B1C8C3 /* Release */,
-				20DD21B6544A41AAA464C45D /* MinSizeRel */,
-				884ABF8E84CC475ABC0B7E0C /* RelWithDebInfo */,
+				C5FBB8059C5E45038A51F691 /* Debug */,
+				8E9C40DA7B81452C96F8CC64 /* Release */,
+				1A9AB339B1344C48903947E9 /* MinSizeRel */,
+				EF4B27DE220347FB825AEC6A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		3DCDA23A4C9D422899F8AFBA /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		5AFFBF5582F54F86B328768C /* Build configuration list for PBXProject "SDWebImage" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				2FBCBFE848DD4AD884D6EE01 /* Debug */,
-				FB63827BCAF44F989FF0A895 /* Release */,
-				7E79597AEBD84E769EFB89C5 /* MinSizeRel */,
-				3FE9CCE2E00749ACB743413F /* RelWithDebInfo */,
+				B91795A087924D77B11ECD0A /* Debug */,
+				11709F71EB10484E94B64896 /* Release */,
+				8C601AC67C214ABDB1B69905 /* MinSizeRel */,
+				B92310A695B9462DB0818CBB /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		87CDE61470BA40CFBB65CFCC /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		970D9E01C1C448CC9904220F /* Build configuration list for PBXNativeTarget "SDWebImage_Static" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0B8790DB57834284B2853523 /* Debug */,
-				CE3EB9A5F77A4CAE97860762 /* Release */,
-				EA1502D90D364CF7B16BE180 /* MinSizeRel */,
-				B87760FEFFC24256930EAC42 /* RelWithDebInfo */,
+				7D2D1ECF0EE04EDC9BD37609 /* Debug */,
+				57FDF9B1BB1949D0933466A9 /* Release */,
+				86C1C6E6EB9445D284347FE9 /* MinSizeRel */,
+				A56D513EF27747CEA73D71F4 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C47824CE51A44B62AB912690 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		B677A6F02B7843138259A4B0 /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7D25AB4FD62643718E0969ED /* Debug */,
-				728CD9F483344D29AAE29F87 /* Release */,
-				19FE1BE7529D4A769B5299AD /* MinSizeRel */,
-				D85B988AEB8A490BBACFD810 /* RelWithDebInfo */,
+				2EC2CFB12848413A81799372 /* Debug */,
+				E0E82F621BA549929D6E1ACC /* Release */,
+				3DD105EAF6784DEE90537EE1 /* MinSizeRel */,
+				87353C5CC32943159442BD65 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		C63B88EFE2954CA190D84FDD /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		CA0A462EB6ED4D329AF95653 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BD804C0D602B49138D71BCDF /* Debug */,
-				F0067944584F4106BBC593E8 /* Release */,
-				ECB55EB54B95449183ECD2B9 /* MinSizeRel */,
-				A0DBD8CCE70542A9B138C33F /* RelWithDebInfo */,
+				D24E38EF5C8443C59DD2F9EE /* Debug */,
+				B3408DC1556E4862A184F813 /* Release */,
+				FD0DEA5DE6FD489E828F334F /* MinSizeRel */,
+				4497DA13A03F48BE8D742E19 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 76AFC6FA4ABD4CF482148847 /* Project object */;
+	rootObject = 2C86BA3BF9E4410D842030CF /* Project object */;
 }

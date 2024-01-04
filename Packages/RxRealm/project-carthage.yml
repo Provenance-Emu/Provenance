@@ -1,0 +1,214 @@
+name: RxRealm
+options:
+  minimumXcodeGenVersion: "2.15.1"
+  developmentLanguage: en
+  usesTabs: false
+  indentWidth: 2
+  tabWidth: 2
+  xcodeVersion: "1220"
+  deploymentTarget:
+    iOS: "11.0"
+    macOS: "10.10"
+    tvOS: "9.0"
+    watchOS: "3.0"
+  carthageExecutablePath: "`which carthage`"
+  defaultConfig: "Release"
+configs:
+  Debug: debug
+  Release: release
+attributes:
+  ORGANIZATIONNAME: RxSwiftCommunity
+schemes:
+  RxRealm iOS:
+    scheme: {}
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        RxRealm iOS: all
+        RxRealmTests iOS: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - RxRealmTests iOS
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+  RxRealm macOS:
+    scheme: {}
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        RxRealm macOS: all
+        RxRealmTests macOS: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - RxRealmTests macOS
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+  RxRealm watchOS:
+    scheme: {}
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        RxRealm watchOS: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+  RxRealm tvOS:
+    scheme: {}
+    build:
+      parallelizeBuild: true
+      buildImplicitDependencies: true
+      targets:
+        RxRealm tvOS: all
+        RxRealmTests tvOS: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - RxRealmTests tvOS
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
+      revealArchiveInOrganizer: true
+targets:
+  RxRealm iOS:
+    settings:
+      PRODUCT_NAME: RxRealm
+      PRODUCT_BUNDLE_IDENTIFIER: RxSwiftCommunity.RxRealm.RxRealm-iOS
+      BUILD_LIBRARY_FOR_DISTRIBUTION: YES
+      SKIP_INSTALL: NO
+      SUPPORTS_MACCATALYST: NO
+    platform: iOS
+    type: framework
+    sources:
+      - Sources/RxRealm
+    dependencies:
+      - carthage: Realm
+      - carthage: RealmSwift
+      - carthage: RxCocoa
+      - carthage: RxSwift
+      - carthage: RxRelay
+  RxRealm macOS:
+    settings:
+      PRODUCT_NAME: RxRealm
+      PRODUCT_BUNDLE_IDENTIFIER: RxSwiftCommunity.RxRealm.RxRealm-macOS
+      BUILD_LIBRARY_FOR_DISTRIBUTION: YES
+      SKIP_INSTALL: NO
+    platform: macOS
+    type: framework
+    sources:
+      - Sources/RxRealm
+    dependencies:
+      - carthage: Realm
+      - carthage: RealmSwift
+      - carthage: RxCocoa
+      - carthage: RxSwift
+      - carthage: RxRelay
+  RxRealm tvOS:
+    settings:
+      PRODUCT_NAME: RxRealm
+      PRODUCT_BUNDLE_IDENTIFIER: RxSwiftCommunity.RxRealm.RxRealm-tvOS
+      BUILD_LIBRARY_FOR_DISTRIBUTION: YES
+      SKIP_INSTALL: NO
+    platform: tvOS
+    type: framework
+    sources:
+      - Sources/RxRealm
+    dependencies:
+      - carthage: Realm
+      - carthage: RealmSwift
+      - carthage: RxCocoa
+      - carthage: RxSwift
+      - carthage: RxRelay
+  RxRealm watchOS:
+    settings:
+      PRODUCT_NAME: RxRealm
+      PRODUCT_BUNDLE_IDENTIFIER: RxSwiftCommunity.RxRealm.RxRealm-watchOS
+      BUILD_LIBRARY_FOR_DISTRIBUTION: YES
+      SKIP_INSTALL: NO
+    platform: watchOS
+    type: framework
+    sources:
+      - Sources/RxRealm
+    dependencies:
+      - carthage: Realm
+      - carthage: RealmSwift
+      - carthage: RxCocoa
+      - carthage: RxSwift
+      - carthage: RxRelay
+  RxRealmTests iOS:
+    platform: iOS
+    type: bundle.unit-test
+    sources:
+      - path: Tests/RxRealmTests
+    dependencies:
+      - target: RxRealm iOS
+      - carthage: Realm
+      - carthage: RealmSwift
+      - carthage: RxCocoa
+      - carthage: RxSwift
+      - carthage: RxRelay
+      - carthage: RxBlocking
+      - carthage: RxTest
+  RxRealmTests macOS:
+    platform: macOS
+    type: bundle.unit-test
+    settings:
+      CODE_SIGN_IDENTITY: ""
+    sources:
+      - path: Tests/RxRealmTests
+    dependencies:
+      - target: RxRealm macOS
+      - carthage: Realm
+      - carthage: RealmSwift
+      - carthage: RxCocoa
+      - carthage: RxSwift
+      - carthage: RxRelay
+      - carthage: RxBlocking
+      - carthage: RxTest
+  RxRealmTests tvOS:
+    platform: tvOS
+    type: bundle.unit-test
+    sources:
+      - path: Tests/RxRealmTests
+    dependencies:
+      - target: RxRealm tvOS
+      - carthage: Realm
+      - carthage: RealmSwift
+      - carthage: RxCocoa
+      - carthage: RxSwift
+      - carthage: RxRelay
+      - carthage: RxBlocking
+      - carthage: RxTest
+

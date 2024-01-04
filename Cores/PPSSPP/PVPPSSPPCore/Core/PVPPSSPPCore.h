@@ -38,13 +38,13 @@
 	int8_t tfOption;
 	int8_t tutypeOption;
 	int8_t msaa;
+    int8_t volume;
     BOOL stretchOption;
 	BOOL fastMemory;
 	float sampleRate;
 	BOOL isNTSC;
 	BOOL isPaused;
 	BOOL _isInitialized;
-    BOOL isViewReady;
 	UIViewController *m_view_controller;
 	EAGLContext* m_gl_context;
 	CAMetalLayer* m_metal_layer;
@@ -62,11 +62,14 @@
 @property (nonatomic, assign) int8_t tuOption;
 @property (nonatomic, assign) int8_t tutypeOption;
 @property (nonatomic, assign) int8_t tfOption;
+@property (nonatomic, assign) int volume;
 @property (nonatomic, assign) bool stretchOption;
 @property (nonatomic, assign) int8_t msaa;
 @property (nonatomic, assign) bool fastMemory;
 @property (nonatomic, assign) bool isPaused;
 @property (nonatomic, assign) bool isViewReady;
+@property (nonatomic, assign) bool isGFXReady;
+@property (nonatomic, assign) int8_t buttonPref;
 - (void) runVM;
 - (void) stopVM:(bool)deinitViews;
 - (void) setupVideo;
@@ -79,6 +82,7 @@
 - (void) gamepadEventOnPad:(int)player button:(int)button action:(int)action;
 - (void) gamepadEventIrRecenter:(int)action;
 - (BOOL) setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
+-(void) optionUpdated:(NSNotification *)notification;
 @end
 @interface CLLocationManager : NSObject
 @end

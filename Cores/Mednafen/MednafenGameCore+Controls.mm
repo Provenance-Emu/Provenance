@@ -245,6 +245,29 @@
 }
 
 #pragma mark SS Sega Saturn
+- (void)didMoveSaturnJoystickDirection:(PVSaturnButton)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
+    static float xAxis=0;
+    static float yAxis=0;
+    static float axisRounding = 0.66;
+    yAxis =  yValue > axisRounding ? 1.0 : yValue < -axisRounding ? -1.0 : 0;
+    xAxis =  xValue > axisRounding ? 1.0 : xValue < -axisRounding ? -1.0 : 0;
+    if (yAxis < 0)
+        [self didPushSSButton:PVSaturnButtonDown forPlayer:player];
+    else if (yAxis > 0)
+        [self didPushSSButton:PVSaturnButtonUp forPlayer:player];
+    else {
+        [self didReleaseSSButton:PVSaturnButtonDown forPlayer:player];
+        [self didReleaseSSButton:PVSaturnButtonUp forPlayer:player];
+    }
+    if (xAxis > 0)
+        [self didPushSSButton:PVSaturnButtonRight forPlayer:player];
+    else if (xAxis < 0)
+        [self didPushSSButton:PVSaturnButtonLeft forPlayer:player];
+    else {
+        [self didReleaseSSButton:PVSaturnButtonRight forPlayer:player];
+        [self didReleaseSSButton:PVSaturnButtonLeft forPlayer:player];
+    }
+}
 - (void)didPushSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player
 {
     //    int mappedButton = SSMap[button];
@@ -298,30 +321,54 @@
     inputBuffer[player][0] &= ~(1 << PSXMap[button]);
 }
 
-- (void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player {
+- (void)didMovePSXJoystickDirection:(PVPSXButton)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSInteger)player {
     // TODO
     // Fix the analog circle-to-square axis range conversion by scaling between a value of 1.00 and 1.50
     // We cannot use MDFNI_SetSetting("psx.input.port1.dualshock.axis_scale", "1.33") directly.
     // Background: https://mednafen.github.io/documentation/psx.html#Section_analog_range
     // double scaledValue = MIN(floor(0.5 + value * 1.33), 32767); // 30712 / cos(2*pi/8) / 32767 = 1.33
+    float up = yValue > 0 ? fabs(yValue) : 0.0;
+    float down = yValue < 0 ? fabs(yValue) : 0.0;
+    float left = xValue < 0 ? fabs(xValue) : 0.0;
+    float right = xValue > 0 ? fabs(xValue) : 0.0;
     
-    uint16 modifiedValue = value * 32767;
+    up = fmin(up, 1.0);
+    down = fmin(down, 1.0);
+    left = fmin(left, 1.0);
+    right = fmin(right, 1.0);
+
+    up = fmax(up, 0.0);
+    down = fmax(down, 0.0);
+    left = fmax(left, 0.0);
+    right = fmax(right, 0.0);
     
-    int analogNumber = PSXMap[button] - 17;
-    int address = analogNumber;
+    NSDictionary *buttons = @{ @(PVPSXButtonLeftAnalogUp):@(up),
+                               @(PVPSXButtonLeftAnalogDown):@(down),
+                               @(PVPSXButtonLeftAnalogLeft):@(left),
+                               @(PVPSXButtonLeftAnalogRight):@(right) };
     
-    if (analogNumber % 2 != 0) {
-        axis[analogNumber] = -1 * modifiedValue;
-        address -= 1;
+    for (NSNumber *key in buttons) {
+        int button = [(NSNumber *)key intValue];
+        float value = [(NSNumber *)[buttons objectForKey:key] floatValue];
+        
+        uint16 modifiedValue = value * 32767;
+        
+        int analogNumber = PSXMap[button] - 17;
+        int address = analogNumber;
+        
+        if (analogNumber % 2 != 0) {
+            axis[analogNumber] = -1 * modifiedValue;
+            address -= 1;
+        }
+        else {
+            axis[analogNumber] = modifiedValue;
+        }
+        
+        uint16 actualValue = 32767 + axis[analogNumber] + axis[analogNumber ^ 1];
+        
+        uint8 *buf = (uint8 *)inputBuffer[player];
+        Mednafen::MDFN_en16lsb(&buf[3]+address, (uint16) actualValue);
     }
-    else {
-        axis[analogNumber] = modifiedValue;
-    }
-    
-    uint16 actualValue = 32767 + axis[analogNumber] + axis[analogNumber ^ 1];
-    
-    uint8 *buf = (uint8 *)inputBuffer[player];
-    Mednafen::MDFN_en16lsb(&buf[3]+address, (uint16) actualValue);
 }
 
 #pragma mark Virtual Boy

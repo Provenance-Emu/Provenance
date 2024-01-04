@@ -121,11 +121,22 @@ public extension PVGame {
 
     var discCount: Int {
         if isCD {
-            return relatedFiles.filter({ PVEmulatorConfiguration.supportedCDFileExtensions.contains($0.pathExtension.lowercased()) }).count
+            return relatedFiles.filter({ $0.pathExtension.lowercased() != "m3u" }).filter({ PVEmulatorConfiguration.supportedCDFileExtensions.contains($0.pathExtension.lowercased()) }).count
         } else {
             return 0
         }
     }
+    var diskCount: Int {
+        return relatedFiles
+            .filter({ $0.pathExtension.lowercased() != "m3u" })
+            .filter({
+                if let extensions=RomDatabase.sharedInstance.getSystemCache()[self.systemIdentifier]?.supportedExtensions {
+                    return extensions.contains($0.pathExtension.lowercased())
+                }
+                return false
+            }).count
+    }
+
 }
 
 extension PVGame: Filed, LocalFileProvider {}
