@@ -221,7 +221,6 @@ final class CoreOptionsViewController: QuickTableViewController {
 //                        cell.textLabel?.text = value
                                                              },
                                                              action: { cell in
-                                                                 let currentValue: String = value // self.core.valueForOption(String.self, option.key) ?? option.defaultValue as? String ?? ""
                                                                  let actionController = UIAlertController(title: display.title, message: nil, preferredStyle: .actionSheet)
                         actionController.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
                         actionController.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view

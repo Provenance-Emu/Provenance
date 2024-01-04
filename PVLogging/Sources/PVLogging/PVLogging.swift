@@ -163,9 +163,6 @@ public final class PVLogging: NSObject {
      Write local information about the device to the file log
      */
     public func writeLocalInfo() {
-        let systemInfo: utsname = utsname()
-        // uname(&systemInfo)
-
         let appName = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "Unknown"
         let appId = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String ?? "Unknown"
         let buildVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
@@ -177,11 +174,6 @@ public final class PVLogging: NSObject {
         let gitTag = Bundle.main.infoDictionary?["GitTag"] as? String ?? "Unknown"
         let gitDate = Bundle.main.infoDictionary?["GitDate"] as? String ?? "Unknown"
 
-#if canImport(UIKit)
-        let systemName = UIDevice.current.systemName ?? "Unknown"
-#else
-        let systemName = "macOS"
-#endif
         var info: String = """
         \n---------------- App Load ----------------------\n
         Load date: \(Date())
