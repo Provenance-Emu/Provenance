@@ -69,10 +69,10 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T: SliderCell {
 
     // MARK: - Row
 
-    /// The title is disabled in `SliderRow`.
+    /// The text of the row.
     public let text: String
 
-    /// The subtitle is disabled in `SliderRow`.
+    /// The detail text of the row.
     public let detailText: DetailText?
 
     /// A closure that will be invoked when the `switchValue` is changed.
@@ -83,12 +83,16 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T: SliderCell {
     /// The type of the table view cell to display the row.
     public let cellType: UITableViewCell.Type = T.self
 
-    /// The reuse identifier of the table view cell to display the row. The default value is **SliderCell**.
-    public let cellReuseIdentifier: String = "SliderCell" // T.reuseIdentifier
-
-    /// The cell style is `.default`.
-    public let cellStyle: UITableViewCell.CellStyle = .default
-
+    /// Returns the reuse identifier of the table view cell to display the row.
+    public var cellReuseIdentifier: String {
+      return T.reuseIdentifier + (detailText?.style.stringValue ?? "")
+    }
+    
+    /// Returns the table view cell style for the specified detail text.
+    public var cellStyle: UITableViewCell.CellStyle {
+      return detailText?.style ?? .default
+    }
+    
     /// The minimum value icon of the slider.
     public var icon: Icon? {
         return nil
@@ -110,6 +114,7 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T: SliderCell {
     public static func == (lhs: SliderRow, rhs: SliderRow) -> Bool {
         return
             lhs.text == rhs.text &&
+            lhs.detailText == rhs.detailText &&
             lhs.value == rhs.value &&
             lhs.icon == rhs.icon
     }

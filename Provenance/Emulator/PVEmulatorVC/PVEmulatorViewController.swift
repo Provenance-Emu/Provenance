@@ -245,9 +245,6 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         fpsTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { [weak self] (_: Timer) -> Void in
             guard let `self` = self else { return }
-            let green = [NSAttributedString.Key.foregroundColor: UIColor.green]
-            let red = [NSAttributedString.Key.foregroundColor: UIColor.red]
-//            let white = [NSAttributedString.Key.foregroundColor: UIColor.white]
 
             let coreSpeed = self.core.renderFPS/self.core.frameInterval * 100
             let drawTime =  self.gpuViewController.timeSinceLastDraw * 1000

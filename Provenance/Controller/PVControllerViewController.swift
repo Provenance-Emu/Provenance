@@ -861,7 +861,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	func layoutLeftShoulderButtons(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let xPadding: CGFloat = view.safeAreaInsets.left + 10
-        let yPadding: CGFloat = view.safeAreaInsets.bottom + 10
 		var leftShoulderFrame: CGRect!
 		if dPad != nil {
             leftShoulderFrame = CGRect(x: xPadding, y: (dPad?.frame.minY)!, width: controlSize.width, height: controlSize.height)
@@ -991,7 +990,6 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	func layoutStartButton(control: ControlLayoutEntry) {
 		let controlSize: CGSize = NSCoder.cgSize(for: control.PVControlSize)
         let yPadding: CGFloat = view.safeAreaInsets.bottom
-        let xPadding: CGFloat = view.safeAreaInsets.right
 		let spacing: CGFloat = 20
 		var startFrame = CGRect(x: (view.frame.size.width / 2) + controlSize.width + (spacing / 2),
 								y: view.frame.height - yPadding - controlSize.height,
