@@ -161,6 +161,7 @@
 		551DA2FE2ABF8006004BA3E9 /* LaunchImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FD2ABF8006004BA3E9 /* LaunchImage.png */; };
 		555454432AC09998006A065F /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; };
 		555454442AC09998006A065F /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; };
+		55B660D92AC33C7D00718B7A /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		930498CF2A93073800BF257F /* RadioSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0A276B470B00D85327 /* RadioSection.swift */; };
 		930498D02A93073800BF257F /* PVSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225B21D32FCC0077E86F /* PVSliderCell.swift */; };
 		930498D12A93073800BF257F /* PVSaveStatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB108206EE8A700A1F942 /* PVSaveStatesViewController.swift */; };
@@ -2046,6 +2047,7 @@
 				B3FAC99B292B476E005E8B11 /* PVLibRetro.framework in Embed Frameworks */,
 				B3FAC9AD292B477E005E8B11 /* PVOpera.framework in Embed Frameworks */,
 				93A728642AAF073B0052B279 /* PVLogging in Embed Frameworks */,
+				55B660D92AC33C7D00718B7A /* (null) in Embed Frameworks */,
 				B3FAC9AB292B477D005E8B11 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
 				B3FAC9A5292B4778005E8B11 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B3FAC999292B476C005E8B11 /* PVGME.framework in Embed Frameworks */,
