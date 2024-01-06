@@ -27,11 +27,13 @@ final class PVApplication: UIApplication {
     }
 }
 
+#if !os(tvOS)
 final class PVUINavigationController: UINavigationController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
 }
+#endif
 
 final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     internal var window: UIWindow?
