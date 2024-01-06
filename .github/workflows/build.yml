@@ -31,6 +31,7 @@ jobs:
           - Provenance-Release
           - ProvenanceTV-Release
           - "Provenance-XL Release"
+          - "Provenance-Lite Release"
           - Provenance-UnderDevelopment
         include:
           - target: Provenance-Release
@@ -48,6 +49,11 @@ jobs:
             scheme: "Provenance-XL Release"
             APP_NAME: Provenance-XL
             IPA_NAME: Provenance-XL
+          - target: "Provenance-Lite Release"
+            sdk: iphoneos
+            scheme: "Provenance-Lite Release"
+            APP_NAME: Provenance-Lite
+            IPA_NAME: Provenance-Lite
           - target: Provenance-UnderDevelopment
             sdk: iphoneos
             scheme: Provenance-UnderDevelopment
