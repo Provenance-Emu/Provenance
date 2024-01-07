@@ -33,13 +33,10 @@ final class PVConflictViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        #if os(tvOS)
-            splitViewController?.title = "Solve Conflicts"
-        #else
+        title = "Solve Conflicts"
+        #if !os(tvOS)
             let currentTableview = tableView!
             tableView = UITableView(frame: currentTableview.frame, style: currentTableview.style)
-
-            title = "Solve Conflicts"
             tableView.separatorColor = UIColor.clear
         #endif
 
