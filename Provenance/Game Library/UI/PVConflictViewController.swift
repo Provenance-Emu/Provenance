@@ -49,7 +49,7 @@ final class PVConflictViewController: UITableViewController {
         let rows = conflictsController.conflicts
             .map({ conflicts -> [Row] in
                 if conflicts.isEmpty {
-                    return [.empty(title: ""), .empty(title: ""), .empty(title: "No Conflicts…")]
+                    return [.empty(title: "No Conflicts…")]
                 } else {
                     return conflicts.map { .conflict($0) }
                 }
