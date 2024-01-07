@@ -589,7 +589,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             .subscribe(onNext: { hasConflicts in
                 self.updateConflictsButton(hasConflicts)
                 if hasConflicts {
-                    self.showConflictsAlert()
+                    DispatchQueue.main.async {
+                        self.showConflictsAlert()
+                    }
                 }
             })
             .disposed(by: disposeBag)
