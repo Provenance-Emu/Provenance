@@ -84,12 +84,7 @@ final class PVConflictViewController: UITableViewController {
                     }
                 })
                 .bind(onNext: { conflict, indexPath in
-                    // Delete file
-                    do {
-                        try FileManager.default.removeItem(at: conflict.path)
-                    } catch {
-                        ELOG(error.localizedDescription)
-                    }
+                    self.conflictsController.deleteConflict(path: conflict.path)
                     self.tableView.reloadData()
                 })
             .disposed(by: disposeBag)
