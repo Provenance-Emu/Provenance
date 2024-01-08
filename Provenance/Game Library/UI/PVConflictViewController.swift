@@ -33,13 +33,10 @@ final class PVConflictViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        #if os(tvOS)
-            splitViewController?.title = "Solve Conflicts"
-        #else
+        title = "Solve Conflicts"
+        #if !os(tvOS)
             let currentTableview = tableView!
             tableView = UITableView(frame: currentTableview.frame, style: currentTableview.style)
-
-            title = "Solve Conflicts"
             tableView.separatorColor = UIColor.clear
         #endif
 
@@ -52,7 +49,7 @@ final class PVConflictViewController: UITableViewController {
         let rows = conflictsController.conflicts
             .map({ conflicts -> [Row] in
                 if conflicts.isEmpty {
-                    return [.empty(title: ""), .empty(title: ""), .empty(title: "No Conflicts…")]
+                    return [.empty(title: "No Conflicts…")]
                 } else {
                     return conflicts.map { .conflict($0) }
                 }
@@ -68,6 +65,7 @@ final class PVConflictViewController: UITableViewController {
                 cell.textLabel?.text = title
                 cell.textLabel?.textAlignment = .center
                 cell.accessoryType = .none
+                cell.isUserInteractionEnabled = false
             }
         }
         .disposed(by: disposeBag)
@@ -86,12 +84,7 @@ final class PVConflictViewController: UITableViewController {
                     }
                 })
                 .bind(onNext: { conflict, indexPath in
-                    // Delete file
-                    do {
-                        try FileManager.default.removeItem(at: conflict.path)
-                    } catch {
-                        ELOG(error.localizedDescription)
-                    }
+                    self.conflictsController.deleteConflict(path: conflict.path)
                     self.tableView.reloadData()
                 })
             .disposed(by: disposeBag)
@@ -144,18 +137,6 @@ final class PVConflictViewController: UITableViewController {
     @objc func dismissMe() {
         dismiss(animated: true) { () -> Void in }
     }
-
-    #if os(tvOS)
-        override func tableView(_ tableView: UITableView, canFocusRowAt indexPath: IndexPath) -> Bool {
-            let row: Row = try! tableView.rx.model(at: indexPath)
-            switch row {
-            case .conflict:
-                return true
-            case .empty:
-                return false
-            }
-        }
-    #endif
 }
 
 extension PVConflictViewController {
