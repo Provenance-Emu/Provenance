@@ -65,6 +65,7 @@ final class PVConflictViewController: UITableViewController {
                 cell.textLabel?.text = title
                 cell.textLabel?.textAlignment = .center
                 cell.accessoryType = .none
+                cell.isUserInteractionEnabled = false
             }
         }
         .disposed(by: disposeBag)
@@ -141,18 +142,6 @@ final class PVConflictViewController: UITableViewController {
     @objc func dismissMe() {
         dismiss(animated: true) { () -> Void in }
     }
-
-    #if os(tvOS)
-        override func tableView(_ tableView: UITableView, canFocusRowAt indexPath: IndexPath) -> Bool {
-            let row: Row = try! tableView.rx.model(at: indexPath)
-            switch row {
-            case .conflict:
-                return true
-            case .empty:
-                return false
-            }
-        }
-    #endif
 }
 
 extension PVConflictViewController {
