@@ -90,6 +90,14 @@ jobs:
       - name: Install dependencies
         run: brew install ldid
 
+      - name: Cache DerivedData
+        uses: irgaly/xcode-cache@v1
+        with:
+          key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
+          restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+          deriveddata-directory: DerivedData
+          sourcepackages-directory: SourcePackages
+
       - name: Build Provenance
         run: |
           xcodebuild -configuration Release -workspace Provenance.xcworkspace -scheme "${{ matrix.scheme }}" -sdk ${{ matrix.sdk }} archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=S32Z3HMYVQ ORG_IDENTIFIER=org.provenance-emu | xcpretty && exit ${PIPESTATUS[0]}
