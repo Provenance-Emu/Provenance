@@ -20,7 +20,7 @@
 			<key>CFBundleTypeName</key>
 			<string>ROM</string>
 			<key>LSHandlerRank</key>
-			<string>Owner</string>
+			<string>Default</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>com.provenance.rom</string>
@@ -284,13 +284,13 @@
 	</array>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
-        <key>UTExportedTypeDeclarations</key>
+	<key>UTExportedTypeDeclarations</key>
 	<array>
-	    <dict>
-        <key>public.filename-extension</key>
-				<array>
-					<string>svs</string>
-				</array>
+		<dict>
+			<key>public.filename-extension</key>
+			<array>
+				<string>svs</string>
+			</array>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.data</string>
