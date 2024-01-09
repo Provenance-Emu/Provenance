@@ -32,9 +32,6 @@ let PVGameLibraryCollectionViewGamesCellIdentifier = "RecentlyPlayedCollectionCe
 
 let PVRequiresMigrationKey = "PVRequiresMigration"
 
-// should we use the "new" context menus added in iOS 13, or use an action sheet
-let useModernContextMenus = true
-
 // For Obj-C
 public extension NSNotification {
     @objc
@@ -445,12 +442,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         sections.map { !$0.isEmpty }.bind(to: libraryInfoContainerView.rx.isHidden).disposed(by: disposeBag)
         #endif
 
-        // attach long press gesture only on pre-iOS 13, and tvOS
-        if  useModernContextMenus == false || NSClassFromString("UIContextMenuConfiguration") == nil {
-            collectionView.rx.longPressed(Section.Item.self)
-                .bind(onNext: self.longPressed)
-                .disposed(by: disposeBag)
-        }
+        #if os(tvOS)
+        collectionView.rx.longPressed(Section.Item.self)
+            .bind(onNext: self.longPressed)
+            .disposed(by: disposeBag)
+        #endif
 
         collectionView.rx.setDelegate(self).disposed(by: disposeBag)
         collectionView.bounces = true
@@ -1069,8 +1065,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
     #if !os(tvOS)
     func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        guard useModernContextMenus,
-              let cell = collectionView.cellForItem(at: indexPath),
+        guard let cell = collectionView.cellForItem(at: indexPath),
               let item: Section.Item = try? collectionView.rx.model(at: indexPath)
         else { return nil }
 
