@@ -11,9 +11,9 @@
 		B324C64921921577009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64821921577009F4EDC /* libz.tbd */; };
 		B3411B50276B2FC000D85327 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B4F276B2FC000D85327 /* Foundation.framework */; };
 		B3547B5A205858B700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B59205858B600CFF7D8 /* Core.plist */; };
-		B36DE7A31D6B7558002EE3ED /* ProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* ProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B36DE7A31D6B7558002EE3ED /* PVProSystem.h in Headers */ = {isa = PBXBuildFile; fileRef = B36DE7A21D6B7558002EE3ED /* PVProSystem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B36DE7AE1D6B759C002EE3ED /* ProSystem.dat in Resources */ = {isa = PBXBuildFile; fileRef = 941F59FB17A77CC90005D7EA /* ProSystem.dat */; };
-		B36DE7C31D6B7621002EE3ED /* ProSystemGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* ProSystemGameCore.mm */; };
+		B36DE7C31D6B7621002EE3ED /* PVProSystemGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 941DFB2615B6425200C6552F /* PVProSystemGameCore.mm */; };
 		B3CA5B1426E9E3E100687B27 /* Unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 941F599417A6189D0005D7EA /* Unzip.c */; };
 		B3CA5B1526E9E3E100687B27 /* Cartridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598517A6189D0005D7EA /* Cartridge.cpp */; };
 		B3CA5B1626E9E3E100687B27 /* Database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598917A6189D0005D7EA /* Database.cpp */; };
@@ -35,7 +35,7 @@
 		B3CA5B2626E9E3E100687B27 /* ProSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F59A617A6189D0005D7EA /* ProSystem.cpp */; };
 		B3CA5B2726E9E3E100687B27 /* Bios.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 941F598317A6189D0005D7EA /* Bios.cpp */; };
 		B3CA5B4A26E9E42400687B27 /* libprosystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CA5B0A26E9E3D700687B27 /* libprosystem.a */; };
-		B3FA5D431D6B84F400060D71 /* ProSystemGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3FA5D431D6B84F400060D71 /* PVProSystemGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B5008DAD0E8BFB3E005AECAF /* PVProSystemGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,7 +62,7 @@
 
 /* Begin PBXFileReference section */
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		941DFB2615B6425200C6552F /* ProSystemGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ProSystemGameCore.mm; sourceTree = "<group>"; };
+		941DFB2615B6425200C6552F /* PVProSystemGameCore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVProSystemGameCore.mm; sourceTree = "<group>"; };
 		941F598117A6189D0005D7EA /* Archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Archive.cpp; sourceTree = "<group>"; };
 		941F598217A6189D0005D7EA /* Archive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Archive.h; sourceTree = "<group>"; };
 		941F598317A6189D0005D7EA /* Bios.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bios.cpp; sourceTree = "<group>"; };
@@ -129,17 +129,17 @@
 		B3411B51276B2FD600D85327 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3411B53276B2FE200D85327 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34CB0EA2274B16A009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B3547B59205858B600CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Core.plist; path = ProSystem/Core.plist; sourceTree = "<group>"; };
+		B3547B59205858B600CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Core.plist; path = PVProSystem/Core.plist; sourceTree = "<group>"; };
 		B36C7D5427AE227300715677 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36DE7A01D6B7558002EE3ED /* PVProSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVProSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B36DE7A21D6B7558002EE3ED /* ProSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProSystem.h; sourceTree = "<group>"; };
+		B36DE7A21D6B7558002EE3ED /* PVProSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVProSystem.h; sourceTree = "<group>"; };
 		B36DE7A41D6B7558002EE3ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B372637026E9FC7700E95488 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B372639826EA039D00E95488 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B372639C26EA03A600E95488 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS15.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3CA5B0226E9E38200687B27 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CA5B0A26E9E3D700687B27 /* libprosystem.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libprosystem.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProSystemGameCore.h; sourceTree = "<group>"; };
+		B5008DAD0E8BFB3E005AECAF /* PVProSystemGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVProSystemGameCore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,7 +171,7 @@
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
-				B36DE7A11D6B7558002EE3ED /* ProSystem */,
+				B36DE7A11D6B7558002EE3ED /* PVProSystem */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 				B324C64121921519009F4EDC /* Frameworks */,
 			);
@@ -191,8 +191,8 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				B5008DAD0E8BFB3E005AECAF /* ProSystemGameCore.h */,
-				941DFB2615B6425200C6552F /* ProSystemGameCore.mm */,
+				B5008DAD0E8BFB3E005AECAF /* PVProSystemGameCore.h */,
+				941DFB2615B6425200C6552F /* PVProSystemGameCore.mm */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -321,13 +321,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		B36DE7A11D6B7558002EE3ED /* ProSystem */ = {
+		B36DE7A11D6B7558002EE3ED /* PVProSystem */ = {
 			isa = PBXGroup;
 			children = (
-				B36DE7A21D6B7558002EE3ED /* ProSystem.h */,
+				B36DE7A21D6B7558002EE3ED /* PVProSystem.h */,
 				B36DE7A41D6B7558002EE3ED /* Info.plist */,
 			);
-			path = ProSystem;
+			path = PVProSystem;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -337,8 +337,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3FA5D431D6B84F400060D71 /* ProSystemGameCore.h in Headers */,
-				B36DE7A31D6B7558002EE3ED /* ProSystem.h in Headers */,
+				B3FA5D431D6B84F400060D71 /* PVProSystemGameCore.h in Headers */,
+				B36DE7A31D6B7558002EE3ED /* PVProSystem.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,7 +435,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B36DE7C31D6B7621002EE3ED /* ProSystemGameCore.mm in Sources */,
+				B36DE7C31D6B7621002EE3ED /* PVProSystemGameCore.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -673,7 +673,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = ProSystem/Info.plist;
+				INFOPLIST_FILE = PVProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -724,7 +724,7 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = ProSystem/Info.plist;
+				INFOPLIST_FILE = PVProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -769,7 +769,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = ProSystem/Info.plist;
+				INFOPLIST_FILE = PVProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;

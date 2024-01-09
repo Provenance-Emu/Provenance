@@ -25,7 +25,7 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ProSystemGameCore.h"
+#import "PVProSystemGameCore.h"
 
 #import <PVSupport/OERingBuffer.h>
 
@@ -41,7 +41,7 @@
 
 #import <PVSupport/PVSupport-Swift.h>
 
-#include "ProSystem.h"
+#include "PVProSystem.h"
 #include "Database.h"
 #include "Sound.h"
 #include "Palette.h"
