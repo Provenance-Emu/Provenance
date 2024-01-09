@@ -11,8 +11,8 @@ import PVLogging
 
 public extension CoreOptional { // where Self:PVEmulatorCore {
     static func storedValueForOption<T>(_: T.Type, _ option: String, andMD5 md5: String? = nil) -> T? {
-        let className = self.className
-        let key = "\(className).\(option)"
+        let className: String = "\(self.className.utf8)"
+        let key =  "\(className).\(option)"
         let md5Key: String = [className, md5, option].compactMap {$0}.joined(separator: ".")
         VLOG("Looking for either key's `\(key)` or \(md5Key) with type \(T.self)")
 
@@ -37,12 +37,12 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
     }
 
     static func setValue(_ value: Encodable?, forOption option: CoreOption, andMD5 md5: String? = nil) {
-        let className = self.className
+        let className: String = "\(self.className.utf8)"
 		let key: String
 		if let md5 = md5, !md5.isEmpty {
-			key = "\(className.utf8).\(md5).\(option.key)"
+			key = "\(className).\(md5).\(option.key)"
 		} else {
-			key = "\(className.utf8).\(option.key)"
+			key = "\(className).\(option.key)"
 		}
 
         // TODO: Make sure the value matches the option type
