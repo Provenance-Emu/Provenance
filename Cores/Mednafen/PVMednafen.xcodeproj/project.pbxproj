@@ -7984,6 +7984,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3B5BF9B293F13F1006BFC55 /* Config.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -8059,6 +8060,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3B5BF9B293F13F1006BFC55 /* Config.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -8135,6 +8137,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B3B5BF9B293F13F1006BFC55 /* Config.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
