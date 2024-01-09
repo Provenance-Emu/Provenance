@@ -4303,6 +4303,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B391F2B627C14FA300730B53 /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -4375,6 +4376,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B391F2B627C14FA300730B53 /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -4442,6 +4444,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B391F2B627C14FA300730B53 /* BuildFlags.xcconfig */;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
