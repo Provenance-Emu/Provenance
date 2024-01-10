@@ -4748,7 +4748,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 				);
@@ -4780,7 +4780,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/Src/Arch\"",
 					"\"$(SRCROOT)/blueMSX-libretro/Src/Bios\"",
@@ -4847,7 +4847,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/Src/Utils\"",
 				);
@@ -4869,7 +4869,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/Src/Utils\"",
 				);
@@ -4891,7 +4891,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/Src/Utils\"",
 				);
@@ -4963,7 +4963,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 				);
@@ -5039,7 +5039,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 				);
@@ -5072,7 +5072,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/Src/Arch\"",
 					"\"$(SRCROOT)/blueMSX-libretro/Src/Bios\"",
@@ -5127,7 +5127,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/blueMSX-libretro/Src/Arch\"",
 					"\"$(SRCROOT)/blueMSX-libretro/Src/Bios\"",

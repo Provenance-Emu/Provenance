@@ -2135,7 +2135,7 @@
 		3649D67B375641EE9264A820 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = deps/Framework/build_cmake/FrameworkOpenGl/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		365509DEE9C1492BB6BB9601 /* MacroblockAddressIncrementTable.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MacroblockAddressIncrementTable.cpp; path = deps/Framework/src/mpeg2/MacroblockAddressIncrementTable.cpp; sourceTree = SOURCE_ROOT; };
 		36571DED52474BCA9C804C35 /* Iop_IomanX.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Iop_IomanX.h; path = Source/iop/Iop_IomanX.h; sourceTree = SOURCE_ROOT; };
-		3684F522715F4D95BBBF5C37 /* CodeGenTestSuite */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = CodeGenTestSuite; path = CodeGenTestSuite.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3684F522715F4D95BBBF5C37 /* CodeGenTestSuite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = CodeGenTestSuite.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36CE51A9D56947549292BE35 /* VirtualPadStick.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VirtualPadStick.h; path = Source/ui_ios/VirtualPadStick.h; sourceTree = SOURCE_ROOT; };
 		3703566E5F8E46DDAFEAE2EF /* GotoTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GotoTest.cpp; path = deps/CodeGen/tests/GotoTest.cpp; sourceTree = SOURCE_ROOT; };
 		371EC36249944D6D92C22057 /* GsCachedAreaTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GsCachedAreaTest.h; path = tools/GsAreaTest/GsCachedAreaTest.h; sourceTree = SOURCE_ROOT; };
@@ -3458,7 +3458,7 @@
 				3EF59AFFEDDA48FEB2FB54C4 /* libAltKitPlay.a */,
 				B5FF47133F1643DEB02D0B28 /* libCAltKitPlay.a */,
 				6509805DAA5545AFB0DC8123 /* libCodeGenPlay.a */,
-				3684F522715F4D95BBBF5C37 /* CodeGenTestSuite */,
+				3684F522715F4D95BBBF5C37 /* CodeGenTestSuite.app */,
 				57DEBACD3E2A42D998984A71 /* libFrameworkPlay.a */,
 				673D9DFA8FD64B72AB2B9F49 /* libFramework_AmazonPlay.a */,
 				1BC372A2A543479FA9E39177 /* libFramework_HttpPlay.a */,
@@ -5701,7 +5701,7 @@
 			);
 			name = CodeGenTestSuite;
 			productName = CodeGenTestSuite;
-			productReference = 3684F522715F4D95BBBF5C37 /* CodeGenTestSuite */;
+			productReference = 3684F522715F4D95BBBF5C37 /* CodeGenTestSuite.app */;
 			productType = "com.apple.product-type.application";
 		};
 		5B87228A5ECF4618B5E65621 /* libzstd_zlibwrapper_staticPlay */ = {
@@ -10189,7 +10189,7 @@
 					"../Play-/deps/Dependencies/xxHash/cmake_unofficial/..",
 					"../Play-/deps/libchdr/include",
 					"../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
-					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
+					"\"$(SDK_DIR)/System/Library/Frameworks/OpenAL.framework/Headers\"",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -10330,7 +10330,7 @@
 					"../cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a",
 					"../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Debug${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a",
 					"../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Debug${EFFECTIVE_PLATFORM_NAME}/libzstd.a",
-					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/usr/lib/libz.tbd,
+					"\"$(SDK_DIR)/usr/lib/libz.tbd\"",
 					"-framework",
 					Foundation,
 					"$(inherited)",
@@ -10384,7 +10384,7 @@
 					"../Play-/deps/Dependencies/xxHash/cmake_unofficial/..",
 					"../Play-/deps/libchdr/include",
 					"../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
-					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
+					"\"$(SDK_DIR)/System/Library/Frameworks/OpenAL.framework/Headers\"",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -11562,7 +11562,7 @@
 					"../Play-/deps/Dependencies/xxHash/cmake_unofficial/..",
 					"../Play-/deps/libchdr/include",
 					"../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
-					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
+					"\"$(SDK_DIR)/System/Library/Frameworks/OpenAL.framework/Headers\"",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -14924,7 +14924,7 @@
 					"../Play-/deps/Dependencies/xxHash/cmake_unofficial/..",
 					"../Play-/deps/libchdr/include",
 					"../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",
-					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
+					"\"$(SDK_DIR)/System/Library/Frameworks/OpenAL.framework/Headers\"",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";

@@ -7944,7 +7944,7 @@
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/custom/android/include\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/custom/GLideN64\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/libretro-common/crt/include\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
@@ -8022,7 +8022,7 @@
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/custom/android/include\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/custom/GLideN64\"",
 					"\"$(SRCROOT)/mupen64plus-libretro-nx/libretro-common/crt/include\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;

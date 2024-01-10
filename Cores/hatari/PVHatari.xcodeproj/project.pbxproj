@@ -2936,7 +2936,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/../hatari/hatari/src/includes\"",
 					"\"$(SRCROOT)/../hatari/hatari/src/falcon\"",
 					"\"$(SRCROOT)/../hatari/hatari/src/debug\"",

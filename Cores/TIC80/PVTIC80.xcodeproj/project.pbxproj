@@ -1940,7 +1940,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/TIC-80/src/system/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/TIC-80/include\"",
 					"\"$(SRCROOT)/TIC-80/src\"",
@@ -1993,7 +1993,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/TIC-80/src/system/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/TIC-80/include\"",
 					"\"$(SRCROOT)/TIC-80/vendor\"",
@@ -2143,7 +2143,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/TIC-80/src/system/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/TIC-80/include\"",
 					"\"$(SRCROOT)/TIC-80/src\"",
@@ -2239,7 +2239,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/TIC-80/src/system/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/TIC-80/include\"",
 					"\"$(SRCROOT)/TIC-80/src\"",
@@ -2293,7 +2293,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/TIC-80/src/system/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/TIC-80/include\"",
 					"\"$(SRCROOT)/TIC-80/vendor\"",
@@ -2330,7 +2330,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/TIC-80/src/system/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/TIC-80/include\"",
 					"\"$(SRCROOT)/TIC-80/vendor\"",

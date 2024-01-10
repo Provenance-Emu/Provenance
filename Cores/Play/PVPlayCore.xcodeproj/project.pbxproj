@@ -3973,7 +3973,7 @@
 				939EA1412A88F9DE00D45022 /* libAltKitPlay.a */,
 				939EA1432A88F9DE00D45022 /* libCAltKitPlay.a */,
 				939EA1452A88F9DE00D45022 /* libCodeGenPlay.a */,
-				B3135B4A26E4C6860047F338 /* CodeGenTestSuite */,
+				B3135B4A26E4C6860047F338 /* CodeGenTestSuite.app */,
 				939EA1472A88F9DE00D45022 /* libFrameworkPlay.a */,
 				939EA1492A88F9DE00D45022 /* libFramework_AmazonPlay.a */,
 				939EA14B2A88F9DE00D45022 /* libFramework_HttpPlay.a */,
@@ -4405,10 +4405,9 @@
 			remoteRef = 939EA16C2A88F9DE00D45022 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B4A26E4C6860047F338 /* CodeGenTestSuite */ = {
+		B3135B4A26E4C6860047F338 /* CodeGenTestSuite.app */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = CodeGenTestSuite;
+			fileType = wrapper.application;
 			path = CodeGenTestSuite.app;
 			remoteRef = B3135B4926E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -4727,8 +4726,8 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../PPSSPP/ppsspp/ext/",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/../PPSSPP/ppsspp/ext/\"",
 				);
 				LIBRARY_SEARCH_PATHS = "$(SRCROOT)/lib";
 				OTHER_LDFLAGS = (
@@ -4800,7 +4799,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -4841,13 +4840,13 @@
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Play-/deps/CodeGen/include\"",
 					"\"$(SRCROOT)/Play-/Source\"",
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/../../MoltenVK/MoltenVK/include\"",
 					"\"$(SRCROOT)/Play-/deps/Nuanceur/include\"",
-					"$(SRCROOT)/PVPlayCore/Core/libbig_int/include",
+					"\"$(SRCROOT)/PVPlayCore/Core/libbig_int/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPlay/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

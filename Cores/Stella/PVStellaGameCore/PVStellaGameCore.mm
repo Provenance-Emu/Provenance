@@ -292,7 +292,7 @@ static void writeSaveFile(const char* path, int type) {
     retro_run();
 }
 
-- (BOOL)loadFileAtPath: (NSString*) path {
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
 	memset(_pad, 0, sizeof(int16_t) * NUMBER_OF_PADS * NUMBER_OF_PAD_INPUTS);
     if(_videoBuffer)
         free(_videoBuffer);
@@ -349,7 +349,14 @@ static void writeSaveFile(const char* path, int type) {
         
         return YES;
     }
-    
+
+    if(error) {
+        *error = [NSError errorWithDomain:@"" code:-1 userInfo:@{
+            NSLocalizedDescriptionKey : @"Failed to load ROM",
+            NSLocalizedRecoverySuggestionErrorKey : @"Stella could not load the ROM. The core does not supply additional information."
+        }];
+    }
+
     return NO;
 }
 

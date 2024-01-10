@@ -23571,11 +23571,11 @@
 					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
 					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
 					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/flycast/core/deps/libretro-common/glsym\"",
 					"\"$(SRCROOT)/flycast/core/deps/libretro-common\"",
 					"\"$(SRCROOT)/cmake/include\"",
-					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+					"\"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_DYLIB_INSTALL_NAME = "$(DYLIB_INSTALL_NAME_BASE:standardizepath)/$(EXECUTABLE_PATH)";
@@ -23646,9 +23646,9 @@
 					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
 					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
 					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/cmake/include\"",
-					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
+					"\"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers\"",
 					"\"$(SRCROOT)/flycast/core/deps/miniupnpc/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -23705,7 +23705,7 @@
 					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
 					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
 					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/cmake/include\"",
 					"$(SRCROOT)/cmake/OpenMP.framework/Versions/Current/Headers",
 					"\"$(SRCROOT)/flycast/core/deps/miniupnpc/include\"",
@@ -23759,7 +23759,7 @@
 					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
 					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
 					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/flycast/core/deps/libretro-common/glsym\"",
 					"\"$(SRCROOT)/flycast/core/deps/libretro-common\"",
 					"\"$(SRCROOT)/cmake/include\"",
@@ -23851,7 +23851,7 @@
 					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
 					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
 					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -23901,7 +23901,7 @@
 					"\"$(SRCROOT)/flycast/core/deps/picotcp/modules\"",
 					"\"$(SRCROOT)/flycast/core/deps/libretro-common/include/libchdr\"",
 					"\"$(SRCROOT)/flycast/core/deps/vixl\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INFOPLIST_FILE = PVFlycast/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

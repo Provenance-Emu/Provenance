@@ -8245,7 +8245,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -8313,7 +8313,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -8382,7 +8382,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
@@ -8436,7 +8436,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
@@ -8477,7 +8477,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(SDK_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
@@ -8494,7 +8494,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
@@ -8539,7 +8539,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(SDK_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
@@ -8552,7 +8552,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
@@ -8605,7 +8605,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -8675,7 +8675,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -8746,7 +8746,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -9237,7 +9237,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
@@ -9303,7 +9303,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
@@ -9367,7 +9367,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
@@ -10310,7 +10310,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -10382,7 +10382,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
@@ -10423,7 +10423,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(SDK_DIR)/Developer/Library/Frameworks",
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
@@ -10436,7 +10436,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance Tests/Info.plist";
@@ -10663,7 +10663,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
@@ -10729,7 +10729,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
@@ -10793,7 +10793,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
@@ -11333,7 +11333,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -11403,7 +11403,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -11474,7 +11474,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -11546,7 +11546,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -11616,7 +11616,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";
@@ -11687,7 +11687,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = "Provenance/Provenance-Info.plist";

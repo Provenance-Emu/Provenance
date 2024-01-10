@@ -4025,7 +4025,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/reicast-emulator/core/hw\"",
 					"\"$(SRCROOT)/reicast-emulator/core\"",
 					"\"$(SRCROOT)/reicast-emulator/core/deps\"",
@@ -4166,7 +4166,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/reicast-emulator/core/hw\"",
 					"\"$(SRCROOT)/reicast-emulator/core\"",
 					"\"$(SRCROOT)/reicast-emulator/core/deps\"",
@@ -4241,7 +4241,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/reicast-emulator/core/hw\"",
 					"\"$(SRCROOT)/reicast-emulator/core\"",
 					"\"$(SRCROOT)/reicast-emulator/core/deps\"",

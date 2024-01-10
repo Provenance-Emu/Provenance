@@ -11525,7 +11525,7 @@
 					../cmake/ffmpeg/ios/universal/lib/libswresample.a,
 					../cmake/ffmpeg/ios/universal/lib/libswscale.a,
 					../cmake/ffmpeg/ios/universal/lib/libavutil.a,
-					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/lib/libz.tbd,
+					"\"$(SDK_DIR)/usr/lib/libz.tbd\"",
 					../cmake/lib/MinSizeRel/libminiupnpc.a,
 					"$(inherited)",
 				);
@@ -14112,7 +14112,7 @@
 				CODE_SIGNING_REQUIRED = NO;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				PROJECT_TEMP_DIR = "$(SRCROOT)/../lib/ppsspp/build/$(PROJECT_NAME).build";
-				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk;
+				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SYMROOT = "$(SRCROOT)/../lib/ppsspp";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";

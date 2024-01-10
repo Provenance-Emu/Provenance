@@ -2094,7 +2094,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DT_TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
 				INFOPLIST_FILE = PVLibrary/Info.plist;
