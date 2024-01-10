@@ -5717,8 +5717,6 @@
 				B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */,
 				37EEA2A927BC81880070E222 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */,
-				934F387E2A84FAA900813318 /* XCRemoteSwiftPackageReference "RxSwift" */,
-				934F38852A84FB7800813318 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -12121,22 +12119,6 @@
 		930498CC2A93073800BF257F /* XCRemoteSwiftPackageReference "Reachability" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
-		934F387E2A84FAA900813318 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-		934F38852A84FB7800813318 /* XCRemoteSwiftPackageReference "realm-cocoa" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/realm-cocoa.git";
 			requirement = {
 				branch = master;
 				kind = branch;

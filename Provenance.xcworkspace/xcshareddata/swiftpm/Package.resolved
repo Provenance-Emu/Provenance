@@ -6,17 +6,17 @@
         "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
         "state": {
           "branch": null,
-          "revision": "0c38cfb756f86673991d51f273b7bbcbaa28f94d",
-          "version": "5.0.1"
+          "revision": "1120c26835925f8314d035127c580bc71689c620",
+          "version": "5.0.4"
         }
       },
       {
         "package": "CocoaLumberjack",
-        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
+        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
         "state": {
           "branch": null,
-          "revision": "0188d31089b5881a269e01777be74c7316924346",
-          "version": "3.8.0"
+          "revision": "363ed23d19a931809ea834a7d722da830353806a",
+          "version": "3.8.2"
         }
       },
       {
@@ -33,7 +33,7 @@
         "repositoryURL": "https://github.com/fpillet/NSLogger",
         "state": {
           "branch": "master",
-          "revision": "e8c453142da7051462cca189d3fcee74de0500ea",
+          "revision": "640681c81ed021136aeacf71a4dee1e90940e5b5",
           "version": null
         }
       },
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
         "state": {
           "branch": null,
-          "revision": "b1a342da19ed9b3af61ea2efa7656c2af30aeb7c",
-          "version": "1.11.0"
+          "revision": "1aed8f7dc79ce8e674c61e430ef51ca3db18cea9",
+          "version": "1.11.1"
         }
       },
       {
@@ -56,21 +56,21 @@
         }
       },
       {
-        "package": "Realm",
-        "repositoryURL": "https://github.com/realm/realm-cocoa.git",
-        "state": {
-          "branch": "master",
-          "revision": "752f8ae418f97c7e90c2c83ebeeb534c0357df4d",
-          "version": null
-        }
-      },
-      {
         "package": "RealmDatabase",
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "c04f5e401a1ec682e6b08b1ee157e19a0f834a5f",
-          "version": "13.17.1"
+          "revision": "7227d6a447821c28895daa099b6c7cd4c99d461b",
+          "version": "13.25.1"
+        }
+      },
+      {
+        "package": "Realm",
+        "repositoryURL": "https://github.com/realm/realm-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "836cc4b8619886f979f8961c3f592a82b0741591",
+          "version": "10.45.3"
         }
       },
       {
@@ -83,12 +83,21 @@
         }
       },
       {
+        "package": "RxRealm",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm.git",
+        "state": {
+          "branch": null,
+          "revision": "fafdc8209b64a2d5ba22437a86532872bdb1efe3",
+          "version": "5.0.6"
+        }
+      },
+      {
         "package": "RxSwift",
         "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
         "state": {
-          "branch": "main",
-          "revision": "2ff073fc1b9c600ac9b54734aff3348110437c19",
-          "version": null
+          "branch": null,
+          "revision": "9dcaa4b333db437b0fbfaf453fad29069044a8b4",
+          "version": "6.6.0"
         }
       },
       {
@@ -114,8 +123,8 @@
         "repositoryURL": "https://github.com/apple/swift-log.git",
         "state": {
           "branch": null,
-          "revision": "6fe203dc33195667ce1759bf0182975e4653ba1c",
-          "version": "1.4.4"
+          "revision": "532d8b529501fb73a2455b179e0bbb6d49b652ed",
+          "version": "1.5.3"
         }
       },
       {
@@ -132,8 +141,8 @@
         "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
         "state": {
           "branch": null,
-          "revision": "3016df0730fb7daa85d73e29ec9d02851db831ae",
-          "version": "2.5.3"
+          "revision": "79d4dc9729096c6ad83dd3cee2b9f354d1b4ab7b",
+          "version": "2.5.5"
         }
       },
       {
