@@ -59,7 +59,7 @@ jobs:
           #   sdk: macosx
           #   scheme: Provenance
 
-    runs-on: 'macos-13-arm64'
+    runs-on: 'macos-13'
     timeout-minutes: 300
     steps:
       - name: Checkout code
@@ -91,6 +91,18 @@ jobs:
         with:
           key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
           restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
+
+      # - name: Import Codesign Certificates
+      #   uses: apple-actions/import-codesign-certs@v1
+      #   with:
+      #     p12-file-base64: ${{ secrets.CERT_P12 }}
+      #     p12-password: ${{ secrets.P12_PASS }}
+
+      # - name: Import Codesign Certificates
+      #   uses: apple-actions/import-codesign-certs@v2
+      #   with:
+      #     p12-file-base64: ${{ secrets.CERT_P12 }}
+      #     p12-password: ${{ secrets.P12_PASS }}
 
       - name: Build Provenance
         run: |
