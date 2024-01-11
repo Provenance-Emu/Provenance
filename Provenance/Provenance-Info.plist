@@ -11,7 +11,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Provenance</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -266,8 +266,6 @@
 	<true/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -284,13 +282,11 @@
 	</array>
 	<key>UISupportsDocumentBrowser</key>
 	<true/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
-			<key>public.filename-extension</key>
-			<array>
-				<string>svs</string>
-			</array>
 			<key>UTTypeConformsTo</key>
 			<array>
 				<string>public.data</string>
@@ -314,6 +310,10 @@
 					<string>com.provenance.savestate</string>
 				</array>
 			</dict>
+			<key>public.filename-extension</key>
+			<array>
+				<string>svs</string>
+			</array>
 		</dict>
 	</array>
 	<key>UTImportedTypeDeclarations</key>
