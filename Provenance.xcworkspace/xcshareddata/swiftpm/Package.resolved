@@ -38,6 +38,15 @@
         }
       },
       {
+        "package": "OpenSSL",
+        "repositoryURL": "https://github.com/krzyzanowskim/OpenSSL",
+        "state": {
+          "branch": null,
+          "revision": "0faf71a188bcfdf0245cab42886b9b240ca71c52",
+          "version": "1.1.2200"
+        }
+      },
+      {
         "package": "PLCrashReporter",
         "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
         "state": {
