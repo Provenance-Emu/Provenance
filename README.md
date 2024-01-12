@@ -8,15 +8,9 @@
 </p>
 
 <div style="align:center" align="center">
-<a href="https://github.com/provenance-emu/Provenance/network">
-  <img src="https://img.shields.io/github/forks/provenance-emu/Provenance.svg?style=flat-square"/>
-</a>
-<a href="https://github.com/provenance-emu/Provenance/stargazers">
-<img src="https://img.shields.io/github/stars/provenance-emu/Provenance.svg?style=flat-square"/>
-</a>
-<a href="https://github.com/Provenance-Emu/Provenance/graphs/contributors">
-  <img src="https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square"/>
-</a>
+<a href="https://github.com/provenance-emu/Provenance/network"><img src="https://img.shields.io/github/forks/provenance-emu/Provenance.svg?style=flat-square"/></a>
+<a href="https://github.com/provenance-emu/Provenance/stargazers"><img src="https://img.shields.io/github/stars/provenance-emu/Provenance.svg?style=flat-square"/></a>
+<a href="https://github.com/Provenance-Emu/Provenance/graphs/contributors"><img src="https://img.shields.io/github/contributors/provenance-emu/Provenance.svg?style=flat-square"/></a>
 <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/provenance-emu/provenance/total?logo=github&style=flat-square">
 </br>  
 <img src="https://img.shields.io/github/languages/count/provenance-emu/provenance.svg?style=flat-square"/>
@@ -29,12 +23,8 @@
 </br>
 
 <p align="center">
-<a href="https://www.patreon.com/bePatron?u=8537745">
-  <img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="65" />
-</a>
-<a href="https://www.amazon.com/hz/wishlist/ls/1VXOGWHIOFVMR?ref_=wl_share">
-  <img src="https://user-images.githubusercontent.com/399864/140426153-b6797d7d-c82f-4542-89ff-b29a3e70525d.jpg"  height="65" />
-</a>
+<a href="https://www.patreon.com/bePatron?u=8537745"><img src="https://user-images.githubusercontent.com/399864/139607496-983c7220-3aae-46f6-8369-ebd45d4c7f06.png" height="65" /></a>
+<a href="https://www.amazon.com/hz/wishlist/ls/1VXOGWHIOFVMR?ref_=wl_share"><img src="https://user-images.githubusercontent.com/399864/140426153-b6797d7d-c82f-4542-89ff-b29a3e70525d.jpg"  height="65" /></a>
  </p>
  <div style="align:center" align="center">
  <img alt="Open Collective backers and sponsors" src="https://img.shields.io/opencollective/all/provenanceemu?logo=OpenCollective">
