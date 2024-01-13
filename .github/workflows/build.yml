@@ -106,7 +106,18 @@ jobs:
 
       - name: Build Provenance
         run: |
-          xcodebuild -configuration Release -workspace Provenance.xcworkspace -scheme "${{ matrix.scheme }}" -sdk ${{ matrix.sdk }} archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=S32Z3HMYVQ ORG_IDENTIFIER=org.provenance-emu | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild -configuration Release \
+          -workspace Provenance.xcworkspace \
+          -scheme "${{ matrix.scheme }}" \
+          -sdk ${{ matrix.sdk }} \
+          archive \
+          -archivePath ./archive \
+          CODE_SIGNING_REQUIRED=NO \
+          AD_HOC_CODE_SIGNING_ALLOWED=YES \
+          CODE_SIGNING_ALLOWED=NO \
+          DEVELOPMENT_TEAM=S32Z3HMYVQ \
+          ORG_IDENTIFIER=org.provenance-emu \
+          | xcpretty && exit ${PIPESTATUS[0]}
 
       # - name: Build Provenance
       #   run: |
@@ -115,10 +126,10 @@ jobs:
       #     rm ./Provenance.xcworkspace/xcshareddata/swiftpm/Package.resolved
       #     xcodebuild -workspace Provenance.xcworkspace -scheme Provenance-Release -sdk iphoneos archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=XYZ0123456 ORG_IDENTIFIER=org.provenance-emu | xcpretty && exit ${PIPESTATUS[0]}
 
-      # - name: Fakesign app
-      #   run: |
-      #     #rm -rf archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/Frameworks/*.framework/Frameworks/
-      #     ldid -SProvenance/Provenance.entitlements archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}
+      - name: Fakesign app
+        run: |
+          #rm -rf archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/Frameworks/*.framework/Frameworks/
+          ldid -SProvenance/Provenance.entitlements archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app/${{ matrix.APP_NAME }}
 
       - name: Convert to IPA
         run: |
@@ -126,14 +137,14 @@ jobs:
           cp -pR "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app" "Payload/${{ matrix.IPA_NAME }}.app"
           zip -r "${{ matrix.IPA_NAME }}.ipa" Payload
 
-      - name: Codesign IPA
-        uses: mmaetzler/ios-resign-action@d3c2e4cb930bc7edf89894af7af622d3c0d5b571
-        with:
-          ipa_path: "${{ matrix.IPA_NAME }}.ipa"
-          mobileprovision: ${{ secrets.MOBILEPROVISION }}
-          cert_p12: ${{ secrets.CERT_P12 }}
-          p12_pass: ${{ secrets.P12_PASS }}
-          signing_identity: ${{ secrets.SIGNING_IDENTITY }}
+      # - name: Codesign IPA
+      #   uses: mmaetzler/ios-resign-action@d3c2e4cb930bc7edf89894af7af622d3c0d5b571
+      #   with:
+      #     ipa_path: "${{ matrix.IPA_NAME }}.ipa"
+      #     mobileprovision: ${{ secrets.MOBILEPROVISION }}
+      #     cert_p12: ${{ secrets.CERT_P12 }}
+      #     p12_pass: ${{ secrets.P12_PASS }}
+      #     signing_identity: ${{ secrets.SIGNING_IDENTITY }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.0
