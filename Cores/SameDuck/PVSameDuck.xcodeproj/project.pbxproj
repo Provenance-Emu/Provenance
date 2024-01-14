@@ -1280,7 +1280,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-SameDuck/libretro-common/include\"",
 					"\"$(SRCROOT)/SameBoy\"",
 				);
@@ -1436,7 +1436,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-SameDuck/libretro-common/include\"",
 					"\"$(SRCROOT)/SameBoy\"",
 				);
@@ -1504,7 +1504,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-SameDuck/libretro-common/include\"",
 					"\"$(SRCROOT)/SameBoy\"",
 				);

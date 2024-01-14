@@ -4772,7 +4772,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -4792,7 +4792,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -4857,7 +4857,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro\"",
 				);
@@ -4888,7 +4888,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4915,7 +4915,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -4935,7 +4935,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/yabause/yabause\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -4955,7 +4955,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/yabause/yabause\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -4975,7 +4975,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/yabause/yabause\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
@@ -5042,7 +5042,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro\"",
 				);
@@ -5114,7 +5114,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/yabause/yabause/src/libretro\"",
 				);
@@ -5146,7 +5146,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -5177,7 +5177,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVYabause/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

@@ -1137,11 +1137,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GLUT.framework/Headers,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/gllibs/include,
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi,
+					"\"$(SDK_DIR)/GLUT.framework/Headers\"",
+					"\"$(SRCROOT)/src/gllibs/include\"",
+					"\"$(SRCROOT)/cmake/src/musashi\"",
+					"\"$(SRCROOT)/src/musashi\"",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -1351,11 +1350,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GLUT.framework/Headers,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/gllibs/include,
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi,
+					"\"$(SDK_DIR)/GLUT.framework/Headers\"",
+					"\"$(SRCROOT)/src/gllibs/include\"",
+					"\"$(SRCROOT)/cmake/src/musashi\"",
+					"\"$(SRCROOT)/src/musashi\"",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -1579,11 +1577,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GLUT.framework/Headers,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/gllibs/include,
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi,
+					"\"$(SDK_DIR)/GLUT.framework/Headers\"",
+					"\"$(SRCROOT)/src/gllibs/include\"",
+					"\"$(SRCROOT)/cmake/src/musashi\"",
+					"\"$(SRCROOT)/src/musashi\"",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";
@@ -1639,11 +1636,10 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/GLUT.framework/Headers,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/gllibs/include,
-					/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/OpenAL.framework/Headers,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/cmake/src/musashi,
-					/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Yabause/yabause/yabause/src/musashi,
+					"\"$(SDK_DIR)/GLUT.framework/Headers\"",
+					"\"$(SRCROOT)/src/gllibs/include\"",
+					"\"$(SRCROOT)/cmake/src/musashi\"",
+					"\"$(SRCROOT)/src/musashi\"",
 					"$(inherited)",
 				);
 				INSTALL_PATH = "";

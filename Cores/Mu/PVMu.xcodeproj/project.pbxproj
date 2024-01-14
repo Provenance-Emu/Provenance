@@ -1707,7 +1707,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = mu;
@@ -1730,7 +1730,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = mu;
@@ -1799,7 +1799,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Mu/include\"",
 					"\"$(SRCROOT)/Mu/libretroBuildSystem/libretro-common/include\"",
 				);
@@ -1845,7 +1845,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
@@ -1879,7 +1879,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = mu;
@@ -1901,7 +1901,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = "mu-libretro";
@@ -1923,7 +1923,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = "mu-libretro";
@@ -1945,7 +1945,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = "mu-libretro";
@@ -2016,7 +2016,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Mu/include\"",
 					"\"$(SRCROOT)/Mu/libretroBuildSystem/libretro-common/include\"",
 				);
@@ -2090,7 +2090,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Mu/include\"",
 					"\"$(SRCROOT)/Mu/libretroBuildSystem/libretro-common/include\"",
 				);
@@ -2137,7 +2137,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
@@ -2174,7 +2174,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",

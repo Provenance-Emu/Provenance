@@ -59,7 +59,7 @@ jobs:
           #   sdk: macosx
           #   scheme: Provenance
 
-    runs-on: 'macos-12'
+    runs-on: 'macos-13'
     timeout-minutes: 300
     steps:
       - name: Checkout code
@@ -73,9 +73,9 @@ jobs:
       #     xcode-version: ${{ matrix.version }}
 
       - name: Setup Xcode
-        uses: maxim-lobanov/setup-xcode@v1.5.1
+        uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
-          xcode-version: '14.1'
+          xcode-version: '15.1'
           # xcode-select-path: /Applications/Xcode_${{ matrix.version }}.app/Contents/Developer
 
       - uses: actions/cache@v3
@@ -92,9 +92,32 @@ jobs:
           key: xcode-cache-deriveddata-${{ github.workflow }}-${{ github.sha }}
           restore-keys: xcode-cache-deriveddata-${{ github.workflow }}-
 
+      # - name: Import Codesign Certificates
+      #   uses: apple-actions/import-codesign-certs@v1
+      #   with:
+      #     p12-file-base64: ${{ secrets.CERT_P12 }}
+      #     p12-password: ${{ secrets.P12_PASS }}
+
+      - name: Import Codesign Certificates
+        uses: apple-actions/import-codesign-certs@v2
+        with:
+          p12-file-base64: ${{ secrets.CERT_P12 }}
+          p12-password: ${{ secrets.P12_PASS }}
+
       - name: Build Provenance
         run: |
-          xcodebuild -configuration Release -workspace Provenance.xcworkspace -scheme "${{ matrix.scheme }}" -sdk ${{ matrix.sdk }} archive -archivePath ./archive CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES CODE_SIGNING_ALLOWED=NO DEVELOPMENT_TEAM=S32Z3HMYVQ ORG_IDENTIFIER=org.provenance-emu | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild -configuration Release \
+          -workspace Provenance.xcworkspace \
+          -scheme "${{ matrix.scheme }}" \
+          -sdk ${{ matrix.sdk }} \
+          archive \
+          -archivePath ./archive \
+          CODE_SIGNING_REQUIRED=NO \
+          AD_HOC_CODE_SIGNING_ALLOWED=YES \
+          CODE_SIGNING_ALLOWED=NO \
+          DEVELOPMENT_TEAM=S32Z3HMYVQ \
+          ORG_IDENTIFIER=org.provenance-emu \
+          | xcpretty && exit ${PIPESTATUS[0]}
 
       # - name: Build Provenance
       #   run: |
@@ -113,6 +136,15 @@ jobs:
           mkdir Payload
           cp -pR "archive.xcarchive/Products/Applications/${{ matrix.APP_NAME }}.app" "Payload/${{ matrix.IPA_NAME }}.app"
           zip -r "${{ matrix.IPA_NAME }}.ipa" Payload
+
+      # - name: Codesign IPA
+      #   uses: mmaetzler/ios-resign-action@d3c2e4cb930bc7edf89894af7af622d3c0d5b571
+      #   with:
+      #     ipa_path: "${{ matrix.IPA_NAME }}.ipa"
+      #     mobileprovision: ${{ secrets.MOBILEPROVISION }}
+      #     cert_p12: ${{ secrets.CERT_P12 }}
+      #     p12_pass: ${{ secrets.P12_PASS }}
+      #     signing_identity: ${{ secrets.SIGNING_IDENTITY }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.0

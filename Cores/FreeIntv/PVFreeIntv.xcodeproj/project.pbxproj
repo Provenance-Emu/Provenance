@@ -884,7 +884,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/FreeIntv/src/deps/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1056,7 +1056,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/FreeIntv/src/deps/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1128,7 +1128,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/FreeIntv/src/deps/libretro-common/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

@@ -10,7 +10,7 @@ DEVELOPMENT_TEAM = XYZ0123456
 //   - com.myuniquename.provenance.topshelf
 ORG_IDENTIFIER = com.myuniquename
 
-// Set to YES if you have a valid paid Apple Developer account
+// Set to 'YES' or 'JB' if you have a valid paid Apple Developer account
 DEVELOPER_ACCOUNT_PAID = NO
 
 // Name of the iOS development signing certificate, you probably do not need

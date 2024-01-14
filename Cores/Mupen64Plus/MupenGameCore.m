@@ -267,12 +267,14 @@ static void *dlopen_myself()
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	for (NSString *path in @[configPath, dataPath]) {
 		if (![fileManager fileExistsAtPath:configPath]) {
-			NSError *error;
+			NSError *fmError;
 			if(![fileManager createDirectoryAtPath:configPath
 					   withIntermediateDirectories:true
 										attributes:nil
-											 error:&error]) {
-				ELOG(@"Filed to create path. %@", error.localizedDescription);
+											 error:&fmError]) {
+				ELOG(@"Filed to create path. %@", fmError.localizedDescription);
+                if(error != NULL) { *error = fmError; }
+                return false;
 			}
 		}
 	}

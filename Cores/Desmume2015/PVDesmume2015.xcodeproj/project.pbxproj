@@ -2611,7 +2611,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/desmume2015/desmume/src/libretro-common/include\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/hw\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core\"",
@@ -2758,7 +2758,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/desmume2015/desmume/src/libretro-common/include\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/hw\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core\"",
@@ -2834,7 +2834,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/desmume2015/desmume/src/libretro-common/include\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core/hw\"",
 					"\"$(SRCROOT)/desmume2015-emulator/core\"",

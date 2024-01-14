@@ -3296,7 +3296,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/beetle-psx-libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/beetle-psx-libretro/deps\"",
 					"\"$(SRCROOT)/beetle-psx-libretro/mednafen\"",

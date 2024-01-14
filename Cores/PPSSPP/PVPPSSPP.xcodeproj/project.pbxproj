@@ -2062,7 +2062,7 @@
 					./libretro_ppsspp/ext/armips/ext/tinyformat,
 					./libretro_ppsspp/ext/armips/ext/filesystem/include,
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -2107,7 +2107,7 @@
 					GLKit,
 					"-framework",
 					OpenGLES,
-					/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/usr/lib/libz.tbd,
+					"\"$(SDK_DIR)/usr/lib/libz.tbd\"",
 					"$(inherited)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.ppsspp-libretro";
@@ -2140,7 +2140,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/libretro_ppsspp\"",
 					"\"$(SRCROOT)/libretro_ppsspp/ext/vulkan\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/cmake/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
@@ -2191,7 +2191,7 @@
 					"\"$(SRCROOT)/libretro_ppsspp/ext/glslang-build\"",
 					"\"$(SRCROOT)/libretro_ppsspp/ext/glslang/glslang\"",
 					"\"$(SRCROOT)/libretro_ppsspp/ext/glslang/glslang/MachineIndependent\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"\"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib\"",
@@ -2267,8 +2267,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					"\"$(SRCROOT)/ppsspp/ffmpeg/ios/universal/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;

@@ -3753,7 +3753,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_MAP_FILE_PATH = "";
@@ -3783,7 +3783,7 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",

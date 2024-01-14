@@ -40391,7 +40391,7 @@
 					"\"$(SRCROOT)/dolphin-ios/Externals/soundtouch\"",
 					"\"${SRCROOT}/dolphin-ios/Externals/FreeSurround/include\"",
 					"\"${SRCROOT}/dolphin-ios/Externals/fmt/include\"",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"$(inherited)",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -40469,7 +40469,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/PVDolphinCore/Compatibility\"",
 					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
 				);
@@ -40554,7 +40554,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/dolphin-ios/Source/Core/Core/IOS\"",
 					"\"$(SRCROOT)/dolphin-ios/Source/Core\"",
 					"\"$(SRCROOT)/dolphin-ios/Externals/fmt/include\"",

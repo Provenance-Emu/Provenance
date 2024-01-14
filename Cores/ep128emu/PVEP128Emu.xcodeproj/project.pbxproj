@@ -918,7 +918,6 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = ep128emu;
@@ -940,7 +939,6 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = ep128emu;
@@ -1009,7 +1007,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/ep128emu-core/src\"",
 					"\"$(SRCROOT)/ep128emu-core/z80\"",
 					"\"$(SRCROOT)/ep128emu-core\"",
@@ -1041,7 +1039,6 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
@@ -1074,7 +1071,6 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = ep128emu;
@@ -1097,7 +1093,6 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = "ep128emu-libretro";
@@ -1120,7 +1115,6 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = "ep128emu-libretro";
@@ -1143,7 +1137,6 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
 				);
 				PRODUCT_NAME = "ep128emu-libretro";
@@ -1214,7 +1207,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/ep128emu-core/src\"",
 					"\"$(SRCROOT)/ep128emu-core/z80\"",
 					"\"$(SRCROOT)/ep128emu-core\"",
@@ -1289,7 +1282,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/ep128emu-core/src\"",
 					"\"$(SRCROOT)/ep128emu-core/z80\"",
 					"\"$(SRCROOT)/ep128emu-core\"",
@@ -1322,7 +1315,6 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
@@ -1359,7 +1351,6 @@
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
 					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
 					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",

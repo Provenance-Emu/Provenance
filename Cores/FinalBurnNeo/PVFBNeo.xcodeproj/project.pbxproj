@@ -9685,7 +9685,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/FBNeo/src/burner/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/FBNeo/src/burner/macos\"",
 					"\"$(SRCROOT)/FBNeo/src/dep/generated\"",
@@ -9864,7 +9864,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/FBNeo/src/burner/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/FBNeo/src/burner/macos\"",
 					"\"$(SRCROOT)/FBNeo/src/dep/generated\"",
@@ -9942,7 +9942,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/FBNeo/src/burner/libretro/libretro-common/include\"",
 					"\"$(SRCROOT)/FBNeo/src/burner/macos\"",
 					"\"$(SRCROOT)/FBNeo/src/dep/generated\"",
