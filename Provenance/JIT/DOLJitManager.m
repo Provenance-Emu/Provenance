@@ -4,7 +4,7 @@
 
 #import "DOLJitManager.h"
 
-#define _USE_ALTKIT (TARGET_OS_TV && !TARGET_OS_WATCH && !TARGET_OS_MACCATALYST)
+#define _USE_ALTKIT (!TARGET_OS_TV && !TARGET_OS_WATCH && !TARGET_OS_MACCATALYST)
 
 #if _USE_ALTKIT
 @import AltKit;
