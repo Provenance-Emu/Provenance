@@ -8451,6 +8451,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
@@ -12041,7 +12042,7 @@
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
 			requirement = {
 				kind = revision;
-				revision = d3cbf32788250741d397cfb5bcd532c37aa1096d;
+				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
 			};
 		};
 		930498C62A93073800BF257F /* XCRemoteSwiftPackageReference "AltKit" */ = {

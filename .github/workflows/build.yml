@@ -98,11 +98,11 @@ jobs:
       #     p12-file-base64: ${{ secrets.CERT_P12 }}
       #     p12-password: ${{ secrets.P12_PASS }}
 
-      - name: Import Codesign Certificates
-        uses: apple-actions/import-codesign-certs@v2
-        with:
-          p12-file-base64: ${{ secrets.CERT_P12 }}
-          p12-password: ${{ secrets.P12_PASS }}
+      #- name: Import Codesign Certificates
+      #  uses: apple-actions/import-codesign-certs@v2
+      #  with:
+      #    p12-file-base64: ${{ secrets.CERT_P12 }}
+      #    p12-password: ${{ secrets.P12_PASS }}
 
       - name: Build Provenance
         run: |
