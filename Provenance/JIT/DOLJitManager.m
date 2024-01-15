@@ -4,7 +4,9 @@
 
 #import "DOLJitManager.h"
 
-#if !TARGET_OS_TV
+#define _USE_ALTKIT (TARGET_OS_TV && !TARGET_OS_WATCH && !TARGET_OS_MACCATALYST)
+
+#if _USE_ALTKIT
 @import AltKit;
 #endif
 
@@ -222,7 +224,7 @@ NSString* const DOLJitAltJitFailureNotification = @"org.provenance-emu.provenanc
 }
 
 - (void)attemptToAcquireJitByAltJIT {
-#if !TARGET_OS_TV
+#if _USE_ALTKIT
     if (self->_m_jit_type != DOLJitTypeDebugger) {
         return;
     }
