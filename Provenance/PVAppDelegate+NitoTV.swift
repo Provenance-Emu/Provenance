@@ -23,7 +23,10 @@ extension PVAppDelegate {
             let last = url.lastPathComponent
             let newPath = cache.appendingPathComponent(last)
             let originalPath = url
-            try man.copyItem(at: originalPath, to: newPath)
+            let sourcePath = originalPath.path
+            let destinationPath = newPath.path
+            ILOG("[Provenance] copying \(sourcePath) to \(destinationPath)")
+            try man.copyItem(atPath: sourcePath, toPath: destinationPath)
         } catch {
             ELOG("\(error.localizedDescription)")
         }
