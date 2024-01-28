@@ -249,12 +249,27 @@
 		<string>fetch</string>
 		<string>location</string>
 		<string>nearby-interaction</string>
+		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen.storyboard</string>
+	<dict>
+		<key>UIDefaultLaunchScreen</key>
+		<string></string>
+		<key>UILaunchScreenDefinitions</key>
+		<array>
+			<dict>
+				<key>UIImageName</key>
+				<string></string>
+				<key>UILaunchScreenIdentifier</key>
+				<string></string>
+			</dict>
+		</array>
+		<key>UIURLToLaunchScreenAssociations</key>
+		<dict/>
+	</dict>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>

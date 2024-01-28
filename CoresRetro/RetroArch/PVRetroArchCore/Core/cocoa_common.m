@@ -213,6 +213,7 @@ void *glkitview_init(void);
 
 -(void)adjustViewFrameForSafeArea
 {
+#if !TARGET_OS_TV
    /* This is for adjusting the view frame to account for
     * the notch in iPhone X phones */
    if (@available(iOS 11, *))
@@ -246,6 +247,7 @@ void *glkitview_init(void);
             break;
       }
    }
+#endif
 }
 
 - (void)viewWillLayoutSubviews
@@ -308,15 +310,13 @@ void *glkitview_init(void);
 
 -(void)viewDidLoad {
     [super viewDidLoad];
-#if TARGET_OS_IOS
+#ifdef HAVE_IOS_TOUCHMOUSE
     UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showNativeMenu)];
     swipe.numberOfTouchesRequired   = 4;
     swipe.delegate                  = self;
     swipe.direction                 = UISwipeGestureRecognizerDirectionDown;
     [self.view addGestureRecognizer:swipe];
-#ifdef HAVE_IOS_TOUCHMOUSE
     [self setupMouseSupport];
-#endif
 #ifdef HAVE_IOS_CUSTOMKEYBOARD
     [self setupEmulatorKeyboard];
     UISwipeGestureRecognizer *showKeyboardSwipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(toggleCustomKeyboardUsingSwipe:)];
@@ -343,7 +343,7 @@ void *glkitview_init(void);
 
 - (void)viewDidAppear:(BOOL)animated
 {
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS && !TARGET_OS_TV
     if (@available(iOS 11.0, *))
         [self setNeedsUpdateOfHomeIndicatorAutoHidden];
 #endif
@@ -497,7 +497,7 @@ static float get_from_selector(
     [invocation setTarget:obj_id];
     [invocation invoke];
     [invocation getReturnValue:ret];
-    RELEASE(invocation);
+//    RELEASE(invocation);
     return *ret;
 }
 
@@ -678,4 +678,31 @@ bool cocoa_get_metrics(
 - (void)keyUp:(NSEvent *)event { }
 
 @end
+#endif
+
+#if TARGET_OS_TV
+#include "../file_path_special.h"
+#include "../paths.h"
+
+config_file_t *open_userdefaults_config_file(void)
+{
+    config_file_t *conf = NULL;
+    NSString *backup = [NSUserDefaults.standardUserDefaults stringForKey:@FILE_PATH_MAIN_CONFIG];
+    if ([backup length] >= 0)
+    {
+        char *str = strdup(backup.UTF8String);
+        conf = config_file_new_from_string(str, path_get(RARCH_PATH_CONFIG));
+        free(str);
+    }
+    return conf;
+}
+
+void write_userdefaults_config_file(void)
+{
+    NSString *conf = [NSString stringWithContentsOfFile:[NSString stringWithUTF8String:path_get(RARCH_PATH_CONFIG)]
+                                               encoding:NSUTF8StringEncoding
+                                                  error:nil];
+    if (conf)
+        [NSUserDefaults.standardUserDefaults setObject:conf forKey:@FILE_PATH_MAIN_CONFIG];
+}
 #endif

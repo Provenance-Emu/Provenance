@@ -78,6 +78,7 @@ _Provenance_ is our origin story. The word has a similar meaning to _Genesis_, w
 ## Systems Supported:
 
 - Apple
+  - II
   - Macintosh
 - Atari
   - 2600

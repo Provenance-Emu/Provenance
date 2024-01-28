@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 10/5/21.
 //  Copyright © 2021 Provenance Emu. All rights reserved.
 //
-
+#if os(tvOS)
 import Foundation
 import UIKit
 import PVSupport
@@ -53,3 +53,4 @@ extension PVAppDelegate {
         return cache
     }
 }
+#endif

@@ -16,6 +16,7 @@ import PVLogging
 import Foundation
 import UIKit
 
+#if canImport(CarPlay)
 import CarPlay
 
 /*
@@ -167,6 +168,7 @@ extension PVAppDelegate: CPTemplateApplicationSceneDelegate {
 //        }
 //    }
 }
+#endif
 
 @objc public protocol UIApplicationPrivate {
     @objc func setWantsVolumeButtonEvents(_:Bool)

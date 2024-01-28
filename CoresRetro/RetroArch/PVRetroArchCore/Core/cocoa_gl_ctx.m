@@ -146,7 +146,7 @@ void cocoa_gl_gfx_ctx_update(void)
 void *glkitview_init(void)
 {
    glk_view                      = [GLKView new];
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS && !TARGET_OS_TV
    glk_view.multipleTouchEnabled = YES;
 #endif
    glk_view.enableSetNeedsDisplay = NO;

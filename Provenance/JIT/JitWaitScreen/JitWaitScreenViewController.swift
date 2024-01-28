@@ -2,8 +2,9 @@
 // Licensed under GPLv2+
 // Refer to the license.txt file included.
 
-import Foundation
+#if os(iOS)
 
+import Foundation
 @objc final class JitWaitScreenViewController : UIViewController {
   @objc weak var delegate: JitScreenDelegate?
   var cancellation_token = DOLCancellationToken()
@@ -98,3 +99,4 @@ import Foundation
     self.delegate?.didFinishJitScreen(result: false, sender: self)
   }
 }
+#endif
