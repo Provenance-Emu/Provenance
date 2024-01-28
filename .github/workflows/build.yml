@@ -40,6 +40,11 @@ jobs:
             scheme: ProvenanceTV-Release
             APP_NAME: Provenance
             IPA_NAME: ProvenanceTV
+          - target: Provenance-Release
+            sdk: appletvos
+            scheme: Provenance-Release
+            APP_NAME: Provenance
+            IPA_NAME: Provenance-tvOS
           - target: "Provenance-XL Release"
             sdk: iphoneos
             scheme: "Provenance-XL Release"
