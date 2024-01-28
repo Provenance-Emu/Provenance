@@ -54,6 +54,7 @@ private extension ApplicationMonitor {
         let delay = 5 as TimeInterval
 
         let content = UNMutableNotificationContent()
+        #if !os(tvOS)
         content.title = NSLocalizedString("App Stopped Running", comment: "")
         content.body = NSLocalizedString("Tap this notification to resume monitoring for AltStore.", comment: "")
 
@@ -67,6 +68,7 @@ private extension ApplicationMonitor {
             // This prevents the currently scheduled notification from displaying, and starts another countdown timer.
             self.scheduleApplicationQuitNotification()
         }
+        #endif
     }
 
     func cancelApplicationQuitNotification() {
@@ -74,12 +76,14 @@ private extension ApplicationMonitor {
     }
 
     func sendNotification(title: String, message: String) {
+#if !os(tvOS)
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = message
 
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
+#endif
     }
 }
 

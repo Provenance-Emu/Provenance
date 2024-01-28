@@ -43,8 +43,8 @@
 		9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57E294CB5E6000322B9 /* number_theory.c */; };
 		9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57F294CB5E6000322B9 /* memory_manager.c */; };
 		9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */; };
-		936FDBC02957F9D70073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; };
-		936FDBCA295808D20073628A /* libMoltenVK_Play.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; };
+		936FDBC02957F9D70073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
+		936FDBCA295808D20073628A /* libMoltenVK_Play.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		939AAF6E2A791EF0007709E5 /* libplay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libplay.a */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
@@ -85,11 +85,13 @@
 		B3135BA726E4CD5A0047F338 /* PVPlayCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVPlayCore+Video.mm */; };
 		B3135BA926E4CD600047F338 /* PVPlayCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVPlayCore+Audio.mm */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
+		B32987C82B66175A00728996 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32987C72B66175A00728996 /* MoltenVK.xcframework */; platformFilters = (tvos, ); };
+		B32987C92B66175A00728996 /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32987C72B66175A00728996 /* MoltenVK.xcframework */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B351223A27843318001C4B83 /* PVPlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVPlay.mm */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
+		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7DB293F2A8B0010B746 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
@@ -508,6 +510,17 @@
 			dstSubfolderSpec = 16;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B32987CA2B66175A00728996 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B32987C92B66175A00728996 /* MoltenVK.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1725,6 +1738,7 @@
 		B3135B2A26E4C6850047F338 /* Play.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Play.xcodeproj; path = cmake/Play.xcodeproj; sourceTree = "<group>"; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B32987C72B66175A00728996 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "../Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447E96218B809200557ACE /* PVPlayCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVPlayCore+Controls.h"; sourceTree = "<group>"; };
@@ -1802,6 +1816,7 @@
 			files = (
 				939AAF6E2A791EF0007709E5 /* libplay.a in Frameworks */,
 				93161E0C2A5A0AA6000C5362 /* libbz2.1.0.tbd in Frameworks */,
+				B32987C82B66175A00728996 /* MoltenVK.xcframework in Frameworks */,
 				939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */,
 				B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */,
 				9333C7E3298932970042CD99 /* Foundation.framework in Frameworks */,
@@ -4068,6 +4083,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B32987C72B66175A00728996 /* MoltenVK.xcframework */,
 				934FA1BC2A79063F0019C951 /* libplay.a */,
 				93161E092A5A0A31000C5362 /* libbz2.1.0.tbd */,
 				93161E072A5A09F4000C5362 /* libbz2.1.0.8.tbd */,
@@ -4179,6 +4195,7 @@
 				B3C7620C20783162009950E4 /* Frameworks */,
 				B3C7620D20783162009950E4 /* Headers */,
 				B3C7620E20783162009950E4 /* Resources */,
+				B32987CA2B66175A00728996 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -4864,13 +4881,13 @@
 				PRODUCT_NAME = PVPlay;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/lib/play";
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 			};
 			name = Release;
 		};

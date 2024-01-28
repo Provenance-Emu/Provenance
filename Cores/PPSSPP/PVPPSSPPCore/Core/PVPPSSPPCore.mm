@@ -395,7 +395,9 @@ kern_return_t catch_exception_raise(mach_port_t exception_port,
 
 void *exception_handler(void *argument) {
 	auto port = *reinterpret_cast<mach_port_t *>(argument);
+#if !TARGET_OS_TV
 	mach_msg_server(exc_server, 2048, port, 0);
+#endif
 	return NULL;
 }
 

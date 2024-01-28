@@ -311,7 +311,9 @@ void extract_bundles();
             MetalView *v = [MetalView new];
             v.paused                = YES;
             v.enableSetNeedsDisplay = NO;
+#if !TARGET_OS_TV
             v.multipleTouchEnabled  = YES;
+#endif
             v.autoresizesSubviews=true;
             v.autoResizeDrawable=true;
             v.contentMode=UIViewContentModeScaleToFill;
@@ -323,7 +325,7 @@ void extract_bundles();
             MetalView *v = [MetalView new];
             v.paused                = YES;
             v.enableSetNeedsDisplay = NO;
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS && !TARGET_OS_TV
             v.multipleTouchEnabled  = YES;
 #endif
             if (!self.isRootView) {
@@ -487,7 +489,9 @@ void extract_bundles();
             self.touchViewController.view.userInteractionEnabled=true;
             self.touchViewController.view.autoresizesSubviews=true;
             self.touchViewController.view.userInteractionEnabled=true;
+#if !TARGET_OS_TV
             self.touchViewController.view.multipleTouchEnabled=true;
+#endif
         } else {
             [gl_view_controller.view addSubview:self.view];
             [gl_view_controller addChildViewController:rootController];
@@ -505,10 +509,14 @@ void extract_bundles();
             gl_view_controller.view.userInteractionEnabled=true;
             gl_view_controller.view.autoresizesSubviews=true;
             gl_view_controller.view.userInteractionEnabled=true;
+#if !TARGET_OS_TV
             gl_view_controller.view.multipleTouchEnabled=true;
+#endif
         }
         self.view.userInteractionEnabled=true;
+#if !TARGET_OS_TV
         self.view.multipleTouchEnabled=true;
+#endif
         self.view.autoresizesSubviews=true;
         self.view.contentMode=UIViewContentModeScaleToFill;
 	}
@@ -553,7 +561,7 @@ void extract_bundles();
 	return self.documentsDirectory;
 }
 - (void)refreshSystemConfig {
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS && !TARGET_OS_TV
 	/* Get enabled orientations */
 	apple_frontend_settings.orientation_flags = UIInterfaceOrientationMaskAll;
 	if (string_is_equal(apple_frontend_settings.orientations, "landscape"))

@@ -96,9 +96,17 @@
 @end
 
 /* iOS UI */
+#if TARGET_OS_TV
+//#define HAVE_IOS_TOUCHMOUSE 0
+#undef HAVE_IOS_TOUCHMOUSE
 #define HAVE_COCOATOUCH 1
 #define TARGET_OS_IOS 1
+#define TARGET_OS_TVOS 1
+#else
 #define HAVE_IOS_TOUCHMOUSE 1
+#define HAVE_COCOATOUCH 1
+#define TARGET_OS_IOS 1
+#endif
 #define HAVE_IOS_SWIFT 1
 #define HAVE_IOS_CUSTOMKEYBOARD 1
 
