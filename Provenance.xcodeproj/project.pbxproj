@@ -723,6 +723,26 @@
 		B34CFF5E295F2BE90014C8AF /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
 		B34EADAF218824C3008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
+		B34FB13D2B6730B4009687D7 /* BiosRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB13C2B6730B4009687D7 /* BiosRowView.swift */; };
+		B34FB13E2B6730B4009687D7 /* BiosRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB13C2B6730B4009687D7 /* BiosRowView.swift */; };
+		B34FB13F2B6730B4009687D7 /* BiosRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB13C2B6730B4009687D7 /* BiosRowView.swift */; };
+		B34FB1402B6730B4009687D7 /* BiosRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB13C2B6730B4009687D7 /* BiosRowView.swift */; };
+		B34FB1412B6730B4009687D7 /* BiosRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB13C2B6730B4009687D7 /* BiosRowView.swift */; };
+		B34FB1432B67313B009687D7 /* GamesDisplayOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1422B67313B009687D7 /* GamesDisplayOptionsView.swift */; };
+		B34FB1442B67313B009687D7 /* GamesDisplayOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1422B67313B009687D7 /* GamesDisplayOptionsView.swift */; };
+		B34FB1452B67313B009687D7 /* GamesDisplayOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1422B67313B009687D7 /* GamesDisplayOptionsView.swift */; };
+		B34FB1462B67313B009687D7 /* GamesDisplayOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1422B67313B009687D7 /* GamesDisplayOptionsView.swift */; };
+		B34FB1472B67313B009687D7 /* GamesDisplayOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1422B67313B009687D7 /* GamesDisplayOptionsView.swift */; };
+		B34FB1492B6731A0009687D7 /* GamesDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1482B6731A0009687D7 /* GamesDividerView.swift */; };
+		B34FB14A2B6731A0009687D7 /* GamesDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1482B6731A0009687D7 /* GamesDividerView.swift */; };
+		B34FB14B2B6731A0009687D7 /* GamesDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1482B6731A0009687D7 /* GamesDividerView.swift */; };
+		B34FB14C2B6731A0009687D7 /* GamesDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1482B6731A0009687D7 /* GamesDividerView.swift */; };
+		B34FB14D2B6731A0009687D7 /* GamesDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1482B6731A0009687D7 /* GamesDividerView.swift */; };
+		B34FB14F2B6731C7009687D7 /* OptionsIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB14E2B6731C7009687D7 /* OptionsIndicator.swift */; };
+		B34FB1502B6731C7009687D7 /* OptionsIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB14E2B6731C7009687D7 /* OptionsIndicator.swift */; };
+		B34FB1512B6731C7009687D7 /* OptionsIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB14E2B6731C7009687D7 /* OptionsIndicator.swift */; };
+		B34FB1522B6731C8009687D7 /* OptionsIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB14E2B6731C7009687D7 /* OptionsIndicator.swift */; };
+		B34FB1532B6731C8009687D7 /* OptionsIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB14E2B6731C7009687D7 /* OptionsIndicator.swift */; };
 		B3532B2B21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
 		B3532B2C21A78FB2006CDA0F /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
 		B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
@@ -2738,6 +2758,10 @@
 		B344605A27DCB73E0035B08E /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/swift/libswift_Concurrency.tbd; sourceTree = DEVELOPER_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3475E65293CB6F200725A82 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B34FB13C2B6730B4009687D7 /* BiosRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiosRowView.swift; sourceTree = "<group>"; };
+		B34FB1422B67313B009687D7 /* GamesDisplayOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesDisplayOptionsView.swift; sourceTree = "<group>"; };
+		B34FB1482B6731A0009687D7 /* GamesDividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesDividerView.swift; sourceTree = "<group>"; };
+		B34FB14E2B6731C7009687D7 /* OptionsIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsIndicator.swift; sourceTree = "<group>"; };
 		B35104C32896646800FA401F /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35104C62896648500FA401F /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSwitchCell.swift; sourceTree = "<group>"; };
@@ -4225,13 +4249,11 @@
 			isa = PBXGroup;
 			children = (
 				37EEA28527BC7E610070E222 /* Home */,
-				37EEA28727BC7E610070E222 /* PVRootViewController.swift */,
-				37EEA28827BC7E610070E222 /* PVRootViewController+DelegateMethods.swift */,
+				B34FB13B2B672F33009687D7 /* RootView */,
 				37EEA28927BC7E610070E222 /* SideNavigationController */,
 				37EEA28D27BC7E610070E222 /* Utils */,
 				37EEA28F27BC7E610070E222 /* Components */,
 				37EEA29427BC7E610070E222 /* SideMenu */,
-				37EEA29627BC7E610070E222 /* PVRootViewModel.swift */,
 				37EEA29727BC7E610070E222 /* Consoles */,
 			);
 			path = NewUI;
@@ -4285,8 +4307,12 @@
 		37EEA29727BC7E610070E222 /* Consoles */ = {
 			isa = PBXGroup;
 			children = (
+				B34FB13C2B6730B4009687D7 /* BiosRowView.swift */,
 				37EEA29827BC7E610070E222 /* ConsolesWrapperView.swift */,
 				37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */,
+				B34FB1422B67313B009687D7 /* GamesDisplayOptionsView.swift */,
+				B34FB1482B6731A0009687D7 /* GamesDividerView.swift */,
+				B34FB14E2B6731C7009687D7 /* OptionsIndicator.swift */,
 			);
 			path = Consoles;
 			sourceTree = "<group>";
@@ -4534,6 +4560,16 @@
 				B3427BEC287EA0CE0054C1B5 /* fullscreen_vs.metal */,
 			);
 			path = Vertex;
+			sourceTree = "<group>";
+		};
+		B34FB13B2B672F33009687D7 /* RootView */ = {
+			isa = PBXGroup;
+			children = (
+				37EEA28727BC7E610070E222 /* PVRootViewController.swift */,
+				37EEA28827BC7E610070E222 /* PVRootViewController+DelegateMethods.swift */,
+				37EEA29627BC7E610070E222 /* PVRootViewModel.swift */,
+			);
+			path = RootView;
 			sourceTree = "<group>";
 		};
 		B3532B2921A78F97006CDA0F /* Cells */ = {
@@ -6571,6 +6607,7 @@
 				B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */,
 				B300DEC3295FEC320049F2AB /* CodeSignatureUtils.m in Sources */,
 				B39AF05F28754EB8004882FC /* PVAppDelegate+VolumeButton.swift in Sources */,
+				B34FB1502B6731C7009687D7 /* OptionsIndicator.swift in Sources */,
 				93599B4B2955F2850049DAC8 /* PVWiiControllerViewController.swift in Sources */,
 				B3411C1C276B470C00D85327 /* Icon.swift in Sources */,
 				B3DB11AD205C973F00A6E845 /* PVCoresTableViewContorller.swift in Sources */,
@@ -6629,12 +6666,14 @@
 				B300DED2295FECDC0049F2AB /* LocalizerUtils.m in Sources */,
 				B3B923B0202D2EAE00580FFC /* Theme.swift in Sources */,
 				37EEA2A427BC7E610070E222 /* SearchBar.swift in Sources */,
+				B34FB14A2B6731A0009687D7 /* GamesDividerView.swift in Sources */,
 				B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */,
 				B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */,
 				CF17114E2586A13100258602 /* PVCheatsTableViewCell.swift in Sources */,
 				B3AB37342187F569009D9244 /* PVGBControllerViewController.swift in Sources */,
 				B300DED0295FECC70049F2AB /* JitAcquisitionUtils.m in Sources */,
 				B3532C3C21A9AC93006CDA0F /* Services.swift in Sources */,
+				B34FB13E2B6730B4009687D7 /* BiosRowView.swift in Sources */,
 				1180B3242492AFC900636C8A /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3AB37382187F569009D9244 /* PVGBAControllerViewController.swift in Sources */,
 				1A5665091D96A18A006EAE01 /* UIDevice+Hardware.m in Sources */,
@@ -6643,6 +6682,7 @@
 				378F4A021B63D7CD0065FA39 /* GCDWebServerFunctions.m in Sources */,
 				B35E6C2F207ED7050040709A /* AppearanceStyle.swift in Sources */,
 				B300DED5295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */,
+				B34FB1442B67313B009687D7 /* GamesDisplayOptionsView.swift in Sources */,
 				B35E6C27207ED7050040709A /* AppearanceStyleable.swift in Sources */,
 				B3D534E220AFF21900A83D4E /* Version.swift in Sources */,
 				B37B71B0278E33B9005FB278 /* MenuButton.swift in Sources */,
@@ -6799,6 +6839,7 @@
 				B3290499270D1F95002707AC /* PVAppDelegate+NitoTV.swift in Sources */,
 				B346AEDF297617E30090E014 /* main.m in Sources */,
 				B3B104C3218F2EF400210C39 /* PVAtari7800ControllerViewController.swift in Sources */,
+				B34FB1452B67313B009687D7 /* GamesDisplayOptionsView.swift in Sources */,
 				B361F63427C07B300080D368 /* GameItemView.swift in Sources */,
 				B3E3B5DA202ED84100A11871 /* PVGameLibraryViewController.swift in Sources */,
 				B3D534E320AFF21900A83D4E /* Version.swift in Sources */,
@@ -6863,6 +6904,7 @@
 				B35E6C26207ED7050040709A /* UIApplicationExtensions.swift in Sources */,
 				B361F63027C07B240080D368 /* ConsolesWrapperView.swift in Sources */,
 				B3427BFF287EA0CF0054C1B5 /* MameShaders.metal in Sources */,
+				B34FB14B2B6731A0009687D7 /* GamesDividerView.swift in Sources */,
 				B3B104CA218F2EF400210C39 /* PVN64ControllerViewController.swift in Sources */,
 				B3411C28276B472900D85327 /* Configurable.swift in Sources */,
 				B3B104D5218F2F1700210C39 /* JSDPad.swift in Sources */,
@@ -6885,6 +6927,7 @@
 				B3B104C5218F2EF400210C39 /* PVDreamcastControllerViewController.swift in Sources */,
 				B361F63227C07B300080D368 /* SearchBar.swift in Sources */,
 				B3B104CE218F2EF400210C39 /* PVPCFXControllerViewController.swift in Sources */,
+				B34FB1512B6731C7009687D7 /* OptionsIndicator.swift in Sources */,
 				B3D5E2B3218EC1AE0015C690 /* RxTableViewRealmDataSource.swift in Sources */,
 				B3427BF9287EA0CF0054C1B5 /* megaTron.metal in Sources */,
 				B382C63A278E5055007E61FE /* PVEmulatorViewController+Controllers.swift in Sources */,
@@ -6936,6 +6979,7 @@
 				B3427BF7287EA0CF0054C1B5 /* ulTron.metal in Sources */,
 				1AACCAED1BB61D5600DC21AE /* PVTVSplitViewController.swift in Sources */,
 				B3B104C1218F2EF400210C39 /* PVAtari2600ControllerViewController.swift in Sources */,
+				B34FB13F2B6730B4009687D7 /* BiosRowView.swift in Sources */,
 				1AD481D91BA3543B00FDA50A /* GCDWebServerFunctions.m in Sources */,
 				1AD481D01BA3540300FDA50A /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */,
@@ -6997,6 +7041,7 @@
 				930498F82A93073800BF257F /* PVSaveStateInfoViewController.swift in Sources */,
 				930498F92A93073800BF257F /* CodeSignatureUtils.m in Sources */,
 				930498FA2A93073800BF257F /* PVAppDelegate+VolumeButton.swift in Sources */,
+				B34FB1532B6731C8009687D7 /* OptionsIndicator.swift in Sources */,
 				930498FB2A93073800BF257F /* PVWiiControllerViewController.swift in Sources */,
 				930498FC2A93073800BF257F /* Icon.swift in Sources */,
 				930498FD2A93073800BF257F /* PVCoresTableViewContorller.swift in Sources */,
@@ -7055,12 +7100,14 @@
 				930499312A93073800BF257F /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				930499322A93073800BF257F /* LocalizerUtils.m in Sources */,
 				930499332A93073800BF257F /* Theme.swift in Sources */,
+				B34FB14D2B6731A0009687D7 /* GamesDividerView.swift in Sources */,
 				930499342A93073800BF257F /* SearchBar.swift in Sources */,
 				930499352A93073800BF257F /* ApplicationMonitor.swift in Sources */,
 				930499362A93073800BF257F /* ConflictsController.swift in Sources */,
 				930499372A93073800BF257F /* PVCheatsTableViewCell.swift in Sources */,
 				930499382A93073800BF257F /* PVGBControllerViewController.swift in Sources */,
 				930499392A93073800BF257F /* JitAcquisitionUtils.m in Sources */,
+				B34FB1412B6730B4009687D7 /* BiosRowView.swift in Sources */,
 				9304993A2A93073800BF257F /* Services.swift in Sources */,
 				9304993B2A93073800BF257F /* PVGameLibraryUpdatesController.swift in Sources */,
 				9304993C2A93073800BF257F /* PVGBAControllerViewController.swift in Sources */,
@@ -7069,6 +7116,7 @@
 				9304993F2A93073800BF257F /* GCDWebServerFunctions.m in Sources */,
 				930499402A93073800BF257F /* AppearanceStyle.swift in Sources */,
 				930499412A93073800BF257F /* PVAppDelegate+JIT.swift in Sources */,
+				B34FB1472B67313B009687D7 /* GamesDisplayOptionsView.swift in Sources */,
 				930499422A93073800BF257F /* AppearanceStyleable.swift in Sources */,
 				930499432A93073800BF257F /* Version.swift in Sources */,
 				930499442A93073800BF257F /* MenuButton.swift in Sources */,
@@ -7315,6 +7363,7 @@
 				B3F7E2CE297736BE00362B92 /* PVSaveStateInfoViewController.swift in Sources */,
 				B3F7E2CF297736BE00362B92 /* CodeSignatureUtils.m in Sources */,
 				B3F7E2D0297736BE00362B92 /* PVAppDelegate+VolumeButton.swift in Sources */,
+				B34FB1522B6731C8009687D7 /* OptionsIndicator.swift in Sources */,
 				B3F7E2D1297736BE00362B92 /* PVWiiControllerViewController.swift in Sources */,
 				B3F7E2D2297736BE00362B92 /* Icon.swift in Sources */,
 				B3F7E2D3297736BE00362B92 /* PVCoresTableViewContorller.swift in Sources */,
@@ -7373,12 +7422,14 @@
 				B3F7E308297736BE00362B92 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B3F7E309297736BE00362B92 /* LocalizerUtils.m in Sources */,
 				B3F7E30A297736BE00362B92 /* Theme.swift in Sources */,
+				B34FB14C2B6731A0009687D7 /* GamesDividerView.swift in Sources */,
 				B3F7E30B297736BE00362B92 /* SearchBar.swift in Sources */,
 				B3F7E30C297736BE00362B92 /* ApplicationMonitor.swift in Sources */,
 				B3F7E30D297736BE00362B92 /* ConflictsController.swift in Sources */,
 				B3F7E30E297736BE00362B92 /* PVCheatsTableViewCell.swift in Sources */,
 				B3F7E30F297736BE00362B92 /* PVGBControllerViewController.swift in Sources */,
 				B3F7E310297736BE00362B92 /* JitAcquisitionUtils.m in Sources */,
+				B34FB1402B6730B4009687D7 /* BiosRowView.swift in Sources */,
 				B3F7E311297736BE00362B92 /* Services.swift in Sources */,
 				B3F7E312297736BE00362B92 /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3F7E313297736BE00362B92 /* PVGBAControllerViewController.swift in Sources */,
@@ -7387,6 +7438,7 @@
 				B3F7E316297736BE00362B92 /* GCDWebServerFunctions.m in Sources */,
 				B3F7E317297736BE00362B92 /* AppearanceStyle.swift in Sources */,
 				B3F7E318297736BE00362B92 /* PVAppDelegate+JIT.swift in Sources */,
+				B34FB1462B67313B009687D7 /* GamesDisplayOptionsView.swift in Sources */,
 				B3F7E319297736BE00362B92 /* AppearanceStyleable.swift in Sources */,
 				B3F7E31A297736BE00362B92 /* Version.swift in Sources */,
 				B3F7E31B297736BE00362B92 /* MenuButton.swift in Sources */,
@@ -7529,6 +7581,7 @@
 				B3F7E45B297736C200362B92 /* PVSaveStateInfoViewController.swift in Sources */,
 				B3F7E45C297736C200362B92 /* CodeSignatureUtils.m in Sources */,
 				B3F7E45D297736C200362B92 /* PVAppDelegate+VolumeButton.swift in Sources */,
+				B34FB14F2B6731C7009687D7 /* OptionsIndicator.swift in Sources */,
 				B3F7E45E297736C200362B92 /* PVWiiControllerViewController.swift in Sources */,
 				B3F7E45F297736C200362B92 /* Icon.swift in Sources */,
 				B3F7E460297736C200362B92 /* PVCoresTableViewContorller.swift in Sources */,
@@ -7587,12 +7640,14 @@
 				B3F7E495297736C200362B92 /* PVGameLibrarySectionHeaderView.swift in Sources */,
 				B3F7E496297736C200362B92 /* LocalizerUtils.m in Sources */,
 				B3F7E497297736C200362B92 /* Theme.swift in Sources */,
+				B34FB1492B6731A0009687D7 /* GamesDividerView.swift in Sources */,
 				B3F7E498297736C200362B92 /* SearchBar.swift in Sources */,
 				B3F7E499297736C200362B92 /* ApplicationMonitor.swift in Sources */,
 				B3F7E49A297736C200362B92 /* ConflictsController.swift in Sources */,
 				B3F7E49B297736C200362B92 /* PVCheatsTableViewCell.swift in Sources */,
 				B3F7E49C297736C200362B92 /* PVGBControllerViewController.swift in Sources */,
 				B3F7E49D297736C200362B92 /* JitAcquisitionUtils.m in Sources */,
+				B34FB13D2B6730B4009687D7 /* BiosRowView.swift in Sources */,
 				B3F7E49E297736C200362B92 /* Services.swift in Sources */,
 				B3F7E49F297736C200362B92 /* PVGameLibraryUpdatesController.swift in Sources */,
 				B3F7E4A0297736C200362B92 /* PVGBAControllerViewController.swift in Sources */,
@@ -7601,6 +7656,7 @@
 				B3F7E4A3297736C200362B92 /* GCDWebServerFunctions.m in Sources */,
 				B3F7E4A4297736C200362B92 /* AppearanceStyle.swift in Sources */,
 				B3F7E4A5297736C200362B92 /* PVAppDelegate+JIT.swift in Sources */,
+				B34FB1432B67313B009687D7 /* GamesDisplayOptionsView.swift in Sources */,
 				B3F7E4A6297736C200362B92 /* AppearanceStyleable.swift in Sources */,
 				B3F7E4A7297736C200362B92 /* Version.swift in Sources */,
 				B3F7E4A8297736C200362B92 /* MenuButton.swift in Sources */,
