@@ -148,7 +148,7 @@ int argc =  1;
 	}
 	iterate_observer = NULL;
     retroarch_config_init();
-	task_queue_init(true, main_msg_queue_push);
+	task_queue_init(true, (void (*)(struct retro_task *, const char *, unsigned int, unsigned int, bool)) main_msg_queue_push);
 	main_exit(NULL);
     task_queue_deinit();
 	_isInitialized = false;
