@@ -456,7 +456,7 @@ static void *dlopen_myself()
     audio.aiLenChanged = MupenAudioLenChanged;
     audio.initiateAudio = MupenOpenAudio;
     audio.setSpeedFactor = MupenSetAudioSpeed;
-    audio.romOpen = MupenAudioRomOpen;
+    audio.romOpen = (int (*)(void))MupenAudioRomOpen;
     audio.romClosed = MupenAudioRomClosed;
 
     plugin_start(M64PLUGIN_AUDIO);
