@@ -409,9 +409,9 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
     }
 
-    @IBOutlet var waringSignLabel: UIImageView! {
+    @IBOutlet var warningSignLabel: UIImageView! {
         didSet {
-            //			waringSignLabel.layer.compositingFilter = BlendModes.screenBlendMode.rawValue //"colorDodgeBlendMode"
+            //			warningSignLabel.layer.compositingFilter = BlendModes.screenBlendMode.rawValue //"colorDodgeBlendMode"
         }
     }
 
@@ -420,8 +420,8 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
 //    @IBOutlet weak var topRightBadgeWidthConstraint: NSLayoutConstraint?
     @IBOutlet var discCountTrailingConstraint: NSLayoutConstraint?
     @IBOutlet var discCountBottomConstraint: NSLayoutConstraint?
-    @IBOutlet var missingFileWidthContraint: NSLayoutConstraint?
-    @IBOutlet var missingFileHeightContraint: NSLayoutConstraint?
+    @IBOutlet var missingFileWidthConstraint: NSLayoutConstraint?
+    @IBOutlet var missingFileHeightConstraint: NSLayoutConstraint?
     @IBOutlet var titleLabelHeightConstraint: NSLayoutConstraint?
     @IBOutlet var deleteActionView: UIView? {
         didSet {
@@ -458,7 +458,7 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         }
     }
 
-    private func updateImageBageConstraints() {}
+    private func updateImageBagConstraints() {}
 
     private func setup(with game: PVGame) {
         let artworkURL: String = game.customArtworkURL
@@ -876,8 +876,8 @@ final class PVGameLibraryCollectionViewCell: UICollectionViewCell {
         discCountTrailingConstraint?.constant = trailingConstant
         discCountBottomConstraint?.constant = bottomConstant
 
-        missingFileWidthContraint?.constant = imageContentFrame.width
-        missingFileHeightContraint?.constant = imageContentFrame.height
+        missingFileWidthConstraint?.constant = imageContentFrame.width
+        missingFileHeightConstraint?.constant = imageContentFrame.height
 
         roundDiscCountCorners()
     }

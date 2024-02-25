@@ -202,7 +202,7 @@ public extension Thread {
 
 public typealias RomDB = RomDatabase
 public final class RomDatabase {
-    public private(set) static var databaseInitilized = false
+    public private(set) static var databaseInitialized = false
     static var gamesCache: [String: PVGame]?
     static var systemCache: [String: PVSystem]?
     static var coreCache: [String: PVCore]?
@@ -212,7 +212,7 @@ public final class RomDatabase {
     static var artFileNameToMD5Cache:[String:String]?
     
     public class func initDefaultDatabase() throws {
-        if !databaseInitilized {
+        if !databaseInitialized {
             RealmConfiguration.setDefaultRealmConfig()
             try _sharedInstance = RomDatabase()
 
@@ -226,7 +226,7 @@ public final class RomDatabase {
                 createInitialLocalLibrary()
             }
 
-            databaseInitilized = true
+            databaseInitialized = true
         }
     }
 
@@ -680,9 +680,9 @@ public extension RomDatabase {
         RomDatabase.gamesCache=addGameCache(game, cache: RomDatabase.gamesCache ?? [:])
     }
     func altName(_ romPath:URL, systemIdentifier:String) -> String {
-        var similiarName = romPath.deletingPathExtension().lastPathComponent
-        similiarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similiarName)
-        return (systemIdentifier as NSString).appendingPathComponent(similiarName)
+        var similarName = romPath.deletingPathExtension().lastPathComponent
+        similarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similarName)
+        return (systemIdentifier as NSString).appendingPathComponent(similarName)
     }
     func getGamesCache() -> [String:PVGame] {
         if RomDatabase.gamesCache == nil {

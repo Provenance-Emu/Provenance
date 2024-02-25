@@ -608,7 +608,7 @@ public extension GameImporter {
 
         if games.count > 1 {
             // TODO: Prompt use for which one? or change all, or all where custom artwork isn't set but only if tehre's at least one that isn't? =jm
-            WLOG("There were mutliple matches for \(gamePartialPath)! #\(games.count). Going with first for now until we make better code to prompt user.")
+            WLOG("There were multiple matches for \(gamePartialPath)! #\(games.count). Going with first for now until we make better code to prompt user.")
         }
 
         let game = games.first!
@@ -667,7 +667,7 @@ public extension GameImporter {
 #if canImport(UIKit)
         // Create new Data from scaled image
         guard let coverArtScaledData = coverArtScaledImage.jpegData(compressionQuality: 0.85) else {
-            ELOG("Failed to create data respresentation of scaled image")
+            ELOG("Failed to create data representation of scaled image")
             return nil
         }
         #else
@@ -779,7 +779,7 @@ public extension GameImporter {
                         try FileManager.default.removeItem(at: path)
                         ILOG("Deleted empty import folder \(path.path)")
                     } else {
-                        ILOG("Found non-empty folder in improts dir. Will iterate subcontents for import")
+                        ILOG("Found non-empty folder in imports dir. Will iterate subcontents for import")
                         subContents.forEach { subFile in
                             self.workQueue.addOperation {
                                 self._handlePath(path: subFile, userChosenSystem: nil)
@@ -873,10 +873,10 @@ public extension GameImporter {
         // If we have a matching game from a multi-match above, use that, or run a query by path and see if there's a match there
 
         // For multi-cd games, make the most inert version of the filename
-        var similiarName = RomDatabase.sharedInstance.altName(path, systemIdentifier: system.identifier)
+        var similarName = RomDatabase.sharedInstance.altName(path, systemIdentifier: system.identifier)
         if let existingGame = maybeGame ?? // found a match above?
             RomDatabase.sharedInstance.getGamesCache()[partialPath] ??
-            RomDatabase.sharedInstance.getGamesCache()[similiarName],
+            RomDatabase.sharedInstance.getGamesCache()[similarName],
             system.identifier == existingGame.systemIdentifier
         {
             //database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [partialPath])).first ?? // Exact filename match
@@ -1384,7 +1384,7 @@ extension GameImporter {
      */
     public func moveCDROM(toAppropriateSubfolder candidateFile: ImportCandidateFile) -> [URL]? {
         guard let systemsForExtension = systemIDsForRom(at: candidateFile.filePath) else {
-            WLOG("No sytem found for import candidate file \(candidateFile.filePath.lastPathComponent)")
+            WLOG("No system found for import candidate file \(candidateFile.filePath.lastPathComponent)")
             return nil
         }
 
@@ -1433,7 +1433,7 @@ extension GameImporter {
 
         var relatedFiles: [URL]?
         // moved the .cue, now move .bins .imgs etc to the destination dir (conflicts or system dir, decided above)
-        if var paths = moveFiles(similiarToFile: candidateFile.filePath, toDirectory: newDirectory, cuesheet: newCDFilePath) {
+        if var paths = moveFiles(similarToFile: candidateFile.filePath, toDirectory: newDirectory, cuesheet: newCDFilePath) {
             paths.append(newCDFilePath)
             relatedFiles = paths
         }
@@ -1447,7 +1447,7 @@ extension GameImporter {
         return relatedFiles
     }
 
-    public func biosEntryMatcing(candidateFile: ImportCandidateFile) -> PVBIOS? {
+    public func biosEntryMatching(candidateFile: ImportCandidateFile) -> PVBIOS? {
         // Check if BIOS by filename - should possibly just only check MD5?
         if let bios = PVEmulatorConfiguration.biosEntry(forFilename: candidateFile.filePath.lastPathComponent) {
             return bios
@@ -1477,8 +1477,8 @@ extension GameImporter {
         }
 
         // Check first if known BIOS
-        if let biosEntry = biosEntryMatcing(candidateFile: candidateFile) {
-            ILOG("Candiate file matches as a known BIOS")
+        if let biosEntry = biosEntryMatching(candidateFile: candidateFile) {
+            ILOG("Candidate file matches as a known BIOS")
             // We have a BIOS file match
             let destinationPath = biosEntry.expectedPath
             let biosDirectory = biosEntry.system.biosDirectory
@@ -1521,15 +1521,15 @@ extension GameImporter {
         // Check if .m3u
         if extensionLowercased == "m3u" {
             let cueFilenameWithoutExtension = filePath.deletingPathExtension().lastPathComponent
-            let similiarFile = PVEmulatorConfiguration.stripDiscNames(fromFilename: cueFilenameWithoutExtension)
+            let similarFile = PVEmulatorConfiguration.stripDiscNames(fromFilename: cueFilenameWithoutExtension)
 
-            var foundGameMaybe = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similiarFile])).first
+            var foundGameMaybe = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similarFile])).first
 
             // If don't find by the m3u partial file name matching a filename, try to see if the first line of the m3u matches any games filenames partially
             if foundGameMaybe == nil, let m3uContents = try? String(contentsOf: filePath, encoding: .utf8) {
                 if var firstLine = m3uContents.components(separatedBy: .newlines).first {
                     firstLine = PVEmulatorConfiguration.stripDiscNames(fromFilename: firstLine)
-                    if let game = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similiarFile])).first {
+                    if let game = RomDatabase.sharedInstance.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [similarFile])).first {
                         foundGameMaybe = game
                     }
                 }
@@ -1631,7 +1631,7 @@ extension GameImporter {
                 if let s = systemID, let f = systemToPathMap[s] {
                     subfolderPathMaybe = f
                 } else {
-                    ELOG("Didn't expecte any nils here")
+                    ELOG("Didn't expect any nils here")
                     return nil
                 }
             } else {
@@ -1651,7 +1651,7 @@ extension GameImporter {
             if let s = systemID, let f = systemToPathMap[s] {
                 subfolderPathMaybe = f
             } else {
-                ELOG("Didn't expecte any nils here")
+                ELOG("Didn't expect any nils here")
                 return nil
             }
         }
@@ -1729,8 +1729,8 @@ extension GameImporter {
         return newPath
     }
 
-    public func moveFiles(similiarToFile inputFile: URL, toDirectory: URL, cuesheet cueSheetPath: URL) -> [URL]? {
-        ILOG("Move files files similiar to \(inputFile.lastPathComponent) to directory \(toDirectory.lastPathComponent) from cue sheet \(cueSheetPath.lastPathComponent)")
+    public func moveFiles(similarToFile inputFile: URL, toDirectory: URL, cuesheet cueSheetPath: URL) -> [URL]? {
+        ILOG("Move files files similar to \(inputFile.lastPathComponent) to directory \(toDirectory.lastPathComponent) from cue sheet \(cueSheetPath.lastPathComponent)")
         let relatedFileName: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: inputFile.deletingPathExtension().lastPathComponent)
 
         let contents: [URL]
@@ -1770,7 +1770,7 @@ extension GameImporter {
             }
 
             if filenameWithoutExtension.contains(relatedFileName) {
-                DLOG("<\(file.lastPathComponent)> was found to be similiar to <\(cueSheetPath.lastPathComponent)>")
+                DLOG("<\(file.lastPathComponent)> was found to be similar to <\(cueSheetPath.lastPathComponent)>")
                 // Before moving the file, make sure the cue sheet's reference uses the same case.
                 if !cueSheetPath.path.isEmpty {
                     do {

@@ -103,7 +103,7 @@ public extension PVEmulatorConfiguration {
     }
 
     class func updateSystems(fromPlists plists: [URL]) {
-        typealias SystemPlistEntries = [SytemPlistEntry]
+        typealias SystemPlistEntries = [SystemPlistEntry]
         let database = RomDatabase.sharedInstance
         let decoder = PropertyListDecoder()
 
@@ -150,7 +150,7 @@ public extension PVEmulatorConfiguration {
         }
     }
 
-    class func setPropertiesTo(pvSystem: PVSystem, fromSystemPlistEntry system: SytemPlistEntry) {
+    class func setPropertiesTo(pvSystem: PVSystem, fromSystemPlistEntry system: SystemPlistEntry) {
         pvSystem.openvgDatabaseID = Int(system.PVDatabaseID) ?? -1
         pvSystem.requiresBIOS = system.PVRequiresBIOS ?? false
         pvSystem.manufacturer = system.PVManufacturer

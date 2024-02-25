@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)attemptToAcquireJitByJitStreamer;
 - (DOLJitType)jitType;
 - (bool)appHasAcquiredJit;
-- (void)setAuxillaryError:(NSString*)error;
+- (void)setAuxiliaryError:(NSString*)error;
 - (nullable NSString*)getAuxiliaryError;
 
 @end
