@@ -169,7 +169,7 @@
                 <outlet property="topRightBadgeTopConstraint" destination="eqW-Eg-3eO" id="k1X-HN-KoO"/>
                 <outlet property="topRightBadgeTrailingConstraint" destination="iDr-pp-Vh8" id="1Rj-wN-I6X"/>
                 <outlet property="topRightCornerBadgeView" destination="pdf-KX-U3g" id="T4k-bE-YcX"/>
-                <outlet property="waringSignLabel" destination="kJf-Ta-dgV" id="B7m-kB-Om0"/>
+                <outlet property="warningSignLabel" destination="kJf-Ta-dgV" id="B7m-kB-Om0"/>
             </connections>
             <point key="canvasLocation" x="-416" y="-155"/>
         </collectionViewCell>

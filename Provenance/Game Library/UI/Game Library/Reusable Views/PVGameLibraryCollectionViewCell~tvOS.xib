@@ -146,7 +146,7 @@
                 <outlet property="missingRedSquareView" destination="mmT-El-XIM" id="ujB-2t-nbC"/>
                 <outlet property="titleLabel" destination="98d-iv-EkE" id="iyv-CT-5gs"/>
                 <outlet property="topRightCornerBadgeView" destination="pdf-KX-U3g" id="T4k-bE-YcX"/>
-                <outlet property="waringSignLabel" destination="kJf-Ta-dgV" id="B7m-kB-Om0"/>
+                <outlet property="warningSignLabel" destination="kJf-Ta-dgV" id="B7m-kB-Om0"/>
             </connections>
             <point key="canvasLocation" x="-363" y="-94"/>
         </collectionViewCell>

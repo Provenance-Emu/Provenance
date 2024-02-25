@@ -230,7 +230,7 @@ extension PVEmulatorViewController {
             let message =
                 """
                 Save State is not valid
-                Please try anonther save state
+                Please try another save state
                 """
             presentWarning(message, source: self.view, completion: loadOk)
             return

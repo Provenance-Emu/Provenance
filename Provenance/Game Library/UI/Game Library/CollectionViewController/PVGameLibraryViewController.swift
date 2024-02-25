@@ -132,7 +132,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     struct Section: SectionModelType {
         let header: String
         let items: [Item]
-        let collapsable: Collapsable?
+        let collapsible: Collapsible?
 
         enum Item {
             case game(PVGame)
@@ -141,19 +141,19 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             case recents([PVRecentGame])
         }
 
-        enum Collapsable {
+        enum Collapsible {
             case collapsed(systemToken: String)
             case notCollapsed(systemToken: String)
         }
 
-        init(header: String, items: [Item], collapsable: Collapsable?) {
+        init(header: String, items: [Item], collapsible: Collapsible?) {
             self.header = header
             self.items = items
-            self.collapsable = collapsable
+            self.collapsible = collapsible
         }
 
         init(original: PVGameLibraryViewController.Section, items: [Item]) {
-            self.init(header: original.header, items: items, collapsable: original.collapsable)
+            self.init(header: original.header, items: items, collapsible: original.collapsible)
         }
     }
 
@@ -332,17 +332,17 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: PVGameLibraryHeaderViewIdentifier, for: indexPath) as! PVGameLibrarySectionHeaderView
                 let section = dataSource.sectionModels[indexPath.section]
                 let collapsed: Bool = {
-                    if case .collapsed = section.collapsable {
+                    if case .collapsed = section.collapsible {
                         return true
                     }
                     return false
                 }()
-                header.viewModel = .init(title: section.header, collapsable: section.collapsable != nil, collapsed: collapsed)
+                header.viewModel = .init(title: section.header, collapsible: section.collapsible != nil, collapsed: collapsed)
                 #if os(iOS)
                 header.collapseButton.rx.tap
                     .withLatestFrom(self.collapsedSystems)
                     .map({ (collapsedSystems: Set<String>) in
-                        switch section.collapsable {
+                        switch section.collapsible {
                         case .collapsed(let token):
                             return collapsedSystems.subtracting([token])
                         case .notCollapsed(let token):
@@ -358,7 +358,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 header.collapseButton.rx.primaryAction
                     .withLatestFrom(self.collapsedSystems)
                     .map({ (collapsedSystems: Set<String>) in
-                        switch section.collapsable {
+                        switch section.collapsible {
                         case .collapsed(let token):
                             return collapsedSystems.subtracting([token])
                         case .notCollapsed(let token):
@@ -379,13 +379,13 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             }
         }
         let favoritesSection = gameLibrary.favorites
-            .map { favorites in favorites.isEmpty ? nil : Section(header: "Favorites", items: [.favorites(favorites)], collapsable: nil)}
+            .map { favorites in favorites.isEmpty ? nil : Section(header: "Favorites", items: [.favorites(favorites)], collapsible: nil)}
 
         let saveStateSection = Observable.combineLatest(showSaveStates, gameLibrary.saveStates) { $0 ? $1.filter { FileManager.default.fileExists(atPath: $0.file.url.path) } : [] }
-            .map { saveStates in saveStates.isEmpty ? nil : Section(header: "Recently Saved", items: [.saves(saveStates)], collapsable: nil) }
+            .map { saveStates in saveStates.isEmpty ? nil : Section(header: "Recently Saved", items: [.saves(saveStates)], collapsible: nil) }
 
         let recentsSection = Observable.combineLatest(showRecentGames, gameLibrary.recents) { $0 ? $1 : [] }
-            .map { recentGames in recentGames.isEmpty ? nil : Section(header: "Recently Played", items: [.recents(recentGames)], collapsable: nil) }
+            .map { recentGames in recentGames.isEmpty ? nil : Section(header: "Recently Played", items: [.recents(recentGames)], collapsible: nil) }
 
         let topSections = Observable.combineLatest(favoritesSection, saveStateSection, recentsSection) { [$0, $1, $2] }
 
@@ -398,7 +398,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             })
             .map({ games -> Section? in
                 guard let games = games else { return nil }
-                return Section(header: "Search Results", items: games.map { .game($0) }, collapsable: nil)
+                return Section(header: "Search Results", items: games.map { .game($0) }, collapsible: nil)
             })
             .startWith(nil)
         let hideBios:[String:Bool] = RomDatabase.sharedInstance.getBIOSCache().values.joined()
@@ -423,7 +423,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 let items = isCollapsed ? [] : system.sortedGames.filter{ !$0.isInvalidated && $0.genres != "hidden" && hideBios[$0.romPath.lowercased()] != true }.map { Section.Item.game($0) }
 
                 return Section(header: header, items: items,
-                               collapsable: isCollapsed ? .collapsed(systemToken: system.identifier) : .notCollapsed(systemToken: system.identifier))
+                               collapsible: isCollapsed ? .collapsed(systemToken: system.identifier) : .notCollapsed(systemToken: system.identifier))
             })
         let nonSearchSections = Observable.combineLatest(topSections, systemSections) { $0 + $1 }
             // Remove empty sections
@@ -710,7 +710,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             #endif
         }
 
-        guard RomDatabase.databaseInitilized else {
+        guard RomDatabase.databaseInitialized else {
             return
         }
 
@@ -1393,7 +1393,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             imagePickerActionSheet.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
        
             let cameraIsAvailable: Bool = UIImagePickerController.isSourceTypeAvailable(.camera)
-            let photoLibraryIsAvaialble: Bool = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
+            let photoLibraryIsAvailable: Bool = UIImagePickerController.isSourceTypeAvailable(.photoLibrary)
 
             let cameraAction = UIAlertAction(title: "Take Photo", style: .default, handler: { action in
                 self.gameForCustomArt = game
@@ -1439,11 +1439,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 }))
             }
 
-            if cameraIsAvailable || photoLibraryIsAvaialble {
+            if cameraIsAvailable || photoLibraryIsAvailable {
                 if cameraIsAvailable {
                     imagePickerActionSheet.addAction(cameraAction)
                 }
-                if photoLibraryIsAvaialble {
+                if photoLibraryIsAvailable {
                     imagePickerActionSheet.addAction(libraryAction)
                 }
             }

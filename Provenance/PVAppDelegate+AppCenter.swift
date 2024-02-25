@@ -25,7 +25,7 @@ extension PVAppDelegate {
         if AppCenter.isConfigured {
             AppCenter.startService(Analytics.self)
             //AppCenter.startService(Crashes.self)
-            ILOG("AppCenter initilized.")
+            ILOG("AppCenter initialized.")
         } else {
             ELOG("AppCenter not configured.")
         }

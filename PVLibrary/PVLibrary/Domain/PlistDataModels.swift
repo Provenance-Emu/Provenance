@@ -62,12 +62,12 @@ public extension ControlLayoutEntry {
             let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
             return dictionary!
         } catch {
-            fatalError("Bad serialzied data")
+            fatalError("Bad serialized data")
         }
     }
 }
 
-public struct SytemPlistEntry: Codable, Equatable, Hashable {
+public struct SystemPlistEntry: Codable, Equatable, Hashable {
     public private(set) var PVSystemIdentifier: String
     public private(set) var PVDatabaseID: String
     public private(set) var PVRequiresBIOS: Bool?

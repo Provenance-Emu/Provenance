@@ -416,13 +416,13 @@
     BOOL isDirectory;
     if (![[NSFileManager defaultManager] fileExistsAtPath:temporaryDirectory
                                               isDirectory:&isDirectory]) {
-        ILOG(@"Not temporay directory at path <%@>. Creating.", temporaryDirectory);
+        ILOG(@"Not temporary directory at path <%@>. Creating.", temporaryDirectory);
         NSError *error;
         if ([[NSFileManager defaultManager] createDirectoryAtPath:temporaryDirectory
                                       withIntermediateDirectories:YES
                                                        attributes:@{}
                                                             error:&error]) {
-            ILOG(@"Created temporay directory");
+            ILOG(@"Created temporary directory");
         } else {
             ELOG(@"Couldn't create temp directory: %@", error.localizedDescription);
         }

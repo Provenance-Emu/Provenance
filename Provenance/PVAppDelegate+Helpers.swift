@@ -13,9 +13,9 @@ import PVLogging
 // MARK: - Helpers
 extension PVAppDelegate {
 
-    func isWebDavServerEnviromentVariableSet() -> Bool {
         // Start optional always on WebDav server using enviroment variable
         // See XCode run scheme enviroment varialbes settings. 
+    func isWebDavServerEnvironmentVariableSet() -> Bool {
         // Note: ENV variables are only passed when when from XCode scheme.
         // Users clicking the app icon won't be passed this variable when run outside of XCode
         let buildConfiguration = ProcessInfo.processInfo.environment["ALWAYS_ON_WEBDAV"]
@@ -24,7 +24,7 @@ extension PVAppDelegate {
 
     func startOptionalWebDavServer() {
         // Check if the user setting is set or the optional ENV variable
-        if PVSettingsModel.shared.webDavAlwaysOn || isWebDavServerEnviromentVariableSet() {
+        if PVSettingsModel.shared.webDavAlwaysOn || isWebDavServerEnvironmentVariableSet() {
             PVWebServer.shared.startWebDavServer()
         }
     }

@@ -4,7 +4,7 @@ internal class PerformanceView: UIWindow, PerformanceViewConfigurator {
     // MARK: Structs
 
     private struct Constants {
-        static let prefferedHeight: CGFloat = 20.0
+        static let preferredHeight: CGFloat = 20.0
         static let borderWidth: CGFloat = 1.0
         static let cornerRadius: CGFloat = 5.0
         static let pointSize: CGFloat = 8.0
@@ -50,7 +50,7 @@ internal class PerformanceView: UIWindow, PerformanceViewConfigurator {
     // MARK: Init Methods & Superclass Overriders
 
     required internal init() {
-        super.init(frame: PerformanceView.windowFrame(withPrefferedHeight: Constants.prefferedHeight))
+        super.init(frame: PerformanceView.windowFrame(withPreferredHeight: Constants.preferredHeight))
         self.windowScene = PerformanceView.keyWindowScene()
 
         self.configureWindow()
@@ -157,21 +157,21 @@ private extension PerformanceView {
     }
 
     func configureStaticInformation() {
-        var staticInformations: [String] = []
+        var staticInformation: [String] = []
         if self.options.contains(.application) {
             let applicationVersion = self.applicationVersion()
-            staticInformations.append(applicationVersion)
+            staticInformation.append(applicationVersion)
         }
         if self.options.contains(.device) {
             let deviceModel = self.deviceModel()
-            staticInformations.append(deviceModel)
+            staticInformation.append(deviceModel)
         }
         if self.options.contains(.system) {
             let systemVersion = self.systemVersion()
-            staticInformations.append(systemVersion)
+            staticInformation.append(systemVersion)
         }
 
-        self.staticInformation = (staticInformations.count > 0 ? staticInformations.joined(separator: ", ") : nil)
+        self.staticInformation = (staticInformation.count > 0 ? staticInformation.joined(separator: ", ") : nil)
     }
 
     func configureUserInformation() {
@@ -236,7 +236,7 @@ private extension PerformanceView {
 // MARK: Layout View
 private extension PerformanceView {
     func layoutWindow() {
-        self.frame = PerformanceView.windowFrame(withPrefferedHeight: self.monitoringTextLabel.bounds.height)
+        self.frame = PerformanceView.windowFrame(withPreferredHeight: self.monitoringTextLabel.bounds.height)
         self.layoutMonitoringLabel()
     }
 
@@ -246,7 +246,7 @@ private extension PerformanceView {
         let labelSize = self.monitoringTextLabel.sizeThatFits(CGSize(width: windowWidth, height: CGFloat.greatestFiniteMagnitude))
 
         if windowHeight != labelSize.height {
-            self.frame = PerformanceView.windowFrame(withPrefferedHeight: self.monitoringTextLabel.bounds.height)
+            self.frame = PerformanceView.windowFrame(withPreferredHeight: self.monitoringTextLabel.bounds.height)
         }
 
         self.monitoringTextLabel.frame = CGRect(x: (windowWidth - labelSize.width) / 2.0, y: (windowHeight - labelSize.height) / 2.0, width: labelSize.width, height: labelSize.height)
@@ -305,7 +305,7 @@ private extension PerformanceView {
 
 // MARK: Class Methods
 private extension PerformanceView {
-    class func windowFrame(withPrefferedHeight height: CGFloat) -> CGRect {
+    class func windowFrame(withPreferredHeight height: CGFloat) -> CGRect {
         guard let window = PerformanceView.keyWindow() else {
             return .zero
         }

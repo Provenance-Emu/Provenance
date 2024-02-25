@@ -1325,7 +1325,7 @@ extern bool video_pixel_frame_scale(const void *data,
 void video_driver_frame(const void *data, unsigned width,
                         unsigned height, size_t pitch)
 {
-    NAssert(@"Shouldn't be here, or need to impliment");
+    NAssert(@"Shouldn't be here, or need to implement");
 //       static char video_driver_msg[256];
 //       unsigned output_width  = 0;
 //       unsigned output_height = 0;

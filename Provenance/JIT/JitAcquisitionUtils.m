@@ -144,7 +144,7 @@ bool HasJitWithPTrace()
   return s_has_jit_with_ptrace;
 }
 
-DOLJitError GetJitAcqusitionError()
+DOLJitError GetJitAcquisitionError()
 {
   return s_acquisition_error;
 }
