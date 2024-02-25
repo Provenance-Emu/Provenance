@@ -82,7 +82,7 @@ NSString* const DOLJitAltJitFailureNotification = @"org.provenance-emu.provenanc
     
     if (cpu_architecture == nil)
     {
-        [self setAuxillaryError:@"CPU architecture check failed."];
+        [self setAuxiliaryError:@"CPU architecture check failed."];
         return false;
     }
     else if (![cpu_architecture isEqualToString:@"arm64e"])
@@ -315,7 +315,7 @@ NSString* const DOLJitAltJitFailureNotification = @"org.provenance-emu.provenanc
     return _m_has_acquired_jit;
 }
 
-- (void)setAuxillaryError:(NSString*)error {
+- (void)setAuxiliaryError:(NSString*)error {
     self->_m_aux_error = error;
 }
 

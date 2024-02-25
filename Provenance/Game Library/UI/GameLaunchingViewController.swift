@@ -413,7 +413,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
     func presentCoreSelection(forGame game: PVGame, sender: Any?) {
         guard let system = game.system else {
-            ELOG("No sytem for game \(game.title)")
+            ELOG("No system for game \(game.title)")
             return
         }
 
@@ -475,7 +475,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                     self.presentEMU(withCore: core, forGame: game, source: sender as? UIView ?? self.view)
 
                 })
-                let alwaysThisSytemAction = UIAlertAction(title: "Always for this system", style: .default, handler: { [unowned self] _ in
+                let alwaysThisSystemAction = UIAlertAction(title: "Always for this system", style: .default, handler: { [unowned self] _ in
                     try! RomDatabase.sharedInstance.writeTransaction {
                         system.userPreferredCoreID = core.identifier
                     }
@@ -484,7 +484,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
                 alwaysUseAlert.addAction(thisTimeOnlyAction)
                 alwaysUseAlert.addAction(alwaysThisGameAction)
-                alwaysUseAlert.addAction(alwaysThisSytemAction)
+                alwaysUseAlert.addAction(alwaysThisSystemAction)
 
                 self.present(alwaysUseAlert, animated: true)
             }

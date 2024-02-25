@@ -405,7 +405,7 @@
                         <action selector="timeSpentTapped:" destination="7RB-u6-8KS" id="9Jn-ei-F7B"/>
                     </connections>
                 </pongPressGestureRecognizer>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="F3u-05-Y4u" userLabel="descrition long press">
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="F3u-05-Y4u" userLabel="description long press">
                     <connections>
                         <action selector="descriptionTapped:" destination="7RB-u6-8KS" id="tUc-b3-kPf"/>
                     </connections>

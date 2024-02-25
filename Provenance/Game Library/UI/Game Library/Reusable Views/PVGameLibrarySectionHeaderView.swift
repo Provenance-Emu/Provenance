@@ -10,7 +10,7 @@ import RxSwift
 
 internal struct GameLibrarySectionViewModel {
     internal let title: String
-    internal let collapsable: Bool
+    internal let collapsible: Bool
     internal let collapsed: Bool
 
 //    internal init(title : String, collapsable: Bool, collapsed: Bool) {
@@ -46,14 +46,14 @@ final class PVGameLibrarySectionHeaderView: UICollectionReusableView {
                 titleLabel.text = viewModel.title.uppercased()
                 titleLabel.font = UIFont.boldSystemFont(ofSize: 12)
             #endif
-            collapseButton.isHidden = !viewModel.collapsable
+            collapseButton.isHidden = !viewModel.collapsible
             collapseButton.imageView?.transform = viewModel.collapsed ? CGAffineTransform(rotationAngle: CGFloat.pi / 2.0) : .identity
             setNeedsDisplay()
         }
     }
 
     override init(frame: CGRect) {
-        viewModel = GameLibrarySectionViewModel(title: "", collapsable: false, collapsed: false)
+        viewModel = GameLibrarySectionViewModel(title: "", collapsible: false, collapsed: false)
         super.init(frame: frame)
         #if os(tvOS)
             titleLabel.frame = CGRect(x: 90, y: 0, width: (bounds.size.width / 2.0) - 90.0, height: bounds.size.height)

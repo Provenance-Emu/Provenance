@@ -167,7 +167,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.removeObserver(self, forKeyPath: "isRunning")
     }
 
-    private func initNotifcationObservers() {
+    private func initNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVEmulatorViewController.appWillResignActive(_:)), name: UIApplication.willResignActiveNotification, object: nil)
@@ -341,7 +341,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             app.emulator = self
         }
 
-        initNotifcationObservers()
+        initNotificationObservers()
         initCore()
 
         // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order

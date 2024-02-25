@@ -28,7 +28,7 @@ public enum SystemGeneration: UInt, Codable {
     case sixth
     case seventh
     case eighth
-    case nineth
+    case ninth
     case tenth
 }
 

@@ -202,7 +202,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                                key: \PVSettingsModel.metalFilter,
                                                options: shaders)
 
-        // MARK -- Section : Controler
+        // MARK -- Section : Controller
 
         var controllerRows = [TableRow]()
 
@@ -210,7 +210,7 @@ final class PVSettingsViewController: QuickTableViewController {
         controllerRows.append(PVSettingsSliderRow(text: NSLocalizedString("Opacity", comment: "Opacity"), detailText: .subtitle("Transparency amount of on-screen controls overlays."), valueLimits: (min: 0.0, max: 1.0), valueImages: (.sfSymbol("sun.min"), .sfSymbol("sun.max")), key: \PVSettingsModel.controllerOpacity))
 
             controllerRows.append(contentsOf: [
-                PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), detailText: .subtitle("Color the on-screen controls to be similiar to their original system controller colors where applicable."), key: \PVSettingsModel.buttonTints, icon: .sfSymbol("paintpalette")),
+                PVSettingsSwitchRow(text: NSLocalizedString("Button Colors", comment: "Button Colors"), detailText: .subtitle("Color the on-screen controls to be similar to their original system controller colors where applicable."), key: \PVSettingsModel.buttonTints, icon: .sfSymbol("paintpalette")),
                 PVSettingsSwitchRow(text: NSLocalizedString("All-Right Shoulders", comment: "All-Right Shoulders"), detailText: .subtitle("Moves L1, L2 & Z to right side"), key: \PVSettingsModel.allRightShoulders, icon: .sfSymbol("l.joystick.tilt.right")),
                 PVSettingsSwitchRow(text: NSLocalizedString("Haptic Feedback", comment: "Haptic Feedback"), detailText: .subtitle("Vibrate on button push and force feedback on iPhone and controllers where applicable."), key: \PVSettingsModel.buttonVibration, icon: .sfSymbol("hand.point.up.braille")),
                 PVSettingsSwitchRow(text: NSLocalizedString("Enable 8BitDo M30 Mapping", comment: "Enable 8BitDo M30 Mapping"), detailText: .subtitle("For use with Sega Genesis/Mega Drive, Sega/Mega CD, 32X, Saturn and the PC Engine."), key: \PVSettingsModel.use8BitdoM30, icon: .sfSymbol("arrow.triangle.swap")),
@@ -477,7 +477,7 @@ final class PVSettingsViewController: QuickTableViewController {
         )
         let blogRow = NavigationRow(
             text: NSLocalizedString("Blog", comment: ""),
-            detailText: .subtitle("Release annoucements and full changelogs and screenshots posted to our blog."),
+            detailText: .subtitle("Release announcements and full changelogs and screenshots posted to our blog."),
             icon: .sfSymbol("square.and.pencil"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
