@@ -641,7 +641,7 @@
 						<key>PVControlTitle</key>
 						<string>C▲</string>
 						<key>PVControlFrame</key>
-						<string>{{170,4},{60,60}}</string>
+						<string>{{162,4},{60,60}}</string>
 						<key>PVControlTint</key>
 						<string>#ffbe2c</string>
 					</dict>
