@@ -813,6 +813,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         PVControllerManager.shared.controllers().forEach {
             $0.clearPauseHandler()
         }
+        Theme.currentTheme = Theme.currentTheme
         #endif
         updatePlayedDuration()
         destroyAutosaveTimer()
