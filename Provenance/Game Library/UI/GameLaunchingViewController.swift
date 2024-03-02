@@ -325,7 +325,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                 if let biosInfo = additionalBios[file],
                    let md5=biosInfo.keys.first,
                    let size=biosInfo[md5] {
-                    var bios=PVBIOS(withSystem: system, descriptionText: file, expectedMD5: md5, expectedSize: size, expectedFilename: file)
+                    let bios=PVBIOS(withSystem: system, descriptionText: file, expectedMD5: md5, expectedSize: size, expectedFilename: file)
                     bios.optional=false
                     entries.append(bios.asDomain())
                 }

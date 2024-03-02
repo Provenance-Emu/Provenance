@@ -100,7 +100,7 @@ final class PVSettingsViewController: QuickTableViewController {
             let alert = UIAlertController(title: "Theme", message: "", preferredStyle: .actionSheet)
             alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
             alert.popoverPresentationController?.sourceView = self.tableView
-            alert.popoverPresentationController?.sourceRect = self.tableView.bounds ?? UIScreen.main.bounds
+            alert.popoverPresentationController?.sourceRect = self.tableView.bounds 
             ThemeOptions.themes.forEach { mode in
                 let modeLabel = mode == .auto ? mode.description + " (\(systemMode))" : mode.description
                 let action = UIAlertAction(title: modeLabel, style: .default, handler: { _ in
@@ -663,7 +663,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                               message: "Check your network connection or settings and free up ports: 80, 81.",
                                               preferredStyle: .alert)
                 alert.popoverPresentationController?.sourceView = tableView
-                alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+                alert.popoverPresentationController?.sourceRect = tableView.bounds 
                 alert.preferredContentSize = CGSize(width: 500, height: 150)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
                 }))
@@ -674,7 +674,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                           message: "Your device needs to be connected to a WiFi network to continue!",
                                           preferredStyle: .alert)
             alert.popoverPresentationController?.sourceView = tableView
-            alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+            alert.popoverPresentationController?.sourceRect = tableView.bounds 
             alert.preferredContentSize = CGSize(width: 500, height: 150)
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
             }))
@@ -690,7 +690,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                       """,
                                       preferredStyle: .alert)
         alert.popoverPresentationController?.sourceView = tableView
-        alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+        alert.popoverPresentationController?.sourceRect = tableView.bounds 
         alert.preferredContentSize = CGSize(width: 500, height: 300)
         alert.addAction(UIAlertAction(title: "Yes",
                                       style: .default,
@@ -712,7 +712,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                       """,
                                       preferredStyle: .alert)
         alert.popoverPresentationController?.sourceView = tableView
-        alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+        alert.popoverPresentationController?.sourceRect = tableView.bounds 
         alert.preferredContentSize = CGSize(width: 500, height: 300)
         alert.addAction(UIAlertAction(title: "Yes",
                                       style: .default,
@@ -738,7 +738,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                       """,
                                       preferredStyle: .alert)
         alert.popoverPresentationController?.sourceView = tableView
-        alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+        alert.popoverPresentationController?.sourceRect = tableView.bounds 
         alert.preferredContentSize = CGSize(width: 500, height: 300)
         alert.addAction(UIAlertAction(title: "Yes",
                                       style: .default,
@@ -761,7 +761,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                       """,
                                       preferredStyle: .alert)
         alert.popoverPresentationController?.sourceView = tableView
-        alert.popoverPresentationController?.sourceRect = tableView.bounds ?? UIScreen.main.bounds
+        alert.popoverPresentationController?.sourceRect = tableView.bounds 
         alert.preferredContentSize = CGSize(width: 500, height: 150)
         alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: ""),
                                       style: .default,
