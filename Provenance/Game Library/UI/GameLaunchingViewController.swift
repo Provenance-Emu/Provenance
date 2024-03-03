@@ -670,8 +670,6 @@ extension GameLaunchingViewController where Self: UIViewController {
         } catch {
             ELOG("\(error.localizedDescription)")
         }
-
-        updateRecentGames(game)
     }
 
     private func checkForSaveStateThenRun(withCore core: PVCore, forGame game: PVGame, source: UIView?, completion: @escaping (PVSaveState?) -> Void) {
