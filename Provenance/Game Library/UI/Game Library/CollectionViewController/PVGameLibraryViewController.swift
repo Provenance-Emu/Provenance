@@ -1181,7 +1181,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         actionSheet.addAction(UIAlertAction(title: "Rename", symbol: "rectangle.and.pencil.and.ellipsis", style: .default, handler: { (_: UIAlertAction) -> Void in
             self.renameGame(game, sender: sender)
         }))
-        actionSheet.addAction(UIAlertAction(title: "Hide", symbol: "rectangle.and.pencil.and.ellipsis", style: .default, handler: { (_: UIAlertAction) -> Void in
+        actionSheet.addAction(UIAlertAction(title: "Hide", symbol: "eye.slash", style: .default, handler: { (_: UIAlertAction) -> Void in
             self.hideGame(game, sender: sender)
         }))
         #if os(iOS)
