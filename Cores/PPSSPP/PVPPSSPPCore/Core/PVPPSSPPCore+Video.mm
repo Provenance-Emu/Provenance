@@ -117,6 +117,7 @@ static bool threadStopped = false;
     if (!_isInitialized || !m_view)
         return;
     float adjustedHeight = screen.bounds.size.height / 2;
+#if !TARGET_OS_TV
     if ([[UIDevice currentDevice] orientation] == UIInterfaceOrientationPortrait ||
         [[UIDevice currentDevice] orientation] == UIInterfaceOrientationPortraitUpsideDown) {
         if (m_view.frame.size.width > m_view.frame.size.height) {
@@ -140,6 +141,7 @@ static bool threadStopped = false;
             }
         }
     } else {
+#endif
         if (m_view.frame.size.width < m_view.frame.size.height) {
             if (self.gsPreference == 0) {
                 [[m_view.topAnchor constraintEqualToAnchor:self.touchViewController.view.topAnchor] setActive:YES];
@@ -151,12 +153,18 @@ static bool threadStopped = false;
                 m_view.frame =  CGRectMake(0, 0, m_view.frame.size.height, m_view.frame.size.width);
             }
         }
+#if !TARGET_OS_TV
     }
+#endif
     float scale = screen.scale;
     if ([screen respondsToSelector:@selector(nativeScale)]) {
             scale = screen.nativeScale;
     }
+#if TARGET_OS_TV
+    CGSize size = screen.bounds.size;
+#else
     CGSize size = screen.applicationFrame.size;
+#endif
     if (size.height > size.width) {
         float h = size.height;
         if (IS_IPAD())
@@ -247,7 +255,9 @@ static bool threadStopped = false;
         [[rootController.view.trailingAnchor constraintEqualToAnchor:self.touchViewController.view.trailingAnchor] setActive:YES];
         self.touchViewController.view.userInteractionEnabled=true;
         self.touchViewController.view.autoresizesSubviews=true;
+#if !TARGET_OS_TV
         self.touchViewController.view.multipleTouchEnabled=true;
+#endif
     } else {
         [gl_view_controller addChildViewController:rootController];
         [rootController didMoveToParentViewController:gl_view_controller];

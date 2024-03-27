@@ -23,6 +23,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 //
+#if !os(tvOS)
 
 import UIKit
 
@@ -119,3 +120,4 @@ open class SliderRow<T>: SliderRowCompatible, Equatable where T: SliderCell {
             lhs.icon == rhs.icon
     }
 }
+#endif

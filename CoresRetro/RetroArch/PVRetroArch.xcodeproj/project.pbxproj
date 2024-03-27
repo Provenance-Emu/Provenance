@@ -42,7 +42,7 @@
 		93654F7A298F4A2D0046503F /* PVRetroArchCore+Controls+PCE.m in Sources */ = {isa = PBXBuildFile; fileRef = 93654F78298F4A2C0046503F /* PVRetroArchCore+Controls+PCE.m */; };
 		93654F7B298F4A2D0046503F /* PVRetroArchCore+Controls+DS.m in Sources */ = {isa = PBXBuildFile; fileRef = 93654F79298F4A2C0046503F /* PVRetroArchCore+Controls+DS.m */; };
 		936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */ = {isa = PBXBuildFile; fileRef = 936B47F92969798B00C7D2A3 /* platform_darwin.m */; };
-		936BFD7E2986A4E1001FF097 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD7D2986A4E1001FF097 /* libMoltenVK.dylib */; };
+		936BFD7E2986A4E1001FF097 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD7D2986A4E1001FF097 /* libMoltenVK.dylib */; platformFilter = ios; };
 		936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BA743C2965B96D00A49D66 /* cocoa_vk_ctx.m */; };
 		936E99E62A35A15900B1D0F8 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99E52A35A15900B1D0F8 /* PVSupport.framework */; };
 		936E99E82A35A3A400B1D0F8 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99E72A35A3A400B1D0F8 /* Metal.framework */; };
@@ -96,7 +96,7 @@
 		93B3B1992A8CBA5F00B60325 /* PVRetroArchCore+Archive.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B3B1982A8CBA5F00B60325 /* PVRetroArchCore+Archive.h */; };
 		93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B19A2A8CBC7100B60325 /* PVRetroArchCore+Archive.m */; };
 		93B3B2722A8CC8C200B60325 /* libRarArchive_RetroArch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B1B32A8CC39800B60325 /* libRarArchive_RetroArch.a */; };
-		93B3B52A2A8CE65500B60325 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B5262A8CE56A00B60325 /* libunrar.a */; platformFilters = (ios, macos, ); };
+		93B3B52A2A8CE65500B60325 /* libunrar.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B5262A8CE56A00B60325 /* libunrar.a */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93B3BCE62A8CE91900B60325 /* lh5_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B3BC902A8CE91800B60325 /* lh5_decoder.c */; };
 		93B3BCE72A8CE91900B60325 /* lha_endian.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B3BC912A8CE91800B60325 /* lha_endian.c */; };
 		93B3BCE82A8CE91900B60325 /* lha_file_header.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B3BC922A8CE91800B60325 /* lha_file_header.c */; };
@@ -2479,10 +2479,10 @@
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SYMROOT = "$(SRCROOT)/lib/zip";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
 		};
@@ -2506,12 +2506,10 @@
 					"${SRCROOT}/PVRetroArchCore/Archive/UnrarKit/Libraries/unrar",
 					"$(inherited)",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SYMROOT = "$(SRCROOT)/lib/rar";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2541,7 +2539,6 @@
 					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/",
 					"$(inherited)",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -2550,9 +2547,11 @@
 					"-analyzer-disable-all-checks",
 					"$(inherited)",
 				);
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SYMROOT = "$(SRCROOT)/lib/lha";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2599,6 +2598,7 @@
 					./Retroarch/deps,
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"./Retroarch/libretro-common/include",
+					"./Retroarch/libretro-common/include/file",
 					./RetroArch/gfx/drivers_context,
 					./Retroarch/gfx,
 					./RetroArch/gfx/include/,
@@ -2615,7 +2615,6 @@
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
 					./RetroArch/gfx/drivers/,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib",
@@ -2625,7 +2624,7 @@
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_LDFLAGS = "-Wl,-segalign,4000";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				STRIP_SWIFT_SYMBOLS = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2904,11 +2903,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.coresretro.pvretroarchcore";
 				PRODUCT_NAME = PVRetroArch;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				STRIP_SWIFT_SYMBOLS = NO;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
-				SUPPORTS_MACCATALYST = NO;
+				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";

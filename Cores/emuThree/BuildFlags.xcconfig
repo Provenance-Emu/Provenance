@@ -6,6 +6,11 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
 OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fpermissive -fsingle-precision-constant -DTARGET_NO_NIXPROF
 OTHER_LDFLAGS = $(inherited) -ObjC -DIPHONEOS
 
+// Swift <--> C++ Interop
+// 1. Include the "MYSWIFTMODULENAME-Swift.h" header from your C++ code. (Where MYSWIFTMODULENAME is your Swift module’s name)
+// 2. Create the Swift object by calling the MYSWIFTMODULENAME::MYSWIFTCLASSNAME::init() method. (with your initializer's arguments)
+SWIFT_OBJC_INTEROP_MODE = objcxx
+
 // Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1
 OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) 

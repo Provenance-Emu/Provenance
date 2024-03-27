@@ -8,6 +8,7 @@
 
 import Foundation
 import PVSupport
+#if os(iOS)
 
 final class PVSettingsSliderRow<T>: SliderRow<PVSliderCell> where T: BinaryFloatingPoint {
     let keyPath: ReferenceWritableKeyPath<PVSettingsModel, T>
@@ -35,3 +36,4 @@ final class PVSettingsSliderRow<T>: SliderRow<PVSliderCell> where T: BinaryFloat
         )
     }
 }
+#endif

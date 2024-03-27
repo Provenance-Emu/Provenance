@@ -23,6 +23,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 //
+#if os(iOS)
 
 import UIKit
 
@@ -46,7 +47,6 @@ extension QuickTableViewController: SliderCellDelegate {
     }
 }
 
-#if os(iOS)
 
     /// The `SliderCellDelegate` protocol allows the adopting delegate to respond to the UI interaction. Not available on tvOS.
     @available(tvOS, unavailable, message: "SliderCellDelegate is not available on tvOS.")

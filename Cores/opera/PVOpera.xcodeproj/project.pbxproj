@@ -34,6 +34,8 @@
 
 /* Begin PBXBuildFile section */
 		93F6EC6A298ACB1A00397536 /* PVDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F6EC69298ACB1A00397536 /* PVDebug.m */; };
+		B35D8A842B58E1F500F37E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D8A832B58E1F500F37E8B /* PVSupport.framework */; };
+		B35D8A862B58E20E00F37E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D8A852B58E20E00F37E8B /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +58,8 @@
 /* Begin PBXFileReference section */
 		93F6EC69298ACB1A00397536 /* PVDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PVDebug.m; path = ../../Debug/PVDebug.m; sourceTree = "<group>"; };
 		B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
+		B35D8A832B58E1F500F37E8B /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B35D8A852B58E20E00F37E8B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B37022BD287253B300B3F6DA /* PVOpera-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVOpera-Prefix.pch"; sourceTree = "<group>"; };
 		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37022C0287253B300B3F6DA /* PVOpera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVOpera.h; sourceTree = "<group>"; };
@@ -1124,6 +1128,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B35D8A842B58E1F500F37E8B /* PVSupport.framework in Frameworks */,
+				B35D8A862B58E20E00F37E8B /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1176,6 +1182,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B35D8A852B58E20E00F37E8B /* Foundation.framework */,
+				B35D8A832B58E1F500F37E8B /* PVSupport.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -3671,7 +3679,12 @@
 		};
 		935BB0572985484E00AA68DC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				macos,
+				watchos,
+			);
 			target = 935BB0502985469B00AA68DC /* OperaRetroArch */;
 			targetProxy = 935BB0562985484E00AA68DC /* PBXContainerItemProxy */;
 		};
@@ -3681,17 +3694,14 @@
 		9337CFB6298CDFEF007CDDB6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = appletvos;
 			};
 			name = Release;
 		};
 		935BB0522985469B00AA68DC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 			};
@@ -3772,7 +3782,6 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -3784,9 +3793,6 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
-					"\"$(SRCROOT)/Play-/deps/Framework/include\"",
-					"\"$(SRCROOT)/Play-/Source/ui_ios\"",
-					"\"$(SRCROOT)/Play-/deps/Dependencies/ghc_filesystem/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVOpera/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -3799,9 +3805,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVOpera";
 				PRODUCT_NAME = PVOpera;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator driverkit iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
