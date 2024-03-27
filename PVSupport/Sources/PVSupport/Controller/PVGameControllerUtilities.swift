@@ -10,7 +10,7 @@ import Foundation
 @_exported import GameController
 import simd
 
-private let thumbstickSensitivty: Float = 0.2
+private let thumbstickSensitivity: Float = 0.2
 
 @objc
 public enum PVControllerAxisDirection : UInt, CustomDebugStringConvertible {
@@ -44,7 +44,7 @@ public enum PVControllerAxisDirection : UInt, CustomDebugStringConvertible {
         let xValue = fabsf(thumbstick.xAxis.value)
         let yValue = fabsf(thumbstick.yAxis.value)
 
-        if xValue <= thumbstickSensitivty && yValue <= thumbstickSensitivty {
+        if xValue <= thumbstickSensitivity && yValue <= thumbstickSensitivity {
             self = .None
             return
         }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public typealias BIOSExpectationsInfoProvider = ExpectedMD5Provider & ExpectedFilenameProvider & ExpectedSizeProvider & ExpectedExistantInfoProvider
+public typealias BIOSExpectationsInfoProvider = ExpectedMD5Provider & ExpectedFilenameProvider & ExpectedSizeProvider & ExpectedExistentInfoProvider
 
 public protocol BIOSInfoProvider: BIOSExpectationsInfoProvider {
     var descriptionText: String { get }
@@ -97,7 +97,7 @@ public struct BIOSStatus: Codable {
     }
 
     public enum State: Codable {
-        public enum CodingError: Error { case uknownRawValue(Int) }
+        public enum CodingError: Error { case unknownRawValue(Int) }
 
         case missing
         case mismatch([Mismatch])
@@ -124,7 +124,7 @@ public struct BIOSStatus: Codable {
                     self = .match
                     return
                 default:
-                    throw CodingError.uknownRawValue(rawValue)
+                    throw CodingError.unknownRawValue(rawValue)
                 }
             } else {
                 fatalError("No known decode")

@@ -166,7 +166,7 @@ public final class HapticsManager {
             try engine.playPattern(from: url)
 
         } catch { // Engine startup errors
-			ELOG("An error occured playing \(filename): \(error).")
+			ELOG("An error occurred playing \(filename): \(error).")
         }
     }
 }

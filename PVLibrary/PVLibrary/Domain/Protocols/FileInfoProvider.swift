@@ -146,6 +146,6 @@ public protocol ExpectedSizeProvider {
     var expectedSize: Int { get }
 }
 
-public protocol ExpectedExistantInfoProvider {
+public protocol ExpectedExistentInfoProvider {
     var optional: Bool { get }
 }

@@ -162,7 +162,7 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
             }
 
             do {
-                ILOG("Trying to set Ubiquitious from local (\(url.path)) to ICloud (\(destinationURL.path))")
+                ILOG("Trying to set ubiquitous from local (\(url.path)) to iCloud (\(destinationURL.path))")
                 try fm.setUbiquitous(true, itemAt: url, destinationURL: destinationURL)
                 completionHandler(.success)
             } catch {
@@ -267,7 +267,7 @@ public final class iCloudSync {
     }
 
     public static func importNewSaves() {
-        if !RomDatabase.databaseInitilized {
+        if !RomDatabase.databaseInitialized {
             // Keep trying // TODO: Add a notification for this
             // instead of dumb loop
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
@@ -289,8 +289,8 @@ public final class iCloudSync {
                 try? fm.contentsOfDirectory(at: $0, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
             }.joined()
             let jsonFiles = saveFiles.filter { $0.pathExtension == "json" }
-            let jsonDecorder = JSONDecoder()
-            jsonDecorder.dataDecodingStrategy = .deferredToData
+            let jsonDecoder = JSONDecoder()
+            jsonDecoder.dataDecodingStrategy = .deferredToData
 
             let legacySubDirs: [URL]?
             do {
@@ -342,7 +342,7 @@ public final class iCloudSync {
                         }
 
                         DLOG("Data read \(String(data: data, encoding: .utf8) ?? "Nil")")
-                        let save = try jsonDecorder.decode(SaveState.self, from: data)
+                        let save = try jsonDecoder.decode(SaveState.self, from: data)
                         DLOG("Read JSON data at (\(json.absoluteString)")
 
                         let existing = realm.object(ofType: PVSaveState.self, forPrimaryKey: save.id)

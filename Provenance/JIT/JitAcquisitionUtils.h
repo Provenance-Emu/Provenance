@@ -32,7 +32,7 @@ void AcquireJit(void);
 bool HasJit(void);
 bool HasJitWithPTrace(void);
 bool HasJitWithPsychicpaper(void);
-DOLJitError GetJitAcqusitionError(void);
+DOLJitError GetJitAcquisitionError(void);
 char* GetJitAcquisitionErrorMessage(void);
 void SetJitAcquisitionErrorMessage(char* error);
 

@@ -139,7 +139,7 @@ public enum SubtleVolumeError: Error {
     ///
     /// - Parameter delta: the volume increase. The volume goes from 0 to 1, delta must be a Double in that range
     /// - Throws: `SubtleVolumeError.unableToChangeVolumeLevel`
-    @objc public func increseVolume(by step: Double = DefaultVolumeStep, animated: Bool = false) throws {
+    @objc public func increaseVolume(by step: Double = DefaultVolumeStep, animated: Bool = false) throws {
         try setVolumeLevel(volumeLevel + step, animated: animated)
     }
 

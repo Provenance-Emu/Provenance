@@ -280,7 +280,7 @@ NS_ASSUME_NONNULL_END
 
   NSString* fileName = [absolutePath lastPathComponent];
   if (([fileName hasPrefix:@"."] && !_allowHiddenItems) || ![self _checkFileExtension:fileName]) {
-    return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_Forbidden message:@"Downlading file name \"%@\" is not allowed", fileName];
+    return [GCDWebServerErrorResponse responseWithClientError:kGCDWebServerHTTPStatusCode_Forbidden message:@"Downloading file name \"%@\" is not allowed", fileName];
   }
 
   if ([self.delegate respondsToSelector:@selector(webUploader:didDownloadFileAtPath:)]) {
