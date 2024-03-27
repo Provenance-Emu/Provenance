@@ -133,7 +133,7 @@ struct BiosRowView: SwiftUI.View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(Color.yellow)
                         .font(.system(size: 12, weight: .light))
-                case let .mismatch(_):
+                case .mismatch(_):
                     Text("Mismatch")
                         .font(.system(size: 12))
                         .foregroundColor(Color.red)
