@@ -32,6 +32,11 @@ extension CocoaView {
 extension CocoaView: HelperBarActionDelegate {
 	func keyboardButtonTapped() {
 		toggleCustomKeyboard()
+	        if isKeyboardEnabled {
+	            NotificationCenter.default.post(name: Notification.Name("HideTouchControls"), object: nil)
+	        } else {
+	            NotificationCenter.default.post(name: Notification.Name("ShowTouchControls"), object: nil)
+	        }
 	}
 
 	func mouseButtonTapped() {
