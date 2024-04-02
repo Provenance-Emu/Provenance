@@ -233,7 +233,6 @@
 		B3E5BDC1297788E20011CCBF /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E5BDC0297788E20011CCBF /* PVLogging */; };
 		B3FAC8DE292B1DDD005E8B11 /* PVPatreon.h in Headers */ = {isa = PBXBuildFile; fileRef = B3FAC8DD292B1DDD005E8B11 /* PVPatreon.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3FAC8EF292B1E1C005E8B11 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; };
-		B3FAC8F0292B1E1C005E8B11 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3579D0F2106B11D00DDEBD6 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FAC8F9292B26EA005E8B11 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = B3FAC8F8292B26EA005E8B11 /* KeychainAccess */; };
 		B3FAC8FB292B3155005E8B11 /* PVUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8FA292B3155005E8B11 /* PVUser.swift */; };
 		B3FAC8FD292B3240005E8B11 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FAC8FC292B3240005E8B11 /* User.swift */; };
@@ -276,17 +275,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B3FAC8F3292B1E1C005E8B11 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B3FAC8F0292B1E1C005E8B11 /* PVLibrary.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1677,7 +1665,6 @@
 				B3FAC8D7292B1DDD005E8B11 /* Sources */,
 				B3FAC8D8292B1DDD005E8B11 /* Frameworks */,
 				B3FAC8D9292B1DDD005E8B11 /* Resources */,
-				B3FAC8F3292B1E1C005E8B11 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -2112,11 +2099,12 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
@@ -2347,13 +2335,14 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator xros xrsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,7";
 			};
 			name = Release;
 		};
