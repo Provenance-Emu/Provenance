@@ -492,7 +492,6 @@
 		936BFD882986A719001FF097 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		936FDBEB295855670073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; };
 		936FDBEC295855A50073628A /* libMoltenVK_Play.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		9389451E2A7677FE00715C74 /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93A924572A6F113F0059BFEA /* PVEmuThree.framework */; platformFilter = ios; };
 		93943E892A36DEF800E06513 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		939A43092A35ADE2001AFF6B /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		939A430A2A35AE14001AFF6B /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -509,16 +508,9 @@
 		93A728632AAF073B0052B279 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93A728622AAF073B0052B279 /* PVLogging */; };
 		93A728642AAF073B0052B279 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 93A728622AAF073B0052B279 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93A924562A6F0ACA0059BFEA /* PV3DSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A924552A6F0ACA0059BFEA /* PV3DSControllerViewController.swift */; };
-		93A924592A6F11740059BFEA /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93A924572A6F113F0059BFEA /* PVEmuThree.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		93A9245A2A6F11D10059BFEA /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93A924572A6F113F0059BFEA /* PVEmuThree.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		93A9245C2A6F12140059BFEA /* libMoltenVK_emuThree_iOS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93A9245B2A6F12140059BFEA /* libMoltenVK_emuThree_iOS.dylib */; };
-		93A9245D2A6F12260059BFEA /* libMoltenVK_emuThree_iOS.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93A9245B2A6F12140059BFEA /* libMoltenVK_emuThree_iOS.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		93A9245E2A6F12350059BFEA /* libMoltenVK_emuThree_iOS.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93A9245B2A6F12140059BFEA /* libMoltenVK_emuThree_iOS.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		93A9245F2A6F16290059BFEA /* libMoltenVK_emuThree_iOS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93A9245B2A6F12140059BFEA /* libMoltenVK_emuThree_iOS.dylib */; };
 		93A924602A6F1E0C0059BFEA /* PV3DSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A924552A6F0ACA0059BFEA /* PV3DSControllerViewController.swift */; };
 		93A924612A6F1E150059BFEA /* PV3DSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A924552A6F0ACA0059BFEA /* PV3DSControllerViewController.swift */; };
 		93A924622A6F1E190059BFEA /* PV3DSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A924552A6F0ACA0059BFEA /* PV3DSControllerViewController.swift */; };
-		93A924642A6F22B70059BFEA /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93A924572A6F113F0059BFEA /* PVEmuThree.framework */; platformFilter = ios; };
 		93AC9F562A7F757C00484B9E /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */; };
 		93AC9F572A7F75E300484B9E /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93AC9F582A7F766700484B9E /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
@@ -2068,8 +2060,6 @@
 				93DB7D422A750AE5005F8B26 /* libavutil.framework in Embed Frameworks */,
 				93DB7D432A750AE7005F8B26 /* libswresample.framework in Embed Frameworks */,
 				93DB7D442A750AE9005F8B26 /* libswscale.framework in Embed Frameworks */,
-				93A9245D2A6F12260059BFEA /* libMoltenVK_emuThree_iOS.dylib in Embed Frameworks */,
-				93A9245A2A6F11D10059BFEA /* PVEmuThree.framework in Embed Frameworks */,
 				939A430A2A35AE14001AFF6B /* PVRetroArch.framework in Embed Frameworks */,
 				93DC577F2A3582C4008645AB /* libMoltenVK_PPSSPP.dylib in Embed Frameworks */,
 				936FDBEC295855A50073628A /* libMoltenVK_Play.dylib in Embed Frameworks */,
@@ -2285,7 +2275,6 @@
 				93DB7D382A7509A7005F8B26 /* libavutil.framework in Embed Frameworks */,
 				93DB7D392A7509A9005F8B26 /* libswresample.framework in Embed Frameworks */,
 				93DB7D3A2A7509AA005F8B26 /* libswscale.framework in Embed Frameworks */,
-				93A9245E2A6F12350059BFEA /* libMoltenVK_emuThree_iOS.dylib in Embed Frameworks */,
 				9348D7522A32166A00CC7998 /* libMoltenVK_PPSSPP.dylib in Embed Frameworks */,
 				B3F7E576297736C200362B92 /* PVBeetlePSX.framework in Embed Frameworks */,
 				B3F7E577297736C200362B92 /* libMoltenVK_Play.dylib in Embed Frameworks */,
@@ -2334,7 +2323,6 @@
 				B3F7E5A5297736C200362B92 /* PVBliss.framework in Embed Frameworks */,
 				B3F7E5A6297736C200362B92 /* PVMupen64Plus.framework in Embed Frameworks */,
 				93CB27D3297CE666006A940B /* libMoltenVK_Dolphin.dylib in Embed Frameworks */,
-				93A924592A6F11740059BFEA /* PVEmuThree.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2492,8 +2480,6 @@
 		93A7277A2AAEB0DA0052B279 /* PVMameControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVMameControllerViewController.swift; sourceTree = "<group>"; };
 		93A7277B2AAEB0DB0052B279 /* PVNeoGeoControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVNeoGeoControllerViewController.swift; sourceTree = "<group>"; };
 		93A924552A6F0ACA0059BFEA /* PV3DSControllerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PV3DSControllerViewController.swift; sourceTree = "<group>"; };
-		93A924572A6F113F0059BFEA /* PVEmuThree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmuThree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		93A9245B2A6F12140059BFEA /* libMoltenVK_emuThree_iOS.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_emuThree_iOS.dylib; path = Cores/emuThree/lib/libMoltenVK_emuThree_iOS.dylib; sourceTree = "<group>"; };
 		93C792242954E869001212D2 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
 		93CB27D1297CE664006A940B /* libMoltenVK_Dolphin.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_Dolphin.dylib; path = Cores/Dolphin/lib/libMoltenVK_Dolphin.dylib; sourceTree = "<group>"; };
 		93DB7D2C2A750966005F8B26 /* libswscale.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libswscale.framework; path = Cores/emuThree/lib/libswscale.framework; sourceTree = "<group>"; };
@@ -3138,13 +3124,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9389451E2A7677FE00715C74 /* PVEmuThree.framework in Frameworks */,
 				93DB7D3B2A750AC9005F8B26 /* libavcodec.framework in Frameworks */,
 				93DB7D3C2A750AC9005F8B26 /* libavformat.framework in Frameworks */,
 				93DB7D3D2A750AC9005F8B26 /* libavutil.framework in Frameworks */,
 				93DB7D3E2A750AC9005F8B26 /* libswresample.framework in Frameworks */,
 				93DB7D3F2A750AC9005F8B26 /* libswscale.framework in Frameworks */,
-				93A9245C2A6F12140059BFEA /* libMoltenVK_emuThree_iOS.dylib in Frameworks */,
 				9328B14D2A3183C80094C712 /* libMoltenVK_PPSSPP.dylib in Frameworks */,
 				93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */,
 				B3FAC92D292B450C005E8B11 /* PVGB.framework in Frameworks */,
@@ -3522,13 +3506,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				9314858F2AA8B052002DA906 /* PVHatariRetroArch.framework in Frameworks */,
-				93A924642A6F22B70059BFEA /* PVEmuThree.framework in Frameworks */,
 				93DB7D312A750967005F8B26 /* libswscale.framework in Frameworks */,
 				93DB7D322A750967005F8B26 /* libavutil.framework in Frameworks */,
 				93DB7D332A750967005F8B26 /* libavcodec.framework in Frameworks */,
 				93DB7D342A750967005F8B26 /* libavformat.framework in Frameworks */,
 				93DB7D352A750967005F8B26 /* libswresample.framework in Frameworks */,
-				93A9245F2A6F16290059BFEA /* libMoltenVK_emuThree_iOS.dylib in Frameworks */,
 				B3F7E507297736C200362B92 /* Photos.framework in Frameworks */,
 				9328B14C2A31837B0094C712 /* libMoltenVK_PPSSPP.dylib in Frameworks */,
 				B3F7E503297736C200362B92 /* PVGB.framework in Frameworks */,
@@ -3741,13 +3723,11 @@
 				930499F12A9307BF00BF257F /* PVSnesticle.framework */,
 				938F29CF2A8D068B002F783A /* PVNP2Kai.framework */,
 				935335092A85D1FD0000E5C3 /* libMoltenVK.dylib */,
-				93A924572A6F113F0059BFEA /* PVEmuThree.framework */,
 				93DB7D2E2A750967005F8B26 /* libavcodec.framework */,
 				93DB7D2F2A750967005F8B26 /* libavformat.framework */,
 				93DB7D2D2A750967005F8B26 /* libavutil.framework */,
 				93DB7D302A750967005F8B26 /* libswresample.framework */,
 				93DB7D2C2A750966005F8B26 /* libswscale.framework */,
-				93A9245B2A6F12140059BFEA /* libMoltenVK_emuThree_iOS.dylib */,
 				9328B14B2A31837A0094C712 /* libMoltenVK_PPSSPP.dylib */,
 				93654F75298F400B0046503F /* PVSupergrafx.framework */,
 				936BFD802986A5B4001FF097 /* libMoltenVK.dylib */,

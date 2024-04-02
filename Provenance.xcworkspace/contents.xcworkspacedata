@@ -17,9 +17,6 @@
       location = "container:"
       name = "Cores">
       <FileRef
-         location = "group:Cores/emuThree/PVEmuThree.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/4DO/PV4DO.xcodeproj">
       </FileRef>
       <FileRef
