@@ -127,9 +127,6 @@
 [submodule "Cores/Gearcoleco/Gearcoleco"]
 	path = Cores/Gearcoleco/Gearcoleco
 	url = https://github.com/Provenance-Emu/Gearcoleco.git
-[submodule "Cores/Citra/citra"]
-	path = Cores/Citra/citra
-	url = https://github.com/Provenance-Emu/citra.git
 [submodule "Cores/FreeIntv/FreeIntv"]
 	path = Cores/FreeIntv/FreeIntv
 	url = https://github.com/Provenance-Emu/FreeIntv.git
