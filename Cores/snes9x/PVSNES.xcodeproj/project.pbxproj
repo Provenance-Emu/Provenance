@@ -34,7 +34,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5832106DEA000C45F09 /* PVSupport.framework */; };
+		B3133A072BBCBAB200ECE169 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3133A062BBCBAB200ECE169 /* PVSupport.framework */; };
 		B3547B632058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
 		B365107E21782E95008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107D21782E95008FDB7B /* libz.tbd */; };
 		B3AFCF7C2977A6F800A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF7B2977A6F800A01010 /* PVLogging */; };
@@ -225,6 +225,7 @@
 		1ACEA98E17F760390031B1C9 /* tile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tile.h; sourceTree = "<group>"; };
 		1ACEA98F17F760390031B1C9 /* SNESOESupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SNESOESupport.mm; sourceTree = "<group>"; };
 		938E5C5C298B445000F8596C /* BuildConfig.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BuildConfig.xcconfig; sourceTree = "<group>"; };
+		B3133A062BBCBAB200ECE169 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB5672106D60400C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B34AB5832106DEA000C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B622058591000CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
@@ -278,9 +279,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3133A072BBCBAB200ECE169 /* PVSupport.framework in Frameworks */,
 				B3AFCF7C2977A6F800A01010 /* PVLogging in Frameworks */,
 				B365107E21782E95008FDB7B /* libz.tbd in Frameworks */,
-				B34AB5842106DEA000C45F09 /* PVSupport.framework in Frameworks */,
 				B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */,
 				B3C9D54B1DEA84220068D057 /* CoreGraphics.framework in Frameworks */,
 				B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */,
@@ -312,6 +313,7 @@
 		1ACEA8E617F75F350031B1C9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3133A062BBCBAB200ECE169 /* PVSupport.framework */,
 				B365107D21782E95008FDB7B /* libz.tbd */,
 				B365107F21782E9E008FDB7B /* libz.tbd */,
 				B34AB5832106DEA000C45F09 /* PVSupport.framework */,
@@ -846,6 +848,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -870,7 +873,7 @@
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = "${SRCROOT}/cmake";
+				SYMROOT = "${SRCROOT}/cmake/$(CONFIGURATION)";
 				VALIDATE_PRODUCT = YES;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
@@ -884,7 +887,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
-				SYMROOT = "${SRCROOT}/cmake";
 			};
 			name = Release;
 		};
@@ -894,7 +896,6 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SYMROOT = "${SRCROOT}/cmake";
 			};
 			name = Release;
 		};
@@ -910,7 +911,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -937,7 +937,6 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/cmake";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -945,7 +944,7 @@
 			};
 			name = Release;
 		};
-		B3D067992BC4ED6500A7327F /* Debug */ = {
+		B3E948EA2BBCBC3000E8D00E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 938E5C5C298B445000F8596C /* BuildConfig.xcconfig */;
 			buildSettings = {
@@ -975,13 +974,14 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -995,18 +995,21 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-D__MACOSX__";
+				OTHER_CFLAGS = (
+					"-D__MACOSX__",
+					"$(inherited)",
+				);
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SYMROOT = "${SRCROOT}/cmake";
-				VALIDATE_PRODUCT = YES;
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SYMROOT = "${SRCROOT}/cmake/$(CONFIGURATION)";
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
 			name = Debug;
 		};
-		B3D0679A2BC4ED6500A7327F /* Debug */ = {
+		B3E948EB2BBCBC3000E8D00E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1018,7 +1021,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1045,7 +1047,6 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/cmake";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1053,17 +1054,16 @@
 			};
 			name = Debug;
 		};
-		B3D0679B2BC4ED6500A7327F /* Debug */ = {
+		B3E948EC2BBCBC3000E8D00E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SYMROOT = "${SRCROOT}/cmake";
 			};
 			name = Debug;
 		};
-		B3D0679C2BC4ED6500A7327F /* Debug */ = {
+		B3E948ED2BBCBC3000E8D00E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
@@ -1071,7 +1071,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
-				SYMROOT = "${SRCROOT}/cmake";
 			};
 			name = Debug;
 		};
@@ -1082,7 +1081,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1ACEA90617F75F350031B1C9 /* Release */,
-				B3D067992BC4ED6500A7327F /* Debug */,
+				B3E948EA2BBCBC3000E8D00E /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1091,7 +1090,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9312497C298CECEA002DE0C2 /* Release */,
-				B3D0679C2BC4ED6500A7327F /* Debug */,
+				B3E948ED2BBCBC3000E8D00E /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1100,7 +1099,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				934BE99F296F080500FB9933 /* Release */,
-				B3D0679B2BC4ED6500A7327F /* Debug */,
+				B3E948EC2BBCBC3000E8D00E /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1109,7 +1108,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C9D5391DEA83DE0068D057 /* Release */,
-				B3D0679A2BC4ED6500A7327F /* Debug */,
+				B3E948EB2BBCBC3000E8D00E /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
