@@ -127,9 +127,6 @@
 [submodule "Cores/Gearcoleco/Gearcoleco"]
 	path = Cores/Gearcoleco/Gearcoleco
 	url = https://github.com/Provenance-Emu/Gearcoleco.git
-[submodule "Cores/Citra/citra"]
-	path = Cores/Citra/citra
-	url = https://github.com/Provenance-Emu/citra.git
 [submodule "Cores/FreeIntv/FreeIntv"]
 	path = Cores/FreeIntv/FreeIntv
 	url = https://github.com/Provenance-Emu/FreeIntv.git
@@ -175,12 +172,6 @@
 [submodule "Cores/Play/Play-"]
 	path = Cores/Play/Play-
 	url = https://github.com/jpd002/Play-.git
-[submodule "Cores/emuThree/emuthree"]
-	path = Cores/emuThree/emuthree
-	url = https://github.com/emuPlace/emuThreeDS.git
-[submodule "Cores/emuThree/cmake/zstd"]
-	path = Cores/emuThree/cmake/zstd
-	url = https://github.com/facebook/zstd.git
 [submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/UnrarKit"]
 	path = CoresRetro/RetroArch/PVRetroArchCore/Archive/UnrarKit
 	url = https://github.com/abbeycode/UnrarKit.git
