@@ -1,1 +1,3 @@
 VALID_ARCHS[sdk=iphonesimulator*] = x86_64 arm64
+
+//OTHER_CFLAGS = $(inherited) -fmodules -fcxx-modules
