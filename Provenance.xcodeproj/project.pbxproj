@@ -3081,7 +3081,7 @@
 		B344605A27DCB73E0035B08E /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/swift/libswift_Concurrency.tbd; sourceTree = DEVELOPER_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3475E65293CB6F200725A82 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B347B3892BC4CA98006A3B2D /* ProvennaceTV-Lite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ProvennaceTV-Lite.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B347B3892BC4CA98006A3B2D /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B347B38A2BC4CA99006A3B2D /* ProvenanceTV-Lite-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ProvenanceTV-Lite-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/ProvenanceTV-Lite-Info.plist"; sourceTree = "<absolute>"; };
 		B347B38D2BC4CCA6006A3B2D /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS17.4.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		B347B38E2BC4CCA6006A3B2D /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS17.4.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
@@ -4094,7 +4094,7 @@
 				B3F7E421297736BE00362B92 /* Provenance-Lite.app */,
 				B3F7E5AE297736C200362B92 /* Provenance-XL.app */,
 				930499EF2A93073800BF257F /* Provenance-UnderDevelopment.app */,
-				B347B3892BC4CA98006A3B2D /* ProvennaceTV-Lite.app */,
+				B347B3892BC4CA98006A3B2D /* Provenance.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5701,7 +5701,7 @@
 				B347B2442BC4CA98006A3B2D /* PVLogging */,
 			);
 			productName = ProvenanceTV;
-			productReference = B347B3892BC4CA98006A3B2D /* ProvennaceTV-Lite.app */;
+			productReference = B347B3892BC4CA98006A3B2D /* Provenance.app */;
 			productType = "com.apple.product-type.application";
 		};
 		B355DF9629209B6200E4C858 /* QuickLookPreview */ = {
@@ -10126,7 +10126,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "ProvenanceTV-Lite-Info.plist";
+				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10138,7 +10138,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -10179,7 +10179,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "ProvenanceTV-Lite-Info.plist";
+				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10192,7 +10192,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -10234,7 +10234,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "ProvenanceTV-Lite-Info.plist";
+				INFOPLIST_FILE = ProvenanceTV/en.lproj/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10246,7 +10246,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
