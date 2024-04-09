@@ -124,7 +124,9 @@ struct ConsoleGamesView: SwiftUI.View {
                         }
                 }
             )
-            .gesture(MagnificationGesture()
+            #if !os(tvOS)
+            .gesture(
+                MagnificationGesture()
                 .onChanged { state in
 
                     // Adjust state so we are always working from 1 because we are changing layouts whilst magnifying
@@ -245,6 +247,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     }
                 }
             )
+            #endif
         }
     }
     // MARK: Adjustable size helpers
@@ -291,6 +294,9 @@ struct GridZoomStages
 {
     static var zoomStages: [Int]
     {
+        #if os(tvOS)
+        return [1, 2, 4, 8, 16]
+        #else
         if UIDevice.current.userInterfaceIdiom == .pad
         {
             if UIDevice.current.orientation.isLandscape
@@ -313,6 +319,7 @@ struct GridZoomStages
                 return [1, 2, 4, 6, 8]
             }
         }
+        #endif
     }
 
     static func getZoomStage(at index: Int) -> Int
