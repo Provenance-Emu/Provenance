@@ -719,6 +719,267 @@
 		B346AED2297602210090E014 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; };
 		B346AED3297602210090E014 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B346AEDF297617E30090E014 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.m */; };
+		B347B2472BC4CA98006A3B2D /* RowCompatible.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C01276B470B00D85327 /* RowCompatible.swift */; };
+		B347B2482BC4CA98006A3B2D /* PVCheatsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710832585912C00258602 /* PVCheatsHeaderView.swift */; };
+		B347B2492BC4CA98006A3B2D /* PVCheatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710932585917A00258602 /* PVCheatsViewController.swift */; };
+		B347B24A2BC4CA98006A3B2D /* PVCheatsInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1710B4258610DE00258602 /* PVCheatsInfoViewController.swift */; };
+		B347B24B2BC4CA98006A3B2D /* PVCheatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */; };
+		B347B24C2BC4CA98006A3B2D /* PVEmulatorViewController+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17107025858B5400258602 /* PVEmulatorViewController+Cheats.swift */; };
+		B347B24D2BC4CA98006A3B2D /* PV3DSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A924552A6F0ACA0059BFEA /* PV3DSControllerViewController.swift */; };
+		B347B24E2BC4CA98006A3B2D /* DOLJitManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7EC295EFE0A00CC9D4F /* DOLJitManager.m */; };
+		B347B24F2BC4CA98006A3B2D /* PVSaturnControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB372C2187F568009D9244 /* PVSaturnControllerViewController.swift */; };
+		B347B2502BC4CA98006A3B2D /* PVAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB125951D93E57F00D045D0 /* PVAppearanceViewController.swift */; };
+		B347B2512BC4CA98006A3B2D /* crt_filter_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE1287EA0CE0054C1B5 /* crt_filter_ps.metal */; };
+		B347B2522BC4CA98006A3B2D /* Sections.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2BE218EC62E0015C690 /* Sections.swift */; };
+		B347B2532BC4CA98006A3B2D /* JSButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECE205CD1F100C273C7 /* JSButton.swift */; };
+		B347B2542BC4CA98006A3B2D /* PVEmulatorViewController+MultiDisc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C633278E5055007E61FE /* PVEmulatorViewController+MultiDisc.swift */; };
+		B347B2552BC4CA98006A3B2D /* PVAppDelegate+JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */; };
+		B347B2562BC4CA98006A3B2D /* PVOdyssey2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B306E0CE2769F2C2001DC52E /* PVOdyssey2ControllerViewController.swift */; };
+		B347B2572BC4CA98006A3B2D /* TapActionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C04276B470B00D85327 /* TapActionRow.swift */; };
+		B347B2582BC4CA98006A3B2D /* AppearanceStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1F207ED7040040709A /* AppearanceStyle.swift */; };
+		B347B2592BC4CA98006A3B2D /* QuickTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFB276B470B00D85327 /* QuickTableViewController.swift */; };
+		B347B25A2BC4CA98006A3B2D /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFE276B470B00D85327 /* Reusable.swift */; };
+		B347B25B2BC4CA98006A3B2D /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
+		B347B25C2BC4CA98006A3B2D /* PVControllerSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED7205CD21F00C273C7 /* PVControllerSelectionViewController.swift */; };
+		B347B25D2BC4CA98006A3B2D /* PVGameLibraryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A48696F17C8C0DE0019F6D2 /* PVGameLibraryCollectionViewCell.swift */; };
+		B347B25E2BC4CA98006A3B2D /* SettingsOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38D02332884D03A008FBED8 /* SettingsOptionRow.swift */; };
+		B347B25F2BC4CA98006A3B2D /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
+		B347B2602BC4CA98006A3B2D /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
+		B347B2612BC4CA98006A3B2D /* PVWonderSwanControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37212187F568009D9244 /* PVWonderSwanControllerViewController.swift */; };
+		B347B2622BC4CA98006A3B2D /* PVAtari5200ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB372A2187F568009D9244 /* PVAtari5200ControllerViewController.swift */; };
+		B347B2632BC4CA98006A3B2D /* PVMameControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A7277A2AAEB0DA0052B279 /* PVMameControllerViewController.swift */; };
+		B347B2642BC4CA98006A3B2D /* PVNeoGeoControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A7277B2AAEB0DB0052B279 /* PVNeoGeoControllerViewController.swift */; };
+		B347B2652BC4CA98006A3B2D /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532C3B21A9AC93006CDA0F /* Services.swift */; };
+		B347B2662BC4CA98006A3B2D /* PVEmulatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A164EB217BC03E800FAC391 /* PVEmulatorViewController.swift */; };
+		B347B2672BC4CA98006A3B2D /* PVGLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D433A17B30BA3004DFFFC /* PVGLViewController.m */; };
+		B347B2682BC4CA98006A3B2D /* PVSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB95FFB17C563C100D3E392 /* PVSettingsViewController.swift */; };
+		B347B2692BC4CA98006A3B2D /* TVAlertController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA9279E63B700578663 /* TVAlertController.swift */; };
+		B347B26A2BC4CA98006A3B2D /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
+		B347B26B2BC4CA98006A3B2D /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
+		B347B26C2BC4CA98006A3B2D /* PVGameLibraryUpdatesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B3232492AFC900636C8A /* PVGameLibraryUpdatesController.swift */; };
+		B347B26D2BC4CA98006A3B2D /* PVPSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37232187F568009D9244 /* PVPSXControllerViewController.swift */; };
+		B347B26E2BC4CA98006A3B2D /* PVPokeMiniControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37292187F568009D9244 /* PVPokeMiniControllerViewController.swift */; };
+		B347B26F2BC4CA98006A3B2D /* GameLaunchingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35D26F920337D1C00F17D58 /* GameLaunchingViewController.swift */; };
+		B347B2702BC4CA98006A3B2D /* PVPSPControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3054370272026E800F5257D /* PVPSPControllerViewController.swift */; };
+		B347B2712BC4CA98006A3B2D /* PVMetalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C641278E55C9007E61FE /* PVMetalViewController.m */; };
+		B347B2722BC4CA98006A3B2D /* PVCoreFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DFC203605BB00D583C4 /* PVCoreFactory.swift */; };
+		B347B2732BC4CA98006A3B2D /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
+		B347B2742BC4CA98006A3B2D /* CodeSignatureUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F0295EFE3400CC9D4F /* CodeSignatureUtils.m */; };
+		B347B2752BC4CA98006A3B2D /* SwitchRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C05276B470B00D85327 /* SwitchRow.swift */; };
+		B347B2762BC4CA98006A3B2D /* Icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C09276B470B00D85327 /* Icon.swift */; };
+		B347B2772BC4CA98006A3B2D /* PVLynxControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37282187F568009D9244 /* PVLynxControllerViewController.swift */; };
+		B347B2782BC4CA98006A3B2D /* AppearanceStyleable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1B207ED7040040709A /* AppearanceStyleable.swift */; };
+		B347B2792BC4CA98006A3B2D /* PVSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */; };
+		B347B27A2BC4CA98006A3B2D /* UIViewController+Alerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */; };
+		B347B27B2BC4CA98006A3B2D /* GCDWebServerDataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49EC1B63D7CD0065FA39 /* GCDWebServerDataRequest.m */; };
+		B347B27C2BC4CA98006A3B2D /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
+		B347B27D2BC4CA98006A3B2D /* PVGameLibraryCollectionFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32746BC219BD65F00B78124 /* PVGameLibraryCollectionFlowLayout.swift */; };
+		B347B27E2BC4CA98006A3B2D /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; };
+		B347B27F2BC4CA98006A3B2D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.m */; };
+		B347B2802BC4CA98006A3B2D /* PVAtari7800ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37312187F568009D9244 /* PVAtari7800ControllerViewController.swift */; };
+		B347B2812BC4CA98006A3B2D /* GamesDisplayOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1422B67313B009687D7 /* GamesDisplayOptionsView.swift */; };
+		B347B2822BC4CA98006A3B2D /* GameItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29127BC7E610070E222 /* GameItemView.swift */; };
+		B347B2832BC4CA98006A3B2D /* PVGameLibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E3B5D8202ED84100A11871 /* PVGameLibraryViewController.swift */; };
+		B347B2842BC4CA98006A3B2D /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534E120AFF21800A83D4E /* Version.swift */; };
+		B347B2852BC4CA98006A3B2D /* Deprecated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0B276B470B00D85327 /* Deprecated.swift */; };
+		B347B2862BC4CA98006A3B2D /* PVEmulatorViewController+Saves.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CCD2B921DAA8D30031C42C /* PVEmulatorViewController+Saves.swift */; };
+		B347B2872BC4CA98006A3B2D /* PVEmulatorViewController+CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C63C278E514A007E61FE /* PVEmulatorViewController+CoreOptions.swift */; };
+		B347B2882BC4CA98006A3B2D /* SettingsRowSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224921D329EC0077E86F /* SettingsRowSwitch.swift */; };
+		B347B2892BC4CA98006A3B2D /* PVVectrexControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */; };
+		B347B28A2BC4CA98006A3B2D /* PVDSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BF7276B37DE00D85327 /* PVDSControllerViewController.swift */; };
+		B347B28B2BC4CA98006A3B2D /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3FD78D1AC7744100F8C23C /* MBProgressHUD.m */; };
+		B347B28C2BC4CA98006A3B2D /* PVPCEControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37272187F568009D9244 /* PVPCEControllerViewController.swift */; };
+		B347B28D2BC4CA98006A3B2D /* PVAtariJaguarControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37222187F568009D9244 /* PVAtariJaguarControllerViewController.swift */; };
+		B347B28E2BC4CA98006A3B2D /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28E27BC7E610070E222 /* Extensions.swift */; };
+		B347B28F2BC4CA98006A3B2D /* PVGPUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B382C648278E626D007E61FE /* PVGPUViewController.m */; };
+		B347B2902BC4CA98006A3B2D /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28627BC7E610070E222 /* HomeView.swift */; };
+		B347B2912BC4CA98006A3B2D /* PVGBAControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37242187F568009D9244 /* PVGBAControllerViewController.swift */; };
+		B347B2922BC4CA98006A3B2D /* PVLicensesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D52451D9198E000C29F90 /* PVLicensesViewController.swift */; };
+		B347B2932BC4CA98006A3B2D /* PVAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */; };
+		B347B2942BC4CA98006A3B2D /* UIWindowExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1E207ED7040040709A /* UIWindowExtensions.swift */; };
+		B347B2952BC4CA98006A3B2D /* PVCoresTableViewContorller.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */; };
+		B347B2962BC4CA98006A3B2D /* GCDWebServerStreamedResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FB1B63D7CD0065FA39 /* GCDWebServerStreamedResponse.m */; };
+		B347B2972BC4CA98006A3B2D /* PVEP128ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70060288DD23F00355823 /* PVEP128ControllerViewController.swift */; };
+		B347B2982BC4CA98006A3B2D /* GCDWebServerConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E11B63D7CD0065FA39 /* GCDWebServerConnection.m */; };
+		B347B2992BC4CA98006A3B2D /* Moveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D30B427BCD82B00C01114 /* Moveable.swift */; };
+		B347B29A2BC4CA98006A3B2D /* UITraitCollectionExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1D207ED7040040709A /* UITraitCollectionExtensions.swift */; };
+		B347B29B2BC4CA98006A3B2D /* NavigationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C06276B470B00D85327 /* NavigationRow.swift */; };
+		B347B29C2BC4CA98006A3B2D /* MetalViewShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BEA287EA0CE0054C1B5 /* MetalViewShaders.metal */; };
+		B347B29D2BC4CA98006A3B2D /* AppearanceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C18207ED7030040709A /* AppearanceScope.swift */; };
+		B347B29E2BC4CA98006A3B2D /* PVControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36D9DF7203562E000D583C4 /* PVControllerViewController.swift */; };
+		B347B29F2BC4CA98006A3B2D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
+		B347B2A02BC4CA98006A3B2D /* PVRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28727BC7E610070E222 /* PVRootViewController.swift */; };
+		B347B2A12BC4CA98006A3B2D /* PVControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED4205CD21400C273C7 /* PVControllerManager.swift */; };
+		B347B2A22BC4CA98006A3B2D /* PV32XControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB372B2187F568009D9244 /* PV32XControllerViewController.swift */; };
+		B347B2A32BC4CA98006A3B2D /* Row.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFF276B470B00D85327 /* Row.swift */; };
+		B347B2A42BC4CA98006A3B2D /* RowStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C00276B470B00D85327 /* RowStyle.swift */; };
+		B347B2A52BC4CA98006A3B2D /* GCDWebServerFileResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F91B63D7CD0065FA39 /* GCDWebServerFileResponse.m */; };
+		B347B2A62BC4CA98006A3B2D /* PVSwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3532B2A21A78FB2006CDA0F /* PVSwitchCell.swift */; };
+		B347B2A72BC4CA98006A3B2D /* PillPageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D534EB20B001D700A83D4E /* PillPageControl.swift */; };
+		B347B2A82BC4CA98006A3B2D /* SystemOverviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7C5219A7D9D0041F971 /* SystemOverviewViewModel.swift */; };
+		B347B2A92BC4CA98006A3B2D /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
+		B347B2AA2BC4CA98006A3B2D /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
+		B347B2AB2BC4CA98006A3B2D /* PVRetroArchControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934A09CB2AB3FC80003FAFCE /* PVRetroArchControllerViewController.swift */; };
+		B347B2AC2BC4CA98006A3B2D /* PVRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29627BC7E610070E222 /* PVRootViewModel.swift */; };
+		B347B2AD2BC4CA98006A3B2D /* GCDWebServerDataResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F51B63D7CD0065FA39 /* GCDWebServerDataResponse.m */; };
+		B347B2AE2BC4CA98006A3B2D /* AppearanceStyleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1C207ED7040040709A /* AppearanceStyleExtensions.swift */; };
+		B347B2AF2BC4CA98006A3B2D /* PV3DOControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437174276B0B650014F87C /* PV3DOControllerViewController.swift */; };
+		B347B2B02BC4CA98006A3B2D /* PVWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F4A101B63DCF00065FA39 /* PVWebServer.m */; };
+		B347B2B12BC4CA98006A3B2D /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
+		B347B2B22BC4CA98006A3B2D /* GCDWebServerErrorResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F71B63D7CD0065FA39 /* GCDWebServerErrorResponse.m */; };
+		B347B2B32BC4CA98006A3B2D /* Intents.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355DF90292095B300E4C858 /* Intents.intentdefinition */; };
+		B347B2B42BC4CA98006A3B2D /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
+		B347B2B52BC4CA98006A3B2D /* GCDWebServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49DF1B63D7CD0065FA39 /* GCDWebServer.m */; };
+		B347B2B62BC4CA98006A3B2D /* PVSaveStatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB108206EE8A700A1F942 /* PVSaveStatesViewController.swift */; };
+		B347B2B72BC4CA98006A3B2D /* PVWiiControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93599B4A2955F2850049DAC8 /* PVWiiControllerViewController.swift */; };
+		B347B2B82BC4CA98006A3B2D /* TapActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0F276B470B00D85327 /* TapActionCell.swift */; };
+		B347B2B92BC4CA98006A3B2D /* ShaderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3427BD4287E7E170054C1B5 /* ShaderManager.swift */; };
+		B347B2BA2BC4CA98006A3B2D /* RadioSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0A276B470B00D85327 /* RadioSection.swift */; };
+		B347B2BB2BC4CA98006A3B2D /* GCDWebServerMultiPartFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F01B63D7CD0065FA39 /* GCDWebServerMultiPartFormRequest.m */; };
+		B347B2BC2BC4CA98006A3B2D /* GCDWebServerRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E71B63D7CD0065FA39 /* GCDWebServerRequest.m */; };
+		B347B2BD2BC4CA98006A3B2D /* RealmBindObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AA218EC1AB0015C690 /* RealmBindObserver.swift */; };
+		B347B2BE2BC4CA98006A3B2D /* PVSaveStateHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB10E206EF29E00A1F942 /* PVSaveStateHeaderView.swift */; };
+		B347B2BF2BC4CA98006A3B2D /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1A207ED7040040709A /* UIApplicationExtensions.swift */; };
+		B347B2C02BC4CA98006A3B2D /* ConsolesWrapperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29827BC7E610070E222 /* ConsolesWrapperView.swift */; };
+		B347B2C12BC4CA98006A3B2D /* MameShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE7287EA0CE0054C1B5 /* MameShaders.metal */; };
+		B347B2C22BC4CA98006A3B2D /* GamesDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1482B6731A0009687D7 /* GamesDividerView.swift */; };
+		B347B2C32BC4CA98006A3B2D /* PVN64ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB372F2187F568009D9244 /* PVN64ControllerViewController.swift */; };
+		B347B2C42BC4CA98006A3B2D /* Configurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411BFD276B470B00D85327 /* Configurable.swift */; };
+		B347B2C52BC4CA98006A3B2D /* JSDPad.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ECB205CD1D600C273C7 /* JSDPad.swift */; };
+		B347B2C62BC4CA98006A3B2D /* GameContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29027BC7E610070E222 /* GameContextMenu.swift */; };
+		B347B2C72BC4CA98006A3B2D /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0C276B470B00D85327 /* Section.swift */; };
+		B347B2C82BC4CA98006A3B2D /* SegueNavigationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378224D21D32A360077E86F /* SegueNavigationRow.swift */; };
+		B347B2C92BC4CA98006A3B2D /* VerticalAlignLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A33C9F294753C10090F1F3 /* VerticalAlignLabel.swift */; };
+		B347B2CA2BC4CA98006A3B2D /* PVAppDelegate+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8D29208A4A00E4C858 /* PVAppDelegate+Helpers.swift */; };
+		B347B2CB2BC4CA98006A3B2D /* CoreOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B354E7D1219A9C230041F971 /* CoreOptionsViewController.swift */; };
+		B347B2CC2BC4CA98006A3B2D /* PVGenesisControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB372D2187F568009D9244 /* PVGenesisControllerViewController.swift */; };
+		B347B2CD2BC4CA98006A3B2D /* PVGameLibrarySectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A40C7021A67C7800544C20 /* PVGameLibrarySectionFooterView.swift */; };
+		B347B2CE2BC4CA98006A3B2D /* PVMSXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A70064288DF1BF00355823 /* PVMSXControllerViewController.swift */; };
+		B347B2CF2BC4CA98006A3B2D /* lineTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE5287EA0CE0054C1B5 /* lineTron.metal */; };
+		B347B2D02BC4CA98006A3B2D /* simpleCRT.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE4287EA0CE0054C1B5 /* simpleCRT.metal */; };
+		B347B2D12BC4CA98006A3B2D /* Reactive+RxRealmDataSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AB218EC1AC0015C690 /* Reactive+RxRealmDataSources.swift */; };
+		B347B2D22BC4CA98006A3B2D /* TVFullscreenController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF474BA7279CCDD100578663 /* TVFullscreenController.swift */; };
+		B347B2D32BC4CA98006A3B2D /* UIViewController+SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28C27BC7E610070E222 /* UIViewController+SideNavigationController.swift */; };
+		B347B2D42BC4CA98006A3B2D /* UISearchController+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2B62487C120000A3922 /* UISearchController+Rx.swift */; };
+		B347B2D52BC4CA98006A3B2D /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37B71AF278E33B9005FB278 /* MenuButton.swift */; };
+		B347B2D62BC4CA98006A3B2D /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
+		B347B2D72BC4CA98006A3B2D /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29327BC7E610070E222 /* SearchBar.swift */; };
+		B347B2D82BC4CA98006A3B2D /* PVPCFXControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37262187F568009D9244 /* PVPCFXControllerViewController.swift */; };
+		B347B2D92BC4CA98006A3B2D /* OptionsIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB14E2B6731C7009687D7 /* OptionsIndicator.swift */; };
+		B347B2DA2BC4CA98006A3B2D /* RxTableViewRealmDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D5E2AC218EC1AD0015C690 /* RxTableViewRealmDataSource.swift */; };
+		B347B2DB2BC4CA98006A3B2D /* megaTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE3287EA0CE0054C1B5 /* megaTron.metal */; };
+		B347B2DC2BC4CA98006A3B2D /* PVEmulatorViewController+Controllers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C634278E5055007E61FE /* PVEmulatorViewController+Controllers.swift */; };
+		B347B2DD2BC4CA98006A3B2D /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C10276B470B00D85327 /* SwitchCell.swift */; };
+		B347B2DE2BC4CA98006A3B2D /* GCDWebServerURLEncodedFormRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49F21B63D7CD0065FA39 /* GCDWebServerURLEncodedFormRequest.m */; };
+		B347B2DF2BC4CA98006A3B2D /* GCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E91B63D7CD0065FA39 /* GCDWebServerResponse.m */; };
+		B347B2E02BC4CA98006A3B2D /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
+		B347B2E12BC4CA98006A3B2D /* DetailText.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0D276B470B00D85327 /* DetailText.swift */; };
+		B347B2E22BC4CA98006A3B2D /* PVSNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371E2187F568009D9244 /* PVSNESControllerViewController.swift */; };
+		B347B2E32BC4CA98006A3B2D /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
+		B347B2E42BC4CA98006A3B2D /* WebServerActivatorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B387676B20BD0F43009D8CD2 /* WebServerActivatorController.swift */; };
+		B347B2E52BC4CA98006A3B2D /* ViewControllerResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29227BC7E610070E222 /* ViewControllerResolver.swift */; };
+		B347B2E62BC4CA98006A3B2D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
+		B347B2E72BC4CA98006A3B2D /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F5295EFE4600CC9D4F /* FastmemUtil.m */; };
+		B347B2E82BC4CA98006A3B2D /* PVPS2ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313544626E4C0F90047F338 /* PVPS2ControllerViewController.swift */; };
+		B347B2E92BC4CA98006A3B2D /* DOLCancellationToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B36AE801295EFE5B00CC9D4F /* DOLCancellationToken.swift */; };
+		B347B2EA2BC4CA98006A3B2D /* SideNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28B27BC7E610070E222 /* SideNavigationController.swift */; };
+		B347B2EB2BC4CA98006A3B2D /* PVButtonGroupOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F64ED1205CD20800C273C7 /* PVButtonGroupOverlayView.swift */; };
+		B347B2EC2BC4CA98006A3B2D /* UICollectionView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1180B306248FF8AC00636C8A /* UICollectionView+Rx.swift */; };
+		B347B2ED2BC4CA98006A3B2D /* PVColecoVisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437175276B0B650014F87C /* PVColecoVisionControllerViewController.swift */; };
+		B347B2EE2BC4CA98006A3B2D /* PVIntellivisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437173276B0B650014F87C /* PVIntellivisionControllerViewController.swift */; };
+		B347B2EF2BC4CA98006A3B2D /* PVVBControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37252187F568009D9244 /* PVVBControllerViewController.swift */; };
+		B347B2F02BC4CA98006A3B2D /* LocalizerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F7295EFE5000CC9D4F /* LocalizerUtils.m */; };
+		B347B2F12BC4CA98006A3B2D /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
+		B347B2F22BC4CA98006A3B2D /* JitAcquisitionUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7FA295EFE5700CC9D4F /* JitAcquisitionUtils.m */; };
+		B347B2F32BC4CA98006A3B2D /* JitScreenDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DECB295FEC760049F2AB /* JitScreenDelegate.swift */; };
+		B347B2F42BC4CA98006A3B2D /* GCDWebUploader.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49FF1B63D7CD0065FA39 /* GCDWebUploader.m */; };
+		B347B2F52BC4CA98006A3B2D /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29527BC7E610070E222 /* SideMenuView.swift */; };
+		B347B2F62BC4CA98006A3B2D /* Subtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C08276B470B00D85327 /* Subtitle.swift */; };
+		B347B2F72BC4CA98006A3B2D /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A65D1C519917D55004E1777 /* UIImage+ImageEffects.m */; };
+		B347B2F82BC4CA98006A3B2D /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
+		B347B2F92BC4CA98006A3B2D /* CollectionViewInCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D520AB392C00092CA6 /* CollectionViewInCollectionViewCell.swift */; };
+		B347B2FA2BC4CA98006A3B2D /* PVGBControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */; };
+		B347B2FB2BC4CA98006A3B2D /* PVNESControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37302187F568009D9244 /* PVNESControllerViewController.swift */; };
+		B347B2FC2BC4CA98006A3B2D /* SideNavigationController+NestedTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28A27BC7E610070E222 /* SideNavigationController+NestedTypes.swift */; };
+		B347B2FD2BC4CA98006A3B2D /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BEC287EA0CE0054C1B5 /* fullscreen_vs.metal */; };
+		B347B2FE2BC4CA98006A3B2D /* UIAppearanceExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C19207ED7040040709A /* UIAppearanceExtensions.swift */; };
+		B347B2FF2BC4CA98006A3B2D /* PVConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F7BE78204A289B000D0B4D /* PVConflictViewController.swift */; };
+		B347B3002BC4CA98006A3B2D /* PVNeoGeoPocketControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB372E2187F568009D9244 /* PVNeoGeoPocketControllerViewController.swift */; };
+		B347B3012BC4CA98006A3B2D /* GCDWebServerFileRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49EE1B63D7CD0065FA39 /* GCDWebServerFileRequest.m */; };
+		B347B3022BC4CA98006A3B2D /* PVRootViewController+DelegateMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28827BC7E610070E222 /* PVRootViewController+DelegateMethods.swift */; };
+		B347B3032BC4CA98006A3B2D /* GCControllerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */; };
+		B347B3042BC4CA98006A3B2D /* PVAppDelegate+Open.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF8A292088E500E4C858 /* PVAppDelegate+Open.swift */; };
+		B347B3052BC4CA98006A3B2D /* OptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C03276B470B00D85327 /* OptionRow.swift */; };
+		B347B3062BC4CA98006A3B2D /* PVSaveStateCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB10B206EF07C00A1F942 /* PVSaveStateCollectionViewCell.swift */; };
+		B347B3072BC4CA98006A3B2D /* DebuggerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = B36AE7F3295EFE3F00CC9D4F /* DebuggerUtils.m */; };
+		B347B3082BC4CA98006A3B2D /* PVSupervisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3164B76288E25F500E1CBCF /* PVSupervisionControllerViewController.swift */; };
+		B347B3092BC4CA98006A3B2D /* PVGameMoreInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B385542D20336D02006CA50B /* PVGameMoreInfoViewController.swift */; };
+		B347B30A2BC4CA98006A3B2D /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE2287EA0CE0054C1B5 /* ulTron.metal */; };
+		B347B30B2BC4CA98006A3B2D /* PVTVSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */; };
+		B347B30C2BC4CA98006A3B2D /* PVAtari2600ControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB371F2187F568009D9244 /* PVAtari2600ControllerViewController.swift */; };
+		B347B30D2BC4CA98006A3B2D /* BiosRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB13C2B6730B4009687D7 /* BiosRowView.swift */; };
+		B347B30E2BC4CA98006A3B2D /* GCDWebServerFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E31B63D7CD0065FA39 /* GCDWebServerFunctions.m */; };
+		B347B30F2BC4CA98006A3B2D /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
+		B347B3102BC4CA98006A3B2D /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
+		B347B3182BC4CA98006A3B2D /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701B21916E38000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B347B3252BC4CA98006A3B2D /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B347B3282BC4CA98006A3B2D /* PVLibRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B347B32A2BC4CA98006A3B2D /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B347B2442BC4CA98006A3B2D /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B347B32B2BC4CA98006A3B2D /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B347B3322BC4CA98006A3B2D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B347B3372BC4CA98006A3B2D /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61A219203AF009F4EDC /* libc++.tbd */; };
+		B347B33A2BC4CA98006A3B2D /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
+		B347B33B2BC4CA98006A3B2D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C618219203A5009F4EDC /* libsqlite3.tbd */; };
+		B347B33C2BC4CA98006A3B2D /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B347B2422BC4CA98006A3B2D /* Reachability */; };
+		B347B33E2BC4CA98006A3B2D /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B347B2402BC4CA98006A3B2D /* Introspect */; };
+		B347B33F2BC4CA98006A3B2D /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B347B2442BC4CA98006A3B2D /* PVLogging */; };
+		B347B3412BC4CA98006A3B2D /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C6162192038C009F4EDC /* libxml2.tbd */; };
+		B347B3422BC4CA98006A3B2D /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B347B23E2BC4CA98006A3B2D /* SteamController */; };
+		B347B3482BC4CA98006A3B2D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61421920384009F4EDC /* libz.tbd */; };
+		B347B3492BC4CA98006A3B2D /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C311219195CE009F4EDC /* CFNetwork.framework */; };
+		B347B34A2BC4CA98006A3B2D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30B219195BB009F4EDC /* SystemConfiguration.framework */; };
+		B347B34B2BC4CA98006A3B2D /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C309219195AE009F4EDC /* AudioToolbox.framework */; };
+		B347B34C2BC4CA98006A3B2D /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; };
+		B347B34D2BC4CA98006A3B2D /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701B21916E38000FA7F9 /* PVSupport.framework */; };
+		B347B34E2BC4CA98006A3B2D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C307219195A8009F4EDC /* GLKit.framework */; };
+		B347B3532BC4CA98006A3B2D /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C305219195A0009F4EDC /* OpenGLES.framework */; };
+		B347B3542BC4CA98006A3B2D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30121919596009F4EDC /* UIKit.framework */; };
+		B347B3552BC4CA98006A3B2D /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C30221919596009F4EDC /* TVUIKit.framework */; };
+		B347B3562BC4CA98006A3B2D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FF2191958D009F4EDC /* CoreGraphics.framework */; };
+		B347B3582BC4CA98006A3B2D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF705921916F2F000FA7F9 /* Foundation.framework */; };
+		B347B35A2BC4CA98006A3B2D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C2FC21919568009F4EDC /* AVFoundation.framework */; };
+		B347B35F2BC4CA98006A3B2D /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF70652191733D000FA7F9 /* GameController.framework */; };
+		B347B3602BC4CA98006A3B2D /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1180B31B2492A95400636C8A /* CoreServices.framework */; };
+		B347B3662BC4CA98006A3B2D /* LaunchImageTV.png in Resources */ = {isa = PBXBuildFile; fileRef = 555454412AC09997006A065F /* LaunchImageTV.png */; };
+		B347B3672BC4CA98006A3B2D /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
+		B347B3682BC4CA98006A3B2D /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
+		B347B3692BC4CA98006A3B2D /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
+		B347B36A2BC4CA98006A3B2D /* NearestNeighbor.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034B2896314000F75595 /* NearestNeighbor.fsh */; };
+		B347B36B2BC4CA98006A3B2D /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; };
+		B347B36C2BC4CA98006A3B2D /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
+		B347B36D2BC4CA98006A3B2D /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; };
+		B347B36E2BC4CA98006A3B2D /* SmoothBilinear.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703502896314100F75595 /* SmoothBilinear.fsh */; };
+		B347B36F2BC4CA98006A3B2D /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
+		B347B3702BC4CA98006A3B2D /* CRT.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703542896314200F75595 /* CRT.fsh */; };
+		B347B3712BC4CA98006A3B2D /* AAOmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034D2896314000F75595 /* AAOmniScaleLegacy.fsh */; };
+		B347B3722BC4CA98006A3B2D /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; };
+		B347B3732BC4CA98006A3B2D /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; };
+		B347B3742BC4CA98006A3B2D /* Bilinear.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703562896314200F75595 /* Bilinear.fsh */; };
+		B347B3752BC4CA98006A3B2D /* HQ2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703522896314100F75595 /* HQ2x.fsh */; };
+		B347B3762BC4CA98006A3B2D /* MonoLCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034E2896314100F75595 /* MonoLCD.fsh */; };
+		B347B3772BC4CA98006A3B2D /* Strings.strings in Resources */ = {isa = PBXBuildFile; fileRef = B3296EEA26CAC3ED0088AC32 /* Strings.strings */; };
+		B347B3782BC4CA98006A3B2D /* AAScale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703572896314200F75595 /* AAScale4x.fsh */; };
+		B347B3792BC4CA98006A3B2D /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; };
+		B347B37A2BC4CA98006A3B2D /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; };
+		B347B37B2BC4CA98006A3B2D /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; };
+		B347B37C2BC4CA98006A3B2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
+		B347B37D2BC4CA98006A3B2D /* LCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703532896314200F75595 /* LCD.fsh */; };
+		B347B37E2BC4CA98006A3B2D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
+		B347B37F2BC4CA98006A3B2D /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; };
+		B347B3802BC4CA98006A3B2D /* MasterShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703512896314100F75595 /* MasterShader.fsh */; };
+		B347B3812BC4CA98006A3B2D /* AAScale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034C2896314000F75595 /* AAScale2x.fsh */; };
+		B347B3822BC4CA98006A3B2D /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
+		B347B3832BC4CA98006A3B2D /* OmniScale.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703552896314200F75595 /* OmniScale.fsh */; };
 		B34CFF5D295F2BE90014C8AF /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; };
 		B34CFF5E295F2BE90014C8AF /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B34EADAE218824C2008F52EE /* PViCadeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37F421881CDC009D9244 /* PViCadeControllerViewController.swift */; };
@@ -1927,6 +2188,34 @@
 			remoteGlobalIDString = B305EF04276B4C73003AE510;
 			remoteInfo = "Provenance Watch WatchKit Extension";
 		};
+		B347B2372BC4CA98006A3B2D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B383225D26ED9C530029D12F;
+			remoteInfo = "Check Git Submodules";
+		};
+		B347B2392BC4CA98006A3B2D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B29D3F2156177100903290;
+			remoteInfo = "Create Version files";
+		};
+		B347B23B2BC4CA98006A3B2D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
+		};
+		B347B23D2BC4CA98006A3B2D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3C8A6BB2878238C0037A946;
+			remoteInfo = CoresRetro;
+		};
 		B36FE830218EAAD200F858F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -2194,6 +2483,32 @@
 				B305EF30276B4CB0003AE510 /* PVStella.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B347B3112BC4CA98006A3B2D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B347B3182BC4CA98006A3B2D /* PVSupport.framework in Embed Frameworks */,
+				B347B3252BC4CA98006A3B2D /* PVLibrary.framework in Embed Frameworks */,
+				B347B3282BC4CA98006A3B2D /* PVLibRetro.framework in Embed Frameworks */,
+				B347B32A2BC4CA98006A3B2D /* PVLogging in Embed Frameworks */,
+				B347B32B2BC4CA98006A3B2D /* (null) in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B347B3312BC4CA98006A3B2D /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B347B3322BC4CA98006A3B2D /* TopShelf.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B36B852C2959987D00FDEA29 /* Embed Frameworks */ = {
@@ -2758,6 +3073,8 @@
 		B344605A27DCB73E0035B08E /* libswift_Concurrency.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswift_Concurrency.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/swift/libswift_Concurrency.tbd; sourceTree = DEVELOPER_DIR; };
 		B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDreamcastControllerViewController.swift; sourceTree = "<group>"; };
 		B3475E65293CB6F200725A82 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B347B3892BC4CA98006A3B2D /* ProvennaceTV-Lite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ProvennaceTV-Lite.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B347B38A2BC4CA99006A3B2D /* ProvenanceTV-Lite-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ProvenanceTV-Lite-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/ProvenanceTV-Lite-Info.plist"; sourceTree = "<absolute>"; };
 		B34FB13C2B6730B4009687D7 /* BiosRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiosRowView.swift; sourceTree = "<group>"; };
 		B34FB1422B67313B009687D7 /* GamesDisplayOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesDisplayOptionsView.swift; sourceTree = "<group>"; };
 		B34FB1482B6731A0009687D7 /* GamesDividerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesDividerView.swift; sourceTree = "<group>"; };
@@ -3383,6 +3700,36 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B347B3332BC4CA98006A3B2D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B347B3372BC4CA98006A3B2D /* libc++.tbd in Frameworks */,
+				B347B33A2BC4CA98006A3B2D /* PVLibRetro.framework in Frameworks */,
+				B347B33B2BC4CA98006A3B2D /* libsqlite3.tbd in Frameworks */,
+				B347B33C2BC4CA98006A3B2D /* Reachability in Frameworks */,
+				B347B33E2BC4CA98006A3B2D /* Introspect in Frameworks */,
+				B347B33F2BC4CA98006A3B2D /* PVLogging in Frameworks */,
+				B347B3412BC4CA98006A3B2D /* libxml2.tbd in Frameworks */,
+				B347B3422BC4CA98006A3B2D /* SteamController in Frameworks */,
+				B347B3482BC4CA98006A3B2D /* libz.tbd in Frameworks */,
+				B347B3492BC4CA98006A3B2D /* CFNetwork.framework in Frameworks */,
+				B347B34A2BC4CA98006A3B2D /* SystemConfiguration.framework in Frameworks */,
+				B347B34B2BC4CA98006A3B2D /* AudioToolbox.framework in Frameworks */,
+				B347B34C2BC4CA98006A3B2D /* PVLibrary.framework in Frameworks */,
+				B347B34D2BC4CA98006A3B2D /* PVSupport.framework in Frameworks */,
+				B347B34E2BC4CA98006A3B2D /* GLKit.framework in Frameworks */,
+				B347B3532BC4CA98006A3B2D /* OpenGLES.framework in Frameworks */,
+				B347B3542BC4CA98006A3B2D /* UIKit.framework in Frameworks */,
+				B347B3552BC4CA98006A3B2D /* TVUIKit.framework in Frameworks */,
+				B347B3562BC4CA98006A3B2D /* CoreGraphics.framework in Frameworks */,
+				B347B3582BC4CA98006A3B2D /* Foundation.framework in Frameworks */,
+				B347B35A2BC4CA98006A3B2D /* AVFoundation.framework in Frameworks */,
+				B347B35F2BC4CA98006A3B2D /* GameController.framework in Frameworks */,
+				B347B3602BC4CA98006A3B2D /* CoreServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B355DF9429209B6200E4C858 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3698,6 +4045,7 @@
 				B3C8A6A328781E810037A946 /* CoresRetro */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
+				B347B38A2BC4CA99006A3B2D /* ProvenanceTV-Lite-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3726,6 +4074,7 @@
 				B3F7E421297736BE00362B92 /* Provenance-Lite.app */,
 				B3F7E5AE297736C200362B92 /* Provenance-XL.app */,
 				930499EF2A93073800BF257F /* Provenance-UnderDevelopment.app */,
+				B347B3892BC4CA98006A3B2D /* ProvennaceTV-Lite.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5298,6 +5647,37 @@
 			productReference = B3270F7F27DCB25100E83180 /* Cores.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B347B2352BC4CA98006A3B2D /* ProvennaceTV-Lite */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B347B3852BC4CA98006A3B2D /* Build configuration list for PBXNativeTarget "ProvennaceTV-Lite" */;
+			buildPhases = (
+				B347B2452BC4CA98006A3B2D /* Script: Get RetroArch Modules */,
+				B347B2462BC4CA98006A3B2D /* Sources */,
+				B347B3112BC4CA98006A3B2D /* Embed Frameworks */,
+				B347B3312BC4CA98006A3B2D /* Embed App Extensions */,
+				B347B3332BC4CA98006A3B2D /* Frameworks */,
+				B347B3652BC4CA98006A3B2D /* Resources */,
+				B347B3842BC4CA98006A3B2D /* Script: Set Build Number */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B347B2362BC4CA98006A3B2D /* PBXTargetDependency */,
+				B347B2382BC4CA98006A3B2D /* PBXTargetDependency */,
+				B347B23A2BC4CA98006A3B2D /* PBXTargetDependency */,
+				B347B23C2BC4CA98006A3B2D /* PBXTargetDependency */,
+			);
+			name = "ProvennaceTV-Lite";
+			packageProductDependencies = (
+				B347B23E2BC4CA98006A3B2D /* SteamController */,
+				B347B2402BC4CA98006A3B2D /* Introspect */,
+				B347B2422BC4CA98006A3B2D /* Reachability */,
+				B347B2442BC4CA98006A3B2D /* PVLogging */,
+			);
+			productName = ProvenanceTV;
+			productReference = B347B3892BC4CA98006A3B2D /* ProvennaceTV-Lite.app */;
+			productType = "com.apple.product-type.application";
+		};
 		B355DF9629209B6200E4C858 /* QuickLookPreview */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B355DFA729209B8900E4C858 /* Build configuration list for PBXNativeTarget "QuickLookPreview" */;
@@ -5738,6 +6118,7 @@
 				B3F7E422297736C200362B92 /* Provenance-XL */,
 				1A3D409317B2DCE4004DFFFC /* Provenance */,
 				1AD481B31BA350A400FDA50A /* ProvenanceTV */,
+				B347B2352BC4CA98006A3B2D /* ProvennaceTV-Lite */,
 				B3F7E295297736BE00362B92 /* Provenance-Lite */,
 				930498BE2A93073800BF257F /* Provenance-UnderDevelopment */,
 				1AD9AA341ACC988F00EC87A0 /* Provenance Tests */,
@@ -5973,6 +6354,43 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B347B3652BC4CA98006A3B2D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B347B3662BC4CA98006A3B2D /* LaunchImageTV.png in Resources */,
+				B347B3672BC4CA98006A3B2D /* GCDWebUploader.bundle in Resources */,
+				B347B3682BC4CA98006A3B2D /* Scale4x.fsh in Resources */,
+				B347B3692BC4CA98006A3B2D /* GLES in Resources */,
+				B347B36A2BC4CA98006A3B2D /* NearestNeighbor.fsh in Resources */,
+				B347B36B2BC4CA98006A3B2D /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */,
+				B347B36C2BC4CA98006A3B2D /* Scale2x.fsh in Resources */,
+				B347B36D2BC4CA98006A3B2D /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */,
+				B347B36E2BC4CA98006A3B2D /* SmoothBilinear.fsh in Resources */,
+				B347B36F2BC4CA98006A3B2D /* licenses.html in Resources */,
+				B347B3702BC4CA98006A3B2D /* CRT.fsh in Resources */,
+				B347B3712BC4CA98006A3B2D /* AAOmniScaleLegacy.fsh in Resources */,
+				B347B3722BC4CA98006A3B2D /* Cheats.storyboard in Resources */,
+				B347B3732BC4CA98006A3B2D /* Provenance.storyboard in Resources */,
+				B347B3742BC4CA98006A3B2D /* Bilinear.fsh in Resources */,
+				B347B3752BC4CA98006A3B2D /* HQ2x.fsh in Resources */,
+				B347B3762BC4CA98006A3B2D /* MonoLCD.fsh in Resources */,
+				B347B3772BC4CA98006A3B2D /* Strings.strings in Resources */,
+				B347B3782BC4CA98006A3B2D /* AAScale4x.fsh in Resources */,
+				B347B3792BC4CA98006A3B2D /* SaveStates.storyboard in Resources */,
+				B347B37A2BC4CA98006A3B2D /* LaunchScreenTV.storyboard in Resources */,
+				B347B37B2BC4CA98006A3B2D /* TVAssets.xcassets in Resources */,
+				B347B37C2BC4CA98006A3B2D /* Assets.xcassets in Resources */,
+				B347B37D2BC4CA98006A3B2D /* LCD.fsh in Resources */,
+				B347B37E2BC4CA98006A3B2D /* Settings.bundle in Resources */,
+				B347B37F2BC4CA98006A3B2D /* Settings.storyboard in Resources */,
+				B347B3802BC4CA98006A3B2D /* MasterShader.fsh in Resources */,
+				B347B3812BC4CA98006A3B2D /* AAScale2x.fsh in Resources */,
+				B347B3822BC4CA98006A3B2D /* OmniScaleLegacy.fsh in Resources */,
+				B347B3832BC4CA98006A3B2D /* OmniScale.fsh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6369,6 +6787,47 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "FILE=\"${SRCROOT}/CodeSigning.xcconfig\"\nif [ -e \"${FILE}\" ]\nthen\n\techo \"CodeSigning OK!\"\nelse\n    osascript -e 'display notification \"Copy CodeSigning.xcconfig.sample to CodeSigning.xcconfig and edit with your Apple Developer Account info for proper signing.\" with title \"Code Signing not Configured!\"'\n    echo \"warning: Missing CodeSigning.xcconfig\"\nfi\n";
+		};
+		B347B2452BC4CA98006A3B2D /* Script: Get RetroArch Modules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Script: Get RetroArch Modules";
+			outputFileListPaths = (
+				"$(SRCROOT)/CoresRetro/RetroArch/scripts/output_modules_tv.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\" tvos\n";
+		};
+		B347B3842BC4CA98006A3B2D /* Script: Set Build Number */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(PROJECT_DIR)/Scripts/set_bundle_build_number.sh",
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Script: Set Build Number";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+				"$(SRCROOT)/ProvenanceTV/.version",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = ". \"${PROJECT_DIR}/Scripts/set_bundle_build_number.sh\" ProvenanceTV\n";
 		};
 		B383226226ED9C590029D12F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -7228,6 +7687,215 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B347B2462BC4CA98006A3B2D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B347B2472BC4CA98006A3B2D /* RowCompatible.swift in Sources */,
+				B347B2482BC4CA98006A3B2D /* PVCheatsHeaderView.swift in Sources */,
+				B347B2492BC4CA98006A3B2D /* PVCheatsViewController.swift in Sources */,
+				B347B24A2BC4CA98006A3B2D /* PVCheatsInfoViewController.swift in Sources */,
+				B347B24B2BC4CA98006A3B2D /* PVCheatsTableViewCell.swift in Sources */,
+				B347B24C2BC4CA98006A3B2D /* PVEmulatorViewController+Cheats.swift in Sources */,
+				B347B24D2BC4CA98006A3B2D /* PV3DSControllerViewController.swift in Sources */,
+				B347B24E2BC4CA98006A3B2D /* DOLJitManager.m in Sources */,
+				B347B24F2BC4CA98006A3B2D /* PVSaturnControllerViewController.swift in Sources */,
+				B347B2502BC4CA98006A3B2D /* PVAppearanceViewController.swift in Sources */,
+				B347B2512BC4CA98006A3B2D /* crt_filter_ps.metal in Sources */,
+				B347B2522BC4CA98006A3B2D /* Sections.swift in Sources */,
+				B347B2532BC4CA98006A3B2D /* JSButton.swift in Sources */,
+				B347B2542BC4CA98006A3B2D /* PVEmulatorViewController+MultiDisc.swift in Sources */,
+				B347B2552BC4CA98006A3B2D /* PVAppDelegate+JIT.swift in Sources */,
+				B347B2562BC4CA98006A3B2D /* PVOdyssey2ControllerViewController.swift in Sources */,
+				B347B2572BC4CA98006A3B2D /* TapActionRow.swift in Sources */,
+				B347B2582BC4CA98006A3B2D /* AppearanceStyle.swift in Sources */,
+				B347B2592BC4CA98006A3B2D /* QuickTableViewController.swift in Sources */,
+				B347B25A2BC4CA98006A3B2D /* Reusable.swift in Sources */,
+				B347B25B2BC4CA98006A3B2D /* AppearanceStyleHelpers.swift in Sources */,
+				B347B25C2BC4CA98006A3B2D /* PVControllerSelectionViewController.swift in Sources */,
+				B347B25D2BC4CA98006A3B2D /* PVGameLibraryCollectionViewCell.swift in Sources */,
+				B347B25E2BC4CA98006A3B2D /* SettingsOptionRow.swift in Sources */,
+				B347B25F2BC4CA98006A3B2D /* PViCadeControllerViewController.swift in Sources */,
+				B347B2602BC4CA98006A3B2D /* CenterFlowLayout.swift in Sources */,
+				B347B2612BC4CA98006A3B2D /* PVWonderSwanControllerViewController.swift in Sources */,
+				B347B2622BC4CA98006A3B2D /* PVAtari5200ControllerViewController.swift in Sources */,
+				B347B2632BC4CA98006A3B2D /* PVMameControllerViewController.swift in Sources */,
+				B347B2642BC4CA98006A3B2D /* PVNeoGeoControllerViewController.swift in Sources */,
+				B347B2652BC4CA98006A3B2D /* Services.swift in Sources */,
+				B347B2662BC4CA98006A3B2D /* PVEmulatorViewController.swift in Sources */,
+				B347B2672BC4CA98006A3B2D /* PVGLViewController.m in Sources */,
+				B347B2682BC4CA98006A3B2D /* PVSettingsViewController.swift in Sources */,
+				B347B2692BC4CA98006A3B2D /* TVAlertController.swift in Sources */,
+				B347B26A2BC4CA98006A3B2D /* PVEmulatorViewController+Audio.swift in Sources */,
+				B347B26B2BC4CA98006A3B2D /* PVAppDelegate+AppCenter.swift in Sources */,
+				B347B26C2BC4CA98006A3B2D /* PVGameLibraryUpdatesController.swift in Sources */,
+				B347B26D2BC4CA98006A3B2D /* PVPSXControllerViewController.swift in Sources */,
+				B347B26E2BC4CA98006A3B2D /* PVPokeMiniControllerViewController.swift in Sources */,
+				B347B26F2BC4CA98006A3B2D /* GameLaunchingViewController.swift in Sources */,
+				B347B2702BC4CA98006A3B2D /* PVPSPControllerViewController.swift in Sources */,
+				B347B2712BC4CA98006A3B2D /* PVMetalViewController.m in Sources */,
+				B347B2722BC4CA98006A3B2D /* PVCoreFactory.swift in Sources */,
+				B347B2732BC4CA98006A3B2D /* blit_ps.metal in Sources */,
+				B347B2742BC4CA98006A3B2D /* CodeSignatureUtils.m in Sources */,
+				B347B2752BC4CA98006A3B2D /* SwitchRow.swift in Sources */,
+				B347B2762BC4CA98006A3B2D /* Icon.swift in Sources */,
+				B347B2772BC4CA98006A3B2D /* PVLynxControllerViewController.swift in Sources */,
+				B347B2782BC4CA98006A3B2D /* AppearanceStyleable.swift in Sources */,
+				B347B2792BC4CA98006A3B2D /* PVSearchViewController.swift in Sources */,
+				B347B27A2BC4CA98006A3B2D /* UIViewController+Alerts.swift in Sources */,
+				B347B27B2BC4CA98006A3B2D /* GCDWebServerDataRequest.m in Sources */,
+				B347B27C2BC4CA98006A3B2D /* ConsoleGamesView.swift in Sources */,
+				B347B27D2BC4CA98006A3B2D /* PVGameLibraryCollectionFlowLayout.swift in Sources */,
+				B347B27E2BC4CA98006A3B2D /* PVAppDelegate+NitoTV.swift in Sources */,
+				B347B27F2BC4CA98006A3B2D /* main.m in Sources */,
+				B347B2802BC4CA98006A3B2D /* PVAtari7800ControllerViewController.swift in Sources */,
+				B347B2812BC4CA98006A3B2D /* GamesDisplayOptionsView.swift in Sources */,
+				B347B2822BC4CA98006A3B2D /* GameItemView.swift in Sources */,
+				B347B2832BC4CA98006A3B2D /* PVGameLibraryViewController.swift in Sources */,
+				B347B2842BC4CA98006A3B2D /* Version.swift in Sources */,
+				B347B2852BC4CA98006A3B2D /* Deprecated.swift in Sources */,
+				B347B2862BC4CA98006A3B2D /* PVEmulatorViewController+Saves.swift in Sources */,
+				B347B2872BC4CA98006A3B2D /* PVEmulatorViewController+CoreOptions.swift in Sources */,
+				B347B2882BC4CA98006A3B2D /* SettingsRowSwitch.swift in Sources */,
+				B347B2892BC4CA98006A3B2D /* PVVectrexControllerViewController.swift in Sources */,
+				B347B28A2BC4CA98006A3B2D /* PVDSControllerViewController.swift in Sources */,
+				B347B28B2BC4CA98006A3B2D /* MBProgressHUD.m in Sources */,
+				B347B28C2BC4CA98006A3B2D /* PVPCEControllerViewController.swift in Sources */,
+				B347B28D2BC4CA98006A3B2D /* PVAtariJaguarControllerViewController.swift in Sources */,
+				B347B28E2BC4CA98006A3B2D /* Extensions.swift in Sources */,
+				B347B28F2BC4CA98006A3B2D /* PVGPUViewController.m in Sources */,
+				B347B2902BC4CA98006A3B2D /* HomeView.swift in Sources */,
+				B347B2912BC4CA98006A3B2D /* PVGBAControllerViewController.swift in Sources */,
+				B347B2922BC4CA98006A3B2D /* PVLicensesViewController.swift in Sources */,
+				B347B2932BC4CA98006A3B2D /* PVAppDelegate.swift in Sources */,
+				B347B2942BC4CA98006A3B2D /* UIWindowExtensions.swift in Sources */,
+				B347B2952BC4CA98006A3B2D /* PVCoresTableViewContorller.swift in Sources */,
+				B347B2962BC4CA98006A3B2D /* GCDWebServerStreamedResponse.m in Sources */,
+				B347B2972BC4CA98006A3B2D /* PVEP128ControllerViewController.swift in Sources */,
+				B347B2982BC4CA98006A3B2D /* GCDWebServerConnection.m in Sources */,
+				B347B2992BC4CA98006A3B2D /* Moveable.swift in Sources */,
+				B347B29A2BC4CA98006A3B2D /* UITraitCollectionExtensions.swift in Sources */,
+				B347B29B2BC4CA98006A3B2D /* NavigationRow.swift in Sources */,
+				B347B29C2BC4CA98006A3B2D /* MetalViewShaders.metal in Sources */,
+				B347B29D2BC4CA98006A3B2D /* AppearanceScope.swift in Sources */,
+				B347B29E2BC4CA98006A3B2D /* PVControllerViewController.swift in Sources */,
+				B347B29F2BC4CA98006A3B2D /* UIColor+Hex.swift in Sources */,
+				B347B2A02BC4CA98006A3B2D /* PVRootViewController.swift in Sources */,
+				B347B2A12BC4CA98006A3B2D /* PVControllerManager.swift in Sources */,
+				B347B2A22BC4CA98006A3B2D /* PV32XControllerViewController.swift in Sources */,
+				B347B2A32BC4CA98006A3B2D /* Row.swift in Sources */,
+				B347B2A42BC4CA98006A3B2D /* RowStyle.swift in Sources */,
+				B347B2A52BC4CA98006A3B2D /* GCDWebServerFileResponse.m in Sources */,
+				B347B2A62BC4CA98006A3B2D /* PVSwitchCell.swift in Sources */,
+				B347B2A72BC4CA98006A3B2D /* PillPageControl.swift in Sources */,
+				B347B2A82BC4CA98006A3B2D /* SystemOverviewViewModel.swift in Sources */,
+				B347B2A92BC4CA98006A3B2D /* ConflictsController.swift in Sources */,
+				B347B2AA2BC4CA98006A3B2D /* UIView+FrameAdditions.swift in Sources */,
+				B347B2AB2BC4CA98006A3B2D /* PVRetroArchControllerViewController.swift in Sources */,
+				B347B2AC2BC4CA98006A3B2D /* PVRootViewModel.swift in Sources */,
+				B347B2AD2BC4CA98006A3B2D /* GCDWebServerDataResponse.m in Sources */,
+				B347B2AE2BC4CA98006A3B2D /* AppearanceStyleExtensions.swift in Sources */,
+				B347B2AF2BC4CA98006A3B2D /* PV3DOControllerViewController.swift in Sources */,
+				B347B2B02BC4CA98006A3B2D /* PVWebServer.m in Sources */,
+				B347B2B12BC4CA98006A3B2D /* PVGameLibraryViewController+CollectionView.swift in Sources */,
+				B347B2B22BC4CA98006A3B2D /* GCDWebServerErrorResponse.m in Sources */,
+				B347B2B32BC4CA98006A3B2D /* Intents.intentdefinition in Sources */,
+				B347B2B42BC4CA98006A3B2D /* SystemsSettingsTableViewController.swift in Sources */,
+				B347B2B52BC4CA98006A3B2D /* GCDWebServer.m in Sources */,
+				B347B2B62BC4CA98006A3B2D /* PVSaveStatesViewController.swift in Sources */,
+				B347B2B72BC4CA98006A3B2D /* PVWiiControllerViewController.swift in Sources */,
+				B347B2B82BC4CA98006A3B2D /* TapActionCell.swift in Sources */,
+				B347B2B92BC4CA98006A3B2D /* ShaderManager.swift in Sources */,
+				B347B2BA2BC4CA98006A3B2D /* RadioSection.swift in Sources */,
+				B347B2BB2BC4CA98006A3B2D /* GCDWebServerMultiPartFormRequest.m in Sources */,
+				B347B2BC2BC4CA98006A3B2D /* GCDWebServerRequest.m in Sources */,
+				B347B2BD2BC4CA98006A3B2D /* RealmBindObserver.swift in Sources */,
+				B347B2BE2BC4CA98006A3B2D /* PVSaveStateHeaderView.swift in Sources */,
+				B347B2BF2BC4CA98006A3B2D /* UIApplicationExtensions.swift in Sources */,
+				B347B2C02BC4CA98006A3B2D /* ConsolesWrapperView.swift in Sources */,
+				B347B2C12BC4CA98006A3B2D /* MameShaders.metal in Sources */,
+				B347B2C22BC4CA98006A3B2D /* GamesDividerView.swift in Sources */,
+				B347B2C32BC4CA98006A3B2D /* PVN64ControllerViewController.swift in Sources */,
+				B347B2C42BC4CA98006A3B2D /* Configurable.swift in Sources */,
+				B347B2C52BC4CA98006A3B2D /* JSDPad.swift in Sources */,
+				B347B2C62BC4CA98006A3B2D /* GameContextMenu.swift in Sources */,
+				B347B2C72BC4CA98006A3B2D /* Section.swift in Sources */,
+				B347B2C82BC4CA98006A3B2D /* SegueNavigationRow.swift in Sources */,
+				B347B2C92BC4CA98006A3B2D /* VerticalAlignLabel.swift in Sources */,
+				B347B2CA2BC4CA98006A3B2D /* PVAppDelegate+Helpers.swift in Sources */,
+				B347B2CB2BC4CA98006A3B2D /* CoreOptionsViewController.swift in Sources */,
+				B347B2CC2BC4CA98006A3B2D /* PVGenesisControllerViewController.swift in Sources */,
+				B347B2CD2BC4CA98006A3B2D /* PVGameLibrarySectionFooterView.swift in Sources */,
+				B347B2CE2BC4CA98006A3B2D /* PVMSXControllerViewController.swift in Sources */,
+				B347B2CF2BC4CA98006A3B2D /* lineTron.metal in Sources */,
+				B347B2D02BC4CA98006A3B2D /* simpleCRT.metal in Sources */,
+				B347B2D12BC4CA98006A3B2D /* Reactive+RxRealmDataSources.swift in Sources */,
+				B347B2D22BC4CA98006A3B2D /* TVFullscreenController.swift in Sources */,
+				B347B2D32BC4CA98006A3B2D /* UIViewController+SideNavigationController.swift in Sources */,
+				B347B2D42BC4CA98006A3B2D /* UISearchController+Rx.swift in Sources */,
+				B347B2D52BC4CA98006A3B2D /* MenuButton.swift in Sources */,
+				B347B2D62BC4CA98006A3B2D /* PVDreamcastControllerViewController.swift in Sources */,
+				B347B2D72BC4CA98006A3B2D /* SearchBar.swift in Sources */,
+				B347B2D82BC4CA98006A3B2D /* PVPCFXControllerViewController.swift in Sources */,
+				B347B2D92BC4CA98006A3B2D /* OptionsIndicator.swift in Sources */,
+				B347B2DA2BC4CA98006A3B2D /* RxTableViewRealmDataSource.swift in Sources */,
+				B347B2DB2BC4CA98006A3B2D /* megaTron.metal in Sources */,
+				B347B2DC2BC4CA98006A3B2D /* PVEmulatorViewController+Controllers.swift in Sources */,
+				B347B2DD2BC4CA98006A3B2D /* SwitchCell.swift in Sources */,
+				B347B2DE2BC4CA98006A3B2D /* GCDWebServerURLEncodedFormRequest.m in Sources */,
+				B347B2DF2BC4CA98006A3B2D /* GCDWebServerResponse.m in Sources */,
+				B347B2E02BC4CA98006A3B2D /* PVSaveStateInfoViewController.swift in Sources */,
+				B347B2E12BC4CA98006A3B2D /* DetailText.swift in Sources */,
+				B347B2E22BC4CA98006A3B2D /* PVSNESControllerViewController.swift in Sources */,
+				B347B2E32BC4CA98006A3B2D /* PVDOSControllerViewController.swift in Sources */,
+				B347B2E42BC4CA98006A3B2D /* WebServerActivatorController.swift in Sources */,
+				B347B2E52BC4CA98006A3B2D /* ViewControllerResolver.swift in Sources */,
+				B347B2E62BC4CA98006A3B2D /* Theme.swift in Sources */,
+				B347B2E72BC4CA98006A3B2D /* FastmemUtil.m in Sources */,
+				B347B2E82BC4CA98006A3B2D /* PVPS2ControllerViewController.swift in Sources */,
+				B347B2E92BC4CA98006A3B2D /* DOLCancellationToken.swift in Sources */,
+				B347B2EA2BC4CA98006A3B2D /* SideNavigationController.swift in Sources */,
+				B347B2EB2BC4CA98006A3B2D /* PVButtonGroupOverlayView.swift in Sources */,
+				B347B2EC2BC4CA98006A3B2D /* UICollectionView+Rx.swift in Sources */,
+				B347B2ED2BC4CA98006A3B2D /* PVColecoVisionControllerViewController.swift in Sources */,
+				B347B2EE2BC4CA98006A3B2D /* PVIntellivisionControllerViewController.swift in Sources */,
+				B347B2EF2BC4CA98006A3B2D /* PVVBControllerViewController.swift in Sources */,
+				B347B2F02BC4CA98006A3B2D /* LocalizerUtils.m in Sources */,
+				B347B2F12BC4CA98006A3B2D /* PVEmulatorViewController+PauseMenu.swift in Sources */,
+				B347B2F22BC4CA98006A3B2D /* JitAcquisitionUtils.m in Sources */,
+				B347B2F32BC4CA98006A3B2D /* JitScreenDelegate.swift in Sources */,
+				B347B2F42BC4CA98006A3B2D /* GCDWebUploader.m in Sources */,
+				B347B2F52BC4CA98006A3B2D /* SideMenuView.swift in Sources */,
+				B347B2F62BC4CA98006A3B2D /* Subtitle.swift in Sources */,
+				B347B2F72BC4CA98006A3B2D /* UIImage+ImageEffects.m in Sources */,
+				B347B2F82BC4CA98006A3B2D /* PVGameCubeControllerViewController.swift in Sources */,
+				B347B2F92BC4CA98006A3B2D /* CollectionViewInCollectionViewCell.swift in Sources */,
+				B347B2FA2BC4CA98006A3B2D /* PVGBControllerViewController.swift in Sources */,
+				B347B2FB2BC4CA98006A3B2D /* PVNESControllerViewController.swift in Sources */,
+				B347B2FC2BC4CA98006A3B2D /* SideNavigationController+NestedTypes.swift in Sources */,
+				B347B2FD2BC4CA98006A3B2D /* fullscreen_vs.metal in Sources */,
+				B347B2FE2BC4CA98006A3B2D /* UIAppearanceExtensions.swift in Sources */,
+				B347B2FF2BC4CA98006A3B2D /* PVConflictViewController.swift in Sources */,
+				B347B3002BC4CA98006A3B2D /* PVNeoGeoPocketControllerViewController.swift in Sources */,
+				B347B3012BC4CA98006A3B2D /* GCDWebServerFileRequest.m in Sources */,
+				B347B3022BC4CA98006A3B2D /* PVRootViewController+DelegateMethods.swift in Sources */,
+				B347B3032BC4CA98006A3B2D /* GCControllerExtensions.swift in Sources */,
+				B347B3042BC4CA98006A3B2D /* PVAppDelegate+Open.swift in Sources */,
+				B347B3052BC4CA98006A3B2D /* OptionRow.swift in Sources */,
+				B347B3062BC4CA98006A3B2D /* PVSaveStateCollectionViewCell.swift in Sources */,
+				B347B3072BC4CA98006A3B2D /* DebuggerUtils.m in Sources */,
+				B347B3082BC4CA98006A3B2D /* PVSupervisionControllerViewController.swift in Sources */,
+				B347B3092BC4CA98006A3B2D /* PVGameMoreInfoViewController.swift in Sources */,
+				B347B30A2BC4CA98006A3B2D /* ulTron.metal in Sources */,
+				B347B30B2BC4CA98006A3B2D /* PVTVSplitViewController.swift in Sources */,
+				B347B30C2BC4CA98006A3B2D /* PVAtari2600ControllerViewController.swift in Sources */,
+				B347B30D2BC4CA98006A3B2D /* BiosRowView.swift in Sources */,
+				B347B30E2BC4CA98006A3B2D /* GCDWebServerFunctions.m in Sources */,
+				B347B30F2BC4CA98006A3B2D /* PVGameLibrarySectionHeaderView.swift in Sources */,
+				B347B3102BC4CA98006A3B2D /* GCDWebDAVServer.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B355DF9329209B6200E4C858 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7802,6 +8470,26 @@
 			isa = PBXTargetDependency;
 			target = B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */;
 			targetProxy = B305EF07276B4C73003AE510 /* PBXContainerItemProxy */;
+		};
+		B347B2362BC4CA98006A3B2D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
+			targetProxy = B347B2372BC4CA98006A3B2D /* PBXContainerItemProxy */;
+		};
+		B347B2382BC4CA98006A3B2D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B29D3F2156177100903290 /* Create Version files */;
+			targetProxy = B347B2392BC4CA98006A3B2D /* PBXContainerItemProxy */;
+		};
+		B347B23A2BC4CA98006A3B2D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
+			targetProxy = B347B23B2BC4CA98006A3B2D /* PBXContainerItemProxy */;
+		};
+		B347B23C2BC4CA98006A3B2D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3C8A6BB2878238C0037A946 /* CoresRetro */;
+			targetProxy = B347B23D2BC4CA98006A3B2D /* PBXContainerItemProxy */;
 		};
 		B36FE831218EAAD200F858F3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -9380,6 +10068,163 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
+		};
+		B347B3862BC4CA98006A3B2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = "Prov Debug";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = "ProvenanceTV-Lite-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/tvOS",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = appletvos;
+				SWIFT_COMPILATION_MODE = singlefile;
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Debug;
+		};
+		B347B3872BC4CA98006A3B2D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = "${PRODUCT_NAME}";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = "ProvenanceTV-Lite-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/tvOS",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = appletvos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = 3;
+			};
+			name = Release;
+		};
+		B347B3882BC4CA98006A3B2D /* Archive */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B326758627B1E0BC0033C5D1 /* Build-tvOS.xcconfig */;
+			buildSettings = {
+				APP_DISPLAY_NAME = "${PRODUCT_NAME}";
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Provenance/Provenance-Prefix.pch";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(TOOLCHAIN_DIR)/usr/include\"",
+					/usr/include/libxml2,
+				);
+				INFOPLIST_FILE = "ProvenanceTV-Lite-Info.plist";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dylib/tvOS",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
+				TARGETED_DEVICE_FAMILY = 3;
 			};
 			name = Archive;
 		};
@@ -11864,6 +12709,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B347B3852BC4CA98006A3B2D /* Build configuration list for PBXNativeTarget "ProvennaceTV-Lite" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B347B3862BC4CA98006A3B2D /* Debug */,
+				B347B3872BC4CA98006A3B2D /* Release */,
+				B347B3882BC4CA98006A3B2D /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B355DFA729209B8900E4C858 /* Build configuration list for PBXNativeTarget "QuickLookPreview" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -12077,6 +12932,30 @@
 				kind = branch;
 			};
 		};
+		B347B23F2BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "SteamController" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Provenance-Emu/SteamController.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		B347B2412BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
+			requirement = {
+				kind = revision;
+				revision = 121c146fe591b1320238d054ae35c81ffa45f45a;
+			};
+		};
+		B347B2432BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "Reachability" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		B357A43627092253002C7C0F /* XCRemoteSwiftPackageReference "appcenter-sdk-apple" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/microsoft/appcenter-sdk-apple.git";
@@ -12202,6 +13081,25 @@
 			productName = PVLogging;
 		};
 		93A728622AAF073B0052B279 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+		B347B23E2BC4CA98006A3B2D /* SteamController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B347B23F2BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "SteamController" */;
+			productName = SteamController;
+		};
+		B347B2402BC4CA98006A3B2D /* Introspect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B347B2412BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = Introspect;
+		};
+		B347B2422BC4CA98006A3B2D /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B347B2432BC4CA98006A3B2D /* XCRemoteSwiftPackageReference "Reachability" */;
+			productName = Reachability;
+		};
+		B347B2442BC4CA98006A3B2D /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
 		};
