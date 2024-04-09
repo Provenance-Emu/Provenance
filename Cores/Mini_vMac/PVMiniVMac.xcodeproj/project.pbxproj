@@ -1197,9 +1197,9 @@
 				LD_MAP_FILE_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = appletvos;
 				SHARED_PRECOMPS_DIR = "";
-				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
 			};
 			name = Debug;
 		};
@@ -1210,9 +1210,9 @@
 				LD_MAP_FILE_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = appletvos;
 				SHARED_PRECOMPS_DIR = "";
-				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
 			};
 			name = Release;
 		};
@@ -1222,9 +1222,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				LD_MAP_FILE_PATH = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
+				SDKROOT = appletvos;
 				SHARED_PRECOMPS_DIR = "";
-				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
 			};
 			name = Archive;
 		};
