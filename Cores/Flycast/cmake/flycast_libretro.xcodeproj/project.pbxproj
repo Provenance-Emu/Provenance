@@ -5419,6 +5419,7 @@
 				HEADER_SEARCH_PATHS = (
 					../flycast/core,
 					../flycast/core/deps,
+					../flycast/core/deps/xbyak,
 					../flycast/core/deps/stb,
 					../flycast/core/deps/khronos,
 					../flycast/core/deps/json,

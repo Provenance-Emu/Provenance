@@ -31,7 +31,7 @@ struct ConsoleGamesView: SwiftUI.View {
 //        sortDescriptor: SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: false)
 //    ) var filteredGames
 
-    init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate) {
+    init(console: PVSystem, viewModel: PVRootViewModel, rootDelegate: PVRootDelegate? = nil) {
         self.console = console
         self.viewModel = viewModel
         self.rootDelegate = rootDelegate
@@ -44,181 +44,298 @@ struct ConsoleGamesView: SwiftUI.View {
             .sorted(by: [SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)])
     }
 
-    // TODO: adjust for landscape
-    let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible()),
-        GridItem(.flexible())
-    ]
+    // Adjustable grid size via pinch
+    // from; https://github.com/AlexanderMarchant/DynamicGridZoom/tree/main
+    @State var scale: CGFloat = 1.0
+
+    // Multiple of how much to decrease the existing size to equal the next decreased size
+    @State var scaleFactor: CGFloat = 1.0
+
+    // Multiple of how much to increase the existing size to equal the next increased size
+    @State var zoomFactor: CGFloat = 1.0
+
+    @State var isMagnifying = false
+
+    @State private var size: CGFloat = 100
+
+    @State private var currentZoomStageIndex = 2
+    @State private var previousZoomStageUpdateState: CGFloat = 0
+    @State private var adjustedState: CGFloat = 0
+
+    @State private var gridWidth: CGFloat = 0
+    @State private var zooming: Bool = false
+
+    @State private var padding: CGFloat = 2
 
     var body: some SwiftUI.View {
-        ScrollView {
+        let columns = [
+            GridItem(.adaptive(minimum: size), spacing: padding)
+        ]
+        return VStack {
             GamesDisplayOptionsView(
                 sortAscending: viewModel.sortGamesAscending,
                 isGrid: viewModel.viewGamesAsGrid,
                 toggleFilterAction: { self.rootDelegate?.showUnderConstructionAlert() },
                 toggleSortAction: { viewModel.sortGamesAscending.toggle() },
                 toggleViewTypeAction: { viewModel.viewGamesAsGrid.toggle() })
-                .padding(.top, 16)
-            if viewModel.viewGamesAsGrid {
-                LazyVGrid(columns: columns, spacing: 20) {
-                    ForEach(filteredAndSortedGames(), id: \.self) { game in
-                        GameItemView(game: game) {
-                            rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+            .padding(.top, 16)
+            ScrollView {
+                if viewModel.viewGamesAsGrid {
+                    LazyVGrid(columns: columns, spacing: 20) {
+                        ForEach(filteredAndSortedGames(), id: \.self) { game in
+                            GameItemView(game: game) {
+                                rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                            }
+                            .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                         }
-                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                     }
-                }
-                .padding(.horizontal, 10)
-            } else {
-                LazyVStack {
-                    ForEach(filteredAndSortedGames(), id: \.self) { game in
-                        GameItemView(game: game, viewType: .row) {
-                            rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                    .padding(.horizontal, 10)
+                } else {
+                    LazyVStack {
+                        ForEach(filteredAndSortedGames(), id: \.self) { game in
+                            GameItemView(game: game, viewType: .row) {
+                                rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
+                            }
+                            .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+                            GamesDividerView()
                         }
-                        .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
+                    }
+                    .padding(.horizontal, 10)
+                }
+                if console.bioses.count > 0 {
+                    LazyVStack {
                         GamesDividerView()
+                        ForEach(console.bioses, id: \.self) { bios in
+                            BiosRowView(bios: bios.warmUp())
+                            GamesDividerView()
+                        }
+                    }
+                    .background(Theme.currentTheme.settingsCellBackground?.swiftUIColor.opacity(0.3) ?? Color.black)
+                }
+            }
+            //        .scrollDisabled(self.zooming)
+            .scaleEffect(scale, anchor: .top)
+            .background(
+                GeometryReader { proxy in
+                    Theme.currentTheme.gameLibraryBackground.swiftUIColor
+                        .onAppear {
+                            self.gridWidth = proxy.frame(in: .local).width
+                            self.calculateZoomFactor(at: self.currentZoomStageIndex)
+                        }
+                }
+            )
+            #if !os(tvOS)
+            .gesture(
+                MagnificationGesture()
+                .onChanged { state in
+
+                    // Adjust state so we are always working from 1 because we are changing layouts whilst magnifying
+                    var adjustedState = state - self.previousZoomStageUpdateState
+
+                    self.zooming = true
+
+                    // Decreasing the size
+                    if scale <= 1,
+                       adjustedState < 1
+                    {
+                        self.isMagnifying = false
+                        if self.currentZoomStageIndex > GridZoomStages.zoomStages.count - 1
+                        {
+                            if adjustedState > 0.95
+                            {
+                                self.scale = self.scaleFactor - (1 - adjustedState)
+                            }
+                            else
+                            {
+                                // If the user is at the upper limit of stages, cap the magnification
+                                adjustedState = 0.95
+                            }
+                        }
+                        else
+                        {
+                            // Minimise the size of the elements based on the number of items to show per-line
+                            let updatedSize = self.calculateUpdatedSize(index: self.currentZoomStageIndex + 1)
+
+                            self.previousZoomStageUpdateState = state - 1
+
+                            self.zoomFactor = updatedSize / self.size
+                            self.scaleFactor = self.size / updatedSize
+
+                            // Setting the scale to the scale factor between sizes ensures the user doesn't see a 'jump' between stages
+                            self.scale = self.scaleFactor
+
+                            self.size = updatedSize
+
+                            self.currentZoomStageIndex = self.currentZoomStageIndex + 1
+                        }
+                    }
+                    // Increasing the size
+                    else if scale >= self.zoomFactor,
+                            adjustedState > 1
+                    {
+                        self.isMagnifying = true
+                        if self.currentZoomStageIndex == 0
+                        {
+                            if adjustedState < 1.1
+                            {
+                                self.scale = 1 - (1 - adjustedState)
+                            }
+                            else
+                            {
+                                // If the user is at the lower limit of stages, cap the magnification
+                                adjustedState = 1.1
+                            }
+                        }
+                        else
+                        {
+                            self.currentZoomStageIndex = self.currentZoomStageIndex - 1
+                            self.previousZoomStageUpdateState = state - 1
+
+                            self.calculateZoomFactor(at: self.currentZoomStageIndex)
+
+                            self.scaleFactor = 1
+
+                            // Setting the scale 1 ensures the user doesn't see a 'jump' between zoomed stages
+                            self.scale = 1
+                        }
+                    }
+                    else
+                    {
+                        if self.isMagnifying
+                        {
+                            self.scale = 1 - (1 - adjustedState)
+                        }
+                        else
+                        {
+                            self.scale = self.scaleFactor - (1 - adjustedState)
+                        }
+                    }
+
+                    self.adjustedState = adjustedState
+                }
+                .onEnded { _ in
+
+                    let shouldMagnify = self.adjustedState > 1
+                    let animationDuration = 0.25
+
+                    withAnimation(.linear(duration: animationDuration))
+                    {
+                        if shouldMagnify
+                        {
+                            // Continue zooming until it reaches limit for the next stage
+                            self.scale = self.zoomFactor
+                        }
+                        else
+                        {
+                            self.resetZoomVariables()
+                        }
+                    }
+
+                    if shouldMagnify
+                    {
+                        // Delay reset so zooming finishes and it smoothly transitions to the next zoom stage
+                        // This mimics the behaviour a user see's if they were to manually transition between stages by zooming
+                        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration)
+                        {
+                            if self.currentZoomStageIndex > 0
+                            {
+                                self.currentZoomStageIndex = self.currentZoomStageIndex - 1
+                            }
+
+                            self.resetZoomVariables()
+                        }
                     }
                 }
-                .padding(.horizontal, 10)
-            }
-            if console.bioses.count > 0 {
-                LazyVStack {
-                    GamesDividerView()
-                    ForEach(console.bioses, id: \.self) { bios in
-                        BiosRowView(bios: bios.warmUp())
-                        GamesDividerView()
-                    }
-                }
-                .background(Theme.currentTheme.settingsCellBackground?.swiftUIColor.opacity(0.3) ?? Color.black)
-            }
+            )
+            #endif
         }
-        .background(Theme.currentTheme.gameLibraryBackground.swiftUIColor)
+    }
+    // MARK: Adjustable size helpers
+    func resetZoomVariables() {
+        self.calculateZoomFactor(at: self.currentZoomStageIndex)
+        self.zooming = false
+        self.scale = 1
+        self.scaleFactor = 1
+        self.previousZoomStageUpdateState = 0
+        self.adjustedState = 0
+    }
+
+    func calculateUpdatedSize(index: Int) -> CGFloat {
+        let zoomStages = GridZoomStages.getZoomStage(at: index)
+
+        let availableSpace = self.gridWidth - (2 * CGFloat(zoomStages))
+
+        return availableSpace / CGFloat(zoomStages)
+    }
+
+    func calculateZoomFactor(at index: Int) {
+        let currentSize = self.calculateUpdatedSize(index: index)
+        let magnifiedSize = self.calculateUpdatedSize(index: index - 1)
+
+        self.zoomFactor = magnifiedSize / currentSize
+
+        self.size = currentSize
     }
 }
 
 @available(iOS 14, tvOS 14, *)
-struct BiosRowView: SwiftUI.View {
+struct ConsoleGamesView_Previews: PreviewProvider {
+    static let console: PVSystem = ._rlmDefaultValue()
+    static let viewModel: PVRootViewModel = .init()
 
-    var bios: PVBIOS
-
-    func biosState() -> BIOSStatus.State {
-        return (bios as BIOSStatusProvider).status.state
+    static var previews: some SwiftUI.View {
+        ConsoleGamesView(console: console,
+                         viewModel: viewModel, 
+                         rootDelegate: nil)
     }
+}
 
-    var body: some SwiftUI.View {
-        HStack(alignment: .center, spacing: 0) {
-            Image(biosState().biosStatusImageName).resizable().scaledToFit()
-                .padding(.vertical, 4)
-                .padding(.horizontal, 12)
-            VStack(alignment: .leading) {
-                Text("\(bios.descriptionText)")
-                    .font(.system(size: 13))
-                    .foregroundColor(Color.white)
-                Text("\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes")
-                    .font(.system(size: 10))
-                    .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
+struct GridZoomStages
+{
+    static var zoomStages: [Int]
+    {
+        #if os(tvOS)
+        return [1, 2, 4, 8, 16]
+        #else
+        if UIDevice.current.userInterfaceIdiom == .pad
+        {
+            if UIDevice.current.orientation.isLandscape
+            {
+                return [4, 6, 10, 14, 18]
             }
-            Spacer()
-            HStack(alignment: .center, spacing: 4) {
-                switch biosState() {
-                case .match:
-                    Image(systemName: "checkmark")
-                        .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
-                        .font(.system(size: 13, weight: .light))
-                case .missing:
-                    Text("Missing")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color.yellow)
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(Color.yellow)
-                        .font(.system(size: 12, weight: .light))
-                case let .mismatch(_):
-                    Text("Mismatch")
-                        .font(.system(size: 12))
-                        .foregroundColor(Color.red)
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(Color.red)
-                        .font(.system(size: 12, weight: .medium))
-                }
+            else
+            {
+                return [4, 6, 8, 10, 12]
             }
-            .padding(.horizontal, 12)
         }
-        .frame(height: 40)
-    }
-}
-
-extension BIOSStatus.State {
-    var biosStatusImageName: String {
-        switch self {
-        case .missing: return "bios_empty"
-        case .mismatch:  return "bios_empty"
-        case .match: return "bios_filled"
+        else
+        {
+            if UIDevice.current.orientation.isLandscape
+            {
+                return [4, 6, 8, 9]
+            }
+            else
+            {
+                return [1, 2, 4, 6, 8]
+            }
         }
+        #endif
     }
-}
 
-@available(iOS 14, tvOS 14, *)
-struct GamesDividerView: SwiftUI.View {
-    var body: some SwiftUI.View {
-        Divider()
-            .frame(height: 1)
-            .background(Theme.currentTheme.gameLibraryText.swiftUIColor)
-            .opacity(0.1)
-    }
-}
-
-@available(iOS 14, tvOS 14, *)
-struct GamesDisplayOptionsView: SwiftUI.View {
-
-    var sortAscending = true
-    var isGrid = true
-
-    var toggleFilterAction: () -> Void
-    var toggleSortAction: () -> Void
-    var toggleViewTypeAction: () -> Void
-
-    var body: some SwiftUI.View {
-        HStack(spacing: 12) {
-            Spacer()
-            OptionsIndicator(pointDown: true, action: { toggleFilterAction() }) {
-                Text("Filter").foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
-            }
-            OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
-                Text("Sort").foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
-            }
-            OptionsIndicator(pointDown: true, action: { toggleViewTypeAction() }) {
-                Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal")
-                    .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
-                    .font(.system(size: 13, weight: .light))
-            }
-            .padding(.trailing, 10)
+    static func getZoomStage(at index: Int) -> Int
+    {
+        if index >= zoomStages.count
+        {
+            return zoomStages.last!
+        }
+        else if index < 0
+        {
+            return zoomStages.first!
+        }
+        else
+        {
+            return zoomStages[index]
         }
     }
 }
-
-@available(iOS 14, tvOS 14, *)
-struct OptionsIndicator<Content: SwiftUI.View>: SwiftUI.View {
-
-    var pointDown: Bool = true
-    var chevronSize: CGFloat = 12.0
-
-    var action: () -> Void
-
-    @ViewBuilder var label: () -> Content
-
-    var body: some SwiftUI.View {
-        Button {
-            action()
-        } label: {
-            HStack(spacing: 3) {
-                label()
-                Image(systemName: pointDown == true ? "chevron.down" : "chevron.up")
-                    .foregroundColor(.gray)
-                    .font(.system(size: chevronSize, weight: .ultraLight))
-            }
-        }
-    }
-}
-
 #endif
