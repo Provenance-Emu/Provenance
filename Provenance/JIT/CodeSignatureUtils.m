@@ -6,14 +6,15 @@
 // Refer to the license.txt file included.
 
 #import <Foundation/Foundation.h>
+#import "CodeSignatureUtils.h"
+#import "DOLJitManager.h"
+#import "StringUtils.h"
+
 #import <dlfcn.h>
 #import <errno.h>
 #import <mach/mach.h>
 #import <mach-o/loader.h>
 #import <mach-o/getsect.h>
-
-#import "DOLJitManager.h"
-#import "StringUtils.h"
 
 // partly adapted from iSH: app/AppGroup.m
 
