@@ -2576,7 +2576,6 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
-				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
 				DEPS_DIR = ./RetroArch/deps;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -2615,7 +2614,6 @@
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
 					./RetroArch/gfx/drivers/,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib",
@@ -2881,7 +2879,6 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVRetroArch/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3090,7 +3087,6 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVRetroArch/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3141,7 +3137,6 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
-				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
 				DEPS_DIR = ./RetroArch/deps;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -3180,7 +3175,6 @@
 					"$(DEPS_DIR)/glslang/glslang/glslang/MachineIndependent",
 					./RetroArch/gfx/drivers/,
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/cmake/ffmpeg/ios/universal/lib",

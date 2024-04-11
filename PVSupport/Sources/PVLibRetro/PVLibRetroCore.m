@@ -465,7 +465,7 @@ bool core_set_poll_type(unsigned *type)
 void core_uninit_symbols(void)
 {
     GET_CURRENT_OR_RETURN();
-    uninit_libretro_sym(&current->core);
+    uninit_libretro_sym(current->core);
 }
 
 bool core_init_symbols(enum rarch_core_type *type)
@@ -473,7 +473,7 @@ bool core_init_symbols(enum rarch_core_type *type)
     GET_CURRENT_OR_RETURN(false);
     if (!type)
         return false;
-    init_libretro_sym(*type, &current->core);
+    init_libretro_sym(*type, current->core);
     return true;
 }
 

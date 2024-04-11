@@ -2545,7 +2545,7 @@
 					"-D__LIBRETRO__",
 					"$(inherited)",
 				);
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -2615,7 +2615,7 @@
 					"-DM68K_OVERCLOCK_SHIFT=20",
 					"$(inherited)",
 				);
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -2686,7 +2686,7 @@
 					"-DM68K_OVERCLOCK_SHIFT=20",
 					"$(inherited)",
 				);
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
