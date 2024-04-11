@@ -74,7 +74,7 @@
 		B3411BA6276B315E00D85327 /* libpicodrive.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B5C276B312C00D85327 /* libpicodrive.a */; };
 		B3547B5D205858D800CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5C205858D800CFF7D8 /* Core.plist */; };
 		B371709E1D6CB559005D1EFF /* carthw.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 946B94F317829B4400A212AC /* carthw.cfg */; };
-		B37937B01D6BCF8100EBAE81 /* PicoDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = B37937AE1D6BCF8100EBAE81 /* PicoDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B37937B01D6BCF8100EBAE81 /* PVPicoDrive.h in Headers */ = {isa = PBXBuildFile; fileRef = B37937AE1D6BCF8100EBAE81 /* PVPicoDrive.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37937B41D6BCFB400EBAE81 /* PicodriveGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 82287C33101E9DB40072172D /* PicodriveGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37937FB1D6BDF5A00EBAE81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */; };
 		B37937FD1D6BDF5F00EBAE81 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B37937FC1D6BDF5F00EBAE81 /* libz.tbd */; };
@@ -522,7 +522,7 @@
 		B34CB0EB2274B173009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3547B5C205858D800CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B37937AC1D6BCF8100EBAE81 /* PVPicoDrive.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPicoDrive.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B37937AE1D6BCF8100EBAE81 /* PicoDrive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PicoDrive.h; sourceTree = "<group>"; };
+		B37937AE1D6BCF8100EBAE81 /* PVPicoDrive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPicoDrive.h; sourceTree = "<group>"; };
 		B37937AF1D6BCF8100EBAE81 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B37937F81D6BDF4E00EBAE81 /* PVSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PVSupport.framework; path = "../PVSupport/build/Debug-iphoneos/PVSupport.framework"; sourceTree = "<group>"; };
 		B37937FA1D6BDF5A00EBAE81 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -1379,7 +1379,7 @@
 		B37937AD1D6BCF8100EBAE81 /* PicoDrive */ = {
 			isa = PBXGroup;
 			children = (
-				B37937AE1D6BCF8100EBAE81 /* PicoDrive.h */,
+				B37937AE1D6BCF8100EBAE81 /* PVPicoDrive.h */,
 				B3547B5C205858D800CFF7D8 /* Core.plist */,
 				B37937AF1D6BCF8100EBAE81 /* Info.plist */,
 			);
@@ -1417,7 +1417,7 @@
 			files = (
 				C604DF5225C7C7E500E1FBE5 /* eeprom_spi.h in Headers */,
 				C604DF8525C7CB6B00E1FBE5 /* libretro.h in Headers */,
-				B37937B01D6BCF8100EBAE81 /* PicoDrive.h in Headers */,
+				B37937B01D6BCF8100EBAE81 /* PVPicoDrive.h in Headers */,
 				B37937B41D6BCFB400EBAE81 /* PicodriveGameCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

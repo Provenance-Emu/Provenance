@@ -113,7 +113,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, assign) BOOL skipEmulationLoop;
 @property (nonatomic, assign) BOOL alwaysUseMetal;
 @property (nonatomic, assign) BOOL skipLayout;
-@property (nonatomic, assign) UIViewController* touchViewController;
+@property (nonatomic, assign) UIViewController* _Nullable touchViewController;
 @property (class, retain, nonnull) NSString *className;
 @property (class, retain, nonnull) NSString *systemName;
 typedef NS_ENUM(NSInteger, GameSpeed) {
@@ -194,8 +194,8 @@ typedef NS_ENUM(NSInteger, GLESVersion) {
             completionHandler:(nonnull SaveStateCompletion)block;
 - (void)loadStateFromFileAtPath:(NSString *_Nonnull )fileName
               completionHandler:(nonnull SaveStateCompletion)block;
-- (void)sendEvent:(UIEvent *)event;
-+ (void)setClassName:(NSString *)name;
-+ (void)setSystemName:(NSString *)name;
+- (void)sendEvent:(UIEvent *_Nullable)event;
++ (void)setClassName:(NSString *_Nullable)name;
++ (void)setSystemName:(NSString *_Nullable)name;
 - (void)initialize;
 @end

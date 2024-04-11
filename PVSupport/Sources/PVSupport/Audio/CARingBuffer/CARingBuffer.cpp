@@ -50,7 +50,7 @@
 //#include "CAAtomic.h"
 
 #if DEBUG
-#define CALOG printf
+#define CALOG(x) printf(x)
 #else
 #define CALOG
 #endif

@@ -123,7 +123,6 @@ static void UpdateWiiPointer();
 {
     //DolHost *dol_host;
     uint16_t *_soundBuffer;
-    bool _isWii;
     float _frameInterval;
     NSString *autoLoadStatefileName;
     NSString *_dolphinCoreModule;
@@ -599,6 +598,7 @@ static void UpdateWiiPointer();
     if (action)
         action();
 }
+
 @end
 
 /* Dolphin Host (Required by Core) */
