@@ -1,2 +1,2 @@
-void PVDebug() {
+void PVDebug(void) {
 }

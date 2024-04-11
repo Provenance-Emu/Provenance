@@ -71,7 +71,7 @@ struct cs_codedirectory {
     uint64_t execSegmentFlags;
 };
 
-bool HasValidCodeSignature()
+bool HasValidCodeSignature(void)
 {
   // Find our mach-o header
   Dl_info dl_info;
