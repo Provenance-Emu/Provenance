@@ -7,7 +7,7 @@
 //
 
 // All
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited)
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATIONS=1
 OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -fno-operator-names -fno-rtti -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fno-rtti -fpermissive -fsingle-precision-constant -DTARGET_NO_NIXPROF
 // -DUSE_MEMORYWATCHER=1
 OTHER_LDFLAGS = $(inherited) -ObjC -l"c++" -l"z" -DIPHONEOS
