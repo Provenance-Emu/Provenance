@@ -17,7 +17,7 @@ static bool s_is_arm64e = false;
 static DOLJitError s_acquisition_error = DOLJitErrorNone;
 static char s_acquisition_error_message[256];
 
-bool GetCpuArchitecture()
+bool GetCpuArchitecture(void)
 {
   // Query MobileGestalt for the CPU architecture
   void* gestalt_handle = dlopen("/usr/lib/libMobileGestalt.dylib", RTLD_LAZY);
@@ -42,7 +42,7 @@ bool GetCpuArchitecture()
   return true;
 }
 
-DOLJitError AcquireJitWithAllowUnsigned()
+DOLJitError AcquireJitWithAllowUnsigned(void)
 {
   if (!GetCpuArchitecture())
   {
@@ -65,7 +65,7 @@ DOLJitError AcquireJitWithAllowUnsigned()
   return DOLJitErrorNone;
 }
 
-void AcquireJit()
+void AcquireJit(void)
 {
   if (IsProcessDebugged())
   {
@@ -134,22 +134,22 @@ void AcquireJit()
 #endif
 }
 
-bool HasJit()
+bool HasJit(void)
 {
   return s_has_jit;
 }
 
-bool HasJitWithPTrace()
+bool HasJitWithPTrace(void)
 {
   return s_has_jit_with_ptrace;
 }
 
-DOLJitError GetJitAcquisitionError()
+DOLJitError GetJitAcquisitionError(void)
 {
   return s_acquisition_error;
 }
 
-char* GetJitAcquisitionErrorMessage()
+char* GetJitAcquisitionErrorMessage(void)
 {
   return s_acquisition_error_message;
 }
