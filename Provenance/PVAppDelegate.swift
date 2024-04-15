@@ -18,7 +18,7 @@ import UIKit
 final class PVApplication: UIApplication {
     var core: PVEmulatorCore?
     var emulator: PVEmulatorViewController?
-    var isInBackground: Bool = false;
+    var isInBackground: Bool = false
     override func sendEvent(_ event: UIEvent) {
         if let core=self.core {
             core.send(event)
