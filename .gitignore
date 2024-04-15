@@ -116,3 +116,4 @@ Cores/DuckStation/lib/
 /Cores/PPSSPP/lib/libzstd_staticPPSSPP.a
 /Cores/PPSSPP/lib/ppsspp
 /CoresRetro/RetroArch/lib
+/Cores/Flycast/build
