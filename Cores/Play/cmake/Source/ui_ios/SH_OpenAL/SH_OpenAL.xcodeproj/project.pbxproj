@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		8BCD176C8FFF461D905EA9CD /* RUN_TESTS */ = {
+		1F81D8D78115457AA9FB1277 /* RUN_TESTS */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 689FAF4C5289463C9411E4CA /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
+			buildConfigurationList = 21647F01EA0A41AE99823F05 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */;
 			buildPhases = (
 				003C8D08B0008F35F218E126 /* CMake PostBuild Rules */,
 			);
@@ -18,51 +18,51 @@
 			name = RUN_TESTS;
 			productName = RUN_TESTS;
 		};
-		A3F400094DE749EEB922DD52 /* package */ = {
+		3CE69EB366EF41009E321A46 /* package */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 127CC5475DE847D884D3E6FD /* Build configuration list for PBXAggregateTarget "package" */;
+			buildConfigurationList = BDE1DA04D1464D7B92B97500 /* Build configuration list for PBXAggregateTarget "package" */;
 			buildPhases = (
 				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				115F1212C5E540C398DFD9D0 /* PBXTargetDependency */,
+				05D669D0EF2549F7B99996A0 /* PBXTargetDependency */,
 			);
 			name = package;
 			productName = package;
 		};
-		DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */ = {
+		7D5675DB9FF34C648823A625 /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F0439938506B4C5885F7C0CA /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = 9C02E9029050406E935A9955 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
-				1EF4F9212BADCBD3F44BEE10 /* Generate CMakeFiles/ZERO_CHECK */,
+				E0048B62584232ABD03115A3 /* Generate CMakeFiles/ZERO_CHECK */,
 			);
 			dependencies = (
 			);
 			name = ZERO_CHECK;
 			productName = ZERO_CHECK;
 		};
-		F79EE59899544A67B12CB8F2 /* ALL_BUILD */ = {
+		83967F7FD1F545B5A3A7BD95 /* ALL_BUILD */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 849F9D07EE864AE39C7E049C /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildConfigurationList = 9D22E67B2C794A0DA8DF2D90 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
 			buildPhases = (
-				588105337BA1D089525818D9 /* Generate CMakeFiles/ALL_BUILD */,
+				58E9AE8FAA123772EED4DDC3 /* Generate CMakeFiles/ALL_BUILD */,
 			);
 			dependencies = (
-				C67466AE85414FD2AAE1D276 /* PBXTargetDependency */,
-				776C16E7B42A4A809B3B53DE /* PBXTargetDependency */,
-				BD47F2C276F44ED292F534E0 /* PBXTargetDependency */,
+				3483159E124642EE97BA25CB /* PBXTargetDependency */,
+				34FC56F603124AA2BED11BF2 /* PBXTargetDependency */,
+				4F009798E339446383D2EF8B /* PBXTargetDependency */,
 			);
 			name = ALL_BUILD;
 			productName = ALL_BUILD;
 		};
-		FC9CD7A99A534051BEB8AC72 /* install */ = {
+		95D05D9E0A9845938A35677A /* install */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = E8A484293550464DA8C22F39 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = 9E2FD110C0C84418B2DC5B85 /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				F2C79DEA07A34A3488DE8534 /* PBXTargetDependency */,
+				F0ACE4961A6543BF92E58BBD /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
@@ -70,126 +70,126 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		1889EBAEB5104793BBC3AA48 /* ../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = CDFDEA3EB5E64691B302EAF4 /* ../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */; };
-		1F36FA8614C64EFA8F6D1C20 /* ../Play-/deps/Framework/src/openal/Device.cpp */ = {isa = PBXBuildFile; fileRef = 031DC666852F4B3AA82E20FE /* ../Play-/deps/Framework/src/openal/Device.cpp */; };
-		35F10260234A4C6A9806B741 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp */ = {isa = PBXBuildFile; fileRef = 79CC35BE0A9B47A990B9B0F6 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp */; };
-		60EC5C2871E04E49892DCF6C /* ../Play-/deps/Framework/src/openal/Buffer.cpp */ = {isa = PBXBuildFile; fileRef = 3988EE3FB5A54E8F8708B577 /* ../Play-/deps/Framework/src/openal/Buffer.cpp */; };
-		659560150697466FB375D0A7 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL.h */ = {isa = PBXBuildFile; fileRef = B330142BF72244578AEEFD32 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL.h */; };
-		9954F048616543B2B5E9FA72 /* ../Play-/deps/Framework/src/openal/Source.cpp */ = {isa = PBXBuildFile; fileRef = 7C543867B5B2489C85A83631 /* ../Play-/deps/Framework/src/openal/Source.cpp */; };
-		A4923BC7CF704C8088430127 /* ../Play-/deps/Framework/src/openal/Context.cpp */ = {isa = PBXBuildFile; fileRef = E869201B72EA41F2A6F26804 /* ../Play-/deps/Framework/src/openal/Context.cpp */; };
-		D17297990BE74BFB9038A87A /* ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 0CE7E0CFAF484DA5BB835AFB /* ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */; };
-		E1913AA957284532A52A93A6 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 3833B9E32C6D4C0B8148ED81 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */; };
-		E8979210694D4D02B37E5AB3 /* ../cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/sh_openal.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 9871A3C4208349C4A639BE83 /* ../cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/sh_openal.dir/Info.plist */; };
+		099F15249C75491BBE528D6A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp */ = {isa = PBXBuildFile; fileRef = 2974FE521D224F3DAF5A8E4D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp */; };
+		3A58B3A5FA2A4FFE97C0DEC9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp */ = {isa = PBXBuildFile; fileRef = 5BD23AFB86F44E818C02B05D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp */; };
+		474E7015097C4A4FB053A375 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 6FD802867B4C4B3B9D42A919 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */; };
+		701D5E32EF8B4C36B91963D8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = A1ECFA35FE5B4DAC80E45F9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */; };
+		8B760AB32EF6419582450ED6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp */ = {isa = PBXBuildFile; fileRef = 21103A95CB3B485399891E97 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp */; };
+		ACD2546D6C384E58B88FCD72 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/sh_openal.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = AB4D4B25DF2B49E186F7469C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/sh_openal.dir/Info.plist */; };
+		B6A4F8608F5D418BBE5468C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp */ = {isa = PBXBuildFile; fileRef = 74F1A09E4EA642479D3B373A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp */; };
+		CF023A9D80634921B7B4C3EB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp */ = {isa = PBXBuildFile; fileRef = 91E4448E9B474F9CB32D79BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp */; };
+		CF5EA74C1E1B413AAB7C31F2 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.h */ = {isa = PBXBuildFile; fileRef = 342C6AF141DE489481DE9ED5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.h */; };
+		EC75ECD1A2C24F90A9289076 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 42E29B0D8AE54105A1981EA6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		2044897E17ED4CD499A1C006 /* Release */ = {
+		41C47D76C0DD40828282636D /* Release */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Release;
 		};
-		36B5EC22674646BBAAA4DA6B /* MinSizeRel */ = {
+		A7CAB1B9A72A42F4B4BB21D8 /* MinSizeRel */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = MinSizeRel;
 		};
-		75DA6DF0D5894F86ADD6FB9F /* RelWithDebInfo */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = RelWithDebInfo;
-		};
-		DD1FFC4B0B754541834599B2 /* Debug */ = {
+		CECD2D50DFD84BDB853858C9 /* Debug */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Debug;
 		};
+		CF9C64650C9041E8AFF9D0DE /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		23A639F199CC4B75958E57F7 /* PBXContainerItemProxy */ = {
+		168D8E6BF7064BF6A63AD11D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 31EAFE4351034302847186B4 /* Project object */;
+			containerPortal = 6546BFAB8FAA4F62BCFA3DBF /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F79EE59899544A67B12CB8F2;
-			remoteInfo = ALL_BUILD;
-		};
-		271761618AB34434905BD977 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 31EAFE4351034302847186B4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 11E00168FCE146408665B2E6;
+			remoteGlobalIDString = 8679EE64A9B446DCA0010082;
 			remoteInfo = sh_openal;
 		};
-		2B17FBAE95A8420BB3DDA794 /* PBXContainerItemProxy */ = {
+		4A884FFC2805450189B8C399 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 31EAFE4351034302847186B4 /* Project object */;
+			containerPortal = 6546BFAB8FAA4F62BCFA3DBF /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F79EE59899544A67B12CB8F2;
+			remoteGlobalIDString = 7D5675DB9FF34C648823A625;
+			remoteInfo = ZERO_CHECK;
+		};
+		52C6F904BA0F42198F319E8B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6546BFAB8FAA4F62BCFA3DBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D5675DB9FF34C648823A625;
+			remoteInfo = ZERO_CHECK;
+		};
+		672D42767987451997F5D3AC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6546BFAB8FAA4F62BCFA3DBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B9D5716E689042E08E58302E;
+			remoteInfo = Framework_OpenAl;
+		};
+		8437424316BD4DCF9D801E61 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6546BFAB8FAA4F62BCFA3DBF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 83967F7FD1F545B5A3A7BD95;
 			remoteInfo = ALL_BUILD;
 		};
-		412DF0A4409C473E89E33440 /* PBXContainerItemProxy */ = {
+		E8595615131F4791BF59F538 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 31EAFE4351034302847186B4 /* Project object */;
+			containerPortal = 6546BFAB8FAA4F62BCFA3DBF /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = DAB69F6DD3114DF6A6B504DB;
-			remoteInfo = ZERO_CHECK;
+			remoteGlobalIDString = 83967F7FD1F545B5A3A7BD95;
+			remoteInfo = ALL_BUILD;
 		};
-		6D05BB7B97234ACEB6847824 /* PBXContainerItemProxy */ = {
+		F420823D261F4EB4BEE1CADE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 31EAFE4351034302847186B4 /* Project object */;
+			containerPortal = 6546BFAB8FAA4F62BCFA3DBF /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = A3E4850B89F746BEB08F01D2;
+			remoteGlobalIDString = B9D5716E689042E08E58302E;
 			remoteInfo = Framework_OpenAl;
-		};
-		CD73D601924846619D660840 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 31EAFE4351034302847186B4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A3E4850B89F746BEB08F01D2;
-			remoteInfo = Framework_OpenAl;
-		};
-		EB6783B140A240A9BC866D1A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 31EAFE4351034302847186B4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DAB69F6DD3114DF6A6B504DB;
-			remoteInfo = ZERO_CHECK;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		031DC666852F4B3AA82E20FE /* ../Play-/deps/Framework/src/openal/Device.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Device.cpp; path = "../Play-/deps/Framework/src/openal/Device.cpp"; sourceTree = "<absolute>"; };
-		0CE7E0CFAF484DA5BB835AFB /* ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist; sourceTree = "<absolute>"; };
-		33BF1CD602954B0DBB9DF448 /* sh_openal */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libsh_openal.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3833B9E32C6D4C0B8148ED81 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		3988EE3FB5A54E8F8708B577 /* ../Play-/deps/Framework/src/openal/Buffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Buffer.cpp; path = "../Play-/deps/Framework/src/openal/Buffer.cpp"; sourceTree = "<absolute>"; };
-		3B726C5C0970474F85B8B2C1 /* Framework_OpenAl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFramework_OpenAl.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		79CC35BE0A9B47A990B9B0F6 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SH_OpenAL.cpp; path = "../Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp"; sourceTree = "<absolute>"; };
-		7C543867B5B2489C85A83631 /* ../Play-/deps/Framework/src/openal/Source.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Source.cpp; path = "../Play-/deps/Framework/src/openal/Source.cpp"; sourceTree = "<absolute>"; };
-		9871A3C4208349C4A639BE83 /* ../cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/sh_openal.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/sh_openal.dir/Info.plist; sourceTree = "<absolute>"; };
-		B330142BF72244578AEEFD32 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SH_OpenAL.h; path = "../Play-/tools/PsfPlayer/Source/SH_OpenAL.h"; sourceTree = "<absolute>"; };
-		B7CAE35A6DE34DBE9D0B383A /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		CDFDEA3EB5E64691B302EAF4 /* ../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt"; sourceTree = "<absolute>"; };
-		E869201B72EA41F2A6F26804 /* ../Play-/deps/Framework/src/openal/Context.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Context.cpp; path = "../Play-/deps/Framework/src/openal/Context.cpp"; sourceTree = "<absolute>"; };
+		03EA7BD713584D8293A97DE3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		21103A95CB3B485399891E97 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Buffer.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp"; sourceTree = "<absolute>"; };
+		2974FE521D224F3DAF5A8E4D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Source.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp"; sourceTree = "<absolute>"; };
+		342C6AF141DE489481DE9ED5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SH_OpenAL.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.h"; sourceTree = "<absolute>"; };
+		42E29B0D8AE54105A1981EA6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt"; sourceTree = "<absolute>"; };
+		5BD23AFB86F44E818C02B05D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Device.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp"; sourceTree = "<absolute>"; };
+		6FD802867B4C4B3B9D42A919 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist; sourceTree = "<absolute>"; };
+		74F1A09E4EA642479D3B373A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Context.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp"; sourceTree = "<absolute>"; };
+		91E4448E9B474F9CB32D79BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SH_OpenAL.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp"; sourceTree = "<absolute>"; };
+		A1ECFA35FE5B4DAC80E45F9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		A4BE59C3A6C740158D421E0F /* sh_openal */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libsh_openal.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB4D4B25DF2B49E186F7469C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/sh_openal.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/sh_openal.dir/Info.plist; sourceTree = "<absolute>"; };
+		D02E10E52E4E4DF4A1F773D6 /* Framework_OpenAl */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFramework_OpenAl.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		1829EF6ADFB74AC19E61679B /* Frameworks */ = {
+		3D32EC2657604E26A1B76ABC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		935B6562621547F2812DAD8A /* Frameworks */ = {
+		668D3FB08038447DADEA070B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -199,140 +199,148 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		03650F9FA0D54F80A8A51331 = {
+		057FFC303BD64CA7B2BBABBB /* sh_openal */ = {
 			isa = PBXGroup;
 			children = (
-				0D297753E5F74B52BD478295 /* sh_openal */,
-				957B0FD2F3B647AE95ADCE2F /* ALL_BUILD */,
-				DA51A032FA3A428FA0FA8735 /* Framework_OpenAl */,
-				CDF2C13F156B45C4A5429758 /* Products */,
-				B10C1D52F55F4DA792CBEEA1 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		05DA1A9597ED44159E7F0FAF /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				3988EE3FB5A54E8F8708B577 /* ../Play-/deps/Framework/src/openal/Buffer.cpp */,
-				E869201B72EA41F2A6F26804 /* ../Play-/deps/Framework/src/openal/Context.cpp */,
-				031DC666852F4B3AA82E20FE /* ../Play-/deps/Framework/src/openal/Device.cpp */,
-				7C543867B5B2489C85A83631 /* ../Play-/deps/Framework/src/openal/Source.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		0D297753E5F74B52BD478295 /* sh_openal */ = {
-			isa = PBXGroup;
-			children = (
-				2D0CA9B4336C4D74A5FE9311 /* Source Files */,
-				243F058155BF49E492F6470B /* Header Files */,
-				F47B674EAAB746B1B297242C /* Resources */,
-				3833B9E32C6D4C0B8148ED81 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */,
+				CCF3803DEDBC4CB8A337FC75 /* Source Files */,
+				EE40AD88184147F48CA40456 /* Header Files */,
+				058AB8D2F72A4A5E9635E081 /* Resources */,
+				A1ECFA35FE5B4DAC80E45F9A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */,
 			);
 			name = sh_openal;
 			sourceTree = "<group>";
 		};
-		243F058155BF49E492F6470B /* Header Files */ = {
+		058AB8D2F72A4A5E9635E081 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B330142BF72244578AEEFD32 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL.h */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		2D0CA9B4336C4D74A5FE9311 /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				79CC35BE0A9B47A990B9B0F6 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		7A788990725343B0AAC1779D /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				0CE7E0CFAF484DA5BB835AFB /* ../cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */,
+				AB4D4B25DF2B49E186F7469C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/sh_openal.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		957B0FD2F3B647AE95ADCE2F /* ALL_BUILD */ = {
+		2050E4813A144A4587368CC1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A43A08AB82F24419B9553FCD /* CMake Rules */,
-				B7CAE35A6DE34DBE9D0B383A /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */,
+				D02E10E52E4E4DF4A1F773D6 /* Framework_OpenAl */,
+				A4BE59C3A6C740158D421E0F /* sh_openal */,
 			);
-			name = ALL_BUILD;
+			name = Products;
 			sourceTree = "<group>";
 		};
-		A43A08AB82F24419B9553FCD /* CMake Rules */ = {
+		300C6878D4EE46C7B9B4E777 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
+				21103A95CB3B485399891E97 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp */,
+				74F1A09E4EA642479D3B373A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp */,
+				5BD23AFB86F44E818C02B05D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp */,
+				2974FE521D224F3DAF5A8E4D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp */,
 			);
-			name = "CMake Rules";
+			name = "Source Files";
 			sourceTree = "<group>";
 		};
-		B10C1D52F55F4DA792CBEEA1 /* Frameworks */ = {
+		4F72F125086742798B074287 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		CDF2C13F156B45C4A5429758 /* Products */ = {
+		5781492795C145FE9534C614 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
-				3B726C5C0970474F85B8B2C1 /* Framework_OpenAl */,
-				33BF1CD602954B0DBB9DF448 /* sh_openal */,
 			);
-			name = Products;
+			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		DA51A032FA3A428FA0FA8735 /* Framework_OpenAl */ = {
+		74B7224D55004EC7B0FF39BD /* ALL_BUILD */ = {
 			isa = PBXGroup;
 			children = (
-				05DA1A9597ED44159E7F0FAF /* Source Files */,
-				7A788990725343B0AAC1779D /* Resources */,
-				CDFDEA3EB5E64691B302EAF4 /* ../Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */,
+				5781492795C145FE9534C614 /* CMake Rules */,
+				03EA7BD713584D8293A97DE3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		8C0439284D0F493B982565FE = {
+			isa = PBXGroup;
+			children = (
+				057FFC303BD64CA7B2BBABBB /* sh_openal */,
+				74B7224D55004EC7B0FF39BD /* ALL_BUILD */,
+				A675C726588347DD80EE6B76 /* Framework_OpenAl */,
+				2050E4813A144A4587368CC1 /* Products */,
+				4F72F125086742798B074287 /* Frameworks */,
+				D4EFEDD5E0E0408F8F5432F1 /* Resources */,
+			);
+			sourceTree = "<group>";
+		};
+		A675C726588347DD80EE6B76 /* Framework_OpenAl */ = {
+			isa = PBXGroup;
+			children = (
+				300C6878D4EE46C7B9B4E777 /* Source Files */,
+				D355D2ED3458402A926B7360 /* Resources */,
+				42E29B0D8AE54105A1981EA6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/CMakeLists.txt */,
 			);
 			name = Framework_OpenAl;
 			sourceTree = "<group>";
 		};
-		F47B674EAAB746B1B297242C /* Resources */ = {
+		CCF3803DEDBC4CB8A337FC75 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				9871A3C4208349C4A639BE83 /* ../cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/sh_openal.dir/Info.plist */,
+				91E4448E9B474F9CB32D79BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		D355D2ED3458402A926B7360 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				6FD802867B4C4B3B9D42A919 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/FrameworkOpenAl/CMakeFiles/Framework_OpenAl.dir/Info.plist */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		D4EFEDD5E0E0408F8F5432F1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		EE40AD88184147F48CA40456 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				342C6AF141DE489481DE9ED5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.h */,
+			);
+			name = "Header Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		11E00168FCE146408665B2E6 /* sh_openal */ = {
+		8679EE64A9B446DCA0010082 /* sh_openal */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 627B7676DEE6417F92904A79 /* Build configuration list for PBXNativeTarget "sh_openal" */;
+			buildConfigurationList = 02701FD960F94F2F8A067636 /* Build configuration list for PBXNativeTarget "sh_openal" */;
 			buildPhases = (
-				50A73FEEEE1044D586CBF33A /* Sources */,
-				1829EF6ADFB74AC19E61679B /* Frameworks */,
+				458F654572884052B9FCFE7D /* Sources */,
+				3D32EC2657604E26A1B76ABC /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				2888FCA946A9488388AE7C56 /* PBXTargetDependency */,
-				EFB1C73CCD29494B81FBCD15 /* PBXTargetDependency */,
+				0DD82FBA98D64FCF91FCE460 /* PBXTargetDependency */,
+				4FBBBA8225C94A7FA32F764B /* PBXTargetDependency */,
 			);
 			name = sh_openal;
 			productName = sh_openal;
-			productReference = 33BF1CD602954B0DBB9DF448 /* sh_openal */;
+			productReference = A4BE59C3A6C740158D421E0F /* sh_openal */;
 			productType = "com.apple.product-type.library.static";
 		};
-		A3E4850B89F746BEB08F01D2 /* Framework_OpenAl */ = {
+		B9D5716E689042E08E58302E /* Framework_OpenAl */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 99189F16504E4C9F9EFBC7A0 /* Build configuration list for PBXNativeTarget "Framework_OpenAl" */;
+			buildConfigurationList = E4A06BF692664523A168361F /* Build configuration list for PBXNativeTarget "Framework_OpenAl" */;
 			buildPhases = (
-				CAC04F1C871547B49738468D /* Sources */,
-				935B6562621547F2812DAD8A /* Frameworks */,
+				17384F15F429456CB1BA8E7B /* Sources */,
+				668D3FB08038447DADEA070B /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -340,40 +348,40 @@
 			);
 			name = Framework_OpenAl;
 			productName = Framework_OpenAl;
-			productReference = 3B726C5C0970474F85B8B2C1 /* Framework_OpenAl */;
+			productReference = D02E10E52E4E4DF4A1F773D6 /* Framework_OpenAl */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		31EAFE4351034302847186B4 /* Project object */ = {
+		6546BFAB8FAA4F62BCFA3DBF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1530;
 			};
-			buildConfigurationList = A787C1EAE3B449A1B9B15E6A /* Build configuration list for PBXProject "SH_OpenAL" */;
+			buildConfigurationList = CFFB701A809041E4BFF96FA3 /* Build configuration list for PBXProject "SH_OpenAL" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				DD1FFC4B0B754541834599B2 /* Debug */,
-				2044897E17ED4CD499A1C006 /* Release */,
-				36B5EC22674646BBAAA4DA6B /* MinSizeRel */,
-				75DA6DF0D5894F86ADD6FB9F /* RelWithDebInfo */,
+				CECD2D50DFD84BDB853858C9 /* Debug */,
+				41C47D76C0DD40828282636D /* Release */,
+				A7CAB1B9A72A42F4B4BB21D8 /* MinSizeRel */,
+				CF9C64650C9041E8AFF9D0DE /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 03650F9FA0D54F80A8A51331;
+			mainGroup = 8C0439284D0F493B982565FE;
 			projectDirPath = "../Play-";
 			projectRoot = "";
 			targets = (
-				F79EE59899544A67B12CB8F2 /* ALL_BUILD */,
-				A3E4850B89F746BEB08F01D2 /* Framework_OpenAl */,
-				8BCD176C8FFF461D905EA9CD /* RUN_TESTS */,
-				DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */,
-				FC9CD7A99A534051BEB8AC72 /* install */,
-				A3F400094DE749EEB922DD52 /* package */,
-				11E00168FCE146408665B2E6 /* sh_openal */,
+				83967F7FD1F545B5A3A7BD95 /* ALL_BUILD */,
+				B9D5716E689042E08E58302E /* Framework_OpenAl */,
+				1F81D8D78115457AA9FB1277 /* RUN_TESTS */,
+				7D5675DB9FF34C648823A625 /* ZERO_CHECK */,
+				95D05D9E0A9845938A35677A /* install */,
+				3CE69EB366EF41009E321A46 /* package */,
+				8679EE64A9B446DCA0010082 /* sh_openal */,
 			);
 		};
 /* End PBXProject section */
@@ -392,53 +400,20 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  /usr/local/Cellar/cmake/3.27.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
-fi
-";
-			showEnvVarsInLog = 0;
-		};
-		1EF4F9212BADCBD3F44BEE10 /* Generate CMakeFiles/ZERO_CHECK */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Generate CMakeFiles/ZERO_CHECK";
-			outputPaths = (
-../cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/ZERO_CHECK			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e
-if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  make -f ../cmake/Source/ui_ios/SH_OpenAL/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  make -f ../cmake/Source/ui_ios/SH_OpenAL/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  make -f ../cmake/Source/ui_ios/SH_OpenAL/CMakeScripts/ReRunCMake.make
-fi
-if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  make -f ../cmake/Source/ui_ios/SH_OpenAL/CMakeScripts/ReRunCMake.make
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -471,25 +446,25 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake
-  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake
-  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake
-  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake
-  /usr/local/Cellar/cmake/3.27.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
 		};
-		588105337BA1D089525818D9 /* Generate CMakeFiles/ALL_BUILD */ = {
+		58E9AE8FAA123772EED4DDC3 /* Generate CMakeFiles/ALL_BUILD */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -499,24 +474,24 @@ fi
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-../cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/ALL_BUILD			);
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
   echo Build\\ all\\ projects
 fi
 ";
@@ -580,20 +555,20 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd ../cmake/Source/ui_ios/SH_OpenAL
-  /usr/local/Cellar/cmake/3.27.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -613,408 +588,103 @@ fi
 exit 0";
 			showEnvVarsInLog = 0;
 		};
+		E0048B62584232ABD03115A3 /* Generate CMakeFiles/ZERO_CHECK */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate CMakeFiles/ZERO_CHECK";
+			outputPaths = (
+/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeFiles/ZERO_CHECK			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e
+if test \"$CONFIGURATION\" = \"Debug\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"Release\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeScripts/ReRunCMake.make
+fi
+if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
+  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL
+  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/SH_OpenAL/CMakeScripts/ReRunCMake.make
+fi
+";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		50A73FEEEE1044D586CBF33A /* Sources */ = {
+		17384F15F429456CB1BA8E7B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				35F10260234A4C6A9806B741 /* ../Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp */,
+				8B760AB32EF6419582450ED6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Buffer.cpp */,
+				B6A4F8608F5D418BBE5468C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Context.cpp */,
+				3A58B3A5FA2A4FFE97C0DEC9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Device.cpp */,
+				099F15249C75491BBE528D6A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/src/openal/Source.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CAC04F1C871547B49738468D /* Sources */ = {
+		458F654572884052B9FCFE7D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60EC5C2871E04E49892DCF6C /* ../Play-/deps/Framework/src/openal/Buffer.cpp */,
-				A4923BC7CF704C8088430127 /* ../Play-/deps/Framework/src/openal/Context.cpp */,
-				1F36FA8614C64EFA8F6D1C20 /* ../Play-/deps/Framework/src/openal/Device.cpp */,
-				9954F048616543B2B5E9FA72 /* ../Play-/deps/Framework/src/openal/Source.cpp */,
+				CF023A9D80634921B7B4C3EB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/PsfPlayer/Source/SH_OpenAL.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		115F1212C5E540C398DFD9D0 /* PBXTargetDependency */ = {
+		05D669D0EF2549F7B99996A0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F79EE59899544A67B12CB8F2 /* ALL_BUILD */;
-			targetProxy = 2B17FBAE95A8420BB3DDA794 /* PBXContainerItemProxy */;
+			target = 83967F7FD1F545B5A3A7BD95 /* ALL_BUILD */;
+			targetProxy = E8595615131F4791BF59F538 /* PBXContainerItemProxy */;
 		};
-		2888FCA946A9488388AE7C56 /* PBXTargetDependency */ = {
+		0DD82FBA98D64FCF91FCE460 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A3E4850B89F746BEB08F01D2 /* Framework_OpenAl */;
-			targetProxy = 6D05BB7B97234ACEB6847824 /* PBXContainerItemProxy */;
+			target = B9D5716E689042E08E58302E /* Framework_OpenAl */;
+			targetProxy = 672D42767987451997F5D3AC /* PBXContainerItemProxy */;
 		};
-		776C16E7B42A4A809B3B53DE /* PBXTargetDependency */ = {
+		3483159E124642EE97BA25CB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A3E4850B89F746BEB08F01D2 /* Framework_OpenAl */;
-			targetProxy = CD73D601924846619D660840 /* PBXContainerItemProxy */;
+			target = 8679EE64A9B446DCA0010082 /* sh_openal */;
+			targetProxy = 168D8E6BF7064BF6A63AD11D /* PBXContainerItemProxy */;
 		};
-		BD47F2C276F44ED292F534E0 /* PBXTargetDependency */ = {
+		34FC56F603124AA2BED11BF2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */;
-			targetProxy = EB6783B140A240A9BC866D1A /* PBXContainerItemProxy */;
+			target = B9D5716E689042E08E58302E /* Framework_OpenAl */;
+			targetProxy = F420823D261F4EB4BEE1CADE /* PBXContainerItemProxy */;
 		};
-		C67466AE85414FD2AAE1D276 /* PBXTargetDependency */ = {
+		4F009798E339446383D2EF8B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 11E00168FCE146408665B2E6 /* sh_openal */;
-			targetProxy = 271761618AB34434905BD977 /* PBXContainerItemProxy */;
+			target = 7D5675DB9FF34C648823A625 /* ZERO_CHECK */;
+			targetProxy = 52C6F904BA0F42198F319E8B /* PBXContainerItemProxy */;
 		};
-		EFB1C73CCD29494B81FBCD15 /* PBXTargetDependency */ = {
+		4FBBBA8225C94A7FA32F764B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DAB69F6DD3114DF6A6B504DB /* ZERO_CHECK */;
-			targetProxy = 412DF0A4409C473E89E33440 /* PBXContainerItemProxy */;
+			target = 7D5675DB9FF34C648823A625 /* ZERO_CHECK */;
+			targetProxy = 4A884FFC2805450189B8C399 /* PBXContainerItemProxy */;
 		};
-		F2C79DEA07A34A3488DE8534 /* PBXTargetDependency */ = {
+		F0ACE4961A6543BF92E58BBD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F79EE59899544A67B12CB8F2 /* ALL_BUILD */;
-			targetProxy = 23A639F199CC4B75958E57F7 /* PBXContainerItemProxy */;
+			target = 83967F7FD1F545B5A3A7BD95 /* ALL_BUILD */;
+			targetProxy = 8437424316BD4DCF9D801E61 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		05F9B3B80D474CE0A132F842 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = fast;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","../Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","../Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","../Play-/Source","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2        -DNDEBUG -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = sh_openal;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		12677602BC0F47CD81745130 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		1777A52985BB4D4496E3411F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		1920B5C290564C4E883CED2C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		19B71F56B67F4669A01F18B6 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				FRAMEWORK_SEARCH_PATHS = (/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks,"$(inherited)");
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2 -x objective-c++        -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Framework_OpenAl;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		1D2CAC64FE8747029A0CEF7C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				FRAMEWORK_SEARCH_PATHS = (/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks,"$(inherited)");
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2 -x objective-c++    -D_DEBUG -D_DEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Framework_OpenAl;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		269266C052CF41A4A086B33C /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		27F1C63DE3CC48BC83DF1552 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		3381DD3A066E4D34909CC7F0 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = RelWithDebInfo;
-		};
-		36D42F0DE04E4EB4AF66C773 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		3EA3E306B25D4C8EB8E5BF22 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		445697DFC31D4C7CB4DBA220 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		4C4CD27ABEE24321B07DF7C5 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		4E0655B8E8FB49F5A8CCF88B /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","../Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","../Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","../Play-/Source","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = sh_openal;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		4FB215C7804C47ACA48AB283 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_VERSION = 4.0;
-				BUILD_DIR = ../lib;
-			};
-			name = Release;
-		};
-		52D77D80011C4DFD9A241C0B /* Debug */ = {
+		0590C8E142E94503A2BC5CEB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1034,27 +704,7 @@ exit 0";
 			};
 			name = Debug;
 		};
-		5E35108FC79449D3826DA81E /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		7B7017ED39554DD48074DB2B /* Release */ = {
+		0D0AC3C9759F4F47AF0F5EE3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1074,98 +724,42 @@ exit 0";
 			};
 			name = Release;
 		};
-		9787A7D57D0F40BC8AFD52C7 /* Debug */ = {
+		11E54E9BE7104122AEC97831 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		A01970BEAF3A47FFA788EC6E /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
 			};
 			name = RelWithDebInfo;
 		};
-		A8ACAADB7F024202A32B908E /* Debug */ = {
+		136642A3D2D84924884E8000 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.0;
+				BUILD_DIR = ../lib;
 			};
 			name = Debug;
 		};
-		A8F8B7C4CA0D4187AB0EB3F3 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				FRAMEWORK_SEARCH_PATHS = (/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks,"$(inherited)");
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2 -x objective-c++     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Framework_OpenAl;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		B53B3B77E979443D8492656C /* MinSizeRel */ = {
+		205A6BCB34E84782B21D9336 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -1183,7 +777,7 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		C2E3445CB74744299D3FF7E3 /* MinSizeRel */ = {
+		24005E56E5014826BDDDAF3A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1201,9 +795,9 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = Debug;
 		};
-		C455A7A4534A4D1D8353C2C6 /* RelWithDebInfo */ = {
+		30B022A355734334B3E3AB9E /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1218,11 +812,11 @@ exit 0";
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","../Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","../Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","../Play-/Source","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = sh_openal;
@@ -1233,37 +827,67 @@ exit 0";
 			};
 			name = RelWithDebInfo;
 		};
-		CB873E3A81A24FAEB954AC41 /* Debug */ = {
+		30EB02EEFE1E4D0DA326AE08 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = arm64;
-				CLANG_CXX_LIBRARY = "libc++";
 				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","../Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",../../../MoltenVK/MoltenVK/MoltenVK/include,"../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Nuanceur/build_cmake/../include","../Play-/deps/Nuanceur/build_cmake/../../Framework/include","../Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","../Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","../Play-/Source","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
 				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2    -D_DEBUG '-std=gnu++17' ";
-				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = sh_openal;
+				PRODUCT_NAME = package;
 				SECTORDER_FLAGS = "";
-				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Debug;
 		};
-		D838A4F76A0441A88515B493 /* Release */ = {
+		3A190BD684F7472997D8141F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		3A34E04AD57D4DE588006163 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		4EE2E54966614A8AB5ABD321 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1273,17 +897,17 @@ exit 0";
 				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
-				FRAMEWORK_SEARCH_PATHS = (/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks,"$(inherited)");
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				FRAMEWORK_SEARCH_PATHS = (/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks,"$(inherited)");
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.0.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2                -mios-version-min=12.2 -x objective-c++        -DNDEBUG -DNDEBUG -DNDEBUG '-std=gnu++17' ";
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++        -DNDEBUG '-std=gnu++17' ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = Framework_OpenAl;
@@ -1292,9 +916,139 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
+			name = RelWithDebInfo;
+		};
+		54C5496A7C3C40F98FDAC426 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = sh_openal;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		607AC0FB421345BE9895AC99 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
 			name = Release;
 		};
-		DB6971BFFC9B4BBA8F71A6E4 /* Release */ = {
+		6568F181A7A34CF5A5752127 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		717083E60CAE424DAC8CE435 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		7CF8144224D94144A5CC1717 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		8810AD0FC4D04B32AF1354A5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		92E4CE29AB0D4F9E86124318 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1314,7 +1068,128 @@ exit 0";
 			};
 			name = Release;
 		};
-		E189C1126E8B4E889FC977F0 /* Release */ = {
+		B160FC3F36424FCCA6960B67 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				FRAMEWORK_SEARCH_PATHS = (/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks,"$(inherited)");
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++        -DNDEBUG -DNDEBUG -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework_OpenAl;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		B468DC73EE0A4A24A97E67A5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2        -DNDEBUG -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = sh_openal;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		BE5DD309152A4A309D3AE4E8 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		C5288B615C3B40F68727EFA2 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		C9C171F0991545D48422A791 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		D08CEEFAFA244F61A16903BD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1334,7 +1209,7 @@ exit 0";
 			};
 			name = Release;
 		};
-		E1EAF68F068242B4B2D0ED71 /* Release */ = {
+		D610F7BD22D144F59D29CC02 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1347,14 +1222,14 @@ exit 0";
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = RUN_TESTS;
+				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
+			name = RelWithDebInfo;
 		};
-		E2FE02B752044610AAA766D1 /* Debug */ = {
+		DB3B11037C2A469E820E0265 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = arm64;
@@ -1366,12 +1241,64 @@ exit 0";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 4.0;
 				BUILD_DIR = ../lib;
 			};
+			name = Release;
+		};
+		DB8095404452424F903ADB76 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		DF34FA0703F84C7F9D55B645 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				FRAMEWORK_SEARCH_PATHS = (/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks,"$(inherited)");
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++    -D_DEBUG -D_DEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework_OpenAl;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
 			name = Debug;
 		};
-		FA79448F82F54D4388F1DF51 /* RelWithDebInfo */ = {
+		F04A0167D96E4079B39666F8 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1390,99 +1317,180 @@ exit 0";
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = RelWithDebInfo;
+		};
+		F1B82341F9144BCDA008D61E /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				FRAMEWORK_SEARCH_PATHS = (/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks,"$(inherited)");
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++     -DNDEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Framework_OpenAl;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		F6341B013BF74C7B8E3AF6ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = RUN_TESTS;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		FF9AB75FB7A848E9907C1A60 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				CLANG_CXX_LIBRARY = "libc++";
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,GLES_COMPATIBILITY,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_Vulkan/Source/gs/GSH_Vulkan","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkVulkan/../../include",/Users/jmattiello/Workspace/Provenance/Provenance/MoltenVK/MoltenVK/include,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Nuanceur/build_cmake/../../Framework/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/gs/GSH_OpenGL/Source/gs/GSH_OpenGL","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenGl/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkOpenAl/../../include",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/System/Library/Frameworks/OpenAL.framework/Headers,"$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2    -D_DEBUG '-std=gnu++17' ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = sh_openal;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		127CC5475DE847D884D3E6FD /* Build configuration list for PBXAggregateTarget "package" */ = {
+		02701FD960F94F2F8A067636 /* Build configuration list for PBXNativeTarget "sh_openal" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9787A7D57D0F40BC8AFD52C7 /* Debug */,
-				DB6971BFFC9B4BBA8F71A6E4 /* Release */,
-				445697DFC31D4C7CB4DBA220 /* MinSizeRel */,
-				36D42F0DE04E4EB4AF66C773 /* RelWithDebInfo */,
+				FF9AB75FB7A848E9907C1A60 /* Debug */,
+				B468DC73EE0A4A24A97E67A5 /* Release */,
+				54C5496A7C3C40F98FDAC426 /* MinSizeRel */,
+				30B022A355734334B3E3AB9E /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		627B7676DEE6417F92904A79 /* Build configuration list for PBXNativeTarget "sh_openal" */ = {
+		21647F01EA0A41AE99823F05 /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CB873E3A81A24FAEB954AC41 /* Debug */,
-				05F9B3B80D474CE0A132F842 /* Release */,
-				4E0655B8E8FB49F5A8CCF88B /* MinSizeRel */,
-				C455A7A4534A4D1D8353C2C6 /* RelWithDebInfo */,
+				F6341B013BF74C7B8E3AF6ED /* Debug */,
+				3A190BD684F7472997D8141F /* Release */,
+				BE5DD309152A4A309D3AE4E8 /* MinSizeRel */,
+				F04A0167D96E4079B39666F8 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		689FAF4C5289463C9411E4CA /* Build configuration list for PBXAggregateTarget "RUN_TESTS" */ = {
+		9C02E9029050406E935A9955 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				5E35108FC79449D3826DA81E /* Debug */,
-				E1EAF68F068242B4B2D0ED71 /* Release */,
-				3EA3E306B25D4C8EB8E5BF22 /* MinSizeRel */,
-				FA79448F82F54D4388F1DF51 /* RelWithDebInfo */,
+				0590C8E142E94503A2BC5CEB /* Debug */,
+				D08CEEFAFA244F61A16903BD /* Release */,
+				717083E60CAE424DAC8CE435 /* MinSizeRel */,
+				D610F7BD22D144F59D29CC02 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		849F9D07EE864AE39C7E049C /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		9D22E67B2C794A0DA8DF2D90 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1777A52985BB4D4496E3411F /* Debug */,
-				1920B5C290564C4E883CED2C /* Release */,
-				C2E3445CB74744299D3FF7E3 /* MinSizeRel */,
-				269266C052CF41A4A086B33C /* RelWithDebInfo */,
+				24005E56E5014826BDDDAF3A /* Debug */,
+				607AC0FB421345BE9895AC99 /* Release */,
+				DB8095404452424F903ADB76 /* MinSizeRel */,
+				7CF8144224D94144A5CC1717 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		99189F16504E4C9F9EFBC7A0 /* Build configuration list for PBXNativeTarget "Framework_OpenAl" */ = {
+		9E2FD110C0C84418B2DC5B85 /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1D2CAC64FE8747029A0CEF7C /* Debug */,
-				D838A4F76A0441A88515B493 /* Release */,
-				A8F8B7C4CA0D4187AB0EB3F3 /* MinSizeRel */,
-				19B71F56B67F4669A01F18B6 /* RelWithDebInfo */,
+				8810AD0FC4D04B32AF1354A5 /* Debug */,
+				0D0AC3C9759F4F47AF0F5EE3 /* Release */,
+				6568F181A7A34CF5A5752127 /* MinSizeRel */,
+				C5288B615C3B40F68727EFA2 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		A787C1EAE3B449A1B9B15E6A /* Build configuration list for PBXProject "SH_OpenAL" */ = {
+		BDE1DA04D1464D7B92B97500 /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E2FE02B752044610AAA766D1 /* Debug */,
-				4FB215C7804C47ACA48AB283 /* Release */,
-				B53B3B77E979443D8492656C /* MinSizeRel */,
-				3381DD3A066E4D34909CC7F0 /* RelWithDebInfo */,
+				30EB02EEFE1E4D0DA326AE08 /* Debug */,
+				92E4CE29AB0D4F9E86124318 /* Release */,
+				3A34E04AD57D4DE588006163 /* MinSizeRel */,
+				C9C171F0991545D48422A791 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		E8A484293550464DA8C22F39 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		CFFB701A809041E4BFF96FA3 /* Build configuration list for PBXProject "SH_OpenAL" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A8ACAADB7F024202A32B908E /* Debug */,
-				7B7017ED39554DD48074DB2B /* Release */,
-				4C4CD27ABEE24321B07DF7C5 /* MinSizeRel */,
-				A01970BEAF3A47FFA788EC6E /* RelWithDebInfo */,
+				136642A3D2D84924884E8000 /* Debug */,
+				DB3B11037C2A469E820E0265 /* Release */,
+				205A6BCB34E84782B21D9336 /* MinSizeRel */,
+				11E54E9BE7104122AEC97831 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		F0439938506B4C5885F7C0CA /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		E4A06BF692664523A168361F /* Build configuration list for PBXNativeTarget "Framework_OpenAl" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				52D77D80011C4DFD9A241C0B /* Debug */,
-				E189C1126E8B4E889FC977F0 /* Release */,
-				27F1C63DE3CC48BC83DF1552 /* MinSizeRel */,
-				12677602BC0F47CD81745130 /* RelWithDebInfo */,
+				DF34FA0703F84C7F9D55B645 /* Debug */,
+				B160FC3F36424FCCA6960B67 /* Release */,
+				F1B82341F9144BCDA008D61E /* MinSizeRel */,
+				4EE2E54966614A8AB5ABD321 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 31EAFE4351034302847186B4 /* Project object */;
+	rootObject = 6546BFAB8FAA4F62BCFA3DBF /* Project object */;
 }
