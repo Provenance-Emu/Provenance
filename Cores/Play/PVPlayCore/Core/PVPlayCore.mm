@@ -475,8 +475,8 @@ void CPH_OpenEmu::Update(uint8* ram)
 {
     GET_CURRENT_OR_RETURN();
 
-    for(auto listenerIterator(std::begin(m_listeners));
-        listenerIterator != std::end(m_listeners); listenerIterator++)
+    for(auto listenerIterator(std::begin(m_interfaces));
+        listenerIterator != std::end(m_interfaces); listenerIterator++)
     {
         auto* listener(*listenerIterator);
 
@@ -496,6 +496,7 @@ void CPH_OpenEmu::Update(uint8* ram)
             }
         }
     }
+
 }
 
 static CPadHandler *PadHandlerFactory()
