@@ -49,29 +49,6 @@
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B194A29490A840024133A /* CGSH_MTLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939B194929490A820024133A /* CGSH_MTLViewController.swift */; };
-		939EA1E52A88FE2A00D45022 /* libAltKitPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1412A88F9DE00D45022 /* libAltKitPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1E62A88FE2A00D45022 /* libCAltKitPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1432A88F9DE00D45022 /* libCAltKitPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1E72A88FE2A00D45022 /* libchdr-staticPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1592A88F9DE00D45022 /* libchdr-staticPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1E82A88FE2A00D45022 /* libCodeGenPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1452A88F9DE00D45022 /* libCodeGenPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1E92A88FE2A00D45022 /* libFramework_AmazonPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1492A88F9DE00D45022 /* libFramework_AmazonPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1EA2A88FE2A00D45022 /* libFramework_HttpPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA14B2A88F9DE00D45022 /* libFramework_HttpPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1EB2A88FE2A00D45022 /* libFramework_OpenAlPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA14D2A88F9DE00D45022 /* libFramework_OpenAlPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1EC2A88FE2A00D45022 /* libFramework_OpenGlPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA14F2A88F9DE00D45022 /* libFramework_OpenGlPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1ED2A88FE2A00D45022 /* libFramework_VulkanPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1512A88F9DE00D45022 /* libFramework_VulkanPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1EE2A88FE2A00D45022 /* libFrameworkPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1472A88F9DE00D45022 /* libFrameworkPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1EF2A88FE2A00D45022 /* libgsh_openglPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA15B2A88F9DE00D45022 /* libgsh_openglPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1F02A88FE2A00D45022 /* libgsh_vulkanPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA15D2A88F9DE00D45022 /* libgsh_vulkanPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1F12A88FE2A00D45022 /* libiCade_StaticPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA15F2A88F9DE00D45022 /* libiCade_StaticPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1F22A88FE2A00D45022 /* liblibzstd_zlibwrapper_staticPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1632A88F9DE00D45022 /* liblibzstd_zlibwrapper_staticPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1F32A88FE2A00D45022 /* liblzmaPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1652A88F9DE00D45022 /* liblzmaPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1F42A88FE2A00D45022 /* libNuanceurPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1532A88F9DE00D45022 /* libNuanceurPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1F52A88FE2A00D45022 /* libPlayCorePlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1552A88F9DE00D45022 /* libPlayCorePlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1F62A88FE2A00D45022 /* libSDWebImage_StaticPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1572A88F9DE00D45022 /* libSDWebImage_StaticPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1F72A88FE2A00D45022 /* libsh_openalPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1672A88F9DE00D45022 /* libsh_openalPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1F82A88FE2B00D45022 /* libui_sharedPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1692A88F9DE00D45022 /* libui_sharedPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1F92A88FE2B00D45022 /* libxxhashPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA16B2A88F9DE00D45022 /* libxxhashPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1FA2A88FE2B00D45022 /* libzPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA16D2A88F9DE00D45022 /* libzPlay.a */; platformFilters = (ios, maccatalyst, ); };
-		939EA1FB2A88FE2B00D45022 /* libzstdPlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 939EA1612A88F9DE00D45022 /* libzstdPlay.a */; platformFilters = (ios, maccatalyst, ); };
 		93C68BEF298ADF5E0008E5A3 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93C68BEE298ADF5D0008E5A3 /* PVDebug.c */; };
 		93F5FBF42945D1B600493D4F /* PVPlayCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5FBF32945D1B600493D4F /* PVPlayCore.swift */; };
 		B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPlayCore.mm */; };
@@ -99,6 +76,29 @@
 		B3A6209129478A7600ED28E3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209029478A7600ED28E3 /* Metal.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209229478A7F00ED28E3 /* CoreGraphics.framework */; };
 		B3A6209529478A9B00ED28E3 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A6209429478A9B00ED28E3 /* MetalKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
+		B3ABAEFD2BCCF93900D77B8C /* libAltKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */; };
+		B3ABAEFE2BCCF93900D77B8C /* libCAltKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */; };
+		B3ABAEFF2BCCF93900D77B8C /* libchdr-static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE42BCCF87F00D77B8C /* libchdr-static.a */; };
+		B3ABAF002BCCF93900D77B8C /* libCodeGen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */; };
+		B3ABAF012BCCF93900D77B8C /* libFramework_Amazon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */; };
+		B3ABAF022BCCF93900D77B8C /* libFramework_Http.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED42BCCF87F00D77B8C /* libFramework_Http.a */; };
+		B3ABAF032BCCF93900D77B8C /* libFramework_OpenAl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED62BCCF87F00D77B8C /* libFramework_OpenAl.a */; };
+		B3ABAF042BCCF93900D77B8C /* libFramework_OpenGl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAED82BCCF87F00D77B8C /* libFramework_OpenGl.a */; };
+		B3ABAF052BCCF93900D77B8C /* libFramework_Vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEDA2BCCF87F00D77B8C /* libFramework_Vulkan.a */; };
+		B3ABAF062BCCF93900D77B8C /* libFramework.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAECE2BCCF87F00D77B8C /* libFramework.a */; };
+		B3ABAF072BCCF93900D77B8C /* libgsh_opengl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE62BCCF87F00D77B8C /* libgsh_opengl.a */; };
+		B3ABAF082BCCF93900D77B8C /* libgsh_vulkan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE82BCCF87F00D77B8C /* libgsh_vulkan.a */; };
+		B3ABAF092BCCF93900D77B8C /* libiCade_Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEA2BCCF87F00D77B8C /* libiCade_Static.a */; };
+		B3ABAF0A2BCCF93900D77B8C /* liblibzstd_zlibwrapper_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEE2BCCF87F00D77B8C /* liblibzstd_zlibwrapper_static.a */; };
+		B3ABAF0B2BCCF93900D77B8C /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF02BCCF87F00D77B8C /* liblzma.a */; };
+		B3ABAF0C2BCCF93900D77B8C /* libNuanceur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */; };
+		B3ABAF0D2BCCF93900D77B8C /* libPlayCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE02BCCF87F00D77B8C /* libPlayCore.a */; };
+		B3ABAF0E2BCCF93900D77B8C /* libSDWebImage_Static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEE22BCCF87F00D77B8C /* libSDWebImage_Static.a */; };
+		B3ABAF0F2BCCF93900D77B8C /* libsh_openal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF22BCCF87F00D77B8C /* libsh_openal.a */; };
+		B3ABAF102BCCF93900D77B8C /* libui_shared.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF42BCCF87F00D77B8C /* libui_shared.a */; };
+		B3ABAF112BCCF93900D77B8C /* libxxhash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF62BCCF87F00D77B8C /* libxxhash.a */; };
+		B3ABAF122BCCF93900D77B8C /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF82BCCF87F00D77B8C /* libz.a */; };
+		B3ABAF132BCCF93900D77B8C /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEC2BCCF87F00D77B8C /* libzstd.a */; };
 		B3AFCF602977A69F00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF5F2977A69F00A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); };
 		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
@@ -112,328 +112,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 934D2DFF294B4D4600BDEBA5;
 			remoteInfo = PlayLibAdjustments;
-		};
-		939EA1402A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3EF59AFFEDDA48FEB2FB54C4;
-			remoteInfo = AltKit;
-		};
-		939EA1422A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B5FF47133F1643DEB02D0B28;
-			remoteInfo = CAltKit;
-		};
-		939EA1442A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6509805DAA5545AFB0DC8123;
-			remoteInfo = CodeGen;
-		};
-		939EA1462A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 57DEBACD3E2A42D998984A71;
-			remoteInfo = Framework;
-		};
-		939EA1482A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 673D9DFA8FD64B72AB2B9F49;
-			remoteInfo = Framework_Amazon;
-		};
-		939EA14A2A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1BC372A2A543479FA9E39177;
-			remoteInfo = Framework_Http;
-		};
-		939EA14C2A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 0BD839034D20442AA76527E7;
-			remoteInfo = Framework_OpenAl;
-		};
-		939EA14E2A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 221BD0DD73A54394B89C32BC;
-			remoteInfo = Framework_OpenGl;
-		};
-		939EA1502A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CD976ACD4C764CC39F388803;
-			remoteInfo = Framework_Vulkan;
-		};
-		939EA1522A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5DDB69EDC92341C3A73CF78D;
-			remoteInfo = Nuanceur;
-		};
-		939EA1542A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2C9DE717CF994316B4360C6D;
-			remoteInfo = PlayCore;
-		};
-		939EA1562A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 11C1E1FC7A514C978BFDBB79;
-			remoteInfo = SDWebImage_Static;
-		};
-		939EA1582A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 0162B0B0F55341599616C719;
-			remoteInfo = "chdr-static";
-		};
-		939EA15A2A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F61024A922E7449E9536C80E;
-			remoteInfo = gsh_opengl;
-		};
-		939EA15C2A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A653FA29DC9941A1BF2CB0AB;
-			remoteInfo = gsh_vulkan;
-		};
-		939EA15E2A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4B77CB4B45D144A3B30B4B91;
-			remoteInfo = iCade_Static;
-		};
-		939EA1602A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 0A8C17B516984A628D86EC3F;
-			remoteInfo = libzstd_static;
-		};
-		939EA1622A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 326A24F36EF1448DB497D3C6;
-			remoteInfo = libzstd_zlibwrapper_static;
-		};
-		939EA1642A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9BE0A770C0584251A0B6F273;
-			remoteInfo = lzma;
-		};
-		939EA1662A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B29FDDAF136B4CADB8B4EF72;
-			remoteInfo = sh_openal;
-		};
-		939EA1682A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2BC70862B88946B28AE8E5DA;
-			remoteInfo = ui_shared;
-		};
-		939EA16A2A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B602127A0B074BD5B225F3AC;
-			remoteInfo = xxhash;
-		};
-		939EA16C2A88F9DE00D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = DAA7282473424D8A82E291B9;
-			remoteInfo = zlib;
-		};
-		939EA1A12A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 7EFA35744AB641F6A742D505;
-			remoteInfo = AltKitPlay;
-		};
-		939EA1A32A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 1664194A00D64693BD3AB7CA;
-			remoteInfo = CAltKitPlay;
-		};
-		939EA1A52A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 4FAEE6E1DB5340D0BFC5ACD9;
-			remoteInfo = CodeGenPlay;
-		};
-		939EA1A92A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 18390E684AB442FF8E2618E6;
-			remoteInfo = FrameworkPlay;
-		};
-		939EA1AB2A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 829A3D82551049699E6DD558;
-			remoteInfo = Framework_AmazonPlay;
-		};
-		939EA1AD2A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 4A72C761D61546ABBC0336F3;
-			remoteInfo = Framework_HttpPlay;
-		};
-		939EA1AF2A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = A3E4850B89F746BEB08F01D2;
-			remoteInfo = Framework_OpenAlPlay;
-		};
-		939EA1B12A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 4131F095E430456E8B2DB56E;
-			remoteInfo = Framework_OpenGlPlay;
-		};
-		939EA1B32A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = EBDF8B38FCFC408DAFF76235;
-			remoteInfo = Framework_VulkanPlay;
-		};
-		939EA1B92A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 670FE74582934BBEBB0248E6;
-			remoteInfo = NuanceurPlay;
-		};
-		939EA1BD2A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5722A568319344B6A62F2FEC;
-			remoteInfo = PlayCorePlay;
-		};
-		939EA1BF2A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 07B3C656C0D34C63B6C5A52C;
-			remoteInfo = SDWebImage_StaticPlay;
-		};
-		939EA1C92A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E949D16B3D834FC1A7B1D013;
-			remoteInfo = "chdr-staticPlay";
-		};
-		939EA1CB2A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 97406420196A4371BAF74FC7;
-			remoteInfo = gsh_openglPlay;
-		};
-		939EA1CD2A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 09D61113ECCD4ABEA4A44D13;
-			remoteInfo = gsh_vulkanPlay;
-		};
-		939EA1CF2A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E0C9C99B6AFB4AB285EF2E57;
-			remoteInfo = iCade_StaticPlay;
-		};
-		939EA1D32A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = F90DE460BF754253A45EE879;
-			remoteInfo = libzstd_staticPlay;
-		};
-		939EA1D52A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B87228A5ECF4618B5E65621;
-			remoteInfo = libzstd_zlibwrapper_staticPlay;
-		};
-		939EA1D72A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 79E3F85C9BF64E829548F608;
-			remoteInfo = lzmaPlay;
-		};
-		939EA1DB2A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 11E00168FCE146408665B2E6;
-			remoteInfo = sh_openalPlay;
-		};
-		939EA1DD2A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = DE6178354CA84E958ED7FCEF;
-			remoteInfo = ui_sharedPlay;
-		};
-		939EA1E12A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 4CDCC17A178742EC88CDB100;
-			remoteInfo = xxhashPlay;
-		};
-		939EA1E32A88FB4000D45022 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = BE183B529C7C42239BC7D0FC;
-			remoteInfo = zlibPlay;
 		};
 		B3135B4926E4C6860047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -490,6 +168,188 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3D8B3EB767EE44DDA61194D2;
 			remoteInfo = "chdr-benchmark";
+		};
+		B3ABAEC72BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 974D33F945594855B9CA3B87;
+			remoteInfo = AltKitPlay;
+		};
+		B3ABAEC92BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 516169E1EE0443EAA18EE654;
+			remoteInfo = CAltKitPlay;
+		};
+		B3ABAECB2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 7FD2C537E6A74A20914C1BC5;
+			remoteInfo = CodeGenPlay;
+		};
+		B3ABAECD2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = BF93E5AEFEED46669047AA5D;
+			remoteInfo = FrameworkPlay;
+		};
+		B3ABAECF2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9172032BB7A34B1FBF9384BA;
+			remoteInfo = FrameworkTests;
+		};
+		B3ABAED12BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CE24008C50CB422A8BF5C0A2;
+			remoteInfo = Framework_AmazonPlay;
+		};
+		B3ABAED32BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = B09398BEBEB44F268A393BD4;
+			remoteInfo = Framework_HttpPlay;
+		};
+		B3ABAED52BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 301A72A5796946898D63065A;
+			remoteInfo = Framework_OpenAlPlay;
+		};
+		B3ABAED72BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 0006254557AC4D738F9372E7;
+			remoteInfo = Framework_OpenGlPlay;
+		};
+		B3ABAED92BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F0104EC7E894461D82EFA784;
+			remoteInfo = Framework_VulkanPlay;
+		};
+		B3ABAEDB2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 20138C2749964AD7A0ACE589;
+			remoteInfo = NamcoSys147NANDTools;
+		};
+		B3ABAEDD2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 864C901E2C2F4A5AB513FC3F;
+			remoteInfo = NuanceurPlay;
+		};
+		B3ABAEDF2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 25A81220F955465FB0FE282A;
+			remoteInfo = PlayCorePlay;
+		};
+		B3ABAEE12BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 239DC38A57F946AFA21EED13;
+			remoteInfo = SDWebImage_StaticPlay;
+		};
+		B3ABAEE32BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6A482C3271184230B1156850;
+			remoteInfo = "chdr-staticPlay";
+		};
+		B3ABAEE52BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AB8D8EA469694500B799938A;
+			remoteInfo = gsh_openglPlay;
+		};
+		B3ABAEE72BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = AFBB1A81F6CA495CAA3FD663;
+			remoteInfo = gsh_vulkanPlay;
+		};
+		B3ABAEE92BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DC753F83079D486AB6FB387F;
+			remoteInfo = iCade_StaticPlay;
+		};
+		B3ABAEEB2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 91EE5BE7913C49D09455C24F;
+			remoteInfo = libzstd_staticPlay;
+		};
+		B3ABAEED2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 2CA5630A100C431CBC9A7BAB;
+			remoteInfo = libzstd_zlibwrapper_staticPlay;
+		};
+		B3ABAEEF2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F28704B7A1034846A0111241;
+			remoteInfo = lzmaPlay;
+		};
+		B3ABAEF12BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = A4EDC0B8FFA44808BAF87B40;
+			remoteInfo = sh_openalPlay;
+		};
+		B3ABAEF32BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 6BD600F8931B460DBF3D220B;
+			remoteInfo = ui_sharedPlay;
+		};
+		B3ABAEF52BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F703B67F87264F8AB8BA8ACE;
+			remoteInfo = xxhashPlay;
+		};
+		B3ABAEF72BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D325F18A8B00400599714273;
+			remoteInfo = zlibPlay;
+		};
+		B3ABAEFB2BCCF91B00D77B8C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = AD15F50FE49049C5B6AE8E2A;
+			remoteInfo = Framework_VulkanPlay;
 		};
 		B3B2546B27842B7B00F97E55 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1768,29 +1628,29 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				939EA1E52A88FE2A00D45022 /* libAltKitPlay.a in Frameworks */,
-				939EA1E62A88FE2A00D45022 /* libCAltKitPlay.a in Frameworks */,
-				939EA1E72A88FE2A00D45022 /* libchdr-staticPlay.a in Frameworks */,
-				939EA1E82A88FE2A00D45022 /* libCodeGenPlay.a in Frameworks */,
-				939EA1E92A88FE2A00D45022 /* libFramework_AmazonPlay.a in Frameworks */,
-				939EA1EA2A88FE2A00D45022 /* libFramework_HttpPlay.a in Frameworks */,
-				939EA1EB2A88FE2A00D45022 /* libFramework_OpenAlPlay.a in Frameworks */,
-				939EA1EC2A88FE2A00D45022 /* libFramework_OpenGlPlay.a in Frameworks */,
-				939EA1ED2A88FE2A00D45022 /* libFramework_VulkanPlay.a in Frameworks */,
-				939EA1EE2A88FE2A00D45022 /* libFrameworkPlay.a in Frameworks */,
-				939EA1EF2A88FE2A00D45022 /* libgsh_openglPlay.a in Frameworks */,
-				939EA1F02A88FE2A00D45022 /* libgsh_vulkanPlay.a in Frameworks */,
-				939EA1F12A88FE2A00D45022 /* libiCade_StaticPlay.a in Frameworks */,
-				939EA1F22A88FE2A00D45022 /* liblibzstd_zlibwrapper_staticPlay.a in Frameworks */,
-				939EA1F32A88FE2A00D45022 /* liblzmaPlay.a in Frameworks */,
-				939EA1F42A88FE2A00D45022 /* libNuanceurPlay.a in Frameworks */,
-				939EA1F52A88FE2A00D45022 /* libPlayCorePlay.a in Frameworks */,
-				939EA1F62A88FE2A00D45022 /* libSDWebImage_StaticPlay.a in Frameworks */,
-				939EA1F72A88FE2A00D45022 /* libsh_openalPlay.a in Frameworks */,
-				939EA1F82A88FE2B00D45022 /* libui_sharedPlay.a in Frameworks */,
-				939EA1F92A88FE2B00D45022 /* libxxhashPlay.a in Frameworks */,
-				939EA1FA2A88FE2B00D45022 /* libzPlay.a in Frameworks */,
-				939EA1FB2A88FE2B00D45022 /* libzstdPlay.a in Frameworks */,
+				B3ABAEFD2BCCF93900D77B8C /* libAltKit.a in Frameworks */,
+				B3ABAEFE2BCCF93900D77B8C /* libCAltKit.a in Frameworks */,
+				B3ABAEFF2BCCF93900D77B8C /* libchdr-static.a in Frameworks */,
+				B3ABAF002BCCF93900D77B8C /* libCodeGen.a in Frameworks */,
+				B3ABAF012BCCF93900D77B8C /* libFramework_Amazon.a in Frameworks */,
+				B3ABAF022BCCF93900D77B8C /* libFramework_Http.a in Frameworks */,
+				B3ABAF032BCCF93900D77B8C /* libFramework_OpenAl.a in Frameworks */,
+				B3ABAF042BCCF93900D77B8C /* libFramework_OpenGl.a in Frameworks */,
+				B3ABAF052BCCF93900D77B8C /* libFramework_Vulkan.a in Frameworks */,
+				B3ABAF062BCCF93900D77B8C /* libFramework.a in Frameworks */,
+				B3ABAF072BCCF93900D77B8C /* libgsh_opengl.a in Frameworks */,
+				B3ABAF082BCCF93900D77B8C /* libgsh_vulkan.a in Frameworks */,
+				B3ABAF092BCCF93900D77B8C /* libiCade_Static.a in Frameworks */,
+				B3ABAF0A2BCCF93900D77B8C /* liblibzstd_zlibwrapper_static.a in Frameworks */,
+				B3ABAF0B2BCCF93900D77B8C /* liblzma.a in Frameworks */,
+				B3ABAF0C2BCCF93900D77B8C /* libNuanceur.a in Frameworks */,
+				B3ABAF0D2BCCF93900D77B8C /* libPlayCore.a in Frameworks */,
+				B3ABAF0E2BCCF93900D77B8C /* libSDWebImage_Static.a in Frameworks */,
+				B3ABAF0F2BCCF93900D77B8C /* libsh_openal.a in Frameworks */,
+				B3ABAF102BCCF93900D77B8C /* libui_shared.a in Frameworks */,
+				B3ABAF112BCCF93900D77B8C /* libxxhash.a in Frameworks */,
+				B3ABAF122BCCF93900D77B8C /* libz.a in Frameworks */,
+				B3ABAF132BCCF93900D77B8C /* libzstd.a in Frameworks */,
 				939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */,
 				B3A33CB229475F010090F1F3 /* libz.tbd in Frameworks */,
 			);
@@ -3970,37 +3830,39 @@
 		B3135B2B26E4C6850047F338 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				939EA1412A88F9DE00D45022 /* libAltKitPlay.a */,
-				939EA1432A88F9DE00D45022 /* libCAltKitPlay.a */,
-				939EA1452A88F9DE00D45022 /* libCodeGenPlay.a */,
-				B3135B4A26E4C6860047F338 /* CodeGenTestSuite.app */,
-				939EA1472A88F9DE00D45022 /* libFrameworkPlay.a */,
-				939EA1492A88F9DE00D45022 /* libFramework_AmazonPlay.a */,
-				939EA14B2A88F9DE00D45022 /* libFramework_HttpPlay.a */,
-				939EA14D2A88F9DE00D45022 /* libFramework_OpenAlPlay.a */,
-				939EA14F2A88F9DE00D45022 /* libFramework_OpenGlPlay.a */,
-				939EA1512A88F9DE00D45022 /* libFramework_VulkanPlay.a */,
+				B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */,
+				B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */,
+				B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */,
+				B3135B4A26E4C6860047F338 /* CodeGenTestSuite */,
+				B3ABAECE2BCCF87F00D77B8C /* libFramework.a */,
+				B3ABAED02BCCF87F00D77B8C /* FrameworkTests.app */,
+				B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */,
+				B3ABAED42BCCF87F00D77B8C /* libFramework_Http.a */,
+				B3ABAED62BCCF87F00D77B8C /* libFramework_OpenAl.a */,
+				B3ABAED82BCCF87F00D77B8C /* libFramework_OpenGl.a */,
+				B3ABAEDA2BCCF87F00D77B8C /* libFramework_Vulkan.a */,
 				B3135B5626E4C6860047F338 /* GsAreaTest */,
 				B3135B5826E4C6860047F338 /* McServTest */,
-				939EA1532A88F9DE00D45022 /* libNuanceurPlay.a */,
+				B3ABAEDC2BCCF87F00D77B8C /* NamcoSys147NANDTools.app */,
+				B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */,
 				B3135B5A26E4C6860047F338 /* Play */,
-				939EA1552A88F9DE00D45022 /* libPlayCorePlay.a */,
-				939EA1572A88F9DE00D45022 /* libSDWebImage_StaticPlay.a */,
+				B3ABAEE02BCCF87F00D77B8C /* libPlayCore.a */,
+				B3ABAEE22BCCF87F00D77B8C /* libSDWebImage_Static.a */,
 				B3135B6026E4C6860047F338 /* SpuTest */,
 				B3135B6226E4C6860047F338 /* VuTest */,
 				B3135B6426E4C6860047F338 /* autotest */,
 				B3A33CF62947695F0090F1F3 /* chdr-benchmark */,
-				939EA1592A88F9DE00D45022 /* libchdr-staticPlay.a */,
-				939EA15B2A88F9DE00D45022 /* libgsh_openglPlay.a */,
-				939EA15D2A88F9DE00D45022 /* libgsh_vulkanPlay.a */,
-				939EA15F2A88F9DE00D45022 /* libiCade_StaticPlay.a */,
-				939EA1612A88F9DE00D45022 /* libzstdPlay.a */,
-				939EA1632A88F9DE00D45022 /* liblibzstd_zlibwrapper_staticPlay.a */,
-				939EA1652A88F9DE00D45022 /* liblzmaPlay.a */,
-				939EA1672A88F9DE00D45022 /* libsh_openalPlay.a */,
-				939EA1692A88F9DE00D45022 /* libui_sharedPlay.a */,
-				939EA16B2A88F9DE00D45022 /* libxxhashPlay.a */,
-				939EA16D2A88F9DE00D45022 /* libzPlay.a */,
+				B3ABAEE42BCCF87F00D77B8C /* libchdr-static.a */,
+				B3ABAEE62BCCF87F00D77B8C /* libgsh_opengl.a */,
+				B3ABAEE82BCCF87F00D77B8C /* libgsh_vulkan.a */,
+				B3ABAEEA2BCCF87F00D77B8C /* libiCade_Static.a */,
+				B3ABAEEC2BCCF87F00D77B8C /* libzstd.a */,
+				B3ABAEEE2BCCF87F00D77B8C /* liblibzstd_zlibwrapper_static.a */,
+				B3ABAEF02BCCF87F00D77B8C /* liblzma.a */,
+				B3ABAEF22BCCF87F00D77B8C /* libsh_openal.a */,
+				B3ABAEF42BCCF87F00D77B8C /* libui_shared.a */,
+				B3ABAEF62BCCF87F00D77B8C /* libxxhash.a */,
+				B3ABAEF82BCCF87F00D77B8C /* libz.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4141,29 +4003,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				939EA1A22A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1A42A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1A62A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1AA2A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1AC2A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1AE2A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1B02A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1B22A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1B42A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1BA2A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1BE2A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1C02A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1CA2A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1CC2A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1CE2A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1D02A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1D42A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1D62A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1D82A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1DC2A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1DE2A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1E22A88FB4000D45022 /* PBXTargetDependency */,
-				939EA1E42A88FB4000D45022 /* PBXTargetDependency */,
+				B3ABAEFC2BCCF91B00D77B8C /* PBXTargetDependency */,
 				934D2E1B294B4D8800BDEBA5 /* PBXTargetDependency */,
 			);
 			name = play;
@@ -4244,170 +4084,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		939EA1412A88F9DE00D45022 /* libAltKitPlay.a */ = {
+		B3135B4A26E4C6860047F338 /* CodeGenTestSuite */ = {
 			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libAltKitPlay.a;
-			remoteRef = 939EA1402A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1432A88F9DE00D45022 /* libCAltKitPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libCAltKitPlay.a;
-			remoteRef = 939EA1422A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1452A88F9DE00D45022 /* libCodeGenPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libCodeGenPlay.a;
-			remoteRef = 939EA1442A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1472A88F9DE00D45022 /* libFrameworkPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libFrameworkPlay.a;
-			remoteRef = 939EA1462A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1492A88F9DE00D45022 /* libFramework_AmazonPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libFramework_AmazonPlay.a;
-			remoteRef = 939EA1482A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA14B2A88F9DE00D45022 /* libFramework_HttpPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libFramework_HttpPlay.a;
-			remoteRef = 939EA14A2A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA14D2A88F9DE00D45022 /* libFramework_OpenAlPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libFramework_OpenAlPlay.a;
-			remoteRef = 939EA14C2A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA14F2A88F9DE00D45022 /* libFramework_OpenGlPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libFramework_OpenGlPlay.a;
-			remoteRef = 939EA14E2A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1512A88F9DE00D45022 /* libFramework_VulkanPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libFramework_VulkanPlay.a;
-			remoteRef = 939EA1502A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1532A88F9DE00D45022 /* libNuanceurPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libNuanceurPlay.a;
-			remoteRef = 939EA1522A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1552A88F9DE00D45022 /* libPlayCorePlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libPlayCorePlay.a;
-			remoteRef = 939EA1542A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1572A88F9DE00D45022 /* libSDWebImage_StaticPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSDWebImage_StaticPlay.a;
-			remoteRef = 939EA1562A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1592A88F9DE00D45022 /* libchdr-staticPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libchdr-staticPlay.a";
-			remoteRef = 939EA1582A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA15B2A88F9DE00D45022 /* libgsh_openglPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libgsh_openglPlay.a;
-			remoteRef = 939EA15A2A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA15D2A88F9DE00D45022 /* libgsh_vulkanPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libgsh_vulkanPlay.a;
-			remoteRef = 939EA15C2A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA15F2A88F9DE00D45022 /* libiCade_StaticPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libiCade_StaticPlay.a;
-			remoteRef = 939EA15E2A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1612A88F9DE00D45022 /* libzstdPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libzstdPlay.a;
-			remoteRef = 939EA1602A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1632A88F9DE00D45022 /* liblibzstd_zlibwrapper_staticPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = liblibzstd_zlibwrapper_staticPlay.a;
-			remoteRef = 939EA1622A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1652A88F9DE00D45022 /* liblzmaPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = liblzmaPlay.a;
-			remoteRef = 939EA1642A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1672A88F9DE00D45022 /* libsh_openalPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libsh_openalPlay.a;
-			remoteRef = 939EA1662A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA1692A88F9DE00D45022 /* libui_sharedPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libui_sharedPlay.a;
-			remoteRef = 939EA1682A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA16B2A88F9DE00D45022 /* libxxhashPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libxxhashPlay.a;
-			remoteRef = 939EA16A2A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		939EA16D2A88F9DE00D45022 /* libzPlay.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libzPlay.a;
-			remoteRef = 939EA16C2A88F9DE00D45022 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B4A26E4C6860047F338 /* CodeGenTestSuite.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
+			fileType = "compiled.mach-o.executable";
+			name = CodeGenTestSuite;
 			path = CodeGenTestSuite.app;
 			remoteRef = B3135B4926E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -4466,6 +4146,181 @@
 			name = "chdr-benchmark";
 			path = "chdr-benchmark.app";
 			remoteRef = B3A33CF52947695F0090F1F3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libAltKit.a;
+			remoteRef = B3ABAEC72BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCAltKit.a;
+			remoteRef = B3ABAEC92BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCodeGen.a;
+			remoteRef = B3ABAECB2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAECE2BCCF87F00D77B8C /* libFramework.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFramework.a;
+			remoteRef = B3ABAECD2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAED02BCCF87F00D77B8C /* FrameworkTests.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = FrameworkTests.app;
+			remoteRef = B3ABAECF2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFramework_Amazon.a;
+			remoteRef = B3ABAED12BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAED42BCCF87F00D77B8C /* libFramework_Http.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFramework_Http.a;
+			remoteRef = B3ABAED32BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAED62BCCF87F00D77B8C /* libFramework_OpenAl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFramework_OpenAl.a;
+			remoteRef = B3ABAED52BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAED82BCCF87F00D77B8C /* libFramework_OpenGl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFramework_OpenGl.a;
+			remoteRef = B3ABAED72BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEDA2BCCF87F00D77B8C /* libFramework_Vulkan.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libFramework_Vulkan.a;
+			remoteRef = B3ABAED92BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEDC2BCCF87F00D77B8C /* NamcoSys147NANDTools.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = NamcoSys147NANDTools.app;
+			remoteRef = B3ABAEDB2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libNuanceur.a;
+			remoteRef = B3ABAEDD2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEE02BCCF87F00D77B8C /* libPlayCore.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libPlayCore.a;
+			remoteRef = B3ABAEDF2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEE22BCCF87F00D77B8C /* libSDWebImage_Static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libSDWebImage_Static.a;
+			remoteRef = B3ABAEE12BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEE42BCCF87F00D77B8C /* libchdr-static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libchdr-static.a";
+			remoteRef = B3ABAEE32BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEE62BCCF87F00D77B8C /* libgsh_opengl.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libgsh_opengl.a;
+			remoteRef = B3ABAEE52BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEE82BCCF87F00D77B8C /* libgsh_vulkan.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libgsh_vulkan.a;
+			remoteRef = B3ABAEE72BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEEA2BCCF87F00D77B8C /* libiCade_Static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libiCade_Static.a;
+			remoteRef = B3ABAEE92BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEEC2BCCF87F00D77B8C /* libzstd.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libzstd.a;
+			remoteRef = B3ABAEEB2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEEE2BCCF87F00D77B8C /* liblibzstd_zlibwrapper_static.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblibzstd_zlibwrapper_static.a;
+			remoteRef = B3ABAEED2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEF02BCCF87F00D77B8C /* liblzma.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = liblzma.a;
+			remoteRef = B3ABAEEF2BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEF22BCCF87F00D77B8C /* libsh_openal.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libsh_openal.a;
+			remoteRef = B3ABAEF12BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEF42BCCF87F00D77B8C /* libui_shared.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libui_shared.a;
+			remoteRef = B3ABAEF32BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEF62BCCF87F00D77B8C /* libxxhash.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libxxhash.a;
+			remoteRef = B3ABAEF52BCCF87F00D77B8C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		B3ABAEF82BCCF87F00D77B8C /* libz.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libz.a;
+			remoteRef = B3ABAEF72BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -4563,120 +4418,10 @@
 			target = 934D2DFF294B4D4600BDEBA5 /* PlayLibAdjustments */;
 			targetProxy = 934D2E1A294B4D8800BDEBA5 /* PBXContainerItemProxy */;
 		};
-		939EA1A22A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = AltKitPlay;
-			targetProxy = 939EA1A12A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1A42A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CAltKitPlay;
-			targetProxy = 939EA1A32A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1A62A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = CodeGenPlay;
-			targetProxy = 939EA1A52A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1AA2A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = FrameworkPlay;
-			targetProxy = 939EA1A92A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1AC2A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Framework_AmazonPlay;
-			targetProxy = 939EA1AB2A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1AE2A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Framework_HttpPlay;
-			targetProxy = 939EA1AD2A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1B02A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Framework_OpenAlPlay;
-			targetProxy = 939EA1AF2A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1B22A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Framework_OpenGlPlay;
-			targetProxy = 939EA1B12A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1B42A88FB4000D45022 /* PBXTargetDependency */ = {
+		B3ABAEFC2BCCF91B00D77B8C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Framework_VulkanPlay;
-			targetProxy = 939EA1B32A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1BA2A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = NuanceurPlay;
-			targetProxy = 939EA1B92A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1BE2A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = PlayCorePlay;
-			targetProxy = 939EA1BD2A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1C02A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = SDWebImage_StaticPlay;
-			targetProxy = 939EA1BF2A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1CA2A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "chdr-staticPlay";
-			targetProxy = 939EA1C92A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1CC2A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = gsh_openglPlay;
-			targetProxy = 939EA1CB2A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1CE2A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = gsh_vulkanPlay;
-			targetProxy = 939EA1CD2A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1D02A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = iCade_StaticPlay;
-			targetProxy = 939EA1CF2A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1D42A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = libzstd_staticPlay;
-			targetProxy = 939EA1D32A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1D62A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = libzstd_zlibwrapper_staticPlay;
-			targetProxy = 939EA1D52A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1D82A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = lzmaPlay;
-			targetProxy = 939EA1D72A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1DC2A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = sh_openalPlay;
-			targetProxy = 939EA1DB2A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1DE2A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = ui_sharedPlay;
-			targetProxy = 939EA1DD2A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1E22A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = xxhashPlay;
-			targetProxy = 939EA1E12A88FB4000D45022 /* PBXContainerItemProxy */;
-		};
-		939EA1E42A88FB4000D45022 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = zlibPlay;
-			targetProxy = 939EA1E32A88FB4000D45022 /* PBXContainerItemProxy */;
+			targetProxy = B3ABAEFB2BCCF91B00D77B8C /* PBXContainerItemProxy */;
 		};
 		B3B2546C27842B7B00F97E55 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
