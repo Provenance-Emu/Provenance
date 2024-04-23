@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
         "state": {
           "branch": null,
-          "revision": "363ed23d19a931809ea834a7d722da830353806a",
-          "version": "3.8.2"
+          "revision": "4b8714a7fb84d42393314ce897127b3939885ec3",
+          "version": "3.8.5"
         }
       },
       {
@@ -51,7 +51,7 @@
         "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
         "state": {
           "branch": "master",
-          "revision": "a81b7367f2c46875f29577e03a60c39cdfad0c8d",
+          "revision": "57da4b1270cab7c2228919eabc0e4e1bf93e48ea",
           "version": null
         }
       },
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "7227d6a447821c28895daa099b6c7cd4c99d461b",
-          "version": "13.25.1"
+          "revision": "4d815c6e6883bfdcb67cf755d0f0f29a4b399ea7",
+          "version": "14.5.2"
         }
       },
       {
@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/realm/realm-swift.git",
         "state": {
           "branch": null,
-          "revision": "836cc4b8619886f979f8961c3f592a82b0741591",
-          "version": "10.45.3"
+          "revision": "a4d731076e6a52f4366d844c78369ac7c9c6b1c0",
+          "version": "10.49.2"
         }
       },
       {
@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
         "state": {
           "branch": null,
-          "revision": "9dcaa4b333db437b0fbfaf453fad29069044a8b4",
-          "version": "6.6.0"
+          "revision": "5949cbd3d4f3f97968bb40b6cd232f8315c6341c",
+          "version": "6.7.0"
         }
       },
       {
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
         "state": {
           "branch": null,
-          "revision": "7a2e3cd27de56f6d396e84f63beefd0267b55ccb",
-          "version": "0.14.1"
+          "revision": "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
+          "version": "0.15.3"
         }
       },
       {
@@ -120,11 +120,11 @@
       },
       {
         "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
-          "revision": "532d8b529501fb73a2455b179e0bbb6d49b652ed",
-          "version": "1.5.3"
+          "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
+          "version": "1.5.4"
         }
       },
       {
