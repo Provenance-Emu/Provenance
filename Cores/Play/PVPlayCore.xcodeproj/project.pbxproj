@@ -4086,64 +4086,56 @@
 /* Begin PBXReferenceProxy section */
 		B3135B4A26E4C6860047F338 /* CodeGenTestSuite */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = CodeGenTestSuite;
+			fileType = wrapper.application;
 			path = CodeGenTestSuite.app;
 			remoteRef = B3135B4926E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3135B5626E4C6860047F338 /* GsAreaTest */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = GsAreaTest;
+			fileType = wrapper.application;
 			path = GsAreaTest.app;
 			remoteRef = B3135B5526E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3135B5826E4C6860047F338 /* McServTest */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = McServTest;
+			fileType = wrapper.application;
 			path = McServTest.app;
 			remoteRef = B3135B5726E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3135B5A26E4C6860047F338 /* Play */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = Play;
+			fileType = wrapper.application;
 			path = Play.app;
 			remoteRef = B3135B5926E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3135B6026E4C6860047F338 /* SpuTest */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = SpuTest;
+			fileType = wrapper.application;
 			path = SpuTest.app;
 			remoteRef = B3135B5F26E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3135B6226E4C6860047F338 /* VuTest */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = VuTest;
+			fileType = wrapper.application;
 			path = VuTest.app;
 			remoteRef = B3135B6126E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3135B6426E4C6860047F338 /* autotest */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = autotest;
+			fileType = wrapper.application;
 			path = autotest.app;
 			remoteRef = B3135B6326E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3A33CF62947695F0090F1F3 /* chdr-benchmark */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			name = "chdr-benchmark";
+			fileType = wrapper.application;
 			path = "chdr-benchmark.app";
 			remoteRef = B3A33CF52947695F0090F1F3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
