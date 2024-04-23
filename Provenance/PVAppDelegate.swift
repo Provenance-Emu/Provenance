@@ -79,7 +79,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         window.tintColor = .provenanceBlue
         #endif
 
-        if #available(iOS 14, tvOS 14, macCatalyst 15.0, *),
+        if #available(iOS 14, tvOS 14, macCatalyst 15.0, visionOS 1.0, *),
            PVSettingsModel.shared.debugOptions.useSwiftUI {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
@@ -116,7 +116,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             
             self.gameLibraryViewController = gameLibraryViewController
         }
-        
+
         #if os(iOS)
         if PVSettingsModel.shared.debugOptions.autoJIT {
             DOLJitManager.shared().attemptToAcquireJitOnStartup()
