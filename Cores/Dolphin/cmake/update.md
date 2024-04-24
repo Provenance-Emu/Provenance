@@ -9,4 +9,5 @@ _How to update the generated xcode project after running update.sh_
    1. Platforms (mac, tvos, ios, visionos plus sims)
    2. Arches => Apple Default
    3. Build active arch only on for `Configuration` => `Debug`
-   4. Delete these settings from all the subtarget libs so they inherit from root
+   4. Delete these settings from all the subtarget libs so they inherit from
+      root
