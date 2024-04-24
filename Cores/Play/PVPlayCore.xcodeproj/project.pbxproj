@@ -3833,7 +3833,7 @@
 				B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */,
 				B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */,
 				B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */,
-				B3135B4A26E4C6860047F338 /* CodeGenTestSuite */,
+				B3135B4A26E4C6860047F338 /* CodeGenTestSuite.app */,
 				B3ABAECE2BCCF87F00D77B8C /* libFramework.a */,
 				B3ABAED02BCCF87F00D77B8C /* FrameworkTests.app */,
 				B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */,
@@ -3841,17 +3841,17 @@
 				B3ABAED62BCCF87F00D77B8C /* libFramework_OpenAl.a */,
 				B3ABAED82BCCF87F00D77B8C /* libFramework_OpenGl.a */,
 				B3ABAEDA2BCCF87F00D77B8C /* libFramework_Vulkan.a */,
-				B3135B5626E4C6860047F338 /* GsAreaTest */,
-				B3135B5826E4C6860047F338 /* McServTest */,
+				B3135B5626E4C6860047F338 /* GsAreaTest.app */,
+				B3135B5826E4C6860047F338 /* McServTest.app */,
 				B3ABAEDC2BCCF87F00D77B8C /* NamcoSys147NANDTools.app */,
 				B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */,
-				B3135B5A26E4C6860047F338 /* Play */,
+				B3135B5A26E4C6860047F338 /* Play.app */,
 				B3ABAEE02BCCF87F00D77B8C /* libPlayCore.a */,
 				B3ABAEE22BCCF87F00D77B8C /* libSDWebImage_Static.a */,
-				B3135B6026E4C6860047F338 /* SpuTest */,
-				B3135B6226E4C6860047F338 /* VuTest */,
-				B3135B6426E4C6860047F338 /* autotest */,
-				B3A33CF62947695F0090F1F3 /* chdr-benchmark */,
+				B3135B6026E4C6860047F338 /* SpuTest.app */,
+				B3135B6226E4C6860047F338 /* VuTest.app */,
+				B3135B6426E4C6860047F338 /* autotest.app */,
+				B3A33CF62947695F0090F1F3 /* chdr-benchmark.app */,
 				B3ABAEE42BCCF87F00D77B8C /* libchdr-static.a */,
 				B3ABAEE62BCCF87F00D77B8C /* libgsh_opengl.a */,
 				B3ABAEE82BCCF87F00D77B8C /* libgsh_vulkan.a */,
@@ -4084,56 +4084,56 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B3135B4A26E4C6860047F338 /* CodeGenTestSuite */ = {
+		B3135B4A26E4C6860047F338 /* CodeGenTestSuite.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = CodeGenTestSuite.app;
 			remoteRef = B3135B4926E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B5626E4C6860047F338 /* GsAreaTest */ = {
+		B3135B5626E4C6860047F338 /* GsAreaTest.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = GsAreaTest.app;
 			remoteRef = B3135B5526E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B5826E4C6860047F338 /* McServTest */ = {
+		B3135B5826E4C6860047F338 /* McServTest.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = McServTest.app;
 			remoteRef = B3135B5726E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B5A26E4C6860047F338 /* Play */ = {
+		B3135B5A26E4C6860047F338 /* Play.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = Play.app;
 			remoteRef = B3135B5926E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B6026E4C6860047F338 /* SpuTest */ = {
+		B3135B6026E4C6860047F338 /* SpuTest.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = SpuTest.app;
 			remoteRef = B3135B5F26E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B6226E4C6860047F338 /* VuTest */ = {
+		B3135B6226E4C6860047F338 /* VuTest.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = VuTest.app;
 			remoteRef = B3135B6126E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3135B6426E4C6860047F338 /* autotest */ = {
+		B3135B6426E4C6860047F338 /* autotest.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = autotest.app;
 			remoteRef = B3135B6326E4C6860047F338 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3A33CF62947695F0090F1F3 /* chdr-benchmark */ = {
+		B3A33CF62947695F0090F1F3 /* chdr-benchmark.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = "chdr-benchmark.app";
