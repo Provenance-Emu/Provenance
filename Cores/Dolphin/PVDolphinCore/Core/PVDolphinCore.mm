@@ -624,7 +624,7 @@ void Host_Message(HostMessageID id)
 	if (Core::IsRunning())
 	  Core::QueueHostJob(&Core::Stop);
   } else if (id == HostMessageID::WMUserCreate)
-      NSLog(@"User Create Called\n", (int)id);
+      NSLog(@"User Create Called %i\n", (int)id);
 }
 
 void Host_UpdateTitle(const std::string& title)
