@@ -456,9 +456,15 @@ final class PVSettingsViewController: QuickTableViewController {
                 }
             }
         )
+
+        #if APP_STORE
+        let patreonText = "Support us on Patreon."
+        #else
+        let patreonText = "Support us on Patreon and receive special features and early access builds."
+        #endif
         let patreonRow = NavigationRow(
             text: NSLocalizedString("Patreon", comment: ""),
-            detailText: .subtitle("Support us on Patreon and receive special features and early access builds."),
+            detailText: .subtitle(patreonText),
             icon: .named("patreon"),
             customization: { cell, row in
                 guard let detailTextLabel = cell.detailTextLabel else {  return }
