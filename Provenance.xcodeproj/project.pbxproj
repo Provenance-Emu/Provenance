@@ -1372,7 +1372,6 @@
 		B394CD022BDEE53A006B63E8 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29527BC7E610070E222 /* SideMenuView.swift */; };
 		B394CD032BDEE53A006B63E8 /* PVRootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA28727BC7E610070E222 /* PVRootViewController.swift */; };
 		B394CD042BDEE53A006B63E8 /* GCDWebServerResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 378F49E91B63D7CD0065FA39 /* GCDWebServerResponse.m */; };
-		B394CD052BDEE53A006B63E8 /* PVRetroArchControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 934A09CB2AB3FC80003FAFCE /* PVRetroArchControllerViewController.swift */; };
 		B394CD062BDEE53A006B63E8 /* PVEmulatorViewController+PauseMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */; };
 		B394CD072BDEE53A006B63E8 /* AppearanceScope.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C18207ED7030040709A /* AppearanceScope.swift */; };
 		B394CD082BDEE53A006B63E8 /* TapActionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C04276B470B00D85327 /* TapActionRow.swift */; };
@@ -1428,12 +1427,8 @@
 		B394CD442BDEE53A006B63E8 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD452BDEE53A006B63E8 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD462BDEE53A006B63E8 /* PVSNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B394CD472BDEE53A006B63E8 /* PVPotator.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32296DD2878385E00585AD8 /* PVPotator.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD482BDEE53A006B63E8 /* PVPicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE27293F34B30050BDB6 /* PVPicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD492BDEE53A006B63E8 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B394CD4A2BDEE53A006B63E8 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B394CD4C2BDEE53A006B63E8 /* PVGearcoleco.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B394CD4D2BDEE53A006B63E8 /* PVfMSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE66E293F23F70010B746 /* PVfMSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD4E2BDEE53A006B63E8 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD502BDEE53A006B63E8 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD512BDEE53A006B63E8 /* PVCrabEmu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F103276B6BBD003AE510 /* PVCrabEmu.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2891,12 +2886,8 @@
 				B394CD442BDEE53A006B63E8 /* PVFCEU.framework in Embed Frameworks */,
 				B394CD452BDEE53A006B63E8 /* PVMednafen.framework in Embed Frameworks */,
 				B394CD462BDEE53A006B63E8 /* PVSNES.framework in Embed Frameworks */,
-				B394CD472BDEE53A006B63E8 /* PVPotator.framework in Embed Frameworks */,
 				B394CD482BDEE53A006B63E8 /* PVPicoDrive.framework in Embed Frameworks */,
 				B394CD492BDEE53A006B63E8 /* PVAtari800.framework in Embed Frameworks */,
-				B394CD4A2BDEE53A006B63E8 /* PVVecX.framework in Embed Frameworks */,
-				B394CD4C2BDEE53A006B63E8 /* PVGearcoleco.framework in Embed Frameworks */,
-				B394CD4D2BDEE53A006B63E8 /* PVfMSX.framework in Embed Frameworks */,
 				B394CD4E2BDEE53A006B63E8 /* PVSupport.framework in Embed Frameworks */,
 				B394CD502BDEE53A006B63E8 /* PVLibrary.framework in Embed Frameworks */,
 				B394CD512BDEE53A006B63E8 /* PVCrabEmu.framework in Embed Frameworks */,
@@ -3659,7 +3650,7 @@
 		B39313832870FCFC00372EBB /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B394C98920609E180014A65D /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		B394CDDF2BDEE53A006B63E8 /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B394CDE02BDEE53B006B63E8 /* Provenance-AppStore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Provenance-AppStore-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Provenance-AppStore-Info.plist"; sourceTree = "<absolute>"; };
+		B394CDE22BDF0BCE006B63E8 /* Provenance-AppStore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-AppStore-Info.plist"; sourceTree = "<group>"; };
 		B3976926285A020800558958 /* PVDOSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDOSControllerViewController.swift; sourceTree = "<group>"; };
 		B397692C285A089200558958 /* PVDosBox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDosBox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3977533219AB53F00E16AD5 /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Provenance.entitlements; path = Provenance/Provenance.entitlements; sourceTree = SOURCE_ROOT; };
@@ -4788,7 +4779,7 @@
 		1A3D409E17B2DCE4004DFFFC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				B394CDE02BDEE53B006B63E8 /* Provenance-AppStore-Info.plist */,
+				B394CDE22BDF0BCE006B63E8 /* Provenance-AppStore-Info.plist */,
 				1A3D409F17B2DCE4004DFFFC /* Provenance-Info.plist */,
 				1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */,
 				1A3D40A517B2DCE4004DFFFC /* Provenance-Prefix.pch */,
@@ -6266,7 +6257,6 @@
 				B394CD3B2BDEE53A006B63E8 /* Embed Frameworks */,
 				B394CD6A2BDEE53A006B63E8 /* Embed App Extensions */,
 				B394CD6C2BDEE53A006B63E8 /* Frameworks */,
-				B394CDB52BDEE53A006B63E8 /* Code Sign libretro.h Cores */,
 				B394CDB62BDEE53A006B63E8 /* Resources */,
 				B394CDDA2BDEE53A006B63E8 /* Script: Set Build Number */,
 			);
@@ -7416,24 +7406,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\"\n";
-		};
-		B394CDB52BDEE53A006B63E8 /* Code Sign libretro.h Cores */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Code Sign libretro.h Cores";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "sh \"${SRCROOT}\"/CoresRetro/RetroArch/scripts/code-sign-cores.sh\n";
 		};
 		B394CDDA2BDEE53A006B63E8 /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -8705,7 +8677,6 @@
 				B394CD022BDEE53A006B63E8 /* SideMenuView.swift in Sources */,
 				B394CD032BDEE53A006B63E8 /* PVRootViewController.swift in Sources */,
 				B394CD042BDEE53A006B63E8 /* GCDWebServerResponse.m in Sources */,
-				B394CD052BDEE53A006B63E8 /* PVRetroArchControllerViewController.swift in Sources */,
 				B394CD062BDEE53A006B63E8 /* PVEmulatorViewController+PauseMenu.swift in Sources */,
 				B394CD072BDEE53A006B63E8 /* AppearanceScope.swift in Sources */,
 				B394CD082BDEE53A006B63E8 /* TapActionRow.swift in Sources */,
@@ -12263,7 +12234,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "Provenance-AppStore-Info.plist";
+				INFOPLIST_FILE = "Provenance/Provenance-AppStore-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -12334,7 +12305,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "Provenance-AppStore-Info.plist";
+				INFOPLIST_FILE = "Provenance/Provenance-AppStore-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
@@ -12406,7 +12377,7 @@
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					/usr/include/libxml2,
 				);
-				INFOPLIST_FILE = "Provenance-AppStore-Info.plist";
+				INFOPLIST_FILE = "Provenance/Provenance-AppStore-Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.arcade-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
