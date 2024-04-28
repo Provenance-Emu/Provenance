@@ -328,54 +328,65 @@ final class PVSettingsViewController: QuickTableViewController {
          // Beta options
         #if !os(tvOS)
 
-        let betaRows: [TableRow] = [
+        let appStoreRows: [TableRow] = [
 			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
-								detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
+								detailText: .subtitle("Use newer Metaltm™ backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
                                 key: \PVSettingsModel.debugOptions.useMetal, icon: .sfSymbol("m.square.fill")),
-            
-            PVSettingsSwitchRow(text: NSLocalizedString("Auto JIT", comment: "Auto JIT"),
-                                detailText: .subtitle("Attempt to automatically enable Just In Time OS support. Requires ZeroConf VPN to be active. See JITStreamer.com for more info."),
-                                key: \PVSettingsModel.debugOptions.autoJIT, icon: .sfSymbol("figure.run")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: \PVSettingsModel.debugOptions.iCloudSync, icon: .sfSymbol("icloud")),
 
-            PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
-                                detailText: .subtitle("Cores that are in development"),
-                                key: \PVSettingsModel.debugOptions.unsupportedCores, icon: .sfSymbol("testtube.2")),
-
-            PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
-                                detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet. iOS 14.0+ recommended."),
-                                key: \PVSettingsModel.debugOptions.useSwiftUI, icon: .sfSymbol("swift")) { cell, row in
-//                                    let swiftUIDetailText: DetailText
-//                                    if #available(iOS 14, tvOS 14, *) {
-//                                        row.
-//                                    } else {
-//                                        swiftUIDetailText = .subtitle("Only available in iOS/tvOS 14+")
-//                                    }
-//
-//                                    var swiftUI =
-//
-//                                    if #available(iOS 14, tvOS 14, *) {
-//                                        swiftUI.isSelectable = true
-//                                    } else {
-//                                        swiftUI.isSelectable = false
-//                                        swiftUI.switchValue = false
-//                                    }
-                                },
-
             PVSettingsSwitchRow(text: NSLocalizedString("Movable Buttons", comment: "Bool option to allow user to move on screen controller buttons"),
-								detailText: .subtitle("Allow user to move on screen controller buttons. Tap with 2-fingers 4 times to toggle."),
-								key: \PVSettingsModel.debugOptions.movableButtons, icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right")),
+                                detailText: .subtitle("Allow user to move on screen controller buttons. Tap with 2-fingers 4 times to toggle."),
+                                key: \PVSettingsModel.debugOptions.movableButtons, icon: .sfSymbol("arrow.up.and.down.and.arrow.left.and.right")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems. Layout is strange on some devices while in beta."),
                                 key: \PVSettingsModel.debugOptions.onscreenJoypad, icon: .sfSymbol("l.joystick.tilt.left.fill")),
+
             PVSettingsSwitchRow(text: NSLocalizedString("On screen Joypad with keyboard", comment: ""),
                                 detailText: .subtitle("Show a touch Joystick pad on supported systems when the P1 controller is 'Keyboard'. Useful on iPad OS for systems with an analog joystick (N64, PSX, etc.)"),
                                 key: \PVSettingsModel.debugOptions.onscreenJoypadWithKeyboard, icon: .sfSymbol("keyboard.badge.eye"))
-        ]
+            ]
+
+            #if !APP_STORE
+
+            let nonAppStoreRows: [TableRow] = [
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
+                                detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet. iOS 14.0+ recommended."),
+                                key: \PVSettingsModel.debugOptions.useSwiftUI, icon: .sfSymbol("swift")) { cell, row in
+                                    //                                    let swiftUIDetailText: DetailText
+                                    //                                    if #available(iOS 14, tvOS 14, *) {
+                                    //                                        row.
+                                    //                                    } else {
+                                    //                                        swiftUIDetailText = .subtitle("Only available in iOS/tvOS 14+")
+                                    //                                    }
+                                    //
+                                    //                                    var swiftUI =
+                                    //
+                                    //                                    if #available(iOS 14, tvOS 14, *) {
+                                    //                                        swiftUI.isSelectable = true
+                                    //                                    } else {
+                                    //                                        swiftUI.isSelectable = false
+                                    //                                        swiftUI.switchValue = false
+                                    //                                    }
+                                },
+
+            PVSettingsSwitchRow(text: NSLocalizedString("Auto JIT", comment: "Auto JIT"),
+                                detailText: .subtitle("Attempt to automatically enable Just In Time OS support. Requires ZeroConf VPN to be active. See JITStreamer.com for more info."),
+                                key: \PVSettingsModel.debugOptions.autoJIT, icon: .sfSymbol("figure.run")),
+
+            PVSettingsSwitchRow(text: NSLocalizedString("Unsupported Cores", comment: "Unsupported Cores"),
+                                detailText: .subtitle("Cores that are in development"),
+                                key: \PVSettingsModel.debugOptions.unsupportedCores, icon: .sfSymbol("testtube.2"))
+            ]
+
+
+            let betaRows: [TableRow] = appStoreRows + nonAppStoreRows
+            #else // App store builds
+            let betaRows: [TableRow] = appStoreRows
+            #endif
         #else // tvOS
          let betaRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
@@ -394,9 +405,9 @@ final class PVSettingsViewController: QuickTableViewController {
         #endif
 
         let betaSection = Section(
-            title: NSLocalizedString("Beta Features", comment: ""),
+            title: NSLocalizedString("Advanced Features", comment: ""),
             rows: betaRows,
-            footer: "Untested, unsupported, work in progress features. Use at your own risk. May result in crashes and data loss."
+            footer: "Additional features for power users."
         )
 
         // - Social links
