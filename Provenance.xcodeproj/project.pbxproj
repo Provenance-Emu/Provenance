@@ -6252,7 +6252,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B394CDDB2BDEE53A006B63E8 /* Build configuration list for PBXNativeTarget "Provenance (AppStore)" */;
 			buildPhases = (
-				B394CC662BDEE53A006B63E8 /* Script: Get RetroArch Modules */,
 				B394CC672BDEE53A006B63E8 /* Sources */,
 				B394CD3B2BDEE53A006B63E8 /* Embed Frameworks */,
 				B394CD6A2BDEE53A006B63E8 /* Embed App Extensions */,
@@ -7386,26 +7385,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "FILE=\"${SRCROOT}/Cores/TGBDual/tgbdual-emulator/gb_core/rom.cpp\"\nif [ -e \"${FILE}\" ]\nthen\n\techo \"Submodules OK!\"\nelse\n    #echo \"error: Submodules not cloned. Run 'git submodule update --init --recursive'\"\n    echo \"warning: Cloning Submodules\"\n    git submodule update --init --recursive\nfi\n";
-		};
-		B394CC662BDEE53A006B63E8 /* Script: Get RetroArch Modules */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Script: Get RetroArch Modules";
-			outputFileListPaths = (
-				"$(SRCROOT)/CoresRetro/RetroArch/scripts/output_modules.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/bin/sh \"${SRCROOT}/CoresRetro/RetroArch/scripts/get-modules.sh\"\n";
 		};
 		B394CDDA2BDEE53A006B63E8 /* Script: Set Build Number */ = {
 			isa = PBXShellScriptBuildPhase;
