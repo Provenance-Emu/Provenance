@@ -17,7 +17,11 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
         let systems = RomDatabase.sharedInstance.all(PVSystem.self).sorted(byKeyPath: "identifier")
         let systemsModels = systems.map { SystemOverviewViewModel(withSystem: $0) }
 
-        tableContents = systemsModels.map { systemModel in
+        tableContents = systemsModels
+            .filter {
+                !$0.cores.isEmpty
+            }
+            .map { systemModel in
             var rows = [Row & RowStyle]()
             rows.append(
                 NavigationRow(text: "Games", detailText: .value2("\(systemModel.gameCount)"))
@@ -25,12 +29,10 @@ final class SystemsSettingsTableViewController: QuickTableViewController {
 
             // CORES
             //			if systemModel.cores.count < 2 {
-            if !systemModel.cores.isEmpty {
-                let coreNames = systemModel.cores.map { $0.project.name }.joined(separator: ",")
-                rows.append(
-                    NavigationRow(text: "Cores", detailText: .value2(coreNames))
-                )
-            }
+            let coreNames = systemModel.cores.map { $0.project.name }.joined(separator: ",")
+            rows.append(
+                NavigationRow(text: "Cores", detailText: .value2(coreNames))
+            )
             //			} else {
             //				let preferredCore = systemModel.preferredCore
             //				rows.append(
