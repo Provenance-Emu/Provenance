@@ -7,21 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9308994B2950752400E145C8 /* libminizipDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF12949E94400CC8234 /* libminizipDolphin.a */; };
-		930899DA29508B7100E145C8 /* libcpp-optparseDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACD2949E94400CC8234 /* libcpp-optparseDolphin.a */; };
-		930899DB29508B7100E145C8 /* libed25519Dolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD32949E94400CC8234 /* libed25519Dolphin.a */; };
-		930899E029508B7100E145C8 /* libpugixmlDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF52949E94400CC8234 /* libpugixmlDolphin.a */; };
 		932931A0297EC23600464B9D /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9329319F297EC23300464B9D /* Security.framework */; };
 		932931A2297EC31900464B9D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932931A1297EC31800464B9D /* SystemConfiguration.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		932931A5297EC81700464B9D /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 932931A3297EC81600464B9D /* FastmemUtil.m */; };
 		932931A6297EC81700464B9D /* FastmemUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 932931A4297EC81600464B9D /* FastmemUtil.h */; };
 		932931BE297ED02900464B9D /* Config in Resources */ = {isa = PBXBuildFile; fileRef = 932931BD297ED02900464B9D /* Config */; };
 		9333C82729895CEF0042CD99 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9333C82629895CEF0042CD99 /* PVSupport.framework */; };
-		933CC5E42951BF680070CF1D /* libpngDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5E12951BB8A0070CF1D /* libpngDolphin.a */; };
 		933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5FE2951FB9F0070CF1D /* GLKit.framework */; platformFilters = (ios, tvos, watchos, ); };
 		933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */; };
 		933CC6032952034E0070CF1D /* PVDolphinCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC6022952034E0070CF1D /* PVDolphinCore.swift */; };
-		933CFC26295335B600217F45 /* libvideovulkanDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB072949E94400CC8234 /* libvideovulkanDolphin.a */; };
 		933CFC362953605600217F45 /* DolphinOGLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CFC352953605600217F45 /* DolphinOGLViewController.swift */; };
 		93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93599B4C2955FD520049DAC8 /* QuartzCore.framework */; };
 		9366AC80295976D000162286 /* PVDolphinCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC5E295976D000162286 /* PVDolphinCore+Cheats.mm */; };
@@ -29,10 +23,8 @@
 		9366AC842959C6D900162286 /* Cheats_ActionReplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC822959C6D900162286 /* Cheats_ActionReplay.mm */; };
 		9366AC862959CD4A00162286 /* Sys in Resources */ = {isa = PBXBuildFile; fileRef = 9366AC852959CD4A00162286 /* Sys */; };
 		93713380298BEE0F0050DB6E /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 9371337F298BEE0E0050DB6E /* PVDebug.c */; };
-		93829B18298980F50061038E /* libdolphin-commonDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAC92949E94400CC8234 /* libdolphin-commonDolphin.a */; };
 		939AAF6C2A791EA8007709E5 /* libdolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdolphin.a */; };
-		93C33A952952192200CC86C5 /* libdolphin-coreDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACB2949E94400CC8234 /* libdolphin-coreDolphin.a */; };
-		93CB27CC297CE59B006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27CB297CE59B006A940B /* libMoltenVK_Dolphin.dylib */; };
+		93CB27CC297CE59B006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27CB297CE59B006A940B /* libMoltenVK_Dolphin.dylib */; platformFilter = ios; };
 		93CB27D0297CE5DF006A940B /* VulkanLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CB27CF297CE5DF006A940B /* VulkanLoader.cpp */; };
 		B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDolphinCore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVDolphinCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDolphinCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -45,43 +37,20 @@
 		B3135BA726E4CD5A0047F338 /* PVDolphinCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVDolphinCore+Video.mm */; };
 		B3135BA926E4CD600047F338 /* PVDolphinCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVDolphinCore+Audio.mm */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
+		B345CF4E2BDEB59800ABB18F /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B316ECDB26E5C6920077FE46 /* MoltenVK.xcframework */; };
+		B345CF4F2BDEBAFA00ABB18F /* libfmtd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B345CF3A2BDEAFBE00ABB18F /* libfmtd.a */; };
 		B34A8EF6295848010000D110 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB452949F41D00CC8234 /* libbz2.tbd */; };
 		B34A8EF7295848360000D110 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B39F67CC295D8B1F0048CEAD /* libfmtdDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD72949E94400CC8234 /* libfmtdDolphin.a */; };
 		B3A3204527209EE100F338F6 /* PVDolphinCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVDolphinCore+Controls.mm */; };
-		B3AAFB232949EA9E00CC8234 /* libvideocommonDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAFF2949E94400CC8234 /* libvideocommonDolphin.a */; };
-		B3AAFB242949EB8100CC8234 /* libcurlDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACF2949E94400CC8234 /* libcurlDolphin.a */; };
-		B3AAFB252949EB8100CC8234 /* libenetDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD52949E94400CC8234 /* libenetDolphin.a */; };
-		B3AAFB272949EB8100CC8234 /* libiconvDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFADF2949E94400CC8234 /* libiconvDolphin.a */; };
-		B3AAFB282949EB8100CC8234 /* libmbedcryptoDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAEB2949E94400CC8234 /* libmbedcryptoDolphin.a */; };
-		B3AAFB292949EB8100CC8234 /* libmbedtlsDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAED2949E94400CC8234 /* libmbedtlsDolphin.a */; };
-		B3AAFB2A2949EB8100CC8234 /* libmbedx509Dolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAEF2949E94400CC8234 /* libmbedx509Dolphin.a */; };
-		B3AAFB2E2949EBAE00CC8234 /* libaudiocommonDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAC72949E94400CC8234 /* libaudiocommonDolphin.a */; };
-		B3AAFB2F2949EBD000CC8234 /* libvideonullDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB012949E94400CC8234 /* libvideonullDolphin.a */; };
-		B3AAFB302949EBD000CC8234 /* libvideooglDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB032949E94400CC8234 /* libvideooglDolphin.a */; };
-		B3AAFB312949EBD000CC8234 /* libvideosoftwareDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB052949E94400CC8234 /* libvideosoftwareDolphin.a */; };
 		B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB322949F26800CC8234 /* CoreGraphics.framework */; };
-		B3AAFB342949F28700CC8234 /* libSoundTouchDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFABF2949E94400CC8234 /* libSoundTouchDolphin.a */; };
-		B3AAFB352949F2B300CC8234 /* libinputcommonDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE32949E94400CC8234 /* libinputcommonDolphin.a */; };
 		B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB362949F2D500CC8234 /* CoreHaptics.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB382949F2DC00CC8234 /* GameController.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
-		B3AAFB3B2949F30E00CC8234 /* libdiscioDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD12949E94400CC8234 /* libdiscioDolphin.a */; };
-		B3AAFB3C2949F31300CC8234 /* libimguiDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE12949E94400CC8234 /* libimguiDolphin.a */; };
-		B3AAFB3D2949F32700CC8234 /* liblzma-dolphinDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE52949E94400CC8234 /* liblzma-dolphinDolphin.a */; };
-		B3AAFB3E2949F34400CC8234 /* libsfml-networkDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF72949E94400CC8234 /* libsfml-networkDolphin.a */; };
-		B3AAFB3F2949F35900CC8234 /* libxxhashDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB092949E94400CC8234 /* libxxhashDolphin.a */; };
-		B3AAFB412949F38F00CC8234 /* libzstdDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB0B2949E94400CC8234 /* libzstdDolphin.a */; };
 		B3AAFB462949F41D00CC8234 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB442949F41C00CC8234 /* libz.tbd */; };
 		B3AAFB472949F41D00CC8234 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB452949F41D00CC8234 /* libbz2.tbd */; };
-		B3AAFB482949F45B00CC8234 /* libuicommonDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAFB2949E94400CC8234 /* libuicommonDolphin.a */; };
-		B3AAFB492949F52E00CC8234 /* libsfml-systemDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAF92949E94400CC8234 /* libsfml-systemDolphin.a */; };
-		B3AAFB4B2949F58100CC8234 /* libFreeSurroundDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAB12949E94400CC8234 /* libFreeSurroundDolphin.a */; };
-		B3AAFB4C2949F59800CC8234 /* libglslangDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAD92949E94400CC8234 /* libglslangDolphin.a */; };
-		B3AAFB4D2949F5BB00CC8234 /* liblzo2Dolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAE72949E94400CC8234 /* liblzo2Dolphin.a */; };
 		B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB502949F72800CC8234 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
 		B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB522949F73C00CC8234 /* MetalKit.framework */; };
 		B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB532949F73C00CC8234 /* Metal.framework */; };
@@ -94,224 +63,196 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6D06739B76F94BA58C0C241A;
+			remoteGlobalIDString = 418CB96B93374F6B944CDD73;
 			remoteInfo = minizip;
-		};
-		93089941295071C200E145C8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = AD9FB006DD914823A5E1C675;
-			remoteInfo = fmt;
 		};
 		9308999229508AD400E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 95D817F4A2E64387A8B63962;
+			remoteGlobalIDString = 69ACA1EC6E494BEC88F806DC;
 			remoteInfo = FreeSurround;
 		};
 		9308999429508AD400E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5F759DF1A3D34CF0817A5056;
+			remoteGlobalIDString = 27A9B85A37864A44BFD6CD0D;
 			remoteInfo = SoundTouch;
 		};
 		9308999629508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5F9E26EB6412457CAAEF2862;
+			remoteGlobalIDString = 4C83CE0BF7504563BD937E87;
 			remoteInfo = audiocommon;
 		};
 		9308999A29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = D9135B9C9BB8460684E1A3BD;
+			remoteGlobalIDString = 820145E0C84A4E7CAE9CF3BF;
 			remoteInfo = core;
 		};
 		9308999C29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C23503A6E1A84878BB8365ED;
+			remoteGlobalIDString = 2166791DA6CF4CF0A5FC83A4;
 			remoteInfo = "cpp-optparse";
 		};
 		9308999E29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6BE1452B379441EA91E622A5;
+			remoteGlobalIDString = BB8F1093C8B7492EAC089399;
 			remoteInfo = curl;
 		};
 		930899A029508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C0FE329640A24E14BC42E1E8;
+			remoteGlobalIDString = 0F8FFCACD7F74B01BB469ED0;
 			remoteInfo = discio;
 		};
 		930899A229508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = CDB2A7A006C940A898BA1105;
+			remoteGlobalIDString = 6A8C5E0A5F33491AA1836C56;
 			remoteInfo = ed25519;
 		};
 		930899A429508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 9A4601325D2A49C79EBA05DE;
+			remoteGlobalIDString = A51DF080CB604868B3E334D8;
 			remoteInfo = enet;
 		};
 		930899A629508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 904647FC2D314066B9F04905;
+			remoteGlobalIDString = 20715DC7393E42079279A12B;
 			remoteInfo = glslang;
-		};
-		930899A829508AED00E145C8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = E7F9B2035B1D49008E68966E;
-			remoteInfo = gtest;
-		};
-		930899AA29508AED00E145C8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9848868307C1400D9AC40CAB;
-			remoteInfo = gtest_main;
 		};
 		930899AC29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 184651C4B0C14DA499C7E6C3;
+			remoteGlobalIDString = 3D5AFC2E84054608A7E7698F;
 			remoteInfo = iconv;
 		};
 		930899AE29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 003B3E18F5BF47DFAC75E727;
+			remoteGlobalIDString = C38A755AEAF24E7D8C429056;
 			remoteInfo = imgui;
 		};
 		930899B029508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 13CAEFFAB77941B88165274F;
+			remoteGlobalIDString = 2F592BAFCE6645AD84F606CA;
 			remoteInfo = inputcommon;
 		};
 		930899B629508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 2D752928893D4BFD95D25A85;
+			remoteGlobalIDString = F16B740BFA034C35B6629EBB;
 			remoteInfo = lzo2;
 		};
 		930899BA29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = A9FADB726A3F4823AF69920A;
+			remoteGlobalIDString = BE1B868618E343CD9301DE51;
 			remoteInfo = mbedcrypto;
 		};
 		930899BC29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 7ADE35EC9B4B4D95B62A8E7D;
+			remoteGlobalIDString = 946E47B94845438FA3685F06;
 			remoteInfo = mbedtls;
 		};
 		930899BE29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 74710D29352D45F688AF1321;
+			remoteGlobalIDString = 23140FAD16AB40E7A4F8C796;
 			remoteInfo = mbedx509;
 		};
 		930899C229508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 3F467100F3C2470595B4E136;
+			remoteGlobalIDString = BE3C9F7524CC4375914DFCA7;
 			remoteInfo = pugixml;
 		};
 		930899C429508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 7237D86AFCAF47B3AACCD36F;
+			remoteGlobalIDString = 23E144BDCB3C4104B69823AC;
 			remoteInfo = "sfml-network";
 		};
 		930899C629508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 91B2192A5C894AA39B800CD1;
+			remoteGlobalIDString = 3421F0BE5132498D87197769;
 			remoteInfo = "sfml-system";
 		};
 		930899C829508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 836B2739FBBA47768EBAF7A1;
+			remoteGlobalIDString = 626C43B01A59432B8FDB5294;
 			remoteInfo = uicommon;
-		};
-		930899CA29508AED00E145C8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D5AE0652CBF341B6A584AB4D;
-			remoteInfo = unittests_stubhost;
 		};
 		930899CC29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 6504457CD76E42D5B7609C78;
+			remoteGlobalIDString = 56B931D8570049A3B489FD5E;
 			remoteInfo = videocommon;
 		};
 		930899CE29508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C79A01DDDBE745E19D67FCEB;
+			remoteGlobalIDString = B9DE6DC7357E4363A96B8CFF;
 			remoteInfo = videonull;
 		};
 		930899D029508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = C12C69F6EF204E95994F1155;
+			remoteGlobalIDString = F3C60E91DC094BA48B39B6D3;
 			remoteInfo = videoogl;
 		};
 		930899D229508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 72D3780A30FB4E26A293E913;
+			remoteGlobalIDString = 3D88E96B784E47EF9D5E0D21;
 			remoteInfo = videosoftware;
 		};
 		930899D429508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 2E6BA310C533454797D03C14;
+			remoteGlobalIDString = 8AA6E63A4D904032BC6DC5E8;
 			remoteInfo = videovulkan;
 		};
 		930899D629508AED00E145C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 0424D5B451D54E0A9CBB3EF1;
+			remoteGlobalIDString = 610F240DB80F47E989297C2F;
 			remoteInfo = xxhash;
 		};
 		930899D829508B0400E145C8 /* PBXContainerItemProxy */ = {
@@ -321,480 +262,270 @@
 			remoteGlobalIDString = B30178D2207C901D0051B93D;
 			remoteInfo = dolphin;
 		};
-		933CC5E02951BB8A0070CF1D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D76AB5BBBFBE4D7A8840EEC0;
-			remoteInfo = png;
-		};
 		933CC5E52951C0380070CF1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 12EF7DC7FA03454FA4C38BBF;
+			remoteGlobalIDString = D27A3A72D55B44D299EBA951;
 			remoteInfo = png;
 		};
 		933CC5E72951C0480070CF1D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 7FD26A8923E048C185776846;
+			remoteGlobalIDString = 0C84FC3CC5CE4D0F9026D8D6;
 			remoteInfo = lzma;
 		};
 		93829AC229896E070061038E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 28C8EC9CC6C448748C0AEAF8;
+			remoteGlobalIDString = AC18C04C032A45F5BDEFC4AC;
 			remoteInfo = common;
 		};
-		B3AAFA8C2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF392BDEAFBE00ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = E449D1CC998F479899984D08;
-			remoteInfo = BitFieldTest;
+			remoteGlobalIDString = 58D0E4907A904D91A9168FB7;
+			remoteInfo = fmtd;
 		};
-		B3AAFA8E2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF512BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 2F61ACB12F2544F38B36AC74;
-			remoteInfo = BitSetTest;
+			remoteGlobalIDString = 28529F33FE604B5E863C58A7;
+			remoteInfo = FreeSurround_Dolphin;
 		};
-		B3AAFA902949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF532BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = C968170A7D39415ABF53325A;
-			remoteInfo = BitUtilsTest;
+			remoteGlobalIDString = B8CC8C17C70A4EED92AA92E2;
+			remoteInfo = SoundTouch_Dolphin;
 		};
-		B3AAFA922949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF552BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = D09B294247B347C69B6056C5;
-			remoteInfo = BlockingLoopTest;
+			remoteGlobalIDString = 45A995B9264D4C8EB4DFC05B;
+			remoteInfo = audiocommon_Dolphin;
 		};
-		B3AAFA942949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF572BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 999E6F71031540A294ED10AD;
-			remoteInfo = BusyLoopTest;
+			remoteGlobalIDString = 3E5EF27AAAD34CD08946D8BC;
+			remoteInfo = common_Dolphin;
 		};
-		B3AAFA962949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF592BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 0DA33A3C1ADC4DD9B03532F8;
-			remoteInfo = CommonFuncsTest;
+			remoteGlobalIDString = DB14254F0F494300B83FAB47;
+			remoteInfo = core_Dolphin;
 		};
-		B3AAFA982949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF5B2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = EFB9D51FA9034A38B9F73B9C;
-			remoteInfo = CoreTimingTest;
+			remoteGlobalIDString = C503F948CA8646C587F04A12;
+			remoteInfo = "cpp-optparse_Dolphin";
 		};
-		B3AAFA9A2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF5D2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 1111BB4F63D94D658F81B740;
-			remoteInfo = CryptoEcTest;
+			remoteGlobalIDString = 8CE37336145940C0914C8681;
+			remoteInfo = curl_Dolphin;
 		};
-		B3AAFA9C2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF5F2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 46F7DA2E87E043B4B24A077B;
-			remoteInfo = DSPAcceleratorTest;
+			remoteGlobalIDString = 6A1173AB25A64C67BD216FCA;
+			remoteInfo = discio_Dolphin;
 		};
-		B3AAFA9E2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF612BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = E20B2AE1290D4797851DCB20;
-			remoteInfo = DSPAssemblyTest;
+			remoteGlobalIDString = C56EF3549CDD4A5480B4D664;
+			remoteInfo = ed25519_Dolphin;
 		};
-		B3AAFAA02949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF632BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8BFB82AF96E24C7DB24BA1C8;
-			remoteInfo = ESFormatsTest;
+			remoteGlobalIDString = 3EE6456C61024B31A5EFCC85;
+			remoteInfo = enet_Dolphin;
 		};
-		B3AAFAA22949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF652BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 97AE98159ED84948A87D92A1;
-			remoteInfo = EnumFormatterTest;
+			remoteGlobalIDString = 2DD2D353F84242638721E80B;
+			remoteInfo = glslang_Dolphin;
 		};
-		B3AAFAA42949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF672BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = F9460EB91E2645F6A1A9E9B2;
-			remoteInfo = EventTest;
+			remoteGlobalIDString = C4E9F1755B7146CDBDF96F74;
+			remoteInfo = iconv_Dolphin;
 		};
-		B3AAFAA62949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF692BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 3667081458CB4BD7847EBA70;
-			remoteInfo = FileSystemTest;
+			remoteGlobalIDString = EA28B38C91CD4791A3976990;
+			remoteInfo = imgui_Dolphin;
 		};
-		B3AAFAA82949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF6B2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 578F8EFC108849F694A63F5C;
-			remoteInfo = FileUtilTest;
+			remoteGlobalIDString = 0C4F848D58014C1D90E291D1;
+			remoteInfo = inputcommon_Dolphin;
 		};
-		B3AAFAAA2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF6D2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 063D3264BEF047229A08D3E6;
-			remoteInfo = FixedSizeQueueTest;
+			remoteGlobalIDString = 99369F85B0B8425D8611B7C8;
+			remoteInfo = lzma_Dolphin;
 		};
-		B3AAFAAC2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF6F2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 336D9CECBBD34B888198360F;
-			remoteInfo = FlagTest;
+			remoteGlobalIDString = CCD4A520B00A4E21A543E8B3;
+			remoteInfo = lzo2_Dolphin;
 		};
-		B3AAFAAE2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF712BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 1A9893033830441097A65CEC;
-			remoteInfo = FloatUtilsTest;
+			remoteGlobalIDString = 669FF4F79EF946C2A9237607;
+			remoteInfo = main_Dolphin;
 		};
-		B3AAFAB02949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF732BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 4BB39C731E2447D7AC8FDEFE;
-			remoteInfo = FreeSurround;
+			remoteGlobalIDString = CA83096B395B424C8DD23475;
+			remoteInfo = mbedcrypto_Dolphin;
 		};
-		B3AAFAB22949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF752BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = EA05D19C36424210AD696CBE;
-			remoteInfo = MMIOTest;
+			remoteGlobalIDString = F58920C5FAE94362992AE114;
+			remoteInfo = mbedtls_Dolphin;
 		};
-		B3AAFAB42949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF772BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 279038446885432B9A0334B1;
-			remoteInfo = MathUtilTest;
+			remoteGlobalIDString = 6B16B085C87248FAA97824BD;
+			remoteInfo = mbedx509_Dolphin;
 		};
-		B3AAFAB62949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF792BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 1FECF898B33D476CB3DA2737;
-			remoteInfo = NandPathsTest;
+			remoteGlobalIDString = 387D5287206D47DA8068EA22;
+			remoteInfo = minizip_Dolphin;
 		};
-		B3AAFAB82949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF7B2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 37976FF96B4E45E0AE6F8A49;
-			remoteInfo = PageFaultTest;
+			remoteGlobalIDString = FE13161A63014B418938AFCC;
+			remoteInfo = png_Dolphin;
 		};
-		B3AAFABA2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF7D2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = A4C49CB45DCC4B1C9EED5D0E;
-			remoteInfo = PowerPCTest;
+			remoteGlobalIDString = 1F1760D4112947C7953B2FC2;
+			remoteInfo = pugixml_Dolphin;
 		};
-		B3AAFABC2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF7F2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 5D3922F1953C443683235594;
-			remoteInfo = SPSCQueueTest;
+			remoteGlobalIDString = 48B411E154FF49C89E88F9B4;
+			remoteInfo = "sfml-network_Dolphin";
 		};
-		B3AAFABE2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF812BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = E6922D69AF9748DE8DA73888;
-			remoteInfo = SoundTouch;
+			remoteGlobalIDString = 57B53F75429D43D0B95561CA;
+			remoteInfo = "sfml-system_Dolphin";
 		};
-		B3AAFAC02949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF832BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 572513C0DD194608AF410050;
-			remoteInfo = StringUtilTest;
+			remoteGlobalIDString = E5A46BD87524412D8D97433C;
+			remoteInfo = uicommon_Dolphin;
 		};
-		B3AAFAC22949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF852BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = D4E1696AE2FC404FB96E7B55;
-			remoteInfo = SwapTest;
+			remoteGlobalIDString = B0B3BBCB95564AFD90482344;
+			remoteInfo = videocommon_Dolphin;
 		};
-		B3AAFAC42949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF872BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 9EAE6985868B4F619D463534;
-			remoteInfo = VertexLoaderTest;
+			remoteGlobalIDString = 5F44E2CF07E44296A9CD107B;
+			remoteInfo = videonull_Dolphin;
 		};
-		B3AAFAC62949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF892BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 0482791101EB4C2E8E78B035;
-			remoteInfo = audiocommon;
+			remoteGlobalIDString = 666867CD9920441E800A7776;
+			remoteInfo = videoogl_Dolphin;
 		};
-		B3AAFAC82949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF8B2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = C53581E14CFA46648750E93E;
-			remoteInfo = common;
+			remoteGlobalIDString = 460C5AAB7E93451D871B2938;
+			remoteInfo = videosoftware_Dolphin;
 		};
-		B3AAFACA2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF8D2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 908272F7C3FE46B8A54FDAF7;
-			remoteInfo = core;
+			remoteGlobalIDString = 4B09F91DE8A04BDC88C8B92C;
+			remoteInfo = videovulkan_Dolphin;
 		};
-		B3AAFACC2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF8F2BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 781C6645E0EC44189CDA84E9;
-			remoteInfo = "cpp-optparse";
+			remoteGlobalIDString = F9FCF6096B56432190C98530;
+			remoteInfo = xxhash_Dolphin;
 		};
-		B3AAFACE2949E94400CC8234 /* PBXContainerItemProxy */ = {
+		B345CF912BDEC35100ABB18F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 1E099526FB60469D94F9CEEB;
-			remoteInfo = curl;
-		};
-		B3AAFAD02949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C96A88B66B224568B85AA8F1;
-			remoteInfo = discio;
-		};
-		B3AAFAD22949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 60148ABB2AC84726AB6F6057;
-			remoteInfo = ed25519;
-		};
-		B3AAFAD42949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7D7B0C0AF46B475987D8F64B;
-			remoteInfo = enet;
-		};
-		B3AAFAD62949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5C7F8AB6547A434E9F507C85;
-			remoteInfo = fmt;
-		};
-		B3AAFAD82949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F77FAE0C5F644A1EA39FB1B5;
-			remoteInfo = glslang;
-		};
-		B3AAFADA2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F048386A2EC14FD7B66CF4F7;
-			remoteInfo = gtest;
-		};
-		B3AAFADC2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D914D761583404D958B0FB4;
-			remoteInfo = gtest_main;
-		};
-		B3AAFADE2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 86EE3D8613FC4CAD83D4A941;
-			remoteInfo = iconv;
-		};
-		B3AAFAE02949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 69D4BC48429A4BF596D6D6F2;
-			remoteInfo = imgui;
-		};
-		B3AAFAE22949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EA597B0199244FFFBB593558;
-			remoteInfo = inputcommon;
-		};
-		B3AAFAE42949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C5F5CEF8B1E74286A3CDB0F5;
-			remoteInfo = lzma;
-		};
-		B3AAFAE62949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4E16BF7839604CD28D860CA0;
-			remoteInfo = lzo2;
-		};
-		B3AAFAE82949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A753FAF343514E72A57C8CAE;
-			remoteInfo = main;
-		};
-		B3AAFAEA2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5BE6CD372F734166BD73FD08;
-			remoteInfo = mbedcrypto;
-		};
-		B3AAFAEC2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4448DCDFD7F24E5E9EDD8C80;
-			remoteInfo = mbedtls;
-		};
-		B3AAFAEE2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 2FE754E401494068B9E5141B;
-			remoteInfo = mbedx509;
-		};
-		B3AAFAF02949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BF10C35576674D80B38E6E8B;
-			remoteInfo = minizip;
-		};
-		B3AAFAF42949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6A0600FDF41E4DF7A107FEB5;
-			remoteInfo = pugixml;
-		};
-		B3AAFAF62949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3821A0E007B94E4A89461F7C;
-			remoteInfo = "sfml-network";
-		};
-		B3AAFAF82949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 75D69E11DC84452491D86064;
-			remoteInfo = "sfml-system";
-		};
-		B3AAFAFA2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4E053277294D4CFEA6805B33;
-			remoteInfo = uicommon;
-		};
-		B3AAFAFC2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 31D9BCE2831E4CBCB574B4EF;
-			remoteInfo = unittests_stubhost;
-		};
-		B3AAFAFE2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D2D3D002B5F544AC891A4519;
-			remoteInfo = videocommon;
-		};
-		B3AAFB002949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = BBA93B04E79145BB925A183D;
-			remoteInfo = videonull;
-		};
-		B3AAFB022949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3799155848014E629EC0AE98;
-			remoteInfo = videoogl;
-		};
-		B3AAFB042949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CE6C8AEC36B94254A93DA885;
-			remoteInfo = videosoftware;
-		};
-		B3AAFB062949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A7C22FB154D84F80BC8C3DBA;
-			remoteInfo = videovulkan;
-		};
-		B3AAFB082949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9D0FF7F1A8024CEFAE0F4C86;
-			remoteInfo = xxhash;
-		};
-		B3AAFB0A2949E94400CC8234 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E40AF06B711646088153CFB4;
-			remoteInfo = zstd;
+			remoteGlobalIDString = 5E524D4E004C456C8D78C001;
+			remoteInfo = zstd_Dolphin;
 		};
 		B3AAFB422949F3A400CC8234 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3AAFA432949E94300CC8234 /* dolphin-emu.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 49318C94EA5D453AA16C3407;
+			remoteGlobalIDString = D6E6029A5ED2417B8BEFA211;
 			remoteInfo = zstd;
 		};
 /* End PBXContainerItemProxy section */
@@ -15501,39 +15232,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93829B18298980F50061038E /* libdolphin-commonDolphin.a in Frameworks */,
-				B3AAFB2E2949EBAE00CC8234 /* libaudiocommonDolphin.a in Frameworks */,
-				B3AAFB352949F2B300CC8234 /* libinputcommonDolphin.a in Frameworks */,
-				B3AAFB482949F45B00CC8234 /* libuicommonDolphin.a in Frameworks */,
-				B3AAFB232949EA9E00CC8234 /* libvideocommonDolphin.a in Frameworks */,
-				B39F67CC295D8B1F0048CEAD /* libfmtdDolphin.a in Frameworks */,
-				933CFC26295335B600217F45 /* libvideovulkanDolphin.a in Frameworks */,
-				93C33A952952192200CC86C5 /* libdolphin-coreDolphin.a in Frameworks */,
-				933CC5E42951BF680070CF1D /* libpngDolphin.a in Frameworks */,
-				9308994B2950752400E145C8 /* libminizipDolphin.a in Frameworks */,
-				930899DA29508B7100E145C8 /* libcpp-optparseDolphin.a in Frameworks */,
-				B3AAFB242949EB8100CC8234 /* libcurlDolphin.a in Frameworks */,
-				B3AAFB3B2949F30E00CC8234 /* libdiscioDolphin.a in Frameworks */,
-				930899DB29508B7100E145C8 /* libed25519Dolphin.a in Frameworks */,
-				B3AAFB252949EB8100CC8234 /* libenetDolphin.a in Frameworks */,
-				B3AAFB4B2949F58100CC8234 /* libFreeSurroundDolphin.a in Frameworks */,
-				B3AAFB4C2949F59800CC8234 /* libglslangDolphin.a in Frameworks */,
-				B3AAFB272949EB8100CC8234 /* libiconvDolphin.a in Frameworks */,
-				B3AAFB3C2949F31300CC8234 /* libimguiDolphin.a in Frameworks */,
-				B3AAFB3D2949F32700CC8234 /* liblzma-dolphinDolphin.a in Frameworks */,
-				B3AAFB4D2949F5BB00CC8234 /* liblzo2Dolphin.a in Frameworks */,
-				B3AAFB282949EB8100CC8234 /* libmbedcryptoDolphin.a in Frameworks */,
-				B3AAFB292949EB8100CC8234 /* libmbedtlsDolphin.a in Frameworks */,
-				B3AAFB2A2949EB8100CC8234 /* libmbedx509Dolphin.a in Frameworks */,
-				930899E029508B7100E145C8 /* libpugixmlDolphin.a in Frameworks */,
-				B3AAFB3E2949F34400CC8234 /* libsfml-networkDolphin.a in Frameworks */,
-				B3AAFB492949F52E00CC8234 /* libsfml-systemDolphin.a in Frameworks */,
-				B3AAFB342949F28700CC8234 /* libSoundTouchDolphin.a in Frameworks */,
-				B3AAFB2F2949EBD000CC8234 /* libvideonullDolphin.a in Frameworks */,
-				B3AAFB302949EBD000CC8234 /* libvideooglDolphin.a in Frameworks */,
-				B3AAFB312949EBD000CC8234 /* libvideosoftwareDolphin.a in Frameworks */,
-				B3AAFB3F2949F35900CC8234 /* libxxhashDolphin.a in Frameworks */,
-				B3AAFB412949F38F00CC8234 /* libzstdDolphin.a in Frameworks */,
+				B345CF4F2BDEBAFA00ABB18F /* libfmtd.a in Frameworks */,
 				B3AAFB472949F41D00CC8234 /* libbz2.tbd in Frameworks */,
 				B3AAFB462949F41D00CC8234 /* libz.tbd in Frameworks */,
 			);
@@ -15550,6 +15249,7 @@
 				B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				932931A2297EC31900464B9D /* SystemConfiguration.framework in Frameworks */,
+				B345CF4E2BDEB59800ABB18F /* MoltenVK.xcframework in Frameworks */,
 				9333C82729895CEF0042CD99 /* PVSupport.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */,
@@ -39136,70 +38836,40 @@
 		B3AAFA442949E94300CC8234 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3AAFA8D2949E94400CC8234 /* BitFieldTest.app */,
-				B3AAFA8F2949E94400CC8234 /* BitSetTest.app */,
-				B3AAFA912949E94400CC8234 /* BitUtilsTest.app */,
-				B3AAFA932949E94400CC8234 /* BlockingLoopTest.app */,
-				B3AAFA952949E94400CC8234 /* BusyLoopTest.app */,
-				B3AAFA972949E94400CC8234 /* CommonFuncsTest.app */,
-				B3AAFA992949E94400CC8234 /* CoreTimingTest.app */,
-				B3AAFA9B2949E94400CC8234 /* CryptoEcTest.app */,
-				B3AAFA9D2949E94400CC8234 /* DSPAcceleratorTest.app */,
-				B3AAFA9F2949E94400CC8234 /* DSPAssemblyTest.app */,
-				B3AAFAA12949E94400CC8234 /* ESFormatsTest.app */,
-				B3AAFAA32949E94400CC8234 /* EnumFormatterTest.app */,
-				B3AAFAA52949E94400CC8234 /* EventTest.app */,
-				B3AAFAA72949E94400CC8234 /* FileSystemTest.app */,
-				B3AAFAA92949E94400CC8234 /* FileUtilTest.app */,
-				B3AAFAAB2949E94400CC8234 /* FixedSizeQueueTest.app */,
-				B3AAFAAD2949E94400CC8234 /* FlagTest.app */,
-				B3AAFAAF2949E94400CC8234 /* FloatUtilsTest.app */,
-				B3AAFAB12949E94400CC8234 /* libFreeSurroundDolphin.a */,
-				B3AAFAB32949E94400CC8234 /* MMIOTest.app */,
-				B3AAFAB52949E94400CC8234 /* MathUtilTest.app */,
-				B3AAFAB72949E94400CC8234 /* NandPathsTest.app */,
-				B3AAFAB92949E94400CC8234 /* PageFaultTest.app */,
-				B3AAFABB2949E94400CC8234 /* PowerPCTest.app */,
-				B3AAFABD2949E94400CC8234 /* SPSCQueueTest.app */,
-				B3AAFABF2949E94400CC8234 /* libSoundTouchDolphin.a */,
-				B3AAFAC12949E94400CC8234 /* StringUtilTest.app */,
-				B3AAFAC32949E94400CC8234 /* SwapTest.app */,
-				B3AAFAC52949E94400CC8234 /* VertexLoaderTest.app */,
-				B3AAFAC72949E94400CC8234 /* libaudiocommonDolphin.a */,
-				B3AAFAC92949E94400CC8234 /* libdolphin-commonDolphin.a */,
-				B3AAFACB2949E94400CC8234 /* libdolphin-coreDolphin.a */,
-				B3AAFACD2949E94400CC8234 /* libcpp-optparseDolphin.a */,
-				B3AAFACF2949E94400CC8234 /* libcurlDolphin.a */,
-				B3AAFAD12949E94400CC8234 /* libdiscioDolphin.a */,
-				B3AAFAD32949E94400CC8234 /* libed25519Dolphin.a */,
-				B3AAFAD52949E94400CC8234 /* libenetDolphin.a */,
-				B3AAFAD72949E94400CC8234 /* libfmtdDolphin.a */,
-				B3AAFAD92949E94400CC8234 /* libglslangDolphin.a */,
-				B3AAFADB2949E94400CC8234 /* libgtestDolphin.a */,
-				B3AAFADD2949E94400CC8234 /* libgtest_mainDolphin.a */,
-				B3AAFADF2949E94400CC8234 /* libiconvDolphin.a */,
-				B3AAFAE12949E94400CC8234 /* libimguiDolphin.a */,
-				B3AAFAE32949E94400CC8234 /* libinputcommonDolphin.a */,
-				B3AAFAE52949E94400CC8234 /* liblzma-dolphinDolphin.a */,
-				B3AAFAE72949E94400CC8234 /* liblzo2Dolphin.a */,
-				B3AAFAE92949E94400CC8234 /* libmainDolphin.a */,
-				B3AAFAEB2949E94400CC8234 /* libmbedcryptoDolphin.a */,
-				B3AAFAED2949E94400CC8234 /* libmbedtlsDolphin.a */,
-				B3AAFAEF2949E94400CC8234 /* libmbedx509Dolphin.a */,
-				B3AAFAF12949E94400CC8234 /* libminizipDolphin.a */,
-				933CC5E12951BB8A0070CF1D /* libpngDolphin.a */,
-				B3AAFAF52949E94400CC8234 /* libpugixmlDolphin.a */,
-				B3AAFAF72949E94400CC8234 /* libsfml-networkDolphin.a */,
-				B3AAFAF92949E94400CC8234 /* libsfml-systemDolphin.a */,
-				B3AAFAFB2949E94400CC8234 /* libuicommonDolphin.a */,
-				B3AAFAFD2949E94400CC8234 /* libunittests_stubhostDolphin.a */,
-				B3AAFAFF2949E94400CC8234 /* libvideocommonDolphin.a */,
-				B3AAFB012949E94400CC8234 /* libvideonullDolphin.a */,
-				B3AAFB032949E94400CC8234 /* libvideooglDolphin.a */,
-				B3AAFB052949E94400CC8234 /* libvideosoftwareDolphin.a */,
-				B3AAFB072949E94400CC8234 /* libvideovulkanDolphin.a */,
-				B3AAFB092949E94400CC8234 /* libxxhashDolphin.a */,
-				B3AAFB0B2949E94400CC8234 /* libzstdDolphin.a */,
+				B345CF522BDEC35100ABB18F /* libFreeSurround.a */,
+				B345CF542BDEC35100ABB18F /* libSoundTouch.a */,
+				B345CF562BDEC35100ABB18F /* libaudiocommon.a */,
+				B345CF582BDEC35100ABB18F /* libcommon.a */,
+				B345CF5A2BDEC35100ABB18F /* libcore.a */,
+				B345CF5C2BDEC35100ABB18F /* libcpp-optparse.a */,
+				B345CF5E2BDEC35100ABB18F /* libcurl.a */,
+				B345CF602BDEC35100ABB18F /* libdiscio.a */,
+				B345CF622BDEC35100ABB18F /* libed25519.a */,
+				B345CF642BDEC35100ABB18F /* libenet.a */,
+				B345CF3A2BDEAFBE00ABB18F /* libfmtd.a */,
+				B345CF662BDEC35100ABB18F /* libglslang.a */,
+				B345CF682BDEC35100ABB18F /* libiconv.a */,
+				B345CF6A2BDEC35100ABB18F /* libimgui.a */,
+				B345CF6C2BDEC35100ABB18F /* libinputcommon.a */,
+				B345CF6E2BDEC35100ABB18F /* liblzma.a */,
+				B345CF702BDEC35100ABB18F /* liblzo2.a */,
+				B345CF722BDEC35100ABB18F /* libmain.a */,
+				B345CF742BDEC35100ABB18F /* libmbedcrypto.a */,
+				B345CF762BDEC35100ABB18F /* libmbedtls.a */,
+				B345CF782BDEC35100ABB18F /* libmbedx509.a */,
+				B345CF7A2BDEC35100ABB18F /* libminizip.a */,
+				B345CF7C2BDEC35100ABB18F /* libpng.a */,
+				B345CF7E2BDEC35100ABB18F /* libpugixml.a */,
+				B345CF802BDEC35100ABB18F /* libsfml-network.a */,
+				B345CF822BDEC35100ABB18F /* libsfml-system.a */,
+				B345CF842BDEC35100ABB18F /* libuicommon.a */,
+				B345CF862BDEC35100ABB18F /* libvideocommon.a */,
+				B345CF882BDEC35100ABB18F /* libvideonull.a */,
+				B345CF8A2BDEC35100ABB18F /* libvideoogl.a */,
+				B345CF8C2BDEC35100ABB18F /* libvideosoftware.a */,
+				B345CF8E2BDEC35100ABB18F /* libvideovulkan.a */,
+				B345CF902BDEC35100ABB18F /* libxxhash.a */,
+				B345CF922BDEC35100ABB18F /* libzstd.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -39329,10 +38999,7 @@
 				930899A129508AED00E145C8 /* PBXTargetDependency */,
 				930899A329508AED00E145C8 /* PBXTargetDependency */,
 				930899A529508AED00E145C8 /* PBXTargetDependency */,
-				93089942295071C200E145C8 /* PBXTargetDependency */,
 				930899A729508AED00E145C8 /* PBXTargetDependency */,
-				930899A929508AED00E145C8 /* PBXTargetDependency */,
-				930899AB29508AED00E145C8 /* PBXTargetDependency */,
 				930899AD29508AED00E145C8 /* PBXTargetDependency */,
 				930899AF29508AED00E145C8 /* PBXTargetDependency */,
 				930899B729508AED00E145C8 /* PBXTargetDependency */,
@@ -39342,7 +39009,6 @@
 				930899C329508AED00E145C8 /* PBXTargetDependency */,
 				930899C529508AED00E145C8 /* PBXTargetDependency */,
 				930899C729508AED00E145C8 /* PBXTargetDependency */,
-				930899CB29508AED00E145C8 /* PBXTargetDependency */,
 				930899CF29508AED00E145C8 /* PBXTargetDependency */,
 				930899D129508AED00E145C8 /* PBXTargetDependency */,
 				930899D329508AED00E145C8 /* PBXTargetDependency */,
@@ -39434,452 +39100,242 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		933CC5E12951BB8A0070CF1D /* libpngDolphin.a */ = {
+		B345CF3A2BDEAFBE00ABB18F /* libfmtd.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libpngDolphin.a;
-			remoteRef = 933CC5E02951BB8A0070CF1D /* PBXContainerItemProxy */;
+			path = libfmtd.a;
+			remoteRef = B345CF392BDEAFBE00ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFA8D2949E94400CC8234 /* BitFieldTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = BitFieldTest.app;
-			remoteRef = B3AAFA8C2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA8F2949E94400CC8234 /* BitSetTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = BitSetTest.app;
-			remoteRef = B3AAFA8E2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA912949E94400CC8234 /* BitUtilsTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = BitUtilsTest.app;
-			remoteRef = B3AAFA902949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA932949E94400CC8234 /* BlockingLoopTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = BlockingLoopTest.app;
-			remoteRef = B3AAFA922949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA952949E94400CC8234 /* BusyLoopTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = BusyLoopTest.app;
-			remoteRef = B3AAFA942949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA972949E94400CC8234 /* CommonFuncsTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = CommonFuncsTest.app;
-			remoteRef = B3AAFA962949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA992949E94400CC8234 /* CoreTimingTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = CoreTimingTest.app;
-			remoteRef = B3AAFA982949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA9B2949E94400CC8234 /* CryptoEcTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = CryptoEcTest.app;
-			remoteRef = B3AAFA9A2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA9D2949E94400CC8234 /* DSPAcceleratorTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = DSPAcceleratorTest.app;
-			remoteRef = B3AAFA9C2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFA9F2949E94400CC8234 /* DSPAssemblyTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = DSPAssemblyTest.app;
-			remoteRef = B3AAFA9E2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAA12949E94400CC8234 /* ESFormatsTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = ESFormatsTest.app;
-			remoteRef = B3AAFAA02949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAA32949E94400CC8234 /* EnumFormatterTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = EnumFormatterTest.app;
-			remoteRef = B3AAFAA22949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAA52949E94400CC8234 /* EventTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = EventTest.app;
-			remoteRef = B3AAFAA42949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAA72949E94400CC8234 /* FileSystemTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = FileSystemTest.app;
-			remoteRef = B3AAFAA62949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAA92949E94400CC8234 /* FileUtilTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = FileUtilTest.app;
-			remoteRef = B3AAFAA82949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAAB2949E94400CC8234 /* FixedSizeQueueTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = FixedSizeQueueTest.app;
-			remoteRef = B3AAFAAA2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAAD2949E94400CC8234 /* FlagTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = FlagTest.app;
-			remoteRef = B3AAFAAC2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAAF2949E94400CC8234 /* FloatUtilsTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = FloatUtilsTest.app;
-			remoteRef = B3AAFAAE2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAB12949E94400CC8234 /* libFreeSurroundDolphin.a */ = {
+		B345CF522BDEC35100ABB18F /* libFreeSurround.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libFreeSurroundDolphin.a;
-			remoteRef = B3AAFAB02949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libFreeSurround.a;
+			remoteRef = B345CF512BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAB32949E94400CC8234 /* MMIOTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = MMIOTest.app;
-			remoteRef = B3AAFAB22949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAB52949E94400CC8234 /* MathUtilTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = MathUtilTest.app;
-			remoteRef = B3AAFAB42949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAB72949E94400CC8234 /* NandPathsTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = NandPathsTest.app;
-			remoteRef = B3AAFAB62949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAB92949E94400CC8234 /* PageFaultTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = PageFaultTest.app;
-			remoteRef = B3AAFAB82949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFABB2949E94400CC8234 /* PowerPCTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = PowerPCTest.app;
-			remoteRef = B3AAFABA2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFABD2949E94400CC8234 /* SPSCQueueTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = SPSCQueueTest.app;
-			remoteRef = B3AAFABC2949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFABF2949E94400CC8234 /* libSoundTouchDolphin.a */ = {
+		B345CF542BDEC35100ABB18F /* libSoundTouch.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libSoundTouchDolphin.a;
-			remoteRef = B3AAFABE2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libSoundTouch.a;
+			remoteRef = B345CF532BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAC12949E94400CC8234 /* StringUtilTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = StringUtilTest.app;
-			remoteRef = B3AAFAC02949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAC32949E94400CC8234 /* SwapTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = SwapTest.app;
-			remoteRef = B3AAFAC22949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAC52949E94400CC8234 /* VertexLoaderTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = VertexLoaderTest.app;
-			remoteRef = B3AAFAC42949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFAC72949E94400CC8234 /* libaudiocommonDolphin.a */ = {
+		B345CF562BDEC35100ABB18F /* libaudiocommon.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libaudiocommonDolphin.a;
-			remoteRef = B3AAFAC62949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libaudiocommon.a;
+			remoteRef = B345CF552BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAC92949E94400CC8234 /* libdolphin-commonDolphin.a */ = {
+		B345CF582BDEC35100ABB18F /* libcommon.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libdolphin-commonDolphin.a";
-			remoteRef = B3AAFAC82949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libcommon.a;
+			remoteRef = B345CF572BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFACB2949E94400CC8234 /* libdolphin-coreDolphin.a */ = {
+		B345CF5A2BDEC35100ABB18F /* libcore.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libdolphin-coreDolphin.a";
-			remoteRef = B3AAFACA2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libcore.a;
+			remoteRef = B345CF592BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFACD2949E94400CC8234 /* libcpp-optparseDolphin.a */ = {
+		B345CF5C2BDEC35100ABB18F /* libcpp-optparse.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libcpp-optparseDolphin.a";
-			remoteRef = B3AAFACC2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = "libcpp-optparse.a";
+			remoteRef = B345CF5B2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFACF2949E94400CC8234 /* libcurlDolphin.a */ = {
+		B345CF5E2BDEC35100ABB18F /* libcurl.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libcurlDolphin.a;
-			remoteRef = B3AAFACE2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libcurl.a;
+			remoteRef = B345CF5D2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAD12949E94400CC8234 /* libdiscioDolphin.a */ = {
+		B345CF602BDEC35100ABB18F /* libdiscio.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libdiscioDolphin.a;
-			remoteRef = B3AAFAD02949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libdiscio.a;
+			remoteRef = B345CF5F2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAD32949E94400CC8234 /* libed25519Dolphin.a */ = {
+		B345CF622BDEC35100ABB18F /* libed25519.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libed25519Dolphin.a;
-			remoteRef = B3AAFAD22949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libed25519.a;
+			remoteRef = B345CF612BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAD52949E94400CC8234 /* libenetDolphin.a */ = {
+		B345CF642BDEC35100ABB18F /* libenet.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libenetDolphin.a;
-			remoteRef = B3AAFAD42949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libenet.a;
+			remoteRef = B345CF632BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAD72949E94400CC8234 /* libfmtdDolphin.a */ = {
+		B345CF662BDEC35100ABB18F /* libglslang.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libfmtdDolphin.a;
-			remoteRef = B3AAFAD62949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libglslang.a;
+			remoteRef = B345CF652BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAD92949E94400CC8234 /* libglslangDolphin.a */ = {
+		B345CF682BDEC35100ABB18F /* libiconv.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libglslangDolphin.a;
-			remoteRef = B3AAFAD82949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libiconv.a;
+			remoteRef = B345CF672BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFADB2949E94400CC8234 /* libgtestDolphin.a */ = {
+		B345CF6A2BDEC35100ABB18F /* libimgui.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libgtestDolphin.a;
-			remoteRef = B3AAFADA2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libimgui.a;
+			remoteRef = B345CF692BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFADD2949E94400CC8234 /* libgtest_mainDolphin.a */ = {
+		B345CF6C2BDEC35100ABB18F /* libinputcommon.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libgtest_mainDolphin.a;
-			remoteRef = B3AAFADC2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libinputcommon.a;
+			remoteRef = B345CF6B2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFADF2949E94400CC8234 /* libiconvDolphin.a */ = {
+		B345CF6E2BDEC35100ABB18F /* liblzma.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libiconvDolphin.a;
-			remoteRef = B3AAFADE2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = liblzma.a;
+			remoteRef = B345CF6D2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAE12949E94400CC8234 /* libimguiDolphin.a */ = {
+		B345CF702BDEC35100ABB18F /* liblzo2.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libimguiDolphin.a;
-			remoteRef = B3AAFAE02949E94400CC8234 /* PBXContainerItemProxy */;
+			path = liblzo2.a;
+			remoteRef = B345CF6F2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAE32949E94400CC8234 /* libinputcommonDolphin.a */ = {
+		B345CF722BDEC35100ABB18F /* libmain.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libinputcommonDolphin.a;
-			remoteRef = B3AAFAE22949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libmain.a;
+			remoteRef = B345CF712BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAE52949E94400CC8234 /* liblzma-dolphinDolphin.a */ = {
+		B345CF742BDEC35100ABB18F /* libmbedcrypto.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "liblzma-dolphinDolphin.a";
-			remoteRef = B3AAFAE42949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libmbedcrypto.a;
+			remoteRef = B345CF732BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAE72949E94400CC8234 /* liblzo2Dolphin.a */ = {
+		B345CF762BDEC35100ABB18F /* libmbedtls.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = liblzo2Dolphin.a;
-			remoteRef = B3AAFAE62949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libmbedtls.a;
+			remoteRef = B345CF752BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAE92949E94400CC8234 /* libmainDolphin.a */ = {
+		B345CF782BDEC35100ABB18F /* libmbedx509.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libmainDolphin.a;
-			remoteRef = B3AAFAE82949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libmbedx509.a;
+			remoteRef = B345CF772BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAEB2949E94400CC8234 /* libmbedcryptoDolphin.a */ = {
+		B345CF7A2BDEC35100ABB18F /* libminizip.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libmbedcryptoDolphin.a;
-			remoteRef = B3AAFAEA2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libminizip.a;
+			remoteRef = B345CF792BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAED2949E94400CC8234 /* libmbedtlsDolphin.a */ = {
+		B345CF7C2BDEC35100ABB18F /* libpng.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libmbedtlsDolphin.a;
-			remoteRef = B3AAFAEC2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libpng.a;
+			remoteRef = B345CF7B2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAEF2949E94400CC8234 /* libmbedx509Dolphin.a */ = {
+		B345CF7E2BDEC35100ABB18F /* libpugixml.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libmbedx509Dolphin.a;
-			remoteRef = B3AAFAEE2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libpugixml.a;
+			remoteRef = B345CF7D2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAF12949E94400CC8234 /* libminizipDolphin.a */ = {
+		B345CF802BDEC35100ABB18F /* libsfml-network.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libminizipDolphin.a;
-			remoteRef = B3AAFAF02949E94400CC8234 /* PBXContainerItemProxy */;
+			path = "libsfml-network.a";
+			remoteRef = B345CF7F2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAF52949E94400CC8234 /* libpugixmlDolphin.a */ = {
+		B345CF822BDEC35100ABB18F /* libsfml-system.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libpugixmlDolphin.a;
-			remoteRef = B3AAFAF42949E94400CC8234 /* PBXContainerItemProxy */;
+			path = "libsfml-system.a";
+			remoteRef = B345CF812BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAF72949E94400CC8234 /* libsfml-networkDolphin.a */ = {
+		B345CF842BDEC35100ABB18F /* libuicommon.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libsfml-networkDolphin.a";
-			remoteRef = B3AAFAF62949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libuicommon.a;
+			remoteRef = B345CF832BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAF92949E94400CC8234 /* libsfml-systemDolphin.a */ = {
+		B345CF862BDEC35100ABB18F /* libvideocommon.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = "libsfml-systemDolphin.a";
-			remoteRef = B3AAFAF82949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libvideocommon.a;
+			remoteRef = B345CF852BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAFB2949E94400CC8234 /* libuicommonDolphin.a */ = {
+		B345CF882BDEC35100ABB18F /* libvideonull.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libuicommonDolphin.a;
-			remoteRef = B3AAFAFA2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libvideonull.a;
+			remoteRef = B345CF872BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAFD2949E94400CC8234 /* libunittests_stubhostDolphin.a */ = {
+		B345CF8A2BDEC35100ABB18F /* libvideoogl.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libunittests_stubhostDolphin.a;
-			remoteRef = B3AAFAFC2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libvideoogl.a;
+			remoteRef = B345CF892BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFAFF2949E94400CC8234 /* libvideocommonDolphin.a */ = {
+		B345CF8C2BDEC35100ABB18F /* libvideosoftware.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libvideocommonDolphin.a;
-			remoteRef = B3AAFAFE2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libvideosoftware.a;
+			remoteRef = B345CF8B2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFB012949E94400CC8234 /* libvideonullDolphin.a */ = {
+		B345CF8E2BDEC35100ABB18F /* libvideovulkan.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libvideonullDolphin.a;
-			remoteRef = B3AAFB002949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libvideovulkan.a;
+			remoteRef = B345CF8D2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFB032949E94400CC8234 /* libvideooglDolphin.a */ = {
+		B345CF902BDEC35100ABB18F /* libxxhash.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libvideooglDolphin.a;
-			remoteRef = B3AAFB022949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libxxhash.a;
+			remoteRef = B345CF8F2BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		B3AAFB052949E94400CC8234 /* libvideosoftwareDolphin.a */ = {
+		B345CF922BDEC35100ABB18F /* libzstd.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libvideosoftwareDolphin.a;
-			remoteRef = B3AAFB042949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFB072949E94400CC8234 /* libvideovulkanDolphin.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libvideovulkanDolphin.a;
-			remoteRef = B3AAFB062949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFB092949E94400CC8234 /* libxxhashDolphin.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libxxhashDolphin.a;
-			remoteRef = B3AAFB082949E94400CC8234 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3AAFB0B2949E94400CC8234 /* libzstdDolphin.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libzstdDolphin.a;
-			remoteRef = B3AAFB0A2949E94400CC8234 /* PBXContainerItemProxy */;
+			path = libzstd.a;
+			remoteRef = B345CF912BDEC35100ABB18F /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -39934,11 +39390,6 @@
 			name = minizip;
 			targetProxy = 9308993F2950713700E145C8 /* PBXContainerItemProxy */;
 		};
-		93089942295071C200E145C8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = fmt;
-			targetProxy = 93089941295071C200E145C8 /* PBXContainerItemProxy */;
-		};
 		9308999329508AD400E145C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = FreeSurround;
@@ -39988,16 +39439,6 @@
 			isa = PBXTargetDependency;
 			name = glslang;
 			targetProxy = 930899A629508AED00E145C8 /* PBXContainerItemProxy */;
-		};
-		930899A929508AED00E145C8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = gtest;
-			targetProxy = 930899A829508AED00E145C8 /* PBXContainerItemProxy */;
-		};
-		930899AB29508AED00E145C8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = gtest_main;
-			targetProxy = 930899AA29508AED00E145C8 /* PBXContainerItemProxy */;
 		};
 		930899AD29508AED00E145C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -40053,11 +39494,6 @@
 			isa = PBXTargetDependency;
 			name = uicommon;
 			targetProxy = 930899C829508AED00E145C8 /* PBXContainerItemProxy */;
-		};
-		930899CB29508AED00E145C8 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = unittests_stubhost;
-			targetProxy = 930899CA29508AED00E145C8 /* PBXContainerItemProxy */;
 		};
 		930899CD29508AED00E145C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -40478,7 +39914,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "$(inherited)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
@@ -40493,6 +39929,10 @@
 		B3C7621A20783162009950E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					arm64,
+					arm64e,
+				);
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -40659,7 +40099,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "$(inherited)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
@@ -40674,6 +40114,10 @@
 		B3D067CF2BC4FA2B00A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					arm64,
+					arm64e,
+				);
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

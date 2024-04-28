@@ -8,11 +8,11 @@ spaceplus:= $(empty)\ $(empty)
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/fmt/CMakeLists.txt))
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/fmt/support/cmake/JoinPaths.cmake))
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/fmt/support/cmake/cxx14.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CMakeParseArguments.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CheckCXXCompilerFlag.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CheckCXXSourceCompiles.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/CheckSymbolExists.cmake))
-TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.25.1/share/cmake/Modules/GNUInstallDirs.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.29.2/share/cmake/Modules/CMakeParseArguments.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.29.2/share/cmake/Modules/CheckCXXCompilerFlag.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.29.2/share/cmake/Modules/CheckCXXSourceCompiles.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.29.2/share/cmake/Modules/CheckSymbolExists.cmake))
+TARGETS += $(subst $(space),$(spaceplus),$(wildcard /opt/homebrew/Cellar/cmake/3.29.2/share/cmake/Modules/GNUInstallDirs.cmake))
 
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
-	/opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -H/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios -B/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+	/opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -S/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios -B/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake

@@ -7,46 +7,21 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		27752D87E92A4D2AAF4559FB /* ALL_BUILD */ = {
+		18D93D140CF74F3CB2EE2044 /* install */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 128B3A6100F54F6C8A91F9C9 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
-			buildPhases = (
-				E956AA72BAD599C77E7AA9B9 /* Generate CMakeFiles/ALL_BUILD */,
-			);
-			dependencies = (
-				6557210FA90A491F9812A8AD /* PBXTargetDependency */,
-				C4610C30189040AAAC50314C /* PBXTargetDependency */,
-			);
-			name = ALL_BUILD;
-			productName = ALL_BUILD;
-		};
-		37035854F5494840A21D2316 /* package */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = CEB388EB54A14D78A02DA3A8 /* Build configuration list for PBXAggregateTarget "package" */;
-			buildPhases = (
-				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
-			);
-			dependencies = (
-				EC20E5AF9E2A4D1CAB5F4B4B /* PBXTargetDependency */,
-			);
-			name = package;
-			productName = package;
-		};
-		A7904E74C7BB45968F4D5EC8 /* install */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 3A8A48D1712A44BCA9961277 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = 9A423A7AB6C24864949211B2 /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				DE1A0854AFC9486A985EFCC5 /* PBXTargetDependency */,
+				E54D39117E304B65AFA1D251 /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
 		};
-		D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */ = {
+		2D7794A245CE41B888FF8C64 /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = CC96D81056BE47389EE6C1F1 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = 30EA65B90A4049FCBE7C7F1F /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
 				764A83DAF4CAB7CDDD73018F /* Generate CMakeFiles/ZERO_CHECK */,
 			);
@@ -55,123 +30,148 @@
 			name = ZERO_CHECK;
 			productName = ZERO_CHECK;
 		};
+		ABFAB71FC99B401D8040E7DA /* package */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 79F7EBC26D9B436C9377FB0A /* Build configuration list for PBXAggregateTarget "package" */;
+			buildPhases = (
+				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				949FBC9AE12A431282D83444 /* PBXTargetDependency */,
+			);
+			name = package;
+			productName = package;
+		};
+		C38467A1EA2247DC869676BA /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5B1AA593DE3B4A53B7CE5C49 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				E956AA72BAD599C77E7AA9B9 /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				27CBCF0FAB6445108726912D /* PBXTargetDependency */,
+				03BB74BCDFA44E008236682C /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		08984B66A7BE464E8B5B046E /* ../dolphin-ios/Externals/fmt/include/fmt/color.h */ = {isa = PBXBuildFile; fileRef = F877E20CA3794F89A9BB83A5 /* ../dolphin-ios/Externals/fmt/include/fmt/color.h */; };
-		144045E77B5947D2A157CE91 /* ../dolphin-ios/Externals/fmt/include/fmt/ostream.h */ = {isa = PBXBuildFile; fileRef = EC630F14EF554680B5A51C37 /* ../dolphin-ios/Externals/fmt/include/fmt/ostream.h */; };
-		2E252F155BFC472EA211FC73 /* ../dolphin-ios/Externals/fmt/include/fmt/os.h */ = {isa = PBXBuildFile; fileRef = B6A50509BBC541DD9FA2D30E /* ../dolphin-ios/Externals/fmt/include/fmt/os.h */; };
-		3607165CAD664B59BC4DBF33 /* ../dolphin-ios/Externals/fmt/include/fmt/printf.h */ = {isa = PBXBuildFile; fileRef = 573EFA4DFBC0422D88019101 /* ../dolphin-ios/Externals/fmt/include/fmt/printf.h */; };
-		4C45A52749CE4EBA9845110E /* ../dolphin-ios/Externals/fmt/include/fmt/locale.h */ = {isa = PBXBuildFile; fileRef = 68342CD724E74A5EB034A41B /* ../dolphin-ios/Externals/fmt/include/fmt/locale.h */; };
-		5728A926E9D941AD85BAF085 /* ../dolphin-ios/Externals/fmt/include/fmt/format.h */ = {isa = PBXBuildFile; fileRef = 8F123F904F6E4311A5B4E8AA /* ../dolphin-ios/Externals/fmt/include/fmt/format.h */; };
-		674AE2CCA00C4563AE455EA7 /* ../dolphin-ios/Externals/fmt/include/fmt/chrono.h */ = {isa = PBXBuildFile; fileRef = 77EE42659383432F81D7E7D9 /* ../dolphin-ios/Externals/fmt/include/fmt/chrono.h */; };
-		78FF62D8E91941DDA5B3581B /* ../dolphin-ios/Externals/fmt/include/fmt/core.h */ = {isa = PBXBuildFile; fileRef = 581401B740D64E048A6F97FD /* ../dolphin-ios/Externals/fmt/include/fmt/core.h */; };
-		856C7D55DC534DE591E0C3E9 /* ../dolphin-ios/Externals/fmt/include/fmt/ranges.h */ = {isa = PBXBuildFile; fileRef = D0868D2DD10040E6A1953A80 /* ../dolphin-ios/Externals/fmt/include/fmt/ranges.h */; };
-		94C3F71F45614522BEB7B364 /* ../dolphin-ios/Externals/fmt/src/format.cc */ = {isa = PBXBuildFile; fileRef = CD9790ED38B344AF9A871A14 /* ../dolphin-ios/Externals/fmt/src/format.cc */; };
-		95D72F5A6764424DA0387C2E /* ../dolphin-ios/Externals/fmt/src/os.cc */ = {isa = PBXBuildFile; fileRef = BA27909B1B5444D6AF58FFD8 /* ../dolphin-ios/Externals/fmt/src/os.cc */; };
-		975736983BE449BBB662294B /* ../dolphin-ios/Externals/fmt/include/fmt/posix.h */ = {isa = PBXBuildFile; fileRef = 4E3261AB98414B4084EDEE24 /* ../dolphin-ios/Externals/fmt/include/fmt/posix.h */; };
-		B02CF23AAD074491BB6B33BF /* ../dolphin-ios/Externals/fmt/README.rst */ = {isa = PBXBuildFile; fileRef = 1891D016C72340CF8A97A334 /* ../dolphin-ios/Externals/fmt/README.rst */; };
-		B19B954116BB4E82933E93E6 /* ../cmake/Externals/fmt/CMakeFiles/fmt.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 37B7949F8E22438EA9EE9456 /* ../cmake/Externals/fmt/CMakeFiles/fmt.dir/Info.plist */; };
-		BD1D5AF3BA424AF283616CE5 /* ../dolphin-ios/Externals/fmt/ChangeLog.rst */ = {isa = PBXBuildFile; fileRef = A63BBADE301D4BE4AADEE055 /* ../dolphin-ios/Externals/fmt/ChangeLog.rst */; };
-		E292386B8FBF4D9AB5713E24 /* ../dolphin-ios/Externals/fmt/include/fmt/compile.h */ = {isa = PBXBuildFile; fileRef = A21F0579317F472F9433CCDE /* ../dolphin-ios/Externals/fmt/include/fmt/compile.h */; };
-		EE83705BDDDA4AC69EA812A4 /* ../dolphin-ios/Externals/fmt/include/fmt/format-inl.h */ = {isa = PBXBuildFile; fileRef = 56111976D4F14D9B80DBA0E3 /* ../dolphin-ios/Externals/fmt/include/fmt/format-inl.h */; };
-		F12DE4A154CD4A88B0943D32 /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 472D3A95E7014FC9A24289E9 /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */; };
+		049EA3154C8E4A0AB33083D9 /* ../dolphin-ios/Externals/fmt/include/fmt/compile.h */ = {isa = PBXBuildFile; fileRef = 4634E63A9D33499E9A6E697D /* ../dolphin-ios/Externals/fmt/include/fmt/compile.h */; };
+		15F9BFA4B716434B9757EF94 /* ../dolphin-ios/Externals/fmt/include/fmt/core.h */ = {isa = PBXBuildFile; fileRef = EE945B52F69B487C833F6CA9 /* ../dolphin-ios/Externals/fmt/include/fmt/core.h */; };
+		2B580C311C4F40C7A3C26099 /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 9968A3CBE82441FF85AD1314 /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */; };
+		3280DAF340F74A9389A5EF16 /* ../dolphin-ios/Externals/fmt/include/fmt/locale.h */ = {isa = PBXBuildFile; fileRef = 98468D71D0164EA0B3362E62 /* ../dolphin-ios/Externals/fmt/include/fmt/locale.h */; };
+		3417D9A75DAD4FB0A3B9DA98 /* ../dolphin-ios/Externals/fmt/include/fmt/color.h */ = {isa = PBXBuildFile; fileRef = A1AC0D45F28247FAAC199409 /* ../dolphin-ios/Externals/fmt/include/fmt/color.h */; };
+		413D4B14D2A14377B0D19D56 /* ../dolphin-ios/Externals/fmt/src/os.cc */ = {isa = PBXBuildFile; fileRef = A48B42062AEB41888DBB9527 /* ../dolphin-ios/Externals/fmt/src/os.cc */; };
+		47DBEEDC606F4BF6971C9322 /* ../dolphin-ios/Externals/fmt/include/fmt/ostream.h */ = {isa = PBXBuildFile; fileRef = B1B4596B8D9C4073B2CFDE7B /* ../dolphin-ios/Externals/fmt/include/fmt/ostream.h */; };
+		4FB4FF83B7684AE79A3E93FA /* ../dolphin-ios/Externals/fmt/ChangeLog.rst */ = {isa = PBXBuildFile; fileRef = 182E1F29C9694B338FF54184 /* ../dolphin-ios/Externals/fmt/ChangeLog.rst */; };
+		604D9EA1F8734DC7964D753D /* ../dolphin-ios/Externals/fmt/include/fmt/format-inl.h */ = {isa = PBXBuildFile; fileRef = B54EE846F63E4A5CB7285DFC /* ../dolphin-ios/Externals/fmt/include/fmt/format-inl.h */; };
+		693F16547E934A9695DC4881 /* ../dolphin-ios/Externals/fmt/include/fmt/os.h */ = {isa = PBXBuildFile; fileRef = 3C2ADB6171F045849F2D09AC /* ../dolphin-ios/Externals/fmt/include/fmt/os.h */; };
+		72673E61CE1A441B8FB8547C /* ../cmake/Externals/fmt/CMakeFiles/fmt.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 549FDDA12C2D458291D5D070 /* ../cmake/Externals/fmt/CMakeFiles/fmt.dir/Info.plist */; };
+		7F9F0DB638844E67877E5AFC /* ../dolphin-ios/Externals/fmt/include/fmt/printf.h */ = {isa = PBXBuildFile; fileRef = 73EECE6854EA44E48BC9B9A0 /* ../dolphin-ios/Externals/fmt/include/fmt/printf.h */; };
+		8B51A27B176A443D942BDBBC /* ../dolphin-ios/Externals/fmt/include/fmt/chrono.h */ = {isa = PBXBuildFile; fileRef = 408B17E69B9F4578A6053D3B /* ../dolphin-ios/Externals/fmt/include/fmt/chrono.h */; };
+		96923EF741934728959FFB99 /* ../dolphin-ios/Externals/fmt/include/fmt/posix.h */ = {isa = PBXBuildFile; fileRef = F3DA867A265F48E2BC3883D3 /* ../dolphin-ios/Externals/fmt/include/fmt/posix.h */; };
+		A00FFF32CE30464EBDAE1A49 /* ../dolphin-ios/Externals/fmt/src/format.cc */ = {isa = PBXBuildFile; fileRef = 2A17636F729C485AB9030083 /* ../dolphin-ios/Externals/fmt/src/format.cc */; };
+		AE7A4EDB264646238099198D /* ../dolphin-ios/Externals/fmt/include/fmt/ranges.h */ = {isa = PBXBuildFile; fileRef = 6812C3B81B21411EB17F79D3 /* ../dolphin-ios/Externals/fmt/include/fmt/ranges.h */; };
+		D9FD5AC26B2D4CC9A92DC9BB /* ../dolphin-ios/Externals/fmt/README.rst */ = {isa = PBXBuildFile; fileRef = 0A7FF954CF514D0DBD40E35E /* ../dolphin-ios/Externals/fmt/README.rst */; };
+		FA2CA1167A71476DB6623BA6 /* ../dolphin-ios/Externals/fmt/include/fmt/format.h */ = {isa = PBXBuildFile; fileRef = 414E1988F07645309BE9EA04 /* ../dolphin-ios/Externals/fmt/include/fmt/format.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		407B2F31A19344E981247083 /* Release */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Release;
-		};
-		6662231DF3824FC5BFBC15A1 /* Debug */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Debug;
-		};
-		8FACB64BDF12492DB765FDF4 /* RelWithDebInfo */ = {
+		4826EDA2608D4D368A2EC732 /* RelWithDebInfo */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = RelWithDebInfo;
 		};
-		9AE283CF4ABD4703803CBE85 /* MinSizeRel */ = {
+		884C8BBF67AF40418B37EBFF /* MinSizeRel */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = MinSizeRel;
 		};
+		D1EF79EA9AC34CDC98601178 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		F0D5CE70180241E2890B24B8 /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		459CD4DB0C7F47A89E7729A9 /* PBXContainerItemProxy */ = {
+		76D1744F78474FD28F2FE4A0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = F3EB1FB877D8405CB40AC771 /* Project object */;
+			containerPortal = 4E425E766C104F6E90C4E4F5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D0BDA0649EAD45849C6A8AD3;
+			remoteGlobalIDString = 2D7794A245CE41B888FF8C64;
 			remoteInfo = ZERO_CHECK;
 		};
-		62FE64FFE7674519BBAD0497 /* PBXContainerItemProxy */ = {
+		A58BED19C5624DB6B55158AD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = F3EB1FB877D8405CB40AC771 /* Project object */;
+			containerPortal = 4E425E766C104F6E90C4E4F5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AD9FB006DD914823A5E1C675;
-			remoteInfo = fmtd;
-		};
-		6EC33A24F6044DFC9E9A3830 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3EB1FB877D8405CB40AC771 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D0BDA0649EAD45849C6A8AD3;
-			remoteInfo = ZERO_CHECK;
-		};
-		75262B77519A4428BA312E55 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = F3EB1FB877D8405CB40AC771 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 27752D87E92A4D2AAF4559FB;
+			remoteGlobalIDString = C38467A1EA2247DC869676BA;
 			remoteInfo = ALL_BUILD;
 		};
-		C698630E2BF142B7B3ADF0AA /* PBXContainerItemProxy */ = {
+		BDFAA3A160F54E08BA57780C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = F3EB1FB877D8405CB40AC771 /* Project object */;
+			containerPortal = 4E425E766C104F6E90C4E4F5 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 27752D87E92A4D2AAF4559FB;
+			remoteGlobalIDString = 4F830F07EC314805A5A84FE4;
+			remoteInfo = fmtd;
+		};
+		D8108879AF9B4DA8975A560C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4E425E766C104F6E90C4E4F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D7794A245CE41B888FF8C64;
+			remoteInfo = ZERO_CHECK;
+		};
+		E6799E07165F40AA8EF8E03C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4E425E766C104F6E90C4E4F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C38467A1EA2247DC869676BA;
 			remoteInfo = ALL_BUILD;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1891D016C72340CF8A97A334 /* ../dolphin-ios/Externals/fmt/README.rst */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = README.rst; path = README.rst; sourceTree = SOURCE_ROOT; };
-		37B7949F8E22438EA9EE9456 /* ../cmake/Externals/fmt/CMakeFiles/fmt.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/fmt/CMakeFiles/fmt.dir/Info.plist; sourceTree = "<absolute>"; };
-		472D3A95E7014FC9A24289E9 /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		4E3261AB98414B4084EDEE24 /* ../dolphin-ios/Externals/fmt/include/fmt/posix.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = posix.h; path = include/fmt/posix.h; sourceTree = SOURCE_ROOT; };
-		56111976D4F14D9B80DBA0E3 /* ../dolphin-ios/Externals/fmt/include/fmt/format-inl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "format-inl.h"; path = "include/fmt/format-inl.h"; sourceTree = SOURCE_ROOT; };
-		573EFA4DFBC0422D88019101 /* ../dolphin-ios/Externals/fmt/include/fmt/printf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = printf.h; path = include/fmt/printf.h; sourceTree = SOURCE_ROOT; };
-		581401B740D64E048A6F97FD /* ../dolphin-ios/Externals/fmt/include/fmt/core.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = core.h; path = include/fmt/core.h; sourceTree = SOURCE_ROOT; };
-		68342CD724E74A5EB034A41B /* ../dolphin-ios/Externals/fmt/include/fmt/locale.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = locale.h; path = include/fmt/locale.h; sourceTree = SOURCE_ROOT; };
-		77EE42659383432F81D7E7D9 /* ../dolphin-ios/Externals/fmt/include/fmt/chrono.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = chrono.h; path = include/fmt/chrono.h; sourceTree = SOURCE_ROOT; };
-		8F123F904F6E4311A5B4E8AA /* ../dolphin-ios/Externals/fmt/include/fmt/format.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = format.h; path = include/fmt/format.h; sourceTree = SOURCE_ROOT; };
-		A21F0579317F472F9433CCDE /* ../dolphin-ios/Externals/fmt/include/fmt/compile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compile.h; path = include/fmt/compile.h; sourceTree = SOURCE_ROOT; };
-		A63BBADE301D4BE4AADEE055 /* ../dolphin-ios/Externals/fmt/ChangeLog.rst */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = ChangeLog.rst; path = ChangeLog.rst; sourceTree = SOURCE_ROOT; };
-		B6A50509BBC541DD9FA2D30E /* ../dolphin-ios/Externals/fmt/include/fmt/os.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = os.h; path = include/fmt/os.h; sourceTree = SOURCE_ROOT; };
-		BA27909B1B5444D6AF58FFD8 /* ../dolphin-ios/Externals/fmt/src/os.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = os.cc; path = src/os.cc; sourceTree = SOURCE_ROOT; };
-		BE1A3FE08B4340ABBE1735E6 /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		CD9790ED38B344AF9A871A14 /* ../dolphin-ios/Externals/fmt/src/format.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = format.cc; path = src/format.cc; sourceTree = SOURCE_ROOT; };
-		D0868D2DD10040E6A1953A80 /* ../dolphin-ios/Externals/fmt/include/fmt/ranges.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ranges.h; path = include/fmt/ranges.h; sourceTree = SOURCE_ROOT; };
-		D8B515BDDAEF4757BA1C4E3A /* fmt */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libfmtd.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		EC630F14EF554680B5A51C37 /* ../dolphin-ios/Externals/fmt/include/fmt/ostream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ostream.h; path = include/fmt/ostream.h; sourceTree = SOURCE_ROOT; };
-		F877E20CA3794F89A9BB83A5 /* ../dolphin-ios/Externals/fmt/include/fmt/color.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = color.h; path = include/fmt/color.h; sourceTree = SOURCE_ROOT; };
+		02CCBDBBAF5D4B348E7AA1EE /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		0A7FF954CF514D0DBD40E35E /* ../dolphin-ios/Externals/fmt/README.rst */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = README.rst; path = README.rst; sourceTree = SOURCE_ROOT; };
+		182E1F29C9694B338FF54184 /* ../dolphin-ios/Externals/fmt/ChangeLog.rst */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = ChangeLog.rst; path = ChangeLog.rst; sourceTree = SOURCE_ROOT; };
+		2A17636F729C485AB9030083 /* ../dolphin-ios/Externals/fmt/src/format.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = format.cc; path = src/format.cc; sourceTree = SOURCE_ROOT; };
+		3C2ADB6171F045849F2D09AC /* ../dolphin-ios/Externals/fmt/include/fmt/os.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = os.h; path = include/fmt/os.h; sourceTree = SOURCE_ROOT; };
+		408B17E69B9F4578A6053D3B /* ../dolphin-ios/Externals/fmt/include/fmt/chrono.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = chrono.h; path = include/fmt/chrono.h; sourceTree = SOURCE_ROOT; };
+		414E1988F07645309BE9EA04 /* ../dolphin-ios/Externals/fmt/include/fmt/format.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = format.h; path = include/fmt/format.h; sourceTree = SOURCE_ROOT; };
+		4634E63A9D33499E9A6E697D /* ../dolphin-ios/Externals/fmt/include/fmt/compile.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compile.h; path = include/fmt/compile.h; sourceTree = SOURCE_ROOT; };
+		549FDDA12C2D458291D5D070 /* ../cmake/Externals/fmt/CMakeFiles/fmt.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/fmt/CMakeFiles/fmt.dir/Info.plist; sourceTree = "<absolute>"; };
+		6812C3B81B21411EB17F79D3 /* ../dolphin-ios/Externals/fmt/include/fmt/ranges.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ranges.h; path = include/fmt/ranges.h; sourceTree = SOURCE_ROOT; };
+		73EECE6854EA44E48BC9B9A0 /* ../dolphin-ios/Externals/fmt/include/fmt/printf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = printf.h; path = include/fmt/printf.h; sourceTree = SOURCE_ROOT; };
+		98468D71D0164EA0B3362E62 /* ../dolphin-ios/Externals/fmt/include/fmt/locale.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = locale.h; path = include/fmt/locale.h; sourceTree = SOURCE_ROOT; };
+		9968A3CBE82441FF85AD1314 /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		A1AC0D45F28247FAAC199409 /* ../dolphin-ios/Externals/fmt/include/fmt/color.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = color.h; path = include/fmt/color.h; sourceTree = SOURCE_ROOT; };
+		A48B42062AEB41888DBB9527 /* ../dolphin-ios/Externals/fmt/src/os.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = os.cc; path = src/os.cc; sourceTree = SOURCE_ROOT; };
+		B1B4596B8D9C4073B2CFDE7B /* ../dolphin-ios/Externals/fmt/include/fmt/ostream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ostream.h; path = include/fmt/ostream.h; sourceTree = SOURCE_ROOT; };
+		B54EE846F63E4A5CB7285DFC /* ../dolphin-ios/Externals/fmt/include/fmt/format-inl.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = "format-inl.h"; path = "include/fmt/format-inl.h"; sourceTree = SOURCE_ROOT; };
+		EE1985B7D6BF442F8904B9BA /* fmt */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libfmtd.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE945B52F69B487C833F6CA9 /* ../dolphin-ios/Externals/fmt/include/fmt/core.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = core.h; path = include/fmt/core.h; sourceTree = SOURCE_ROOT; };
+		F3DA867A265F48E2BC3883D3 /* ../dolphin-ios/Externals/fmt/include/fmt/posix.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = posix.h; path = include/fmt/posix.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		032A2735785D4775841453D1 /* Frameworks */ = {
+		9EC484DDC2F74F8590C2C6DC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -181,145 +181,153 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0628C59BF0F3403795189A47 /* Products */ = {
+		1F321E3A36A04AD691E4901D /* fmt */ = {
 			isa = PBXGroup;
 			children = (
-				D8B515BDDAEF4757BA1C4E3A /* fmt */,
+				64E9B6B1F7834037B2B99AD5 /* Source Files */,
+				9E2E74C131A84380B52C10E7 /* Header Files */,
+				AD0E3DCCF7D0405F9E76F749 /* Resources */,
+				9968A3CBE82441FF85AD1314 /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */,
+				182E1F29C9694B338FF54184 /* ../dolphin-ios/Externals/fmt/ChangeLog.rst */,
+				0A7FF954CF514D0DBD40E35E /* ../dolphin-ios/Externals/fmt/README.rst */,
 			);
-			name = Products;
+			name = fmtd;
 			sourceTree = "<group>";
 		};
-		21F0398208A047B9AAC1B8B4 /* Frameworks */ = {
+		32E207EE4A484A5996203D6E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		4DBB405CD2F74596AAB0E081 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		4BD909FD6C6740C79B9E24C5 /* CMake Rules */ = {
+		64E9B6B1F7834037B2B99AD5 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				2A17636F729C485AB9030083 /* ../dolphin-ios/Externals/fmt/src/format.cc */,
+				A48B42062AEB41888DBB9527 /* ../dolphin-ios/Externals/fmt/src/os.cc */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		6FF5CE5CEF6446C1AD3972E1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EE1985B7D6BF442F8904B9BA /* fmt */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9E2E74C131A84380B52C10E7 /* Header Files */ = {
+			isa = PBXGroup;
+			children = (
+				408B17E69B9F4578A6053D3B /* ../dolphin-ios/Externals/fmt/include/fmt/chrono.h */,
+				A1AC0D45F28247FAAC199409 /* ../dolphin-ios/Externals/fmt/include/fmt/color.h */,
+				4634E63A9D33499E9A6E697D /* ../dolphin-ios/Externals/fmt/include/fmt/compile.h */,
+				EE945B52F69B487C833F6CA9 /* ../dolphin-ios/Externals/fmt/include/fmt/core.h */,
+				B54EE846F63E4A5CB7285DFC /* ../dolphin-ios/Externals/fmt/include/fmt/format-inl.h */,
+				414E1988F07645309BE9EA04 /* ../dolphin-ios/Externals/fmt/include/fmt/format.h */,
+				98468D71D0164EA0B3362E62 /* ../dolphin-ios/Externals/fmt/include/fmt/locale.h */,
+				3C2ADB6171F045849F2D09AC /* ../dolphin-ios/Externals/fmt/include/fmt/os.h */,
+				B1B4596B8D9C4073B2CFDE7B /* ../dolphin-ios/Externals/fmt/include/fmt/ostream.h */,
+				F3DA867A265F48E2BC3883D3 /* ../dolphin-ios/Externals/fmt/include/fmt/posix.h */,
+				73EECE6854EA44E48BC9B9A0 /* ../dolphin-ios/Externals/fmt/include/fmt/printf.h */,
+				6812C3B81B21411EB17F79D3 /* ../dolphin-ios/Externals/fmt/include/fmt/ranges.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		A8262F0771CB4587ACBDB25F /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				A957FB08CA2E457B9DD221C1 /* CMake Rules */,
+				02CCBDBBAF5D4B348E7AA1EE /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		A957FB08CA2E457B9DD221C1 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		4C9B1AC76EE04E69A10F35C7 /* fmt */ = {
+		AD0E3DCCF7D0405F9E76F749 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				62DBBB2DDAED4C98BBA23A1B /* Source Files */,
-				BD0A4361C9D4432B86C8137F /* Header Files */,
-				BCA42EA379B54F168493F9AB /* Resources */,
-				472D3A95E7014FC9A24289E9 /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */,
-				A63BBADE301D4BE4AADEE055 /* ../dolphin-ios/Externals/fmt/ChangeLog.rst */,
-				1891D016C72340CF8A97A334 /* ../dolphin-ios/Externals/fmt/README.rst */,
-			);
-			name = fmtd;
-			sourceTree = "<group>";
-		};
-		62DBBB2DDAED4C98BBA23A1B /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				CD9790ED38B344AF9A871A14 /* ../dolphin-ios/Externals/fmt/src/format.cc */,
-				BA27909B1B5444D6AF58FFD8 /* ../dolphin-ios/Externals/fmt/src/os.cc */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		BCA42EA379B54F168493F9AB /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				37B7949F8E22438EA9EE9456 /* ../cmake/Externals/fmt/CMakeFiles/fmt.dir/Info.plist */,
+				549FDDA12C2D458291D5D070 /* ../cmake/Externals/fmt/CMakeFiles/fmt.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		BD0A4361C9D4432B86C8137F /* Header Files */ = {
+		EA79351ABBF04076A5290915 = {
 			isa = PBXGroup;
 			children = (
-				77EE42659383432F81D7E7D9 /* ../dolphin-ios/Externals/fmt/include/fmt/chrono.h */,
-				F877E20CA3794F89A9BB83A5 /* ../dolphin-ios/Externals/fmt/include/fmt/color.h */,
-				A21F0579317F472F9433CCDE /* ../dolphin-ios/Externals/fmt/include/fmt/compile.h */,
-				581401B740D64E048A6F97FD /* ../dolphin-ios/Externals/fmt/include/fmt/core.h */,
-				56111976D4F14D9B80DBA0E3 /* ../dolphin-ios/Externals/fmt/include/fmt/format-inl.h */,
-				8F123F904F6E4311A5B4E8AA /* ../dolphin-ios/Externals/fmt/include/fmt/format.h */,
-				68342CD724E74A5EB034A41B /* ../dolphin-ios/Externals/fmt/include/fmt/locale.h */,
-				B6A50509BBC541DD9FA2D30E /* ../dolphin-ios/Externals/fmt/include/fmt/os.h */,
-				EC630F14EF554680B5A51C37 /* ../dolphin-ios/Externals/fmt/include/fmt/ostream.h */,
-				4E3261AB98414B4084EDEE24 /* ../dolphin-ios/Externals/fmt/include/fmt/posix.h */,
-				573EFA4DFBC0422D88019101 /* ../dolphin-ios/Externals/fmt/include/fmt/printf.h */,
-				D0868D2DD10040E6A1953A80 /* ../dolphin-ios/Externals/fmt/include/fmt/ranges.h */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		E2613249BBA846BA912A9A07 /* ALL_BUILD */ = {
-			isa = PBXGroup;
-			children = (
-				4BD909FD6C6740C79B9E24C5 /* CMake Rules */,
-				BE1A3FE08B4340ABBE1735E6 /* ../dolphin-ios/Externals/fmt/CMakeLists.txt */,
-			);
-			name = ALL_BUILD;
-			sourceTree = "<group>";
-		};
-		FA79FA59FFA94927BA8E5082 = {
-			isa = PBXGroup;
-			children = (
-				4C9B1AC76EE04E69A10F35C7 /* fmt */,
-				E2613249BBA846BA912A9A07 /* ALL_BUILD */,
-				0628C59BF0F3403795189A47 /* Products */,
-				21F0398208A047B9AAC1B8B4 /* Frameworks */,
+				1F321E3A36A04AD691E4901D /* fmt */,
+				A8262F0771CB4587ACBDB25F /* ALL_BUILD */,
+				6FF5CE5CEF6446C1AD3972E1 /* Products */,
+				4DBB405CD2F74596AAB0E081 /* Frameworks */,
+				32E207EE4A484A5996203D6E /* Resources */,
 			);
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AD9FB006DD914823A5E1C675 /* fmt */ = {
+		4F830F07EC314805A5A84FE4 /* fmt */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 782BBCF2671C4BEEBDCF61F0 /* Build configuration list for PBXNativeTarget "fmt" */;
+			buildConfigurationList = AB5A8E8CD0AF4921BF1CC922 /* Build configuration list for PBXNativeTarget "fmt" */;
 			buildPhases = (
-				558F1FC3BF37457488269ECA /* Sources */,
-				032A2735785D4775841453D1 /* Frameworks */,
+				58986E8C45604E12B3A81F19 /* Sources */,
+				9EC484DDC2F74F8590C2C6DC /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				46F10123043947D799C01F6D /* PBXTargetDependency */,
+				8B980B34D7024C8E842CB6FD /* PBXTargetDependency */,
 			);
 			name = fmtd;
 			productName = fmtd;
-			productReference = D8B515BDDAEF4757BA1C4E3A /* fmt */;
+			productReference = EE1985B7D6BF442F8904B9BA /* fmt */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		F3EB1FB877D8405CB40AC771 /* Project object */ = {
+		4E425E766C104F6E90C4E4F5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1530;
 			};
-			buildConfigurationList = 915DDA89456B4062BD9A4FD2 /* Build configuration list for PBXProject "FMT" */;
+			buildConfigurationList = DA2614C507A64068B5B0D855 /* Build configuration list for PBXProject "FMT" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				6662231DF3824FC5BFBC15A1 /* Debug */,
-				407B2F31A19344E981247083 /* Release */,
-				9AE283CF4ABD4703803CBE85 /* MinSizeRel */,
-				8FACB64BDF12492DB765FDF4 /* RelWithDebInfo */,
+				F0D5CE70180241E2890B24B8 /* Debug */,
+				D1EF79EA9AC34CDC98601178 /* Release */,
+				884C8BBF67AF40418B37EBFF /* MinSizeRel */,
+				4826EDA2608D4D368A2EC732 /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = FA79FA59FFA94927BA8E5082;
+			mainGroup = EA79351ABBF04076A5290915;
 			projectDirPath = "../dolphin-ios";
 			projectRoot = "";
 			targets = (
-				27752D87E92A4D2AAF4559FB /* ALL_BUILD */,
-				D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */,
-				AD9FB006DD914823A5E1C675 /* fmt */,
-				A7904E74C7BB45968F4D5EC8 /* install */,
-				37035854F5494840A21D2316 /* package */,
+				C38467A1EA2247DC869676BA /* ALL_BUILD */,
+				2D7794A245CE41B888FF8C64 /* ZERO_CHECK */,
+				4F830F07EC314805A5A84FE4 /* fmt */,
+				18D93D140CF74F3CB2EE2044 /* install */,
+				ABFAB71FC99B401D8040E7DA /* package */,
 			);
 		};
 /* End PBXProject section */
@@ -354,19 +362,19 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -448,19 +456,19 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/Externals/fmt
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/Externals/fmt
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/Externals/fmt
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/Externals/fmt
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -516,85 +524,47 @@ fi
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		558F1FC3BF37457488269ECA /* Sources */ = {
+		58986E8C45604E12B3A81F19 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94C3F71F45614522BEB7B364 /* ../dolphin-ios/Externals/fmt/src/format.cc */,
-				95D72F5A6764424DA0387C2E /* ../dolphin-ios/Externals/fmt/src/os.cc */,
+				A00FFF32CE30464EBDAE1A49 /* ../dolphin-ios/Externals/fmt/src/format.cc */,
+				413D4B14D2A14377B0D19D56 /* ../dolphin-ios/Externals/fmt/src/os.cc */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		46F10123043947D799C01F6D /* PBXTargetDependency */ = {
+		03BB74BCDFA44E008236682C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */;
-			targetProxy = 459CD4DB0C7F47A89E7729A9 /* PBXContainerItemProxy */;
+			target = 2D7794A245CE41B888FF8C64 /* ZERO_CHECK */;
+			targetProxy = D8108879AF9B4DA8975A560C /* PBXContainerItemProxy */;
 		};
-		6557210FA90A491F9812A8AD /* PBXTargetDependency */ = {
+		27CBCF0FAB6445108726912D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AD9FB006DD914823A5E1C675 /* fmt */;
-			targetProxy = 62FE64FFE7674519BBAD0497 /* PBXContainerItemProxy */;
+			target = 4F830F07EC314805A5A84FE4 /* fmt */;
+			targetProxy = BDFAA3A160F54E08BA57780C /* PBXContainerItemProxy */;
 		};
-		C4610C30189040AAAC50314C /* PBXTargetDependency */ = {
+		8B980B34D7024C8E842CB6FD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */;
-			targetProxy = 6EC33A24F6044DFC9E9A3830 /* PBXContainerItemProxy */;
+			target = 2D7794A245CE41B888FF8C64 /* ZERO_CHECK */;
+			targetProxy = 76D1744F78474FD28F2FE4A0 /* PBXContainerItemProxy */;
 		};
-		DE1A0854AFC9486A985EFCC5 /* PBXTargetDependency */ = {
+		949FBC9AE12A431282D83444 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 27752D87E92A4D2AAF4559FB /* ALL_BUILD */;
-			targetProxy = 75262B77519A4428BA312E55 /* PBXContainerItemProxy */;
+			target = C38467A1EA2247DC869676BA /* ALL_BUILD */;
+			targetProxy = E6799E07165F40AA8EF8E03C /* PBXContainerItemProxy */;
 		};
-		EC20E5AF9E2A4D1CAB5F4B4B /* PBXTargetDependency */ = {
+		E54D39117E304B65AFA1D251 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 27752D87E92A4D2AAF4559FB /* ALL_BUILD */;
-			targetProxy = C698630E2BF142B7B3ADF0AA /* PBXContainerItemProxy */;
+			target = C38467A1EA2247DC869676BA /* ALL_BUILD */;
+			targetProxy = A58BED19C5624DB6B55158AD /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		063D5DC9391A48F8AFF8E85E /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		0ECBB6EE9FD34A8EA402EF57 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		1649EA9B57E84A5888681213 /* RelWithDebInfo */ = {
+		099EC1BEB0114ED5A848F6E9 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "arm64 x86_64";
@@ -606,14 +576,16 @@ fi
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				ONLY_ACTIVE_ARCH = NO;
 				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				BUILD_DIR = dolphin-build;
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
 			};
 			name = RelWithDebInfo;
 		};
-		175E3280DFA042138C05F028 /* Debug */ = {
+		197B4D1CA60D4075B412FD49 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -623,16 +595,17 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
+				PRODUCT_NAME = package;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
+			name = MinSizeRel;
 		};
-		34A304D15D6A493AAE6E0737 /* Release */ = {
+		1F10BB7BBE6948F08DBFB7AA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -649,9 +622,10 @@ fi
 			};
 			name = Release;
 		};
-		364E907504144AACBEA303C3 /* Debug */ = {
+		21728629C90048F891FB7E41 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -666,11 +640,12 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Debug;
+			name = RelWithDebInfo;
 		};
-		3CBEE407ECFC4DBF933A581B /* Release */ = {
+		362A11840DFF47C0A6009034 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -687,9 +662,68 @@ fi
 			};
 			name = Release;
 		};
-		3E52D3B7FBF04534A1BF235A /* MinSizeRel */ = {
+		45579572820648C984C0A6C5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = Release;
+		};
+		5734D100B378486CA37C89C8 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		5C7C4058AE7847C09D14B706 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		79F94632EC8F463CB91341CD /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -704,28 +738,12 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = RelWithDebInfo;
 		};
-		3F3FA7854AA641F49F596AFE /* Debug */ = {
+		7FC1C23A88194A43ACB7E614 /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "arm64 x86_64";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				BUILD_DIR = dolphin-build;
-			};
-			name = Debug;
-		};
-		44E7EF75D9C1410E97333C55 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
 				
@@ -734,13 +752,13 @@ fi
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",FMT_LOCALE,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",FMT_LOCALE,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/fmt/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer '-std=gnu++11' ";
+				OTHER_CPLUSPLUSFLAGS = "       -DNDEBUG '-std=gnu++11' '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer -flto ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmtd;
@@ -751,9 +769,10 @@ fi
 			};
 			name = RelWithDebInfo;
 		};
-		4590C92099C849D28D75AEEC /* Release */ = {
+		8BDA6865045D40D1B9467FB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -768,66 +787,12 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
-		};
-		48F624D11646432B8C3E1F34 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		50DB6C761FB24C719126C37B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
 			name = Debug;
 		};
-		605AFEF9DD4241FE93BDEBFE /* MinSizeRel */ = {
+		A1EF19D821484C06B1BCF371 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "arm64 x86_64";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				BUILD_DIR = dolphin-build;
-			};
-			name = MinSizeRel;
-		};
-		71B9AB8B488E411D94AAD33A /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
 				
@@ -836,13 +801,13 @@ fi
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",FMT_LOCALE,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",FMT_LOCALE,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/fmt/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer '-std=gnu++11' ";
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=gnu++11' '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer -flto ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmtd;
@@ -853,37 +818,10 @@ fi
 			};
 			name = MinSizeRel;
 		};
-		76FF59D9D74B443798535AD5 /* Debug */ = {
+		A6ACCF294C6246FA8FE982E5 /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",FMT_LOCALE,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/fmt/include","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "   '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden'    '-std=gnu++11' ";
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = fmtd;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		9F60CB082E2A4723A7351EE0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -893,67 +831,32 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		AEFD67EFA0C54EB1BDFA1AB4 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
+				PRODUCT_NAME = ALL_BUILD;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = MinSizeRel;
 		};
-		DDC9EEA6610943D7B6A6214C /* Release */ = {
+		AA98A8F4C9A64B77A5F63E71 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "arm64 x86_64";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				BUILD_DIR = dolphin-build;
-			};
-			name = Release;
-		};
-		DE3EEA4F74E04805A44AEA70 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
 				
 				EXECUTABLE_PREFIX = lib;
 				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",FMT_LOCALE,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'","$(inherited)");
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",FMT_LOCALE,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/fmt/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer '-std=gnu++11' ";
+				OTHER_CPLUSPLUSFLAGS = "   '-std=gnu++11' '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden'    -flto ";
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = fmtd;
@@ -962,11 +865,12 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = Release;
+			name = Debug;
 		};
-		E085F39E4863437486BB5FDB /* RelWithDebInfo */ = {
+		ABF4478FBEF14FC6AF36FC55 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -981,11 +885,118 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = Release;
 		};
-		E2660DD99B404E3795C8D7A8 /* RelWithDebInfo */ = {
+		AC19FCC43E8A45478BD528E6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		CEC0DB11E18643E2B8BE4D68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				BUILD_DIR = ../lib;
+			};
+			name = Debug;
+		};
+		D1C9356919A94974BF4ED004 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		DF80A5E31DA74AE989A8152B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'",FMT_LOCALE,"'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/fmt/include","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CPLUSPLUSFLAGS = "    -DNDEBUG '-std=gnu++11' '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer -flto ";
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = fmtd;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		E0A52E6B8B764926B658B38B /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		E1424DEC25C843C3AE331358 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1002,9 +1013,28 @@ fi
 			};
 			name = RelWithDebInfo;
 		};
-		E342189925F34B7DA9535A95 /* MinSizeRel */ = {
+		E3EBE148F40F4A05BC94EB4B /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = MinSizeRel;
+		};
+		E63B922224E74023AECFD2B9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1019,11 +1049,12 @@ fi
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = Debug;
 		};
-		E38F82F1E0C54E86A5A74A7F /* RelWithDebInfo */ = {
+		EBA42B1E0CE94FF682FCD34C /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1033,7 +1064,7 @@ fi
 				INSTALL_PATH = "";
 				OTHER_LDFLAGS = ("","$(inherited)");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
+				PRODUCT_NAME = ZERO_CHECK;
 				SECTORDER_FLAGS = "";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
@@ -1043,73 +1074,73 @@ fi
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		128B3A6100F54F6C8A91F9C9 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		30EA65B90A4049FCBE7C7F1F /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				175E3280DFA042138C05F028 /* Debug */,
-				4590C92099C849D28D75AEEC /* Release */,
-				3E52D3B7FBF04534A1BF235A /* MinSizeRel */,
-				E38F82F1E0C54E86A5A74A7F /* RelWithDebInfo */,
+				E63B922224E74023AECFD2B9 /* Debug */,
+				1F10BB7BBE6948F08DBFB7AA /* Release */,
+				5734D100B378486CA37C89C8 /* MinSizeRel */,
+				EBA42B1E0CE94FF682FCD34C /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		3A8A48D1712A44BCA9961277 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		5B1AA593DE3B4A53B7CE5C49 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				364E907504144AACBEA303C3 /* Debug */,
-				063D5DC9391A48F8AFF8E85E /* Release */,
-				48F624D11646432B8C3E1F34 /* MinSizeRel */,
-				E085F39E4863437486BB5FDB /* RelWithDebInfo */,
+				8BDA6865045D40D1B9467FB5 /* Debug */,
+				AC19FCC43E8A45478BD528E6 /* Release */,
+				A6ACCF294C6246FA8FE982E5 /* MinSizeRel */,
+				79F94632EC8F463CB91341CD /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		782BBCF2671C4BEEBDCF61F0 /* Build configuration list for PBXNativeTarget "fmt" */ = {
+		79F7EBC26D9B436C9377FB0A /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				76FF59D9D74B443798535AD5 /* Debug */,
-				DE3EEA4F74E04805A44AEA70 /* Release */,
-				71B9AB8B488E411D94AAD33A /* MinSizeRel */,
-				44E7EF75D9C1410E97333C55 /* RelWithDebInfo */,
+				5C7C4058AE7847C09D14B706 /* Debug */,
+				362A11840DFF47C0A6009034 /* Release */,
+				197B4D1CA60D4075B412FD49 /* MinSizeRel */,
+				E1424DEC25C843C3AE331358 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		915DDA89456B4062BD9A4FD2 /* Build configuration list for PBXProject "FMT" */ = {
+		9A423A7AB6C24864949211B2 /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				3F3FA7854AA641F49F596AFE /* Debug */,
-				DDC9EEA6610943D7B6A6214C /* Release */,
-				605AFEF9DD4241FE93BDEBFE /* MinSizeRel */,
-				1649EA9B57E84A5888681213 /* RelWithDebInfo */,
+				D1C9356919A94974BF4ED004 /* Debug */,
+				ABF4478FBEF14FC6AF36FC55 /* Release */,
+				E0A52E6B8B764926B658B38B /* MinSizeRel */,
+				21728629C90048F891FB7E41 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		CC96D81056BE47389EE6C1F1 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		AB5A8E8CD0AF4921BF1CC922 /* Build configuration list for PBXNativeTarget "fmt" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				50DB6C761FB24C719126C37B /* Debug */,
-				34A304D15D6A493AAE6E0737 /* Release */,
-				E342189925F34B7DA9535A95 /* MinSizeRel */,
-				0ECBB6EE9FD34A8EA402EF57 /* RelWithDebInfo */,
+				AA98A8F4C9A64B77A5F63E71 /* Debug */,
+				DF80A5E31DA74AE989A8152B /* Release */,
+				A1EF19D821484C06B1BCF371 /* MinSizeRel */,
+				7FC1C23A88194A43ACB7E614 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		CEB388EB54A14D78A02DA3A8 /* Build configuration list for PBXAggregateTarget "package" */ = {
+		DA2614C507A64068B5B0D855 /* Build configuration list for PBXProject "FMT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9F60CB082E2A4723A7351EE0 /* Debug */,
-				3CBEE407ECFC4DBF933A581B /* Release */,
-				AEFD67EFA0C54EB1BDFA1AB4 /* MinSizeRel */,
-				E2660DD99B404E3795C8D7A8 /* RelWithDebInfo */,
+				CEC0DB11E18643E2B8BE4D68 /* Debug */,
+				45579572820648C984C0A6C5 /* Release */,
+				E3EBE148F40F4A05BC94EB4B /* MinSizeRel */,
+				099EC1BEB0114ED5A848F6E9 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = F3EB1FB877D8405CB40AC771 /* Project object */;
+	rootObject = 4E425E766C104F6E90C4E4F5 /* Project object */;
 }

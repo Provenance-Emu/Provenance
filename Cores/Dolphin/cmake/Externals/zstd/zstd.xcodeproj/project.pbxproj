@@ -7,46 +7,21 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		27752D87E92A4D2AAF4559FB /* ALL_BUILD */ = {
+		18D93D140CF74F3CB2EE2044 /* install */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 726335C549C64FEC9519EC40 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
-			buildPhases = (
-				27DA237296C7CB0287BD369B /* Generate CMakeFiles/ALL_BUILD */,
-			);
-			dependencies = (
-				16D609BE41604525BF3BDC49 /* PBXTargetDependency */,
-				40F3801A98414BB28C89D0A7 /* PBXTargetDependency */,
-			);
-			name = ALL_BUILD;
-			productName = ALL_BUILD;
-		};
-		37035854F5494840A21D2316 /* package */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 90772A3F982246BD9630F760 /* Build configuration list for PBXAggregateTarget "package" */;
-			buildPhases = (
-				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
-			);
-			dependencies = (
-				B101BBC7F2C0405994E3146D /* PBXTargetDependency */,
-			);
-			name = package;
-			productName = package;
-		};
-		A7904E74C7BB45968F4D5EC8 /* install */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 24C95CE1C57A48BDBA960D02 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildConfigurationList = F1C001144DA94EBC8383771C /* Build configuration list for PBXAggregateTarget "install" */;
 			buildPhases = (
 				93426DA6A4AC2C2AC9CE883C /* CMake PostBuild Rules */,
 			);
 			dependencies = (
-				7A46F64654274508A16FC077 /* PBXTargetDependency */,
+				2F650C04B08348D0BCA331ED /* PBXTargetDependency */,
 			);
 			name = install;
 			productName = install;
 		};
-		D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */ = {
+		2D7794A245CE41B888FF8C64 /* ZERO_CHECK */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = ADFBA65FD8F94083BD292951 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildConfigurationList = CB8B54AF19BC45F88B76C472 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
 			buildPhases = (
 				5D8F7C20B5FCDEAA5187E990 /* Generate CMakeFiles/ZERO_CHECK */,
 			);
@@ -55,195 +30,220 @@
 			name = ZERO_CHECK;
 			productName = ZERO_CHECK;
 		};
+		ABFAB71FC99B401D8040E7DA /* package */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C2764464B96146498F0E5116 /* Build configuration list for PBXAggregateTarget "package" */;
+			buildPhases = (
+				571234464C2A5D0D43F1AB42 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				D97F351CBE7F4360BFBB1A20 /* PBXTargetDependency */,
+			);
+			name = package;
+			productName = package;
+		};
+		C38467A1EA2247DC869676BA /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 59F7A57E69964EBB9E4CB2E5 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				27DA237296C7CB0287BD369B /* Generate CMakeFiles/ALL_BUILD */,
+			);
+			dependencies = (
+				DC6AE5DCCC0B4B55973DAE87 /* PBXTargetDependency */,
+				43D717A048564E8C8B74405F /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		003AC2532DA148F2B74DE312 /* ../dolphin-ios/Externals/zstd/lib/common/pool.h */ = {isa = PBXBuildFile; fileRef = FFDA79E3317A4283861E71FB /* ../dolphin-ios/Externals/zstd/lib/common/pool.h */; };
-		1223D484F3AC4AF5A461C340 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXBuildFile; fileRef = B7BC98206683492A99778427 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_internal.h */; };
-		17FC5BCBE0C94EA192B78565 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXBuildFile; fileRef = A685F615EA56422CB1F19FED /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.c */; };
-		1A2409ACD1044A95BBD64C02 /* ../dolphin-ios/Externals/zstd/lib/common/threading.h */ = {isa = PBXBuildFile; fileRef = 54B963CAF3CF41AB8F4D44F9 /* ../dolphin-ios/Externals/zstd/lib/common/threading.h */; };
-		20E9EB946B6E4D6DA291AE53 /* ../dolphin-ios/Externals/zstd/lib/zstd.h */ = {isa = PBXBuildFile; fileRef = B6C5CD7D8C2144869A54A17D /* ../dolphin-ios/Externals/zstd/lib/zstd.h */; };
-		2747C9DC3ECE4FE8B50EADB5 /* ../dolphin-ios/Externals/zstd/lib/common/debug.c */ = {isa = PBXBuildFile; fileRef = 18A1E39F1B2E463287261C78 /* ../dolphin-ios/Externals/zstd/lib/common/debug.c */; };
-		3108C43F89D2446D97A9B1EA /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXBuildFile; fileRef = B4AB3126BD9948AC893BA8F6 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.h */; };
-		32E26D0736254017B39AFCC9 /* ../dolphin-ios/Externals/zstd/lib/common/pool.c */ = {isa = PBXBuildFile; fileRef = 83FA383BCCBB47DCA8E6B537 /* ../dolphin-ios/Externals/zstd/lib/common/pool.c */; };
-		3735CFB7EF9648CEB398898D /* ../dolphin-ios/Externals/zstd/lib/common/error_private.c */ = {isa = PBXBuildFile; fileRef = E45B8795F8BF45A1B1E3A57D /* ../dolphin-ios/Externals/zstd/lib/common/error_private.c */; };
-		39889D4384834B9CBDF6DEA5 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXBuildFile; fileRef = C175FE6209EC46199E8EE94E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.h */; };
-		41670263BA6F484BB660B516 /* ../dolphin-ios/Externals/zstd/lib/common/error_private.h */ = {isa = PBXBuildFile; fileRef = 2FFD9387BBD44B84AB7298CC /* ../dolphin-ios/Externals/zstd/lib/common/error_private.h */; };
-		42A2813501F04D4A8EA988B6 /* ../dolphin-ios/Externals/zstd/lib/common/debug.h */ = {isa = PBXBuildFile; fileRef = 391877DB78A0492088CFA4FD /* ../dolphin-ios/Externals/zstd/lib/common/debug.h */; };
-		4FD700612F884E188F1BA15B /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXBuildFile; fileRef = 9042911A20DC4C9F84CED240 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.c */; };
-		510D726F3325470B8B6675CE /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXBuildFile; fileRef = F708590E0AF04743A082110A /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_cwksp.h */; };
-		52036D03E9844844BF034569 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_errors.h */ = {isa = PBXBuildFile; fileRef = B548B39E49F342A08F56B7CF /* ../dolphin-ios/Externals/zstd/lib/common/zstd_errors.h */; };
-		588087BA3B054171A4F3BCA7 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.h */ = {isa = PBXBuildFile; fileRef = AA3D185DB09947728840DF1E /* ../dolphin-ios/Externals/zstd/lib/compress/hist.h */; };
-		5B5A1AE7621447ECA43C6583 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.c */ = {isa = PBXBuildFile; fileRef = 7DF6BAA8041340728E319507 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.c */; };
-		5CAA3A765E4842FEB63F23FD /* ../cmake/Externals/zstd/CMakeFiles/zstd.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = A8FE620DF0574F09B9FF232F /* ../cmake/Externals/zstd/CMakeFiles/zstd.dir/Info.plist */; };
-		6753EBE57E30442D87030455 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.c */ = {isa = PBXBuildFile; fileRef = AA46FF5AAE2049DAB7832C53 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.c */; };
-		729A4FC96834498E8F7E5C0A /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXBuildFile; fileRef = B9F7E073B8084EECAA85962B /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.c */; };
-		81015DDF35CC4930B598D58E /* ../dolphin-ios/Externals/zstd/lib/common/huf.h */ = {isa = PBXBuildFile; fileRef = 0214A0ED83104BCC9D07C799 /* ../dolphin-ios/Externals/zstd/lib/common/huf.h */; };
-		8CB5EB22D23544DFA8AA3019 /* ../dolphin-ios/Externals/zstd/lib/common/fse.h */ = {isa = PBXBuildFile; fileRef = 26025A303D1E4FFEA2AB34E7 /* ../dolphin-ios/Externals/zstd/lib/common/fse.h */; };
-		9333AA4AC0F346FEA693EC5C /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXBuildFile; fileRef = 1BF6FE763E864D8385ADCDC7 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.h */; };
-		981FF35287C448599C5982E2 /* ../dolphin-ios/Externals/zstd/lib/common/bitstream.h */ = {isa = PBXBuildFile; fileRef = 8208A10C6468458182FAD9CE /* ../dolphin-ios/Externals/zstd/lib/common/bitstream.h */; };
-		992990DBC6BF475A88AD72D0 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_internal.h */ = {isa = PBXBuildFile; fileRef = 2AFBC15BC91B452F9AF7DEAF /* ../dolphin-ios/Externals/zstd/lib/common/zstd_internal.h */; };
-		9964F1731A4043E39687A078 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.h */ = {isa = PBXBuildFile; fileRef = 25D5AC2E85F1480B8713D96E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.h */; };
-		A5B56637199749B29C02B096 /* ../dolphin-ios/Externals/zstd/lib/compress/fse_compress.c */ = {isa = PBXBuildFile; fileRef = 1E668570332D407AA354A3A8 /* ../dolphin-ios/Externals/zstd/lib/compress/fse_compress.c */; };
-		ABF641ED5690435A96215A92 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXBuildFile; fileRef = 4751C3272ECC4CB0A064F194 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.c */; };
-		B9BCEA4F3DC64262B8F47D35 /* ../dolphin-ios/Externals/zstd/lib/common/entropy_common.c */ = {isa = PBXBuildFile; fileRef = D2419B28719940F4851F6789 /* ../dolphin-ios/Externals/zstd/lib/common/entropy_common.c */; };
-		BD87BE4D3C664C4EB8E404E4 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.c */ = {isa = PBXBuildFile; fileRef = 1BB5D14FC77F4EAB899C89E3 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.c */; };
-		BE021DF8BCEF470A84112E09 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXBuildFile; fileRef = 4DD4128887BA4D12BC62FAE3 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress.c */; };
-		BE5C958D5D59432C94592021 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXBuildFile; fileRef = E95244D00C154E5E9F6C46FB /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.h */; };
-		C16367C03527452A8454DE0B /* ../dolphin-ios/Externals/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXBuildFile; fileRef = AB4F7CE92A804A3ABAA604B8 /* ../dolphin-ios/Externals/zstd/lib/decompress/huf_decompress.c */; };
-		C1B20B4E364046B3B630A121 /* ../dolphin-ios/Externals/zstd/lib/common/fse_decompress.c */ = {isa = PBXBuildFile; fileRef = 199F2E5DD9464702AEECBDC2 /* ../dolphin-ios/Externals/zstd/lib/common/fse_decompress.c */; };
-		CA800B5C2AE543CFA70854E0 /* ../dolphin-ios/Externals/zstd/lib/compress/huf_compress.c */ = {isa = PBXBuildFile; fileRef = F27BA823567F4430A37953F1 /* ../dolphin-ios/Externals/zstd/lib/compress/huf_compress.c */; };
-		D17C47E4F56B425A8C802BF8 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.h */ = {isa = PBXBuildFile; fileRef = DF00B96E5CE34CB0B416E136 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.h */; };
-		D34010FA5D0845DC9F74DC21 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXBuildFile; fileRef = 249BA94DE01F4C13ABB61CD5 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.c */; };
-		D5001D437356455980CDB92B /* ../dolphin-ios/Externals/zstd/lib/common/zstd_common.c */ = {isa = PBXBuildFile; fileRef = 0678A26A3100414AB6E4485A /* ../dolphin-ios/Externals/zstd/lib/common/zstd_common.c */; };
-		D91D0EC4108F463BB970BE53 /* ../dolphin-ios/Externals/zstd/lib/common/threading.c */ = {isa = PBXBuildFile; fileRef = 67CFD74B75C94C31B51DD38A /* ../dolphin-ios/Externals/zstd/lib/common/threading.c */; };
-		D9A2F48E86E442BAB1EA6E37 /* ../dolphin-ios/Externals/zstd/lib/common/cpu.h */ = {isa = PBXBuildFile; fileRef = C5737DDA47C543AA893A5730 /* ../dolphin-ios/Externals/zstd/lib/common/cpu.h */; };
-		DACBCD8C0D8D47FEB9A51C85 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.c */ = {isa = PBXBuildFile; fileRef = 40EA27942B654BEF85EA6CD8 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.c */; };
-		DB6F0E4B362C455F901EC3A7 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXBuildFile; fileRef = 9CFED9CB110F4303BD98CBF4 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.h */; };
-		E448A8AE5C3A4BB48A89C3AF /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress.c */ = {isa = PBXBuildFile; fileRef = A6D28A0F7B83464C945623DC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress.c */; };
-		E4E0051384B043FFA6CCA276 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 5B32AD8785C943A5885DFEE5 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */; };
-		E668179B9F4A49FBA392AB31 /* ../dolphin-ios/Externals/zstd/lib/common/compiler.h */ = {isa = PBXBuildFile; fileRef = ABA95162D5584E8883C7FDF1 /* ../dolphin-ios/Externals/zstd/lib/common/compiler.h */; };
-		E97CD932E70745A6BF522FFD /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXBuildFile; fileRef = 362CA6F265C443CEAC2E5301 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.c */; };
-		EF47AC5A5C0F40E59E9A6464 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXBuildFile; fileRef = FE14A9BD013D4E2A962F64CB /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_internal.h */; };
-		F27FCCF1989E4BDBA04761AD /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXBuildFile; fileRef = C88081980A3046A39CED5A28 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.c */; };
-		F3C59555B08A4735AAD745E2 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXBuildFile; fileRef = 07E343445C984F3E9654B8A6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.h */; };
-		F5345A8E62BB4863B2A92C1C /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXBuildFile; fileRef = 0B1030F776A745BE84AE61F1 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.h */; };
-		F7197FCB99C34296BA34AD56 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.h */ = {isa = PBXBuildFile; fileRef = 34141E8AAB1A49C6A5D8A53C /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.h */; };
-		F943F137A210496CAA0F25B0 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXBuildFile; fileRef = 2B9EACA9B74649D4A050A938 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.h */; };
-		FA491A8272C346898EC10073 /* ../dolphin-ios/Externals/zstd/lib/common/mem.h */ = {isa = PBXBuildFile; fileRef = 3D0BCAC8676F48C9A1631331 /* ../dolphin-ios/Externals/zstd/lib/common/mem.h */; };
-		FB0423CBF0E344FBA976D50D /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXBuildFile; fileRef = 31CDE8DE5CE34E909AEB2176 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.c */; };
+		0B21CF4FE99141F9A73712E5 /* ../dolphin-ios/Externals/zstd/lib/common/threading.c */ = {isa = PBXBuildFile; fileRef = 5E17DBB808A142BEBE34FFAD /* ../dolphin-ios/Externals/zstd/lib/common/threading.c */; };
+		0ED2927A7990446EA1638086 /* ../dolphin-ios/Externals/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXBuildFile; fileRef = 9FAB38C91686431885475C83 /* ../dolphin-ios/Externals/zstd/lib/decompress/huf_decompress.c */; };
+		0F440F4087044F76984069FC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXBuildFile; fileRef = BD7C4BED0042486B8C79ED7E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.c */; };
+		1353D262E7FD4C28A3A6EF94 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXBuildFile; fileRef = 807268554E9B44C5AD20AB22 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.c */; };
+		13851536F7CF4F4CB4DE4287 /* ../dolphin-ios/Externals/zstd/lib/common/threading.h */ = {isa = PBXBuildFile; fileRef = 8DBA5A6E670E4B8696F48508 /* ../dolphin-ios/Externals/zstd/lib/common/threading.h */; };
+		152E3C5A6AA541ADA7B2FB7F /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.h */ = {isa = PBXBuildFile; fileRef = 5F634DD6BE9542BFAF397AD3 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.h */; };
+		15341F3310324F26B569CDC4 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXBuildFile; fileRef = 4488D3916FF44B05B4D1E394 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.h */; };
+		183DDCC92B5542009BF03CDD /* ../dolphin-ios/Externals/zstd/lib/compress/hist.c */ = {isa = PBXBuildFile; fileRef = FD016448846A459C9653C010 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.c */; };
+		1A09FA83534A4163A3D7ADA3 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_internal.h */ = {isa = PBXBuildFile; fileRef = FFD3E1D9C5E74EC8919A08C9 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_internal.h */; };
+		1E6C415EE24D45DA9DCE8DC6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXBuildFile; fileRef = 49BEFCA5ED7840BF8D8D60E6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.c */; };
+		2557E042909B4B1CB7BF1CCB /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.c */ = {isa = PBXBuildFile; fileRef = 0A5DC1FB657F475B828BFA32 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.c */; };
+		2598DEBA5A3B4292B00F5BB7 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_errors.h */ = {isa = PBXBuildFile; fileRef = C46879985B70482787D119F0 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_errors.h */; };
+		38C7D6C6B1D8449CA9D0CA02 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXBuildFile; fileRef = 0AC8B22F250141F5A90F3330 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_internal.h */; };
+		42E8B68F975B40B3A5F281BC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress.c */ = {isa = PBXBuildFile; fileRef = 8EC73C50A22A40E48E8E0353 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress.c */; };
+		4904D00F0E7D4EE6872AE093 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.h */ = {isa = PBXBuildFile; fileRef = B6741D823E1D41E487E9F351 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.h */; };
+		490B19913F134B22A9804244 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.c */ = {isa = PBXBuildFile; fileRef = 25BC312DD2164B189F372B43 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.c */; };
+		4A462D82242C4691A1900A5E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXBuildFile; fileRef = E0EABB331BC647918D83B0C2 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.h */; };
+		4D0916EF708F492F856F09E6 /* ../dolphin-ios/Externals/zstd/lib/common/compiler.h */ = {isa = PBXBuildFile; fileRef = 1B7875DC295846239C67D2FB /* ../dolphin-ios/Externals/zstd/lib/common/compiler.h */; };
+		5E641DDF7E294EFB84853B27 /* ../dolphin-ios/Externals/zstd/lib/common/entropy_common.c */ = {isa = PBXBuildFile; fileRef = C8B8281BCFD543298960CF0C /* ../dolphin-ios/Externals/zstd/lib/common/entropy_common.c */; };
+		6145528F2E8E4AD8B030BF32 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 23E24C5B7FB84C7797207C10 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */; };
+		61F762AB2FFF43719E798E11 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.c */ = {isa = PBXBuildFile; fileRef = BC76EAF8B8D34205829DC894 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.c */; };
+		63C0E8D9A1374562A71DFAFF /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXBuildFile; fileRef = 86C71764B7D34D25B0831723 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.c */; };
+		66E0823B734642B2BEFC9E13 /* ../dolphin-ios/Externals/zstd/lib/common/mem.h */ = {isa = PBXBuildFile; fileRef = 1B7DD79944194861BED9B534 /* ../dolphin-ios/Externals/zstd/lib/common/mem.h */; };
+		740429D3063F492FA3C354F5 /* ../dolphin-ios/Externals/zstd/lib/common/pool.c */ = {isa = PBXBuildFile; fileRef = 6B63955B370B4991980BF52F /* ../dolphin-ios/Externals/zstd/lib/common/pool.c */; };
+		765C745A71D5467DA2C31B0A /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXBuildFile; fileRef = BE229FFECE3544489D5DC1BA /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.h */; };
+		77FC7945C0434CD1A050D504 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.h */ = {isa = PBXBuildFile; fileRef = 8C2E92F151D84997983921C3 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.h */; };
+		7961290880C844D29F1BBBD9 /* ../cmake/Externals/zstd/CMakeFiles/zstd.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 8F9EE996F95546A8AE724537 /* ../cmake/Externals/zstd/CMakeFiles/zstd.dir/Info.plist */; };
+		79A0982AA61445F29309542E /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXBuildFile; fileRef = F99E936666E5499594165861 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.c */; };
+		8971FABB33164E17A2DA736E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXBuildFile; fileRef = 9DB1B2E97B024EB3B99841DC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.c */; };
+		8A78C588A1C8433E88E1B9E6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXBuildFile; fileRef = 80F5406EF123442B9E6999DC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_internal.h */; };
+		8A7F0238B5D44CBA9F409844 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.h */ = {isa = PBXBuildFile; fileRef = F7BD749C0D7F4FCDAF2743BB /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.h */; };
+		8DDA97FE898A4C5CA56EF3EF /* ../dolphin-ios/Externals/zstd/lib/common/zstd_common.c */ = {isa = PBXBuildFile; fileRef = 97FB66C8142C4048B81D1720 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_common.c */; };
+		9054B10620974E8E98CAD075 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXBuildFile; fileRef = 3ACADD66B1E94C7AAE8FDA2F /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.h */; };
+		936A101E274A4C5393DE254D /* ../dolphin-ios/Externals/zstd/lib/common/cpu.h */ = {isa = PBXBuildFile; fileRef = EEE56BD1CFC0493A8911C312 /* ../dolphin-ios/Externals/zstd/lib/common/cpu.h */; };
+		9A5AAECCAA5D475DB271F8C0 /* ../dolphin-ios/Externals/zstd/lib/common/fse_decompress.c */ = {isa = PBXBuildFile; fileRef = 3F8C885329AA4128BD6C76B7 /* ../dolphin-ios/Externals/zstd/lib/common/fse_decompress.c */; };
+		9C59FCB024B44121928B474D /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXBuildFile; fileRef = C46C24F8C7744F80928DE0B0 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.h */; };
+		9E831F46ED7549EC884824F6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXBuildFile; fileRef = 8C3BB8BC5ABC438DB0CFB2C7 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.c */; };
+		9EEA296A3246488E976CF28C /* ../dolphin-ios/Externals/zstd/lib/compress/huf_compress.c */ = {isa = PBXBuildFile; fileRef = E9E66E980FB24253B7EF649E /* ../dolphin-ios/Externals/zstd/lib/compress/huf_compress.c */; };
+		A23FADCDC6E841049C02F068 /* ../dolphin-ios/Externals/zstd/lib/common/huf.h */ = {isa = PBXBuildFile; fileRef = EAAA2DEE32054BC6901832C0 /* ../dolphin-ios/Externals/zstd/lib/common/huf.h */; };
+		A4D27E5D7021458084D3B63E /* ../dolphin-ios/Externals/zstd/lib/common/error_private.c */ = {isa = PBXBuildFile; fileRef = 69E2A388FCC4426493F3DDE0 /* ../dolphin-ios/Externals/zstd/lib/common/error_private.c */; };
+		A54CA4F9C0794758BE002CCB /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXBuildFile; fileRef = A3668F187C67404882BE3A7B /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_cwksp.h */; };
+		ABE4B34E914D48AAB0BCF6D4 /* ../dolphin-ios/Externals/zstd/lib/common/debug.h */ = {isa = PBXBuildFile; fileRef = F95C9E8643FE4FC5A5D6D7C6 /* ../dolphin-ios/Externals/zstd/lib/common/debug.h */; };
+		BD07E550645A4EAD81A22A10 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXBuildFile; fileRef = 5FF825741D4C44F68C7B40B1 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.c */; };
+		C32F2540470E42F9953CB44C /* ../dolphin-ios/Externals/zstd/lib/common/pool.h */ = {isa = PBXBuildFile; fileRef = 0E7354A3BA024361AB34D6C4 /* ../dolphin-ios/Externals/zstd/lib/common/pool.h */; };
+		CB5C9B8F608C41649A586E88 /* ../dolphin-ios/Externals/zstd/lib/compress/fse_compress.c */ = {isa = PBXBuildFile; fileRef = 821152AD68C646FB916E0131 /* ../dolphin-ios/Externals/zstd/lib/compress/fse_compress.c */; };
+		D175FF1AEEA04C2EB0CC7939 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXBuildFile; fileRef = 75F23A9B458D4A428CE817FD /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.h */; };
+		D786F1567B4F41BE990F2683 /* ../dolphin-ios/Externals/zstd/lib/common/bitstream.h */ = {isa = PBXBuildFile; fileRef = 7D4D3D35A2084926AE156262 /* ../dolphin-ios/Externals/zstd/lib/common/bitstream.h */; };
+		DEA670E5035542C281F31BF3 /* ../dolphin-ios/Externals/zstd/lib/zstd.h */ = {isa = PBXBuildFile; fileRef = 1F25D8624F9349F399CE2718 /* ../dolphin-ios/Externals/zstd/lib/zstd.h */; };
+		E14D3CB1EE004CE9A565697B /* ../dolphin-ios/Externals/zstd/lib/common/fse.h */ = {isa = PBXBuildFile; fileRef = 8128D3BF97374E8BA9B9AC59 /* ../dolphin-ios/Externals/zstd/lib/common/fse.h */; };
+		E8E17ED3FBC5406F9AAC547C /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXBuildFile; fileRef = 9A74455C1E00451EA859CE5C /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress.c */; };
+		ED338D391A57460395A51234 /* ../dolphin-ios/Externals/zstd/lib/common/debug.c */ = {isa = PBXBuildFile; fileRef = 0C5230E15B6C422289748EA2 /* ../dolphin-ios/Externals/zstd/lib/common/debug.c */; };
+		EEAF73D6C3714F749D0F9835 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXBuildFile; fileRef = 8B4B145DD53A49939566AD7B /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.h */; };
+		EF8852A2598B4AA9AFCEF787 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXBuildFile; fileRef = AA12276783DC44E189587E88 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.h */; };
+		FD8EB41C2E9545C59FA836EE /* ../dolphin-ios/Externals/zstd/lib/common/error_private.h */ = {isa = PBXBuildFile; fileRef = D1AB68BA182943FC88A8E3EF /* ../dolphin-ios/Externals/zstd/lib/common/error_private.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
-		034C141BB7124ACC81B6EDC9 /* Release */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = Release;
-		};
-		4B4EB969E5D2449B8C92BEF8 /* Debug */ = {
+		3076CDC0B95E47F6B310A178 /* Debug */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = Debug;
 		};
-		73583873A38E49CFA2A9042E /* RelWithDebInfo */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-			};
-			name = RelWithDebInfo;
-		};
-		8BD47CFBFAA54318B70D50D2 /* MinSizeRel */ = {
+		AFC397ED96B24FA7A1A048DD /* MinSizeRel */ = {
 			isa = PBXBuildStyle;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 			};
 			name = MinSizeRel;
 		};
+		D43323E8A02540EA9034E419 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		E62FB4310D704016BAD47C41 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
 /* End PBXBuildStyle section */
 
 /* Begin PBXContainerItemProxy section */
-		4F0AE4AE3D84460D96D96787 /* PBXContainerItemProxy */ = {
+		3512FFBC06F64021AC2FD1D5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B6848FEAE9674975ABF44408 /* Project object */;
+			containerPortal = 5C7C19044B7143D69004B3D3 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 49318C94EA5D453AA16C3407;
+			remoteGlobalIDString = C38467A1EA2247DC869676BA;
+			remoteInfo = ALL_BUILD;
+		};
+		4DF05B1042B541599C25ED3F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5C7C19044B7143D69004B3D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C38467A1EA2247DC869676BA;
+			remoteInfo = ALL_BUILD;
+		};
+		A9278467F2214A47894B6ABD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5C7C19044B7143D69004B3D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2D7794A245CE41B888FF8C64;
+			remoteInfo = ZERO_CHECK;
+		};
+		B77C19F9DE5E4BD7BBB139C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5C7C19044B7143D69004B3D3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D6E6029A5ED2417B8BEFA211;
 			remoteInfo = zstd;
 		};
-		78BCAC44A3DE43F79C730100 /* PBXContainerItemProxy */ = {
+		E732A37C134A4ABC988C9592 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = B6848FEAE9674975ABF44408 /* Project object */;
+			containerPortal = 5C7C19044B7143D69004B3D3 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D0BDA0649EAD45849C6A8AD3;
+			remoteGlobalIDString = 2D7794A245CE41B888FF8C64;
 			remoteInfo = ZERO_CHECK;
-		};
-		7B9ED912A46444B49C4CA954 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B6848FEAE9674975ABF44408 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 27752D87E92A4D2AAF4559FB;
-			remoteInfo = ALL_BUILD;
-		};
-		A725426065ED496EA45EBE1E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B6848FEAE9674975ABF44408 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D0BDA0649EAD45849C6A8AD3;
-			remoteInfo = ZERO_CHECK;
-		};
-		C5E10EB9C95647C9AADA7818 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B6848FEAE9674975ABF44408 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 27752D87E92A4D2AAF4559FB;
-			remoteInfo = ALL_BUILD;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0214A0ED83104BCC9D07C799 /* ../dolphin-ios/Externals/zstd/lib/common/huf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = huf.h; path = lib/common/huf.h; sourceTree = SOURCE_ROOT; };
-		0678A26A3100414AB6E4485A /* ../dolphin-ios/Externals/zstd/lib/common/zstd_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_common.c; path = lib/common/zstd_common.c; sourceTree = SOURCE_ROOT; };
-		07E343445C984F3E9654B8A6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstdmt_compress.h; path = lib/compress/zstdmt_compress.h; sourceTree = SOURCE_ROOT; };
-		0B1030F776A745BE84AE61F1 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_literals.h; path = lib/compress/zstd_compress_literals.h; sourceTree = SOURCE_ROOT; };
-		18A1E39F1B2E463287261C78 /* ../dolphin-ios/Externals/zstd/lib/common/debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = lib/common/debug.c; sourceTree = SOURCE_ROOT; };
-		199F2E5DD9464702AEECBDC2 /* ../dolphin-ios/Externals/zstd/lib/common/fse_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_decompress.c; path = lib/common/fse_decompress.c; sourceTree = SOURCE_ROOT; };
-		1BB5D14FC77F4EAB899C89E3 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = lib/common/xxhash.c; sourceTree = SOURCE_ROOT; };
-		1BF6FE763E864D8385ADCDC7 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ldm.h; path = lib/compress/zstd_ldm.h; sourceTree = SOURCE_ROOT; };
-		1E668570332D407AA354A3A8 /* ../dolphin-ios/Externals/zstd/lib/compress/fse_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_compress.c; path = lib/compress/fse_compress.c; sourceTree = SOURCE_ROOT; };
-		249BA94DE01F4C13ABB61CD5 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ldm.c; path = lib/compress/zstd_ldm.c; sourceTree = SOURCE_ROOT; };
-		25D5AC2E85F1480B8713D96E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_fast.h; path = lib/compress/zstd_fast.h; sourceTree = SOURCE_ROOT; };
-		26025A303D1E4FFEA2AB34E7 /* ../dolphin-ios/Externals/zstd/lib/common/fse.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fse.h; path = lib/common/fse.h; sourceTree = SOURCE_ROOT; };
-		2AFBC15BC91B452F9AF7DEAF /* ../dolphin-ios/Externals/zstd/lib/common/zstd_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_internal.h; path = lib/common/zstd_internal.h; sourceTree = SOURCE_ROOT; };
-		2B9EACA9B74649D4A050A938 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_lazy.h; path = lib/compress/zstd_lazy.h; sourceTree = SOURCE_ROOT; };
-		2FFD9387BBD44B84AB7298CC /* ../dolphin-ios/Externals/zstd/lib/common/error_private.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = error_private.h; path = lib/common/error_private.h; sourceTree = SOURCE_ROOT; };
-		3026F25492934E97B0FEEC56 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		31CDE8DE5CE34E909AEB2176 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_double_fast.c; path = lib/compress/zstd_double_fast.c; sourceTree = SOURCE_ROOT; };
-		34141E8AAB1A49C6A5D8A53C /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = xxhash.h; path = lib/common/xxhash.h; sourceTree = SOURCE_ROOT; };
-		362CA6F265C443CEAC2E5301 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_sequences.c; path = lib/compress/zstd_compress_sequences.c; sourceTree = SOURCE_ROOT; };
-		391877DB78A0492088CFA4FD /* ../dolphin-ios/Externals/zstd/lib/common/debug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = debug.h; path = lib/common/debug.h; sourceTree = SOURCE_ROOT; };
-		3D0BCAC8676F48C9A1631331 /* ../dolphin-ios/Externals/zstd/lib/common/mem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mem.h; path = lib/common/mem.h; sourceTree = SOURCE_ROOT; };
-		40EA27942B654BEF85EA6CD8 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hist.c; path = lib/compress/hist.c; sourceTree = SOURCE_ROOT; };
-		4751C3272ECC4CB0A064F194 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_lazy.c; path = lib/compress/zstd_lazy.c; sourceTree = SOURCE_ROOT; };
-		4DD4128887BA4D12BC62FAE3 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress.c; path = lib/decompress/zstd_decompress.c; sourceTree = SOURCE_ROOT; };
-		54B963CAF3CF41AB8F4D44F9 /* ../dolphin-ios/Externals/zstd/lib/common/threading.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = threading.h; path = lib/common/threading.h; sourceTree = SOURCE_ROOT; };
-		5B32AD8785C943A5885DFEE5 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		67CFD74B75C94C31B51DD38A /* ../dolphin-ios/Externals/zstd/lib/common/threading.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = threading.c; path = lib/common/threading.c; sourceTree = SOURCE_ROOT; };
-		7DF6BAA8041340728E319507 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_fast.c; path = lib/compress/zstd_fast.c; sourceTree = SOURCE_ROOT; };
-		8208A10C6468458182FAD9CE /* ../dolphin-ios/Externals/zstd/lib/common/bitstream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bitstream.h; path = lib/common/bitstream.h; sourceTree = SOURCE_ROOT; };
-		83FA383BCCBB47DCA8E6B537 /* ../dolphin-ios/Externals/zstd/lib/common/pool.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pool.c; path = lib/common/pool.c; sourceTree = SOURCE_ROOT; };
-		9042911A20DC4C9F84CED240 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstdmt_compress.c; path = lib/compress/zstdmt_compress.c; sourceTree = SOURCE_ROOT; };
-		9CFED9CB110F4303BD98CBF4 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ddict.h; path = lib/decompress/zstd_ddict.h; sourceTree = SOURCE_ROOT; };
-		A685F615EA56422CB1F19FED /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_literals.c; path = lib/compress/zstd_compress_literals.c; sourceTree = SOURCE_ROOT; };
-		A6D28A0F7B83464C945623DC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress.c; path = lib/compress/zstd_compress.c; sourceTree = SOURCE_ROOT; };
-		A8FE620DF0574F09B9FF232F /* ../cmake/Externals/zstd/CMakeFiles/zstd.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/zstd/CMakeFiles/zstd.dir/Info.plist; sourceTree = "<absolute>"; };
-		AA3D185DB09947728840DF1E /* ../dolphin-ios/Externals/zstd/lib/compress/hist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = hist.h; path = lib/compress/hist.h; sourceTree = SOURCE_ROOT; };
-		AA46FF5AAE2049DAB7832C53 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_opt.c; path = lib/compress/zstd_opt.c; sourceTree = SOURCE_ROOT; };
-		AB4F7CE92A804A3ABAA604B8 /* ../dolphin-ios/Externals/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_decompress.c; path = lib/decompress/huf_decompress.c; sourceTree = SOURCE_ROOT; };
-		ABA95162D5584E8883C7FDF1 /* ../dolphin-ios/Externals/zstd/lib/common/compiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compiler.h; path = lib/common/compiler.h; sourceTree = SOURCE_ROOT; };
-		B4AB3126BD9948AC893BA8F6 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_block.h; path = lib/decompress/zstd_decompress_block.h; sourceTree = SOURCE_ROOT; };
-		B548B39E49F342A08F56B7CF /* ../dolphin-ios/Externals/zstd/lib/common/zstd_errors.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_errors.h; path = lib/common/zstd_errors.h; sourceTree = SOURCE_ROOT; };
-		B6C5CD7D8C2144869A54A17D /* ../dolphin-ios/Externals/zstd/lib/zstd.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd.h; path = lib/zstd.h; sourceTree = SOURCE_ROOT; };
-		B7BC98206683492A99778427 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_internal.h; path = lib/compress/zstd_compress_internal.h; sourceTree = SOURCE_ROOT; };
-		B9F7E073B8084EECAA85962B /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress_block.c; path = lib/decompress/zstd_decompress_block.c; sourceTree = SOURCE_ROOT; };
-		C175FE6209EC46199E8EE94E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_sequences.h; path = lib/compress/zstd_compress_sequences.h; sourceTree = SOURCE_ROOT; };
-		C4337471D87445D193B1D76B /* zstd */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzstd.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C5737DDA47C543AA893A5730 /* ../dolphin-ios/Externals/zstd/lib/common/cpu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu.h; path = lib/common/cpu.h; sourceTree = SOURCE_ROOT; };
-		C88081980A3046A39CED5A28 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ddict.c; path = lib/decompress/zstd_ddict.c; sourceTree = SOURCE_ROOT; };
-		D2419B28719940F4851F6789 /* ../dolphin-ios/Externals/zstd/lib/common/entropy_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = entropy_common.c; path = lib/common/entropy_common.c; sourceTree = SOURCE_ROOT; };
-		DF00B96E5CE34CB0B416E136 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_opt.h; path = lib/compress/zstd_opt.h; sourceTree = SOURCE_ROOT; };
-		E45B8795F8BF45A1B1E3A57D /* ../dolphin-ios/Externals/zstd/lib/common/error_private.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = error_private.c; path = lib/common/error_private.c; sourceTree = SOURCE_ROOT; };
-		E95244D00C154E5E9F6C46FB /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_double_fast.h; path = lib/compress/zstd_double_fast.h; sourceTree = SOURCE_ROOT; };
-		F27BA823567F4430A37953F1 /* ../dolphin-ios/Externals/zstd/lib/compress/huf_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_compress.c; path = lib/compress/huf_compress.c; sourceTree = SOURCE_ROOT; };
-		F708590E0AF04743A082110A /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_cwksp.h; path = lib/compress/zstd_cwksp.h; sourceTree = SOURCE_ROOT; };
-		FE14A9BD013D4E2A962F64CB /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_internal.h; path = lib/decompress/zstd_decompress_internal.h; sourceTree = SOURCE_ROOT; };
-		FFDA79E3317A4283861E71FB /* ../dolphin-ios/Externals/zstd/lib/common/pool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pool.h; path = lib/common/pool.h; sourceTree = SOURCE_ROOT; };
+		0A5DC1FB657F475B828BFA32 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_fast.c; path = lib/compress/zstd_fast.c; sourceTree = SOURCE_ROOT; };
+		0AC8B22F250141F5A90F3330 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_internal.h; path = lib/decompress/zstd_decompress_internal.h; sourceTree = SOURCE_ROOT; };
+		0C5230E15B6C422289748EA2 /* ../dolphin-ios/Externals/zstd/lib/common/debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = lib/common/debug.c; sourceTree = SOURCE_ROOT; };
+		0E7354A3BA024361AB34D6C4 /* ../dolphin-ios/Externals/zstd/lib/common/pool.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = pool.h; path = lib/common/pool.h; sourceTree = SOURCE_ROOT; };
+		1B7875DC295846239C67D2FB /* ../dolphin-ios/Externals/zstd/lib/common/compiler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = compiler.h; path = lib/common/compiler.h; sourceTree = SOURCE_ROOT; };
+		1B7DD79944194861BED9B534 /* ../dolphin-ios/Externals/zstd/lib/common/mem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mem.h; path = lib/common/mem.h; sourceTree = SOURCE_ROOT; };
+		1F25D8624F9349F399CE2718 /* ../dolphin-ios/Externals/zstd/lib/zstd.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd.h; path = lib/zstd.h; sourceTree = SOURCE_ROOT; };
+		23E24C5B7FB84C7797207C10 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		25BC312DD2164B189F372B43 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_opt.c; path = lib/compress/zstd_opt.c; sourceTree = SOURCE_ROOT; };
+		3ACADD66B1E94C7AAE8FDA2F /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_decompress_block.h; path = lib/decompress/zstd_decompress_block.h; sourceTree = SOURCE_ROOT; };
+		3F8C885329AA4128BD6C76B7 /* ../dolphin-ios/Externals/zstd/lib/common/fse_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_decompress.c; path = lib/common/fse_decompress.c; sourceTree = SOURCE_ROOT; };
+		4488D3916FF44B05B4D1E394 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_lazy.h; path = lib/compress/zstd_lazy.h; sourceTree = SOURCE_ROOT; };
+		49BEFCA5ED7840BF8D8D60E6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_double_fast.c; path = lib/compress/zstd_double_fast.c; sourceTree = SOURCE_ROOT; };
+		5E17DBB808A142BEBE34FFAD /* ../dolphin-ios/Externals/zstd/lib/common/threading.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = threading.c; path = lib/common/threading.c; sourceTree = SOURCE_ROOT; };
+		5F634DD6BE9542BFAF397AD3 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = xxhash.h; path = lib/common/xxhash.h; sourceTree = SOURCE_ROOT; };
+		5FF825741D4C44F68C7B40B1 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ddict.c; path = lib/decompress/zstd_ddict.c; sourceTree = SOURCE_ROOT; };
+		69E2A388FCC4426493F3DDE0 /* ../dolphin-ios/Externals/zstd/lib/common/error_private.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = error_private.c; path = lib/common/error_private.c; sourceTree = SOURCE_ROOT; };
+		6B63955B370B4991980BF52F /* ../dolphin-ios/Externals/zstd/lib/common/pool.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pool.c; path = lib/common/pool.c; sourceTree = SOURCE_ROOT; };
+		75F23A9B458D4A428CE817FD /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ddict.h; path = lib/decompress/zstd_ddict.h; sourceTree = SOURCE_ROOT; };
+		7D4D3D35A2084926AE156262 /* ../dolphin-ios/Externals/zstd/lib/common/bitstream.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = bitstream.h; path = lib/common/bitstream.h; sourceTree = SOURCE_ROOT; };
+		807268554E9B44C5AD20AB22 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_literals.c; path = lib/compress/zstd_compress_literals.c; sourceTree = SOURCE_ROOT; };
+		80F5406EF123442B9E6999DC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_internal.h; path = lib/compress/zstd_compress_internal.h; sourceTree = SOURCE_ROOT; };
+		8128D3BF97374E8BA9B9AC59 /* ../dolphin-ios/Externals/zstd/lib/common/fse.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fse.h; path = lib/common/fse.h; sourceTree = SOURCE_ROOT; };
+		821152AD68C646FB916E0131 /* ../dolphin-ios/Externals/zstd/lib/compress/fse_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = fse_compress.c; path = lib/compress/fse_compress.c; sourceTree = SOURCE_ROOT; };
+		86C71764B7D34D25B0831723 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress_block.c; path = lib/decompress/zstd_decompress_block.c; sourceTree = SOURCE_ROOT; };
+		8B4B145DD53A49939566AD7B /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_double_fast.h; path = lib/compress/zstd_double_fast.h; sourceTree = SOURCE_ROOT; };
+		8C2E92F151D84997983921C3 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_opt.h; path = lib/compress/zstd_opt.h; sourceTree = SOURCE_ROOT; };
+		8C3BB8BC5ABC438DB0CFB2C7 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress_sequences.c; path = lib/compress/zstd_compress_sequences.c; sourceTree = SOURCE_ROOT; };
+		8DBA5A6E670E4B8696F48508 /* ../dolphin-ios/Externals/zstd/lib/common/threading.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = threading.h; path = lib/common/threading.h; sourceTree = SOURCE_ROOT; };
+		8EC73C50A22A40E48E8E0353 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_compress.c; path = lib/compress/zstd_compress.c; sourceTree = SOURCE_ROOT; };
+		8F9EE996F95546A8AE724537 /* ../cmake/Externals/zstd/CMakeFiles/zstd.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Externals/zstd/CMakeFiles/zstd.dir/Info.plist; sourceTree = "<absolute>"; };
+		97FB66C8142C4048B81D1720 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_common.c; path = lib/common/zstd_common.c; sourceTree = SOURCE_ROOT; };
+		9A74455C1E00451EA859CE5C /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_decompress.c; path = lib/decompress/zstd_decompress.c; sourceTree = SOURCE_ROOT; };
+		9DB1B2E97B024EB3B99841DC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_ldm.c; path = lib/compress/zstd_ldm.c; sourceTree = SOURCE_ROOT; };
+		9FAB38C91686431885475C83 /* ../dolphin-ios/Externals/zstd/lib/decompress/huf_decompress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_decompress.c; path = lib/decompress/huf_decompress.c; sourceTree = SOURCE_ROOT; };
+		A3668F187C67404882BE3A7B /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_cwksp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_cwksp.h; path = lib/compress/zstd_cwksp.h; sourceTree = SOURCE_ROOT; };
+		AA12276783DC44E189587E88 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_literals.h; path = lib/compress/zstd_compress_literals.h; sourceTree = SOURCE_ROOT; };
+		B6741D823E1D41E487E9F351 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = hist.h; path = lib/compress/hist.h; sourceTree = SOURCE_ROOT; };
+		BC76EAF8B8D34205829DC894 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = xxhash.c; path = lib/common/xxhash.c; sourceTree = SOURCE_ROOT; };
+		BD7C4BED0042486B8C79ED7E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstd_lazy.c; path = lib/compress/zstd_lazy.c; sourceTree = SOURCE_ROOT; };
+		BE229FFECE3544489D5DC1BA /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_ldm.h; path = lib/compress/zstd_ldm.h; sourceTree = SOURCE_ROOT; };
+		C46879985B70482787D119F0 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_errors.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_errors.h; path = lib/common/zstd_errors.h; sourceTree = SOURCE_ROOT; };
+		C46C24F8C7744F80928DE0B0 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstdmt_compress.h; path = lib/compress/zstdmt_compress.h; sourceTree = SOURCE_ROOT; };
+		C8B8281BCFD543298960CF0C /* ../dolphin-ios/Externals/zstd/lib/common/entropy_common.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = entropy_common.c; path = lib/common/entropy_common.c; sourceTree = SOURCE_ROOT; };
+		D1AB68BA182943FC88A8E3EF /* ../dolphin-ios/Externals/zstd/lib/common/error_private.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = error_private.h; path = lib/common/error_private.h; sourceTree = SOURCE_ROOT; };
+		E0EABB331BC647918D83B0C2 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_compress_sequences.h; path = lib/compress/zstd_compress_sequences.h; sourceTree = SOURCE_ROOT; };
+		E9E66E980FB24253B7EF649E /* ../dolphin-ios/Externals/zstd/lib/compress/huf_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = huf_compress.c; path = lib/compress/huf_compress.c; sourceTree = SOURCE_ROOT; };
+		EAAA2DEE32054BC6901832C0 /* ../dolphin-ios/Externals/zstd/lib/common/huf.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = huf.h; path = lib/common/huf.h; sourceTree = SOURCE_ROOT; };
+		EB9A8B0146D94590B7FC6754 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		EEE56BD1CFC0493A8911C312 /* ../dolphin-ios/Externals/zstd/lib/common/cpu.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = cpu.h; path = lib/common/cpu.h; sourceTree = SOURCE_ROOT; };
+		F7BD749C0D7F4FCDAF2743BB /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_fast.h; path = lib/compress/zstd_fast.h; sourceTree = SOURCE_ROOT; };
+		F95C9E8643FE4FC5A5D6D7C6 /* ../dolphin-ios/Externals/zstd/lib/common/debug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = debug.h; path = lib/common/debug.h; sourceTree = SOURCE_ROOT; };
+		F99E936666E5499594165861 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zstdmt_compress.c; path = lib/compress/zstdmt_compress.c; sourceTree = SOURCE_ROOT; };
+		FA63C14EFA61461F8C28EAEE /* zstd */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libzstd.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD016448846A459C9653C010 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = hist.c; path = lib/compress/hist.c; sourceTree = SOURCE_ROOT; };
+		FFD3E1D9C5E74EC8919A08C9 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_internal.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = zstd_internal.h; path = lib/common/zstd_internal.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		DC77DDDDDAE34F738C40998E /* Frameworks */ = {
+		2A66C8E18A434DAF8B159ACC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,181 +253,189 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		084EA1A9E9E94C0C9DF1704A /* Source Files */ = {
-			isa = PBXGroup;
-			children = (
-				18A1E39F1B2E463287261C78 /* ../dolphin-ios/Externals/zstd/lib/common/debug.c */,
-				D2419B28719940F4851F6789 /* ../dolphin-ios/Externals/zstd/lib/common/entropy_common.c */,
-				E45B8795F8BF45A1B1E3A57D /* ../dolphin-ios/Externals/zstd/lib/common/error_private.c */,
-				199F2E5DD9464702AEECBDC2 /* ../dolphin-ios/Externals/zstd/lib/common/fse_decompress.c */,
-				83FA383BCCBB47DCA8E6B537 /* ../dolphin-ios/Externals/zstd/lib/common/pool.c */,
-				67CFD74B75C94C31B51DD38A /* ../dolphin-ios/Externals/zstd/lib/common/threading.c */,
-				1BB5D14FC77F4EAB899C89E3 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.c */,
-				0678A26A3100414AB6E4485A /* ../dolphin-ios/Externals/zstd/lib/common/zstd_common.c */,
-				1E668570332D407AA354A3A8 /* ../dolphin-ios/Externals/zstd/lib/compress/fse_compress.c */,
-				40EA27942B654BEF85EA6CD8 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.c */,
-				F27BA823567F4430A37953F1 /* ../dolphin-ios/Externals/zstd/lib/compress/huf_compress.c */,
-				A6D28A0F7B83464C945623DC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress.c */,
-				A685F615EA56422CB1F19FED /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.c */,
-				362CA6F265C443CEAC2E5301 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.c */,
-				31CDE8DE5CE34E909AEB2176 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.c */,
-				7DF6BAA8041340728E319507 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.c */,
-				4751C3272ECC4CB0A064F194 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.c */,
-				249BA94DE01F4C13ABB61CD5 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.c */,
-				AA46FF5AAE2049DAB7832C53 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.c */,
-				9042911A20DC4C9F84CED240 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.c */,
-				AB4F7CE92A804A3ABAA604B8 /* ../dolphin-ios/Externals/zstd/lib/decompress/huf_decompress.c */,
-				C88081980A3046A39CED5A28 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.c */,
-				4DD4128887BA4D12BC62FAE3 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress.c */,
-				B9F7E073B8084EECAA85962B /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.c */,
-			);
-			name = "Source Files";
-			sourceTree = "<group>";
-		};
-		0A5F2F3637A345678C3FBBA8 /* Frameworks */ = {
+		039A7864422D465D93C78A6C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 			);
-			name = Frameworks;
+			name = Resources;
 			sourceTree = "<group>";
 		};
-		19D01D073E634E21B59CB414 /* ALL_BUILD */ = {
-			isa = PBXGroup;
-			children = (
-				AFD6E8C1A85E4A00BF5DB64E /* CMake Rules */,
-				3026F25492934E97B0FEEC56 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */,
-			);
-			name = ALL_BUILD;
-			sourceTree = "<group>";
-		};
-		6D986090BB184A76A8DF84C8 /* zstd */ = {
-			isa = PBXGroup;
-			children = (
-				084EA1A9E9E94C0C9DF1704A /* Source Files */,
-				88EB96A917FF4E6186DD4B6D /* Header Files */,
-				DF12B76CDA754E85822101C2 /* Resources */,
-				5B32AD8785C943A5885DFEE5 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */,
-			);
-			name = zstd;
-			sourceTree = "<group>";
-		};
-		88EB96A917FF4E6186DD4B6D /* Header Files */ = {
-			isa = PBXGroup;
-			children = (
-				8208A10C6468458182FAD9CE /* ../dolphin-ios/Externals/zstd/lib/common/bitstream.h */,
-				ABA95162D5584E8883C7FDF1 /* ../dolphin-ios/Externals/zstd/lib/common/compiler.h */,
-				C5737DDA47C543AA893A5730 /* ../dolphin-ios/Externals/zstd/lib/common/cpu.h */,
-				391877DB78A0492088CFA4FD /* ../dolphin-ios/Externals/zstd/lib/common/debug.h */,
-				2FFD9387BBD44B84AB7298CC /* ../dolphin-ios/Externals/zstd/lib/common/error_private.h */,
-				26025A303D1E4FFEA2AB34E7 /* ../dolphin-ios/Externals/zstd/lib/common/fse.h */,
-				0214A0ED83104BCC9D07C799 /* ../dolphin-ios/Externals/zstd/lib/common/huf.h */,
-				3D0BCAC8676F48C9A1631331 /* ../dolphin-ios/Externals/zstd/lib/common/mem.h */,
-				FFDA79E3317A4283861E71FB /* ../dolphin-ios/Externals/zstd/lib/common/pool.h */,
-				54B963CAF3CF41AB8F4D44F9 /* ../dolphin-ios/Externals/zstd/lib/common/threading.h */,
-				34141E8AAB1A49C6A5D8A53C /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.h */,
-				B548B39E49F342A08F56B7CF /* ../dolphin-ios/Externals/zstd/lib/common/zstd_errors.h */,
-				2AFBC15BC91B452F9AF7DEAF /* ../dolphin-ios/Externals/zstd/lib/common/zstd_internal.h */,
-				AA3D185DB09947728840DF1E /* ../dolphin-ios/Externals/zstd/lib/compress/hist.h */,
-				B7BC98206683492A99778427 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_internal.h */,
-				0B1030F776A745BE84AE61F1 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.h */,
-				C175FE6209EC46199E8EE94E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.h */,
-				F708590E0AF04743A082110A /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_cwksp.h */,
-				E95244D00C154E5E9F6C46FB /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.h */,
-				25D5AC2E85F1480B8713D96E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.h */,
-				2B9EACA9B74649D4A050A938 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.h */,
-				1BF6FE763E864D8385ADCDC7 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.h */,
-				DF00B96E5CE34CB0B416E136 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.h */,
-				07E343445C984F3E9654B8A6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.h */,
-				9CFED9CB110F4303BD98CBF4 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.h */,
-				B4AB3126BD9948AC893BA8F6 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.h */,
-				FE14A9BD013D4E2A962F64CB /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_internal.h */,
-				B6C5CD7D8C2144869A54A17D /* ../dolphin-ios/Externals/zstd/lib/zstd.h */,
-			);
-			name = "Header Files";
-			sourceTree = "<group>";
-		};
-		9A8009FB37EE4FD5AE587A27 = {
-			isa = PBXGroup;
-			children = (
-				6D986090BB184A76A8DF84C8 /* zstd */,
-				19D01D073E634E21B59CB414 /* ALL_BUILD */,
-				A53051DF2AE44A95A7830EFD /* Products */,
-				0A5F2F3637A345678C3FBBA8 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		A53051DF2AE44A95A7830EFD /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				C4337471D87445D193B1D76B /* zstd */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		AFD6E8C1A85E4A00BF5DB64E /* CMake Rules */ = {
+		05D1F36CBDF44BD49A84FEA0 /* CMake Rules */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = "CMake Rules";
 			sourceTree = "<group>";
 		};
-		DF12B76CDA754E85822101C2 /* Resources */ = {
+		2AA2E38ECC2E4FD7B1863926 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				A8FE620DF0574F09B9FF232F /* ../cmake/Externals/zstd/CMakeFiles/zstd.dir/Info.plist */,
+				7D4D3D35A2084926AE156262 /* ../dolphin-ios/Externals/zstd/lib/common/bitstream.h */,
+				1B7875DC295846239C67D2FB /* ../dolphin-ios/Externals/zstd/lib/common/compiler.h */,
+				EEE56BD1CFC0493A8911C312 /* ../dolphin-ios/Externals/zstd/lib/common/cpu.h */,
+				F95C9E8643FE4FC5A5D6D7C6 /* ../dolphin-ios/Externals/zstd/lib/common/debug.h */,
+				D1AB68BA182943FC88A8E3EF /* ../dolphin-ios/Externals/zstd/lib/common/error_private.h */,
+				8128D3BF97374E8BA9B9AC59 /* ../dolphin-ios/Externals/zstd/lib/common/fse.h */,
+				EAAA2DEE32054BC6901832C0 /* ../dolphin-ios/Externals/zstd/lib/common/huf.h */,
+				1B7DD79944194861BED9B534 /* ../dolphin-ios/Externals/zstd/lib/common/mem.h */,
+				0E7354A3BA024361AB34D6C4 /* ../dolphin-ios/Externals/zstd/lib/common/pool.h */,
+				8DBA5A6E670E4B8696F48508 /* ../dolphin-ios/Externals/zstd/lib/common/threading.h */,
+				5F634DD6BE9542BFAF397AD3 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.h */,
+				C46879985B70482787D119F0 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_errors.h */,
+				FFD3E1D9C5E74EC8919A08C9 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_internal.h */,
+				B6741D823E1D41E487E9F351 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.h */,
+				80F5406EF123442B9E6999DC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_internal.h */,
+				AA12276783DC44E189587E88 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.h */,
+				E0EABB331BC647918D83B0C2 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.h */,
+				A3668F187C67404882BE3A7B /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_cwksp.h */,
+				8B4B145DD53A49939566AD7B /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.h */,
+				F7BD749C0D7F4FCDAF2743BB /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.h */,
+				4488D3916FF44B05B4D1E394 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.h */,
+				BE229FFECE3544489D5DC1BA /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.h */,
+				8C2E92F151D84997983921C3 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.h */,
+				C46C24F8C7744F80928DE0B0 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.h */,
+				75F23A9B458D4A428CE817FD /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.h */,
+				3ACADD66B1E94C7AAE8FDA2F /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.h */,
+				0AC8B22F250141F5A90F3330 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_internal.h */,
+				1F25D8624F9349F399CE2718 /* ../dolphin-ios/Externals/zstd/lib/zstd.h */,
+			);
+			name = "Header Files";
+			sourceTree = "<group>";
+		};
+		3EECAEC3577940C181F32A43 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				05D1F36CBDF44BD49A84FEA0 /* CMake Rules */,
+				EB9A8B0146D94590B7FC6754 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		47EE6C936EEA4B49A48A1F57 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4CBFD4B4E77A4CF59D8152D5 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				0C5230E15B6C422289748EA2 /* ../dolphin-ios/Externals/zstd/lib/common/debug.c */,
+				C8B8281BCFD543298960CF0C /* ../dolphin-ios/Externals/zstd/lib/common/entropy_common.c */,
+				69E2A388FCC4426493F3DDE0 /* ../dolphin-ios/Externals/zstd/lib/common/error_private.c */,
+				3F8C885329AA4128BD6C76B7 /* ../dolphin-ios/Externals/zstd/lib/common/fse_decompress.c */,
+				6B63955B370B4991980BF52F /* ../dolphin-ios/Externals/zstd/lib/common/pool.c */,
+				5E17DBB808A142BEBE34FFAD /* ../dolphin-ios/Externals/zstd/lib/common/threading.c */,
+				BC76EAF8B8D34205829DC894 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.c */,
+				97FB66C8142C4048B81D1720 /* ../dolphin-ios/Externals/zstd/lib/common/zstd_common.c */,
+				821152AD68C646FB916E0131 /* ../dolphin-ios/Externals/zstd/lib/compress/fse_compress.c */,
+				FD016448846A459C9653C010 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.c */,
+				E9E66E980FB24253B7EF649E /* ../dolphin-ios/Externals/zstd/lib/compress/huf_compress.c */,
+				8EC73C50A22A40E48E8E0353 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress.c */,
+				807268554E9B44C5AD20AB22 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.c */,
+				8C3BB8BC5ABC438DB0CFB2C7 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.c */,
+				49BEFCA5ED7840BF8D8D60E6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.c */,
+				0A5DC1FB657F475B828BFA32 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.c */,
+				BD7C4BED0042486B8C79ED7E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.c */,
+				9DB1B2E97B024EB3B99841DC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.c */,
+				25BC312DD2164B189F372B43 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.c */,
+				F99E936666E5499594165861 /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.c */,
+				9FAB38C91686431885475C83 /* ../dolphin-ios/Externals/zstd/lib/decompress/huf_decompress.c */,
+				5FF825741D4C44F68C7B40B1 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.c */,
+				9A74455C1E00451EA859CE5C /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress.c */,
+				86C71764B7D34D25B0831723 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.c */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		95BEB1040D3B4FC5B89FC6B7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FA63C14EFA61461F8C28EAEE /* zstd */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C05FACB9A05B47AAAB90D038 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8F9EE996F95546A8AE724537 /* ../cmake/Externals/zstd/CMakeFiles/zstd.dir/Info.plist */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		C7C50FA10F5040C891C0DD5D = {
+			isa = PBXGroup;
+			children = (
+				DA4BECC4BD004B1EB070D236 /* zstd */,
+				3EECAEC3577940C181F32A43 /* ALL_BUILD */,
+				95BEB1040D3B4FC5B89FC6B7 /* Products */,
+				47EE6C936EEA4B49A48A1F57 /* Frameworks */,
+				039A7864422D465D93C78A6C /* Resources */,
+			);
+			sourceTree = "<group>";
+		};
+		DA4BECC4BD004B1EB070D236 /* zstd */ = {
+			isa = PBXGroup;
+			children = (
+				4CBFD4B4E77A4CF59D8152D5 /* Source Files */,
+				2AA2E38ECC2E4FD7B1863926 /* Header Files */,
+				C05FACB9A05B47AAAB90D038 /* Resources */,
+				23E24C5B7FB84C7797207C10 /* ../dolphin-ios/Externals/zstd/CMakeLists.txt */,
+			);
+			name = zstd;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		49318C94EA5D453AA16C3407 /* zstd */ = {
+		D6E6029A5ED2417B8BEFA211 /* zstd */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8EE6BDD1F2EC43E8B3E29A71 /* Build configuration list for PBXNativeTarget "zstd" */;
+			buildConfigurationList = 5C77BB014EBF4503A19E5613 /* Build configuration list for PBXNativeTarget "zstd" */;
 			buildPhases = (
-				41FA22E446144E719CD1EAC4 /* Sources */,
-				DC77DDDDDAE34F738C40998E /* Frameworks */,
+				92B9E08E7D2748A2952E820D /* Sources */,
+				2A66C8E18A434DAF8B159ACC /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				4482C2BC508248F3943E005B /* PBXTargetDependency */,
+				14048E82DDC7406A8013BD6E /* PBXTargetDependency */,
 			);
 			name = zstd;
 			productName = zstd;
-			productReference = C4337471D87445D193B1D76B /* zstd */;
+			productReference = FA63C14EFA61461F8C28EAEE /* zstd */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		B6848FEAE9674975ABF44408 /* Project object */ = {
+		5C7C19044B7143D69004B3D3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1530;
 			};
-			buildConfigurationList = 6E5EC2FFC74E4D1589A385C1 /* Build configuration list for PBXProject "zstd" */;
+			buildConfigurationList = 7490B26B63C140ECBEC94807 /* Build configuration list for PBXProject "zstd" */;
 			buildSettings = {
 			};
 			buildStyles = (
-				4B4EB969E5D2449B8C92BEF8 /* Debug */,
-				034C141BB7124ACC81B6EDC9 /* Release */,
-				8BD47CFBFAA54318B70D50D2 /* MinSizeRel */,
-				73583873A38E49CFA2A9042E /* RelWithDebInfo */,
+				3076CDC0B95E47F6B310A178 /* Debug */,
+				E62FB4310D704016BAD47C41 /* Release */,
+				AFC397ED96B24FA7A1A048DD /* MinSizeRel */,
+				D43323E8A02540EA9034E419 /* RelWithDebInfo */,
 			);
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
-			mainGroup = 9A8009FB37EE4FD5AE587A27;
+			mainGroup = C7C50FA10F5040C891C0DD5D;
 			projectDirPath = "../dolphin-ios";
 			projectRoot = "";
 			targets = (
-				27752D87E92A4D2AAF4559FB /* ALL_BUILD */,
-				D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */,
-				A7904E74C7BB45968F4D5EC8 /* install */,
-				37035854F5494840A21D2316 /* package */,
-				49318C94EA5D453AA16C3407 /* zstd */,
+				C38467A1EA2247DC869676BA /* ALL_BUILD */,
+				2D7794A245CE41B888FF8C64 /* ZERO_CHECK */,
+				18D93D140CF74F3CB2EE2044 /* install */,
+				ABFAB71FC99B401D8040E7DA /* package */,
+				D6E6029A5ED2417B8BEFA211 /* zstd */,
 			);
 		};
 /* End PBXProject section */
@@ -495,19 +503,19 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -589,19 +597,19 @@ exit 0";
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
   cd ../cmake/Externals/zstd
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
   cd ../cmake/Externals/zstd
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
   cd ../cmake/Externals/zstd
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
   cd ../cmake/Externals/zstd
-  /opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
+  /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -624,71 +632,72 @@ exit 0";
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		41FA22E446144E719CD1EAC4 /* Sources */ = {
+		92B9E08E7D2748A2952E820D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2747C9DC3ECE4FE8B50EADB5 /* ../dolphin-ios/Externals/zstd/lib/common/debug.c */,
-				B9BCEA4F3DC64262B8F47D35 /* ../dolphin-ios/Externals/zstd/lib/common/entropy_common.c */,
-				3735CFB7EF9648CEB398898D /* ../dolphin-ios/Externals/zstd/lib/common/error_private.c */,
-				C1B20B4E364046B3B630A121 /* ../dolphin-ios/Externals/zstd/lib/common/fse_decompress.c */,
-				32E26D0736254017B39AFCC9 /* ../dolphin-ios/Externals/zstd/lib/common/pool.c */,
-				D91D0EC4108F463BB970BE53 /* ../dolphin-ios/Externals/zstd/lib/common/threading.c */,
-				BD87BE4D3C664C4EB8E404E4 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.c */,
-				D5001D437356455980CDB92B /* ../dolphin-ios/Externals/zstd/lib/common/zstd_common.c */,
-				A5B56637199749B29C02B096 /* ../dolphin-ios/Externals/zstd/lib/compress/fse_compress.c */,
-				DACBCD8C0D8D47FEB9A51C85 /* ../dolphin-ios/Externals/zstd/lib/compress/hist.c */,
-				CA800B5C2AE543CFA70854E0 /* ../dolphin-ios/Externals/zstd/lib/compress/huf_compress.c */,
-				E448A8AE5C3A4BB48A89C3AF /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress.c */,
-				17FC5BCBE0C94EA192B78565 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.c */,
-				E97CD932E70745A6BF522FFD /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.c */,
-				FB0423CBF0E344FBA976D50D /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.c */,
-				5B5A1AE7621447ECA43C6583 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.c */,
-				ABF641ED5690435A96215A92 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.c */,
-				D34010FA5D0845DC9F74DC21 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.c */,
-				6753EBE57E30442D87030455 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.c */,
-				4FD700612F884E188F1BA15B /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.c */,
-				C16367C03527452A8454DE0B /* ../dolphin-ios/Externals/zstd/lib/decompress/huf_decompress.c */,
-				F27FCCF1989E4BDBA04761AD /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.c */,
-				BE021DF8BCEF470A84112E09 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress.c */,
-				729A4FC96834498E8F7E5C0A /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.c */,
+				ED338D391A57460395A51234 /* ../dolphin-ios/Externals/zstd/lib/common/debug.c */,
+				5E641DDF7E294EFB84853B27 /* ../dolphin-ios/Externals/zstd/lib/common/entropy_common.c */,
+				A4D27E5D7021458084D3B63E /* ../dolphin-ios/Externals/zstd/lib/common/error_private.c */,
+				9A5AAECCAA5D475DB271F8C0 /* ../dolphin-ios/Externals/zstd/lib/common/fse_decompress.c */,
+				740429D3063F492FA3C354F5 /* ../dolphin-ios/Externals/zstd/lib/common/pool.c */,
+				0B21CF4FE99141F9A73712E5 /* ../dolphin-ios/Externals/zstd/lib/common/threading.c */,
+				61F762AB2FFF43719E798E11 /* ../dolphin-ios/Externals/zstd/lib/common/xxhash.c */,
+				8DDA97FE898A4C5CA56EF3EF /* ../dolphin-ios/Externals/zstd/lib/common/zstd_common.c */,
+				CB5C9B8F608C41649A586E88 /* ../dolphin-ios/Externals/zstd/lib/compress/fse_compress.c */,
+				183DDCC92B5542009BF03CDD /* ../dolphin-ios/Externals/zstd/lib/compress/hist.c */,
+				9EEA296A3246488E976CF28C /* ../dolphin-ios/Externals/zstd/lib/compress/huf_compress.c */,
+				42E8B68F975B40B3A5F281BC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress.c */,
+				1353D262E7FD4C28A3A6EF94 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_literals.c */,
+				9E831F46ED7549EC884824F6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_compress_sequences.c */,
+				1E6C415EE24D45DA9DCE8DC6 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_double_fast.c */,
+				2557E042909B4B1CB7BF1CCB /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_fast.c */,
+				0F440F4087044F76984069FC /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_lazy.c */,
+				8971FABB33164E17A2DA736E /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_ldm.c */,
+				490B19913F134B22A9804244 /* ../dolphin-ios/Externals/zstd/lib/compress/zstd_opt.c */,
+				79A0982AA61445F29309542E /* ../dolphin-ios/Externals/zstd/lib/compress/zstdmt_compress.c */,
+				0ED2927A7990446EA1638086 /* ../dolphin-ios/Externals/zstd/lib/decompress/huf_decompress.c */,
+				BD07E550645A4EAD81A22A10 /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_ddict.c */,
+				E8E17ED3FBC5406F9AAC547C /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress.c */,
+				63C0E8D9A1374562A71DFAFF /* ../dolphin-ios/Externals/zstd/lib/decompress/zstd_decompress_block.c */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		16D609BE41604525BF3BDC49 /* PBXTargetDependency */ = {
+		14048E82DDC7406A8013BD6E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */;
-			targetProxy = 78BCAC44A3DE43F79C730100 /* PBXContainerItemProxy */;
+			target = 2D7794A245CE41B888FF8C64 /* ZERO_CHECK */;
+			targetProxy = A9278467F2214A47894B6ABD /* PBXContainerItemProxy */;
 		};
-		40F3801A98414BB28C89D0A7 /* PBXTargetDependency */ = {
+		2F650C04B08348D0BCA331ED /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 49318C94EA5D453AA16C3407 /* zstd */;
-			targetProxy = 4F0AE4AE3D84460D96D96787 /* PBXContainerItemProxy */;
+			target = C38467A1EA2247DC869676BA /* ALL_BUILD */;
+			targetProxy = 3512FFBC06F64021AC2FD1D5 /* PBXContainerItemProxy */;
 		};
-		4482C2BC508248F3943E005B /* PBXTargetDependency */ = {
+		43D717A048564E8C8B74405F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D0BDA0649EAD45849C6A8AD3 /* ZERO_CHECK */;
-			targetProxy = A725426065ED496EA45EBE1E /* PBXContainerItemProxy */;
+			target = 2D7794A245CE41B888FF8C64 /* ZERO_CHECK */;
+			targetProxy = E732A37C134A4ABC988C9592 /* PBXContainerItemProxy */;
 		};
-		7A46F64654274508A16FC077 /* PBXTargetDependency */ = {
+		D97F351CBE7F4360BFBB1A20 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 27752D87E92A4D2AAF4559FB /* ALL_BUILD */;
-			targetProxy = C5E10EB9C95647C9AADA7818 /* PBXContainerItemProxy */;
+			target = C38467A1EA2247DC869676BA /* ALL_BUILD */;
+			targetProxy = 4DF05B1042B541599C25ED3F /* PBXContainerItemProxy */;
 		};
-		B101BBC7F2C0405994E3146D /* PBXTargetDependency */ = {
+		DC6AE5DCCC0B4B55973DAE87 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 27752D87E92A4D2AAF4559FB /* ALL_BUILD */;
-			targetProxy = 7B9ED912A46444B49C4CA954 /* PBXContainerItemProxy */;
+			target = D6E6029A5ED2417B8BEFA211 /* zstd */;
+			targetProxy = B77C19F9DE5E4BD7BBB139C6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		02B64CBB864C44C284197C48 /* RelWithDebInfo */ = {
+		05883AFF071B451E868674AC /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -703,11 +712,107 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = RelWithDebInfo;
+			name = MinSizeRel;
 		};
-		068932E1C4A741CD9036DF0B /* MinSizeRel */ = {
+		168ED43C836445CA87F5D1EE /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		217AEF5A91D340DDB1594304 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		259ECF78055A41DEB572369B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		292AA455E7684A1CB6037812 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				BUILD_DIR = ../lib;
+			};
+			name = Debug;
+		};
+		2E33248BF06541098D87EB6A /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = RelWithDebInfo;
+		};
+		374C98F1F9A14DB09DD60070 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
 				
@@ -716,13 +821,13 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = s;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,"'XXH_NAMESPACE=ZSTD_'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,"'XXH_NAMESPACE=ZSTD_'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/zstd/lib","../dolphin-ios/Externals/zstd/lib/common","../dolphin-ios/Externals/zstd/lib/compress","../dolphin-ios/Externals/zstd/lib/decompress","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = ("    -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_CFLAGS = ("    -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer -flto ","$(inherited)");
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zstd;
@@ -733,221 +838,10 @@ exit 0";
 			};
 			name = MinSizeRel;
 		};
-		08C0C7CB3C2E418599507631 /* MinSizeRel */ = {
+		3EFA5D700D294299B1657031 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		167533F7121C4EB3BAE67D19 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "arm64 x86_64";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				BUILD_DIR = dolphin-build;
-			};
-			name = Debug;
-		};
-		32FD58DC25EE4093A5CDEB97 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		35A2BD3F3072468383125DBA /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		40FD6E2A7DE3462D944D85FE /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "arm64 x86_64";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				BUILD_DIR = dolphin-build;
-			};
-			name = RelWithDebInfo;
-		};
-		435ECB4D2C814625BE8F09B5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		47AF4959CA994054A8B4508B /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "arm64 x86_64";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				BUILD_DIR = dolphin-build;
-			};
-			name = MinSizeRel;
-		};
-		48E7597A8C794B59BD466B37 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		514BF10327944024B0FF2C38 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ZERO_CHECK;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		63E323B7CD684FE089B6A358 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,"'XXH_NAMESPACE=ZSTD_'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/zstd/lib","../dolphin-ios/Externals/zstd/lib/common","../dolphin-ios/Externals/zstd/lib/compress","../dolphin-ios/Externals/zstd/lib/decompress","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = ("    -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		7284BA3FFE95426E94DF553C /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = install;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = RelWithDebInfo;
-		};
-		76153B4EBF504984BD8DAC54 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -964,56 +858,10 @@ exit 0";
 			};
 			name = Debug;
 		};
-		78176B959D00403A9E86B1DD /* Debug */ = {
+		41DB5CAD97EB4364A1F08CFD /* RelWithDebInfo */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (arm64,x86_64);
-				COMBINE_HIDPI_IMAGES = YES;
-				
-				EXECUTABLE_PREFIX = lib;
-				EXECUTABLE_SUFFIX = .a;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,"'XXH_NAMESPACE=ZSTD_'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/zstd/lib","../dolphin-ios/Externals/zstd/lib/common","../dolphin-ios/Externals/zstd/lib/compress","../dolphin-ios/Externals/zstd/lib/decompress","$(inherited)");
-				INSTALL_PATH = "";
-				LIBRARY_STYLE = STATIC;
-				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = ("   '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden'    ","$(inherited)");
-				OTHER_LIBTOOLFLAGS = ("");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = zstd;
-				SECTORDER_FLAGS = "";
-				
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
-		};
-		785570D2C1D343D0A051EFD7 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Release;
-		};
-		7B9E8E223FDC49C485DF2167 /* RelWithDebInfo */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1030,9 +878,68 @@ exit 0";
 			};
 			name = RelWithDebInfo;
 		};
-		84F20F0E07254BC1AC0CF557 /* Debug */ = {
+		4B47AFDED0B9446890CAE01B /* MinSizeRel */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		8BE74AFC8660475AB3A5393F /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = MinSizeRel;
+		};
+		A28B11F7463A4AEC89254127 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = MinSizeRel;
+		};
+		B9A2C1D4E4E84D008E37A453 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1049,9 +956,10 @@ exit 0";
 			};
 			name = Debug;
 		};
-		9ACE5FAAB6FC47C286CCC657 /* MinSizeRel */ = {
+		BDC77ED7E4C94517BCF98A02 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -1066,11 +974,179 @@ exit 0";
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
-			name = MinSizeRel;
+			name = Release;
 		};
-		A6284471372645C2A39258E9 /* RelWithDebInfo */ = {
+		C6228358A5A6411A815BF9F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		C73A630EF77145A498FB8997 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		D0E92BA6D9174B2B81C7D34F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = XXXXXXXXXX;
+				ENABLE_BITCODE = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ONLY_ACTIVE_ARCH = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
+				SDKROOT = auto;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				BUILD_DIR = ../lib;
+			};
+			name = Release;
+		};
+		D4B111510DF048DEB5F3B06A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		DD367BEDE278476FB6A91534 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,_DEBUG,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,"'XXH_NAMESPACE=ZSTD_'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/zstd/lib","../dolphin-ios/Externals/zstd/lib/common","../dolphin-ios/Externals/zstd/lib/compress","../dolphin-ios/Externals/zstd/lib/decompress","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = ("   '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden'    -flto ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = zstd;
+				SECTORDER_FLAGS = "";
+				
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		E998556ECBB24F5FA07F3E00 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = package;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Release;
+		};
+		ECF2440D577D4B1DA4878045 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = Debug;
+		};
+		F1CDDDBD400941F19B2D1BE7 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("$(inherited)");
+			};
+			name = RelWithDebInfo;
+		};
+		FA7D62CCB2924637AC277C92 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (arm64,x86_64);
 				COMBINE_HIDPI_IMAGES = YES;
 				
@@ -1079,13 +1155,13 @@ exit 0";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,USE_GDBSTUB,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'","'USE_ANALYTICS=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,"'XXH_NAMESPACE=ZSTD_'","$(inherited)");
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,"'XXH_NAMESPACE=ZSTD_'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/zstd/lib","../dolphin-ios/Externals/zstd/lib/common","../dolphin-ios/Externals/zstd/lib/compress","../dolphin-ios/Externals/zstd/lib/decompress","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = ("       -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer ","$(inherited)");
+				OTHER_CFLAGS = ("       -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer -flto ","$(inherited)");
 				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = zstd;
@@ -1096,150 +1172,105 @@ exit 0";
 			};
 			name = RelWithDebInfo;
 		};
-		BC6A7B7A715A48F4B6C85882 /* Release */ = {
+		FF142940EFE3489F99EF44A2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "arm64 x86_64";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = XXXXXXXXXX;
-				ENABLE_BITCODE = NO;
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (arm64,x86_64);
+				COMBINE_HIDPI_IMAGES = YES;
+				
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'DATA_DIR=\"/usr/local/share/dolphin-emu/\"'","'_ARCH_64=1'","'_M_ARM_64=1'",_DEFAULT_SOURCE,IPHONEOS,"'FMT_EXCEPTIONS=0'",_BULLETPROOF_JIT,"'_FILE_OFFSET_BITS=64'",_LARGEFILE_SOURCE,"'USE_PIPES=1'","'USE_MEMORYWATCHER=1'",HAS_VULKAN,HAS_OPENGL,HAVE_UNISTD_H,"'XXH_NAMESPACE=ZSTD_'","$(inherited)");
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = ("../dolphin-ios/Source/Core","../dolphin-ios/Externals/enet/include","../dolphin-ios/Externals/zstd/lib","../dolphin-ios/Externals/zstd/lib/common","../dolphin-ios/Externals/zstd/lib/compress","../dolphin-ios/Externals/zstd/lib/decompress","$(inherited)");
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE_SPECIFIER = "iOS Team Provisioning Profile: *";
-				SDKROOT = iphoneos;
-				BUILD_DIR = dolphin-build;
-			};
-			name = Release;
-		};
-		BCA0965D81BA41E8A164E1C8 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
+				OTHER_CFLAGS = ("    -DNDEBUG '-march=armv8-a+crc' -fno-strict-aliasing -fno-exceptions -fvisibility-inlines-hidden '-fvisibility=hidden' -fomit-frame-pointer -flto ","$(inherited)");
+				OTHER_LIBTOOLFLAGS = ("");
 				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
+				PRODUCT_NAME = zstd;
 				SECTORDER_FLAGS = "";
+				
 				USE_HEADERMAP = NO;
 				WARNING_CFLAGS = ("$(inherited)");
 			};
 			name = Release;
-		};
-		C4E20B89A4254CD9B4C760F4 /* MinSizeRel */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = package;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = MinSizeRel;
-		};
-		C5A451D029164E149A0A9322 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","$(inherited)");
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				INSTALL_PATH = "";
-				OTHER_LDFLAGS = ("","$(inherited)");
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = ALL_BUILD;
-				SECTORDER_FLAGS = "";
-				USE_HEADERMAP = NO;
-				WARNING_CFLAGS = ("$(inherited)");
-			};
-			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		24C95CE1C57A48BDBA960D02 /* Build configuration list for PBXAggregateTarget "install" */ = {
+		59F7A57E69964EBB9E4CB2E5 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				76153B4EBF504984BD8DAC54 /* Debug */,
-				32FD58DC25EE4093A5CDEB97 /* Release */,
-				08C0C7CB3C2E418599507631 /* MinSizeRel */,
-				7284BA3FFE95426E94DF553C /* RelWithDebInfo */,
+				ECF2440D577D4B1DA4878045 /* Debug */,
+				D4B111510DF048DEB5F3B06A /* Release */,
+				4B47AFDED0B9446890CAE01B /* MinSizeRel */,
+				41DB5CAD97EB4364A1F08CFD /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		6E5EC2FFC74E4D1589A385C1 /* Build configuration list for PBXProject "zstd" */ = {
+		5C77BB014EBF4503A19E5613 /* Build configuration list for PBXNativeTarget "zstd" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				167533F7121C4EB3BAE67D19 /* Debug */,
-				BC6A7B7A715A48F4B6C85882 /* Release */,
-				47AF4959CA994054A8B4508B /* MinSizeRel */,
-				40FD6E2A7DE3462D944D85FE /* RelWithDebInfo */,
+				DD367BEDE278476FB6A91534 /* Debug */,
+				FF142940EFE3489F99EF44A2 /* Release */,
+				374C98F1F9A14DB09DD60070 /* MinSizeRel */,
+				FA7D62CCB2924637AC277C92 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		726335C549C64FEC9519EC40 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+		7490B26B63C140ECBEC94807 /* Build configuration list for PBXProject "zstd" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C5A451D029164E149A0A9322 /* Debug */,
-				BCA0965D81BA41E8A164E1C8 /* Release */,
-				35A2BD3F3072468383125DBA /* MinSizeRel */,
-				7B9E8E223FDC49C485DF2167 /* RelWithDebInfo */,
+				292AA455E7684A1CB6037812 /* Debug */,
+				D0E92BA6D9174B2B81C7D34F /* Release */,
+				8BE74AFC8660475AB3A5393F /* MinSizeRel */,
+				2E33248BF06541098D87EB6A /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		8EE6BDD1F2EC43E8B3E29A71 /* Build configuration list for PBXNativeTarget "zstd" */ = {
+		C2764464B96146498F0E5116 /* Build configuration list for PBXAggregateTarget "package" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				78176B959D00403A9E86B1DD /* Debug */,
-				63E323B7CD684FE089B6A358 /* Release */,
-				068932E1C4A741CD9036DF0B /* MinSizeRel */,
-				A6284471372645C2A39258E9 /* RelWithDebInfo */,
+				C6228358A5A6411A815BF9F7 /* Debug */,
+				E998556ECBB24F5FA07F3E00 /* Release */,
+				168ED43C836445CA87F5D1EE /* MinSizeRel */,
+				C73A630EF77145A498FB8997 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		90772A3F982246BD9630F760 /* Build configuration list for PBXAggregateTarget "package" */ = {
+		CB8B54AF19BC45F88B76C472 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				435ECB4D2C814625BE8F09B5 /* Debug */,
-				785570D2C1D343D0A051EFD7 /* Release */,
-				C4E20B89A4254CD9B4C760F4 /* MinSizeRel */,
-				48E7597A8C794B59BD466B37 /* RelWithDebInfo */,
+				B9A2C1D4E4E84D008E37A453 /* Debug */,
+				BDC77ED7E4C94517BCF98A02 /* Release */,
+				05883AFF071B451E868674AC /* MinSizeRel */,
+				F1CDDDBD400941F19B2D1BE7 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		ADFBA65FD8F94083BD292951 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+		F1C001144DA94EBC8383771C /* Build configuration list for PBXAggregateTarget "install" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				84F20F0E07254BC1AC0CF557 /* Debug */,
-				514BF10327944024B0FF2C38 /* Release */,
-				9ACE5FAAB6FC47C286CCC657 /* MinSizeRel */,
-				02B64CBB864C44C284197C48 /* RelWithDebInfo */,
+				3EFA5D700D294299B1657031 /* Debug */,
+				259ECF78055A41DEB572369B /* Release */,
+				A28B11F7463A4AEC89254127 /* MinSizeRel */,
+				217AEF5A91D340DDB1594304 /* RelWithDebInfo */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = B6848FEAE9674975ABF44408 /* Project object */;
+	rootObject = 5C7C19044B7143D69004B3D3 /* Project object */;
 }

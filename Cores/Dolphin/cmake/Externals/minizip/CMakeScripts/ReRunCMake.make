@@ -8,4 +8,4 @@ spaceplus:= $(empty)\ $(empty)
 TARGETS += $(subst $(space),$(spaceplus),$(wildcard /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios/Externals/minizip/CMakeLists.txt))
 
 /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake/CMakeFiles/cmake.check_cache: $(TARGETS)
-	/opt/homebrew/Cellar/cmake/3.25.1/bin/cmake -H/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios -B/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
+	/opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -S/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/dolphin-ios -B/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Dolphin/cmake
