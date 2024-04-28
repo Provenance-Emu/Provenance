@@ -40,7 +40,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     var shortcutItemGame: PVGame?
     let disposeBag = DisposeBag()
 
-    #if os(iOS)
+    #if os(iOS) && !APP_STORE
     weak var jitScreenDelegate: JitScreenDelegate?
     weak var jitWaitScreenVC: JitWaitScreenViewController?
     var cancellation_token = DOLCancellationToken()
@@ -117,7 +117,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             self.gameLibraryViewController = gameLibraryViewController
         }
 
-        #if os(iOS)
+        #if os(iOS) && !APP_STORE
         if PVSettingsModel.shared.debugOptions.autoJIT {
             DOLJitManager.shared().attemptToAcquireJitOnStartup()
         }
