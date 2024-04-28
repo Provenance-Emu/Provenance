@@ -351,9 +351,11 @@ public final class PVCoreFactory: NSObject {
             }
             break;
         }
+        #if !APP_STORE
         if let core = core as? PVRetroArchCoreResponderClient {
             return PVRetroArchControllerViewController(controlLayout: [], system: system, responder: core)
         }
+        #endif
         return nil
     }
 }
