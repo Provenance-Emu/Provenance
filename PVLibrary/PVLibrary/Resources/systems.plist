@@ -198,7 +198,7 @@
 				<key>Name</key>
 				<string>gc-dvd-20020823.bin</string>
 				<key>Size</key>
-				<integer>2097152</integer>
+				<integer>131072</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -210,7 +210,7 @@
 				<key>Name</key>
 				<string>gc-dvd-20020402.bin</string>
 				<key>Size</key>
-				<integer>2097152</integer>
+				<integer>131072</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -222,7 +222,7 @@
 				<key>Name</key>
 				<string>gc-dvd-20010831.bin</string>
 				<key>Size</key>
-				<integer>2097152</integer>
+				<integer>131072</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -234,7 +234,7 @@
 				<key>Name</key>
 				<string>gc-dvd-20010608.bin</string>
 				<key>Size</key>
-				<integer>2097152</integer>
+				<integer>131072</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -266,7 +266,7 @@
 				<key>Description</key>
 				<string>NTSC 10 IPL.bin</string>
 				<key>MD5</key>
-				<string> fc924a7c879b661abc37cec4f018fdf3</string>
+				<string>fc924a7c879b661abc37cec4f018fdf3</string>
 				<key>Name</key>
 				<string>gc-ntsc-10.bin</string>
 				<key>Size</key>
@@ -5503,7 +5503,7 @@
 				<key>Name</key>
 				<string>MSX.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>32768</integer>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -5672,7 +5672,7 @@
 				<key>Name</key>
 				<string>MSX2.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>32768</integer>
 			</dict>
 			<dict>
 				<key>Optional</key>
@@ -5684,7 +5684,7 @@
 				<key>Name</key>
 				<string>MSX2EXT.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>16384</integer>
 			</dict>
 			<dict>
 				<key>Optional</key>
@@ -5696,7 +5696,7 @@
 				<key>Name</key>
 				<string>MSX2P.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>32768</integer>
 			</dict>
 			<dict>
 				<key>Optional</key>
@@ -5708,7 +5708,7 @@
 				<key>Name</key>
 				<string>MSX2PEXT.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>16384</integer>
 			</dict>
 			<dict>
 				<key>Description</key>
@@ -5718,7 +5718,7 @@
 				<key>Name</key>
 				<string>DISK.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>16384</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -5730,7 +5730,7 @@
 				<key>Name</key>
 				<string>FMPAC.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>65536</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -5742,7 +5742,7 @@
 				<key>Name</key>
 				<string>MSXDOS2.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>65536</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -5754,7 +5754,7 @@
 				<key>Name</key>
 				<string>PAINTER.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>65536</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -5766,7 +5766,7 @@
 				<key>Name</key>
 				<string>KANJI.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>131072</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -5871,7 +5871,7 @@
 				<key>Description</key>
 				<string>MacII ROM</string>
 				<key>MD5</key>
-				<string>66223be14974601f1e60885eeb35e03cc</string>
+				<string>66223be1497460f1e60885eeb35e03cc</string>
 				<key>Name</key>
 				<string>MacII.rom</string>
                                 <key>Size</key>
@@ -6432,7 +6432,7 @@
 				<key>Name</key>
 				<string>exec.bin</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>8192</integer>
 				<key>Optional</key>
 				<false/>
 			</dict>
@@ -6444,7 +6444,7 @@
 				<key>Name</key>
 				<string>grom.bin</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>2048</integer>
 				<key>Optional</key>
 				<false/>
 			</dict>
@@ -6456,7 +6456,7 @@
 				<key>Name</key>
 				<string>ECS.BIN</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>24576</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -6468,7 +6468,7 @@
 				<key>Name</key>
 				<string>IVOICE.BIN</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>2048</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -6682,7 +6682,7 @@
 				<key>Name</key>
 				<string>rom2.rom</string>
 				<key>Size</key>
-				<integer>933636</integer>
+				<integer>1048576</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
