@@ -43,8 +43,8 @@
 		9360C5A3294CB5E8000322B9 /* number_theory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57E294CB5E6000322B9 /* number_theory.c */; };
 		9360C5A4294CB5E8000322B9 /* memory_manager.c in Sources */ = {isa = PBXBuildFile; fileRef = 9360C57F294CB5E6000322B9 /* memory_manager.c */; };
 		9360C5A8294CB607000322B9 /* PVPlayCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPlayCore+Cheats.mm */; };
-		936FDBC02957F9D70073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; };
-		936FDBCA295808D20073628A /* libMoltenVK_Play.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; };
+		936FDBC02957F9D70073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; platformFilters = (ios, maccatalyst, macos, xros, ); };
+		936FDBCA295808D20073628A /* libMoltenVK_Play.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 936FDBBF2957F9D60073628A /* libMoltenVK_Play.dylib */; platformFilters = (ios, maccatalyst, macos, xros, ); };
 		939AAF6E2A791EF0007709E5 /* libplay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libplay.a */; };
 		939B19432948B05F0024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
 		939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 939B19422948B05F0024133A /* libsqlite3.tbd */; };
@@ -66,7 +66,7 @@
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B351223A27843318001C4B83 /* PVPlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVPlay.mm */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
-		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
+		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7DB293F2A8B0010B746 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
@@ -113,61 +113,12 @@
 			remoteGlobalIDString = 934D2DFF294B4D4600BDEBA5;
 			remoteInfo = PlayLibAdjustments;
 		};
-		B3135B4926E4C6860047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E726BA1C156D433CB8B91E21;
-			remoteInfo = CodeGenTestSuite;
-		};
-		B3135B5526E4C6860047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = E4D5C957784B4B11AFA123F6;
-			remoteInfo = GsAreaTest;
-		};
-		B3135B5726E4C6860047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CFDBC85E291844F0817EF1BC;
-			remoteInfo = McServTest;
-		};
 		B3135B5926E4C6860047F338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 6FFDC01AC4154B0892EE947F;
 			remoteInfo = Play;
-		};
-		B3135B5F26E4C6860047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 154B5B9CFA074FBCACA12ED3;
-			remoteInfo = SpuTest;
-		};
-		B3135B6126E4C6860047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 237985C140534AE98D9C66BB;
-			remoteInfo = VuTest;
-		};
-		B3135B6326E4C6860047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D9D654DB1C8D4C0BA7D42A03;
-			remoteInfo = autotest;
-		};
-		B3A33CF52947695F0090F1F3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3D8B3EB767EE44DDA61194D2;
-			remoteInfo = "chdr-benchmark";
 		};
 		B3ABAEC72BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -196,13 +147,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = BF93E5AEFEED46669047AA5D;
 			remoteInfo = FrameworkPlay;
-		};
-		B3ABAECF2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9172032BB7A34B1FBF9384BA;
-			remoteInfo = FrameworkTests;
 		};
 		B3ABAED12BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -238,13 +182,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = F0104EC7E894461D82EFA784;
 			remoteInfo = Framework_VulkanPlay;
-		};
-		B3ABAEDB2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 20138C2749964AD7A0ACE589;
-			remoteInfo = NamcoSys147NANDTools;
 		};
 		B3ABAEDD2BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -357,6 +294,160 @@
 			proxyType = 1;
 			remoteGlobalIDString = B30178D2207C901D0051B93D;
 			remoteInfo = "play-iOS";
+		};
+		B3EA207B2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DB2DF0E4E4494E56AEED493E;
+			remoteInfo = AltKitPlay;
+		};
+		B3EA207D2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DC86612D5DCC4F0491577B88;
+			remoteInfo = CAltKitPlay;
+		};
+		B3EA207F2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 975D23456B0047338231B098;
+			remoteInfo = CodeGenPlay;
+		};
+		B3EA20812BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7C394C304554DFFBD66852F;
+			remoteInfo = FrameworkPlay;
+		};
+		B3EA20832BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 693C7F35EBF246558877B9CD;
+			remoteInfo = Framework_AmazonPlay;
+		};
+		B3EA20852BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = ABACA2F251BC4D9EA11198AC;
+			remoteInfo = Framework_HttpPlay;
+		};
+		B3EA20872BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = B9D5716E689042E08E58302E;
+			remoteInfo = Framework_OpenAlPlay;
+		};
+		B3EA20892BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 691DD72EE3FB48388F70C5BA;
+			remoteInfo = Framework_OpenGlPlay;
+		};
+		B3EA208B2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = ECC004E07329422594843450;
+			remoteInfo = NuanceurPlay;
+		};
+		B3EA208D2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A0931A2D00744E07898A5CD3;
+			remoteInfo = PlayCorePlay;
+		};
+		B3EA208F2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DFD9988CB59C4CF18D0A5EA7;
+			remoteInfo = SDWebImage_StaticPlay;
+		};
+		B3EA20912BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8C35B130E60447A39870878B;
+			remoteInfo = "chdr-staticPlay";
+		};
+		B3EA20932BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A97E76974B95454FA92985A7;
+			remoteInfo = gsh_openglPlay;
+		};
+		B3EA20952BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CDFA1D8CB9BC41AC90BC61A9;
+			remoteInfo = gsh_vulkanPlay;
+		};
+		B3EA20972BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 9C38F19B42314552B6A76EC0;
+			remoteInfo = iCade_StaticPlay;
+		};
+		B3EA20992BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 29109A4C926E409898D7C057;
+			remoteInfo = libzstd_staticPlay;
+		};
+		B3EA209B2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = A7A028F9482E40F482DD6DC5;
+			remoteInfo = libzstd_zlibwrapper_staticPlay;
+		};
+		B3EA209D2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 69C54D02ACB649FB9030F3A5;
+			remoteInfo = lzmaPlay;
+		};
+		B3EA209F2BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8679EE64A9B446DCA0010082;
+			remoteInfo = sh_openalPlay;
+		};
+		B3EA20A12BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5D6FCF72494543C99AE04FD1;
+			remoteInfo = ui_sharedPlay;
+		};
+		B3EA20A32BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 4300EEAE663A4B08A86CD4C6;
+			remoteInfo = xxhashPlay;
+		};
+		B3EA20A52BDDDEFF003D0239 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5AAC0F3FB8734FC3B2AFED17;
+			remoteInfo = zlibPlay;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -3830,28 +3921,19 @@
 		B3135B2B26E4C6850047F338 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				B3135B5A26E4C6860047F338 /* Play.app */,
 				B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */,
 				B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */,
 				B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */,
-				B3135B4A26E4C6860047F338 /* CodeGenTestSuite.app */,
 				B3ABAECE2BCCF87F00D77B8C /* libFramework.a */,
-				B3ABAED02BCCF87F00D77B8C /* FrameworkTests.app */,
 				B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */,
 				B3ABAED42BCCF87F00D77B8C /* libFramework_Http.a */,
 				B3ABAED62BCCF87F00D77B8C /* libFramework_OpenAl.a */,
 				B3ABAED82BCCF87F00D77B8C /* libFramework_OpenGl.a */,
 				B3ABAEDA2BCCF87F00D77B8C /* libFramework_Vulkan.a */,
-				B3135B5626E4C6860047F338 /* GsAreaTest.app */,
-				B3135B5826E4C6860047F338 /* McServTest.app */,
-				B3ABAEDC2BCCF87F00D77B8C /* NamcoSys147NANDTools.app */,
 				B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */,
-				B3135B5A26E4C6860047F338 /* Play.app */,
 				B3ABAEE02BCCF87F00D77B8C /* libPlayCore.a */,
 				B3ABAEE22BCCF87F00D77B8C /* libSDWebImage_Static.a */,
-				B3135B6026E4C6860047F338 /* SpuTest.app */,
-				B3135B6226E4C6860047F338 /* VuTest.app */,
-				B3135B6426E4C6860047F338 /* autotest.app */,
-				B3A33CF62947695F0090F1F3 /* chdr-benchmark.app */,
 				B3ABAEE42BCCF87F00D77B8C /* libchdr-static.a */,
 				B3ABAEE62BCCF87F00D77B8C /* libgsh_opengl.a */,
 				B3ABAEE82BCCF87F00D77B8C /* libgsh_vulkan.a */,
@@ -4003,7 +4085,29 @@
 			buildRules = (
 			);
 			dependencies = (
+				B3EA207C2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA207E2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20802BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20822BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20842BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20862BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20882BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA208A2BDDDEFF003D0239 /* PBXTargetDependency */,
 				B3ABAEFC2BCCF91B00D77B8C /* PBXTargetDependency */,
+				B3EA208C2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA208E2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20902BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20922BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20942BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20962BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20982BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA209A2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA209C2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA209E2BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20A02BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20A22BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20A42BDDDEFF003D0239 /* PBXTargetDependency */,
+				B3EA20A62BDDDEFF003D0239 /* PBXTargetDependency */,
 				934D2E1B294B4D8800BDEBA5 /* PBXTargetDependency */,
 			);
 			name = play;
@@ -4084,60 +4188,11 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B3135B4A26E4C6860047F338 /* CodeGenTestSuite.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = CodeGenTestSuite.app;
-			remoteRef = B3135B4926E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B5626E4C6860047F338 /* GsAreaTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = GsAreaTest.app;
-			remoteRef = B3135B5526E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B5826E4C6860047F338 /* McServTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = McServTest.app;
-			remoteRef = B3135B5726E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		B3135B5A26E4C6860047F338 /* Play.app */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.application;
 			path = Play.app;
 			remoteRef = B3135B5926E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B6026E4C6860047F338 /* SpuTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = SpuTest.app;
-			remoteRef = B3135B5F26E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B6226E4C6860047F338 /* VuTest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = VuTest.app;
-			remoteRef = B3135B6126E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3135B6426E4C6860047F338 /* autotest.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = autotest.app;
-			remoteRef = B3135B6326E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3A33CF62947695F0090F1F3 /* chdr-benchmark.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "chdr-benchmark.app";
-			remoteRef = B3A33CF52947695F0090F1F3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */ = {
@@ -4166,13 +4221,6 @@
 			fileType = archive.ar;
 			path = libFramework.a;
 			remoteRef = B3ABAECD2BCCF87F00D77B8C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3ABAED02BCCF87F00D77B8C /* FrameworkTests.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = FrameworkTests.app;
-			remoteRef = B3ABAECF2BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3ABAED22BCCF87F00D77B8C /* libFramework_Amazon.a */ = {
@@ -4208,13 +4256,6 @@
 			fileType = archive.ar;
 			path = libFramework_Vulkan.a;
 			remoteRef = B3ABAED92BCCF87F00D77B8C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		B3ABAEDC2BCCF87F00D77B8C /* NamcoSys147NANDTools.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = NamcoSys147NANDTools.app;
-			remoteRef = B3ABAEDB2BCCF87F00D77B8C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		B3ABAEDE2BCCF87F00D77B8C /* libNuanceur.a */ = {
@@ -4420,6 +4461,116 @@
 			target = B30178D2207C901D0051B93D /* play */;
 			targetProxy = B3B2546B27842B7B00F97E55 /* PBXContainerItemProxy */;
 		};
+		B3EA207C2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = AltKitPlay;
+			targetProxy = B3EA207B2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA207E2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CAltKitPlay;
+			targetProxy = B3EA207D2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20802BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CodeGenPlay;
+			targetProxy = B3EA207F2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20822BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = FrameworkPlay;
+			targetProxy = B3EA20812BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20842BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework_AmazonPlay;
+			targetProxy = B3EA20832BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20862BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework_HttpPlay;
+			targetProxy = B3EA20852BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20882BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework_OpenAlPlay;
+			targetProxy = B3EA20872BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA208A2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework_OpenGlPlay;
+			targetProxy = B3EA20892BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA208C2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = NuanceurPlay;
+			targetProxy = B3EA208B2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA208E2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PlayCorePlay;
+			targetProxy = B3EA208D2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20902BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = SDWebImage_StaticPlay;
+			targetProxy = B3EA208F2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20922BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "chdr-staticPlay";
+			targetProxy = B3EA20912BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20942BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = gsh_openglPlay;
+			targetProxy = B3EA20932BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20962BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = gsh_vulkanPlay;
+			targetProxy = B3EA20952BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20982BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = iCade_StaticPlay;
+			targetProxy = B3EA20972BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA209A2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libzstd_staticPlay;
+			targetProxy = B3EA20992BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA209C2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libzstd_zlibwrapper_staticPlay;
+			targetProxy = B3EA209B2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA209E2BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = lzmaPlay;
+			targetProxy = B3EA209D2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20A02BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = sh_openalPlay;
+			targetProxy = B3EA209F2BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20A22BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ui_sharedPlay;
+			targetProxy = B3EA20A12BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20A42BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = xxhashPlay;
+			targetProxy = B3EA20A32BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
+		B3EA20A62BDDDEFF003D0239 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = zlibPlay;
+			targetProxy = B3EA20A52BDDDEFF003D0239 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -4541,7 +4692,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = "${SRCROOT}/lib/play";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -4654,7 +4805,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					NDEBUG,
+					DEBUG,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -4671,7 +4822,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SYMROOT = "${SRCROOT}/lib/play";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
