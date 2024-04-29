@@ -5513,7 +5513,7 @@
 				<key>Name</key>
 				<string>DISK.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>16384</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -5525,7 +5525,7 @@
 				<key>Name</key>
 				<string>FMPAC.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>65536</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -5537,7 +5537,7 @@
 				<key>Name</key>
 				<string>MSXDOS2.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>65536</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -5549,7 +5549,7 @@
 				<key>Name</key>
 				<string>PAINTER.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>65536</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
@@ -5561,7 +5561,7 @@
 				<key>Name</key>
 				<string>KANJI.ROM</string>
 				<key>Size</key>
-				<integer>0</integer>
+				<integer>131072</integer>
 				<key>Optional</key>
 				<true/>
 			</dict>
