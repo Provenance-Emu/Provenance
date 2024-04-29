@@ -1425,7 +1425,6 @@
 		B394CD3A2BDEE53A006B63E8 /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C10276B470B00D85327 /* SwitchCell.swift */; };
 		B394CD442BDEE53A006B63E8 /* PVFCEU.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8B27DCB2B200E83180 /* PVFCEU.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD452BDEE53A006B63E8 /* PVMednafen.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B394CD462BDEE53A006B63E8 /* PVSNES.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD482BDEE53A006B63E8 /* PVPicoDrive.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE27293F34B30050BDB6 /* PVPicoDrive.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD492BDEE53A006B63E8 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD4E2BDEE53A006B63E8 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1451,7 +1450,6 @@
 		B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B394CD742BDEE53A006B63E8 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
 		B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; };
-		B394CD762BDEE53A006B63E8 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); };
 		B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		B394CD782BDEE53A006B63E8 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B394CD792BDEE53A006B63E8 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
@@ -1462,14 +1460,12 @@
 		B394CD7E2BDEE53A006B63E8 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		B394CD7F2BDEE53A006B63E8 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; };
 		B394CD802BDEE53A006B63E8 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
-		B394CD822BDEE53A006B63E8 /* PVPotator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32296DD2878385E00585AD8 /* PVPotator.framework */; };
 		B394CD842BDEE53A006B63E8 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		B394CD862BDEE53A006B63E8 /* PVCrabEmu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305F103276B6BBD003AE510 /* PVCrabEmu.framework */; };
 		B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
 		B394CD882BDEE53A006B63E8 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
 		B394CD892BDEE53A006B63E8 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D917C8D60B0019F6D2 /* CFNetwork.framework */; };
 		B394CD8A2BDEE53A006B63E8 /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; };
-		B394CD8B2BDEE53A006B63E8 /* PVGearcoleco.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30F1425289674B1004D40BF /* PVGearcoleco.framework */; };
 		B394CD8D2BDEE53A006B63E8 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
 		B394CD8E2BDEE53A006B63E8 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869DB17C8D60C0019F6D2 /* Security.framework */; };
 		B394CD8F2BDEE53A006B63E8 /* PVTGBDual.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9027DCB2CA00E83180 /* PVTGBDual.framework */; };
@@ -1481,10 +1477,8 @@
 		B394CD952BDEE53A006B63E8 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D517C8D5450019F6D2 /* CoreData.framework */; };
 		B394CD962BDEE53A006B63E8 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
 		B394CD982BDEE53A006B63E8 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; };
-		B394CD992BDEE53A006B63E8 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE66E293F23F70010B746 /* PVfMSX.framework */; };
 		B394CD9A2BDEE53A006B63E8 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
 		B394CD9B2BDEE53A006B63E8 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
-		B394CD9C2BDEE53A006B63E8 /* PVSNES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D55C1DEA85C60068D057 /* PVSNES.framework */; };
 		B394CD9D2BDEE53A006B63E8 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
 		B394CD9E2BDEE53A006B63E8 /* PVProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE24293F34740050BDB6 /* PVProSystem.framework */; };
 		B394CD9F2BDEE53A006B63E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
@@ -2886,7 +2880,6 @@
 			files = (
 				B394CD442BDEE53A006B63E8 /* PVFCEU.framework in Embed Frameworks */,
 				B394CD452BDEE53A006B63E8 /* PVMednafen.framework in Embed Frameworks */,
-				B394CD462BDEE53A006B63E8 /* PVSNES.framework in Embed Frameworks */,
 				B394CD482BDEE53A006B63E8 /* PVPicoDrive.framework in Embed Frameworks */,
 				B394CD492BDEE53A006B63E8 /* PVAtari800.framework in Embed Frameworks */,
 				B394CD4E2BDEE53A006B63E8 /* PVSupport.framework in Embed Frameworks */,
@@ -4179,7 +4172,6 @@
 			files = (
 				B394CD742BDEE53A006B63E8 /* PVGB.framework in Frameworks */,
 				B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */,
-				B394CD762BDEE53A006B63E8 /* PVVecX.framework in Frameworks */,
 				B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */,
 				B394CD782BDEE53A006B63E8 /* GameController.framework in Frameworks */,
 				B394CD792BDEE53A006B63E8 /* libxml2.dylib in Frameworks */,
@@ -4190,14 +4182,12 @@
 				B394CD7E2BDEE53A006B63E8 /* libstdc++.dylib in Frameworks */,
 				B394CD7F2BDEE53A006B63E8 /* PVRSPCXD4.framework in Frameworks */,
 				B394CD802BDEE53A006B63E8 /* libc++.dylib in Frameworks */,
-				B394CD822BDEE53A006B63E8 /* PVPotator.framework in Frameworks */,
 				B394CD842BDEE53A006B63E8 /* libsqlite3.dylib in Frameworks */,
 				B394CD862BDEE53A006B63E8 /* PVCrabEmu.framework in Frameworks */,
 				B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */,
 				B394CD882BDEE53A006B63E8 /* PVMupen64Plus.framework in Frameworks */,
 				B394CD892BDEE53A006B63E8 /* CFNetwork.framework in Frameworks */,
 				B394CD8A2BDEE53A006B63E8 /* PVMupen64PlusVideoRice.framework in Frameworks */,
-				B394CD8B2BDEE53A006B63E8 /* PVGearcoleco.framework in Frameworks */,
 				B394CD8D2BDEE53A006B63E8 /* PVPokeMini.framework in Frameworks */,
 				B394CD8E2BDEE53A006B63E8 /* Security.framework in Frameworks */,
 				B394CD8F2BDEE53A006B63E8 /* PVTGBDual.framework in Frameworks */,
@@ -4209,10 +4199,8 @@
 				B394CD952BDEE53A006B63E8 /* CoreData.framework in Frameworks */,
 				B394CD962BDEE53A006B63E8 /* PVLibrary.framework in Frameworks */,
 				B394CD982BDEE53A006B63E8 /* PVMednafen.framework in Frameworks */,
-				B394CD992BDEE53A006B63E8 /* PVfMSX.framework in Frameworks */,
 				B394CD9A2BDEE53A006B63E8 /* AudioToolbox.framework in Frameworks */,
 				B394CD9B2BDEE53A006B63E8 /* PVGenesis.framework in Frameworks */,
-				B394CD9C2BDEE53A006B63E8 /* PVSNES.framework in Frameworks */,
 				B394CD9D2BDEE53A006B63E8 /* PVSupport.framework in Frameworks */,
 				B394CD9E2BDEE53A006B63E8 /* PVProSystem.framework in Frameworks */,
 				B394CD9F2BDEE53A006B63E8 /* UIKit.framework in Frameworks */,
