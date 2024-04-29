@@ -206,7 +206,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         // SteamControllerManager.listenForConnections()
         #endif
 
-        #if os(iOS) && !targetEnvironment(macCatalyst)
+        #if os(iOS) && !targetEnvironment(macCatalyst) && !APP_STORE
 //            PVAltKitService.shared.start()
             ApplicationMonitor.shared.start()
         #endif
