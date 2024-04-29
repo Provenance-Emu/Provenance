@@ -270,6 +270,7 @@
 		<key>UIURLToLaunchScreenAssociations</key>
 		<dict/>
 	</dict>
+	<string>Launch Screen.storyboard</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>

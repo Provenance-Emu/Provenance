@@ -1334,7 +1334,6 @@
 		B394CCCD2BDEE53A006B63E8 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B923A9202D2EAE00580FFC /* Theme.swift */; };
 		B394CCCE2BDEE53A006B63E8 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29327BC7E610070E222 /* SearchBar.swift */; };
 		B394CCCF2BDEE53A006B63E8 /* GamesDividerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34FB1482B6731A0009687D7 /* GamesDividerView.swift */; };
-		B394CCD02BDEE53A006B63E8 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
 		B394CCD12BDEE53A006B63E8 /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B394CCD22BDEE53A006B63E8 /* PVCheatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF17114D2586A13100258602 /* PVCheatsTableViewCell.swift */; };
 		B394CCD32BDEE53A006B63E8 /* PVGBControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37202187F568009D9244 /* PVGBControllerViewController.swift */; };
@@ -1523,7 +1522,7 @@
 		B394CDBB2BDEE53A006B63E8 /* AAScale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034C2896314000F75595 /* AAScale2x.fsh */; };
 		B394CDBC2BDEE53A006B63E8 /* LCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703532896314200F75595 /* LCD.fsh */; };
 		B394CDBD2BDEE53A006B63E8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB426CABEE00088AC32 /* Settings.storyboard */; platformFilters = (ios, maccatalyst, ); };
-		B394CDBE2BDEE53A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
+		B394CDBE2BDEE53A006B63E8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */; };
 		B394CDBF2BDEE53A006B63E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		B394CDC02BDEE53A006B63E8 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
 		B394CDC12BDEE53A006B63E8 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
@@ -1549,6 +1548,9 @@
 		B394CDD62BDEE53A006B63E8 /* LaunchImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FD2ABF8006004BA3E9 /* LaunchImage.png */; };
 		B394CDD72BDEE53A006B63E8 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
 		B394CDD92BDEE53A006B63E8 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
+		B394CDEA2BDF7018006B63E8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */; };
+		B394CDEB2BDF701A006B63E8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */; };
+		B394CDEC2BDF701A006B63E8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */; };
 		B3976927285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
 		B3976928285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
 		B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
@@ -3188,7 +3190,7 @@
 		37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleGamesView.swift; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
-		551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		551DA2FD2ABF8006004BA3E9 /* LaunchImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchImage.png; sourceTree = "<group>"; };
 		5525388625574D48004B00B6 /* PVTGBDual.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		555454412AC09997006A065F /* LaunchImageTV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchImageTV.png; sourceTree = "<group>"; };
@@ -4772,7 +4774,7 @@
 		1A3D409D17B2DCE4004DFFFC /* Provenance */ = {
 			isa = PBXGroup;
 			children = (
-				551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */,
+				551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */,
 				551DA2FD2ABF8006004BA3E9 /* LaunchImage.png */,
 				B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */,
 				1A3D40A717B2DCE4004DFFFC /* PVAppDelegate.swift */,
@@ -6738,7 +6740,7 @@
 				B367035C2896314200F75595 /* AAScale2x.fsh in Resources */,
 				B367036A2896314200F75595 /* LCD.fsh in Resources */,
 				B3296EB226CABEE00088AC32 /* Settings.storyboard in Resources */,
-				551DA2FC2ABF7E99004BA3E9 /* LaunchScreen.storyboard in Resources */,
+				551DA2FC2ABF7E99004BA3E9 /* Launch Screen.storyboard in Resources */,
 				1A1F0B6819CC4EB000764BE6 /* Assets.xcassets in Resources */,
 				378F4A0D1B63D7CD0065FA39 /* GCDWebUploader.bundle in Resources */,
 				B32987D12B66198300728996 /* Settings.storyboard in Resources */,
@@ -6825,6 +6827,7 @@
 			files = (
 				930499C92A93073800BF257F /* modules in Resources */,
 				930499CA2A93073800BF257F /* InfoPlist.strings in Resources */,
+				B394CDEC2BDF701A006B63E8 /* Launch Screen.storyboard in Resources */,
 				930499CB2A93073800BF257F /* Strings.strings in Resources */,
 				930499CC2A93073800BF257F /* HQ2x.fsh in Resources */,
 				930499CD2A93073800BF257F /* AAScale2x.fsh in Resources */,
@@ -6982,7 +6985,7 @@
 				B394CDBB2BDEE53A006B63E8 /* AAScale2x.fsh in Resources */,
 				B394CDBC2BDEE53A006B63E8 /* LCD.fsh in Resources */,
 				B394CDBD2BDEE53A006B63E8 /* Settings.storyboard in Resources */,
-				B394CDBE2BDEE53A006B63E8 /* LaunchScreen.storyboard in Resources */,
+				B394CDBE2BDEE53A006B63E8 /* Launch Screen.storyboard in Resources */,
 				B394CDBF2BDEE53A006B63E8 /* Assets.xcassets in Resources */,
 				B394CDC02BDEE53A006B63E8 /* GCDWebUploader.bundle in Resources */,
 				B394CDC12BDEE53A006B63E8 /* Settings.bundle in Resources */,
@@ -7046,6 +7049,7 @@
 			files = (
 				9368551E2A8956220087FE6B /* modules in Resources */,
 				B3F7E3C5297736BE00362B92 /* InfoPlist.strings in Resources */,
+				B394CDEB2BDF701A006B63E8 /* Launch Screen.storyboard in Resources */,
 				B3F7E3C6297736BE00362B92 /* Strings.strings in Resources */,
 				B3F7E3C7297736BE00362B92 /* HQ2x.fsh in Resources */,
 				B3F7E3C8297736BE00362B92 /* AAScale2x.fsh in Resources */,
@@ -7086,6 +7090,7 @@
 			files = (
 				B3F7E551297736C200362B92 /* modules in Resources */,
 				B3F7E552297736C200362B92 /* InfoPlist.strings in Resources */,
+				B394CDEA2BDF7018006B63E8 /* Launch Screen.storyboard in Resources */,
 				B3F7E553297736C200362B92 /* Strings.strings in Resources */,
 				B3F7E554297736C200362B92 /* HQ2x.fsh in Resources */,
 				B3F7E555297736C200362B92 /* AAScale2x.fsh in Resources */,
@@ -8641,7 +8646,6 @@
 				B394CCCD2BDEE53A006B63E8 /* Theme.swift in Sources */,
 				B394CCCE2BDEE53A006B63E8 /* SearchBar.swift in Sources */,
 				B394CCCF2BDEE53A006B63E8 /* GamesDividerView.swift in Sources */,
-				B394CCD02BDEE53A006B63E8 /* ApplicationMonitor.swift in Sources */,
 				B394CCD12BDEE53A006B63E8 /* ConflictsController.swift in Sources */,
 				B394CCD22BDEE53A006B63E8 /* PVCheatsTableViewCell.swift in Sources */,
 				B394CCD32BDEE53A006B63E8 /* PVGBControllerViewController.swift in Sources */,
@@ -9740,6 +9744,9 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -9802,6 +9809,9 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -11950,6 +11960,9 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "$(TARGET_NAME)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -12267,6 +12280,7 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = "Prov Debug";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
@@ -12342,6 +12356,7 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = Provenance;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
@@ -12418,6 +12433,7 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = Provenance;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
