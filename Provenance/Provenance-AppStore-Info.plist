@@ -248,7 +248,7 @@
 		<string>external-accessory</string>
 		<string>fetch</string>
 		<string>location</string>
-		<string>nearby-interaction</string>
+		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UIFileSharingEnabled</key>
