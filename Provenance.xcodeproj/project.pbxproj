@@ -1516,7 +1516,6 @@
 		B394CDBB2BDEE53A006B63E8 /* AAScale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034C2896314000F75595 /* AAScale2x.fsh */; };
 		B394CDBC2BDEE53A006B63E8 /* LCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703532896314200F75595 /* LCD.fsh */; };
 		B394CDBD2BDEE53A006B63E8 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB426CABEE00088AC32 /* Settings.storyboard */; platformFilters = (ios, maccatalyst, ); };
-		B394CDBE2BDEE53A006B63E8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */; };
 		B394CDBF2BDEE53A006B63E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A1F0B6719CC4EB000764BE6 /* Assets.xcassets */; };
 		B394CDC02BDEE53A006B63E8 /* GCDWebUploader.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 378F49FD1B63D7CD0065FA39 /* GCDWebUploader.bundle */; };
 		B394CDC12BDEE53A006B63E8 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
@@ -1539,7 +1538,6 @@
 		B394CDD32BDEE53A006B63E8 /* MonoLCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034E2896314100F75595 /* MonoLCD.fsh */; };
 		B394CDD42BDEE53A006B63E8 /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
 		B394CDD52BDEE53A006B63E8 /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
-		B394CDD62BDEE53A006B63E8 /* LaunchImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FD2ABF8006004BA3E9 /* LaunchImage.png */; };
 		B394CDD72BDEE53A006B63E8 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
 		B394CDD92BDEE53A006B63E8 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B394CDEA2BDF7018006B63E8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */; };
@@ -6973,7 +6971,6 @@
 				B394CDBB2BDEE53A006B63E8 /* AAScale2x.fsh in Resources */,
 				B394CDBC2BDEE53A006B63E8 /* LCD.fsh in Resources */,
 				B394CDBD2BDEE53A006B63E8 /* Settings.storyboard in Resources */,
-				B394CDBE2BDEE53A006B63E8 /* Launch Screen.storyboard in Resources */,
 				B394CDBF2BDEE53A006B63E8 /* Assets.xcassets in Resources */,
 				B394CDC02BDEE53A006B63E8 /* GCDWebUploader.bundle in Resources */,
 				B394CDC12BDEE53A006B63E8 /* Settings.bundle in Resources */,
@@ -6996,7 +6993,6 @@
 				B394CDD32BDEE53A006B63E8 /* MonoLCD.fsh in Resources */,
 				B394CDD42BDEE53A006B63E8 /* Scale2x.fsh in Resources */,
 				B394CDD52BDEE53A006B63E8 /* Scale4x.fsh in Resources */,
-				B394CDD62BDEE53A006B63E8 /* LaunchImage.png in Resources */,
 				B394CDD72BDEE53A006B63E8 /* OmniScaleLegacy.fsh in Resources */,
 				B394CDD92BDEE53A006B63E8 /* GLES in Resources */,
 			);
