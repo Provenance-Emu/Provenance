@@ -251,8 +251,13 @@
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
-	<key>UILaunchStoryboardName</key>
-	<string>Launch Screen.storyboard</string>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>Launchscreen-background</string>
+		<key>UIImageName</key>
+		<string>LaunchImage.png</string>
+	</dict>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 	<key>UIRequiredDeviceCapabilities</key>
