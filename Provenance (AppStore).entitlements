@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>aps-environment</key>
+	<string>development</string>
+	<key>com.apple.developer.game-center</key>
+	<true/>
+	<key>com.apple.developer.group-session</key>
+	<true/>
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array/>
+	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
+	<true/>
+	<key>com.apple.developer.kernel.increased-memory-limit</key>
+	<true/>
+	<key>com.apple.developer.nfc.readersession.formats</key>
+	<array>
+		<string>TAG</string>
+	</array>
+	<key>com.apple.developer.siri</key>
+	<true/>
+	<key>com.apple.developer.sustained-execution</key>
+	<true/>
+	<key>com.apple.developer.user-management</key>
+	<array>
+		<string>get-current-user</string>
+		<string>runs-as-current-user</string>
+		<string>runs-as-current-user-with-user-independent-keychain</string>
+	</array>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.org.provenance-emu.provenance</string>
+		<string>group.org.provenance-emu</string>
+	</array>
+	<key>keychain-access-groups</key>
+	<array/>
+</dict>
+</plist>
