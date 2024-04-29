@@ -9,7 +9,13 @@
 	<key>com.apple.developer.group-session</key>
 	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
-	<array/>
+	<array>
+		<string>iCloud.org.provenance-emu.provenance</string>
+	</array>
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudDocuments</string>
+	</array>
 	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
 	<true/>
 	<key>com.apple.developer.kernel.increased-memory-limit</key>
@@ -22,6 +28,12 @@
 	<true/>
 	<key>com.apple.developer.sustained-execution</key>
 	<true/>
+	<key>com.apple.developer.ubiquity-container-identifiers</key>
+	<array>
+		<string>iCloud.org.provenance-emu.provenance</string>
+	</array>
+	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
+	<string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
 	<key>com.apple.developer.user-management</key>
 	<array>
 		<string>get-current-user</string>
@@ -34,6 +46,9 @@
 		<string>group.org.provenance-emu</string>
 	</array>
 	<key>keychain-access-groups</key>
-	<array/>
+	<array>
+		<string>$(AppIdentifierPrefix)org.provenance-emu.provenance</string>
+		<string>$(AppIdentifierPrefix)org.provenance-emu</string>
+	</array>
 </dict>
 </plist>
