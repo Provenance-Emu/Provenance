@@ -1448,7 +1448,6 @@
 		B394CD552BDEE53A006B63E8 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD572BDEE53A006B63E8 /* PVGB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD582BDEE53A006B63E8 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B394CD592BDEE53A006B63E8 /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD5B2BDEE53A006B63E8 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD5D2BDEE53A006B63E8 /* PVTGBDual.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F9027DCB2CA00E83180 /* PVTGBDual.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD5E2BDEE53A006B63E8 /* PVProSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE24293F34740050BDB6 /* PVProSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1507,7 +1506,6 @@
 		B394CDAE2BDEE53A006B63E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		B394CDB02BDEE53A006B63E8 /* PVPicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE27293F34B30050BDB6 /* PVPicoDrive.framework */; };
 		B394CDB12BDEE53A006B63E8 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B394CC612BDEE53A006B63E8 /* Introspect */; };
-		B394CDB22BDEE53A006B63E8 /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D3E7612894DEBE0016EB85 /* PVGME.framework */; };
 		B394CDB32BDEE53A006B63E8 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B394CC652BDEE53A006B63E8 /* PVLogging */; };
 		B394CDB42BDEE53A006B63E8 /* PVGBA.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D5201DEA787D0068D057 /* PVGBA.framework */; };
 		B394CDB82BDEE53A006B63E8 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D40A017B2DCE4004DFFFC /* InfoPlist.strings */; };
@@ -2908,7 +2906,6 @@
 				B394CD552BDEE53A006B63E8 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B394CD572BDEE53A006B63E8 /* PVGB.framework in Embed Frameworks */,
 				B394CD582BDEE53A006B63E8 /* PVPokeMini.framework in Embed Frameworks */,
-				B394CD592BDEE53A006B63E8 /* PVGME.framework in Embed Frameworks */,
 				B394CD5B2BDEE53A006B63E8 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B394CD5D2BDEE53A006B63E8 /* PVTGBDual.framework in Embed Frameworks */,
 				B394CD5E2BDEE53A006B63E8 /* PVProSystem.framework in Embed Frameworks */,
@@ -4237,7 +4234,6 @@
 				B394CDAE2BDEE53A006B63E8 /* CoreGraphics.framework in Frameworks */,
 				B394CDB02BDEE53A006B63E8 /* PVPicoDrive.framework in Frameworks */,
 				B394CDB12BDEE53A006B63E8 /* Introspect in Frameworks */,
-				B394CDB22BDEE53A006B63E8 /* PVGME.framework in Frameworks */,
 				B394CDB32BDEE53A006B63E8 /* PVLogging in Frameworks */,
 				B394CDB42BDEE53A006B63E8 /* PVGBA.framework in Frameworks */,
 			);
