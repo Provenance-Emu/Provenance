@@ -124,7 +124,7 @@ import CarPlay
 //        simulateNavigation(for: navSession, maneuvers: mapTemplate.coastalRoadsManeuvers(compatibleWith: mainMapViewController.traitCollection))
 //    }
 
-extension PVAppDelegate: CPTemplateApplicationSceneDelegate {
+//extension PVAppDelegate: CPTemplateApplicationSceneDelegate {
 //    func templateApplicationScene(
 //        _ templateApplicationScene: CPTemplateApplicationScene,
 //        didConnect interfaceController: CPInterfaceController
