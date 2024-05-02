@@ -117,3 +117,4 @@ Cores/DuckStation/lib/
 /Cores/PPSSPP/lib/ppsspp
 /CoresRetro/RetroArch/lib
 /Cores/Flycast/build
+/Cores/Play/cmake/Source/ui_ios/AltKit/Debug

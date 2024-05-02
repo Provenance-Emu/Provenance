@@ -17,7 +17,7 @@ import Foundation
 import UIKit
 
 #if canImport(CarPlay)
-import CarPlay
+//import CarPlay
 
 /*
  https://developer.apple.com/documentation/carplay/cpinstrumentclustersetting
@@ -167,7 +167,7 @@ import CarPlay
 //            }
 //        }
 //    }
-}
+//}
 #endif
 
 @objc public protocol UIApplicationPrivate {
