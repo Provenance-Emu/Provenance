@@ -523,7 +523,9 @@ static void UpdateWiiPointer();
         self.touchViewController.view.userInteractionEnabled=true;
         self.touchViewController.view.autoresizesSubviews=true;
         self.touchViewController.view.userInteractionEnabled=true;
+#if !TARGET_OS_TV
         self.touchViewController.view.multipleTouchEnabled=true;
+#endif
     } else {
         if(self.gsPreference == 0)
         {

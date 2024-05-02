@@ -431,7 +431,7 @@ void frontend_darwin_get_env(int *argc, char *argv[],
     }
 #endif
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || TARGET_OS_TV
     fill_pathname_join_special(assets_zip_path, bundle_path_buf, "Frameworks/PVRetroArch.framework/assets.zip", sizeof(assets_zip_path));
     //fill_pathname_join_special(assets_zip_path, bundle_path_buf, "assets.zip", sizeof(assets_zip_path));
 #else

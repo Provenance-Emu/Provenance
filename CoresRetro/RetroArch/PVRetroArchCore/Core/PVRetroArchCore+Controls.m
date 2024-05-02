@@ -1067,7 +1067,7 @@ float cocoa_screen_get_backing_scale_factor(void);
 /* TODO/FIXME - static globals */
 static bool small_keyboard_active = false;
 static icade_map_t icade_maps[MAX_ICADE_PROFILES][MAX_ICADE_KEYS];
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS && !TARGET_OS_TV
 static UISelectionFeedbackGenerator *feedbackGenerator;
 #endif
 #endif
@@ -1363,7 +1363,7 @@ static void *cocoa_input_init(const char *joypad_driver)
          motionManager = [[CMMotionManager alloc] init];
 #endif
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS && !TARGET_OS_TV
    if (!feedbackGenerator)
       feedbackGenerator = [[UISelectionFeedbackGenerator alloc] init];
    [feedbackGenerator prepare];
@@ -1741,8 +1741,10 @@ static float cocoa_input_get_sensor_input(void *data, unsigned port, unsigned id
 #if TARGET_OS_IOS
 static void cocoa_input_keypress_vibrate(void)
 {
+#if !TARGET_OS_TV
    [feedbackGenerator selectionChanged];
    [feedbackGenerator prepare];
+#endif
 }
 #endif
 

@@ -158,6 +158,7 @@ public enum SubtleVolumeError: Error {
      - parameter animated: Indicating whether the change should be animated
      */
     @objc public func setVolumeLevel(_ volumeLevel: Double, animated: Bool = false) throws {
+        #if !os(tvOS)
         guard let slider = volume.subviews.compactMap({ $0 as? UISlider }).first else {
             throw SubtleVolumeError.unableToChangeVolumeLevel
         }
@@ -183,6 +184,8 @@ public enum SubtleVolumeError: Error {
         } else {
             updateVolume()
         }
+        #else
+        #endif
     }
 
     /// Resume audio session. Call this once the app becomes active after being pushed in background
