@@ -1444,7 +1444,7 @@
 		B394CD502BDEE53A006B63E8 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD512BDEE53A006B63E8 /* PVCrabEmu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F103276B6BBD003AE510 /* PVCrabEmu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD532BDEE53A006B63E8 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B394CC652BDEE53A006B63E8 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B394CD542BDEE53A006B63E8 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B394CD542BDEE53A006B63E8 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; platformFilters = (ios, tvos, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD552BDEE53A006B63E8 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD572BDEE53A006B63E8 /* PVGB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD582BDEE53A006B63E8 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1459,7 +1459,7 @@
 		B394CD672BDEE53A006B63E8 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD682BDEE53A006B63E8 /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD692BDEE53A006B63E8 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B394CD742BDEE53A006B63E8 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
 		B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; platformFilter = ios; };
 		B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
@@ -1472,7 +1472,6 @@
 		B394CD7E2BDEE53A006B63E8 /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2A95A917F7682400F1CB0D /* libstdc++.dylib */; };
 		B394CD7F2BDEE53A006B63E8 /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; };
 		B394CD802BDEE53A006B63E8 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
-		B394CD842BDEE53A006B63E8 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AECF4A81966D76100F8704E /* libsqlite3.dylib */; };
 		B394CD862BDEE53A006B63E8 /* PVCrabEmu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305F103276B6BBD003AE510 /* PVCrabEmu.framework */; };
 		B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AD4BC6E1BFD38D6007D6C7C /* AVFoundation.framework */; };
 		B394CD882BDEE53A006B63E8 /* PVMupen64Plus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; };
@@ -1490,7 +1489,7 @@
 		B394CD962BDEE53A006B63E8 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
 		B394CD982BDEE53A006B63E8 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; };
 		B394CD9A2BDEE53A006B63E8 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
-		B394CD9B2BDEE53A006B63E8 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
+		B394CD9B2BDEE53A006B63E8 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; platformFilters = (ios, tvos, xros, ); };
 		B394CD9D2BDEE53A006B63E8 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
 		B394CD9E2BDEE53A006B63E8 /* PVProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE24293F34740050BDB6 /* PVProSystem.framework */; };
 		B394CD9F2BDEE53A006B63E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
@@ -1502,7 +1501,7 @@
 		B394CDA82BDEE53A006B63E8 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
 		B394CDA92BDEE53A006B63E8 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
 		B394CDAC2BDEE53A006B63E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
-		B394CDAD2BDEE53A006B63E8 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDA276B8B2E0031AECC /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B394CDAD2BDEE53A006B63E8 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDA276B8B2E0031AECC /* OpenGL.framework */; platformFilters = (macos, ); };
 		B394CDAE2BDEE53A006B63E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		B394CDB02BDEE53A006B63E8 /* PVPicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE27293F34B30050BDB6 /* PVPicoDrive.framework */; };
 		B394CDB12BDEE53A006B63E8 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B394CC612BDEE53A006B63E8 /* Introspect */; };
@@ -4218,7 +4217,6 @@
 				B394CD7E2BDEE53A006B63E8 /* libstdc++.dylib in Frameworks */,
 				B394CD7F2BDEE53A006B63E8 /* PVRSPCXD4.framework in Frameworks */,
 				B394CD802BDEE53A006B63E8 /* libc++.dylib in Frameworks */,
-				B394CD842BDEE53A006B63E8 /* libsqlite3.dylib in Frameworks */,
 				B394CD862BDEE53A006B63E8 /* PVCrabEmu.framework in Frameworks */,
 				B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */,
 				B394CD882BDEE53A006B63E8 /* PVMupen64Plus.framework in Frameworks */,
@@ -9340,7 +9338,10 @@
 		};
 		B394CC5B2BDEE53A006B63E8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+				maccatalyst,
+			);
 			target = B3E21D6A203211BE009939D3 /* Spotlight */;
 			targetProxy = B394CC5C2BDEE53A006B63E8 /* PBXContainerItemProxy */;
 		};
@@ -12372,6 +12373,9 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APP_DISPLAY_NAME = Provenance;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=appletvos*]" = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphoneos*]" = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=macosx*]" = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
