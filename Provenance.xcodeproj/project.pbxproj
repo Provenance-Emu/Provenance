@@ -3693,8 +3693,6 @@
 		B399119326C0F41300E54426 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+VolumeButton.swift"; sourceTree = "<group>"; };
-		B39DC77A279E77200017E28D /* PVGCVRViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGCVRViewController.h; sourceTree = "<group>"; };
-		B39DC77B279E77230017E28D /* PVGCVRViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGCVRViewController.m; sourceTree = "<group>"; };
 		B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameCubeControllerViewController.swift; sourceTree = "<group>"; };
 		B3A320392720991B00F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3203C2720992500F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5625,8 +5623,6 @@
 		B382C63F278E5288007E61FE /* PVGLViewController */ = {
 			isa = PBXGroup;
 			children = (
-				B39DC77A279E77200017E28D /* PVGCVRViewController.h */,
-				B39DC77B279E77230017E28D /* PVGCVRViewController.m */,
 				B382C640278E55C9007E61FE /* PVMetalViewController.h */,
 				B382C641278E55C9007E61FE /* PVMetalViewController.m */,
 				1A3D433917B30BA2004DFFFC /* PVGLViewController.h */,
