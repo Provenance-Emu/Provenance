@@ -114,7 +114,7 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 @property (nonatomic, assign) BOOL alwaysUseMetal;
 @property (nonatomic, assign) BOOL skipLayout;
 @property (nonatomic, assign) UIViewController* _Nullable touchViewController;
-@property (class, retain, nonnull) NSString *className;
+@property (class, strong, nonnull, nonatomic) NSString *coreClassName;
 @property (class, retain, nonnull) NSString *systemName;
 typedef NS_ENUM(NSInteger, GameSpeed) {
 	GameSpeedSlow = 0,

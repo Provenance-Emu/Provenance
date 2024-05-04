@@ -94,7 +94,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             app.emulator = self
         }
         if let coreClass = type(of: core) as? CoreOptional.Type {
-            coreClass.className = core.coreIdentifier ?? ""
+            coreClass.coreClassName = core.coreIdentifier ?? ""
             coreClass.systemName = core.systemIdentifier ?? ""
         }
         PVEmulatorCore.status = ["isOn":true]

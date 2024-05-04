@@ -138,7 +138,7 @@ final class PVSettingsViewController: QuickTableViewController {
                 return nil
             }
             return NavigationRow(text: pvcore.projectName, detailText: .none, icon: nil, customization: nil, action: { [weak self] row in
-                coreClass.className = pvcore.identifier
+                coreClass.coreClassName = pvcore.identifier
                 coreClass.systemName = (pvcore.supportedSystems.map { $0.identifier }).joined(separator: ",")
                 let coreOptionsVC = CoreOptionsViewController(withCore: coreClass)
                 coreOptionsVC.title = row.text
