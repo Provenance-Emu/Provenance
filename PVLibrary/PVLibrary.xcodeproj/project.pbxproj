@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1709,7 +1709,7 @@
 				};
 			};
 			buildConfigurationList = B3579D092106B11D00DDEBD6 /* Build configuration list for PBXProject "PVLibrary" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1717,6 +1717,7 @@
 				Base,
 			);
 			mainGroup = B3579D052106B11D00DDEBD6;
+			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B336B90D26B39BCF00960A81 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 				B3A3203F27209B4300F338F6 /* XCRemoteSwiftPackageReference "ZipArchive" */,

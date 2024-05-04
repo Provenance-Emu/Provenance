@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -219,7 +219,9 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
+				CLASSPREFIX = PVUI;
 				LastUpgradeCheck = 1320;
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B311AFF727A52ABE00D1DE41 = {
 						CreatedOnToolsVersion = 13.2.1;
@@ -227,7 +229,7 @@
 				};
 			};
 			buildConfigurationList = B311AFF227A52ABE00D1DE41 /* Build configuration list for PBXProject "PVUI" */;
-			compatibilityVersion = "Xcode 13.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -235,6 +237,7 @@
 				Base,
 			);
 			mainGroup = B311AFEE27A52ABE00D1DE41;
+			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B311B14127A52DAB00D1DE41 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 			);

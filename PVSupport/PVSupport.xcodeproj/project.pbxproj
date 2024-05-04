@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -3431,7 +3431,7 @@
 				};
 			};
 			buildConfigurationList = 1ACEA63F17F7467D0031B1C9 /* Build configuration list for PBXProject "PVSupport" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -3439,6 +3439,7 @@
 				Base,
 			);
 			mainGroup = 1ACEA63B17F7467D0031B1C9;
+			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
