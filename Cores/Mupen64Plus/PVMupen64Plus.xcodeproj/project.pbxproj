@@ -4725,7 +4725,7 @@
 					"-fvisibility-inlines-hidden",
 				);
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build";
@@ -4787,7 +4787,7 @@
 					"-fvisibility-inlines-hidden",
 				);
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -4850,7 +4850,7 @@
 					"-fvisibility-inlines-hidden",
 				);
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
