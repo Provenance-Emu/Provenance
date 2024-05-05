@@ -1521,8 +1521,6 @@
 		B37CE7C1293F287D0010B746 /* PVFreeIntv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; };
 		B37CE7C2293F287D0010B746 /* PVFreeIntv.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37D30B527BCD82B00C01114 /* Moveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D30B427BCD82B00C01114 /* Moveable.swift */; };
-		B37F6A742BE7613200B499E3 /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37F6A732BE7613200B499E3 /* PVEmuThree.framework */; platformFilter = ios; };
-		B37F6A752BE7613200B499E3 /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37F6A732BE7613200B499E3 /* PVEmuThree.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B381A27C292639E400305322 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
 		B382C635278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
 		B382C636278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
@@ -1847,9 +1845,9 @@
 		B394CDD52BDEE53A006B63E8 /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
 		B394CDD72BDEE53A006B63E8 /* OmniScaleLegacy.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703592896314200F75595 /* OmniScaleLegacy.fsh */; };
 		B394CDD92BDEE53A006B63E8 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
-		B394CDEA2BDF7018006B63E8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */; };
-		B394CDEB2BDF701A006B63E8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */; };
-		B394CDEC2BDF701A006B63E8 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */; };
+		B394CDEA2BDF7018006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
+		B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
+		B394CDEC2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
 		B3976927285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
 		B3976928285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
 		B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
@@ -2003,6 +2001,7 @@
 		B3EEEDB42920B0D5008E2603 /* QuickLookThumbnailing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */; };
 		B3EEEDB52920B0D5008E2603 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED9F2920B099008E2603 /* Quartz.framework */; };
 		B3EEEDB82920B0DB008E2603 /* ThumbnailProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EEEDB72920B0DB008E2603 /* ThumbnailProvider.swift */; };
+		B3EF26112BE7678E0066D4B6 /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
@@ -2915,6 +2914,13 @@
 			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
 			remoteInfo = TopShelf;
 		};
+		B3EF26122BE7678E0066D4B6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
+		};
 		B3F7E297297736BE00362B92 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -3240,7 +3246,6 @@
 				B394CD652BDEE53A006B63E8 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B394CD662BDEE53A006B63E8 /* PVGBA.framework in Embed Frameworks */,
 				B394CD672BDEE53A006B63E8 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
-				B37F6A752BE7613200B499E3 /* PVEmuThree.framework in Embed Frameworks */,
 				B394CD682BDEE53A006B63E8 /* PVBliss.framework in Embed Frameworks */,
 				B394CD692BDEE53A006B63E8 /* PVMupen64Plus.framework in Embed Frameworks */,
 			);
@@ -3254,6 +3259,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed App Extensions */,
+				B3EF26112BE7678E0066D4B6 /* TopShelf.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 1;
@@ -3506,7 +3512,7 @@
 		37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleGamesView.swift; sourceTree = "<group>"; };
 		423BB97A17DD35B10048F457 /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameLibrarySectionHeaderView.swift; sourceTree = "<group>"; };
-		551DA2FB2ABF7E98004BA3E9 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		551DA2FD2ABF8006004BA3E9 /* LaunchImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchImage.png; sourceTree = "<group>"; };
 		5525388625574D48004B00B6 /* PVTGBDual.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PVTGBDual.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		555454412AC09997006A065F /* LaunchImageTV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchImageTV.png; sourceTree = "<group>"; };
@@ -4593,7 +4599,6 @@
 				B394CD8E2BDEE53A006B63E8 /* Security.framework in Frameworks */,
 				B394CD8F2BDEE53A006B63E8 /* PVTGBDual.framework in Frameworks */,
 				B394CD902BDEE53A006B63E8 /* PVBliss.framework in Frameworks */,
-				B37F6A742BE7613200B499E3 /* PVEmuThree.framework in Frameworks */,
 				B394CD912BDEE53A006B63E8 /* PVFCEU.framework in Frameworks */,
 				B394CD922BDEE53A006B63E8 /* PVStella.framework in Frameworks */,
 				B394CD932BDEE53A006B63E8 /* PVAtari800.framework in Frameworks */,
@@ -6686,6 +6691,7 @@
 				B394CC572BDEE53A006B63E8 /* PBXTargetDependency */,
 				B394CC592BDEE53A006B63E8 /* PBXTargetDependency */,
 				B394CC5B2BDEE53A006B63E8 /* PBXTargetDependency */,
+				B3EF26132BE7678E0066D4B6 /* PBXTargetDependency */,
 			);
 			name = "Provenance (AppStore)";
 			packageProductDependencies = (
@@ -7180,7 +7186,7 @@
 			files = (
 				930499C92A93073800BF257F /* modules in Resources */,
 				930499CA2A93073800BF257F /* InfoPlist.strings in Resources */,
-				B394CDEC2BDF701A006B63E8 /* Launch Screen.storyboard in Resources */,
+				B394CDEC2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */,
 				930499CB2A93073800BF257F /* Strings.strings in Resources */,
 				930499CC2A93073800BF257F /* HQ2x.fsh in Resources */,
 				930499CD2A93073800BF257F /* AAScale2x.fsh in Resources */,
@@ -7448,7 +7454,7 @@
 			files = (
 				9368551E2A8956220087FE6B /* modules in Resources */,
 				B3F7E3C5297736BE00362B92 /* InfoPlist.strings in Resources */,
-				B394CDEB2BDF701A006B63E8 /* Launch Screen.storyboard in Resources */,
+				B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */,
 				B3F7E3C6297736BE00362B92 /* Strings.strings in Resources */,
 				B3F7E3C7297736BE00362B92 /* HQ2x.fsh in Resources */,
 				B3F7E3C8297736BE00362B92 /* AAScale2x.fsh in Resources */,
@@ -7489,7 +7495,7 @@
 			files = (
 				B3F7E551297736C200362B92 /* modules in Resources */,
 				B3F7E552297736C200362B92 /* InfoPlist.strings in Resources */,
-				B394CDEA2BDF7018006B63E8 /* Launch Screen.storyboard in Resources */,
+				B394CDEA2BDF7018006B63E8 /* LaunchScreen.storyboard in Resources */,
 				B3F7E553297736C200362B92 /* Strings.strings in Resources */,
 				B3F7E554297736C200362B92 /* HQ2x.fsh in Resources */,
 				B3F7E555297736C200362B92 /* AAScale2x.fsh in Resources */,
@@ -10015,6 +10021,14 @@
 			isa = PBXTargetDependency;
 			target = B3C8A6BB2878238C0037A946 /* CoresRetro */;
 			targetProxy = B3C8A6B628781EBC0037A946 /* PBXContainerItemProxy */;
+		};
+		B3EF26132BE7678E0066D4B6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				tvos,
+			);
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
+			targetProxy = B3EF26122BE7678E0066D4B6 /* PBXContainerItemProxy */;
 		};
 		B3F7E296297736BE00362B92 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
