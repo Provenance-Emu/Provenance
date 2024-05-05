@@ -852,7 +852,7 @@ static void emulation_run(BOOL skipFrame) {
         }
         
         if (error) {
-            NSString *message = [NSString stringWithFormat:@"This game requires multiple discs and must be loaded using a m3u file with all %lu discs.\n\nTo enable disc switching and ensure save files load across discs, it cannot be loaded as a single disc.\n\nPlease install a .m3u file with the filename %@.\nSee https://bitly.com/provm3u", self.maxDiscs, m3uPath];
+            NSString *message = [NSString stringWithFormat:@"This game requires multiple discs and must be loaded using a m3u file with all %lu discs.\n\nTo enable disc switching and ensure save files load across discs, it cannot be loaded as a single disc.\n\nPlease install a .m3u file with the filename %@.\nSee https://bitly.com/provdiscs", self.maxDiscs, m3uPath];
             
             NSDictionary *userInfo = @{
                 NSLocalizedDescriptionKey: @"Failed to load game.",
