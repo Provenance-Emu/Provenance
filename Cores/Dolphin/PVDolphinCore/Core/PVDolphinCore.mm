@@ -123,7 +123,6 @@ static void UpdateWiiPointer();
 {
     //DolHost *dol_host;
     uint16_t *_soundBuffer;
-    bool _isWii;
     float _frameInterval;
     NSString *autoLoadStatefileName;
     NSString *_dolphinCoreModule;
@@ -599,6 +598,7 @@ static void UpdateWiiPointer();
     if (action)
         action();
 }
+
 @end
 
 /* Dolphin Host (Required by Core) */
@@ -624,7 +624,7 @@ void Host_Message(HostMessageID id)
 	if (Core::IsRunning())
 	  Core::QueueHostJob(&Core::Stop);
   } else if (id == HostMessageID::WMUserCreate)
-      NSLog(@"User Create Called\n", (int)id);
+      NSLog(@"User Create Called %i\n", (int)id);
 }
 
 void Host_UpdateTitle(const std::string& title)

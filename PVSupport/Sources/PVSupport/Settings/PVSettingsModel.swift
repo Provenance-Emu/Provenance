@@ -227,14 +227,16 @@ extension MirroredSettings {
     public static let shared = PVSettingsModel()
 
     @objc public class DebugOptions: NSObject {
-        #if os(macOS) || targetEnvironment(macCatalyst)
+        #if os(macOS) || targetEnvironment(macCatalyst) || os(visionOS)
 		@objc public dynamic var useMetal = true
         #else
         @objc public dynamic var useMetal = false
         #endif
         @objc public dynamic var autoJIT = false
         #if os(macOS) || targetEnvironment(macCatalyst)
-        @objc public dynamic var useSwiftUI = false
+        @objc public dynamic var useSwiftUI = true
+        #elseif os(visionOS)
+        @objc public dynamic var useSwiftUI = true
         #else
         @objc public dynamic var useSwiftUI = false
         #endif

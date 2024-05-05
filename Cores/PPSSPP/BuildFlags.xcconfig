@@ -18,7 +18,7 @@
 //OTHER_CFLAGS[sdk=appletvos*] = $(inherited) -DDRC_SH2 -D_USE_CZ80
 //OTHER_CFLAGS[sdk=appletvsimulator*] = $(inherited) -D_USE_CZ80
 //OTHER_CFLAGS = $(inherited) -DXXH_VECTOR=XXH_SCALAR -DMASKED_PSP_MEMORY=TRUE
-OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -fno-operator-names -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fpermissive -fno-operator-names -fobjc-arc -fsingle-precision-constant -fmodules -fcxx-modules -fomit-frame-pointer -fvisibility-inlines-hidden -fvisibility=hidden -flto -funsafe-math-optimizations -DXXH_VECTOR=XXH_SCALAR
+OTHER_CFLAGS = $(inherited) -mno-thumb -mfpu=neon -fno-operator-names -ffast-math -ftree-vectorize -fno-strict-aliasing -frename-registers -fpermissive -fno-operator-names -fobjc-arc -fsingle-precision-constant -fmodules -fcxx-modules -fomit-frame-pointer -fvisibility-inlines-hidden -fvisibility=hidden -flto -funsafe-math-optimizations -DXXH_VECTOR=XXH_SCALAR -DGLES_SILENCE_DEPRECATION=1
 // Skip Simulator Build
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = *
 INCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*][arch=*] = PVDebug.m

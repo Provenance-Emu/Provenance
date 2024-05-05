@@ -16,5 +16,3 @@ FOUNDATION_EXPORT const unsigned char PVAtari800VersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVAtari800/PublicHeader.h>
 #import <PVAtari800/ATR800GameCore.h>
-#import <PVAtari800/PV5200SystemResponderClient.h>
-#import <PVAtari800/PVA8SystemResponderClient.h>

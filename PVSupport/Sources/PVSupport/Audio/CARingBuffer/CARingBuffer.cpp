@@ -50,9 +50,9 @@
 //#include "CAAtomic.h"
 
 #if DEBUG
-#define CALOG printf
+#define CALOG(fmt, ...) printf(fmt, ##__VA_ARGS__)
 #else
-#define CALOG
+#define CALOG(...)
 #endif
 
 #include <stdlib.h>

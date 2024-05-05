@@ -1,8 +1,8 @@
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
 
-MARKETING_VERSION = 2.2.1
-CURRENT_PROJECT_VERSION = 2803
+MARKETING_VERSION = 2.3.0
+CURRENT_PROJECT_VERSION = 2807
 
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GLES_SILENCE_DEPRECATION=1  NONJAILBROKEN=1
 
@@ -28,13 +28,15 @@ ICLOUD_CONTAINER_IDENTIFIER = iCloud.$(ORG_PREFIX).$(PROJECT_NAME:lower)
 
 // -- Entitlements based off of CodeSigning settings
 IOS_CODE_SIGN_ENTITLEMENTS_YES = Provenance/Provenance.entitlements
+IOS_CODE_SIGN_ENTITLEMENTS_AppStore = Provenance/Provenance-AppStore.entitlements
 IOS_CODE_SIGN_ENTITLEMENTS_JB = Provenance/Provenance-JB.entitlements
 IOS_CODE_SIGN_ENTITLEMENTS_NO = Provenance/Provenance-Free.entitlements
 IOS_CODE_SIGN_ENTITLEMENTS = $(IOS_CODE_SIGN_ENTITLEMENTS_$(DEVELOPER_ACCOUNT_PAID:default=NO))
 
-TVOS_CODE_SIGN_ENTITLEMENTS_YES = ProvenanceTV/Provenance.entitlements
-TVOS_CODE_SIGN_ENTITLEMENTS_JB = ProvenanceTV/Provenance-JB.entitlements
-TVOS_CODE_SIGN_ENTITLEMENTS_NO = ProvenanceTV/Provenance-Free.entitlements
+TVOS_CODE_SIGN_ENTITLEMENTS_YES = ProvenanceTV/ProvenanceTV.entitlements
+TVOS_CODE_SIGN_ENTITLEMENTS_AppStore = ProvenanceTV/ProvenanceTV-AppStore.entitlements
+TVOS_CODE_SIGN_ENTITLEMENTS_JB = ProvenanceTV/ProvenanceTV-JB.entitlements
+TVOS_CODE_SIGN_ENTITLEMENTS_NO = ProvenanceTV/ProvenanceTV-Free.entitlements
 TVOS_CODE_SIGN_ENTITLEMENTS = $(TVOS_CODE_SIGN_ENTITLEMENTS_$(DEVELOPER_ACCOUNT_PAID:default=NO))
 
 MAC_CODE_SIGN_ENTITLEMENTS_YES = Provenance/Provenance.entitlements

@@ -572,15 +572,15 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 
 - (void)sendEvent:(UIEvent *)event {
 }
-static NSString *_className;
-+ (NSString *)className {
+static NSString *_coreClassName;
++ (NSString *)coreClassName {
     // options are identified by classname
-    if (_className && [_className containsString:@"dylib"])
-        return _className;
+    if (_coreClassName && [_coreClassName containsString:@"dylib"])
+        return _coreClassName;
     return NSStringFromClass(self);
 }
-+ (void)setClassName:(NSString *)name {
-    _className=name;
++ (void)setCoreClassName:(NSString *)name {
+    _coreClassName=name;
 }
 static NSString *_systemName;
 + (NSString *)systemName {

@@ -1,0 +1,18 @@
+{
+  "" : {
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/CompilerIdSwift-master.dia",
+    "emit-module-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/CompilerIdSwift-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/CompilerIdSwift-master-emit-module.dia",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/CompilerIdSwift-master.swiftdeps"
+  },
+  "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerId/main.swift" : {
+    "const-values" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/main.swiftconstvalues",
+    "dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/main.d",
+    "diagnostics" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/main.dia",
+    "index-unit-output-path" : "/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/main.o",
+    "llvm-bc" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/main.bc",
+    "object" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/main.o",
+    "swift-dependencies" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/main.swiftdeps",
+    "swiftmodule" : "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/CMakeFiles/3.29.2/CompilerIdSwift/CompilerIdSwift.build/Debug-iphoneos/CompilerIdSwift.build/Objects-normal/arm64/main~partial.swiftmodule"
+  }
+}

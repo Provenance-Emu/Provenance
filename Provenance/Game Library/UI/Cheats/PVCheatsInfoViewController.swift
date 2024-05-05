@@ -240,7 +240,7 @@ final class PVCheatsInfoViewController: UIViewController, UITextFieldDelegate {
             return
         }
         codeTypeText=String(describing:types[0])
-        for type in types where type is NSString {
+        for case let type as NSString in types {
             let codeTypeButton = MenuButton(type: UIButton.ButtonType.roundedRect)
             let title = String(describing: type)
             #if os(tvOS)
