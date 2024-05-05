@@ -10,9 +10,12 @@
     #import "Services/PVAltKitService.h"
 #endif
 
-#if TARGET_OS_IOS
+#if TARGET_OS_IOS || TARGET_OS_TV
     #import <PVLogging/PVLogging.h>
     #import "UIDevice+Hardware.h"
     #import "MBProgressHUD.h"
+#endif
+
+#if TARGET_OS_IOS
     #import "DOLJitManager.h"
 #endif

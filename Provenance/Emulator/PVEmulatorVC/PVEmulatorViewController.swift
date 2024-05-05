@@ -94,7 +94,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             app.emulator = self
         }
         if let coreClass = type(of: core) as? CoreOptional.Type {
-            coreClass.className = core.coreIdentifier ?? ""
+            coreClass.coreClassName = core.coreIdentifier ?? ""
             coreClass.systemName = core.systemIdentifier ?? ""
         }
         PVEmulatorCore.status = ["isOn":true]
@@ -682,7 +682,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             let size = CGSize(width: width ?? 0.0, height: height ?? 0.0)
             UIGraphicsBeginImageContextWithOptions(size, false, UIScreen.main.scale)
             let rec = CGRect(x: 0, y: 0, width: width ?? 0.0, height: height ?? 0.0)
-            core.touchViewController.view.drawHierarchy(in: rec, afterScreenUpdates: true)
+            core.touchViewController?.view.drawHierarchy(in: rec, afterScreenUpdates: true)
         } else {
             let width: CGFloat? = gpuViewController.view.frame.size.width > 0 ? gpuViewController.view.frame.size.width : UIScreen.main.bounds.width
             let height: CGFloat? = gpuViewController.view.frame.size.height > 0 ? gpuViewController.view.frame.size.height : UIScreen.main.bounds.height

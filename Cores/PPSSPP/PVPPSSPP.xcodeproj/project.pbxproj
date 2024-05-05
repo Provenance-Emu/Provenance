@@ -122,9 +122,9 @@
 		93E741F0295B67C70028EB94 /* PVPPSSPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVPPSSPP.mm */; };
 		93E741F1295B67C70028EB94 /* PVPPSSPPCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPPSSPPCore.mm */; };
 		93E741F2295B67C70028EB94 /* PVPPSSPPCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVPPSSPPCore+Audio.mm */; };
-		93E741F4295B67C70028EB94 /* libMoltenVK_PPSSPP.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E741E0295B5B240028EB94 /* libMoltenVK_PPSSPP.dylib */; };
+		93E741F4295B67C70028EB94 /* libMoltenVK_PPSSPP.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93E741E0295B5B240028EB94 /* libMoltenVK_PPSSPP.dylib */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		93E741F9295B67C70028EB94 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		93E741FA295B67C70028EB94 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; };
+		93E741FA295B67C70028EB94 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		93E741FB295B67C70028EB94 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		93E741FF295B67C70028EB94 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		93E74203295B67C70028EB94 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };

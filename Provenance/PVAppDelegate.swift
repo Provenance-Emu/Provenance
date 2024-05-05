@@ -18,7 +18,7 @@ import UIKit
 final class PVApplication: UIApplication {
     var core: PVEmulatorCore?
     var emulator: PVEmulatorViewController?
-    var isInBackground: Bool = false;
+    var isInBackground: Bool = false
     override func sendEvent(_ event: UIEvent) {
         if let core=self.core {
             core.send(event)
@@ -40,7 +40,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     var shortcutItemGame: PVGame?
     let disposeBag = DisposeBag()
 
-    #if os(iOS)
+    #if os(iOS) && !APP_STORE
     weak var jitScreenDelegate: JitScreenDelegate?
     weak var jitWaitScreenVC: JitWaitScreenViewController?
     var cancellation_token = DOLCancellationToken()
@@ -79,7 +79,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         window.tintColor = .provenanceBlue
         #endif
 
-        if #available(iOS 14, tvOS 14, macCatalyst 15.0, *),
+        if #available(iOS 14, tvOS 14, macCatalyst 15.0, visionOS 1.0, *),
            PVSettingsModel.shared.debugOptions.useSwiftUI {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
@@ -116,8 +116,8 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             
             self.gameLibraryViewController = gameLibraryViewController
         }
-        
-        #if os(iOS)
+
+        #if os(iOS) && !APP_STORE
         if PVSettingsModel.shared.debugOptions.autoJIT {
             DOLJitManager.shared().attemptToAcquireJitOnStartup()
         }
@@ -206,7 +206,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         // SteamControllerManager.listenForConnections()
         #endif
 
-        #if os(iOS) && !targetEnvironment(macCatalyst)
+        #if os(iOS) && !targetEnvironment(macCatalyst) && !APP_STORE
 //            PVAltKitService.shared.start()
             ApplicationMonitor.shared.start()
         #endif

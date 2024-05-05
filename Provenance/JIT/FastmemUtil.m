@@ -48,7 +48,7 @@ bool CanEnableFastmem(void)
   return s_can_enable_fastmem;
 }
 
-DOLFastmemType GetFastmemType()
+DOLFastmemType GetFastmemType(void)
 {
   return s_fastmem_type;
 }

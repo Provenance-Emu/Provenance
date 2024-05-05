@@ -43,7 +43,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B347B2352BC4CA98006A3B2D"
-               BuildableName = "ProvennaceTV-Lite.app"
+               BuildableName = "Provenance.app"
                BlueprintName = "ProvennaceTV-Lite"
                ReferencedContainer = "container:Provenance.xcodeproj">
             </BuildableReference>
@@ -72,7 +72,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B347B2352BC4CA98006A3B2D"
-            BuildableName = "ProvennaceTV-Lite.app"
+            BuildableName = "Provenance.app"
             BlueprintName = "ProvennaceTV-Lite"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>
@@ -89,7 +89,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B347B2352BC4CA98006A3B2D"
-            BuildableName = "ProvennaceTV-Lite.app"
+            BuildableName = "Provenance.app"
             BlueprintName = "ProvennaceTV-Lite"
             ReferencedContainer = "container:Provenance.xcodeproj">
          </BuildableReference>

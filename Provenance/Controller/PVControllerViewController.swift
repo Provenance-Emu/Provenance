@@ -1317,7 +1317,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
                 startButton?.frame.origin.x = view.frame.size.width - (startButton?.frame.size.width)!
             }
         }
-        guard  let joyPad2 = joyPad2, (joyPad2 != nil && !joyPad2.isCustomMoved) else {
+        guard let joyPad2 = joyPad2, !joyPad2.isCustomMoved else {
             return
         }
         var joyPad2Frame = joyPad2.frame

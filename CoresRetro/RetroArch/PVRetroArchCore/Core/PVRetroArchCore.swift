@@ -138,10 +138,10 @@ extension PVRetroArchCore: CoreOptional {
         var coreOptions: [CoreOption] = [gsOption]
         var isDOS=false
         coreOptions.append(retroArchControllerOption)
-        if (self.className.contains("mupen")) {
+        if (self.coreClassName.contains("mupen")) {
             coreOptions.append(mupenRDPOption)
         }
-        if (self.className.contains("mame_libretro")) {
+        if (self.coreClassName.contains("mame_libretro")) {
             coreOptions.append(mameOSDOption)
         }
         if (self.systemName.contains("psx") ||

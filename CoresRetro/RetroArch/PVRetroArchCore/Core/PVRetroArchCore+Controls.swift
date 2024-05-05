@@ -40,8 +40,10 @@ extension CocoaView: HelperBarActionDelegate {
 	}
 
 	func mouseButtonTapped() {
+#if !os(tvOS)
 		mouseHandler.enabled.toggle()
 		//runloop_msg_queue_push( mouseHandler.enabled ? "Touch Mouse Enabled" : "Touch Mouse Disabled", 1, 100, true, "", 0, 0)
+#endif
 	}
 
     func settingsButtonTapped() {
@@ -56,7 +58,11 @@ extension CocoaView: HelperBarActionDelegate {
 	}
 
 	var isMouseEnabled: Bool {
+#if os(tvOS)
+        false
+#else
 		mouseHandler.enabled
+#endif
 	}
 }
 
@@ -202,24 +208,34 @@ extension EmulatorKeyboardController: EmulatorKeyboardViewDelegate {
 }
 extension CocoaView {
 	@objc public func setupMouseSupport() {
+#if !os(tvOS)
 		view.isMultipleTouchEnabled = true;
-		mouseHandler = EmulatorTouchMouseHandler(view: view, delegate: self as? EmulatorTouchMouseHandlerDelegate)
+        mouseHandler = EmulatorTouchMouseHandler(view: view, delegate: self as? EmulatorTouchMouseHandlerDelegate)
+#endif
 	}
 
 	open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+#if !os(tvOS)
 		 mouseHandler.touchesBegan(touches: touches, event: event)
+#endif
 	}
 
 	open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-		 mouseHandler.touchesMoved(touches: touches)
+#if !os(tvOS)
+        mouseHandler.touchesMoved(touches: touches)
+#endif
 	}
 
 	open override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-		 mouseHandler.touchesCancelled(touches: touches, event: event)
+#if !os(tvOS)
+        mouseHandler.touchesCancelled(touches: touches, event: event)
+#endif
 	}
 
 	open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		 mouseHandler.touchesEnded(touches: touches, event: event)
+#if !os(tvOS)
+        mouseHandler.touchesEnded(touches: touches, event: event)
+#endif
 	}
 }
 
@@ -812,8 +828,12 @@ protocol EmulatorKeyboardViewDelegate: AnyObject {
 
 class EmulatorKeyboardView: UIView {
    
-   static var keyboardBackgroundColor = UIColor.systemGray6.withAlphaComponent(0.5)
-   static var keyboardCornerRadius = 6.0
+    #if os(tvOS)
+    static var keyboardBackgroundColor = UIColor.systemGray.withAlphaComponent(0.5)
+    #else
+    static var keyboardBackgroundColor = UIColor.systemGray6.withAlphaComponent(0.5)
+    #endif
+    static var keyboardCornerRadius = 6.0
    static var keyboardDragColor = UIColor.systemGray
    
    static var keyCornerRadius = 6.0
@@ -825,15 +845,29 @@ class EmulatorKeyboardView: UIView {
    static var keyNormalFont = UIFont.systemFont(ofSize: 12)
    static var keyPressedFont = UIFont.boldSystemFont(ofSize: 24)
    
-   static var keyNormalBackgroundColor = UIColor.systemGray4.withAlphaComponent(0.5)
+#if os(tvOS)
+    static var keyNormalBackgroundColor = UIColor.systemGray.withAlphaComponent(0.5)
+#else
+    static var keyNormalBackgroundColor = UIColor.systemGray4.withAlphaComponent(0.5)
+#endif
    static var keyNormalBorderColor = keyNormalBackgroundColor
    static var keyNormalTextColor = UIColor.label
    
-   static var keyPressedBackgroundColor = UIColor.systemGray2
+
+#if os(tvOS)
+    static var keyPressedBackgroundColor = UIColor.systemGray
+#else
+    static var keyPressedBackgroundColor = UIColor.systemGray2
+#endif
    static var keyPressedBorderColor = keyPressedBackgroundColor
    static var keyPressedTextColor = UIColor.label
    
-   static var keySelectedBackgroundColor = UIColor.systemGray2.withAlphaComponent(0.8)
+
+#if os(tvOS)
+    static var keySelectedBackgroundColor = UIColor.systemGray.withAlphaComponent(0.8)
+#else
+    static var keySelectedBackgroundColor = UIColor.systemGray2.withAlphaComponent(0.8)
+#endif
    static var keySelectedBorderColor = keySelectedBackgroundColor
    static var keySelectedTextColor = UIColor.label
    
@@ -1355,20 +1389,36 @@ class SliderKey: KeyCoded {
    init(keySize: KeySize = .standard) {
       self.keySize = keySize
    }
-   
+
+#if !os(tvOS)
    func createView() -> UIView {
       let slider = UISlider(frame: .zero)
-      slider.minimumValue = 0.1
-      slider.maximumValue = 1.0
-      slider.addTarget(self, action: #selector(adjustKeyboardAlpha(_:)), for: .valueChanged)
-      slider.value = 1.0
-      let size = CGSize(width:EmulatorKeyboardView.keyNormalFont.pointSize, height:EmulatorKeyboardView.keyNormalFont.pointSize)
-      slider.setThumbImage(UIImage.dot(size:size, color:EmulatorKeyboardView.keyNormalTextColor), for: .normal)
-      return slider
-   }
+
+       slider.minimumValue = 0.1
+       slider.maximumValue = 1.0
+       slider.addTarget(self, action: #selector(adjustKeyboardAlpha(_:)), for: .valueChanged)
+       slider.value = 1.0
+       let size = CGSize(width:EmulatorKeyboardView.keyNormalFont.pointSize, height:EmulatorKeyboardView.keyNormalFont.pointSize)
+       slider.setThumbImage(UIImage.dot(size:size, color:EmulatorKeyboardView.keyNormalTextColor), for: .normal)
+       return slider
+    }
    @objc func adjustKeyboardAlpha(_ sender: UISlider) {
       keyboardView?.delegate?.updateTransparency(toAlpha: sender.value)
    }
+#else
+    func createView() -> UIView {
+        let slider = UIButton()
+        slider.addTarget(self, action: #selector(adjustKeyboardAlpha(_:)), for: .valueChanged)
+        let size = CGSize(width:EmulatorKeyboardView.keyNormalFont.pointSize, height:EmulatorKeyboardView.keyNormalFont.pointSize)
+        return slider
+    }
+    @objc func adjustKeyboardAlpha(_ sender: UIButton) {
+        // TODO: Do we have a tvOS slider? @JoeMatt
+//        keyboardView?.delegate?.updateTransparency(toAlpha: sender.value)
+    }
+
+#endif
+
 }
 
 //
@@ -1425,7 +1475,7 @@ class EmulatorKeyboardButton: UIButton {
     }
 }
 
-
+#if !os(tvOS)
 //
 //  EmulatorTouchMouse.swift
 //  RetroArchiOS
@@ -1644,3 +1694,4 @@ import UIKit
         return defaultRegion
    }
 }
+#endif

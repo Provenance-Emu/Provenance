@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3F38F2EF1F7042B3A9090901"
+               BlueprintIdentifier = "AE45024B0CBE4704BEF55B8E"
                BuildableName = "Play.app"
                BlueprintName = "Play"
                ReferencedContainer = "container:../cmake/Play.xcodeproj">
@@ -43,7 +43,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3F38F2EF1F7042B3A9090901"
+            BlueprintIdentifier = "AE45024B0CBE4704BEF55B8E"
             BuildableName = "Play.app"
             BlueprintName = "Play"
             ReferencedContainer = "container:../cmake/Play.xcodeproj">
@@ -60,7 +60,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3F38F2EF1F7042B3A9090901"
+            BlueprintIdentifier = "AE45024B0CBE4704BEF55B8E"
             BuildableName = "Play.app"
             BlueprintName = "Play"
             ReferencedContainer = "container:../cmake/Play.xcodeproj">
