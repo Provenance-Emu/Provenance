@@ -1521,6 +1521,8 @@
 		B37CE7C1293F287D0010B746 /* PVFreeIntv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; };
 		B37CE7C2293F287D0010B746 /* PVFreeIntv.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE7C0293F287D0010B746 /* PVFreeIntv.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37D30B527BCD82B00C01114 /* Moveable.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37D30B427BCD82B00C01114 /* Moveable.swift */; };
+		B37F6A742BE7613200B499E3 /* PVEmuThree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37F6A732BE7613200B499E3 /* PVEmuThree.framework */; platformFilter = ios; };
+		B37F6A752BE7613200B499E3 /* PVEmuThree.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37F6A732BE7613200B499E3 /* PVEmuThree.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B381A27C292639E400305322 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
 		B382C635278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
 		B382C636278E5055007E61FE /* PVEmulatorViewController+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B382C632278E5054007E61FE /* PVEmulatorViewController+Audio.swift */; };
@@ -3248,6 +3250,7 @@
 				B394CD652BDEE53A006B63E8 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B394CD662BDEE53A006B63E8 /* PVGBA.framework in Embed Frameworks */,
 				B394CD672BDEE53A006B63E8 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				B37F6A752BE7613200B499E3 /* PVEmuThree.framework in Embed Frameworks */,
 				B394CD682BDEE53A006B63E8 /* PVBliss.framework in Embed Frameworks */,
 				B394CD692BDEE53A006B63E8 /* PVMupen64Plus.framework in Embed Frameworks */,
 			);
@@ -3961,6 +3964,7 @@
 		B37CE7C7293F29AB0010B746 /* PVFreeIntv.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFreeIntv.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37D30B427BCD82B00C01114 /* Moveable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moveable.swift; sourceTree = "<group>"; };
 		B37F4AF4286E94C60043F1C9 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B37F6A732BE7613200B499E3 /* PVEmuThree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEmuThree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3804D032B4E0D3700637102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B380C26C2894EC2F007B76FD /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B380EAC12759D689001B8532 /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
@@ -4604,6 +4608,7 @@
 				B394CD8E2BDEE53A006B63E8 /* Security.framework in Frameworks */,
 				B394CD8F2BDEE53A006B63E8 /* PVTGBDual.framework in Frameworks */,
 				B394CD902BDEE53A006B63E8 /* PVBliss.framework in Frameworks */,
+				B37F6A742BE7613200B499E3 /* PVEmuThree.framework in Frameworks */,
 				B394CD912BDEE53A006B63E8 /* PVFCEU.framework in Frameworks */,
 				B394CD922BDEE53A006B63E8 /* PVStella.framework in Frameworks */,
 				B394CD932BDEE53A006B63E8 /* PVAtari800.framework in Frameworks */,
@@ -4952,6 +4957,7 @@
 				B3EF26ED2BE7F8EC0066D4B6 /* libc++.tbd */,
 				B3EF26EB2BE7F8DD0066D4B6 /* libxml2.tbd */,
 				B3EF26E92BE7F8BC0066D4B6 /* libz.tbd */,
+				B37F6A732BE7613200B499E3 /* PVEmuThree.framework */,
 				B32987D62B661C7A00728996 /* TVUIKit.framework */,
 				9361E6FC2BD62C6600E3891A /* libMoltenVK_emuThree_iOS.dylib */,
 				9361E6F92BD62BFA00E3891A /* PVEmuThree.framework */,
