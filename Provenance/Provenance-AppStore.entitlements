@@ -4,6 +4,11 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:provenance-emu.com</string>
+		<string>applinks:provenance.app</string>
+	</array>
 	<key>com.apple.developer.game-center</key>
 	<true/>
 	<key>com.apple.developer.group-session</key>
@@ -58,6 +63,10 @@
 	<key>com.apple.security.files.downloads.read-only</key>
 	<true/>
 	<key>com.apple.security.files.user-selected.read-only</key>
+	<true/>
+	<key>com.apple.security.network.client</key>
+	<true/>
+	<key>com.apple.security.network.server</key>
 	<true/>
 	<key>com.apple.security.personal-information.photos-library</key>
 	<true/>
