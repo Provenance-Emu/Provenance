@@ -330,7 +330,7 @@ final class PVSettingsViewController: QuickTableViewController {
 
         let appStoreRows: [TableRow] = [
 			PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"),
-								detailText: .subtitle("Use newer Metaltm™ backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
+								detailText: .subtitle("Use newer Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
                                 key: \PVSettingsModel.debugOptions.useMetal, icon: .sfSymbol("m.square.fill")),
 
             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
