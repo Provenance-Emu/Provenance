@@ -75,7 +75,7 @@ protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate whe
 	func vibrate()
 }
 
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
 let volume = SubtleVolume(style: .roundedLine)
 let volumeHeight: CGFloat = 3
 #endif
@@ -326,6 +326,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		feedbackGenerator?.prepare()
 		updateHideTouchControls()
 
+        #if !targetEnvironment(macCatalyst)
 		if PVSettingsModel.shared.debugOptions.movableButtons {
 			let tripleTapGesture = UITapGestureRecognizer(target: self, action: #selector(PVControllerViewController.tripleTapRecognized(_:)))
 
@@ -341,7 +342,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		}
 
 		NotificationCenter.default.addObserver(volume, selector: #selector(SubtleVolume.resume), name: UIApplication.didBecomeActiveNotification, object: nil)
-
+        #endif // !macCatalyst
 #endif // os(iOS)
 	}
 
@@ -351,7 +352,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 
 	// MARK: - GameController Notifications
 	@objc func hideTouchControls(_: Notification?) {
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
         if PVControllerManager.shared.hasControllers {
             if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
                 hideTouchControls(for: controller)
@@ -366,7 +367,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 #endif // os(iOS)
 	}
 	@objc func showTouchControls(_: Notification?) {
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
         var isHidden=false
         if PVControllerManager.shared.hasControllers {
             if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
@@ -386,7 +387,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	}
 
 	@objc func controllerDidConnect(_: Notification?) {
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
 		if PVControllerManager.shared.hasControllers {
 			if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
 				hideTouchControls(for: controller)
@@ -407,7 +408,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		return [dPad, dPad2, joyPad, joyPad2, buttonGroup, selectButton, startButton, leftShoulderButton, rightShoulderButton, leftShoulderButton2, rightShoulderButton2, zTriggerButton, leftAnalogButton, rightAnalogButton].compactMap {$0}
 	}
 	@objc func controllerDidDisconnect(_: Notification?) {
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
+
 		if PVControllerManager.shared.hasControllers {
 			if let controller = PVControllerManager.shared.controller(forPlayer: 1) {
 				hideTouchControls(for: controller)
@@ -464,7 +466,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 		super.viewDidLayoutSubviews()
         if inMoveMode { return }
         PVControllerManager.shared.hasLayout=false
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
+
 		setupTouchControls()
         layoutViews()
 		if PVSettingsModel.shared.volumeHUD {
@@ -477,7 +480,8 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
     func prelayoutSettings() {
     }
 
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(macCatalyst)
+
 	func layoutVolume() {
 		let volumeYPadding: CGFloat = 10
 		let volumeXPadding = UIScreen.main.bounds.width * 0.4 / 2

@@ -275,8 +275,10 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         let dataSource = RxCollectionViewSectionedReloadDataSource<Section>(configureCell: { _, collectionView, indexPath, item in
             switch item {
             case .game(let game):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath) as! PVGameLibraryCollectionViewCell
-                cell.game = game
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PVGameLibraryCollectionViewCellIdentifier, for: indexPath)
+                if let cell = cell as? PVGameLibraryCollectionViewCell {
+                    cell.game = game
+                }
                 return cell
             case .favorites(let games):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewInCollectionViewCell<PVGame>.identifier, for: indexPath) as! CollectionViewInCollectionViewCell<PVGame>
