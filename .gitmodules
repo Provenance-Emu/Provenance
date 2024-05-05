@@ -160,6 +160,9 @@
 [submodule "Cores/snes9x/libretro-snes9x"]
 	path = Cores/snes9x/libretro-snes9x
 	url = https://github.com/libretro/snes9x.git
+[submodule "Cores/emuThree/emuthree"]
+        path = Cores/emuThree/emuthree
+        url = https://github.com/rf2222222/emuThreeDS.git
 [submodule "Cores/supergrafx/libretro-supergrafx"]
 	path = Cores/supergrafx/libretro-supergrafx
 	url = https://github.com/libretro/beetle-supergrafx-libretro.git
@@ -181,3 +184,6 @@
 [submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/ZipArchive"]
 	path = CoresRetro/RetroArch/PVRetroArchCore/Archive/ZipArchive
 	url = https://github.com/ZipArchive/ZipArchive.git
+[submodule "Cores/emuThree/cmake/zstd"]
+	path = Cores/emuThree/cmake/zstd
+	url = https://github.com/facebook/zstd.git

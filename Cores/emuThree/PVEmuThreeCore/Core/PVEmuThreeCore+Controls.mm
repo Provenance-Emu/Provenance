@@ -122,40 +122,6 @@ extern bool _isInitialized;
                 [CitraWrapper.sharedInstance.m_buttonHome valueChangedHandler:button value:value pressed:pressed];
             };
         }
-        else if (controller.gamepad != nil)
-        {
-            controller.gamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [CitraWrapper.sharedInstance.m_buttonB valueChangedHandler:button value:value pressed:pressed];
-            };
-            controller.gamepad.buttonB.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [CitraWrapper.sharedInstance.m_buttonA valueChangedHandler:button value:value pressed:pressed];
-            };
-            controller.gamepad.buttonX.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [CitraWrapper.sharedInstance.m_buttonY valueChangedHandler:button value:value pressed:pressed];
-            };
-            controller.gamepad.buttonY.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [CitraWrapper.sharedInstance.m_buttonX valueChangedHandler:button value:value pressed:pressed];
-            };
-            controller.gamepad.leftShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [CitraWrapper.sharedInstance.m_buttonL valueChangedHandler:button value:value pressed:pressed];
-            };
-            controller.gamepad.rightShoulder.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [CitraWrapper.sharedInstance.m_buttonR valueChangedHandler:button value:value pressed:pressed];
-            };
-            controller.gamepad.dpad.up.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [CitraWrapper.sharedInstance.m_buttonDpadUp valueChangedHandler:button value:value pressed:pressed];
-            };
-            controller.gamepad.dpad.left.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [CitraWrapper.sharedInstance.m_buttonDpadLeft valueChangedHandler:button value:value pressed:pressed];
-            };
-            controller.gamepad.dpad.right.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [CitraWrapper.sharedInstance.m_buttonDpadRight valueChangedHandler:button value:value pressed:pressed];
-            };
-            controller.gamepad.dpad.down.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
-                [CitraWrapper.sharedInstance.m_buttonDpadDown valueChangedHandler:button value:value pressed:pressed];
-            };
-            
-        }
         else if (controller.microGamepad != nil)
         {
             controller.microGamepad.buttonA.pressedChangedHandler = ^(GCControllerButtonInput* button, float value, bool pressed) {
