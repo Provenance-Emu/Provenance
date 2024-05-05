@@ -910,7 +910,7 @@
 		B341FD982BE61EC100718929 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FD992BE61EC100718929 /* PVCrabEmu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305F103276B6BBD003AE510 /* PVCrabEmu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FD9A2BE61EC100718929 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B341FCC62BE61EC100718929 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B341FD9B2BE61EC100718929 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; platformFilters = (ios, tvos, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B341FD9B2BE61EC100718929 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FD9C2BE61EC100718929 /* PVRSPCXD4.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A826EA159400E95488 /* PVRSPCXD4.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FD9D2BE61EC100718929 /* PVGB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FD9E2BE61EC100718929 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -925,10 +925,7 @@
 		B341FDA72BE61EC100718929 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FDA82BE61EC100718929 /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B341FDA92BE61EC100718929 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B341FDAB2BE61EC100718929 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B341FDAC2BE61EC100718929 /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B341FDAE2BE61EC100718929 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
-		B341FDAF2BE61EC100718929 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; platformFilter = ios; };
 		B341FDB02BE61EC100718929 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		B341FDB12BE61EC100718929 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B341FDB22BE61EC100718929 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
@@ -956,7 +953,7 @@
 		B341FDC82BE61EC100718929 /* PVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; };
 		B341FDC92BE61EC100718929 /* PVMednafen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270F8E27DCB2CA00E83180 /* PVMednafen.framework */; };
 		B341FDCA2BE61EC100718929 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A47C94217BC1BC400C27644 /* AudioToolbox.framework */; };
-		B341FDCB2BE61EC100718929 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; platformFilters = (ios, tvos, xros, ); };
+		B341FDCB2BE61EC100718929 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4321DEA1B340068D057 /* PVGenesis.framework */; };
 		B341FDCC2BE61EC100718929 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; };
 		B341FDCD2BE61EC100718929 /* PVProSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE24293F34740050BDB6 /* PVProSystem.framework */; };
 		B341FDCE2BE61EC100718929 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B381A27B292639E200305322 /* UIKit.framework */; };
@@ -964,11 +961,10 @@
 		B341FDD02BE61EC100718929 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B341FCC42BE61EC100718929 /* Reachability */; };
 		B341FDD12BE61EC100718929 /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A526EA159400E95488 /* PVMupen64PlusRspHLE.framework */; };
 		B341FDD22BE61EC100718929 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */; };
-		B341FDD32BE61EC100718929 /* SteamController in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B341FCC02BE61EC100718929 /* SteamController */; settings = {ATTRIBUTES = (Weak, ); }; };
+		B341FDD32BE61EC100718929 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B341FCC02BE61EC100718929 /* SteamController */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B341FDD42BE61EC100718929 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
-		B341FDD52BE61EC100718929 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
+		B341FDD52BE61EC100718929 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D431D17B2F01F004DFFFC /* OpenGLES.framework */; };
 		B341FDD62BE61EC100718929 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409917B2DCE4004DFFFC /* Foundation.framework */; };
-		B341FDD72BE61EC100718929 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDA276B8B2E0031AECC /* OpenGL.framework */; platformFilters = (macos, ); };
 		B341FDD82BE61EC100718929 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409B17B2DCE4004DFFFC /* CoreGraphics.framework */; };
 		B341FDD92BE61EC100718929 /* PVPicoDrive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AEDE27293F34B30050BDB6 /* PVPicoDrive.framework */; };
 		B341FDDA2BE61EC100718929 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = B341FCC22BE61EC100718929 /* Introspect */; };
@@ -996,14 +992,11 @@
 		B341FDF12BE61EC100718929 /* EmulatorActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		B341FDF22BE61EC100718929 /* licenses.html in Resources */ = {isa = PBXBuildFile; fileRef = 1F8D52471D91993000C29F90 /* licenses.html */; };
 		B341FDF32BE61EC100718929 /* NearestNeighbor.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034B2896314000F75595 /* NearestNeighbor.fsh */; };
-		B341FDF42BE61EC100718929 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EAC26CABE880088AC32 /* Provenance.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B341FDF52BE61EC100718929 /* CRT.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703542896314200F75595 /* CRT.fsh */; };
-		B341FDF62BE61EC100718929 /* PVSaveStateCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3592CE42070B9DE00533593 /* PVSaveStateCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		B341FDF72BE61EC100718929 /* SaveStates.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ECA26CABFCA0088AC32 /* SaveStates.storyboard */; platformFilters = (tvos, ); };
 		B341FDF82BE61EC100718929 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; platformFilters = (tvos, ); };
 		B341FDF92BE61EC100718929 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B341FDFA2BE61EC100718929 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
-		B341FDFB2BE61EC100718929 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EB726CABF250088AC32 /* Cheats.storyboard */; platformFilters = (ios, maccatalyst, ); };
 		B341FDFC2BE61EC100718929 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
 		B341FDFD2BE61EC100718929 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		B341FDFE2BE61EC100718929 /* MonoLCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034E2896314100F75595 /* MonoLCD.fsh */; };
@@ -1905,7 +1898,6 @@
 		B3AED2FE2BE355D8003A9290 /* PVTVSplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */; platformFilters = (tvos, ); };
 		B3AED2FF2BE355DA003A9290 /* PVSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B13CC1D0DFF5100D0B863 /* PVSearchViewController.swift */; };
 		B3AED3002BE355DE003A9290 /* TVAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1AD481C21BA350A400FDA50A /* TVAssets.xcassets */; platformFilters = (tvos, ); };
-		B3AED3012BE3560C003A9290 /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3AED3042BE35C52003A9290 /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; platformFilters = (tvos, ); };
 		B3AEDE1C293F2FF10050BDB6 /* PVPlay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; platformFilter = ios; };
 		B3AEDE1D293F2FF10050BDB6 /* PVPlay.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B313544926E4C3B90047F338 /* PVPlay.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2805,20 +2797,6 @@
 			remoteGlobalIDString = B3B29D3F2156177100903290;
 			remoteInfo = "Create Version files";
 		};
-		B341FCBD2BE61EC100718929 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B3E21D6A203211BE009939D3;
-			remoteInfo = Spotlight;
-		};
-		B341FCBF2BE61EC100718929 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
-			remoteInfo = TopShelf;
-		};
 		B347B2372BC4CA98006A3B2D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -2881,13 +2859,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B3E21D6A203211BE009939D3;
 			remoteInfo = Spotlight;
-		};
-		B3AED3022BE3560C003A9290 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
-			remoteInfo = TopShelf;
 		};
 		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3184,18 +3155,6 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B341FDAA2BE61EC100718929 /* Embed App Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 8;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				B341FDAB2BE61EC100718929 /* Spotlight.appex in Embed App Extensions */,
-				B341FDAC2BE61EC100718929 /* TopShelf.appex in Embed App Extensions */,
-			);
-			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		B347B3112BC4CA98006A3B2D /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3288,7 +3247,6 @@
 			dstSubfolderSpec = 13;
 			files = (
 				B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed App Extensions */,
-				B3AED3012BE3560C003A9290 /* TopShelf.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 1;
@@ -3814,7 +3772,7 @@
 		B3411C0F276B470B00D85327 /* TapActionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TapActionCell.swift; sourceTree = "<group>"; };
 		B3411C10276B470B00D85327 /* SwitchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
 		B341FE082BE61EC100718929 /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B341FE092BE61EC400718929 /* ProvenanceTV (AppStore)-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ProvenanceTV (AppStore)-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/ProvenanceTV (AppStore)-Info.plist"; sourceTree = "<absolute>"; };
+		B341FE092BE61EC400718929 /* ProvenanceTV-AppStore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "ProvenanceTV-AppStore-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/ProvenanceTV/ProvenanceTV-AppStore-Info.plist"; sourceTree = "<absolute>"; };
 		B3427BD4287E7E170054C1B5 /* ShaderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderManager.swift; sourceTree = "<group>"; };
 		B3427BE1287EA0CE0054C1B5 /* crt_filter_ps.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = crt_filter_ps.metal; sourceTree = "<group>"; };
 		B3427BE2287EA0CE0054C1B5 /* ulTron.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = ulTron.metal; sourceTree = "<group>"; };
@@ -3969,8 +3927,8 @@
 		B378225921D32F970077E86F /* SettingsRowSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRowSlider.swift; sourceTree = "<group>"; };
 		B378225B21D32FCC0077E86F /* PVSliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVSliderCell.swift; sourceTree = "<group>"; };
 		B379D0472B4FB9A80067325A /* Provenance-JB.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-JB.entitlements"; path = "Provenance/Provenance-JB.entitlements"; sourceTree = SOURCE_ROOT; };
-		B379D0482B4FBF240067325A /* Provenance-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Provenance-Free.entitlements"; sourceTree = "<group>"; };
-		B379D0492B4FBF240067325A /* Provenance-JB.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Provenance-JB.entitlements"; sourceTree = "<group>"; };
+		B379D0482B4FBF240067325A /* ProvenanceTV-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-Free.entitlements"; sourceTree = "<group>"; };
+		B379D0492B4FBF240067325A /* ProvenanceTV-JB.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-JB.entitlements"; sourceTree = "<group>"; };
 		B37B71AC278E3198005FB278 /* UIViewController+Alerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alerts.swift"; sourceTree = "<group>"; };
 		B37B71AF278E33B9005FB278 /* MenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuButton.swift; sourceTree = "<group>"; };
 		B37CE662293F23A50010B746 /* PVBeetlePSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBeetlePSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4008,6 +3966,7 @@
 		B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = "PVGameLibraryCollectionViewCell~tvOS.xib"; sourceTree = "<group>"; };
 		B38A2A452102328600374CDD /* PVEmulatorViewController+PauseMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVEmulatorViewController+PauseMenu.swift"; sourceTree = "<group>"; };
 		B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EmulatorActionCell.xib; sourceTree = "<group>"; };
+		B38CCD8D2BE70DFB00DDB592 /* ProvenanceTV-AppStore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-AppStore.entitlements"; sourceTree = "<group>"; };
 		B38D02332884D03A008FBED8 /* SettingsOptionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsOptionRow.swift; sourceTree = "<group>"; };
 		B38D30FB202AC26500E9A068 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
 		B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
@@ -4025,7 +3984,7 @@
 		B394C98920609E180014A65D /* UIColor+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Hex.swift"; sourceTree = "<group>"; };
 		B394CDDF2BDEE53A006B63E8 /* Provenance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Provenance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B394CDE22BDF0BCE006B63E8 /* Provenance-AppStore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Provenance-AppStore-Info.plist"; sourceTree = "<group>"; };
-		B394CDE32BDF22A2006B63E8 /* Provenance (AppStore).entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Provenance (AppStore).entitlements"; sourceTree = "<group>"; };
+		B394CDE32BDF22A2006B63E8 /* Provenance-AppStore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-AppStore.entitlements"; path = "../Provenance-AppStore.entitlements"; sourceTree = "<group>"; };
 		B3976926285A020800558958 /* PVDOSControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVDOSControllerViewController.swift; sourceTree = "<group>"; };
 		B397692C285A089200558958 /* PVDosBox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDosBox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3977533219AB53F00E16AD5 /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Provenance.entitlements; path = Provenance/Provenance.entitlements; sourceTree = SOURCE_ROOT; };
@@ -4212,7 +4171,7 @@
 		BE9FDCBC1C210B9F0046DF0E /* ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProvider.swift; sourceTree = "<group>"; };
 		BE9FDCBE1C210B9F0046DF0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE9FDCC81C210C470046DF0E /* PVRecentGame+TopShelf.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRecentGame+TopShelf.swift"; sourceTree = "<group>"; };
-		BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Provenance.entitlements; sourceTree = "<group>"; };
+		BE9FDCCC1C21109B0046DF0E /* ProvenanceTV.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ProvenanceTV.entitlements; sourceTree = "<group>"; };
 		BE9FDCCD1C21194B0046DF0E /* TopShelf.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = TopShelf.entitlements; sourceTree = "<group>"; };
 		C13CC82823CABE2800463EDD /* Photos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Photos.framework; path = System/Library/Frameworks/Photos.framework; sourceTree = SDKROOT; };
 		C665CD8321FEC68E00C834C6 /* GCControllerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCControllerExtensions.swift; sourceTree = "<group>"; };
@@ -4474,7 +4433,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B341FDAE2BE61EC100718929 /* PVGB.framework in Frameworks */,
-				B341FDAF2BE61EC100718929 /* CoreTelephony.framework in Frameworks */,
 				B341FDB02BE61EC100718929 /* Photos.framework in Frameworks */,
 				B341FDB12BE61EC100718929 /* GameController.framework in Frameworks */,
 				B341FDB22BE61EC100718929 /* libxml2.dylib in Frameworks */,
@@ -4514,7 +4472,6 @@
 				B341FDD42BE61EC100718929 /* Metal.framework in Frameworks */,
 				B341FDD52BE61EC100718929 /* OpenGLES.framework in Frameworks */,
 				B341FDD62BE61EC100718929 /* Foundation.framework in Frameworks */,
-				B341FDD72BE61EC100718929 /* OpenGL.framework in Frameworks */,
 				B341FDD82BE61EC100718929 /* CoreGraphics.framework in Frameworks */,
 				B341FDD92BE61EC100718929 /* PVPicoDrive.framework in Frameworks */,
 				B341FDDA2BE61EC100718929 /* Introspect in Frameworks */,
@@ -4910,7 +4867,6 @@
 			children = (
 				934BE9B3296F178400FB9933 /* modules */,
 				B381A2792926345F00305322 /* StickerPack.entitlements */,
-				B394CDE32BDF22A2006B63E8 /* Provenance (AppStore).entitlements */,
 				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
 				B380EAC22759D692001B8532 /* CodeSigning.xcconfig */,
 				B380EAC12759D689001B8532 /* Build.xcconfig */,
@@ -5242,6 +5198,7 @@
 		1A4869BB17C8CA2C0019F6D2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B394CDE32BDF22A2006B63E8 /* Provenance-AppStore.entitlements */,
 				B379D0472B4FB9A80067325A /* Provenance-JB.entitlements */,
 				B361938F221FB93B00F73875 /* Provenance-Free.entitlements */,
 				B3977533219AB53F00E16AD5 /* Provenance.entitlements */,
@@ -5363,14 +5320,15 @@
 		1AD481B51BA350A400FDA50A /* ProvenanceTV */ = {
 			isa = PBXGroup;
 			children = (
-				B341FE092BE61EC400718929 /* ProvenanceTV (AppStore)-Info.plist */,
+				B341FE092BE61EC400718929 /* ProvenanceTV-AppStore-Info.plist */,
 				B347B38A2BC4CA99006A3B2D /* ProvenanceTV-Lite-Info.plist */,
 				555454422AC09998006A065F /* LaunchScreenTV.storyboard */,
 				555454412AC09997006A065F /* LaunchImageTV.png */,
 				B35D667D21814EAB0005A992 /* Story Boards */,
-				BE9FDCCC1C21109B0046DF0E /* Provenance.entitlements */,
-				B379D0482B4FBF240067325A /* Provenance-Free.entitlements */,
-				B379D0492B4FBF240067325A /* Provenance-JB.entitlements */,
+				BE9FDCCC1C21109B0046DF0E /* ProvenanceTV.entitlements */,
+				B379D0482B4FBF240067325A /* ProvenanceTV-Free.entitlements */,
+				B379D0492B4FBF240067325A /* ProvenanceTV-JB.entitlements */,
+				B38CCD8D2BE70DFB00DDB592 /* ProvenanceTV-AppStore.entitlements */,
 				EF474BA9279E63B700578663 /* TVAlertController.swift */,
 				EF474BA7279CCDD100578663 /* TVFullscreenController.swift */,
 				1AACCAEC1BB61D5600DC21AE /* PVTVSplitViewController.swift */,
@@ -6541,7 +6499,6 @@
 			buildPhases = (
 				B341FCC72BE61EC100718929 /* Sources */,
 				B341FD922BE61EC100718929 /* Embed Frameworks */,
-				B341FDAA2BE61EC100718929 /* Embed App Extensions */,
 				B341FDAD2BE61EC100718929 /* Frameworks */,
 				B341FDDD2BE61EC100718929 /* Resources */,
 				B341FE032BE61EC100718929 /* Script: Set Build Number */,
@@ -6551,8 +6508,6 @@
 			dependencies = (
 				B341FCB82BE61EC100718929 /* PBXTargetDependency */,
 				B341FCBA2BE61EC100718929 /* PBXTargetDependency */,
-				B341FCBC2BE61EC100718929 /* PBXTargetDependency */,
-				B341FCBE2BE61EC100718929 /* PBXTargetDependency */,
 			);
 			name = "ProvenanceTV (AppStore)";
 			packageProductDependencies = (
@@ -6713,7 +6668,6 @@
 				B394CC572BDEE53A006B63E8 /* PBXTargetDependency */,
 				B394CC592BDEE53A006B63E8 /* PBXTargetDependency */,
 				B394CC5B2BDEE53A006B63E8 /* PBXTargetDependency */,
-				B3AED3032BE3560C003A9290 /* PBXTargetDependency */,
 			);
 			name = "Provenance (AppStore)";
 			packageProductDependencies = (
@@ -7300,14 +7254,11 @@
 				B341FDF12BE61EC100718929 /* EmulatorActionCell.xib in Resources */,
 				B341FDF22BE61EC100718929 /* licenses.html in Resources */,
 				B341FDF32BE61EC100718929 /* NearestNeighbor.fsh in Resources */,
-				B341FDF42BE61EC100718929 /* Provenance.storyboard in Resources */,
 				B341FDF52BE61EC100718929 /* CRT.fsh in Resources */,
-				B341FDF62BE61EC100718929 /* PVSaveStateCollectionViewCell.xib in Resources */,
 				B341FDF72BE61EC100718929 /* SaveStates.storyboard in Resources */,
 				B341FDF82BE61EC100718929 /* Cheats.storyboard in Resources */,
 				B341FDF92BE61EC100718929 /* Settings.storyboard in Resources */,
 				B341FDFA2BE61EC100718929 /* Provenance.storyboard in Resources */,
-				B341FDFB2BE61EC100718929 /* Cheats.storyboard in Resources */,
 				B341FDFC2BE61EC100718929 /* LaunchScreenTV.storyboard in Resources */,
 				B341FDFD2BE61EC100718929 /* PVGameLibraryCollectionViewCell.xib in Resources */,
 				B341FDFE2BE61EC100718929 /* MonoLCD.fsh in Resources */,
@@ -7812,11 +7763,11 @@
 			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
-				"$(SRCROOT)/Provenance/.version",
+				"$(SRCROOT)/ProvenanceTV/.version",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh Provenance\n";
+			shellScript = "#. Scripts/set_bundle_build_number.sh ProvenanceTV\n";
 		};
 		B347B2452BC4CA98006A3B2D /* Script: Get RetroArch Modules */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -7984,7 +7935,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = ". Scripts/set_bundle_build_number.sh TopShelf\n";
+			shellScript = "#. Scripts/set_bundle_build_number.sh TopShelf\n";
 		};
 		B3F7E3C2297736BE00362B92 /* Code Sign libretro.h Cores */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -9962,23 +9913,6 @@
 			target = B3B29D3F2156177100903290 /* Create Version files */;
 			targetProxy = B341FCBB2BE61EC100718929 /* PBXContainerItemProxy */;
 		};
-		B341FCBC2BE61EC100718929 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				ios,
-				maccatalyst,
-			);
-			target = B3E21D6A203211BE009939D3 /* Spotlight */;
-			targetProxy = B341FCBD2BE61EC100718929 /* PBXContainerItemProxy */;
-		};
-		B341FCBE2BE61EC100718929 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				tvos,
-			);
-			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
-			targetProxy = B341FCBF2BE61EC100718929 /* PBXContainerItemProxy */;
-		};
 		B347B2362BC4CA98006A3B2D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
@@ -10033,14 +9967,6 @@
 			);
 			target = B3E21D6A203211BE009939D3 /* Spotlight */;
 			targetProxy = B394CC5C2BDEE53A006B63E8 /* PBXContainerItemProxy */;
-		};
-		B3AED3032BE3560C003A9290 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				tvos,
-			);
-			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
-			targetProxy = B3AED3022BE3560C003A9290 /* PBXContainerItemProxy */;
 		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11625,7 +11551,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "Provenance (AppStore).entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -11672,9 +11598,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
@@ -11703,7 +11626,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "Provenance (AppStore).entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -11753,9 +11676,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
@@ -11780,7 +11700,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "Provenance (AppStore).entitlements";
+				CODE_SIGN_ENTITLEMENTS = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -11830,9 +11750,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = appletvos;
 				SUPPORTED_PLATFORMS = "appletvsimulator appletvos";
-				SUPPORTS_MACCATALYST = YES;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProvenanceTV/ProvenanceTV-Bridging-Header.h";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
@@ -13225,7 +13142,9 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "Provenance (AppStore).entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Provenance/Provenance-AppStore.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvos*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -13306,7 +13225,9 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "Provenance (AppStore).entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Provenance/Provenance-AppStore.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvos*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -13386,7 +13307,9 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_ENTITLEMENTS = "Provenance (AppStore).entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Provenance/Provenance-AppStore.entitlements";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvos*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
+				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
