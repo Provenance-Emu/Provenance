@@ -543,3 +543,11 @@ std::vector<std::string> System_GetCameraDeviceList() {
     deviceList.empty();
     return deviceList;
 }
+
+#if TARGET_OS_TV
+int getCurrentBatteryCapacity() {
+    return 100;
+}
+void _powerSourceRunLoopCallback(void * __unused ctx) {
+}
+#endif
