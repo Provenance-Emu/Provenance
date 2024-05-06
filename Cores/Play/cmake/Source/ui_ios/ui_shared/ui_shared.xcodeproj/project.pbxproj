@@ -69,26 +69,26 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0AB0275941C8492D93ACBB2B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.h */ = {isa = PBXBuildFile; fileRef = B94D1AC388EA421581F76A98 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.h */; };
-		1222DABB0DD74021B2692C60 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.cpp */ = {isa = PBXBuildFile; fileRef = 6E8EB648D60B40128E194A13 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.cpp */; };
-		368884A4D3614344AA8F3E07 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesProcesses.h */ = {isa = PBXBuildFile; fileRef = 65B201A4A47A4EB1A6DE019B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesProcesses.h */; };
-		36C76E5063A949ADA4C7CE2A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = E1AC29154C8243E9B6CCDF74 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/CMakeLists.txt */; };
-		5DF56BB36A684432A23196F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeUtils.h */ = {isa = PBXBuildFile; fileRef = 0CE399763FC842F185797DB6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeUtils.h */; };
-		683107AC0BA74D5EB6F68662 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/AmazonS3Utils.h */ = {isa = PBXBuildFile; fileRef = 8F84CAE2110E4FCE84A56248 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/AmazonS3Utils.h */; };
-		7EA4476274404DF6878F81F4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeFiles/ui_shared.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = EB259A9E54CC4846933B3BD0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeFiles/ui_shared.dir/Info.plist */; };
-		85072338DE5B4EBD8C3EF0DF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/TheGamesDbClient.h */ = {isa = PBXBuildFile; fileRef = ABC46315778B49A28691BA02 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/TheGamesDbClient.h */; };
-		91C9E01545034394B6A7C62F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/StatsManager.cpp */ = {isa = PBXBuildFile; fileRef = D9403835FB364CBDBC08C5B8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/StatsManager.cpp */; };
-		B877E1E54476451FBD11C403 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.cpp */ = {isa = PBXBuildFile; fileRef = D84D782EC0664F71936D706F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.cpp */; };
-		BF9BCC45C9474EC6ABC14CD4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesDbClient.h */ = {isa = PBXBuildFile; fileRef = 5E93F642AE2B4AC681C82824 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesDbClient.h */; };
-		C281D0FA342847E3B45A36FB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesDbClient.cpp */ = {isa = PBXBuildFile; fileRef = 1380ADC469E245D49D17143E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesDbClient.cpp */; };
-		D7F0E7601AC94F628F0923EC /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/ArcadeDriver.h */ = {isa = PBXBuildFile; fileRef = 9FF4639790974AE8BDA4A96F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/ArcadeDriver.h */; };
-		DB8706CA72C34D7BA2C03F30 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesProcesses.cpp */ = {isa = PBXBuildFile; fileRef = 6046E0769B5049BABDB07207 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesProcesses.cpp */; };
-		DE02E5DFE5FD46848927A79B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeUtils.cpp */ = {isa = PBXBuildFile; fileRef = B28C03C8855D440184F857CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeUtils.cpp */; };
-		DE32796C6B4142369A9CE8BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/TheGamesDbClient.cpp */ = {isa = PBXBuildFile; fileRef = 19F7FB9135C2409ABF5176D4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/TheGamesDbClient.cpp */; };
-		EC8AFD13C2CE4EE98944E8A3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/StatsManager.h */ = {isa = PBXBuildFile; fileRef = 3F1696A0351049BE891D6188 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/StatsManager.h */; };
-		F4AF6EFD4C4845F8BA88F48A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.h */ = {isa = PBXBuildFile; fileRef = 867EDA3FF6F440C38B749426 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.h */; };
-		FB8900EEBBD94F45BC191B53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/AmazonS3Utils.cpp */ = {isa = PBXBuildFile; fileRef = 27C5BDF7BFCF4E7785F4CA21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/AmazonS3Utils.cpp */; };
-		FDF2B1CB441E455A91A87F9C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeDefinition.h */ = {isa = PBXBuildFile; fileRef = 0CA84A2C094342AEAB6C1184 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeDefinition.h */; };
+		0AB0275941C8492D93ACBB2B /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.h */ = {isa = PBXBuildFile; fileRef = B94D1AC388EA421581F76A98 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.h */; };
+		1222DABB0DD74021B2692C60 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.cpp */ = {isa = PBXBuildFile; fileRef = 6E8EB648D60B40128E194A13 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.cpp */; };
+		368884A4D3614344AA8F3E07 /* ../Play-/Source/ui_shared/BootablesProcesses.h */ = {isa = PBXBuildFile; fileRef = 65B201A4A47A4EB1A6DE019B /* ../Play-/Source/ui_shared/BootablesProcesses.h */; };
+		36C76E5063A949ADA4C7CE2A /* ../Play-/Source/ui_shared/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = E1AC29154C8243E9B6CCDF74 /* ../Play-/Source/ui_shared/CMakeLists.txt */; };
+		5DF56BB36A684432A23196F3 /* ../Play-/Source/ui_shared/ArcadeUtils.h */ = {isa = PBXBuildFile; fileRef = 0CE399763FC842F185797DB6 /* ../Play-/Source/ui_shared/ArcadeUtils.h */; };
+		683107AC0BA74D5EB6F68662 /* ../Play-/Source/ui_shared/AmazonS3Utils.h */ = {isa = PBXBuildFile; fileRef = 8F84CAE2110E4FCE84A56248 /* ../Play-/Source/ui_shared/AmazonS3Utils.h */; };
+		7EA4476274404DF6878F81F4 /* ../cmake/Source/ui_ios/ui_shared/CMakeFiles/ui_shared.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = EB259A9E54CC4846933B3BD0 /* ../cmake/Source/ui_ios/ui_shared/CMakeFiles/ui_shared.dir/Info.plist */; };
+		85072338DE5B4EBD8C3EF0DF /* ../Play-/Source/ui_shared/TheGamesDbClient.h */ = {isa = PBXBuildFile; fileRef = ABC46315778B49A28691BA02 /* ../Play-/Source/ui_shared/TheGamesDbClient.h */; };
+		91C9E01545034394B6A7C62F /* ../Play-/Source/ui_shared/StatsManager.cpp */ = {isa = PBXBuildFile; fileRef = D9403835FB364CBDBC08C5B8 /* ../Play-/Source/ui_shared/StatsManager.cpp */; };
+		B877E1E54476451FBD11C403 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.cpp */ = {isa = PBXBuildFile; fileRef = D84D782EC0664F71936D706F /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.cpp */; };
+		BF9BCC45C9474EC6ABC14CD4 /* ../Play-/Source/ui_shared/BootablesDbClient.h */ = {isa = PBXBuildFile; fileRef = 5E93F642AE2B4AC681C82824 /* ../Play-/Source/ui_shared/BootablesDbClient.h */; };
+		C281D0FA342847E3B45A36FB /* ../Play-/Source/ui_shared/BootablesDbClient.cpp */ = {isa = PBXBuildFile; fileRef = 1380ADC469E245D49D17143E /* ../Play-/Source/ui_shared/BootablesDbClient.cpp */; };
+		D7F0E7601AC94F628F0923EC /* ../Play-/Source/ui_shared/arcadedrivers/ArcadeDriver.h */ = {isa = PBXBuildFile; fileRef = 9FF4639790974AE8BDA4A96F /* ../Play-/Source/ui_shared/arcadedrivers/ArcadeDriver.h */; };
+		DB8706CA72C34D7BA2C03F30 /* ../Play-/Source/ui_shared/BootablesProcesses.cpp */ = {isa = PBXBuildFile; fileRef = 6046E0769B5049BABDB07207 /* ../Play-/Source/ui_shared/BootablesProcesses.cpp */; };
+		DE02E5DFE5FD46848927A79B /* ../Play-/Source/ui_shared/ArcadeUtils.cpp */ = {isa = PBXBuildFile; fileRef = B28C03C8855D440184F857CB /* ../Play-/Source/ui_shared/ArcadeUtils.cpp */; };
+		DE32796C6B4142369A9CE8BA /* ../Play-/Source/ui_shared/TheGamesDbClient.cpp */ = {isa = PBXBuildFile; fileRef = 19F7FB9135C2409ABF5176D4 /* ../Play-/Source/ui_shared/TheGamesDbClient.cpp */; };
+		EC8AFD13C2CE4EE98944E8A3 /* ../Play-/Source/ui_shared/StatsManager.h */ = {isa = PBXBuildFile; fileRef = 3F1696A0351049BE891D6188 /* ../Play-/Source/ui_shared/StatsManager.h */; };
+		F4AF6EFD4C4845F8BA88F48A /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.h */ = {isa = PBXBuildFile; fileRef = 867EDA3FF6F440C38B749426 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.h */; };
+		FB8900EEBBD94F45BC191B53 /* ../Play-/Source/ui_shared/AmazonS3Utils.cpp */ = {isa = PBXBuildFile; fileRef = 27C5BDF7BFCF4E7785F4CA21 /* ../Play-/Source/ui_shared/AmazonS3Utils.cpp */; };
+		FDF2B1CB441E455A91A87F9C /* ../Play-/Source/ui_shared/ArcadeDefinition.h */ = {isa = PBXBuildFile; fileRef = 0CA84A2C094342AEAB6C1184 /* ../Play-/Source/ui_shared/ArcadeDefinition.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -161,28 +161,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0CA84A2C094342AEAB6C1184 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeDefinition.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArcadeDefinition.h; path = ArcadeDefinition.h; sourceTree = SOURCE_ROOT; };
-		0CE399763FC842F185797DB6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArcadeUtils.h; path = ArcadeUtils.h; sourceTree = SOURCE_ROOT; };
-		1380ADC469E245D49D17143E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesDbClient.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BootablesDbClient.cpp; path = BootablesDbClient.cpp; sourceTree = SOURCE_ROOT; };
-		19F7FB9135C2409ABF5176D4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/TheGamesDbClient.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TheGamesDbClient.cpp; path = TheGamesDbClient.cpp; sourceTree = SOURCE_ROOT; };
-		27C5BDF7BFCF4E7785F4CA21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/AmazonS3Utils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = AmazonS3Utils.cpp; path = AmazonS3Utils.cpp; sourceTree = SOURCE_ROOT; };
-		3F1696A0351049BE891D6188 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/StatsManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StatsManager.h; path = StatsManager.h; sourceTree = SOURCE_ROOT; };
-		5E93F642AE2B4AC681C82824 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesDbClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BootablesDbClient.h; path = BootablesDbClient.h; sourceTree = SOURCE_ROOT; };
-		6046E0769B5049BABDB07207 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesProcesses.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BootablesProcesses.cpp; path = BootablesProcesses.cpp; sourceTree = SOURCE_ROOT; };
-		65B201A4A47A4EB1A6DE019B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesProcesses.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BootablesProcesses.h; path = BootablesProcesses.h; sourceTree = SOURCE_ROOT; };
-		6E8EB648D60B40128E194A13 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = NamcoSys147Driver.cpp; path = arcadedrivers/NamcoSys147Driver.cpp; sourceTree = SOURCE_ROOT; };
-		867EDA3FF6F440C38B749426 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NamcoSys246Driver.h; path = arcadedrivers/NamcoSys246Driver.h; sourceTree = SOURCE_ROOT; };
-		8F84CAE2110E4FCE84A56248 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/AmazonS3Utils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = AmazonS3Utils.h; path = AmazonS3Utils.h; sourceTree = SOURCE_ROOT; };
-		9FF4639790974AE8BDA4A96F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/ArcadeDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArcadeDriver.h; path = arcadedrivers/ArcadeDriver.h; sourceTree = SOURCE_ROOT; };
-		A6B9DDB190E648A596D1BA7F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		ABC46315778B49A28691BA02 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/TheGamesDbClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TheGamesDbClient.h; path = TheGamesDbClient.h; sourceTree = SOURCE_ROOT; };
-		B28C03C8855D440184F857CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ArcadeUtils.cpp; path = ArcadeUtils.cpp; sourceTree = SOURCE_ROOT; };
-		B94D1AC388EA421581F76A98 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NamcoSys147Driver.h; path = arcadedrivers/NamcoSys147Driver.h; sourceTree = SOURCE_ROOT; };
+		0CA84A2C094342AEAB6C1184 /* ../Play-/Source/ui_shared/ArcadeDefinition.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArcadeDefinition.h; path = ArcadeDefinition.h; sourceTree = SOURCE_ROOT; };
+		0CE399763FC842F185797DB6 /* ../Play-/Source/ui_shared/ArcadeUtils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArcadeUtils.h; path = ArcadeUtils.h; sourceTree = SOURCE_ROOT; };
+		1380ADC469E245D49D17143E /* ../Play-/Source/ui_shared/BootablesDbClient.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BootablesDbClient.cpp; path = BootablesDbClient.cpp; sourceTree = SOURCE_ROOT; };
+		19F7FB9135C2409ABF5176D4 /* ../Play-/Source/ui_shared/TheGamesDbClient.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TheGamesDbClient.cpp; path = TheGamesDbClient.cpp; sourceTree = SOURCE_ROOT; };
+		27C5BDF7BFCF4E7785F4CA21 /* ../Play-/Source/ui_shared/AmazonS3Utils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = AmazonS3Utils.cpp; path = AmazonS3Utils.cpp; sourceTree = SOURCE_ROOT; };
+		3F1696A0351049BE891D6188 /* ../Play-/Source/ui_shared/StatsManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StatsManager.h; path = StatsManager.h; sourceTree = SOURCE_ROOT; };
+		5E93F642AE2B4AC681C82824 /* ../Play-/Source/ui_shared/BootablesDbClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BootablesDbClient.h; path = BootablesDbClient.h; sourceTree = SOURCE_ROOT; };
+		6046E0769B5049BABDB07207 /* ../Play-/Source/ui_shared/BootablesProcesses.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BootablesProcesses.cpp; path = BootablesProcesses.cpp; sourceTree = SOURCE_ROOT; };
+		65B201A4A47A4EB1A6DE019B /* ../Play-/Source/ui_shared/BootablesProcesses.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BootablesProcesses.h; path = BootablesProcesses.h; sourceTree = SOURCE_ROOT; };
+		6E8EB648D60B40128E194A13 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = NamcoSys147Driver.cpp; path = arcadedrivers/NamcoSys147Driver.cpp; sourceTree = SOURCE_ROOT; };
+		867EDA3FF6F440C38B749426 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NamcoSys246Driver.h; path = arcadedrivers/NamcoSys246Driver.h; sourceTree = SOURCE_ROOT; };
+		8F84CAE2110E4FCE84A56248 /* ../Play-/Source/ui_shared/AmazonS3Utils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = AmazonS3Utils.h; path = AmazonS3Utils.h; sourceTree = SOURCE_ROOT; };
+		9FF4639790974AE8BDA4A96F /* ../Play-/Source/ui_shared/arcadedrivers/ArcadeDriver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArcadeDriver.h; path = arcadedrivers/ArcadeDriver.h; sourceTree = SOURCE_ROOT; };
+		A6B9DDB190E648A596D1BA7F /* ../Play-/Source/ui_shared/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		ABC46315778B49A28691BA02 /* ../Play-/Source/ui_shared/TheGamesDbClient.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TheGamesDbClient.h; path = TheGamesDbClient.h; sourceTree = SOURCE_ROOT; };
+		B28C03C8855D440184F857CB /* ../Play-/Source/ui_shared/ArcadeUtils.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ArcadeUtils.cpp; path = ArcadeUtils.cpp; sourceTree = SOURCE_ROOT; };
+		B94D1AC388EA421581F76A98 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = NamcoSys147Driver.h; path = arcadedrivers/NamcoSys147Driver.h; sourceTree = SOURCE_ROOT; };
 		CE4CCEC395404E00AE47361F /* ui_shared */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libui_shared.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		D84D782EC0664F71936D706F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = NamcoSys246Driver.cpp; path = arcadedrivers/NamcoSys246Driver.cpp; sourceTree = SOURCE_ROOT; };
-		D9403835FB364CBDBC08C5B8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/StatsManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StatsManager.cpp; path = StatsManager.cpp; sourceTree = SOURCE_ROOT; };
-		E1AC29154C8243E9B6CCDF74 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		EB259A9E54CC4846933B3BD0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeFiles/ui_shared.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeFiles/ui_shared.dir/Info.plist; sourceTree = "<absolute>"; };
+		D84D782EC0664F71936D706F /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = NamcoSys246Driver.cpp; path = arcadedrivers/NamcoSys246Driver.cpp; sourceTree = SOURCE_ROOT; };
+		D9403835FB364CBDBC08C5B8 /* ../Play-/Source/ui_shared/StatsManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StatsManager.cpp; path = StatsManager.cpp; sourceTree = SOURCE_ROOT; };
+		E1AC29154C8243E9B6CCDF74 /* ../Play-/Source/ui_shared/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		EB259A9E54CC4846933B3BD0 /* ../cmake/Source/ui_ios/ui_shared/CMakeFiles/ui_shared.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/Source/ui_ios/ui_shared/CMakeFiles/ui_shared.dir/Info.plist; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,14 +199,14 @@
 		0501F256938C46389D26A604 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				27C5BDF7BFCF4E7785F4CA21 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/AmazonS3Utils.cpp */,
-				B28C03C8855D440184F857CB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeUtils.cpp */,
-				1380ADC469E245D49D17143E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesDbClient.cpp */,
-				6046E0769B5049BABDB07207 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesProcesses.cpp */,
-				D9403835FB364CBDBC08C5B8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/StatsManager.cpp */,
-				19F7FB9135C2409ABF5176D4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/TheGamesDbClient.cpp */,
-				6E8EB648D60B40128E194A13 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.cpp */,
-				D84D782EC0664F71936D706F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.cpp */,
+				27C5BDF7BFCF4E7785F4CA21 /* ../Play-/Source/ui_shared/AmazonS3Utils.cpp */,
+				B28C03C8855D440184F857CB /* ../Play-/Source/ui_shared/ArcadeUtils.cpp */,
+				1380ADC469E245D49D17143E /* ../Play-/Source/ui_shared/BootablesDbClient.cpp */,
+				6046E0769B5049BABDB07207 /* ../Play-/Source/ui_shared/BootablesProcesses.cpp */,
+				D9403835FB364CBDBC08C5B8 /* ../Play-/Source/ui_shared/StatsManager.cpp */,
+				19F7FB9135C2409ABF5176D4 /* ../Play-/Source/ui_shared/TheGamesDbClient.cpp */,
+				6E8EB648D60B40128E194A13 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.cpp */,
+				D84D782EC0664F71936D706F /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -231,7 +231,7 @@
 				9DF284FD02CC4EDF858621D5 /* Header Files */,
 				0501F256938C46389D26A604 /* Source Files */,
 				92B75ED5117947C0BEBA48E0 /* Resources */,
-				E1AC29154C8243E9B6CCDF74 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/CMakeLists.txt */,
+				E1AC29154C8243E9B6CCDF74 /* ../Play-/Source/ui_shared/CMakeLists.txt */,
 			);
 			name = ui_shared;
 			sourceTree = "<group>";
@@ -239,7 +239,7 @@
 		92B75ED5117947C0BEBA48E0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				EB259A9E54CC4846933B3BD0 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeFiles/ui_shared.dir/Info.plist */,
+				EB259A9E54CC4846933B3BD0 /* ../cmake/Source/ui_ios/ui_shared/CMakeFiles/ui_shared.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -248,7 +248,7 @@
 			isa = PBXGroup;
 			children = (
 				57BA65BC873A4D6DA78FF055 /* CMake Rules */,
-				A6B9DDB190E648A596D1BA7F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/CMakeLists.txt */,
+				A6B9DDB190E648A596D1BA7F /* ../Play-/Source/ui_shared/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -256,16 +256,16 @@
 		9DF284FD02CC4EDF858621D5 /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				8F84CAE2110E4FCE84A56248 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/AmazonS3Utils.h */,
-				0CA84A2C094342AEAB6C1184 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeDefinition.h */,
-				0CE399763FC842F185797DB6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeUtils.h */,
-				5E93F642AE2B4AC681C82824 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesDbClient.h */,
-				65B201A4A47A4EB1A6DE019B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesProcesses.h */,
-				3F1696A0351049BE891D6188 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/StatsManager.h */,
-				ABC46315778B49A28691BA02 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/TheGamesDbClient.h */,
-				9FF4639790974AE8BDA4A96F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/ArcadeDriver.h */,
-				B94D1AC388EA421581F76A98 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.h */,
-				867EDA3FF6F440C38B749426 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.h */,
+				8F84CAE2110E4FCE84A56248 /* ../Play-/Source/ui_shared/AmazonS3Utils.h */,
+				0CA84A2C094342AEAB6C1184 /* ../Play-/Source/ui_shared/ArcadeDefinition.h */,
+				0CE399763FC842F185797DB6 /* ../Play-/Source/ui_shared/ArcadeUtils.h */,
+				5E93F642AE2B4AC681C82824 /* ../Play-/Source/ui_shared/BootablesDbClient.h */,
+				65B201A4A47A4EB1A6DE019B /* ../Play-/Source/ui_shared/BootablesProcesses.h */,
+				3F1696A0351049BE891D6188 /* ../Play-/Source/ui_shared/StatsManager.h */,
+				ABC46315778B49A28691BA02 /* ../Play-/Source/ui_shared/TheGamesDbClient.h */,
+				9FF4639790974AE8BDA4A96F /* ../Play-/Source/ui_shared/arcadedrivers/ArcadeDriver.h */,
+				B94D1AC388EA421581F76A98 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.h */,
+				867EDA3FF6F440C38B749426 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -364,19 +364,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -407,25 +407,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeFiles/ZERO_CHECK			);
+../cmake/Source/ui_ios/ui_shared/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/ui_shared
+  make -f ../cmake/Source/ui_ios/ui_shared/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/ui_shared
+  make -f ../cmake/Source/ui_ios/ui_shared/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/ui_shared
+  make -f ../cmake/Source/ui_ios/ui_shared/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeScripts/ReRunCMake.make
+  cd ../cmake/Source/ui_ios/ui_shared
+  make -f ../cmake/Source/ui_ios/ui_shared/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -443,19 +443,19 @@ fi
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -519,19 +519,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -562,24 +562,24 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared/CMakeFiles/ALL_BUILD			);
+../cmake/Source/ui_ios/ui_shared/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/ui_shared
+  cd ../cmake/Source/ui_ios/ui_shared
   echo Build\\ all\\ projects
 fi
 ";
@@ -592,14 +592,14 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB8900EEBBD94F45BC191B53 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/AmazonS3Utils.cpp */,
-				DE02E5DFE5FD46848927A79B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/ArcadeUtils.cpp */,
-				C281D0FA342847E3B45A36FB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesDbClient.cpp */,
-				DB8706CA72C34D7BA2C03F30 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/BootablesProcesses.cpp */,
-				91C9E01545034394B6A7C62F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/StatsManager.cpp */,
-				DE32796C6B4142369A9CE8BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/TheGamesDbClient.cpp */,
-				1222DABB0DD74021B2692C60 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.cpp */,
-				B877E1E54476451FBD11C403 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.cpp */,
+				FB8900EEBBD94F45BC191B53 /* ../Play-/Source/ui_shared/AmazonS3Utils.cpp */,
+				DE02E5DFE5FD46848927A79B /* ../Play-/Source/ui_shared/ArcadeUtils.cpp */,
+				C281D0FA342847E3B45A36FB /* ../Play-/Source/ui_shared/BootablesDbClient.cpp */,
+				DB8706CA72C34D7BA2C03F30 /* ../Play-/Source/ui_shared/BootablesProcesses.cpp */,
+				91C9E01545034394B6A7C62F /* ../Play-/Source/ui_shared/StatsManager.cpp */,
+				DE32796C6B4142369A9CE8BA /* ../Play-/Source/ui_shared/TheGamesDbClient.cpp */,
+				1222DABB0DD74021B2692C60 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys147Driver.cpp */,
+				B877E1E54476451FBD11C403 /* ../Play-/Source/ui_shared/arcadedrivers/NamcoSys246Driver.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -807,7 +807,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/nlohmann_json/single_include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/Source/ui_shared/..","../Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Dependencies/nlohmann_json/single_include","../Play-/Source","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1030,7 +1030,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/nlohmann_json/single_include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/Source/ui_shared/..","../Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Dependencies/nlohmann_json/single_include","../Play-/Source","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1160,7 +1160,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/nlohmann_json/single_include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/Source/ui_shared/..","../Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Dependencies/nlohmann_json/single_include","../Play-/Source","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1190,7 +1190,7 @@ fi
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'","$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source/ui_shared/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/nlohmann_json/single_include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
+				HEADER_SEARCH_PATHS = ("../Play-/Source/ui_shared/..","../Play-/deps/Framework/build_cmake/FrameworkSqlite/../../include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Dependencies/nlohmann_json/single_include","../Play-/Source","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
 				ONLY_ACTIVE_ARCH = NO;

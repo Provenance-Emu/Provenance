@@ -647,8 +647,8 @@
 		92153E9106F6429486211EAB /* MIPSVFPUFallbacks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C4DBBE765701450D8A011F18 /* MIPSVFPUFallbacks.cpp */; };
 		9294427864AD4AC4B6ACD789 /* TextureScalerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DEC1448BFE3E4C82896CDE3D /* TextureScalerCommon.cpp */; };
 		9305B97C43B64955B005D982 /* ZipFileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 976E9EAC570443F7B365B66B /* ZipFileReader.cpp */; };
-		933430362A323F9D001C35C2 /* AppleBatteryClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 2640D92F3AE445ABAC572FF5 /* AppleBatteryClient.m */; };
 		93C4DE4467E9421C9DB1C5D7 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AE763A07FEC14C51874A64A1 /* Profiler.cpp */; };
+		93CFE69E2BE945A4009B2220 /* AppleBatteryClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 93CFE69D2BE945A4009B2220 /* AppleBatteryClient.m */; };
 		93E70B5810F9455E92C5E4A0 /* DepthBufferCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EEAF8762014E44E7A1870D76 /* DepthBufferCommon.cpp */; };
 		944A4639CE5540A19BAA12E6 /* zip_add_entry.c in Sources */ = {isa = PBXBuildFile; fileRef = 64BED318CD384B829E22A820 /* zip_add_entry.c */; };
 		94881E63AC9C44EE83C37C36 /* fse_compress.c in Sources */ = {isa = PBXBuildFile; fileRef = CAFF36115AAA4DDC967FB247 /* fse_compress.c */; };
@@ -1947,7 +1947,7 @@
 		018067A9D0414B0EAAE5C413 /* RamCachingFileLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = RamCachingFileLoader.cpp; path = Core/FileLoaders/RamCachingFileLoader.cpp; sourceTree = SOURCE_ROOT; };
 		0184238055054205BB9FE800 /* it_IT.ini */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = it_IT.ini; path = assets/lang/it_IT.ini; sourceTree = SOURCE_ROOT; };
 		0189D0A840E64D0381393BBE /* ThreadUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ThreadUtil.cpp; path = Common/Thread/ThreadUtil.cpp; sourceTree = SOURCE_ROOT; };
-		02060DAC60E34A898BF5C0A8 /* zstreamtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = zstreamtest; path = zstreamtest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		02060DAC60E34A898BF5C0A8 /* zstreamtest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = zstreamtest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		020C6643A63C4A7A8B732BDE /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/ext/glslang/SPIRV/CMakeFiles/SPIRV.dir/Info.plist; sourceTree = "<absolute>"; };
 		021B03409D8D4000BDDDCA16 /* CustomButtonMappingScreen.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = CustomButtonMappingScreen.h; path = UI/CustomButtonMappingScreen.h; sourceTree = SOURCE_ROOT; };
 		0264AC532F58433E9D2D45FD /* zip_fclose.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zip_fclose.c; path = ext/libzip/zip_fclose.c; sourceTree = SOURCE_ROOT; };
@@ -1962,7 +1962,7 @@
 		036938F18FCF442EB56C71AD /* InitializeDll.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = InitializeDll.cpp; path = ext/glslang/OGLCompilersDLL/InitializeDll.cpp; sourceTree = SOURCE_ROOT; };
 		0397DAC6054F4CAC94EC9862 /* Arm64RegCache.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Arm64RegCache.h; path = Core/MIPS/ARM64/Arm64RegCache.h; sourceTree = SOURCE_ROOT; };
 		03B570B91EA94CC0A9C5099F /* udis86.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = udis86.h; path = ext/udis86/udis86.h; sourceTree = SOURCE_ROOT; };
-		03D52AB7CD7C47C9B3202DCB /* fullbench */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = fullbench; path = fullbench.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		03D52AB7CD7C47C9B3202DCB /* fullbench.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = fullbench.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03DF881D4CA84126B5BCAA0C /* ArmCompALU.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ArmCompALU.cpp; path = Core/MIPS/ARM/ArmCompALU.cpp; sourceTree = SOURCE_ROOT; };
 		03E1BA36C4AA4D29BC243051 /* TextureReplacer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TextureReplacer.h; path = GPU/Common/TextureReplacer.h; sourceTree = SOURCE_ROOT; };
 		03FE59EAA527483FBDAFEC8C /* miniwget.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = miniwget.c; path = ext/miniupnp/miniupnpc/miniwget.c; sourceTree = SOURCE_ROOT; };
@@ -2461,7 +2461,7 @@
 		42F82791893F4813BBB67FAA /* debug.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = debug.c; path = ext/zstd/lib/common/debug.c; sourceTree = SOURCE_ROOT; };
 		42FDFE5476C34A79B7496CBD /* IRCompLoadStore.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IRCompLoadStore.cpp; path = Core/MIPS/IR/IRCompLoadStore.cpp; sourceTree = SOURCE_ROOT; };
 		430E42E054A244E7B05D3C83 /* CachingFileLoader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = CachingFileLoader.cpp; path = Core/FileLoaders/CachingFileLoader.cpp; sourceTree = SOURCE_ROOT; };
-		431B0772680F4D80ABC1C677 /* datagen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = datagen; path = datagen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		431B0772680F4D80ABC1C677 /* datagen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = datagen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4339885A5EF3497F8D400CAF /* Base64.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Base64.h; path = Common/Data/Encoding/Base64.h; sourceTree = SOURCE_ROOT; };
 		436C9D529F71405689C5F04F /* math_util.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = math_util.h; path = Common/Math/math_util.h; sourceTree = SOURCE_ROOT; };
 		439080932D934255BB982F1F /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/ext/glslang/hlsl/CMakeFiles/HLSL.dir/Info.plist; sourceTree = "<absolute>"; };
@@ -2507,7 +2507,7 @@
 		492A1F79FF534CCB8AAEAF60 /* resource_limits_c.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = resource_limits_c.h; path = ext/glslang/glslang/Public/resource_limits_c.h; sourceTree = SOURCE_ROOT; };
 		493B0389EF804D28A86DDF33 /* sceUsbAcc.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = sceUsbAcc.h; path = Core/HLE/sceUsbAcc.h; sourceTree = SOURCE_ROOT; };
 		4991B804326D470F86811074 /* RemoteISOScreen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = RemoteISOScreen.cpp; path = UI/RemoteISOScreen.cpp; sourceTree = SOURCE_ROOT; };
-		4A12F0F07C0949D9A2D6077B /* paramgrill */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = paramgrill; path = paramgrill.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A12F0F07C0949D9A2D6077B /* paramgrill.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = paramgrill.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4A449417D98B4849A20ED8B8 /* PPSSPPVR.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PPSSPPVR.cpp; path = Common/VR/PPSSPPVR.cpp; sourceTree = SOURCE_ROOT; };
 		4A690492F21A4E5FA7991C0B /* mem.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = mem.h; path = ext/zstd/lib/common/mem.h; sourceTree = SOURCE_ROOT; };
 		4A703FBBFDEF45E4B0F00E80 /* scePower.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = scePower.cpp; path = Core/HLE/scePower.cpp; sourceTree = SOURCE_ROOT; };
@@ -3066,6 +3066,7 @@
 		93B20010896C40B79A684C17 /* pngtrans.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = pngtrans.c; path = ext/libpng17/pngtrans.c; sourceTree = SOURCE_ROOT; };
 		93B9B264605B4831A2F93463 /* MiscScreens.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MiscScreens.cpp; path = UI/MiscScreens.cpp; sourceTree = SOURCE_ROOT; };
 		93BF0356AA8549A9B4E48A3F /* MIPSDis.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MIPSDis.h; path = Core/MIPS/MIPSDis.h; sourceTree = SOURCE_ROOT; };
+		93CFE69D2BE945A4009B2220 /* AppleBatteryClient.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = AppleBatteryClient.m; path = ../PVPPSSPPCore/Core/AppleBatteryClient.m; sourceTree = "<group>"; };
 		942031EBEA494A0994E14BCB /* ArmParser.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ArmParser.h; path = ext/armips/Archs/ARM/ArmParser.h; sourceTree = SOURCE_ROOT; };
 		9436ED05A4CB45659705C951 /* GPUCommonHW.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GPUCommonHW.cpp; path = GPU/GPUCommonHW.cpp; sourceTree = SOURCE_ROOT; };
 		94451EA9416C45BC8E4138C2 /* Theme.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Theme.cpp; path = UI/Theme.cpp; sourceTree = SOURCE_ROOT; };
@@ -3476,7 +3477,7 @@
 		C45A1B348F8C4B0FA79E9029 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; lastKnownFileType = text.plist; name = Info.plist; path = ../cmake/CMakeFiles/kirk.dir/Info.plist; sourceTree = "<absolute>"; };
 		C47EDE228E684268B3AA70A2 /* GPUBackendCommon.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = GPUBackendCommon.cpp; path = Common/GPU/GPUBackendCommon.cpp; sourceTree = SOURCE_ROOT; };
 		C499B42FCAF147A3A2354048 /* zip_get_archive_comment.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.c; fileEncoding = 4; name = zip_get_archive_comment.c; path = ext/libzip/zip_get_archive_comment.c; sourceTree = SOURCE_ROOT; };
-		C4B547EF6DB54834BF062100 /* fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = fuzzer; path = fuzzer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4B547EF6DB54834BF062100 /* fuzzer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = fuzzer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4DBBE765701450D8A011F18 /* MIPSVFPUFallbacks.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MIPSVFPUFallbacks.cpp; path = Core/MIPS/MIPSVFPUFallbacks.cpp; sourceTree = SOURCE_ROOT; };
 		C4E1D6207D5B49928E0AF69A /* TouchControlVisibilityScreen.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TouchControlVisibilityScreen.cpp; path = UI/TouchControlVisibilityScreen.cpp; sourceTree = SOURCE_ROOT; };
 		C4F7D5A357924819A4973F67 /* kirk_engine.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = kirk_engine.h; path = ext/libkirk/kirk_engine.h; sourceTree = SOURCE_ROOT; };
@@ -4471,6 +4472,7 @@
 		0D61473230DC4C46AE4A253D = {
 			isa = PBXGroup;
 			children = (
+				93CFE69D2BE945A4009B2220 /* AppleBatteryClient.m */,
 				8D1628F454B14738BE68B2E2 /* Common */,
 				752B366429794C05B8692F0F /* gason */,
 				18864D9C46F142CE913B4849 /* vma */,
@@ -6175,9 +6177,9 @@
 				AEF3099227394CC58C0FFE4C /* libbasis_universalPPSSPP.a */,
 				FE1937C2CEFE42188EA81295 /* libcityhashPPSSPP.a */,
 				B543391F1D9941949C0B7495 /* libcpu_featuresPPSSPP.a */,
-				431B0772680F4D80ABC1C677 /* datagen */,
-				03D52AB7CD7C47C9B3202DCB /* fullbench */,
-				C4B547EF6DB54834BF062100 /* fuzzer */,
+				431B0772680F4D80ABC1C677 /* datagen.app */,
+				03D52AB7CD7C47C9B3202DCB /* fullbench.app */,
+				C4B547EF6DB54834BF062100 /* fuzzer.app */,
 				79F455D776924F6BA7A219CC /* libgasonPPSSPP.a */,
 				86EB15D74E364265847A2436 /* libglslangPPSSPP.a */,
 				F9D17F06CC724CFCB08579D6 /* libglslang-default-resource-limitsPPSSPP.a */,
@@ -6187,7 +6189,7 @@
 				922CAA6DC8B543948A7F8EF1 /* libzstd_staticPPSSPP.a */,
 				B9EB63BE6AA94B60A899AB62 /* libminiupnpcPPSSPP.a */,
 				BC98A36589864BB49668C82E /* libnativePPSSPP.a */,
-				4A12F0F07C0949D9A2D6077B /* paramgrill */,
+				4A12F0F07C0949D9A2D6077B /* paramgrill.app */,
 				92E8F7170F7B4D309078E628 /* libpng17PPSSPP.a */,
 				947FDAEB025E43228F8F2D0F /* libsfmt19937PPSSPP.a */,
 				C9601F8EBEC641F0925EE8CF /* libsnappyPPSSPP.a */,
@@ -6202,7 +6204,7 @@
 				65544F20F285481692E536D8 /* libvmaPPSSPP.a */,
 				3530A62A93CE47AF9234C6E1 /* libxbrzPPSSPP.a */,
 				D49A135ADB4946D3B43DF1A4 /* libxxhashPPSSPP.a */,
-				02060DAC60E34A898BF5C0A8 /* zstreamtest */,
+				02060DAC60E34A898BF5C0A8 /* zstreamtest.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -8397,7 +8399,7 @@
 			);
 			name = paramgrill;
 			productName = paramgrill;
-			productReference = 4A12F0F07C0949D9A2D6077B /* paramgrill */;
+			productReference = 4A12F0F07C0949D9A2D6077B /* paramgrill.app */;
 			productType = "com.apple.product-type.application";
 		};
 		4BDC1B6F1FDC471D932AF991 /* spirv-cross-glslPPSSPP */ = {
@@ -8551,7 +8553,7 @@
 			);
 			name = datagen;
 			productName = datagen;
-			productReference = 431B0772680F4D80ABC1C677 /* datagen */;
+			productReference = 431B0772680F4D80ABC1C677 /* datagen.app */;
 			productType = "com.apple.product-type.application";
 		};
 		77D4BDC60A014CE8A80A0537 /* PPSSPP */ = {
@@ -8740,7 +8742,7 @@
 			);
 			name = fuzzer;
 			productName = fuzzer;
-			productReference = C4B547EF6DB54834BF062100 /* fuzzer */;
+			productReference = C4B547EF6DB54834BF062100 /* fuzzer.app */;
 			productType = "com.apple.product-type.application";
 		};
 		B3CFEC20FB604CB585EEEC0E /* cityhashPPSSPP */ = {
@@ -8774,7 +8776,7 @@
 			);
 			name = fullbench;
 			productName = fullbench;
-			productReference = 03D52AB7CD7C47C9B3202DCB /* fullbench */;
+			productReference = 03D52AB7CD7C47C9B3202DCB /* fullbench.app */;
 			productType = "com.apple.product-type.application";
 		};
 		BA5315E34A504E3082AA4FA9 /* MachineIndependentPPSSPP */ = {
@@ -8979,7 +8981,7 @@
 			);
 			name = zstreamtest;
 			productName = zstreamtest;
-			productReference = 02060DAC60E34A898BF5C0A8 /* zstreamtest */;
+			productReference = 02060DAC60E34A898BF5C0A8 /* zstreamtest.app */;
 			productType = "com.apple.product-type.application";
 		};
 		FD7A24106EE544E4A4315752 /* spirv-cross-corePPSSPP */ = {
@@ -9297,7 +9299,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				933430362A323F9D001C35C2 /* AppleBatteryClient.m in Sources */,
+				93CFE69E2BE945A4009B2220 /* AppleBatteryClient.m in Sources */,
 				F7AA63EAC62543419540FC10 /* draw_text_qt.cpp in Sources */,
 				FCFC8B2A777847C0A2134D79 /* AudioCommon.cpp in Sources */,
 				F9F5ABA042C04699ABAE20AA /* BackgroundAudio.cpp in Sources */,
@@ -11144,6 +11146,7 @@
 					../libretro_ppsspp/ext/snappy/.,
 					../libretro_ppsspp/ext/cmake/cpu_features/../../cpu_features/include,
 					"$(inherited)",
+					../libretro_ppsspp/Common/Battery,
 				);
 				INSTALL_PATH = "";
 				LIBRARY_STYLE = STATIC;
@@ -14105,14 +14108,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ARCHS = arm64;
+				ARCHS = "$(ARCHS_STANDARD)";
 				BUILD_DIR = "$(SRCROOT)/../lib";
 				CACHE_ROOT = "$(SRCROOT)/../lib/cache";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGNING_REQUIRED = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				ONLY_ACTIVE_ARCH = NO;
 				PROJECT_TEMP_DIR = "$(SRCROOT)/../lib/ppsspp/build/$(PROJECT_NAME).build";
-				SDKROOT = iphoneos;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SYMROOT = "$(SRCROOT)/../lib/ppsspp";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
