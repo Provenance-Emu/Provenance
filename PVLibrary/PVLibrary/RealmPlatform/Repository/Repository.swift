@@ -1,5 +1,4 @@
 import Foundation
-import Realm
 import RealmSwift
 import RxRealm
 import RxSwift
@@ -25,7 +24,7 @@ final class Repository<T: RealmRepresentable>: AbstractRepository where T == T.R
         self.configuration = configuration
         let name = "com.CleanArchitectureRxSwift.RealmPlatform.Repository"
         scheduler = RunLoopThreadScheduler(threadName: name)
-        print("File 📁 url: \(RLMRealmPathForFile("default.realm"))")
+//        print("File 📁 url: \(RLMRealmPathForFile("default.realm"))")
     }
 
     func queryAll() -> Observable<[T]> {

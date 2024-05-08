@@ -5,7 +5,6 @@
 
 import PVLibrary
 import PVSupport
-import Realm
 import RealmSwift
 import RxCocoa
 import RxRealm

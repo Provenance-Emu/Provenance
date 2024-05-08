@@ -9,9 +9,10 @@
 
 import CoreSpotlight
 import Foundation
-@_exported import PVSupport
-@_exported import RealmSwift
-@_exported import SQLite
+import PVSupport
+import RealmSwift
+
+import SQLite
 import PVLogging
 
 #if canImport(UIKit)
