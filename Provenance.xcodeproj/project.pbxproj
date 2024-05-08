@@ -3335,6 +3335,7 @@
 				93049A8A2A931E5E00BF257F /* PVDosBoxRetro.framework in Embed Frameworks */,
 				93049A892A931E4E00BF257F /* PVMelonDSRetro.framework in Embed Frameworks */,
 				93049A882A931E3A00BF257F /* PVMiniVMacRetro.framework in Embed Frameworks */,
+				B3F7E58E297736C200362B92 /* PVRetroArch.framework in Embed Frameworks */,
 				93DB7D362A7509A5005F8B26 /* libavcodec.framework in Embed Frameworks */,
 				93DB7D372A7509A6005F8B26 /* libavformat.framework in Embed Frameworks */,
 				93DB7D382A7509A7005F8B26 /* libavutil.framework in Embed Frameworks */,
@@ -3363,7 +3364,6 @@
 				B3F7E58C297736C200362B92 /* PVFuse.framework in Embed Frameworks */,
 				93102A4E2A30E955002C86C6 /* PVLogging in Embed Frameworks */,
 				B3F7E58D297736C200362B92 /* PVGenesis.framework in Embed Frameworks */,
-				B3F7E58E297736C200362B92 /* PVRetroArch.framework in Embed Frameworks */,
 				B3F7E58F297736C200362B92 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B3F7E590297736C200362B92 /* PVDolphin.framework in Embed Frameworks */,
 				B3F7E591297736C200362B92 /* PVGB.framework in Embed Frameworks */,
@@ -4213,7 +4213,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3FAC937292B4585005E8B11 /* PVLibRetro.framework in Frameworks */,
 				93DB7D3B2A750AC9005F8B26 /* libavcodec.framework in Frameworks */,
 				93DB7D3C2A750AC9005F8B26 /* libavformat.framework in Frameworks */,
 				93DB7D3D2A750AC9005F8B26 /* libavutil.framework in Frameworks */,
@@ -4226,6 +4225,7 @@
 				B37CE669293F23C20010B746 /* PVVecX.framework in Frameworks */,
 				C13CC82923CABE2800463EDD /* Photos.framework in Frameworks */,
 				B377E67E21252C6600D88973 /* GameController.framework in Frameworks */,
+				939A43092A35ADE2001AFF6B /* PVRetroArch.framework in Frameworks */,
 				1A4869D817C8D54D0019F6D2 /* libxml2.dylib in Frameworks */,
 				B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */,
 				B3FAC959292B45C1005E8B11 /* PVVirtualJaguar.framework in Frameworks */,
@@ -4276,8 +4276,8 @@
 				B3FB9679276DD7F600F7EDEE /* SteamController in Frameworks */,
 				B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */,
 				1A3D431E17B2F01F004DFFFC /* OpenGLES.framework in Frameworks */,
-				939A43092A35ADE2001AFF6B /* PVRetroArch.framework in Frameworks */,
 				1A3D409A17B2DCE4004DFFFC /* Foundation.framework in Frameworks */,
+				B3FAC937292B4585005E8B11 /* PVLibRetro.framework in Frameworks */,
 				B3271BDB276B8B2E0031AECC /* OpenGL.framework in Frameworks */,
 				1A3D409C17B2DCE4004DFFFC /* CoreGraphics.framework in Frameworks */,
 				B390B0EA276B2DB20018E065 /* AltKit in Frameworks */,
@@ -4295,7 +4295,6 @@
 			files = (
 				B324C64F219216DD009F4EDC /* PVLibrary.framework in Frameworks */,
 				B3AF701C21916E38000FA7F9 /* PVSupport.framework in Frameworks */,
-				B3FAC99A292B476E005E8B11 /* PVLibRetro.framework in Frameworks */,
 				B3FAC99C292B476F005E8B11 /* PVMednafen.framework in Frameworks */,
 				B3FAC990292B4766005E8B11 /* PVGB.framework in Frameworks */,
 				B3FAC98C292B4763005E8B11 /* PVFCEU.framework in Frameworks */,
@@ -4340,6 +4339,7 @@
 				1180B31C2492A96700636C8A /* CoreServices.framework in Frameworks */,
 				B36C50DA296F4D1200921F85 /* PVO2EM.framework in Frameworks */,
 				B3FAC984292B475E005E8B11 /* PVAtari800.framework in Frameworks */,
+				B3FAC99A292B476E005E8B11 /* PVLibRetro.framework in Frameworks */,
 				B3FAC9AA292B477D005E8B11 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B346AED2297602210090E014 /* PVYabause.framework in Frameworks */,
 			);
@@ -4358,9 +4358,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				930499B82A93073800BF257F /* PVLibrary.framework in Frameworks */,
-				930499BA2A93073800BF257F /* PVSupport.framework in Frameworks */,
-				930499A62A93073800BF257F /* PVLibRetro.framework in Frameworks */,
 				93049A862A930E9B00BF257F /* PVFreeDO.framework in Frameworks */,
 				93049A832A930DC900BF257F /* PVYabause.framework in Frameworks */,
 				93049A7A2A930C0D00BF257F /* PVDesmume2015.framework in Frameworks */,
@@ -4371,9 +4368,11 @@
 				930499F22A9307BF00BF257F /* PVSnesticle.framework in Frameworks */,
 				930499A72A93073800BF257F /* libMoltenVK.dylib in Frameworks */,
 				930499A82A93073800BF257F /* CoreTelephony.framework in Frameworks */,
+				930499A62A93073800BF257F /* PVLibRetro.framework in Frameworks */,
 				930499A92A93073800BF257F /* Photos.framework in Frameworks */,
 				930499AA2A93073800BF257F /* GameController.framework in Frameworks */,
 				930499AB2A93073800BF257F /* libxml2.dylib in Frameworks */,
+				930499BA2A93073800BF257F /* PVSupport.framework in Frameworks */,
 				930499AC2A93073800BF257F /* MetalKit.framework in Frameworks */,
 				930499AD2A93073800BF257F /* CoreServices.framework in Frameworks */,
 				930499AE2A93073800BF257F /* libz.dylib in Frameworks */,
@@ -4382,6 +4381,7 @@
 				930499B22A93073800BF257F /* libsqlite3.dylib in Frameworks */,
 				930499B32A93073800BF257F /* AVFoundation.framework in Frameworks */,
 				930499B42A93073800BF257F /* CFNetwork.framework in Frameworks */,
+				930499C62A93073800BF257F /* PVRetroArch.framework in Frameworks */,
 				930499B52A93073800BF257F /* Security.framework in Frameworks */,
 				930499B62A93073800BF257F /* SystemConfiguration.framework in Frameworks */,
 				930499B72A93073800BF257F /* CoreData.framework in Frameworks */,
@@ -4394,10 +4394,10 @@
 				930499C02A93073800BF257F /* Foundation.framework in Frameworks */,
 				930499C12A93073800BF257F /* OpenGL.framework in Frameworks */,
 				930499C22A93073800BF257F /* CoreGraphics.framework in Frameworks */,
+				930499B82A93073800BF257F /* PVLibrary.framework in Frameworks */,
 				930499C32A93073800BF257F /* Reachability in Frameworks */,
 				930499C42A93073800BF257F /* AltKit in Frameworks */,
 				930499C52A93073800BF257F /* Introspect in Frameworks */,
-				930499C62A93073800BF257F /* PVRetroArch.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4698,7 +4698,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93BBFD892AA688C500940E5A /* PVRetroArch.framework in Frameworks */,
 				93AC9F562A7F757C00484B9E /* libMoltenVK.dylib in Frameworks */,
 				B3F7E378297736BE00362B92 /* CoreTelephony.framework in Frameworks */,
 				B3F7E37A297736BE00362B92 /* Photos.framework in Frameworks */,
@@ -4713,12 +4712,12 @@
 				B3F7E38E297736BE00362B92 /* AVFoundation.framework in Frameworks */,
 				B3F7E393297736BE00362B92 /* CFNetwork.framework in Frameworks */,
 				B3F7E399297736BE00362B92 /* Security.framework in Frameworks */,
+				93BBFD892AA688C500940E5A /* PVRetroArch.framework in Frameworks */,
 				B3F7E39F297736BE00362B92 /* SystemConfiguration.framework in Frameworks */,
 				B3F7E3A3297736BE00362B92 /* CoreData.framework in Frameworks */,
 				B3F7E3A4297736BE00362B92 /* PVLibrary.framework in Frameworks */,
 				B3F7E3A8297736BE00362B92 /* AudioToolbox.framework in Frameworks */,
 				B3F7E3AB297736BE00362B92 /* PVSupport.framework in Frameworks */,
-				93AC9F582A7F766700484B9E /* PVLibRetro.framework in Frameworks */,
 				B3F7E3AD297736BE00362B92 /* UIKit.framework in Frameworks */,
 				B3F7E3B3297736BE00362B92 /* SteamController in Frameworks */,
 				93102A4A2A30E879002C86C6 /* PVLogging in Frameworks */,
@@ -4729,6 +4728,7 @@
 				B3F7E3BB297736BE00362B92 /* CoreGraphics.framework in Frameworks */,
 				B3E88CBA2977AB5900C90E86 /* Reachability in Frameworks */,
 				B3F7E3BC297736BE00362B92 /* AltKit in Frameworks */,
+				93AC9F582A7F766700484B9E /* PVLibRetro.framework in Frameworks */,
 				B3F7E3BE297736BE00362B92 /* Introspect in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4780,6 +4780,7 @@
 				B3F7E524297736C200362B92 /* PVPlay.framework in Frameworks */,
 				B3F7E525297736C200362B92 /* PVPokeMini.framework in Frameworks */,
 				B3F7E526297736C200362B92 /* Security.framework in Frameworks */,
+				B3F7E546297736C200362B92 /* PVRetroArch.framework in Frameworks */,
 				B3F7E527297736C200362B92 /* PVTGBDual.framework in Frameworks */,
 				B3F7E528297736C200362B92 /* PVBliss.framework in Frameworks */,
 				B3F7E529297736C200362B92 /* PVFCEU.framework in Frameworks */,
@@ -4807,11 +4808,9 @@
 				B3F7E541297736C200362B92 /* Metal.framework in Frameworks */,
 				B3F7E542297736C200362B92 /* OpenGLES.framework in Frameworks */,
 				936BFD852986A6CA001FF097 /* libMoltenVK.dylib in Frameworks */,
-				B3F7E543297736C200362B92 /* PVLibRetro.framework in Frameworks */,
 				B3F7E544297736C200362B92 /* Foundation.framework in Frameworks */,
 				93049A812A930C6F00BF257F /* PVMiniVMacRetro.framework in Frameworks */,
 				B3F7E545297736C200362B92 /* OpenGL.framework in Frameworks */,
-				B3F7E546297736C200362B92 /* PVRetroArch.framework in Frameworks */,
 				B3F7E548297736C200362B92 /* CoreGraphics.framework in Frameworks */,
 				B3F7E549297736C200362B92 /* AltKit in Frameworks */,
 				93049A7F2A930C6000BF257F /* PVMelonDSRetro.framework in Frameworks */,
@@ -4820,6 +4819,7 @@
 				B3E88CBC2977AB6C00C90E86 /* Reachability in Frameworks */,
 				93049A252A9309FB00BF257F /* PVDosBoxRetro.framework in Frameworks */,
 				B3F7E54D297736C200362B92 /* PVGME.framework in Frameworks */,
+				B3F7E543297736C200362B92 /* PVLibRetro.framework in Frameworks */,
 				B3F7E54E297736C200362B92 /* PVGBA.framework in Frameworks */,
 				9348D7512A32093900CC7998 /* PVPPSSPP.framework in Frameworks */,
 			);
