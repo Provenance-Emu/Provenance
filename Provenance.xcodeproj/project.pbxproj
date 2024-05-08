@@ -1536,6 +1536,9 @@
 		B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
 		B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; };
 		B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */; platformFilters = (ios, maccatalyst, ); };
+		B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B38C69B72BEB35E200AE4F86 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; platformFilters = (tvos, ); };
+		B38C69B82BEB37A100AE4F86 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; platformFilters = (tvos, ); };
 		B38D02342884D03B008FBED8 /* SettingsOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38D02332884D03A008FBED8 /* SettingsOptionRow.swift */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
@@ -1997,7 +2000,6 @@
 		B3EF26EC2BE7F8DD0066D4B6 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EB2BE7F8DD0066D4B6 /* libxml2.tbd */; };
 		B3EF26EE2BE7F8EC0066D4B6 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26ED2BE7F8EC0066D4B6 /* libc++.tbd */; };
 		B3EF26F02BE7F9690066D4B6 /* libc.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EF2BE7F9690066D4B6 /* libc.tbd */; };
-		B3EF26F12BE80B740066D4B6 /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
@@ -2840,6 +2842,13 @@
 			remoteGlobalIDString = B383225D26ED9C530029D12F;
 			remoteInfo = "Check Git Submodules";
 		};
+		B38C69B52BEB2CB300AE4F86 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
+			remoteInfo = TopShelf;
+		};
 		B394CC582BDEE53A006B63E8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
@@ -3247,8 +3256,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B3EF26F12BE80B740066D4B6 /* TopShelf.appex in Embed App Extensions */,
 				B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed App Extensions */,
+				B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 1;
@@ -6678,6 +6687,7 @@
 				B394CC572BDEE53A006B63E8 /* PBXTargetDependency */,
 				B394CC592BDEE53A006B63E8 /* PBXTargetDependency */,
 				B394CC5B2BDEE53A006B63E8 /* PBXTargetDependency */,
+				B38C69B62BEB2CB300AE4F86 /* PBXTargetDependency */,
 			);
 			name = "Provenance (AppStore)";
 			packageProductDependencies = (
@@ -7367,6 +7377,7 @@
 			files = (
 				B394CDB82BDEE53A006B63E8 /* InfoPlist.strings in Resources */,
 				B394CDB92BDEE53A006B63E8 /* Strings.strings in Resources */,
+				B38C69B82BEB37A100AE4F86 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */,
 				B394CDBA2BDEE53A006B63E8 /* HQ2x.fsh in Resources */,
 				B394CDBB2BDEE53A006B63E8 /* AAScale2x.fsh in Resources */,
 				B394CDBC2BDEE53A006B63E8 /* LCD.fsh in Resources */,
@@ -7398,6 +7409,7 @@
 				B3AED2F72BE355B7003A9290 /* LaunchScreenTV.storyboard in Resources */,
 				B394CDD22BDEE53A006B63E8 /* PVGameLibraryCollectionViewCell.xib in Resources */,
 				B394CDD32BDEE53A006B63E8 /* MonoLCD.fsh in Resources */,
+				B38C69B72BEB35E200AE4F86 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */,
 				B394CDD42BDEE53A006B63E8 /* Scale2x.fsh in Resources */,
 				B394CDD52BDEE53A006B63E8 /* Scale4x.fsh in Resources */,
 				B394CDD72BDEE53A006B63E8 /* OmniScaleLegacy.fsh in Resources */,
@@ -9956,6 +9968,14 @@
 			isa = PBXTargetDependency;
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = B383226326ED9F080029D12F /* PBXContainerItemProxy */;
+		};
+		B38C69B62BEB2CB300AE4F86 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				tvos,
+			);
+			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
+			targetProxy = B38C69B52BEB2CB300AE4F86 /* PBXContainerItemProxy */;
 		};
 		B394CC572BDEE53A006B63E8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
