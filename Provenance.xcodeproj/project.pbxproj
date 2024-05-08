@@ -2002,7 +2002,6 @@
 		B3EF26EC2BE7F8DD0066D4B6 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EB2BE7F8DD0066D4B6 /* libxml2.tbd */; };
 		B3EF26EE2BE7F8EC0066D4B6 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26ED2BE7F8EC0066D4B6 /* libc++.tbd */; };
 		B3EF26F02BE7F9690066D4B6 /* libc.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EF26EF2BE7F9690066D4B6 /* libc.tbd */; };
-		B3EF26112BE7678E0066D4B6 /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3F43DCF2168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DD02168075200CDD40A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B3F43DCE2168075200CDD40A /* Settings.bundle */; };
 		B3F43DE22169DB4000CDD40A /* SystemsSettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F43DE12169DB4000CDD40A /* SystemsSettingsTableViewController.swift */; };
@@ -2916,13 +2915,6 @@
 			remoteInfo = CoresRetro;
 		};
 		B3E43F982BE1E7A9002D6F08 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
-			remoteInfo = TopShelf;
-		};
-		B3EF26122BE7678E0066D4B6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
@@ -10045,14 +10037,6 @@
 			isa = PBXTargetDependency;
 			target = B3C8A6BB2878238C0037A946 /* CoresRetro */;
 			targetProxy = B3C8A6B628781EBC0037A946 /* PBXContainerItemProxy */;
-		};
-		B3EF26132BE7678E0066D4B6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilters = (
-				tvos,
-			);
-			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
-			targetProxy = B3EF26122BE7678E0066D4B6 /* PBXContainerItemProxy */;
 		};
 		B3F7E296297736BE00362B92 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
