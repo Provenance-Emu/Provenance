@@ -15,6 +15,10 @@
 		B324C64D21921666009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64C21921666009F4EDC /* PVSupport.framework */; };
 		B3271BDF276B8C660031AECC /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDE276B8C660031AECC /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3547B662058591E00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B652058591D00CFF7D8 /* Core.plist */; };
+		B38C69BA2BEB3F2300AE4F86 /* EventHandler.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BDBF2894B2FA00CF98C7 /* EventHandler.cxx */; };
+		B38C69BC2BEB409C00AE4F86 /* Bezel.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B38C69BB2BEB409C00AE4F86 /* Bezel.cxx */; };
+		B38C69C52BEB426200AE4F86 /* Cart03E0.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B38C69C42BEB426200AE4F86 /* Cart03E0.cxx */; };
+		B38C69C72BEB42B000AE4F86 /* CartGL.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B38C69C62BEB42B000AE4F86 /* CartGL.cxx */; };
 		B38FB4C31C839BE500CD73BE /* PVStella.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FB4C21C839BE500CD73BE /* PVStella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AFCF5C2977A68800A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF5B2977A68800A01010 /* PVLogging */; };
 		B3C96E861D62C1FE003F1E93 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A8494F1C70FD6C008A4D89 /* Foundation.framework */; };
@@ -150,7 +154,6 @@
 		B3E6BF5B2894BB4000CF98C7 /* FrameLayoutDetector.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BDEF2894B2FB00CF98C7 /* FrameLayoutDetector.cxx */; };
 		B3E6BF5C2894BB4000CF98C7 /* JitterEmulation.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BDF02894B2FB00CF98C7 /* JitterEmulation.cxx */; };
 		B3E6BF5D2894BB6E00CF98C7 /* ZipHandler.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BC312894B2F800CF98C7 /* ZipHandler.cxx */; };
-		B3E6BF5E2894BBC800CF98C7 /* EventHandler.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BDBF2894B2FA00CF98C7 /* EventHandler.cxx */; };
 		B3E6BF662894BD0700CF98C7 /* FBSurface.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BDC82894B2FA00CF98C7 /* FBSurface.cxx */; };
 		B3E6BF672894BD2C00CF98C7 /* FrameBuffer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BE622894B2FB00CF98C7 /* FrameBuffer.cxx */; };
 		B3E6BF682894BD4700CF98C7 /* EmulationTiming.cxx in Sources */ = {isa = PBXBuildFile; fileRef = B3E6BDF52894B2FB00CF98C7 /* EmulationTiming.cxx */; };
@@ -344,6 +347,10 @@
 		B3271BDE276B8C660031AECC /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3547B652058591D00CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B377E67F2126A97200D88973 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B38C69BB2BEB409C00AE4F86 /* Bezel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bezel.cxx; sourceTree = "<group>"; };
+		B38C69BD2BEB40B000AE4F86 /* Bezel.hxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Bezel.hxx; sourceTree = "<group>"; };
+		B38C69C42BEB426200AE4F86 /* Cart03E0.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cart03E0.cxx; sourceTree = "<group>"; };
+		B38C69C62BEB42B000AE4F86 /* CartGL.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CartGL.cxx; sourceTree = "<group>"; };
 		B38FB4C01C839BE500CD73BE /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B38FB4C21C839BE500CD73BE /* PVStella.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVStella.h; sourceTree = "<group>"; };
 		B38FB4C41C839BE500CD73BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1898,28 +1905,28 @@
 		B312F972292B0F1E00286CFE /* macos */ = {
 			isa = PBXGroup;
 			children = (
-				B312F973292B0F1E00286CFE /* InfoPlist.strings */,
-				B312F975292B0F1E00286CFE /* AboutBoxTextView.m */,
-				B312F976292B0F1E00286CFE /* SettingsRepositoryMACOS.mm */,
-				B312F977292B0F1E00286CFE /* AboutBox.nib */,
-				B312F978292B0F1E00286CFE /* AboutBox.h */,
-				B312F979292B0F1E00286CFE /* SerialPortMACOS.hxx */,
-				B312F97A292B0F1E00286CFE /* SDLMain.h */,
-				B312F97B292B0F1E00286CFE /* OSystemMACOS.hxx */,
-				B312F97C292B0F1E00286CFE /* SerialPortMACOS.cxx */,
-				B312F980292B0F1E00286CFE /* SDLMain.nib */,
-				B312F981292B0F1E00286CFE /* template.dmg.gz */,
 				B312F982292B0F1E00286CFE /* .gitignore */,
-				B312F983292B0F1E00286CFE /* Cart.icns */,
-				B312F984292B0F1E00286CFE /* SettingsRepositoryMACOS.hxx */,
+				B312F978292B0F1E00286CFE /* AboutBox.h */,
 				B312F985292B0F1E00286CFE /* AboutBox.m */,
-				B312F986292B0F1E00286CFE /* OSystemMACOS.cxx */,
-				B312F987292B0F1E00286CFE /* Info-Stella.plist */,
+				B312F977292B0F1E00286CFE /* AboutBox.nib */,
 				B312F988292B0F1E00286CFE /* AboutBoxTextView.h */,
-				B312F989292B0F1E00286CFE /* SDLMain.m */,
-				B312F98A292B0F1E00286CFE /* Credits.html */,
+				B312F975292B0F1E00286CFE /* AboutBoxTextView.m */,
+				B312F983292B0F1E00286CFE /* Cart.icns */,
 				B312F98B292B0F1E00286CFE /* Create_build.sh */,
+				B312F98A292B0F1E00286CFE /* Credits.html */,
+				B312F987292B0F1E00286CFE /* Info-Stella.plist */,
+				B312F973292B0F1E00286CFE /* InfoPlist.strings */,
+				B312F986292B0F1E00286CFE /* OSystemMACOS.cxx */,
+				B312F97B292B0F1E00286CFE /* OSystemMACOS.hxx */,
+				B312F97A292B0F1E00286CFE /* SDLMain.h */,
+				B312F989292B0F1E00286CFE /* SDLMain.m */,
+				B312F980292B0F1E00286CFE /* SDLMain.nib */,
+				B312F97C292B0F1E00286CFE /* SerialPortMACOS.cxx */,
+				B312F979292B0F1E00286CFE /* SerialPortMACOS.hxx */,
+				B312F984292B0F1E00286CFE /* SettingsRepositoryMACOS.hxx */,
+				B312F976292B0F1E00286CFE /* SettingsRepositoryMACOS.mm */,
 				B312F98C292B0F1E00286CFE /* Stella.icns */,
+				B312F981292B0F1E00286CFE /* template.dmg.gz */,
 			);
 			path = macos;
 			sourceTree = "<group>";
@@ -3200,6 +3207,7 @@
 				B3E6BBD62894B2F800CF98C7 /* AudioQueue.cxx */,
 				B3E6BC2C2894B2F800CF98C7 /* AudioSettings.cxx */,
 				B3E6BC002894B2F800CF98C7 /* Base.cxx */,
+				B38C69BB2BEB409C00AE4F86 /* Bezel.cxx */,
 				B3E6BC272894B2F800CF98C7 /* DevSettingsHandler.cxx */,
 				B3E6BC1D2894B2F800CF98C7 /* EventHandlerSDL2.cxx */,
 				B3E6BBEF2894B2F800CF98C7 /* FBBackendSDL2.cxx */,
@@ -3229,6 +3237,7 @@
 				B3E6BC2F2894B2F800CF98C7 /* AudioQueue.hxx */,
 				B3E6BBD32894B2F800CF98C7 /* AudioSettings.hxx */,
 				B3E6BBE52894B2F800CF98C7 /* Base.hxx */,
+				B38C69BD2BEB40B000AE4F86 /* Bezel.hxx */,
 				B3E6BBDE2894B2F800CF98C7 /* bspf.hxx */,
 				B3E6BBAE2894B2F700CF98C7 /* DevSettingsHandler.hxx */,
 				B3E6BBAB2894B2F700CF98C7 /* EventHandlerSDL2.hxx */,
@@ -3738,6 +3747,7 @@
 				B3E6BE362894B2FB00CF98C7 /* Cart0FA0.cxx */,
 				B3E6BE8B2894B2FB00CF98C7 /* Cart2K.cxx */,
 				B3E6BDC32894B2FA00CF98C7 /* Cart3E.cxx */,
+				B38C69C42BEB426200AE4F86 /* Cart03E0.cxx */,
 				B3E6BE132894B2FB00CF98C7 /* Cart3EPlus.cxx */,
 				B3E6BE4C2894B2FB00CF98C7 /* Cart3EX.cxx */,
 				B3E6BDF72894B2FB00CF98C7 /* Cart3F.cxx */,
@@ -3776,6 +3786,7 @@
 				B3E6BDF92894B2FB00CF98C7 /* CartFA2.cxx */,
 				B3E6BEAB2894B2FC00CF98C7 /* CartFC.cxx */,
 				B3E6BE8E2894B2FB00CF98C7 /* CartFE.cxx */,
+				B38C69C62BEB42B000AE4F86 /* CartGL.cxx */,
 				B3E6BEA62894B2FC00CF98C7 /* CartMDM.cxx */,
 				B3E6BE3F2894B2FB00CF98C7 /* CartMVC.cxx */,
 				B3E6BEAC2894B2FC00CF98C7 /* CartSB.cxx */,
@@ -4163,7 +4174,6 @@
 				B3E6BF682894BD4700CF98C7 /* EmulationTiming.cxx in Sources */,
 				B3E6BEEF2894B3C600CF98C7 /* AtariVox.cxx in Sources */,
 				B3E6BF472894BA6000CF98C7 /* MouseControl.cxx in Sources */,
-				B3E6BF5E2894BBC800CF98C7 /* EventHandler.cxx in Sources */,
 				B3E6BEC72894B37000CF98C7 /* CartX07.cxx in Sources */,
 				B3E6BEE32894B37100CF98C7 /* CartARM.cxx in Sources */,
 				B3E6BF382894BA6000CF98C7 /* Logger.cxx in Sources */,
@@ -4191,6 +4201,7 @@
 				B3E6BF0F2894B3EA00CF98C7 /* Serializer.cxx in Sources */,
 				B3E6BEC22894B37000CF98C7 /* CartEFSC.cxx in Sources */,
 				B3E6BF112894B3EA00CF98C7 /* Joystick.cxx in Sources */,
+				B38C69C72BEB42B000AE4F86 /* CartGL.cxx in Sources */,
 				B3E6BF4A2894BA7700CF98C7 /* CompositeKeyValueRepository.cxx in Sources */,
 				B3E6BF6B2894BDB400CF98C7 /* Driving.cxx in Sources */,
 				B3E6BF6D2894BDF100CF98C7 /* CompuMate.cxx in Sources */,
@@ -4200,6 +4211,7 @@
 				B3E6BF4D2894BA7700CF98C7 /* KeyValueRepositoryPropertyFile.cxx in Sources */,
 				B3E6BF352894BA6000CF98C7 /* StateManager.cxx in Sources */,
 				B3E6BED72894B37100CF98C7 /* CartFA2.cxx in Sources */,
+				B38C69C52BEB426200AE4F86 /* Cart03E0.cxx in Sources */,
 				B3E6BF572894BB3200CF98C7 /* Playfield.cxx in Sources */,
 				B3E6BF2C2894B5FE00CF98C7 /* CheatManager.cxx in Sources */,
 				B3E6BF2F2894B5FE00CF98C7 /* CheetahCheat.cxx in Sources */,
@@ -4223,6 +4235,7 @@
 				B3E6BEC82894B37000CF98C7 /* Cart4A50.cxx in Sources */,
 				B3E6BF6C2894BDD400CF98C7 /* AnalogReadout.cxx in Sources */,
 				B3E6BF512894BB2200CF98C7 /* DrawCounterDecodes.cxx in Sources */,
+				B38C69BA2BEB3F2300AE4F86 /* EventHandler.cxx in Sources */,
 				B3E6BEEA2894B37100CF98C7 /* CartDF.cxx in Sources */,
 				B3E6BF332894BA1C00CF98C7 /* NTSCFilter.cxx in Sources */,
 				B3E6BF192894B3EB00CF98C7 /* M6502.cxx in Sources */,
@@ -4236,6 +4249,7 @@
 				B3E6BF492894BA7700CF98C7 /* KeyValueRepositoryConfigfile.cxx in Sources */,
 				B3E6BF1B2894B3EB00CF98C7 /* Switches.cxx in Sources */,
 				B3E6BECD2894B37000CF98C7 /* CartF6.cxx in Sources */,
+				B38C69BC2BEB409C00AE4F86 /* Bezel.cxx in Sources */,
 				B3E6BECC2894B37000CF98C7 /* CartFE.cxx in Sources */,
 				B3E6BF5B2894BB4000CF98C7 /* FrameLayoutDetector.cxx in Sources */,
 				B3E6BF4B2894BA7700CF98C7 /* CompositeKVRJsonAdapter.cxx in Sources */,
@@ -4630,7 +4644,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -4664,7 +4678,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -4697,7 +4711,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;

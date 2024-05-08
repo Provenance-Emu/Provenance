@@ -328,10 +328,15 @@ static void writeSaveFile(const char* path, int type) {
     info.size = size;
     info.meta = meta;
     
-    if (retro_load_game(&info)) {
+    BOOL loaded = retro_load_game(&info);
+
+    if (loaded) {
         if ([self.batterySavesPath length]) {
-            [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath withIntermediateDirectories:YES attributes:nil error:NULL];
-            
+            [[NSFileManager defaultManager] createDirectoryAtPath:self.batterySavesPath 
+                                      withIntermediateDirectories:YES
+                                                       attributes:nil
+                                                            error:NULL];
+
             NSString *filePath = [self.batterySavesPath stringByAppendingPathComponent:[self.romName stringByAppendingPathExtension:@"sav"]];
             
             [self loadSaveFile:filePath forType:RETRO_MEMORY_SAVE_RAM];
@@ -348,16 +353,19 @@ static void writeSaveFile(const char* path, int type) {
         retro_run();
         
         return YES;
-    }
+    } else {
+        if(error) {
+            *error = [NSError errorWithDomain:@"" code:-1 userInfo:@{
+                NSLocalizedDescriptionKey : @"Failed to load ROM",
+                NSLocalizedRecoverySuggestionErrorKey : @"Stella could not load the ROM. The core does not supply additional information."
+            }];
+        }
 
-    if(error) {
-        *error = [NSError errorWithDomain:@"" code:-1 userInfo:@{
-            NSLocalizedDescriptionKey : @"Failed to load ROM",
-            NSLocalizedRecoverySuggestionErrorKey : @"Stella could not load the ROM. The core does not supply additional information."
-        }];
-    }
+        ELOG(@"Stella failed to load ROM.")
 
-    return NO;
+        return NO;
+
+    }
 }
 
 #pragma mark - Input
