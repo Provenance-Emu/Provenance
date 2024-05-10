@@ -49,8 +49,8 @@
 typedef                         uint32_t     stellabuffer_t;
 #define STELLA_PITCH_SHIFT      2
 #define STELLA_PIXEL_TYPE       GL_UNSIGNED_BYTE
-#define STELLA_PIXEL_FORMAT     GL_BGRA
-#define STELLA_INTERNAL_FORMAT  GL_RGBA
+#define STELLA_PIXEL_FORMAT     GL_RGB565
+#define STELLA_INTERNAL_FORMAT  GL_RGB565
 
 #define STELLA_WIDTH 160
 #define STELLA_HEIGHT 256
@@ -169,13 +169,32 @@ static bool environment_callback(unsigned cmd, void *data) {
             return true;
         }
         case RETRO_ENVIRONMENT_SET_PIXEL_FORMAT: {
-//            *(retro_pixel_format *)data = RETRO_PIXEL_FORMAT_0RGB1555;
-            return false;
+            enum retro_pixel_format pix_fmt = *(const enum retro_pixel_format*)data;
+            switch (pix_fmt)
+            {
+                case RETRO_PIXEL_FORMAT_0RGB1555:
+                    NSLog(@"Environ SET_PIXEL_FORMAT: 0RGB1555");
+                    break;
+
+                case RETRO_PIXEL_FORMAT_RGB565:
+                    NSLog(@"Environ SET_PIXEL_FORMAT: RGB565");
+                    break;
+
+                case RETRO_PIXEL_FORMAT_XRGB8888:
+                    NSLog(@"Environ SET_PIXEL_FORMAT: XRGB8888");
+                    break;
+
+                default:
+                    return false;
+            }
+            //currentPixFmt = pix_fmt;
+            break;
         }
         case RETRO_ENVIRONMENT_GET_VARIABLE: {
             struct retro_variable *var = (struct retro_variable*)data;
             NSString *varS = [NSString stringWithUTF8String:var->key];
             id _Nullable oValue = [strongCurrent getVariable:varS];
+
             NSString *value = [oValue string];
             if(oValue && value && value.length) {
                 var->value = value.cString;
