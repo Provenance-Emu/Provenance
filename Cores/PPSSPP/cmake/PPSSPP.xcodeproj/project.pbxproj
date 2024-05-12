@@ -14249,7 +14249,7 @@
 					"-Wno-multichar",
 					"$(inherited)",
 				);
-				OTHER_LIBTOOLFLAGS = " ../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/filesystem.o ../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/stack_line_reader.o ../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/string_view.o ../cmake/build/unix_based_hardware_detection.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/hwcaps.o";
+				OTHER_LIBTOOLFLAGS = "../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/filesystem.o ../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/stack_line_reader.o ../cmake/build/utils.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/string_view.o ../cmake/build/unix_based_hardware_detection.build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/$(OBJECT_FILE_DIR_normal:base)/arm64/hwcaps.o";
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = cpu_featuresPPSSPP;
 				SECTORDER_FLAGS = "";

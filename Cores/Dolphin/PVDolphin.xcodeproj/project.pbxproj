@@ -32,7 +32,6 @@
 		93829B18298980F50061038E /* libdolphin-commonDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFAC92949E94400CC8234 /* libdolphin-commonDolphin.a */; };
 		939AAF6C2A791EA8007709E5 /* libdolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdolphin.a */; };
 		93C33A952952192200CC86C5 /* libdolphin-coreDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACB2949E94400CC8234 /* libdolphin-coreDolphin.a */; };
-		93CB27CC297CE59B006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93CB27CB297CE59B006A940B /* libMoltenVK_Dolphin.dylib */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		93CB27D0297CE5DF006A940B /* VulkanLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CB27CF297CE5DF006A940B /* VulkanLoader.cpp */; };
 		B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDolphinCore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVDolphinCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDolphinCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -15562,7 +15561,6 @@
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
-				93CB27CC297CE59B006A940B /* libMoltenVK_Dolphin.dylib in Frameworks */,
 				B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -40523,10 +40521,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -40704,10 +40702,10 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

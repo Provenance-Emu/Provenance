@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -3190,7 +3190,7 @@
 				CLASSPREFIX = PV;
 				LastSwiftUpdateCheck = 1320;
 				LastUpgradeCheck = 1300;
-				ORGANIZATIONNAME = "Provenance Emu";
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B33FADAF279BCAB40013AAD8 = {
 						CreatedOnToolsVersion = 13.2.1;
@@ -3202,7 +3202,7 @@
 				};
 			};
 			buildConfigurationList = 1ACEA8DF17F75F350031B1C9 /* Build configuration list for PBXProject "PVSnesticle" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -3210,6 +3210,7 @@
 				Base,
 			);
 			mainGroup = 1ACEA8DB17F75F350031B1C9;
+			minimizedProjectReferenceProxies = 1;
 			productRefGroup = 1ACEA8E517F75F350031B1C9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
