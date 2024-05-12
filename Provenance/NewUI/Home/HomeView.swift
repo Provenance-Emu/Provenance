@@ -70,11 +70,11 @@ struct HomeView: SwiftUI.View {
                         HomeDividerView()
                     }
                     HomeSection(title: "Recently Played") {
-                        ForEach(recentlyPlayedGames, id: \.self) { recentlyPlayedGame in
-                            GameItemView(game: recentlyPlayedGame.game, constrainHeight: true) {
-                                rootDelegate?.root_load(recentlyPlayedGame.game, sender: self, core: nil, saveState: nil)
+                        ForEach(recentlyPlayedGames.compactMap{$0.game}, id: \.self) { game in
+                            GameItemView(game: game, constrainHeight: true) {
+                                rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                             }
-                            .contextMenu { GameContextMenu(game: recentlyPlayedGame.game, rootDelegate: rootDelegate) }
+                            .contextMenu { GameContextMenu(game: game, rootDelegate: rootDelegate) }
                         }
                     }
                     HomeDividerView()
