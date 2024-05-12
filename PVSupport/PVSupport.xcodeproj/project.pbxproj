@@ -21,6 +21,7 @@
 		B32299672878DBE000585AD8 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC36B286717AE00B60497 /* dynamic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B322996C28792B4000585AD8 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
 		B322996E28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
+		B32D86032BF06A4E0018ED51 /* NSFileManager+OEHashingAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32D86022BF06A4E0018ED51 /* NSFileManager+OEHashingAdditions.swift */; };
 		B33FB2EB279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */; };
 		B33FB2EF279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */; };
 		B33FB2F3279BE1320013AAD8 /* CoreOptions+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */; };
@@ -33,18 +34,17 @@
 		B342325B286EB4060033EFA5 /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6452867202D00B60497 /* dylib.c */; };
 		B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
 		B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
-		B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */; };
 		B3447E8C218B7E4B00557ACE /* CAAutoDisposer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E82218B7E4B00557ACE /* CAAutoDisposer.h */; };
 		B3447E8E218B7E4B00557ACE /* CAAtomic.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E83218B7E4B00557ACE /* CAAtomic.h */; };
 		B3447E90218B7E4B00557ACE /* CAAudioTimeStamp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E84218B7E4B00557ACE /* CAAudioTimeStamp.cpp */; };
-		B3447E92218B7E4B00557ACE /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E85218B7E4B00557ACE /* CARingBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		B3447E92218B7E4B00557ACE /* CARingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E85218B7E4B00557ACE /* CARingBuffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3447F9B218C1CD200557ACE /* PVSettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447F9A218C1CD200557ACE /* PVSettingsModel.swift */; };
 		B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3E6DADD20B7BF8600454DD4 /* UIDeviceExtension.swift */; };
 		B34AB5792106DC5300C45F09 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69517F748F80031B1C9 /* TPCircularBuffer.c */; };
 		B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C36207EE15D0040709A /* CoreOptions.swift */; };
 		B34AB57B2106DC6100C45F09 /* NSObject+PVAbstractAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */; };
-		B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */; };
 		B34AB57D2106DC6100C45F09 /* RealTimeThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 0592894E1DC194FD0012644D /* RealTimeThread.m */; };
 		B34AB57E2106DC6100C45F09 /* PVEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D601D6B90BD00060D71 /* PVEmulatorCore.m */; };
 		B34AB57F2106DC6100C45F09 /* PVEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8920522B04001D3D2E /* PVEmulatorCore.swift */; };
@@ -94,7 +94,6 @@
 		B3D0EE2A277FE8E1002DC0A5 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D0EE29277FE8E0002DC0A5 /* CoreHaptics.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3D180A328964C40001207AF /* PVLibRetroCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A128964C3B001207AF /* PVLibRetroCore+Controls.m */; };
 		B3D180A528964C40001207AF /* PVLibRetroCore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D180A228964C40001207AF /* PVLibRetroCore+Saves.m */; };
-		B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3DF963F288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3DF963D288D6B5800300A38 /* PVLibRetroGLESCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3DF9641288D6B5800300A38 /* PVLibRetroGLESCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF963E288D6B5800300A38 /* PVLibRetroGLESCore.m */; };
 		B3E5BDBF29777D6C0011CCBF /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3E5BDBE29777D6C0011CCBF /* PVLogging */; };
@@ -260,6 +259,7 @@
 		B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "PVLibRetro-Build.xcconfig"; sourceTree = "<group>"; };
 		B322994E2878D18D00585AD8 /* PVLibRetro-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVLibRetro-Prefix.pch"; sourceTree = "<group>"; };
 		B324C3152191963B009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		B32D86022BF06A4E0018ED51 /* NSFileManager+OEHashingAdditions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSFileManager+OEHashingAdditions.swift"; sourceTree = "<group>"; };
 		B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreOptions+Serialization.swift"; sourceTree = "<group>"; };
 		B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptionValueDisplay.swift; sourceTree = "<group>"; };
 		B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreOptions+Protocols.swift"; sourceTree = "<group>"; };
@@ -3143,6 +3143,7 @@
 				1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */,
 				B3D73D3B1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h */,
 				B3D73D3C1EA15BB20023925B /* NSFileManager+OEHashingAdditions.m */,
+				B32D86022BF06A4E0018ED51 /* NSFileManager+OEHashingAdditions.swift */,
 			);
 			path = NSExtensions;
 			sourceTree = "<group>";
@@ -3290,7 +3291,6 @@
 				B3447E8E218B7E4B00557ACE /* CAAtomic.h in Headers */,
 				B3A4FB5A278FE45D00A65248 /* OEGeometry.h in Headers */,
 				B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */,
-				B3D73D3D1EA15BB20023925B /* NSFileManager+OEHashingAdditions.h in Headers */,
 				B3FA5D631D6B90BD00060D71 /* PVEmulatorCore.h in Headers */,
 				B3447E8C218B7E4B00557ACE /* CAAutoDisposer.h in Headers */,
 				B3C96ED01D62C5E7003F1E93 /* TPCircularBuffer.h in Headers */,
@@ -3542,6 +3542,7 @@
 				B3AB37DC21881869009D9244 /* PViCadeInputAxis.swift in Sources */,
 				B33FB304279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */,
 				B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */,
+				B32D86032BF06A4E0018ED51 /* NSFileManager+OEHashingAdditions.swift in Sources */,
 				B34AB57A2106DC6100C45F09 /* CoreOptions.swift in Sources */,
 				B33FB2F3279BE1320013AAD8 /* CoreOptions+Protocols.swift in Sources */,
 				B34AB5762106DC4C00C45F09 /* UIDeviceExtension.swift in Sources */,
@@ -3556,7 +3557,6 @@
 				B33FB308279BE2460013AAD8 /* CoreOptionValue.swift in Sources */,
 				B33FB2EF279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */,
 				B33FB2F8279BE1730013AAD8 /* CoreOptionMultiValue.swift in Sources */,
-				B34AB57C2106DC6100C45F09 /* NSFileManager+OEHashingAdditions.m in Sources */,
 				B3AB37DA21881670009D9244 /* PViCadeGamepadButtonInput.swift in Sources */,
 				B3532C3621A925C2006CDA0F /* SortOption.swift in Sources */,
 				CF87D333258AB6B300838AF8 /* GameWithCheat.swift in Sources */,
@@ -3913,17 +3913,17 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4157,12 +4157,14 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4222,13 +4224,15 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4287,13 +4291,15 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4347,16 +4353,16 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4399,17 +4405,17 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				APPLICATION_EXTENSION_API_ONLY = NO;
-				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

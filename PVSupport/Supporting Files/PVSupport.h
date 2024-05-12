@@ -43,7 +43,7 @@ FOUNDATION_EXPORT const unsigned char PVSupport_FrameworkVersionString[];
     #import <PVSupport/DebugUtils.h>
     #import <PVSupport/PVEmulatorCore.h>
     #import <PVSupport/NSObject+PVAbstractAdditions.h>
-    #import <PVSupport/NSFileManager+OEHashingAdditions.h>
+//    #import <PVSupport/NSFileManager+OEHashingAdditions.h>
     #import <PVLogging/PVLogging.h>
 
     # pragma mark - Audio
