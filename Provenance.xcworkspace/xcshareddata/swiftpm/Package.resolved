@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
         "state": {
           "branch": null,
-          "revision": "5949cbd3d4f3f97968bb40b6cd232f8315c6341c",
-          "version": "6.7.0"
+          "revision": "b06a8c8596e4c3e8e7788e08e720e3248563ce6a",
+          "version": "6.7.1"
         }
       },
       {
@@ -150,7 +150,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "ffde100b68bcfa76bc62e3ac7421068dba927f0e",
+          "revision": "97291fc5020a8994019ab76cf0cda83a9824374c",
           "version": null
         }
       }
