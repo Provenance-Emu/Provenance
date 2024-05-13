@@ -1133,7 +1133,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                     let resetAlert = UIAlertController(title: "Reset core?", message: "Are you sure you want to reset \(game.title) to no longer default to use \(coreName)?", preferredStyle: .alert)
                     resetAlert.preferredContentSize = CGSize(width: 300, height: 150)
                     resetAlert.popoverPresentationController?.sourceView = sender
-                    resetAlert.popoverPresentationController?.sourceRect = sender.bounds ?? UIScreen.main.bounds
+                    resetAlert.popoverPresentationController?.sourceRect = sender.bounds 
                     resetAlert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                     resetAlert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { _ in
                         try! RomDatabase.sharedInstance.writeTransaction {
@@ -1194,7 +1194,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             let alert = UIAlertController(title: nil, message: "URL copied to clipboard.", preferredStyle: .alert)
             alert.preferredContentSize = CGSize(width: 300, height: 150)
             alert.popoverPresentationController?.sourceView = sender
-            alert.popoverPresentationController?.sourceRect = sender.bounds ?? UIScreen.main.bounds
+            alert.popoverPresentationController?.sourceRect = sender.bounds 
             self.present(alert, animated: true)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                 alert.dismiss(animated: true, completion: nil)
@@ -1356,7 +1356,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title):", preferredStyle: .alert)
         alert.preferredContentSize = CGSize(width: 300, height: 150)
         alert.popoverPresentationController?.sourceView = sender
-        alert.popoverPresentationController?.sourceRect = sender.bounds ?? UIScreen.main.bounds
+        alert.popoverPresentationController?.sourceRect = sender.bounds 
         alert.addTextField(configurationHandler: { (_ textField: UITextField) -> Void in
             textField.placeholder = game.title
             textField.text = game.title

@@ -874,7 +874,7 @@ public extension GameImporter {
         // If we have a matching game from a multi-match above, use that, or run a query by path and see if there's a match there
 
         // For multi-cd games, make the most inert version of the filename
-        var similarName = RomDatabase.sharedInstance.altName(path, systemIdentifier: system.identifier)
+        let similarName = RomDatabase.sharedInstance.altName(path, systemIdentifier: system.identifier)
         if let existingGame = maybeGame ?? // found a match above?
             RomDatabase.sharedInstance.getGamesCache()[partialPath] ??
             RomDatabase.sharedInstance.getGamesCache()[similarName],
@@ -1162,7 +1162,7 @@ public extension GameImporter {
         return game
     }
 
-    public func getArtwork(forGame game: PVGame) -> PVGame {
+    func getArtwork(forGame game: PVGame) -> PVGame {
         var url = game.originalArtworkURL
         if url.isEmpty {
             return game
