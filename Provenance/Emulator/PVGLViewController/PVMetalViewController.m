@@ -397,11 +397,19 @@ PV_OBJC_DIRECT_MEMBERS
     
     if (!self.emulatorCore.rendersToOpenGL)
     {
-        uint formatByteWidth = [self getByteWidthForPixelFormat:self.emulatorCore.pixelFormat type:self.emulatorCore.pixelType];
-        
+        uint formatByteWidth = [self getByteWidthForPixelFormat:self.emulatorCore.pixelFormat 
+                                                           type:self.emulatorCore.pixelType];
+
         for (int i = 0; i < BUFFER_COUNT; ++i)
         {
-            _uploadBuffer[i] = [_device newBufferWithLength:self.emulatorCore.bufferSize.width * self.emulatorCore.bufferSize.height * formatByteWidth options:MTLResourceStorageModeShared];
+            NSUInteger length = self.emulatorCore.bufferSize.width * self.emulatorCore.bufferSize.height * formatByteWidth;
+            if (length != 0) {
+                _uploadBuffer[i] = [_device newBufferWithLength:length
+                                                        options:MTLResourceStorageModeShared];
+            } else {
+                CGSize bufferSize = self.emulatorCore.bufferSize;
+                WLOG(@"Invalid buffer size: Should be non-zero. Is <%f,%f>", bufferSize.width, bufferSize.height);
+            }
         }
     }
     

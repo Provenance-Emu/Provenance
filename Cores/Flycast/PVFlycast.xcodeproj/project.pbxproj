@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -397,125 +397,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		931C042A2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = A38134A94AA54E9BB8D97552;
-			remoteInfo = GenericCodeGenFlycast;
-		};
-		931C042C2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9E3925D883E54283B9D9818B;
-			remoteInfo = MachineIndependentFlycast;
-		};
-		931C042E2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CEE02E2C2C304EDC9B6E7538;
-			remoteInfo = OGLCompilerFlycast;
-		};
-		931C04302A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8FC3FA13C6544DA0861763AC;
-			remoteInfo = OSDependentFlycast;
-		};
-		931C04322A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 633E7C7AB7AA4D64AF3DEE7A;
-			remoteInfo = SPIRVFlycast;
-		};
-		931C04362A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 3A06ECA0ADF345BEB1C672FD;
-			remoteInfo = "chdr-staticFlycast";
-		};
-		931C04382A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EE552274B7A24CA192A5F683;
-			remoteInfo = elfFlycast;
-		};
-		931C043A2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 41465F1CC43748E5A1275471;
-			remoteInfo = "flycast-resourcesFlycast";
-		};
-		931C043C2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = B28EC58696994C6F8B1071D7;
-			remoteInfo = flycast_libretroFlycast;
-		};
-		931C043E2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8583632333D54DFFBB1FF9EB;
-			remoteInfo = glslangFlycast;
-		};
-		931C04402A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 769D9D1BF78C4B8580D3452A;
-			remoteInfo = "glslang-default-resource-limitsFlycast";
-		};
-		931C04422A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CC6E2E9514914D8E9A601D1B;
-			remoteInfo = "libminiupnpc-staticFlycast";
-		};
-		931C04442A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C14EF6B0205E413BA4E583CE;
-			remoteInfo = lzmaFlycast;
-		};
-		931C04462A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4E35253DCFC6463391ECA222;
-			remoteInfo = nowideFlycast;
-		};
-		931C04482A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D9D2057BBE424F219134366D;
-			remoteInfo = xxhashFlycast;
-		};
-		931C044A2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6D914C31B10742A7B3B734BF;
-			remoteInfo = zipFlycast;
-		};
-		931C044C2A89B17D00759ACB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = AC7317D8DA9541D9A3308B23;
-			remoteInfo = zlibFlycast;
-		};
 		931C04CC2A89E12400759ACB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 931C04112A89B17D00759ACB /* flycast_libretro.xcodeproj */;
@@ -8666,23 +8547,6 @@
 		931C04122A89B17D00759ACB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				931C042B2A89B17D00759ACB /* libGenericCodeGenFlycast.a */,
-				931C042D2A89B17D00759ACB /* libMachineIndependentFlycast.a */,
-				931C042F2A89B17D00759ACB /* libOGLCompilerFlycast.a */,
-				931C04312A89B17D00759ACB /* libOSDependentFlycast.a */,
-				931C04332A89B17D00759ACB /* libSPIRVFlycast.a */,
-				931C04372A89B17D00759ACB /* libchdr-staticFlycast.a */,
-				931C04392A89B17D00759ACB /* libelfFlycast.a */,
-				931C043B2A89B17D00759ACB /* libflycast-resourcesFlycast.a */,
-				931C043D2A89B17D00759ACB /* flycast_libretroFlycast.dylib */,
-				931C043F2A89B17D00759ACB /* libglslangFlycast.a */,
-				931C04412A89B17D00759ACB /* libglslang-default-resource-limitsFlycast.a */,
-				931C04432A89B17D00759ACB /* libminiupnpcFlycast.a */,
-				931C04452A89B17D00759ACB /* liblzmaFlycast.a */,
-				931C04472A89B17D00759ACB /* libnowideFlycast.a */,
-				931C04492A89B17D00759ACB /* libxxhashFlycast.a */,
-				931C044B2A89B17D00759ACB /* libzipFlycast.a */,
-				931C044D2A89B17D00759ACB /* libzFlycast.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -22854,7 +22718,7 @@
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVFlycast" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -22875,6 +22739,7 @@
 				nl,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -22893,128 +22758,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		931C042B2A89B17D00759ACB /* libGenericCodeGenFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libGenericCodeGenFlycast.a;
-			remoteRef = 931C042A2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C042D2A89B17D00759ACB /* libMachineIndependentFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libMachineIndependentFlycast.a;
-			remoteRef = 931C042C2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C042F2A89B17D00759ACB /* libOGLCompilerFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libOGLCompilerFlycast.a;
-			remoteRef = 931C042E2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04312A89B17D00759ACB /* libOSDependentFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libOSDependentFlycast.a;
-			remoteRef = 931C04302A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04332A89B17D00759ACB /* libSPIRVFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libSPIRVFlycast.a;
-			remoteRef = 931C04322A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04372A89B17D00759ACB /* libchdr-staticFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libchdr-staticFlycast.a";
-			remoteRef = 931C04362A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04392A89B17D00759ACB /* libelfFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libelfFlycast.a;
-			remoteRef = 931C04382A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C043B2A89B17D00759ACB /* libflycast-resourcesFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libflycast-resourcesFlycast.a";
-			remoteRef = 931C043A2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C043D2A89B17D00759ACB /* flycast_libretroFlycast.dylib */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = flycast_libretroFlycast.dylib;
-			remoteRef = 931C043C2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C043F2A89B17D00759ACB /* libglslangFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libglslangFlycast.a;
-			remoteRef = 931C043E2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04412A89B17D00759ACB /* libglslang-default-resource-limitsFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libglslang-default-resource-limitsFlycast.a";
-			remoteRef = 931C04402A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04432A89B17D00759ACB /* libminiupnpcFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libminiupnpcFlycast.a;
-			remoteRef = 931C04422A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04452A89B17D00759ACB /* liblzmaFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = liblzmaFlycast.a;
-			remoteRef = 931C04442A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04472A89B17D00759ACB /* libnowideFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libnowideFlycast.a;
-			remoteRef = 931C04462A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C04492A89B17D00759ACB /* libxxhashFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libxxhashFlycast.a;
-			remoteRef = 931C04482A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C044B2A89B17D00759ACB /* libzipFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libzipFlycast.a;
-			remoteRef = 931C044A2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		931C044D2A89B17D00759ACB /* libzFlycast.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libzFlycast.a;
-			remoteRef = 931C044C2A89B17D00759ACB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B3C7620E20783162009950E4 /* Resources */ = {
@@ -23870,10 +23613,10 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -24015,10 +23758,10 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = NO;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

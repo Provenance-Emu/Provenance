@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1047,13 +1047,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B322A97D2971451800F0D876;
 			remoteInfo = "fbneo-dylb";
-		};
-		B3C48066297114F00040C177 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3C48062297114F00040C177 /* Emulator.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = FE1B108D235615940065200C;
-			remoteInfo = Emulator;
 		};
 		B3C480B5297115700040C177 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -8234,7 +8227,6 @@
 		B3C48063297114F00040C177 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3C48067297114F00040C177 /* FinalBurn Neo.app */,
 				B3C480B6297115700040C177 /* libfbneo.a */,
 			);
 			name = Products;
@@ -8382,7 +8374,7 @@
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVFBNeo" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -8401,6 +8393,7 @@
 				nl,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -8420,13 +8413,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B3C48067297114F00040C177 /* FinalBurn Neo.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = "FinalBurn Neo.app";
-			remoteRef = B3C48066297114F00040C177 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		B3C480B6297115700040C177 /* libfbneo.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -9714,10 +9700,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -9972,10 +9958,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -10003,10 +9989,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

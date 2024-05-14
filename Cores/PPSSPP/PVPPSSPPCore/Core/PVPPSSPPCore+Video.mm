@@ -241,6 +241,27 @@ static bool threadStopped = false;
         rootController = cgsh_view_controller;
     }
     [self setupVideo];
+
+#if TARGET_OS_TV
+    [gl_view_controller addChildViewController:rootController];
+    [rootController didMoveToParentViewController:gl_view_controller];
+    if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
+        self.renderDelegate.mtlview.autoresizesSubviews = true;
+        self.renderDelegate.mtlview.clipsToBounds = true;
+        [self.renderDelegate.mtlview addSubview:m_view];
+    } else {
+        gl_view_controller.view.autoresizesSubviews = true;
+        gl_view_controller.view.clipsToBounds = true;
+        [gl_view_controller.view addSubview:m_view];
+    }
+    CGRect bounds = [[UIScreen mainScreen] bounds];
+    [m_view.widthAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.widthAnchor].active=true;
+    [m_view.heightAnchor constraintGreaterThanOrEqualToAnchor:gl_view_controller.view.heightAnchor constant: 0].active=true;
+    [m_view.topAnchor constraintEqualToAnchor:gl_view_controller.view.topAnchor constant:0].active = true;
+    [m_view.leadingAnchor constraintEqualToAnchor:gl_view_controller.view.leadingAnchor constant:0].active = true;
+    [m_view.trailingAnchor constraintEqualToAnchor:gl_view_controller.view.trailingAnchor constant:0].active = true;
+    [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
+#else
     if (self.touchViewController) {
         NSLog(@"setupView: Touch View");
         [self.touchViewController.view addSubview:m_view];
@@ -255,9 +276,7 @@ static bool threadStopped = false;
         [[rootController.view.trailingAnchor constraintEqualToAnchor:self.touchViewController.view.trailingAnchor] setActive:YES];
         self.touchViewController.view.userInteractionEnabled=true;
         self.touchViewController.view.autoresizesSubviews=true;
-#if !TARGET_OS_TV
         self.touchViewController.view.multipleTouchEnabled=true;
-#endif
     } else {
         [gl_view_controller addChildViewController:rootController];
         [rootController didMoveToParentViewController:gl_view_controller];
@@ -288,7 +307,8 @@ static bool threadStopped = false;
             [m_view.bottomAnchor constraintEqualToAnchor:gl_view_controller.view.bottomAnchor constant:0].active = true;
         }
     }
-     
+#endif
+
     // Display connected
     [[NSNotificationCenter defaultCenter] addObserverForName:UIScreenDidConnectNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull notification) {
             UIScreen *screen = (UIScreen *) notification.object;
@@ -317,7 +337,10 @@ static bool threadStopped = false;
         // GPUCORE_VULKAN
         g_Config.iGPUBackend = (int)GPUBackend::VULKAN;
         PSP_CoreParameter().gpuCore         = GPUCORE_VULKAN;
-        graphicsContext = new VulkanGraphicsContext(m_metal_layer, "@executable_path/Frameworks/libMoltenVK_PPSSPP.dylib");
+        graphicsContext = new VulkanGraphicsContext(m_metal_layer, "@executable_path/Frameworks/MoltenVK.framework/MoltenVK");
+        if(!graphicsContext) {
+            graphicsContext = new VulkanGraphicsContext(m_metal_layer, "@executable_path/Frameworks/libMoltenVK.dylib");
+        }
     }
     graphicsContext->GetDrawContext()->SetErrorCallback([](const char *shortDesc, const char *details, void *userdata) {
         NSLog(@"setupVideo: Notify User Message: %s %s\n", shortDesc, details);
@@ -405,7 +428,7 @@ static bool threadStopped = false;
 # pragma mark - Properties
 
 - (CGSize)bufferSize {
-	return CGSizeMake(0,0);
+    return CGSizeMake(0,0);
 }
 
 - (CGRect)screenRect {

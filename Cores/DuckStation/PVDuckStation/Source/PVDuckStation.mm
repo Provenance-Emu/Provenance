@@ -1382,7 +1382,7 @@ bool Host::AcquireHostDisplay(RenderAPI api)
 
         // Use `libMoltenVK.dylib`
         // Needs Vulkan 1.1+
-        const char * filename = [NSString stringWithFormat:@"%@/libMoltenVK.dylib", bundle.sharedFrameworksPath].cString;
+        const char * filename = [NSString stringWithFormat:@"%@/MoltenVK.framework/MoltenVK", bundle.sharedFrameworksPath].cString;
 
             // Set vulkan path to molktenVK
         setenv("LIBVULKAN_PATH", filename, 1);

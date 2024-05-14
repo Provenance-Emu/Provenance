@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -896,7 +896,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				LastUpgradeCheck = 1250;
-				ORGANIZATIONNAME = "Provenance Emu";
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B36DE7471D6AB19C002EE3ED = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -907,7 +907,7 @@
 				};
 			};
 			buildConfigurationList = 0269535B143169EA003A07D4 /* Build configuration list for PBXProject "PVDuckStation" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -915,6 +915,7 @@
 				Base,
 			);
 			mainGroup = 02695356143169EA003A07D4;
+			minimizedProjectReferenceProxies = 1;
 			productRefGroup = 02695362143169EB003A07D4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (

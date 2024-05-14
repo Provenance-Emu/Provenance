@@ -91,7 +91,7 @@ static bool processed;
 }
 #pragma mark - Methods
 
-- (bool) saveComplete:(void (^)(BOOL, NSError *))block {
+- (void) saveComplete:(void (^)(BOOL, NSError *))block {
     while (!isComplete && processed) {
         sleep_ms(WAIT_INTERVAL);
     }

@@ -284,7 +284,110 @@ extension MednafenGameCore: CoreOptional {
             description: "Show horizontal overscan area.",
             requiresRestart: true), defaultValue: true)
     }()
-    
+
+    static var psx_temporal_blur: CoreOption = {
+        .bool(.init(
+            title: "Temporal Blur",
+            description: "Enable video temporal blur(50/50 previous/current frame by default).",
+            requiresRestart: true), defaultValue: false)
+    }()
+
+    static var psx_temporal_blur_color: CoreOption = {
+        .bool(.init(
+            title: "Temporal Color",
+            description: "Accumulate color data rather than discarding it. Also requires Temporal Blur.",
+            requiresRestart: true), defaultValue: false)
+    }()
+
+            /*
+             Enable specified special video scaler.
+             The destination rectangle is NOT altered by this setting, so if you have xscale and yscale set to "2", and try to use a 3x scaling filter like hq3x, the image is not going to look that great. The nearest-neighbor scalers are intended for use with bilinear interpolation enabled, at high resolutions(such as 1280x1024; nn2x(or nny2x) + bilinear interpolation + fullscreen stretching at this resolution looks quite nice).
+
+             none - None/Disabled
+
+             hq2x - hq2x
+
+             hq3x - hq3x
+
+             hq4x - hq4x
+
+             scale2x - scale2x
+
+             scale3x - scale3x
+
+             scale4x - scale4x
+
+             2xsai - 2xSaI
+
+             super2xsai - Super 2xSaI
+
+             supereagle - Super Eagle
+
+             nn2x - Nearest-neighbor 2x
+
+             nn3x - Nearest-neighbor 3x
+
+             nn4x - Nearest-neighbor 4x
+
+             nny2x - Nearest-neighbor 2x, y axis only
+
+             nny3x - Nearest-neighbor 3x, y axis only
+
+             nny4x - Nearest-neighbor 4x, y axis only
+             */
+    static var psx_video_scaler: CoreOption = {
+        .enumeration(.init(title: "Enable specified special video scaler",
+                           description: " The destination rectangle is NOT altered by this setting, so if you have xscale and yscale set to \"2\", and try to use a 3x scaling filter like hq3x, the image is not going to look that great. The nearest-neighbor scalers are intended for use with bilinear interpolation enabled, at high resolutions(such as 1280x1024; nn2x(or nny2x) + bilinear interpolation + fullscreen stretching at this resolution looks quite nice).",
+                           requiresRestart: true),
+                     values: [
+                        .init(title: "None", description: "None/Disabled", value: 0),
+                        .init(title: "hq2x", description: "hq2x", value: 1),
+                        .init(title: "hq3x", description: "hq3x", value: 2),
+                        .init(title: "hq4x", description: "hq4x", value: 3),
+                        .init(title: "scale2x", description: "scale2x", value: 4),
+                        .init(title: "scale3x", description: "scale3x", value: 5),
+                        .init(title: "scale4x", description: "scale4x", value: 6),
+                        .init(title: "2xsai", description: "2xSaI", value: 7),
+                        .init(title: "super2xsai", description: "Super 2xSaI", value: 8),
+                        .init(title: "supereagle", description: "Super Eagle", value: 9),
+                        .init(title: "nn2x", description: "Nearest-neighbor 2x", value: 10),
+                        .init(title: "nn3x", description: "Nearest-neighbor 3x", value: 11),
+                        .init(title: "nn4x", description: "Nearest-neighbor 4x", value: 12),
+                        .init(title: "nny2x", description: "Nearest-neighbor 2x, y axis only", value: 13),
+                        .init(title: "nny3x", description: "Nearest-neighbor 2x, y axis only", value: 14),
+                        .init(title: "nny4x", description: "Nearest-neighbor 2x, y axis only", value: 15),
+                     ],
+                     defaultValue: 0)
+    }()
+            /*
+             0 - Disabled
+
+             full - Full
+             Full-screen stretch, disregarding aspect ratio.
+
+             aspect - Aspect Preserve
+             Full-screen stretch as far as the aspect ratio(in this sense, the equivalent xscalefs == yscalefs) can be maintained.
+
+             aspect_int - Aspect Preserve + Integer Scale
+             Full-screen stretch, same as "aspect" except that the equivalent xscalefs and yscalefs are rounded down to the nearest integer.
+
+             aspect_mult2 - Aspect Preserve + Integer Multiple-of-2 Scale
+             Full-screen stretch, same as "aspect_int", but rounds down to the nearest multiple of 2.
+             */
+    static var psx_stretch: CoreOption = {
+        .enumeration(.init(title: "Stretch to fill screen",
+                           description: "",
+                           requiresRestart: true),
+                     values: [
+                        .init(title: "Disabled", description: "Disabled", value: 0),
+                        .init(title: "Full", description: "Full-screen stretch, disregarding aspect ratio", value: 1),
+                        .init(title: "extram1", description: "1MiB Extended RAM", value: 2),
+                        .init(title: "extram4", description: "4MiB Extended RAM", value: 3),
+                        .init(title: "cs1ram16", description: "Aspect Preserve + Integer Multiple-of-2 Scale Full-screen stretch, same as \"aspect_int\", but rounds down to the nearest multiple of 2.", value: 4),
+                     ],
+                     defaultValue: 0)
+    }()
+
     // MARK: SS
     static var ss_h_overscan: CoreOption = {
         .bool(.init(

@@ -80,7 +80,8 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     }
 
     public var coreStructs: [Core] {
-        return cores.map { Core(with: $0) }
+        let _cores: [Core]  = cores.map { Core(with: $0) }
+        return _cores
     }
 
     public var userPreferredCore: Core? {

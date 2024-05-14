@@ -69,22 +69,22 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		0C32F621FF864EED9E00FADF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = EDB4117E94B846C894EEACFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */; };
-		164876DA9E5145E0BAA26707 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.h */ = {isa = PBXBuildFile; fileRef = E25785A47F1E4F878AA48B5E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.h */; };
-		27B41756921E4BCCB2B14D4F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.h */ = {isa = PBXBuildFile; fileRef = 27600F474C944054BED4F7EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.h */; };
-		2DAB141B06FB4FB8BA0E3BCD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.h */ = {isa = PBXBuildFile; fileRef = 98918319C8DD4ED784ACCBE4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.h */; };
-		3D39635C469B40FB9905B4F4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/Main.cpp */ = {isa = PBXBuildFile; fileRef = 140BB511F3F54506B8090AF7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/Main.cpp */; };
-		4BBAA05C0E3A4E7BBDA172A6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.h */ = {isa = PBXBuildFile; fileRef = A95500F6636048698D918405 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.h */; };
-		5ADC58C48E114E8B819D56BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.cpp */ = {isa = PBXBuildFile; fileRef = B2C4D55F39DF408A875845C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.cpp */; };
-		6CDCA44C5B1746E99D5F3199 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.cpp */ = {isa = PBXBuildFile; fileRef = ADEEF5F08F4A4C6694998A4A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.cpp */; };
-		7E6ED69400924DD882CBE677 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.cpp */ = {isa = PBXBuildFile; fileRef = B1B84E3D974F4C6D846F8D47 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.cpp */; };
-		851032E49CB3447C8531DBDD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.h */ = {isa = PBXBuildFile; fileRef = 5D4D13E56FB5432E84FA281D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.h */; };
-		CC0BD2051E994682BEFC8E5A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/TestDefs.h */ = {isa = PBXBuildFile; fileRef = 63A07170710A47F180D8010B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/TestDefs.h */; };
-		DD7749E6E5C640668C9F8103 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.cpp */ = {isa = PBXBuildFile; fileRef = 5166F67D5D8A40B69E83E362 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.cpp */; };
-		E4A85B98A89746CDB3BD435B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.h */ = {isa = PBXBuildFile; fileRef = 698F708C66DB4556A61B0AFF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.h */; };
-		E8FA4F5865EA47039C8795C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 9EEDD8CFD38F4C8F99F0037A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist */; };
-		EEF7608D78FD41E481E73019 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.cpp */ = {isa = PBXBuildFile; fileRef = 2B04D9C40D514A3C9C0F27B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.cpp */; };
-		F4C17447FAE442E7993633E9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.cpp */ = {isa = PBXBuildFile; fileRef = 81768F3A6CE74E899EA577C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.cpp */; };
+		0C32F621FF864EED9E00FADF /* ../Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = EDB4117E94B846C894EEACFB /* ../Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */; };
+		164876DA9E5145E0BAA26707 /* ../Play-/deps/Framework/tests/StringUtilsTest.h */ = {isa = PBXBuildFile; fileRef = E25785A47F1E4F878AA48B5E /* ../Play-/deps/Framework/tests/StringUtilsTest.h */; };
+		27B41756921E4BCCB2B14D4F /* ../Play-/deps/Framework/tests/MathStringUtilsTest.h */ = {isa = PBXBuildFile; fileRef = 27600F474C944054BED4F7EE /* ../Play-/deps/Framework/tests/MathStringUtilsTest.h */; };
+		2DAB141B06FB4FB8BA0E3BCD /* ../Play-/deps/Framework/tests/StringCastTest.h */ = {isa = PBXBuildFile; fileRef = 98918319C8DD4ED784ACCBE4 /* ../Play-/deps/Framework/tests/StringCastTest.h */; };
+		3D39635C469B40FB9905B4F4 /* ../Play-/deps/Framework/tests/Main.cpp */ = {isa = PBXBuildFile; fileRef = 140BB511F3F54506B8090AF7 /* ../Play-/deps/Framework/tests/Main.cpp */; };
+		4BBAA05C0E3A4E7BBDA172A6 /* ../Play-/deps/Framework/tests/XmlTest.h */ = {isa = PBXBuildFile; fileRef = A95500F6636048698D918405 /* ../Play-/deps/Framework/tests/XmlTest.h */; };
+		5ADC58C48E114E8B819D56BA /* ../Play-/deps/Framework/tests/XmlTest.cpp */ = {isa = PBXBuildFile; fileRef = B2C4D55F39DF408A875845C1 /* ../Play-/deps/Framework/tests/XmlTest.cpp */; };
+		6CDCA44C5B1746E99D5F3199 /* ../Play-/deps/Framework/tests/MathStringUtilsTest.cpp */ = {isa = PBXBuildFile; fileRef = ADEEF5F08F4A4C6694998A4A /* ../Play-/deps/Framework/tests/MathStringUtilsTest.cpp */; };
+		7E6ED69400924DD882CBE677 /* ../Play-/deps/Framework/tests/SignalTest.cpp */ = {isa = PBXBuildFile; fileRef = B1B84E3D974F4C6D846F8D47 /* ../Play-/deps/Framework/tests/SignalTest.cpp */; };
+		851032E49CB3447C8531DBDD /* ../Play-/deps/Framework/tests/BmpTest.h */ = {isa = PBXBuildFile; fileRef = 5D4D13E56FB5432E84FA281D /* ../Play-/deps/Framework/tests/BmpTest.h */; };
+		CC0BD2051E994682BEFC8E5A /* ../Play-/deps/Framework/tests/TestDefs.h */ = {isa = PBXBuildFile; fileRef = 63A07170710A47F180D8010B /* ../Play-/deps/Framework/tests/TestDefs.h */; };
+		DD7749E6E5C640668C9F8103 /* ../Play-/deps/Framework/tests/StringUtilsTest.cpp */ = {isa = PBXBuildFile; fileRef = 5166F67D5D8A40B69E83E362 /* ../Play-/deps/Framework/tests/StringUtilsTest.cpp */; };
+		E4A85B98A89746CDB3BD435B /* ../Play-/deps/Framework/tests/SignalTest.h */ = {isa = PBXBuildFile; fileRef = 698F708C66DB4556A61B0AFF /* ../Play-/deps/Framework/tests/SignalTest.h */; };
+		E8FA4F5865EA47039C8795C9 /* ../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = 9EEDD8CFD38F4C8F99F0037A /* ../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist */; };
+		EEF7608D78FD41E481E73019 /* ../Play-/deps/Framework/tests/StringCastTest.cpp */ = {isa = PBXBuildFile; fileRef = 2B04D9C40D514A3C9C0F27B1 /* ../Play-/deps/Framework/tests/StringCastTest.cpp */; };
+		F4C17447FAE442E7993633E9 /* ../Play-/deps/Framework/tests/BmpTest.cpp */ = {isa = PBXBuildFile; fileRef = 81768F3A6CE74E899EA577C3 /* ../Play-/deps/Framework/tests/BmpTest.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -157,24 +157,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		140BB511F3F54506B8090AF7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Main.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/Main.cpp"; sourceTree = "<absolute>"; };
-		1D0A7ADC73894EDE8DC6C117 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		27600F474C944054BED4F7EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MathStringUtilsTest.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.h"; sourceTree = "<absolute>"; };
-		2B04D9C40D514A3C9C0F27B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StringCastTest.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.cpp"; sourceTree = "<absolute>"; };
-		5166F67D5D8A40B69E83E362 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StringUtilsTest.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.cpp"; sourceTree = "<absolute>"; };
-		5D4D13E56FB5432E84FA281D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BmpTest.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.h"; sourceTree = "<absolute>"; };
-		63A07170710A47F180D8010B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/TestDefs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TestDefs.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/TestDefs.h"; sourceTree = "<absolute>"; };
-		698F708C66DB4556A61B0AFF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SignalTest.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.h"; sourceTree = "<absolute>"; };
-		81768F3A6CE74E899EA577C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BmpTest.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.cpp"; sourceTree = "<absolute>"; };
-		98918319C8DD4ED784ACCBE4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StringCastTest.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.h"; sourceTree = "<absolute>"; };
+		140BB511F3F54506B8090AF7 /* ../Play-/deps/Framework/tests/Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Main.cpp; path = "../Play-/deps/Framework/tests/Main.cpp"; sourceTree = "<absolute>"; };
+		1D0A7ADC73894EDE8DC6C117 /* ../Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		27600F474C944054BED4F7EE /* ../Play-/deps/Framework/tests/MathStringUtilsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MathStringUtilsTest.h; path = "../Play-/deps/Framework/tests/MathStringUtilsTest.h"; sourceTree = "<absolute>"; };
+		2B04D9C40D514A3C9C0F27B1 /* ../Play-/deps/Framework/tests/StringCastTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StringCastTest.cpp; path = "../Play-/deps/Framework/tests/StringCastTest.cpp"; sourceTree = "<absolute>"; };
+		5166F67D5D8A40B69E83E362 /* ../Play-/deps/Framework/tests/StringUtilsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StringUtilsTest.cpp; path = "../Play-/deps/Framework/tests/StringUtilsTest.cpp"; sourceTree = "<absolute>"; };
+		5D4D13E56FB5432E84FA281D /* ../Play-/deps/Framework/tests/BmpTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BmpTest.h; path = "../Play-/deps/Framework/tests/BmpTest.h"; sourceTree = "<absolute>"; };
+		63A07170710A47F180D8010B /* ../Play-/deps/Framework/tests/TestDefs.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TestDefs.h; path = "../Play-/deps/Framework/tests/TestDefs.h"; sourceTree = "<absolute>"; };
+		698F708C66DB4556A61B0AFF /* ../Play-/deps/Framework/tests/SignalTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = SignalTest.h; path = "../Play-/deps/Framework/tests/SignalTest.h"; sourceTree = "<absolute>"; };
+		81768F3A6CE74E899EA577C3 /* ../Play-/deps/Framework/tests/BmpTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BmpTest.cpp; path = "../Play-/deps/Framework/tests/BmpTest.cpp"; sourceTree = "<absolute>"; };
+		98918319C8DD4ED784ACCBE4 /* ../Play-/deps/Framework/tests/StringCastTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StringCastTest.h; path = "../Play-/deps/Framework/tests/StringCastTest.h"; sourceTree = "<absolute>"; };
 		9E6239D7DA0D4833A809C272 /* FrameworkTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = FrameworkTests; sourceTree = BUILT_PRODUCTS_DIR; };
-		9EEDD8CFD38F4C8F99F0037A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist; sourceTree = "<absolute>"; };
-		A95500F6636048698D918405 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = XmlTest.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.h"; sourceTree = "<absolute>"; };
-		ADEEF5F08F4A4C6694998A4A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MathStringUtilsTest.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.cpp"; sourceTree = "<absolute>"; };
-		B1B84E3D974F4C6D846F8D47 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SignalTest.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.cpp"; sourceTree = "<absolute>"; };
-		B2C4D55F39DF408A875845C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = XmlTest.cpp; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.cpp"; sourceTree = "<absolute>"; };
-		E25785A47F1E4F878AA48B5E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StringUtilsTest.h; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.h"; sourceTree = "<absolute>"; };
-		EDB4117E94B846C894EEACFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		9EEDD8CFD38F4C8F99F0037A /* ../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist; sourceTree = "<absolute>"; };
+		A95500F6636048698D918405 /* ../Play-/deps/Framework/tests/XmlTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = XmlTest.h; path = "../Play-/deps/Framework/tests/XmlTest.h"; sourceTree = "<absolute>"; };
+		ADEEF5F08F4A4C6694998A4A /* ../Play-/deps/Framework/tests/MathStringUtilsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MathStringUtilsTest.cpp; path = "../Play-/deps/Framework/tests/MathStringUtilsTest.cpp"; sourceTree = "<absolute>"; };
+		B1B84E3D974F4C6D846F8D47 /* ../Play-/deps/Framework/tests/SignalTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = SignalTest.cpp; path = "../Play-/deps/Framework/tests/SignalTest.cpp"; sourceTree = "<absolute>"; };
+		B2C4D55F39DF408A875845C1 /* ../Play-/deps/Framework/tests/XmlTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = XmlTest.cpp; path = "../Play-/deps/Framework/tests/XmlTest.cpp"; sourceTree = "<absolute>"; };
+		E25785A47F1E4F878AA48B5E /* ../Play-/deps/Framework/tests/StringUtilsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StringUtilsTest.h; path = "../Play-/deps/Framework/tests/StringUtilsTest.h"; sourceTree = "<absolute>"; };
+		EDB4117E94B846C894EEACFB /* ../Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,13 +191,13 @@
 		03E23FC82C744AE9AE3D690C /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				5D4D13E56FB5432E84FA281D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.h */,
-				27600F474C944054BED4F7EE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.h */,
-				698F708C66DB4556A61B0AFF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.h */,
-				98918319C8DD4ED784ACCBE4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.h */,
-				E25785A47F1E4F878AA48B5E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.h */,
-				63A07170710A47F180D8010B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/TestDefs.h */,
-				A95500F6636048698D918405 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.h */,
+				5D4D13E56FB5432E84FA281D /* ../Play-/deps/Framework/tests/BmpTest.h */,
+				27600F474C944054BED4F7EE /* ../Play-/deps/Framework/tests/MathStringUtilsTest.h */,
+				698F708C66DB4556A61B0AFF /* ../Play-/deps/Framework/tests/SignalTest.h */,
+				98918319C8DD4ED784ACCBE4 /* ../Play-/deps/Framework/tests/StringCastTest.h */,
+				E25785A47F1E4F878AA48B5E /* ../Play-/deps/Framework/tests/StringUtilsTest.h */,
+				63A07170710A47F180D8010B /* ../Play-/deps/Framework/tests/TestDefs.h */,
+				A95500F6636048698D918405 /* ../Play-/deps/Framework/tests/XmlTest.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -215,7 +215,7 @@
 				CCE4C97E83574FE6B214CABB /* Source Files */,
 				03E23FC82C744AE9AE3D690C /* Header Files */,
 				69C0AE84E34646C8A4D7C92C /* Resources */,
-				EDB4117E94B846C894EEACFB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */,
+				EDB4117E94B846C894EEACFB /* ../Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */,
 			);
 			name = FrameworkTests;
 			sourceTree = "<group>";
@@ -224,7 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				6B476A37B3744240A1DFA56A /* CMake Rules */,
-				1D0A7ADC73894EDE8DC6C117 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */,
+				1D0A7ADC73894EDE8DC6C117 /* ../Play-/deps/Framework/build_cmake/Tests/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -232,7 +232,7 @@
 		69C0AE84E34646C8A4D7C92C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				9EEDD8CFD38F4C8F99F0037A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist */,
+				9EEDD8CFD38F4C8F99F0037A /* ../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -258,13 +258,13 @@
 		CCE4C97E83574FE6B214CABB /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				81768F3A6CE74E899EA577C3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.cpp */,
-				140BB511F3F54506B8090AF7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/Main.cpp */,
-				ADEEF5F08F4A4C6694998A4A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.cpp */,
-				B1B84E3D974F4C6D846F8D47 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.cpp */,
-				2B04D9C40D514A3C9C0F27B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.cpp */,
-				5166F67D5D8A40B69E83E362 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.cpp */,
-				B2C4D55F39DF408A875845C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.cpp */,
+				81768F3A6CE74E899EA577C3 /* ../Play-/deps/Framework/tests/BmpTest.cpp */,
+				140BB511F3F54506B8090AF7 /* ../Play-/deps/Framework/tests/Main.cpp */,
+				ADEEF5F08F4A4C6694998A4A /* ../Play-/deps/Framework/tests/MathStringUtilsTest.cpp */,
+				B1B84E3D974F4C6D846F8D47 /* ../Play-/deps/Framework/tests/SignalTest.cpp */,
+				2B04D9C40D514A3C9C0F27B1 /* ../Play-/deps/Framework/tests/StringCastTest.cpp */,
+				5166F67D5D8A40B69E83E362 /* ../Play-/deps/Framework/tests/StringUtilsTest.cpp */,
+				B2C4D55F39DF408A875845C1 /* ../Play-/deps/Framework/tests/XmlTest.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -352,19 +352,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -398,19 +398,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -456,25 +456,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/ZERO_CHECK			);
+../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeScripts/ReRunCMake.make
+  cd ../cmake/deps/Framework/build_cmake/Tests
+  make -f ../cmake/deps/Framework/build_cmake/Tests/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeScripts/ReRunCMake.make
+  cd ../cmake/deps/Framework/build_cmake/Tests
+  make -f ../cmake/deps/Framework/build_cmake/Tests/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeScripts/ReRunCMake.make
+  cd ../cmake/deps/Framework/build_cmake/Tests
+  make -f ../cmake/deps/Framework/build_cmake/Tests/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeScripts/ReRunCMake.make
+  cd ../cmake/deps/Framework/build_cmake/Tests
+  make -f ../cmake/deps/Framework/build_cmake/Tests/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -507,19 +507,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -550,24 +550,24 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/ALL_BUILD			);
+../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests
+  cd ../cmake/deps/Framework/build_cmake/Tests
   echo Build\\ all\\ projects
 fi
 ";
@@ -580,13 +580,13 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F4C17447FAE442E7993633E9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/BmpTest.cpp */,
-				3D39635C469B40FB9905B4F4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/Main.cpp */,
-				6CDCA44C5B1746E99D5F3199 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/MathStringUtilsTest.cpp */,
-				7E6ED69400924DD882CBE677 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/SignalTest.cpp */,
-				EEF7608D78FD41E481E73019 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringCastTest.cpp */,
-				DD7749E6E5C640668C9F8103 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/StringUtilsTest.cpp */,
-				5ADC58C48E114E8B819D56BA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/tests/XmlTest.cpp */,
+				F4C17447FAE442E7993633E9 /* ../Play-/deps/Framework/tests/BmpTest.cpp */,
+				3D39635C469B40FB9905B4F4 /* ../Play-/deps/Framework/tests/Main.cpp */,
+				6CDCA44C5B1746E99D5F3199 /* ../Play-/deps/Framework/tests/MathStringUtilsTest.cpp */,
+				7E6ED69400924DD882CBE677 /* ../Play-/deps/Framework/tests/SignalTest.cpp */,
+				EEF7608D78FD41E481E73019 /* ../Play-/deps/Framework/tests/StringCastTest.cpp */,
+				DD7749E6E5C640668C9F8103 /* ../Play-/deps/Framework/tests/StringUtilsTest.cpp */,
+				5ADC58C48E114E8B819D56BA /* ../Play-/deps/Framework/tests/XmlTest.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -892,12 +892,12 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++        -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"-framework Foundation","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Framework/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"-framework Foundation","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FrameworkTests;
 				SECTORDER_FLAGS = "";
@@ -982,12 +982,12 @@ fi
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++        -DNDEBUG -DNDEBUG -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/Release${EFFECTIVE_PLATFORM_NAME}/libFramework.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Release${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Release${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"-framework Foundation","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Framework/Release${EFFECTIVE_PLATFORM_NAME}/libFramework.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Release${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Release${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"-framework Foundation","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FrameworkTests;
 				SECTORDER_FLAGS = "";
@@ -1012,12 +1012,12 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++    -D_DEBUG -D_DEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Debug${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Debug${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"-framework Foundation","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Debug${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Debug${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"-framework Foundation","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FrameworkTests;
 				SECTORDER_FLAGS = "";
@@ -1062,12 +1062,12 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/deps/Framework/build_cmake/Tests/CMakeFiles/FrameworkTests.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2 -x objective-c++     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"-framework Foundation","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Framework/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"-framework Foundation","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = FrameworkTests;
 				SECTORDER_FLAGS = "";

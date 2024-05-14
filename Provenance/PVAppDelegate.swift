@@ -181,7 +181,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 .disposed(by: disposeBag)
 
             // Handle if started from shortcut
-            if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, shortcut.type == "kRecentGameShortcut", let md5Value = shortcut.userInfo?["PVGameHash"] as? String, let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
+            if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, 
+                shortcut.type == "kRecentGameShortcut",
+                let md5Value = shortcut.userInfo?["PVGameHash"] as? String,
+                let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
                 shortcutItemGame = matchedGame
             }
         #endif

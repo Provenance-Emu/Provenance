@@ -20,8 +20,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		930155F12970B3D400E5782C /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B66BA12967DF5700A621DD /* MoltenVK.xcframework */; };
-		930155F22970B3D400E5782C /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93B66BA12967DF5700A621DD /* MoltenVK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93102A5A2A30F2DB002C86C6 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 93102A592A30F2DB002C86C6 /* PVLogging */; };
 		93102A5B2A30F2DB002C86C6 /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 93102A592A30F2DB002C86C6 /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		9319F10A2976C15900A7414A /* PVRetroArchCore+Controls+SNES.m in Sources */ = {isa = PBXBuildFile; fileRef = 9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */; };
@@ -42,7 +40,6 @@
 		93654F7A298F4A2D0046503F /* PVRetroArchCore+Controls+PCE.m in Sources */ = {isa = PBXBuildFile; fileRef = 93654F78298F4A2C0046503F /* PVRetroArchCore+Controls+PCE.m */; };
 		93654F7B298F4A2D0046503F /* PVRetroArchCore+Controls+DS.m in Sources */ = {isa = PBXBuildFile; fileRef = 93654F79298F4A2C0046503F /* PVRetroArchCore+Controls+DS.m */; };
 		936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */ = {isa = PBXBuildFile; fileRef = 936B47F92969798B00C7D2A3 /* platform_darwin.m */; };
-		936BFD7E2986A4E1001FF097 /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD7D2986A4E1001FF097 /* libMoltenVK.dylib */; platformFilter = ios; };
 		936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BA743C2965B96D00A49D66 /* cocoa_vk_ctx.m */; };
 		936E99E62A35A15900B1D0F8 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99E52A35A15900B1D0F8 /* PVSupport.framework */; };
 		936E99E82A35A3A400B1D0F8 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99E72A35A3A400B1D0F8 /* Metal.framework */; };
@@ -244,8 +241,10 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B39C4BEB2BF3430C00F199BB /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
+		B3CC631D2BEF17A5002F3C8B /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -342,7 +341,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				930155F22970B3D400E5782C /* MoltenVK.xcframework in Embed Frameworks */,
 				931A43FA296A26B400D27F9D /* PVRetroArch.framework in Embed Frameworks */,
 				93102A5B2A30F2DB002C86C6 /* PVLogging in Embed Frameworks */,
 			);
@@ -782,7 +780,6 @@
 		93B3BCDB2A8CE91800B60325 /* filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filter.h; sourceTree = "<group>"; };
 		93B66B982967C64300A621DD /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		93B66B992967C64300A621DD /* menu_pipeline.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = menu_pipeline.metal; sourceTree = "<group>"; };
-		93B66BA12967DF5700A621DD /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "../../Cores/Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
 		93B66BA32967DFE200A621DD /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = ../../Cores/PPSSPP/ppsspp/ext/vulkan/iOS/Frameworks/libMoltenVK.dylib; sourceTree = "<group>"; };
 		93B66BA72967EFC900A621DD /* vulkan_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vulkan_common.h; sourceTree = "<group>"; };
 		93B66BA82967EFCA00A621DD /* vulkan_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vulkan_common.c; sourceTree = "<group>"; };
@@ -872,6 +869,7 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
 		B3C7621020783162009950E4 /* PVRetroArch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRetroArch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVRetroArch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArch.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -880,6 +878,7 @@
 		B3C76223207833DE009950E4 /* PVRetroArchCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRetroArchCore.h; sourceTree = "<group>"; };
 		B3C76224207833DE009950E4 /* PVRetroArchCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVRetroArchCore.mm; sourceTree = "<group>"; };
 		B3C7622720783510009950E4 /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
+		B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = ../../MoltenVK/MoltenVK/MoltenVK.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -932,7 +931,6 @@
 				93D6B0F9296A171300D5EE11 /* MobileCoreServices.framework in Frameworks */,
 				93D6B0F8296A170D00D5EE11 /* CoreAudio.framework in Frameworks */,
 				93D6B109296A1AC600D5EE11 /* CoreMedia.framework in Frameworks */,
-				930155F12970B3D400E5782C /* MoltenVK.xcframework in Frameworks */,
 				93D6B10D296A1B0100D5EE11 /* Foundation.framework in Frameworks */,
 				93D6B0F6296A16FB00D5EE11 /* CFNetwork.framework in Frameworks */,
 				93D6B0F3296A16E500D5EE11 /* SwiftUI.framework in Frameworks */,
@@ -945,6 +943,7 @@
 				93D6B108296A1AC100D5EE11 /* CoreLocation.framework in Frameworks */,
 				93D6B105296A1A9800D5EE11 /* AudioToolbox.framework in Frameworks */,
 				93402041296A37D3005742C2 /* IOKit.framework in Frameworks */,
+				B3CC631D2BEF17A5002F3C8B /* MoltenVK.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -961,6 +960,7 @@
 				936E99EA2A35A3E600B1D0F8 /* CoreGraphics.framework in Frameworks */,
 				936E99E82A35A3A400B1D0F8 /* Metal.framework in Frameworks */,
 				93B716E32965922200F4CDC7 /* MobileCoreServices.framework in Frameworks */,
+				B39C4BEB2BF3430C00F199BB /* MoltenVK.xcframework in Frameworks */,
 				93B716E02965921000F4CDC7 /* CoreVideo.framework in Frameworks */,
 				93B716E12965921000F4CDC7 /* CoreText.framework in Frameworks */,
 				93B716DC296591EE00F4CDC7 /* CoreMedia.framework in Frameworks */,
@@ -973,7 +973,6 @@
 				936E99EC2A35A94900B1D0F8 /* PVLogging in Frameworks */,
 				936E99E62A35A15900B1D0F8 /* PVSupport.framework in Frameworks */,
 				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
-				936BFD7E2986A4E1001FF097 /* libMoltenVK.dylib in Frameworks */,
 				93B716F2296595F600F4CDC7 /* AppKit.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
@@ -1793,6 +1792,8 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */,
+				B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */,
 				93B3B1942A8CAB0E00B60325 /* liblzma.tbd */,
 				939EE7EF2A79038A0021C20F /* libretroarch.a */,
 				936E9A202A35AC6100B1D0F8 /* CFNetwork.framework */,
@@ -1815,7 +1816,6 @@
 				93D6B0F2296A16E500D5EE11 /* SwiftUI.framework */,
 				93B66BDC29680D2D00A621DD /* libMoltenVK_RetroArch.dylib */,
 				93B66BA32967DFE200A621DD /* libMoltenVK.dylib */,
-				93B66BA12967DF5700A621DD /* MoltenVK.xcframework */,
 				93F66EE229672D9000203EB3 /* IOKit.framework */,
 				93B716F1296595F500F4CDC7 /* AppKit.framework */,
 				93B716E22965922200F4CDC7 /* MobileCoreServices.framework */,
@@ -2656,10 +2656,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DONT_GENERATE_INFOPLIST_FILE = NO;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;
@@ -2816,12 +2816,12 @@
 			buildSettings = {
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++20";
-				CODE_SIGN_IDENTITY = "";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
 				DEPS_DIR = ./RetroArch/deps;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3199,10 +3199,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CREATE_INFOPLIST_SECTION_IN_BINARY = NO;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DONT_GENERATE_INFOPLIST_FILE = NO;
 				ENABLE_HARDENED_RUNTIME = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = NO;

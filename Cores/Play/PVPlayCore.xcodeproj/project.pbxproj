@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -62,8 +62,6 @@
 		B3135BA726E4CD5A0047F338 /* PVPlayCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVPlayCore+Video.mm */; };
 		B3135BA926E4CD600047F338 /* PVPlayCore+Audio.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB2218BC69700557ACE /* PVPlayCore+Audio.mm */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
-		B32987C82B66175A00728996 /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32987C72B66175A00728996 /* MoltenVK.xcframework */; platformFilters = (tvos, ); };
-		B32987C92B66175A00728996 /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B32987C72B66175A00728996 /* MoltenVK.xcframework */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B351223A27843318001C4B83 /* PVPlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVPlay.mm */; };
@@ -114,13 +112,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 934D2DFF294B4D4600BDEBA5;
 			remoteInfo = PlayLibAdjustments;
-		};
-		B3135B5926E4C6860047F338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B3135B2A26E4C6850047F338 /* Play.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 6FFDC01AC4154B0892EE947F;
-			remoteInfo = Play;
 		};
 		B3ABAEC72BCCF87F00D77B8C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -469,7 +460,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B32987C92B66175A00728996 /* MoltenVK.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1689,7 +1679,6 @@
 		B3135B2A26E4C6850047F338 /* Play.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Play.xcodeproj; path = cmake/Play.xcodeproj; sourceTree = "<group>"; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
-		B32987C72B66175A00728996 /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = "../Dolphin/dolphin-ios/Externals/MoltenVK/MoltenVK.xcframework"; sourceTree = "<group>"; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447E96218B809200557ACE /* PVPlayCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVPlayCore+Controls.h"; sourceTree = "<group>"; };
@@ -1767,7 +1756,6 @@
 			files = (
 				939AAF6E2A791EF0007709E5 /* libplay.a in Frameworks */,
 				93161E0C2A5A0AA6000C5362 /* libbz2.1.0.tbd in Frameworks */,
-				B32987C82B66175A00728996 /* MoltenVK.xcframework in Frameworks */,
 				939B19442948B0780024133A /* libsqlite3.tbd in Frameworks */,
 				B3A6209329478A7F00ED28E3 /* CoreGraphics.framework in Frameworks */,
 				9333C7E3298932970042CD99 /* Foundation.framework in Frameworks */,
@@ -3936,7 +3924,6 @@
 		B3135B2B26E4C6850047F338 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B3135B5A26E4C6860047F338 /* Play.app */,
 				B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */,
 				B3ABAECA2BCCF87F00D77B8C /* libCAltKit.a */,
 				B3ABAECC2BCCF87F00D77B8C /* libCodeGen.a */,
@@ -4027,7 +4014,6 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B32987C72B66175A00728996 /* MoltenVK.xcframework */,
 				934FA1BC2A79063F0019C951 /* libplay.a */,
 				93161E092A5A0A31000C5362 /* libbz2.1.0.tbd */,
 				93161E072A5A09F4000C5362 /* libbz2.1.0.8.tbd */,
@@ -4163,7 +4149,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				LastUpgradeCheck = 1300;
-				ORGANIZATIONNAME = "Provenance Emu";
+				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					934D2DFF294B4D4600BDEBA5 = {
 						CreatedOnToolsVersion = 14.1;
@@ -4179,7 +4165,7 @@
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVPlayCore" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -4187,6 +4173,7 @@
 				Base,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -4205,13 +4192,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		B3135B5A26E4C6860047F338 /* Play.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = Play.app;
-			remoteRef = B3135B5926E4C6860047F338 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		B3ABAEC82BCCF87F00D77B8C /* libAltKit.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -4727,7 +4707,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -4857,7 +4837,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

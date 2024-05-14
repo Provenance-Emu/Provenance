@@ -24,38 +24,47 @@ extension Sequence where Iterator.Element : Hashable {
 
 // MARK: - System Scanner
 
-public extension PVEmulatorConfiguration {
+struct CoreClasses {
     static var coreClasses: [ClassInfo] {
         let libRetroCoreClass: AnyClass? = NSClassFromString("PVLibRetroCore")
         let libRetroGLESCoreClass: AnyClass? = NSClassFromString("PVLibRetroGLESCore")
 
-        let motherClassInfo = [ClassInfo(PVEmulatorCore.self),
-                               ClassInfo(libRetroCoreClass),
-                               ClassInfo(libRetroGLESCoreClass)]
-        var subclassList = [ClassInfo]()
+        // Using compactMap to automatically skip nil values
+        let motherClassInfo = [PVEmulatorCore.self, libRetroCoreClass, libRetroGLESCoreClass].compactMap { ClassInfo($0) }
 
+        // Safely obtaining the class list
         var count = UInt32(0)
-        let classListPointer = objc_copyClassList(&count)!
+        guard let classListPointer = objc_copyClassList(&count) else {
+            return []
+        }
         let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
 
         let superclasses = ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]
-        for i in 0 ..< Int(count) {
-            if let classInfo = ClassInfo(classList[i], withSuperclass: superclasses), motherClassInfo.intersects(with: motherClassInfo) {
-                subclassList.append(classInfo)
+
+        let subclassList = classList.compactMap { clazz -> ClassInfo? in
+            guard let classInfo = ClassInfo(clazz, withSuperclass: superclasses) else {
+                return nil
             }
+            return motherClassInfo.contains { $0.className == classInfo.className } ? nil : classInfo
         }
 
-        let filteredList = subclassList.filter {
-            let notMasterClass = $0.className != "PVEmulatorCore"
-            let className: String = $0.superclassInfo?.className ?? ""
-            let inheritsClass = ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"].contains(className)
-            return notMasterClass && inheritsClass
+        let filteredList = subclassList.filter { info in
+            guard info.className != "PVEmulatorCore" else {
+                return false
+            }
+            return superclasses.contains(info.superclassInfo?.className ?? "")
         }
 
-        let classes = filteredList.map { $0.className }.joined(separator: ",")
-        ILOG("\(classes)")
+        // Log class names using functional approach
+        ILOG(filteredList.map(\.className).joined(separator: ","))
 
         return filteredList
+    }
+}
+
+public extension PVEmulatorConfiguration {
+    static var coreClasses: [ClassInfo] {
+        return CoreClasses.coreClasses
     }
 
     class func updateCores(fromPlists plists: [URL]) {
