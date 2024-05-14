@@ -337,7 +337,10 @@ static bool threadStopped = false;
         // GPUCORE_VULKAN
         g_Config.iGPUBackend = (int)GPUBackend::VULKAN;
         PSP_CoreParameter().gpuCore         = GPUCORE_VULKAN;
-        graphicsContext = new VulkanGraphicsContext(m_metal_layer, "@executable_path/Frameworks/libMoltenVK.dylib");
+        graphicsContext = new VulkanGraphicsContext(m_metal_layer, "@executable_path/Frameworks/MoltenVK.framework/MoltenVK");
+        if(!graphicsContext) {
+            graphicsContext = new VulkanGraphicsContext(m_metal_layer, "@executable_path/Frameworks/libMoltenVK.dylib");
+        }
     }
     graphicsContext->GetDrawContext()->SetErrorCallback([](const char *shortDesc, const char *details, void *userdata) {
         NSLog(@"setupVideo: Notify User Message: %s %s\n", shortDesc, details);

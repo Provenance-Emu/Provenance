@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "AppCenter",
-        "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
-        "state": {
-          "branch": null,
-          "revision": "1120c26835925f8314d035127c580bc71689c620",
-          "version": "5.0.4"
-        }
-      },
-      {
         "package": "CocoaLumberjack",
         "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
         "state": {
@@ -34,24 +25,6 @@
         "state": {
           "branch": "master",
           "revision": "640681c81ed021136aeacf71a4dee1e90940e5b5",
-          "version": null
-        }
-      },
-      {
-        "package": "PLCrashReporter",
-        "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
-        "state": {
-          "branch": null,
-          "revision": "6752f71de206f6a53fa6a758c3660fd9a7fe7527",
-          "version": "1.11.2"
-        }
-      },
-      {
-        "package": "Reachability",
-        "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
-        "state": {
-          "branch": "master",
-          "revision": "57da4b1270cab7c2228919eabc0e4e1bf93e48ea",
           "version": null
         }
       },
@@ -110,30 +83,12 @@
         }
       },
       {
-        "package": "SteamController",
-        "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
-        "state": {
-          "branch": "master",
-          "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
-          "version": null
-        }
-      },
-      {
         "package": "swift-log",
         "repositoryURL": "https://github.com/apple/swift-log",
         "state": {
           "branch": null,
           "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
           "version": "1.5.4"
-        }
-      },
-      {
-        "package": "swiftui-introspect",
-        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
-        "state": {
-          "branch": null,
-          "revision": "121c146fe591b1320238d054ae35c81ffa45f45a",
-          "version": null
         }
       },
       {

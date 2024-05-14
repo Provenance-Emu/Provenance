@@ -1850,6 +1850,12 @@
 		B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B39AF05F28754EB8004882FC /* PVAppDelegate+VolumeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */; };
+		B39C4B5F2BF09AD300F199BB /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B5E2BF09AD300F199BB /* PVPPSSPP.framework */; };
+		B39C4B602BF09AD300F199BB /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B5E2BF09AD300F199BB /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B39C4B6B2BF0A3F000F199BB /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */; platformFilters = (ios, tvos, ); };
+		B39C4B6C2BF0A3F000F199BB /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B39C4B6E2BF0AB6100F199BB /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; };
+		B39C4B6F2BF0AB6100F199BB /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
 		B3A320382720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
@@ -3224,6 +3230,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B39C4B6F2BF0AB6100F199BB /* libMoltenVK.dylib in Embed Frameworks */,
 				B394CD442BDEE53A006B63E8 /* PVFCEU.framework in Embed Frameworks */,
 				B394CD452BDEE53A006B63E8 /* PVMednafen.framework in Embed Frameworks */,
 				B394CD482BDEE53A006B63E8 /* PVPicoDrive.framework in Embed Frameworks */,
@@ -3233,6 +3240,7 @@
 				B394CD512BDEE53A006B63E8 /* PVCrabEmu.framework in Embed Frameworks */,
 				B394CD532BDEE53A006B63E8 /* PVLogging in Embed Frameworks */,
 				B394CD542BDEE53A006B63E8 /* PVGenesis.framework in Embed Frameworks */,
+				B39C4B6C2BF0A3F000F199BB /* MoltenVK.xcframework in Embed Frameworks */,
 				B394CD552BDEE53A006B63E8 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B394CD572BDEE53A006B63E8 /* PVGB.framework in Embed Frameworks */,
 				B394CD582BDEE53A006B63E8 /* PVPokeMini.framework in Embed Frameworks */,
@@ -3242,6 +3250,7 @@
 				B394CD602BDEE53A006B63E8 /* PVFreeIntv.framework in Embed Frameworks */,
 				B394CD612BDEE53A006B63E8 /* PVVirtualJaguar.framework in Embed Frameworks */,
 				B394CD622BDEE53A006B63E8 /* PVStella.framework in Embed Frameworks */,
+				B39C4B602BF09AD300F199BB /* PVPPSSPP.framework in Embed Frameworks */,
 				B394CD652BDEE53A006B63E8 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B394CD662BDEE53A006B63E8 /* PVGBA.framework in Embed Frameworks */,
 				B394CD672BDEE53A006B63E8 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
@@ -4012,6 +4021,10 @@
 		B399119326C0F41300E54426 /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		B3995E4E2058229F001D4985 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+VolumeButton.swift"; sourceTree = "<group>"; };
+		B39C4B5E2BF09AD300F199BB /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B39C4B652BF09F0400F199BB /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = Cores/PPSSPP/lib/libMoltenVK.dylib; sourceTree = "<group>"; };
+		B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = MoltenVK.xcframework; path = MoltenVK/MoltenVK/dynamic/MoltenVK.xcframework; sourceTree = "<group>"; };
+		B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVGameCubeControllerViewController.swift; sourceTree = "<group>"; };
 		B3A320392720991B00F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A3203C2720992500F338F6 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4602,10 +4615,12 @@
 				B394CD8E2BDEE53A006B63E8 /* Security.framework in Frameworks */,
 				B394CD8F2BDEE53A006B63E8 /* PVTGBDual.framework in Frameworks */,
 				B394CD902BDEE53A006B63E8 /* PVBliss.framework in Frameworks */,
+				B39C4B6B2BF0A3F000F199BB /* MoltenVK.xcframework in Frameworks */,
 				B394CD912BDEE53A006B63E8 /* PVFCEU.framework in Frameworks */,
 				B394CD922BDEE53A006B63E8 /* PVStella.framework in Frameworks */,
 				B394CD932BDEE53A006B63E8 /* PVAtari800.framework in Frameworks */,
 				B394CD942BDEE53A006B63E8 /* SystemConfiguration.framework in Frameworks */,
+				B39C4B6E2BF0AB6100F199BB /* libMoltenVK.dylib in Frameworks */,
 				B394CD952BDEE53A006B63E8 /* CoreData.framework in Frameworks */,
 				B394CD962BDEE53A006B63E8 /* PVLibrary.framework in Frameworks */,
 				B394CD982BDEE53A006B63E8 /* PVMednafen.framework in Frameworks */,
@@ -4623,6 +4638,7 @@
 				B394CDA92BDEE53A006B63E8 /* OpenGLES.framework in Frameworks */,
 				B394CDAC2BDEE53A006B63E8 /* Foundation.framework in Frameworks */,
 				B394CDAD2BDEE53A006B63E8 /* OpenGL.framework in Frameworks */,
+				B39C4B5F2BF09AD300F199BB /* PVPPSSPP.framework in Frameworks */,
 				B394CDAE2BDEE53A006B63E8 /* CoreGraphics.framework in Frameworks */,
 				B394CDB02BDEE53A006B63E8 /* PVPicoDrive.framework in Frameworks */,
 				B394CDB12BDEE53A006B63E8 /* Introspect in Frameworks */,
@@ -4946,6 +4962,9 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */,
+				B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */,
+				B39C4B5E2BF09AD300F199BB /* PVPPSSPP.framework */,
 				B3EF26EF2BE7F9690066D4B6 /* libc.tbd */,
 				B3EF26ED2BE7F8EC0066D4B6 /* libc++.tbd */,
 				B3EF26EB2BE7F8DD0066D4B6 /* libxml2.tbd */,
@@ -4984,6 +5003,7 @@
 				936BFD802986A5B4001FF097 /* libMoltenVK.dylib */,
 				935BB05829854A8700AA68DC /* PVNP2Kai.framework */,
 				B33155E62971D360008767C5 /* PVMupen64Plus-NX.framework */,
+				B39C4B652BF09F0400F199BB /* libMoltenVK.dylib */,
 				B33155E32971D34D008767C5 /* PVFuse.framework */,
 				B322A98F2971670B00F0D876 /* PVDuckStation.framework */,
 				934BE9B5296F17A900FB9933 /* PVBeetlePSX.framework */,
@@ -13215,10 +13235,12 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+					"@executable_path/Frameworks/MoltenVK.framework",
 				);
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
+					"@executable_path/../Frameworks/MoltenVK.framework",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13230,6 +13252,7 @@
 					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-Wno-deprecated-declarations";
@@ -13305,10 +13328,12 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+					"@executable_path/Frameworks/MoltenVK.framework",
 				);
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
+					"@executable_path/../Frameworks/MoltenVK.framework",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13320,6 +13345,7 @@
 					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
@@ -13394,10 +13420,12 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+					"@executable_path/Frameworks/MoltenVK.framework",
 				);
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
+					"@executable_path/../Frameworks/MoltenVK.framework",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13409,6 +13437,7 @@
 					"$(PROJECT_DIR)/CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules",
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
+					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
 				);
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
