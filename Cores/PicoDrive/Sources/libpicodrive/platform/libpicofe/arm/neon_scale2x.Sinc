@@ -1,0 +1,493 @@
+@@
+@@  Copyright (C) 2012 Roman Pauer
+@@
+@@  Permission is hereby granted, free of charge, to any person obtaining a copy of
+@@  this software and associated documentation files (the "Software"), to deal in
+@@  the Software without restriction, including without limitation the rights to
+@@  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+@@  of the Software, and to permit persons to whom the Software is furnished to do
+@@  so, subject to the following conditions:
+@@
+@@  The above copyright notice and this permission notice shall be included in all
+@@  copies or substantial portions of the Software.
+@@
+@@  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+@@  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+@@  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+@@  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+@@  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+@@  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+@@  SOFTWARE.
+@@
+
+
+@ A B C  --\ E0 E1
+@ D E F  --/ E2 E3
+@ G H I
+
+@ q0    = E0 (tmp0)
+@ q1    = E1 (tmp1)
+@ q2    = E2 (tmp2)
+@ q3    = E3 (tmp3)
+@ q8    = S2prev
+@ q9    = S2next
+@ q10   = C0        < B == H || D == F >
+@ q11   = S1        < B >
+@ q12   = S2        < E >
+@ q13   = S3        < H >
+@ q14   = S2sl      < D >
+@ q15   = S2sr      < F >
+
+
+.macro __neon_scale2x_8_8_line src1, src2, src3, counter, dst1, dst2, reg1, qB, qH, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+
+        vld1.8 {d17[7]}, [\src2]        @ S2prev[15] = src[0]
+        andS \reg1, \counter, #15       @ reg1 = counter & 15
+
+    .ifnes "\qB", "q11"
+        add \src1, \src1, \counter      @ src1 += counter
+    .endif
+    .ifnes "\qH", "q13"
+        add \src3, \src3, \counter      @ src3 += counter
+    .endif
+        beq 1f
+
+    @ first 1-15 pixels - align counter to 16 bytes
+        vld1.8 {q12}, [\src2], \reg1    @ S2 = [src]    < E >; src2 += counter & 15
+
+    .ifeqs "\qB", "q11"
+        vld1.8 {\qB}, [\src1], \reg1    @ S1 = [src - srcstride]    < B >; src1 += counter & 15
+    .endif
+
+    .ifeqs "\qH", "q13"
+        vld1.8 {\qH}, [\src3], \reg1    @ S3 = [src + srcstride]    < H >; src3 += counter & 15
+    .endif
+        vext.8 q14, q8, q12, #15        @ S2sl = S2prev[15] | (S2 << 8)     < D >
+
+        vceq.i8 q2, \qB, \qH            @ tmp2 = < B == H >
+
+        vmov.8 d17[7], \reg1            @ S2prev[15] = reg1
+        vext.8 q15, q12, q9, #1         @ S2sr = (S2 >> 8) | ...            < F >
+
+        vceq.i8 q0, q14, \qB            @ tmp0 = < D == B >
+
+        vceq.i8 q3, q14, q15            @ tmp3 = < D == F >
+
+        vceq.i8 q1, \qB, q15            @ tmp1 = < B == F >
+        vtbl.8 d17, {d28, d29}, d17     @ S2prev[15] = src[reg1 - 1]
+
+        lsl \reg1, #1
+        vorr q10, q2, q3                @ C0 = < B == H || D == F >
+
+        vceq.i8 q2, q14, \qH            @ tmp2 = < D == H >
+
+        vceq.i8 q3, \qH, q15            @ tmp3 = < H == F >
+
+        vorn q0, q10, q0                @ tmp0 = < C0 || !(D == B) >
+
+        vorn q1, q10, q1                @ tmp1 = < C0 || !(B == F) >
+
+        vbsl q0, q12, q14               @ E0 = < (C0 || !(D == B)) ? E : D >
+
+        vbsl q1, q12, q15               @ E1 = < (C0 || !(B == F)) ? E : F >
+
+        vorn q2, q10, q2                @ tmp2 = < C0 || !(D == H) >
+
+        vorn q3, q10, q3                @ tmp3 = < C0 || !(H == F) >
+
+        vbsl q2, q12, q14               @ E2 = < (C0 || !(D == H)) ? E : D >
+        vst2.8 {q0-q1}, [\dst1], \reg1  @ [dst] = E0,E1; dst1 += reg1
+
+        vbsl q3, q12, q15               @ E3 = < (C0 || !(H == F)) ? E : F >
+        bic \counter, \counter, #15
+
+        vst2.8 {q2-q3}, [\dst2], \reg1  @ [dst + dststride] = E2,E3; dst2 += reg1
+
+    @ counter is aligned to 16 bytes
+
+    1:
+        vld1.8 {q9}, [\alsrc2]!         @ S2next = [src]; src2 += 16
+
+    @ inner loop (16 pixels per iteration)
+    2:
+
+        vmov q12, q9                    @ S2 = S2next           < E >
+    .ifeqs "\qB", "q11"
+        vld1.8 {\qB}, [\alsrc1]!        @ S1 = [src - srcstride]    < B >; src1 += 16
+    .endif
+
+    .ifeqs "\qH", "q13"
+        vld1.8 {\qH}, [\alsrc3]!        @ S3 = [src + srcstride]    < H >; src3 += 16
+    .endif
+
+        vext.8 q14, q8, q12, #15        @ S2sl = S2prev[15] | (S2 << 8)     < D >
+        vld1.8 {q9}, [\alsrc2]!         @ S2next = [src]; src2 += 16
+
+        vceq.i8 q2, \qB, \qH            @ tmp2 = < B == H >
+
+        vmov q8, q12                    @ S2prev = S2
+        vext.8 q15, q12, q9, #1         @ S2sr = (S2 >> 8) | S2next[0]      < F >
+
+        vceq.i8 q0, q14, \qB            @ tmp0 = < D == B >
+
+        vceq.i8 q3, q14, q15            @ tmp3 = < D == F >
+
+        vceq.i8 q1, \qB, q15            @ tmp1 = < B == F >
+
+        sub \counter, \counter, #16     @ counter -= 16
+
+        vorr q10, q2, q3                @ C0 = < B == H || D == F >
+
+        vceq.i8 q2, q14, \qH            @ tmp2 = < D == H >
+
+        vceq.i8 q3, \qH, q15            @ tmp3 = < H == F >
+
+        vorn q0, q10, q0                @ tmp0 = < C0 || !(D == B) >
+
+        vorn q1, q10, q1                @ tmp1 = < C0 || !(B == F) >
+
+        vbsl q0, q12, q14               @ E0 = < (C0 || !(D == B)) ? E : D >
+
+        vbsl q1, q12, q15               @ E1 = < (C0 || !(B == F)) ? E : F >
+
+        vorn q2, q10, q2                @ tmp2 = < C0 || !(D == H) >
+
+        vorn q3, q10, q3                @ tmp3 = < C0 || !(H == F) >
+
+        vbsl q2, q12, q14               @ E2 = < (C0 || !(D == H)) ? E : D >
+        vst2.8 {q0-q1}, [\aldst1]!      @ [dst] = E0,E1; dst1 += 2*16
+
+        cmp \counter, #16
+
+        vbsl q3, q12, q15               @ E3 = < (C0 || !(H == F)) ? E : F >
+
+        vst2.8 {q2-q3}, [\aldst2]!      @ [dst + dststride] = E2,E3; dst2 += 2*16
+
+        bhi 2b
+
+    @ last 16 pixels
+
+        vmov q12, q9                    @ S2 = S2next           < E >
+
+        vshr.u64 d18, d19, #(64-8)      @ S2next[0] = S2[15] | ...
+    .ifeqs "\qB", "q11"
+        vld1.8 {\qB}, [\alsrc1]!        @ S1 = [src - srcstride]    < B >; src1 += 16
+    .endif
+
+        vext.8 q14, q8, q12, #15        @ S2sl = S2prev[15] | (S2 << 8)     < D >
+
+        vext.8 q15, q12, q9, #1         @ S2sr = (S2 >> 8) | S2next[0]      < F >
+    .ifeqs "\qH", "q13"
+        vld1.8 {\qH}, [\alsrc3]!        @ S3 = [src + srcstride]    < H >; src3 += 16
+    .endif
+
+        vceq.i8 q0, q14, \qB            @ tmp0 = < D == B >
+
+        vceq.i8 q2, \qB, \qH            @ tmp2 = < B == H >
+
+        vceq.i8 q3, q14, q15            @ tmp3 = < D == F >
+
+        vceq.i8 q1, \qB, q15            @ tmp1 = < B == F >
+
+        vorr q10, q2, q3                @ C0 = < B == H || D == F >
+
+        vceq.i8 q2, q14, \qH            @ tmp2 = < D == H >
+
+        vceq.i8 q3, \qH, q15            @ tmp3 = < H == F >
+
+        vorn q0, q10, q0                @ tmp0 = < C0 || !(D == B) >
+
+        vorn q1, q10, q1                @ tmp1 = < C0 || !(B == F) >
+
+        vbsl q0, q12, q14               @ E0 = < (C0 || !(D == B)) ? E : D >
+
+        vbsl q1, q12, q15               @ E1 = < (C0 || !(B == F)) ? E : F >
+
+        vorn q2, q10, q2                @ tmp2 = < C0 || !(D == H) >
+
+        vorn q3, q10, q3                @ tmp3 = < C0 || !(H == F) >
+
+        vbsl q2, q12, q14               @ E2 = < (C0 || !(D == H)) ? E : D >
+        vst2.8 {q0-q1}, [\aldst1]!      @ [dst] = E0,E1; dst1 += 2*16
+
+        vbsl q3, q12, q15               @ E3 = < (C0 || !(H == F)) ? E : F >
+
+        vst2.8 {q2-q3}, [\aldst2]!      @ [dst + dststride] = E2,E3; dst2 += 2*16
+
+.endm
+
+.macro _neon_scale2x_8_8_line_first src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_scale2x_8_8_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q12, q13, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro _neon_scale2x_8_8_line_middle src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_scale2x_8_8_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q11, q13, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro _neon_scale2x_8_8_line_last src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_scale2x_8_8_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q11, q12, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro neon_scale2x_8_8_line part, src1, src2, src3, counter, dst1, dst2, reg1, srcalign16, dstalign32
+    .ifeq \srcalign16
+
+    .ifeq \dstalign32
+        _neon_scale2x_8_8_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1, \src2, \src3, \dst1, \dst2
+    .else
+        _neon_scale2x_8_8_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1, \src2, \src3, \dst1:256, \dst2:256
+    .endif
+
+    .else
+
+    .ifeq \dstalign32
+        _neon_scale2x_8_8_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1:128, \src2:128, \src3:128, \dst1, \dst2
+    .else
+        _neon_scale2x_8_8_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1:128, \src2:128, \src3:128, \dst1:256, \dst2:256
+    .endif
+
+    .endif
+.endm
+
+
+.macro __neon_scale2x_16_16_line src1, src2, src3, counter, dst1, dst2, reg1, qB, qH, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+
+        vld1.16 {d17[3]}, [\src2]       @ S2prev[7] = src[0]
+        andS \reg1, \counter, #7        @ reg1 = counter & 7
+
+    .ifnes "\qB", "q11"
+        add \src1, \src1, \counter, lsl #1  @ src1 += 2 * counter
+    .endif
+    .ifnes "\qH", "q13"
+        add \src3, \src3, \counter, lsl #1  @ src3 += 2 * counter
+    .endif
+        beq 1f
+
+    @ first 1-7 pixels - align counter to 16 bytes
+        vld1.16 {q12}, [\src2]          @ S2 = [src]    < E >
+        lsl \reg1, #1
+
+    .ifeqs "\qB", "q11"
+        vld1.16 {\qB}, [\src1]          @ S1 = [src - srcstride]    < B >
+    .endif
+        bfi \reg1, \reg1, #8, #8
+
+    .ifeqs "\qH", "q13"
+        vld1.16 {\qH}, [\src3]          @ S3 = [src + srcstride]    < H >
+    .endif
+        vext.8 q14, q8, q12, #14        @ S2sl = S2prev[7] | (S2 << 16)     < D >
+
+        add \reg1, \reg1, #256
+        vceq.i16 q2, \qB, \qH           @ tmp2 = < B == H >
+
+        vmov.16 d17[3], \reg1           @ S2prev[7] = reg1
+        vext.8 q15, q12, q9, #2         @ S2sr = (S2 >> 16) | ...            < F >
+
+        vceq.i16 q0, q14, \qB           @ tmp0 = < D == B >
+
+        vceq.i16 q3, q14, q15           @ tmp3 = < D == F >
+
+        vceq.i16 q1, \qB, q15           @ tmp1 = < B == F >
+        vtbl.8 d17, {d28, d29}, d17     @ S2prev[7] = src[reg1 - 1]
+
+        vorr q10, q2, q3                @ C0 = < B == H || D == F >
+
+        vceq.i16 q2, q14, \qH           @ tmp2 = < D == H >
+
+        vceq.i16 q3, \qH, q15           @ tmp3 = < H == F >
+
+        vorn q0, q10, q0                @ tmp0 = < C0 || !(D == B) >
+
+        vorn q1, q10, q1                @ tmp1 = < C0 || !(B == F) >
+
+        vbsl q0, q12, q14               @ E0 = < (C0 || !(D == B)) ? E : D >
+
+        vbsl q1, q12, q15               @ E1 = < (C0 || !(B == F)) ? E : F >
+
+        vorn q2, q10, q2                @ tmp2 = < C0 || !(D == H) >
+
+        vorn q3, q10, q3                @ tmp3 = < C0 || !(H == F) >
+
+        vbsl q2, q12, q14               @ E2 = < (C0 || !(D == H)) ? E : D >
+
+        vbsl q3, q12, q15               @ E3 = < (C0 || !(H == F)) ? E : F >
+
+    #ifdef DO_BGR_TO_RGB
+        bgr1555_to_rgb565 q0, q1, q12, q14, q15, \reg1
+        bgr1555_to_rgb565 q2, q3, q12, q14, q15, \reg1
+    #endif
+
+        and \reg1, \counter, #7
+
+        vst2.16 {q0-q1}, [\dst1]        @ [dst] = E0,E1
+
+        bic \counter, \counter, #7
+    .ifeqs "\qB", "q11"
+        add \src1, \src1, \reg1, lsl #1
+    .endif
+        add \src2, \src2, \reg1, lsl #1
+    .ifeqs "\qH", "q13"
+        add \src3, \src3, \reg1, lsl #1
+    .endif
+
+        vst2.16 {q2-q3}, [\dst2]        @ [dst + dststride] = E2,E3
+
+        add \dst1, \dst1, \reg1, lsl #2
+        add \dst2, \dst2, \reg1, lsl #2
+
+    @ counter is aligned to 16 bytes
+
+    1:
+        vld1.16 {q9}, [\alsrc2]!        @ S2next = [src]; src2 += 2*8
+
+    @ inner loop (8 pixels per iteration)
+    2:
+
+        vmov q12, q9                    @ S2 = S2next           < E >
+    .ifeqs "\qB", "q11"
+        vld1.16 {\qB}, [\alsrc1]!       @ S1 = [src - srcstride]    < B >; src1 += 2*8
+    .endif
+
+    .ifeqs "\qH", "q13"
+        vld1.16 {\qH}, [\alsrc3]!       @ S3 = [src + srcstride]    < H >; src3 += 2*8
+    .endif
+
+        vext.8 q14, q8, q12, #14        @ S2sl = S2prev[7] | (S2 << 16)     < D >
+        vld1.16 {q9}, [\alsrc2]!        @ S2next = [src]; src2 += 2*8
+
+        vceq.i16 q2, \qB, \qH           @ tmp2 = < B == H >
+
+        vmov q8, q12                    @ S2prev = S2
+        vext.8 q15, q12, q9, #2         @ S2sr = (S2 >> 16) | S2next[0]      < F >
+
+        vceq.i16 q0, q14, \qB           @ tmp0 = < D == B >
+
+        vceq.i16 q3, q14, q15           @ tmp3 = < D == F >
+
+        vceq.i16 q1, \qB, q15           @ tmp1 = < B == F >
+
+        sub \counter, \counter, #8      @ counter -= 8
+
+        vorr q10, q2, q3                @ C0 = < B == H || D == F >
+
+        vceq.i16 q2, q14, \qH           @ tmp2 = < D == H >
+
+        vceq.i16 q3, \qH, q15           @ tmp3 = < H == F >
+
+        vorn q0, q10, q0                @ tmp0 = < C0 || !(D == B) >
+
+        vorn q1, q10, q1                @ tmp1 = < C0 || !(B == F) >
+
+        vbsl q0, q12, q14               @ E0 = < (C0 || !(D == B)) ? E : D >
+
+        vbsl q1, q12, q15               @ E1 = < (C0 || !(B == F)) ? E : F >
+
+        vorn q2, q10, q2                @ tmp2 = < C0 || !(D == H) >
+
+        vorn q3, q10, q3                @ tmp3 = < C0 || !(H == F) >
+
+        vbsl q2, q12, q14               @ E2 = < (C0 || !(D == H)) ? E : D >
+
+        vbsl q3, q12, q15               @ E3 = < (C0 || !(H == F)) ? E : F >
+
+    #ifdef DO_BGR_TO_RGB
+        bgr1555_to_rgb565 q0, q1, q12, q14, q15, \reg1
+        bgr1555_to_rgb565 q2, q3, q12, q14, q15, \reg1
+    #endif
+
+        vst2.16 {q0-q1}, [\aldst1]!     @ [dst] = E0,E1; dst1 += 2*2*8
+
+        cmp \counter, #8
+
+        vst2.16 {q2-q3}, [\aldst2]!     @ [dst + dststride] = E2,E3; dst2 += 2*2*8
+
+        bhi 2b
+
+    @ last 8 pixels
+
+        vmov q12, q9                    @ S2 = S2next           < E >
+
+        vshr.u64 d18, d19, #(64-16)     @ S2next[0] = S2[7] | ...
+    .ifeqs "\qB", "q11"
+        vld1.16 {\qB}, [\alsrc1]!       @ S1 = [src - srcstride]    < B >; src1 += 2*8
+    .endif
+
+        vext.8 q14, q8, q12, #14        @ S2sl = S2prev[7] | (S2 << 16)     < D >
+
+        vext.8 q15, q12, q9, #2         @ S2sr = (S2 >> 16) | S2next[0]      < F >
+    .ifeqs "\qH", "q13"
+        vld1.16 {\qH}, [\alsrc3]!       @ S3 = [src + srcstride]    < H >; src3 += 2*8
+    .endif
+
+        vceq.i16 q0, q14, \qB           @ tmp0 = < D == B >
+
+        vceq.i16 q2, \qB, \qH           @ tmp2 = < B == H >
+
+        vceq.i16 q3, q14, q15           @ tmp3 = < D == F >
+
+        vceq.i16 q1, \qB, q15           @ tmp1 = < B == F >
+
+        vorr q10, q2, q3                @ C0 = < B == H || D == F >
+
+        vceq.i16 q2, q14, \qH           @ tmp2 = < D == H >
+
+        vceq.i16 q3, \qH, q15           @ tmp3 = < H == F >
+
+        vorn q0, q10, q0                @ tmp0 = < C0 || !(D == B) >
+
+        vorn q1, q10, q1                @ tmp1 = < C0 || !(B == F) >
+
+        vbsl q0, q12, q14               @ E0 = < (C0 || !(D == B)) ? E : D >
+
+        vbsl q1, q12, q15               @ E1 = < (C0 || !(B == F)) ? E : F >
+
+        vorn q2, q10, q2                @ tmp2 = < C0 || !(D == H) >
+
+        vorn q3, q10, q3                @ tmp3 = < C0 || !(H == F) >
+
+        vbsl q2, q12, q14               @ E2 = < (C0 || !(D == H)) ? E : D >
+
+        vbsl q3, q12, q15               @ E3 = < (C0 || !(H == F)) ? E : F >
+
+    #ifdef DO_BGR_TO_RGB
+        bgr1555_to_rgb565 q0, q1, q12, q14, q15, \reg1
+        bgr1555_to_rgb565 q2, q3, q12, q14, q15, \reg1
+    #endif
+
+        vst2.16 {q0-q1}, [\aldst1]!     @ [dst] = E0,E1; dst1 += 2*2*8
+
+        vst2.16 {q2-q3}, [\aldst2]!     @ [dst + dststride] = E2,E3; dst2 += 2*2*8
+
+.endm
+
+.macro _neon_scale2x_16_16_line_first src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_scale2x_16_16_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q12, q13, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro _neon_scale2x_16_16_line_middle src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_scale2x_16_16_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q11, q13, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro _neon_scale2x_16_16_line_last src1, src2, src3, counter, dst1, dst2, reg1, alsrc1, alsrc2, alsrc3, aldst1, aldst2
+        __neon_scale2x_16_16_line \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, q11, q12, \alsrc1, \alsrc2, \alsrc3, \aldst1, \aldst2
+.endm
+
+.macro neon_scale2x_16_16_line part, src1, src2, src3, counter, dst1, dst2, reg1, srcalign16, dstalign32
+    .ifeq \srcalign16
+
+    .ifeq \dstalign32
+        _neon_scale2x_16_16_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1, \src2, \src3, \dst1, \dst2
+    .else
+        _neon_scale2x_16_16_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1, \src2, \src3, \dst1:256, \dst2:256
+    .endif
+
+    .else
+
+    .ifeq \dstalign32
+        _neon_scale2x_16_16_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1 A128, \src2 A128, \src3 A128, \dst1, \dst2
+    .else
+        _neon_scale2x_16_16_line_\part \src1, \src2, \src3, \counter, \dst1, \dst2, \reg1, \src1 A128, \src2 A128, \src3 A128, \dst1 A256, \dst2 A256
+    .endif
+
+    .endif
+.endm
+

@@ -10,6 +10,7 @@
 @import PVSupport;
 @import QuartzCore;
 @import ReplayKit;
+@import PVEmulatorCore;
 #import "Provenance-Swift.h"
 
 #ifndef USE_EFFECT

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -2058,7 +2058,8 @@
 				B3E6BABD2894B2F600CF98C7 /* docs */,
 				B3E6B8B42894B2F200CF98C7 /* test */,
 			);
-			path = stella;
+			name = stella;
+			path = ../Sources/libstella/stella;
 			sourceTree = "<group>";
 		};
 		B3E6B8B42894B2F200CF98C7 /* test */ = {
@@ -4087,7 +4088,7 @@
 				};
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "PVStella" */;
-			compatibilityVersion = "Xcode 15.3";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -4095,7 +4096,6 @@
 				Base,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* VisualBoyAdvance */;
-			minimizedProjectReferenceProxies = 1;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (

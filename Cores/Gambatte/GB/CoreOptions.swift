@@ -8,6 +8,9 @@
 
 import Foundation
 import PVSupport
+import PVEmulatorCore
+import PVCoreBridge
+import PVLogging
 
 @objc public enum GBPalette: Int {
     case peaSoupGreen
@@ -25,6 +28,8 @@ import PVSupport
     case inverted
     case romTitle
     case grayscale
+
+    public static let `default`: GBPalette = .peaSoupGreen
 }
 
 extension GBPalette: CaseIterable { }
@@ -86,10 +91,12 @@ extension PVGBEmulatorCore: CoreOptional {
 			ELOG("Not found")
 			return
 		}
-		guard index > 0, index <= GBPalette.allCases.count, let enumValue = GBPalette(rawValue: index) else {
+		guard index > 0,
+              index <= GBPalette.allCases.count,
+              let enumValue = GBPalette(rawValue: index) else {
 			ELOG("Invalid index \(index)")
 			return
 		}
-		changeDisplayMode(enumValue.rawValue)
+		displayMode = enumValue
 	}
 }

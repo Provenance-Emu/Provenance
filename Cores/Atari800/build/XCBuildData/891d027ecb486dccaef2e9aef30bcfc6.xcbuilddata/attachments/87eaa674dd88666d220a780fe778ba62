@@ -1,0 +1,10 @@
+framework module PVAtari800 {
+  umbrella header "PVAtari800.h"
+  export *
+
+  module * { export * }
+}
+
+module PVAtari800.__Swift {
+  exclude header "PVAtari800-Swift.h"
+}

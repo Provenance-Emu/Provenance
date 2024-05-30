@@ -11,6 +11,8 @@ import UIKit
 import MetalKit
 import os
 
+@objc
+open
 class MTLViewController: UIViewController {
 
 }
@@ -25,8 +27,9 @@ extension MTLViewController: PVRenderDelegate {
     }
 }
 
+@objc
 @available(iOS 13.0, tvOS 13.0, *)
-class PVMTLView: MTKView, MTKViewDelegate {
+open class PVMTLView: MTKView, MTKViewDelegate {
     private let queue: DispatchQueue = DispatchQueue.init(label: "renderQueue", qos: .userInteractive)
     private var hasSuspended: Bool = false
     private let rgbColorSpace: CGColorSpace = CGColorSpaceCreateDeviceRGB()

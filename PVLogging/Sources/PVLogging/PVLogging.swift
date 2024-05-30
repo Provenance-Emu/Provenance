@@ -6,12 +6,9 @@
 
 import Foundation
 import System
-#if canImport(UIKit)
-import UIKit
-#endif
 import os
 
-@_exported import PVLoggingObjC
+//@_exported import PVLoggingObjC
 
 let LOGGING_STACK_SIZE = 1024
 let ISO_TIMEZONE_UTC_FORMAT: String = "Z"

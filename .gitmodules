@@ -20,7 +20,7 @@
 	path = Cores/Reicast/reicast-emulator
 	url = https://github.com/Provenance-Emu/reicast-emulator.git
 [submodule "Cores/PokeMini/PokeMini-libretro"]
-	path = Cores/PokeMini/PokeMini-libretro
+	path = Cores/PokeMini/PokeMiniSource/PokeMini-libretro
 	url = https://github.com/libretro/PokeMini.git
 [submodule "Cores/TGBDual/tgbdual-emulator"]
 	path = Cores/TGBDual/tgbdual-emulator
@@ -187,3 +187,6 @@
 [submodule "Cores/emuThree/cmake/zstd"]
 	path = Cores/emuThree/cmake/zstd
 	url = https://github.com/facebook/zstd.git
+[submodule "Cores/Sudachi/sudachi"]
+	path = Cores/Sudachi/sudachi
+	url = https://github.com/sudachi-emu/sudachi.git

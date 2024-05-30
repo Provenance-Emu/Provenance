@@ -9,6 +9,7 @@
 import PVSupport
 #if canImport(UIKit)
 import UIKit
+import PVLogging
 
 enum JSDPadDirection: Int, CaseIterable {
     case upLeft = 1

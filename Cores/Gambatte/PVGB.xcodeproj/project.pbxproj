@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB55B2106D58F00C45F09 /* PVSupport.framework */; };
 		B3547B4E205857E300CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4D205857E300CFF7D8 /* Core.plist */; };
 		B35E6C42207F09CC0040709A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C41207F09CC0040709A /* CoreOptions.swift */; };
+		B37C00882C01A5E000FEC6AC /* BuildFlags.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */; };
+		B37C008B2C01A6B300FEC6AC /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B37C008A2C01A6B300FEC6AC /* PVEmulatorCore */; };
 		B3AFCF9C2977A84500A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF9B2977A84500A01010 /* PVLogging */; };
 		B3C9D43E1DEA6AFB0068D057 /* PVGB.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C9D43C1DEA6AFB0068D057 /* PVGB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C9D4531DEA6DE80068D057 /* interrupter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AABE0511ABE373800FF6AEF /* interrupter.cpp */; };
@@ -201,6 +202,7 @@
 		B34AB55B2106D58F00C45F09 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3547B4D205857E300CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B35E6C41207F09CC0040709A /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
+		B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BuildFlags.xcconfig; sourceTree = "<group>"; };
 		B3C9D43A1DEA6AFB0068D057 /* PVGB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C9D43C1DEA6AFB0068D057 /* PVGB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGB.h; sourceTree = "<group>"; };
 		B3C9D43D1DEA6AFB0068D057 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -209,8 +211,6 @@
 		B3C9D4A81DEA6E3E0068D057 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B3E4817620C7DE5C0061CF96 /* PVGBEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGBEmulatorCore.swift; sourceTree = "<group>"; };
 		B3EA6C9429261AF500010224 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
-		B3EF26F92BE80CE70066D4B6 /* PVGB_UB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGB_UB.h; sourceTree = "<group>"; };
-		B3EF27032BE80CE70066D4B6 /* PVGB_UBTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVGB_UBTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,7 +219,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3AFCF9C2977A84500A01010 /* PVLogging in Frameworks */,
-				B34AB55C2106D58F00C45F09 /* PVSupport.framework in Frameworks */,
+				B37C008B2C01A6B300FEC6AC /* PVEmulatorCore in Frameworks */,
 				B3C9D4A11DEA6E0D0068D057 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -230,10 +230,9 @@
 		1AABDFD31ABE366000FF6AEF = {
 			isa = PBXGroup;
 			children = (
+				B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */,
 				1AABDFDE1ABE366000FF6AEF /* PVGB */,
 				B3C9D43B1DEA6AFB0068D057 /* PVGB */,
-				B3EF26F82BE80CE70066D4B6 /* PVGB-UB */,
-				B3EF27022BE80CE70066D4B6 /* PVGB-UBTests */,
 				1AABE0C71ABE37A400FF6AEF /* Frameworks */,
 				1AABDFDD1ABE366000FF6AEF /* Products */,
 			);
@@ -540,22 +539,6 @@
 			path = PVGB;
 			sourceTree = "<group>";
 		};
-		B3EF26F82BE80CE70066D4B6 /* PVGB-UB */ = {
-			isa = PBXGroup;
-			children = (
-				B3EF26F92BE80CE70066D4B6 /* PVGB_UB.h */,
-			);
-			path = "PVGB-UB";
-			sourceTree = "<group>";
-		};
-		B3EF27022BE80CE70066D4B6 /* PVGB-UBTests */ = {
-			isa = PBXGroup;
-			children = (
-				B3EF27032BE80CE70066D4B6 /* PVGB_UBTests.swift */,
-			);
-			path = "PVGB-UBTests";
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -587,6 +570,7 @@
 			name = PVGB;
 			packageProductDependencies = (
 				B3AFCF9B2977A84500A01010 /* PVLogging */,
+				B37C008A2C01A6B300FEC6AC /* PVEmulatorCore */,
 			);
 			productName = PVGB;
 			productReference = B3C9D43A1DEA6AFB0068D057 /* PVGB.framework */;
@@ -620,6 +604,9 @@
 			);
 			mainGroup = 1AABDFD31ABE366000FF6AEF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B37C00892C01A6B300FEC6AC /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+			);
 			productRefGroup = 1AABDFDD1ABE366000FF6AEF /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -635,6 +622,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3547B4E205857E300CFF7D8 /* Core.plist in Resources */,
+				B37C00882C01A5E000FEC6AC /* BuildFlags.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -693,6 +681,7 @@
 /* Begin XCBuildConfiguration section */
 		1AABDFEE1ABE366100FF6AEF /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -755,6 +744,7 @@
 		};
 		1AABDFEF1ABE366100FF6AEF /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -812,6 +802,7 @@
 		};
 		B324C5142191A3BA009F4EDC /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B37C00872C01A5DF00FEC6AC /* BuildFlags.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1054,7 +1045,18 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B37C00892C01A6B300FEC6AC /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B37C008A2C01A6B300FEC6AC /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
 		B3AFCF9B2977A84500A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

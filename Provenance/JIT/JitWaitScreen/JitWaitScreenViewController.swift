@@ -5,6 +5,7 @@
 #if os(iOS)
 
 import Foundation
+
 @objc final class JitWaitScreenViewController : UIViewController {
   @objc weak var delegate: JitScreenDelegate?
   var cancellation_token = DOLCancellationToken()

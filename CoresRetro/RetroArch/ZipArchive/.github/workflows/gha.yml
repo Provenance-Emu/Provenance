@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches: 
+      - master
+    tags:
+      - '*'
+jobs:
+  macos-11:
+    runs-on: ${{matrix.OS}}
+    strategy:
+      fail-fast: false
+      matrix:
+        OS: [macOS-11]
+        SDK: ["macosx"]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: |
+        pushd Example
+        pod install
+        popd  
+    - name: Build and test
+      run: |
+        echo "Disabling modern build system as a workaround for target issue in Xcode 10+"
+        USEMODERNBUILDSYSTEM="-UseModernBuildSystem=NO"
+        if [ ${{ matrix.SDK }} == "macosx" ]; then
+          SCHEME="ObjectiveCExample_macOS"
+          SDK="macosx"
+          DESTINATION="platform=macosx"
+        fi
+        
+        # build and test
+        CONFIGURATION="Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES"
+        xcodebuild -workspace Example/ZipArchiveExample.xcworkspace -scheme $SCHEME -sdk $SDK -destination "$DESTINATION" -configuration $CONFIGURATION $USEMODERNBUILDSYSTEM test
+
+  macos-12:
+    runs-on: ${{matrix.OS}}
+    strategy:
+      fail-fast: false
+      matrix:
+        OS: [macOS-12]
+        SDK: ["appletvsimulator", "iphonesimulator"]
+    steps:
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: '13.4.1'
+    - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: |
+        pushd Example
+        pod install
+        popd  
+    - name: Build and test
+      run: |
+        if [ ${{ matrix.SDK }} == "appletvsimulator" ]; then
+          SCHEME="ObjectiveCExample_tvOS"
+          SDK="appletvsimulator"
+          PLATFORM="tvOS Simulator"
+          DEVICE="Apple TV 4K (at 1080p) (2nd generation)"
+          DESTINATION="platform=$PLATFORM,name=$DEVICE"
+        fi
+        if [ ${{ matrix.SDK }} == "iphonesimulator" ]; then
+          SCHEME="ObjectiveCExample_iOS"
+          SDK="iphonesimulator"
+          PLATFORM="iOS Simulator"
+          DEVICE="iPhone 13 Pro Max"
+          DESTINATION="platform=$PLATFORM,name=$DEVICE"
+        fi
+
+        # build and test
+        CONFIGURATION="Debug ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES"
+        xcodebuild -workspace Example/ZipArchiveExample.xcworkspace -scheme $SCHEME -sdk $SDK -destination "$DESTINATION" -configuration $CONFIGURATION $USEMODERNBUILDSYSTEM test

@@ -1,0 +1,18 @@
+filename: mtcd.doc
+compress_method: -pm1-
+compressed_length: 759
+length: 1403
+header_level: 0
+os_type: 0
+crc: 42ca
+timestamp: 344478726
+--
+filename: cd.mtc
+compress_method: -pm1-
+compressed_length: 197
+length: 256
+header_level: 0
+os_type: 0
+crc: 71c8
+timestamp: 344478726
+--

@@ -15,6 +15,7 @@
 //
 
 import PVSupport
+import PVEmulatorCore
 
 private extension JSButton {
     var buttonTag: PV7800Button {

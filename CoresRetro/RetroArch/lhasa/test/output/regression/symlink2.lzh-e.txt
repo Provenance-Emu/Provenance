@@ -1,0 +1,2 @@
+Symbolic Link etc -> ../../etc
+Failed to read file type of 'etc/passwd'

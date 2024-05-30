@@ -19,6 +19,9 @@ import RealmSwift
 import UIKit
 import RxSwift
 
+import PVEmulatorCore
+import PVCoreBridge
+
 final class PVSettingsViewController: QuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
     let reachability: Reachability = try! Reachability()
@@ -133,9 +136,9 @@ final class PVSettingsViewController: QuickTableViewController {
         // MARK: -- Core Options
         let realm = try! Realm()
         let cores: [NavigationRow] = realm.objects(PVCore.self).sorted(byKeyPath: "projectName").compactMap { pvcore in
-            guard let coreClass = NSClassFromString(pvcore.principleClass) as? CoreOptional.Type else {
+            guard let coreClass = NSClassFromString(pvcore.principleClass) as? OptionalCore.Type else {
                 VLOG("Class <\(pvcore.principleClass)> does not implement CoreOptional")
-                return nil
+                return .none
             }
             return NavigationRow(text: pvcore.projectName, detailText: .none, icon: nil, customization: nil, action: { [weak self] row in
                 coreClass.coreClassName = pvcore.identifier

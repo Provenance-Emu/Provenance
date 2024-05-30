@@ -92,6 +92,7 @@ public class PViCadeController: GCController {
         }
     }
 
+    @available(iOS, deprecated: 13.0, message: "controllerPausedHandler has been deprecated. Use the Menu button found on the controller's profile, if it exists.")
     public override var controllerPausedHandler: ((GCController) -> Void)? {
         get {
             return super.controllerPausedHandler

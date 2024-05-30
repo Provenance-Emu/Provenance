@@ -9,6 +9,8 @@
 #ifndef PVSupport_DebugUtils_h
 #define PVSupport_DebugUtils_h
 
+#import <Foundation/Foundation.h>
+
 //MARK: Strong/Weak
 #define MAKEWEAK(x)\
 __weak __typeof(x)weak##x = x
@@ -72,4 +74,5 @@ NSAssert([NSThread isMainThread], @"Not main thread");
 
 #define VISIBLE_DEFAULT __attribute__((visibility("default")))
 
-#define PVCORE VISIBLE_DEFAULT PV_OBJC_DIRECT_MEMBERS
+#define PVCORE VISIBLE_DEFAULT
+#define PVCORE_DIRECT_MEMBERS VISIBLE_DEFAULT PV_OBJC_DIRECT_MEMBERS

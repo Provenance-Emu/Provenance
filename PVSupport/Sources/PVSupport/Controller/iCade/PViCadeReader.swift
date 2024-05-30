@@ -8,6 +8,7 @@
 
 #if canImport(UIKit)
 import UIKit
+import PVLogging
 
 public typealias iCadeButtonEventHandler = (_ button: iCadeControllerState) -> Void
 public typealias iCadeStateEventHandler = (_ state: iCadeControllerState) -> Void

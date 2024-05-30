@@ -1,0 +1,2 @@
+Symbolic Link etc -> /tmp
+Failed to read file type of 'etc/passwd'

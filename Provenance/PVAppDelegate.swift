@@ -10,8 +10,13 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
-#if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
+import PVEmulatorCore
+import PVCoreBridge
+
+#if !targetEnvironment(macCatalyst) && !os(macOS)
+#if canImport(SteamController)
 import SteamController
+#endif
 import UIKit
 #endif
 
@@ -21,7 +26,7 @@ final class PVApplication: UIApplication {
     var isInBackground: Bool = false
     override func sendEvent(_ event: UIEvent) {
         if let core=self.core {
-            core.send(event)
+            core.send(event:event)
         }
         super.sendEvent(event)
     }

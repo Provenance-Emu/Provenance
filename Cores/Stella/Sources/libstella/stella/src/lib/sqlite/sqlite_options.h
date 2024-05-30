@@ -1,0 +1,9 @@
+// https://www.sqlite.org/compile.html
+
+#define SQLITE_DQS 0
+#define SQLITE_DEFAULT_MEMSTATUS 0
+#define SQLITE_DEFAULT_WAL_SYNCHRONOUS 1
+#define SQLITE_USE_ALLOCA 1
+#define SQLITE_OMIT_LOAD_EXTENSION 1
+#define SQLITE_OMIT_DEPRECATED 1
+#define SQLITE_OMIT_DECLTYPE 1

@@ -1,0 +1,10 @@
+filename: gpl-2.gz
+compress_method: -lh0-
+compressed_length: 7040
+length: 7040
+header_level: 2
+os_type: 109 ('m')
+crc: bee7
+timestamp: 1334678218
+common_crc: b9a1
+--

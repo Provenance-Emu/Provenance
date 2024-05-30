@@ -1,0 +1,40 @@
+path: subdir/
+compress_method: -lhd-
+compressed_length: 0
+length: 0
+header_level: 2
+os_type: 77 ('M')
+crc: 0000
+timestamp: 1689556037
+win_creation_time: 133340296371842879
+win_modification_time: 133340296371842879
+win_access_time: 133340297876941261
+common_crc: 5aad
+--
+path: subdir/subdir2/
+compress_method: -lhd-
+compressed_length: 0
+length: 0
+header_level: 2
+os_type: 77 ('M')
+crc: 0000
+timestamp: 1689556037
+win_creation_time: 133340296371842879
+win_modification_time: 133340296371842879
+win_access_time: 133340309360001628
+common_crc: 9696
+--
+path: subdir/subdir2/
+filename: hello.txt
+compress_method: -lh0-
+compressed_length: 12
+length: 12
+header_level: 2
+os_type: 77 ('M')
+crc: 9778
+timestamp: 1262322000
+win_creation_time: 129067956000000000
+win_modification_time: 129067956000000000
+win_access_time: 133340309375721525
+common_crc: cb64
+--

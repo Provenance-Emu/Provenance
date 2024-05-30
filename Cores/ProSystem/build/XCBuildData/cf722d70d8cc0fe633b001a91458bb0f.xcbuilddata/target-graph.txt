@@ -1,0 +1,4 @@
+Target dependency graph (2 targets)
+Target 'PVProSystem' in project 'PVProSystem'
+➜ Explicit dependency on target 'prosystem' in project 'PVProSystem'
+Target 'prosystem' in project 'PVProSystem' (no dependencies)

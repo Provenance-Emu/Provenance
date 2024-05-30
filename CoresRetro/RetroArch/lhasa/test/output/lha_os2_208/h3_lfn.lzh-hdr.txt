@@ -1,0 +1,10 @@
+filename: Long Filename.txt
+compress_method: -lh0-
+compressed_length: 14
+length: 14
+header_level: 3
+os_type: 50 ('2')
+crc: 3197
+timestamp: 1322948330
+common_crc: 0d7b
+--

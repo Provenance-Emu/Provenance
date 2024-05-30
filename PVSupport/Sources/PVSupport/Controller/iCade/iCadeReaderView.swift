@@ -1,7 +1,6 @@
 #if canImport(UIKit)
 import UIKit
-@_exported import PVLogging
-@_exported import CocoaLumberjack
+import PVLogging
 /*
  EN      FR      DE
  UP ON,OFF  =   w,e     z,e     w,e

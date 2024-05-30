@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -439,7 +439,7 @@
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVTGBDual" */;
-			compatibilityVersion = "Xcode 15.3";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -447,7 +447,6 @@
 				Base,
 			);
 			mainGroup = B3C7620620783162009950E4;
-			minimizedProjectReferenceProxies = 1;
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

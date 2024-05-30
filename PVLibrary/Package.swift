@@ -1,12 +1,30 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.10
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
+
+#if swift(>=5.9)
+let swiftSettings: [SwiftSetting] = [
+//    .interoperabilityMode(.Cxx)
+]
+#else
+let swiftSettings: [SwiftSetting] = [
+]
+#endif
+
+let linkerSettings: [LinkerSetting] = [
+    .linkedFramework("Foundation"),
+    .linkedFramework("CoreGraphics"),
+    .linkedFramework("CoreSpotlight"),
+	.linkedFramework("GameController", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
+    .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .watchOS, .macCatalyst])),
+    .linkedFramework("WatchKit", .when(platforms: [.watchOS]))
+]
 
 let package = Package(
     name: "PVLibrary",
     platforms: [
-        .iOS(.v11),
-        .tvOS(.v11),
+        .iOS(.v13),
+        .tvOS(.v13),
         .watchOS(.v7),
         .macOS(.v11)
     ],
@@ -14,115 +32,120 @@ let package = Package(
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "PVLibrary",
-            targets: ["PVLibrary"])
+            targets: ["PVLibrary"]
+        ),
+        .library(
+            name: "PVLibrary-Static",
+            type: .static,
+            targets: ["PVLibrary"]
+        ),
+        .library(
+            name: "PVLibrary-Dynamic",
+            type: .dynamic,
+            targets: ["PVLibrary"]
+        ),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         .package(
             name: "PVSupport",
-            path: "../PVSupport"),
+            path: "../PVSupport"
+        ),
         .package(
-            url: "https://github.com/ReactiveX/RxSwift",
-            .upToNextMajor(from: "6.2.0")),
+            name: "PVLogging",
+            path: "../PVLogging"
+        ),
         .package(
-            url: "https://github.com/RxSwiftCommunity/RxRealm",
-            .upToNextMajor(from: "5.0.3")),
+            name: "PVHashing",
+            path: "../PVHashing"
+        ),
+//        .package(
+//            name: "PVObjCUtils",
+//            path: "../PVObjCUtils"
+//        ),
         .package(
-            name: "SQLite.swift",
-            url: "https://github.com/stephencelis/SQLite.swift",
-            .upToNextMajor(from: "0.12.2")),
+            name: "PVEmulatorCore",
+            path: "../PVEmulatorCore"
+        ),
         .package(
-            name: "ZipArchive",
-            url: "https://github.com/ZipArchive/ZipArchive",
-            .upToNextMajor(from: "2.3.0")),
+            url: "https://github.com/ReactiveX/RxSwift.git",
+            .upToNextMajor(from: "6.7.1")
+        ),
         .package(
-            name: "Reachability",
-            url: "https://github.com/realm/realm-cocoa",
-            .upToNextMajor(from: "10.20.2"))
+            url: "https://github.com/RxSwiftCommunity/RxRealm.git",
+            .upToNextMajor(from: "5.1.0")
+        ),
+        .package(
+            url: "https://github.com/groue/GRDB.swift.git",
+            .upToNextMajor(from: "6.6.0")
+        ),
+        .package(
+            url: "https://github.com/stephencelis/SQLite.swift.git",
+            .upToNextMajor(from: "0.15.3")
+        ),
+        .package(
+            url: "https://github.com/ZipArchive/ZipArchive.git",
+            exact: "2.4.3"
+        ),
+        .package(
+            url: "https://github.com/OlehKulykov/PLzmaSDK.git",
+            revision: "1.2.5"
+        ),
+        .package(
+            url: "https://github.com/tsolomko/SWCompression.git",
+            .upToNextMinor(from: "4.8.4")
+        ),
+		.package(
+			url: "https://github.com/SwiftGen/SwiftGenPlugin",
+			from: "6.6.0"
+		),
+//        .package(
+//            url: "https://github.com/JoeMatt/ZamzamKit.git",
+//			revision: "dbbf712"
+//        )
     ],
     targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages this package depends on.
-        .target(
-            name: "PVLibraryObjC",
-            dependencies: [
-                "PVSupport",
-                // "Realm",
-                // "RealmSwift",
-                .product(name: "RxCocoa", package: "RxSwift"),
-                .product(name: "RxSwift", package: "RxSwift"),
-                .product(name: "RxRealm", package: "RxRealm"),
-                .product(name: "SQLite", package: "SQLite.swift"),
-                .product(name: "ZipArchive", package: "ZipArchive")
-            ],
-            path: "PVLibrary",
-            sources: [
-                "Database/OESQLiteDatabase.m",
-                "NSExtensions/NSFileManager+Hashing.m",
-                "NSExtensions/UIImage+Scaling.m",
-                "NSExtensions/NSString+Hashing.m",
-                "NSExtensions/NSData+Hashing.m"
-                // "LzmaSDKObjC/src/LzmaSDKObjC.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCBufferProcessor.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCCrc.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCError.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCExtern.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCExtractCallback.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCItem.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCMutableItem.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCReader.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCUpdateCallback.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCWriter.mm",
-            ],
-            publicHeadersPath: "Public Headers"),
-
-        .target(
-            name: "LzmaSDKObjC",
-            path: "LzmaSDKObjC"
-        ),
-
         .target(
             name: "PVLibrary",
             dependencies: [
                 "PVSupport",
-                "LzmaSDKObjC",
-                "PVLibraryObjC",
-                // "Realm",
-                // "RealmSwift",
+                "PLzmaSDK",
+                "SWCompression",
+                "PVLogging",
+                "PVHashing", // TODO: Use the objC or Swift version, when it's tested @JoeMatt
+                .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
+                .product(name: "GRDB", package: "GRDB.swift"),
+                .product(name: "SQLite", package: "SQLite.swift"),
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
-                .product(name: "SQLite", package: "SQLite.swift"),
-                .product(name: "ZipArchive", package: "ZipArchive")
+                .product(name: "ZipArchive", package: "ZipArchive"),
+//                .product(name: "ZamzamUI", package: "ZamzamKit")
             ],
-            path: "PVLibrary",
-            exclude: [
-                "Database/OESQLiteDatabase.m",
-                "NSExtensions/NSFileManager+Hashing.m",
-                "NSExtensions/UIImage+Scaling.m",
-                "NSExtensions/NSString+Hashing.m",
-                "NSExtensions/NSData+Hashing.m",
-                "Info.plist"
-                // "LzmaSDKObjC/src/LzmaSDKObjC.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCBufferProcessor.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCCrc.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCError.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCExtern.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCExtractCallback.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCItem.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCMutableItem.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCReader.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCUpdateCallback.mm",
-                // "LzmaSDKObjC/src/LzmaSDKObjCWriter.mm",
-            ],
-            resources: [
-                .process("Resources/")
-            ]),
+			resources: [
+				.copy("Resources/cheatbase.sqlite"),
+				.copy("Resources/openvgdb.sqlite"),
+				.copy("Resources/systems.plist")
+				// .process("Resources/")
+			],
+//			cSettings: cSettings,
+//			cxxSettings: cxxSettings,
+//			swiftSettings: swiftSettings,
+//			linkerSettings: linkerSettings,
+			plugins: [
+				.plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
+			]
+        ),
 
         // MARK: SwiftPM tests
+
         .testTarget(
             name: "PVLibraryTests",
             dependencies: ["PVLibrary"],
-            path: "Tests")
-    ]
+            path: "Tests"
+        )
+    ],
+    swiftLanguageVersions: [.v5],
+    cLanguageStandard: .gnu17,
+    cxxLanguageStandard: .gnucxx20
 )

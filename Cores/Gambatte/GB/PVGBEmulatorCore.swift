@@ -8,6 +8,26 @@
 
 import Foundation
 import PVSupport
+import PVEmulatorCore
+
+@objc
+@objcMembers
+public class PVGBEmulatorCore: PVEmulatorCore {
+    //@interface PVGBEmulatorCore()
+    //-(NSInteger)currentDisplayMode;
+    //-(void)changeDisplayMode:(NSInteger)displayMode;
+    //@property (nonatomic, readonly) BOOL isGameboyColor;
+    //@end
+    public var displayMode: GBPalette = .default
+    public var isGameboyColor: Bool = false
+
+    @objc
+    public var videoBuffer: [UInt32]?
+    @objc
+    public var inSoundBuffer: [UInt32]? = nil
+    @objc
+    public var outSoundBuffer: [Int16]? = nil
+}
 
 extension PVGBEmulatorCore: CoreActions {
     public var coreActions: [CoreAction]? {
@@ -21,9 +41,9 @@ extension PVGBEmulatorCore: CoreActions {
     public func selected(action: CoreAction) {
         switch action.title {
         case "Change Palette":
-            let nextI = currentDisplayMode() + 1
-            let next = GBPalette(rawValue: nextI) ?? .peaSoupGreen
-            changeDisplayMode(next.rawValue)
+            let nextI = displayMode.rawValue + 1
+            let next = GBPalette(rawValue: nextI) ?? .default
+            displayMode = next
         default:
             print("Unknown action: " + action.title)
         }

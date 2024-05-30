@@ -13,6 +13,10 @@ import QuartzCore
 import RealmSwift
 import UIKit
 import ZipArchive
+import PVEmulatorCore
+import PVCoreBridge
+import PVAudio
+import PVCoreAudio
 
 private weak var staticSelf: PVEmulatorViewController?
 
@@ -43,8 +47,10 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     var BIOSPath: URL { return PVEmulatorConfiguration.biosPath(forGame: game) }
     var menuButton: MenuButton?
 
-    let use_metal: Bool = PVSettingsModel.shared.debugOptions.useMetal
-    private(set) lazy var gpuViewController: PVGPUViewController = use_metal ? PVMetalViewController(emulatorCore: core) : PVGLViewController(emulatorCore: core)
+    var use_metal: Bool { PVSettingsModel.shared.debugOptions.useMetal }
+    private(set) lazy var gpuViewController: PVGPUViewController = {
+        return use_metal ? PVMetalViewController(withEmulatorCore: core) : PVGLViewController(withEmulatorCore: core)
+    }()
     private(set) lazy var controllerViewController: (UIViewController & StartSelectDelegate)? = {
         let controller = PVCoreFactory.controllerViewController(forSystem: game.system, core: core)
         return controller
@@ -93,7 +99,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         if (app.emulator == nil) {
             app.emulator = self
         }
-        if let coreClass = type(of: core) as? CoreOptional.Type {
+        if let coreClass = type(of: core) as? OptionalCore.Type {
             coreClass.coreClassName = core.coreIdentifier ?? ""
             coreClass.systemName = core.systemIdentifier ?? ""
         }
@@ -102,7 +108,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         if core.skipLayout {
             gpuViewController.dismiss(animated: false)
         } else if core.alwaysUseMetal {
-            gpuViewController = PVMetalViewController(emulatorCore: core)
+            gpuViewController = PVMetalViewController(withEmulatorCore: core)
         }
 
         staticSelf = self
@@ -145,7 +151,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.stopEmulation()
         // Leave emulation loop first
         if audioInited {
-            gameAudio.stop()
+            gameAudio.stopAudio()
         }
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
@@ -450,7 +456,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         gameAudio.volume = PVSettingsModel.shared.volume
         gameAudio.outputDeviceID = 0
-        gameAudio.start()
+        gameAudio.startAudio()
 
         core.startEmulation()
 
@@ -604,7 +610,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
                 }
             }
         }
-        gameAudio.pause()
+        gameAudio.pauseAudio()
         showMenu(self)
     }
 
@@ -616,7 +622,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             core.setPauseEmulation(false)
         }
         core.setPauseEmulation(true)
-        gameAudio.start()
+        gameAudio.startAudio()
     }
 
     func enableControllerInput(_ enabled: Bool) {
@@ -799,7 +805,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
         core.stopEmulation()
         if audioInited {
-            gameAudio.stop()
+            gameAudio.stopAudio()
         }
         gpuViewController.dismiss(animated: false)
         if let view = controllerViewController?.view {

@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.10
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
@@ -8,7 +8,8 @@ let package = Package(
         .iOS(.v13),
         .tvOS(.v13),
         .watchOS(.v7),
-        .macOS(.v11)
+        .macOS(.v11),
+        .macCatalyst(.v14)
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
@@ -31,10 +32,10 @@ let package = Package(
     targets: [
         // MARK: - PVObjCUtils
         .target(
-            name: "PVObjCUtils",
-            dependencies: [
-            ],
-            publicHeadersPath: "include"
+            name: "PVObjCUtils"
         )
-    ]
+    ],
+    swiftLanguageVersions: [.v5],
+    cLanguageStandard: .gnu11,
+    cxxLanguageStandard: .gnucxx20
 )

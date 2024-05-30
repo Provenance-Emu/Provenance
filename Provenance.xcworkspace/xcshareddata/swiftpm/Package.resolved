@@ -2,29 +2,65 @@
   "object": {
     "pins": [
       {
-        "package": "CocoaLumberjack",
-        "repositoryURL": "https://github.com/CocoaLumberjack/CocoaLumberjack",
+        "package": "AppCenter",
+        "repositoryURL": "https://github.com/microsoft/appcenter-sdk-apple.git",
         "state": {
           "branch": null,
-          "revision": "4b8714a7fb84d42393314ce897127b3939885ec3",
-          "version": "3.8.5"
+          "revision": "ab54f758243f282d290b33027e8aac910d3d859a",
+          "version": "5.0.5"
         }
       },
       {
-        "package": "KeychainAccess",
-        "repositoryURL": "https://github.com/kishikawakatsumi/KeychainAccess.git",
+        "package": "BitByteData",
+        "repositoryURL": "https://github.com/tsolomko/BitByteData",
         "state": {
           "branch": null,
-          "revision": "84e546727d66f1adc5439debad16270d0fdd04e7",
-          "version": "4.2.2"
+          "revision": "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
+          "version": "2.0.4"
         }
       },
       {
-        "package": "NSLogger",
-        "repositoryURL": "https://github.com/fpillet/NSLogger",
+        "package": "Checksum",
+        "repositoryURL": "https://github.com/JoeMatt/Checksum.git",
+        "state": {
+          "branch": null,
+          "revision": "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+          "version": "1.1.1"
+        }
+      },
+      {
+        "package": "GRDB",
+        "repositoryURL": "https://github.com/groue/GRDB.swift.git",
+        "state": {
+          "branch": null,
+          "revision": "639fa9168d36931b36a79e60dc06b7d23852f1f4",
+          "version": "6.27.0"
+        }
+      },
+      {
+        "package": "PLCrashReporter",
+        "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
+        "state": {
+          "branch": null,
+          "revision": "6752f71de206f6a53fa6a758c3660fd9a7fe7527",
+          "version": "1.11.2"
+        }
+      },
+      {
+        "package": "PLzmaSDK",
+        "repositoryURL": "https://github.com/OlehKulykov/PLzmaSDK.git",
+        "state": {
+          "branch": "1.2.5",
+          "revision": "ee2666a06aa1f6632d5060d1cf316520ed8aecbd",
+          "version": null
+        }
+      },
+      {
+        "package": "Reachability",
+        "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
         "state": {
           "branch": "master",
-          "revision": "640681c81ed021136aeacf71a4dee1e90940e5b5",
+          "revision": "57da4b1270cab7c2228919eabc0e4e1bf93e48ea",
           "version": null
         }
       },
@@ -33,8 +69,8 @@
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "4d815c6e6883bfdcb67cf755d0f0f29a4b399ea7",
-          "version": "14.5.2"
+          "revision": "9cf7ef4ad8e2f4c7a519c9a395ca3d253bb87aa8",
+          "version": "14.6.2"
         }
       },
       {
@@ -42,8 +78,8 @@
         "repositoryURL": "https://github.com/realm/realm-swift.git",
         "state": {
           "branch": null,
-          "revision": "a4d731076e6a52f4366d844c78369ac7c9c6b1c0",
-          "version": "10.49.2"
+          "revision": "6e0772315809ff0a11cd265126350039a6aac59d",
+          "version": "10.50.1"
         }
       },
       {
@@ -57,11 +93,11 @@
       },
       {
         "package": "RxRealm",
-        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm.git",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm",
         "state": {
           "branch": null,
-          "revision": "fafdc8209b64a2d5ba22437a86532872bdb1efe3",
-          "version": "5.0.6"
+          "revision": "267cc8b587a5d5c74b57105050f9838cf20e2541",
+          "version": "5.1.0"
         }
       },
       {
@@ -75,7 +111,7 @@
       },
       {
         "package": "SQLite.swift",
-        "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
+        "repositoryURL": "https://github.com/stephencelis/SQLite.swift",
         "state": {
           "branch": null,
           "revision": "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
@@ -83,12 +119,39 @@
         }
       },
       {
-        "package": "swift-log",
-        "repositoryURL": "https://github.com/apple/swift-log",
+        "package": "SteamController",
+        "repositoryURL": "https://github.com/Provenance-Emu/SteamController.git",
+        "state": {
+          "branch": "master",
+          "revision": "55d2fe0484f4cc5ed3535033af6b0218621e37b2",
+          "version": null
+        }
+      },
+      {
+        "package": "SWCompression",
+        "repositoryURL": "https://github.com/tsolomko/SWCompression.git",
         "state": {
           "branch": null,
-          "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
-          "version": "1.5.4"
+          "revision": "390e0b0af8dd19a600005a242a89e570ff482e09",
+          "version": "4.8.6"
+        }
+      },
+      {
+        "package": "SwiftGenPlugin",
+        "repositoryURL": "https://github.com/SwiftGen/SwiftGenPlugin",
+        "state": {
+          "branch": null,
+          "revision": "879b85a470cacd70c19e22eb7e11a3aed66f4068",
+          "version": "6.6.2"
+        }
+      },
+      {
+        "package": "swiftui-introspect",
+        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect",
+        "state": {
+          "branch": null,
+          "revision": "121c146fe591b1320238d054ae35c81ffa45f45a",
+          "version": null
         }
       },
       {
@@ -96,8 +159,8 @@
         "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
         "state": {
           "branch": null,
-          "revision": "79d4dc9729096c6ad83dd3cee2b9f354d1b4ab7b",
-          "version": "2.5.5"
+          "revision": "38e0ce0598e06b034271f296a8e15b149c91aa19",
+          "version": "2.4.3"
         }
       },
       {
@@ -105,7 +168,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "97291fc5020a8994019ab76cf0cda83a9824374c",
+          "revision": "78955f5f9ddb3601566884ce217d91c132f5edc1",
           "version": null
         }
       }

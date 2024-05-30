@@ -1,0 +1,1 @@
+../../Genesis-Plus-GX/core/loadrom.h

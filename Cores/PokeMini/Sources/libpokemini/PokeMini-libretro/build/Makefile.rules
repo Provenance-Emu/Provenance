@@ -1,0 +1,50 @@
+TARGET_NAME ?= pokemini
+
+ifeq ($(STATIC_LINKING), 1)
+  TARGET = $(TARGET_NAME)_libretro_$(platform).a
+else
+  TARGET = $(TARGET_NAME)_libretro$(SOEXT)
+endif
+
+DEFINES  +=
+CFLAGS   += -Wall
+CXXFLAGS += -Wall
+LDFLAGS  +=
+OBJOUT   = -o 
+LINKOUT  = -o 
+
+OBJS    = $(SOURCES_C:.c=$(OBJEXT)) $(SOURCES_CXX:.cpp=$(OBJEXT))
+
+ifneq (,$(findstring msvc,$(platform)))
+	OBJOUT = -Fo
+	LINKOUT = -out:
+	LD = link.exe
+else
+	LD = $(CC)
+endif
+
+%$(OBJEXT): %.cpp
+	$(CXX) -c $(OBJOUT)$@ $< $(INCFLAGS) $(CXXFLAGS)
+
+%$(OBJEXT): %.c
+	$(CC) -c $(OBJOUT)$@ $< $(INCFLAGS) $(CFLAGS)
+
+%$(OBJEXT): %.S
+	$(CC_AS) -c $(OBJOUT)$@ $< $(CFLAGS)
+
+all: $(TARGET)
+
+$(TARGET): $(HEADERS) $(OBJS)
+ifeq ($(STATIC_LINKING), 1)
+	$(AR) rcs $@ $(OBJS)
+else
+	$(LD) $(LINKOUT)$@ $(OBJS) $(LDFLAGS)
+endif
+
+clean-objs:
+	rm -f $(OBJS)
+
+clean: clean-objs
+	rm -f $(TARGET)
+
+.PHONY: clean-objs clean dist-clean FORCE

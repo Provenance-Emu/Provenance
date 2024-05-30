@@ -22,6 +22,8 @@ import RxCocoa
 import RxDataSources
 import RxSwift
 import UIKit
+import PVEmulatorCore
+import PVCoreBridge
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
@@ -986,7 +988,11 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                         self.hud.labelText = "Checking " + paths.description
                         self.hud.show(true)
                         self.hud.hide(true, afterDelay: 1.0)
-                        _ = self.gameImporter.importFiles(atPaths: paths)
+                        do {
+                            try self.gameImporter.importFiles(atPaths: paths)
+                        } catch {
+                            ELOG("Error: \(error.localizedDescription)")
+                        }
                         break;
                     }
                 }, onError: { error in
@@ -1133,7 +1139,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                     let resetAlert = UIAlertController(title: "Reset core?", message: "Are you sure you want to reset \(game.title) to no longer default to use \(coreName)?", preferredStyle: .alert)
                     resetAlert.preferredContentSize = CGSize(width: 300, height: 150)
                     resetAlert.popoverPresentationController?.sourceView = sender
-                    resetAlert.popoverPresentationController?.sourceRect = sender.bounds ?? UIScreen.main.bounds
+                    resetAlert.popoverPresentationController?.sourceRect = sender.bounds // ?? UIScreen.main.bounds
                     resetAlert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
                     resetAlert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { _ in
                         try! RomDatabase.sharedInstance.writeTransaction {
@@ -1194,7 +1200,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             let alert = UIAlertController(title: nil, message: "URL copied to clipboard.", preferredStyle: .alert)
             alert.preferredContentSize = CGSize(width: 300, height: 150)
             alert.popoverPresentationController?.sourceView = sender
-            alert.popoverPresentationController?.sourceRect = sender.bounds ?? UIScreen.main.bounds
+            alert.popoverPresentationController?.sourceRect = sender.bounds // ?? UIScreen.main.bounds
             self.present(alert, animated: true)
             DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: {
                 alert.dismiss(animated: true, completion: nil)
@@ -1356,7 +1362,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         let alert = UIAlertController(title: "Rename", message: "Enter a new name for \(game.title):", preferredStyle: .alert)
         alert.preferredContentSize = CGSize(width: 300, height: 150)
         alert.popoverPresentationController?.sourceView = sender
-        alert.popoverPresentationController?.sourceRect = sender.bounds ?? UIScreen.main.bounds
+        alert.popoverPresentationController?.sourceRect = sender.bounds // ?? UIScreen.main.bounds
         alert.addTextField(configurationHandler: { (_ textField: UITextField) -> Void in
             textField.placeholder = game.title
             textField.text = game.title
@@ -1532,7 +1538,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             dismiss(animated: true) { () -> Void in }
             let image = info[convertFromUIImagePickerControllerInfoKey(UIImagePickerController.InfoKey.originalImage)] as? UIImage
             if let image = image, let scaledImage = image.scaledImage(withMaxResolution: Int(PVThumbnailMaxResolution)), let imageData = scaledImage.jpegData(compressionQuality: 0.85) {
-                let hash = (imageData as NSData).md5Hash
+                let hash = (imageData as NSData).md5
 
                 do {
                     try PVMediaCache.writeData(toDisk: imageData, withKey: hash)

@@ -248,6 +248,9 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
     }
 }
 
+import PVEmulatorCore
+import PVCoreBridge
+
 @objc extension PVEmulatorCore {
     @objc public func setCheat(code: String, type: String, enabled: Bool) -> Bool {
         return false

@@ -24,18 +24,19 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
-#import <PVSupport/PVSupport-Swift.h>
+//#import <Foundation/Foundation.h>
+//#import <PVSupport/PVSupport.h>
+//#import <PVSupport/PVSupport-Swift.h>
+//
+//PVCORE
+//@interface PVGBEmulatorCore : PVEmulatorCore <PVGBSystemResponderClient>
+//
+//@end
+//
+//// for Swiwt extensions
 
-PVCORE
-@interface PVGBEmulatorCore : PVEmulatorCore <PVGBSystemResponderClient>
-
-@end
-
-// for Swiwt extensions
-@interface PVGBEmulatorCore()
--(NSInteger)currentDisplayMode;
--(void)changeDisplayMode:(NSInteger)displayMode;
-@property (nonatomic, readonly) BOOL isGameboyColor;
-@end
+//@interface PVGBEmulatorCore()
+//-(NSInteger)currentDisplayMode;
+//-(void)changeDisplayMode:(NSInteger)displayMode;
+//@property (nonatomic, readonly) BOOL isGameboyColor;
+//@end

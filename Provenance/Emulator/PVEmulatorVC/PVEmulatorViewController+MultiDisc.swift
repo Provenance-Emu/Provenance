@@ -1,4 +1,6 @@
 import PVSupport
+import PVEmulatorCore
+import PVCoreBridge
 
 extension PVEmulatorViewController {
     func showSwapDiscsMenu() {

@@ -1,0 +1,11 @@
+framework module PVAtari800 {
+  umbrella header "PVAtari800.h"
+  export *
+
+  module * { export * }
+}
+
+module PVAtari800.Swift {
+  header "PVAtari800-Swift.h"
+  requires objc
+}

@@ -15,6 +15,9 @@ import PVLibrary
 import PVSupport
 import QuartzCore
 import UIKit
+import PVEmulatorCore
+import PVEmulatorCore
+import PVCoreBridge
 
 protocol JSButtonDisplayer {
 	var dPad: JSDPad? { get set }

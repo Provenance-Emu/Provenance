@@ -29,6 +29,7 @@ public final class PVLogEntry: NSObject {
         __PVLogEntryIndexCounter += 1
     }
     
+    @objc
     public convenience init(message: String) {
         self.init()
         self.text = message

@@ -1,0 +1,3 @@
+file1.txt	- Melting  :  .file1.txt	- Melting  :  ofile1.txt	- Melted  
+file3.txt	- Melting  :  .file3.txt	- Melting  :  ofile3.txt	- Melted  
+file4.txt	- Melting  :  .file4.txt	- Melting  :  ofile4.txt	- Melted  

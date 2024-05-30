@@ -1,0 +1,1 @@
+../../GBACore/gba/Sound.h

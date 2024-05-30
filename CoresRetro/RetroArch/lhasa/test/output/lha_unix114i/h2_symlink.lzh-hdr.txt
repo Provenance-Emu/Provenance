@@ -1,0 +1,14 @@
+filename: symlink
+symlink_target: target
+compress_method: -lhd-
+compressed_length: 0
+length: 0
+header_level: 2
+os_type: 85 ('U')
+crc: 0000
+timestamp: 1262304000
+unix_perms: 0120777
+unix_uid: 1000
+unix_gid: 1000
+common_crc: deb2
+--

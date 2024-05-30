@@ -833,7 +833,7 @@ extension GameLaunchingViewController where Self: UIViewController {
             }
 
             gameVC.core.setPauseEmulation(true)
-            gameVC.core.loadStateFromFile(atPath: saveState.file.url.path) { success, maybeError in
+            gameVC.core.loadState(fromFileAtPath: saveState.file.url.path) { success, maybeError in
                 guard success else {
                     let description = maybeError?.localizedDescription ?? "No reason given"
                     let reason = (maybeError as NSError?)?.localizedFailureReason

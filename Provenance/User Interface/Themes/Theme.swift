@@ -8,7 +8,7 @@
 
 import Foundation
 import PVSupport
-
+import PVLogging
 import UIKit
 
 public extension UIColor {

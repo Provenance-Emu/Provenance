@@ -1,0 +1,262 @@
+#!/usr/bin/env bash
+#
+# Copyright (c) 2011, 2012, Simon Howard
+#
+# Permission to use, copy, modify, and/or distribute this software
+# for any purpose with or without fee is hereby granted, provided
+# that the above copyright notice and this permission notice appear
+# in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+# WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+# AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+# LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
+# NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+#
+# Test script that uses the decompress-crc tool to decompress the
+# contents of the test archives, and check the CRC and length of
+# the decompressed data.
+#
+
+. test_common.sh
+
+test_archive() {
+	local archive=$1
+
+	(echo "crc: $2"; echo "length: $3") > "$wd/expected.txt"
+
+	./decompress-crc "archives/$archive" > "$wd/output.txt"
+
+	if ! diff -u "$wd/expected.txt" "$wd/output.txt"; then
+		fail "Output not as expected for $archive"
+	fi
+
+	rm -f "$wd/expected.txt" "$wd/output.txt"
+}
+
+generate_test_line() {
+	local archive=$1
+
+	local crc=$(./decompress-crc archives/$archive | grep crc: \
+	            | sed "s/crc: //")
+	local len=$(./decompress-crc archives/$archive | grep length: \
+	            | sed "s/length: //")
+	printf "test_archive %-35s%-10s%s\n" "$archive" "$crc" "$len"
+}
+
+# Common definitions for file contents:
+
+gpl2_gz="e4690583 6829"
+gpl2="4e46f4a1 18092"
+long="06788e85 1241658"
+hello_world1="af083b2d 12"
+hello_world2="b19b306e 14"
+hello_world3="0d4a1185 11"
+
+test_archive explzh_723/h0_lh0.lzh              $gpl2_gz
+test_archive explzh_723/h0_lh5.lzh              $gpl2
+test_archive explzh_723/h0_lh6.lzh              $gpl2
+test_archive explzh_723/h0_lh7.lzh              $gpl2
+test_archive explzh_723/h0_subdir.lzh           $hello_world1
+test_archive explzh_723/h1_lh0.lzh              $gpl2_gz
+test_archive explzh_723/h1_lh5.lzh              $gpl2
+test_archive explzh_723/h1_lh6.lzh              $gpl2
+test_archive explzh_723/h1_lh7.lzh              $gpl2
+test_archive explzh_723/h1_subdir.lzh           $hello_world1
+test_archive explzh_723/h2_lh0.lzh              $gpl2_gz
+test_archive explzh_723/h2_lh5.lzh              $gpl2
+test_archive explzh_723/h2_lh6.lzh              $gpl2
+test_archive explzh_723/h2_lh7.lzh              $gpl2
+test_archive explzh_723/h2_subdir.lzh           $hello_world1
+test_archive explzh_723/declha_sfx_ansi.exe     $gpl2
+test_archive explzh_723/declha_sfx_unicode.exe  $gpl2
+
+test_archive larc333/lz4.lzs                    $gpl2_gz
+test_archive larc333/lz5.lzs                    $gpl2
+test_archive larc333/sfx.com                    $gpl2_gz
+test_archive larc333/subdir.lzs                 $hello_world1
+test_archive larc333/long.lzs                   $long
+
+test_archive lharc113/lh0.lzh                   $gpl2_gz
+test_archive lharc113/lh1.lzh                   $gpl2
+test_archive lharc113/sfx.com                   $gpl2
+test_archive lharc113/subdir.lzh                $hello_world1
+test_archive lharc113/long.lzh                  $long
+
+test_archive lha213/lh0.lzh                     $gpl2_gz
+test_archive lha213/lh5.lzh                     $gpl2
+test_archive lha213/lh5_long.lzh                $long
+test_archive lha213/sfx.exe                     $gpl2
+test_archive lha213/subdir.lzh                  $hello_world1
+
+test_archive lha255e/lh0.lzh                    $gpl2_gz
+test_archive lha255e/lh5.lzh                    $gpl2
+test_archive lha255e/sfx.exe                    $gpl2
+test_archive lha255e/subdir.lzh                 $hello_world1
+
+test_archive lha_unix114i/h0_lh0.lzh            $gpl2_gz
+test_archive lha_unix114i/h0_lh5.lzh            $gpl2
+test_archive lha_unix114i/h0_lh6.lzh            $gpl2
+test_archive lha_unix114i/h0_lh7.lzh            $gpl2
+#test_archive lha_unix114i/h0_subdir.lzh         $hello_world1
+test_archive lha_unix114i/h1_lh0.lzh            $gpl2_gz
+test_archive lha_unix114i/h1_lh5.lzh            $gpl2
+test_archive lha_unix114i/h1_lh6.lzh            $gpl2
+test_archive lha_unix114i/h1_lh7.lzh            $gpl2
+test_archive lha_unix114i/h1_subdir.lzh         $hello_world1
+test_archive lha_unix114i/h2_lh0.lzh            $gpl2_gz
+test_archive lha_unix114i/h2_lh5.lzh            $gpl2
+test_archive lha_unix114i/h2_lh6.lzh            $gpl2
+test_archive lha_unix114i/h2_lh7.lzh            $gpl2
+test_archive lha_unix114i/h2_subdir.lzh         $hello_world1
+test_archive lha_unix114i/lh6_long.lzh          $long
+test_archive lha_unix114i/lh7_long.lzh          $long
+
+
+test_archive lha_os2_208/lh0.lzh                $gpl2_gz
+test_archive lha_os2_208/lh5.lzh                $gpl2
+test_archive lha_os2_208/lfn.lzh                $hello_world2
+test_archive lha_os2_208/subdir.lzh             $hello_world2
+test_archive lha_os2_208/lh1.lzh                $gpl2
+test_archive lha_os2_208/h3_lfn.lzh             $hello_world2
+test_archive lha_os2_208/h3_lh0.lzh             $gpl2_gz
+test_archive lha_os2_208/h3_lh5.lzh             $gpl2
+test_archive lha_os2_208/h3_subdir.lzh          $hello_world2
+
+# The PMarc archives contain trailing zero-space, meaning that
+# the results here are technically incorrect. This is an unfortunate
+# result of the original PMarc tool which adds the extra data.
+
+test_archive pmarc124/pm0.pma                   e3cf61d2  6912
+test_archive pmarc124/pm1.pma                   b7d0e42c  25284
+test_archive pmarc124/pm1_long.pma              b2b419d6  1241659
+test_archive pmarc124/mtcd.pma                  ceec9f76  1403
+
+test_archive pmarc2/pm0.pma                     549d935a  6912
+test_archive pmarc2/pm2.pma                     8e2093a7  18176
+test_archive pmarc2/comment.pma                 906330c5  128
+test_archive pmarc2/sfx.com                     8e2093a7  18176
+test_archive pmarc2/long.pma                    b2b419d6  1241659
+
+test_archive lha_amiga_122/level0.lzh           $hello_world1
+test_archive lha_amiga_122/level1.lzh           $hello_world1
+test_archive lha_amiga_122/level2.lzh           $hello_world1
+test_archive lha_amiga_122/lh0.lzh              $gpl2_gz
+test_archive lha_amiga_122/lh1.lzh              $gpl2
+test_archive lha_amiga_122/lh4_long.lzh         $long
+test_archive lha_amiga_122/lh4.lzh              $gpl2
+test_archive lha_amiga_122/lh5.lzh              $gpl2
+test_archive lha_amiga_122/subdir.lzh           $hello_world1
+test_archive lha_amiga_122/sfx.run              $gpl2
+
+test_archive lha_amiga_212/level0.lzh           $hello_world1
+test_archive lha_amiga_212/level1.lzh           $hello_world1
+test_archive lha_amiga_212/level2.lzh           $hello_world1
+test_archive lha_amiga_212/lh1.lzh              $gpl2
+test_archive lha_amiga_212/lh6.lzh              $gpl2
+
+test_archive lharc_atari_313a/lh0.lzh           $gpl2_gz
+test_archive lharc_atari_313a/lh5.lzh           $gpl2
+test_archive lharc_atari_313a/lz5.lzh           $gpl2
+test_archive lharc_atari_313a/subdir.lzh        $hello_world1
+test_archive lharc_atari_313a/sfx.tos           $gpl2
+test_archive lharc_atari_313a/shorter.lzh       3fdcda96  286015
+test_archive lharc_atari_313a/h1_lh5.lzh        $gpl2
+test_archive lharc_atari_313a/h1_lz5.lzh        $gpl2
+test_archive lharc_atari_313a/h1_subdir.lzh     $hello_world1
+test_archive lharc_atari_313a/h2_lh5.lzh        $gpl2
+test_archive lharc_atari_313a/h2_lz5.lzh        $gpl2
+test_archive lharc_atari_313a/h2_subdir.lzh     $hello_world1
+
+test_archive lha_x68k_213/h0_lh0.lzh            $gpl2_gz
+test_archive lha_x68k_213/h0_lh5.lzh            $gpl2
+test_archive lha_x68k_213/h0_subdir.lzh         $hello_world1
+test_archive lha_x68k_213/h1_lh0.lzh            $gpl2_gz
+test_archive lha_x68k_213/h1_lh5.lzh            $gpl2
+test_archive lha_x68k_213/h1_subdir.lzh         $hello_world1
+test_archive lha_x68k_213/h2_lh0.lzh            $gpl2_gz
+test_archive lha_x68k_213/h2_lh5.lzh            $gpl2
+test_archive lha_x68k_213/h2_subdir.lzh         $hello_world1
+test_archive lha_x68k_213/sfx.x                 $gpl2
+
+# These three MacLHA archives are technically "incorrect" because they
+# contain MacBinary headers that are not stripped off. As they are
+# level 0 archives, there is no OS type that can be used to identify
+# them as MacLHA archives.
+
+test_archive maclha_224/l0_lh0.lzh              12789183  7040
+test_archive maclha_224/l0_lh1.lzh              f96b05fd  18304
+test_archive maclha_224/l0_lh5.lzh              f96b05fd  18304
+
+test_archive maclha_224/l0_nm_lh5.lzh           $gpl2
+test_archive maclha_224/l1_full_subdir.lzh      $hello_world3
+test_archive maclha_224/l1_lh0.lzh              $gpl2_gz
+test_archive maclha_224/l1_lh1.lzh              $gpl2
+test_archive maclha_224/l1_lh5.lzh              $gpl2
+test_archive maclha_224/l1_nm_lh5.lzh           $gpl2
+test_archive maclha_224/l1_subdir.lzh           $hello_world3
+test_archive maclha_224/l2_full_subdir.lzh      $hello_world3
+test_archive maclha_224/l2_lh0.lzh              $gpl2_gz
+test_archive maclha_224/l2_lh1.lzh              $gpl2
+test_archive maclha_224/l2_lh5.lzh              $gpl2
+test_archive maclha_224/l2_nm_lh5.lzh           $gpl2
+test_archive maclha_224/l2_subdir.lzh           $hello_world3
+
+test_archive lhmelt_16536/h0_lh0.lzh            $gpl2_gz
+test_archive lhmelt_16536/h0_lh1.lzh            $gpl2
+test_archive lhmelt_16536/h0_lh5.lzh            $gpl2
+test_archive lhmelt_16536/h0_lh6.lzh            $gpl2
+test_archive lhmelt_16536/h0_lh7.lzh            $gpl2
+test_archive lhmelt_16536/h0_subdir.lzh         $hello_world1
+test_archive lhmelt_16536/h1_lh0.lzh            $gpl2_gz
+test_archive lhmelt_16536/h1_lh1.lzh            $gpl2
+test_archive lhmelt_16536/h1_lh5.lzh            $gpl2
+test_archive lhmelt_16536/h1_subdir.lzh         $hello_world1
+test_archive lhmelt_16536/h2_lh0.lzh            $gpl2_gz
+test_archive lhmelt_16536/h2_lh1.lzh            $gpl2
+test_archive lhmelt_16536/h2_lh5.lzh            $gpl2
+test_archive lhmelt_16536/h2_subdir.lzh         $hello_world1
+test_archive lhmelt_16536/sfx_winsfx32_213.exe  $gpl2
+test_archive lhmelt_16536/sfx_winsfx32m_250.exe $gpl2
+test_archive lhmelt_16536/sfx_winsfx_213.exe    $gpl2
+test_archive lhmelt_16536/sfx_winsfxm_250.exe   $gpl2
+
+test_archive lha_osk_201/h0_lh0.lzh             $gpl2_gz
+test_archive lha_osk_201/h0_lh1.lzh             $gpl2
+test_archive lha_osk_201/h0_lh5.lzh             $gpl2
+#test_archive lha_osk_201/h0_subdir.lzh          $hello_world1
+test_archive lha_osk_201/h1_lh0.lzh             $gpl2_gz
+test_archive lha_osk_201/h1_lh1.lzh             $gpl2
+test_archive lha_osk_201/h1_lh5.lzh             $gpl2
+test_archive lha_osk_201/h1_subdir.lzh          $hello_world1
+test_archive lha_osk_201/h2_lh0.lzh             $gpl2_gz
+test_archive lha_osk_201/h2_lh1.lzh             $gpl2
+test_archive lha_osk_201/h2_lh5.lzh             $gpl2
+test_archive lha_osk_201/h2_subdir.lzh          $hello_world1
+
+test_archive lha_os9_211c/h0_lh0.lzh            $gpl2_gz
+test_archive lha_os9_211c/h0_lh1.lzh            $gpl2
+test_archive lha_os9_211c/h0_subdir.lzh         $hello_world1
+test_archive lha_os9_211c/h1_lh0.lzh            $gpl2_gz
+test_archive lha_os9_211c/h1_lh1.lzh            $gpl2
+test_archive lha_os9_211c/h1_subdir.lzh         $hello_world1
+test_archive lha_os9_211c/h2_lh0.lzh            $gpl2_gz
+test_archive lha_os9_211c/h2_lh1.lzh            $gpl2
+test_archive lha_os9_211c/h2_subdir.lzh         $hello_world1
+
+test_archive regression/abspath.lzh             bd98d221  46
+test_archive regression/badterm.lzh             00000000  0
+test_archive regression/unixsep.lzh             $hello_world1
+
+test_archive generated/lzs/lzs.lzs              $gpl2
+test_archive generated/lzs/long.lzs             $long
+
+# -pm1- decompress. Unfortunately only the first file in the archive
+# will be tested.
+
+test_archive generated/pm1/pm1.pma              41fe9947  32768
+

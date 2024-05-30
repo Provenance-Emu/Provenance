@@ -1,0 +1,1 @@
+../../libretro/scrc32.h

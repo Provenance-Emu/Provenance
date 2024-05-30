@@ -1,0 +1,1 @@
+../../GBACore/gba/GBAinline.h

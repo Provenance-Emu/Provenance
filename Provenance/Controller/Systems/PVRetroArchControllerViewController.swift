@@ -1,4 +1,5 @@
 import PVSupport
+import PVEmulatorCore
 
 final class PVRetroArchControllerViewController: PVControllerViewController<PVRetroArchCoreResponderClient> {
     override func layoutViews() {

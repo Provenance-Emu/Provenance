@@ -1,0 +1,1 @@
+../tgbdual-emulator/gb_core/serializer.h

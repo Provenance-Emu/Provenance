@@ -1,0 +1,74 @@
+Notes on command line arguments:
+
+Mode - must be the first character of the first argument. Leading '-'
+is ignored:
+
+  e/x       - Extract
+  l/v       - List (normal / verbose mode)
+  t         - Test CRC
+  p         - Print files to STDOUT
+
+Options - flags following the mode character. Options are accepted
+even if they are inappropriate for the mode, eg. "lha lf".
+
+  q[level]  - Quiet mode. Normal running is quiet level 0.
+
+              in list mode, quiet level 2 strips header/footer from
+              listing.
+
+              in extract mode, overwrite is always performed, and:
+              - at quiet level 1, the 'progress bar' is not shown.
+              - at quiet level 2, no messages are printed at all.
+
+              in test mode, behavior is similar to extract mode, but
+              level 2 behavior is similar to level 0.
+
+              in print mode, at quiet level 2 the filename is not
+              printed before the file contents.
+
+              all quiet modes imply 'f', disabling overwrite without
+              confirmation.
+
+  f         - Force overwrite. When extracting, existing files are
+              overwritten with no confirmation.
+
+  n         - Don't execute commands, just do a dry run of what would
+              be done.
+
+              eg. for lha en:
+
+                      EXTRACT lhasa/src/ (directory)
+                      EXTRACT lhasa/src/extract.c
+                      EXTRACT lhasa/src/extract.c but file is exist.
+
+              eg. for lha tn:
+
+                      VERIFY lhasa/src/main.c
+
+  i         - Ignore directory path. When extracting, the directory
+              of each file is ignored - they are all extracted into
+              the same directory.
+
+              Also applies to test mode - the output filename of the
+              tested file does not include the directory.
+
+              In print mode, the path is not printed in the header
+              before each file.
+
+  v         - Verbose mode, prints extra information.
+
+              in list mode, verbose mode splits the filename onto a
+              separate preceding line and the header level is shown
+              in its normal place.
+
+              in extract mode, verbose mode prints a message when
+              creating a directory. If creating missing parent directories,
+              they are printed in reverse order, eg.
+
+                      Making directory "lhasa/src".
+                      Making directory "lhasa".
+                      lhasa/src/main.c        - Melted   :  o
+
+  w=dir     - Specify destination directory to extract files. Must be
+              the last option specified. '=' can be omitted. If combined
+              with 'i', all files get placed in that one directory.

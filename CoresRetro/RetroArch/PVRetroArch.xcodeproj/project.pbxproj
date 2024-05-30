@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -34,14 +34,11 @@
 		93402041296A37D3005742C2 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F66EE229672D9000203EB3 /* IOKit.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93448E562980043F002F87BB /* PVRetroArchCore+Controls+PSX.m in Sources */ = {isa = PBXBuildFile; fileRef = 93448E552980043E002F87BB /* PVRetroArchCore+Controls+PSX.m */; };
 		935E7D4B29A4ABDD00D92748 /* vulkan_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B66BA82967EFCA00A621DD /* vulkan_common.c */; };
-		935E7D4D29A4C7AC00D92748 /* localintermediate.h in Sources */ = {isa = PBXBuildFile; fileRef = 935E7D4C29A4C6E200D92748 /* localintermediate.h */; };
-		935E7D4F29A4C98C00D92748 /* griffin_slang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935E7D4E29A4C98C00D92748 /* griffin_slang.cpp */; };
 		935E7D5329A4CA7F00D92748 /* griffin_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935E7D5129A4CA7E00D92748 /* griffin_cpp.cpp */; };
 		93654F7A298F4A2D0046503F /* PVRetroArchCore+Controls+PCE.m in Sources */ = {isa = PBXBuildFile; fileRef = 93654F78298F4A2C0046503F /* PVRetroArchCore+Controls+PCE.m */; };
 		93654F7B298F4A2D0046503F /* PVRetroArchCore+Controls+DS.m in Sources */ = {isa = PBXBuildFile; fileRef = 93654F79298F4A2C0046503F /* PVRetroArchCore+Controls+DS.m */; };
 		936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */ = {isa = PBXBuildFile; fileRef = 936B47F92969798B00C7D2A3 /* platform_darwin.m */; };
 		936BFD8A2986AF03001FF097 /* cocoa_vk_ctx.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BA743C2965B96D00A49D66 /* cocoa_vk_ctx.m */; };
-		936E99E62A35A15900B1D0F8 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99E52A35A15900B1D0F8 /* PVSupport.framework */; };
 		936E99E82A35A3A400B1D0F8 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99E72A35A3A400B1D0F8 /* Metal.framework */; };
 		936E99EA2A35A3E600B1D0F8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 936E99E92A35A3E600B1D0F8 /* CoreGraphics.framework */; };
 		936E99EC2A35A94900B1D0F8 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 936E99EB2A35A94900B1D0F8 /* PVLogging */; };
@@ -86,7 +83,6 @@
 		93AA124F296DCE58007C9808 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA124E296DCE58007C9808 /* libiconv.tbd */; };
 		93AA1253296DCEE8007C9808 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93AA1252296DCEE8007C9808 /* VideoToolbox.framework */; platformFilters = (ios, maccatalyst, macos, tvos, ); };
 		93AC9F672A48952800D3F4D6 /* runloop.c in Sources */ = {isa = PBXBuildFile; fileRef = 93AC9F662A48952700D3F4D6 /* runloop.c */; };
-		93ACAAB22A4A763400A744F8 /* griffin.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B66BEC2968382700A621DD /* griffin.m */; };
 		93B3B1932A8CAA7800B60325 /* libZipArchive_RetroArch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B1532A8CA9D100B60325 /* libZipArchive_RetroArch.a */; };
 		93B3B1952A8CAB0E00B60325 /* liblzma.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B3B1942A8CAB0E00B60325 /* liblzma.tbd */; };
 		93B3B1972A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m in Sources */ = {isa = PBXBuildFile; fileRef = 93B3B1962A8CBA1B00B60325 /* PVRetroArchCore+Archive+PC98.m */; };
@@ -168,7 +164,6 @@
 		93B3BD542A8CEB9F00B60325 /* filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B3BCDB2A8CE91800B60325 /* filter.h */; };
 		93B66B9F2967DB7600A621DD /* menu_pipeline.metal in Sources */ = {isa = PBXBuildFile; fileRef = 93B66B992967C64300A621DD /* menu_pipeline.metal */; };
 		93B66BA02967DB7600A621DD /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 93B66B982967C64300A621DD /* Shaders.metal */; };
-		93B66C1C296854C000A621DD /* griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = 93B66BEA2968382700A621DD /* griffin.c */; };
 		93B716DC296591EE00F4CDC7 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DA296591ED00F4CDC7 /* CoreMedia.framework */; };
 		93B716DD296591EE00F4CDC7 /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DB296591EE00F4CDC7 /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, ); };
 		93B716E02965921000F4CDC7 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93B716DE2965921000F4CDC7 /* CoreVideo.framework */; };
@@ -218,9 +213,7 @@
 		93D6B10D296A1B0100D5EE11 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		93F66E9B29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F66E9A29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m */; };
 		93F66EC52966D6E100203EB3 /* cocoa_common.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FF38392966337100772659 /* cocoa_common.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		93F66ED02967246B00203EB3 /* PVRetroArchCore+Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F66ECF2967246B00203EB3 /* PVRetroArchCore+Controls.swift */; };
 		93FF381A2965FF9C00772659 /* cocoa_gl_ctx.m in Sources */ = {isa = PBXBuildFile; fileRef = 93BA743D2965B96D00A49D66 /* cocoa_gl_ctx.m */; };
-		93FF381E2965FF9C00772659 /* PVRetroArchCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC6022952034E0070CF1D /* PVRetroArchCore.swift */; };
 		93FF381F2965FF9C00772659 /* PVRetroArchCore.h in Sources */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVRetroArchCore.h */; };
 		93FF38202965FF9C00772659 /* PVRetroArchCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVRetroArchCore.mm */; };
 		93FF38212965FF9C00772659 /* PVRetroArchCore+Audio.h in Sources */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVRetroArchCore+Audio.h */; };
@@ -233,6 +226,12 @@
 		93FF38282965FF9C00772659 /* PVRetroArchCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */; };
 		93FF38292965FF9C00772659 /* PVRetroArchCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */; };
 		93FF382A2965FF9C00772659 /* PVRetroArch.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EA0218B881000557ACE /* PVRetroArch.mm */; };
+		B30C8C822BF45AE200C91991 /* griffin_slang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */; };
+		B30C8C832BF45AE200C91991 /* griffin.c in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7E2BF45AE200C91991 /* griffin.c */; };
+		B30C8C842BF45AE200C91991 /* griffin.m in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C7F2BF45AE200C91991 /* griffin.m */; };
+		B30C8C882BF45AFB00C91991 /* PVRetroArchCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C852BF45AFA00C91991 /* PVRetroArchCore.swift */; };
+		B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */; };
+		B30C8C8C2BF45BDC00C91991 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */; };
 		B3135B9C26E4CC290047F338 /* PVRetroArchCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVRetroArchCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA126E4CC620047F338 /* PVRetroArch.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVRetroArch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
@@ -241,7 +240,9 @@
 		B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF3207CD2730040709A /* CoreAudioKit.framework */; platformFilters = (ios, maccatalyst, macos, watchos, ); };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */ = {isa = PBXBuildFile; productRef = B37C00582BFF6A1000FEC6AC /* MoltenVK */; };
 		B39C4BEB2BF3430C00F199BB /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4BEA2BF3430B00F199BB /* MoltenVK.xcframework */; };
+		B3C439532BF442920021B9C3 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C439522BF442920021B9C3 /* PVSupport */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3CC631D2BEF17A5002F3C8B /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3CC63152BEF0CD0002F3C8B /* MoltenVK.xcframework */; };
@@ -268,34 +269,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 93B3B19C2A8CC39800B60325;
 			remoteInfo = RarArchive;
-		};
-		93B3B5192A8CE56A00B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B42D2A8CE56900B60325 /* UnrarExample.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1D6058910D05DD3D006BFB54;
-			remoteInfo = UnrarExample;
-		};
-		93B3B51F2A8CE56A00B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B4352A8CE56900B60325 /* UnrarKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 96EA535B1B3CB04300F79DC6;
-			remoteInfo = UnrarKit;
-		};
-		93B3B5212A8CE56A00B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B4352A8CE56900B60325 /* UnrarKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 964C8ABB18D28EE000AD7321;
-			remoteInfo = "UnrarKit Tests";
-		};
-		93B3B5232A8CE56A00B60325 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93B3B4352A8CE56900B60325 /* UnrarKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 7A22B1EA1F60A05F004B8050;
-			remoteInfo = UnrarKitResources;
 		};
 		93B3B5252A8CE56A00B60325 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -394,11 +367,8 @@
 		932A5CC92968710B0032C168 /* modules */ = {isa = PBXFileReference; lastKnownFileType = folder; path = modules; sourceTree = "<group>"; };
 		93323F812AAB891100EB0C43 /* mame_plugins */ = {isa = PBXFileReference; lastKnownFileType = folder; path = mame_plugins; sourceTree = "<group>"; };
 		933CC5FE2951FB9F0070CF1D /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
-		933CC6022952034E0070CF1D /* PVRetroArchCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVRetroArchCore.swift; sourceTree = "<group>"; };
 		93448E552980043E002F87BB /* PVRetroArchCore+Controls+PSX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PSX.m"; sourceTree = "<group>"; };
 		934BE7CD296E969500FB9933 /* OpenMP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenMP.framework; path = ../../Cores/Flycast/cmake/OpenMP.framework; sourceTree = "<group>"; };
-		935E7D4C29A4C6E200D92748 /* localintermediate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = localintermediate.h; sourceTree = "<group>"; };
-		935E7D4E29A4C98C00D92748 /* griffin_slang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_slang.cpp; sourceTree = "<group>"; };
 		935E7D5029A4CA7E00D92748 /* griffin_glslang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = griffin_glslang.cpp; path = RetroArch/griffin/griffin_glslang.cpp; sourceTree = SOURCE_ROOT; };
 		935E7D5129A4CA7E00D92748 /* griffin_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = griffin_cpp.cpp; path = RetroArch/griffin/griffin_cpp.cpp; sourceTree = SOURCE_ROOT; };
 		93654F78298F4A2C0046503F /* PVRetroArchCore+Controls+PCE.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls+PCE.m"; sourceTree = "<group>"; };
@@ -785,8 +755,6 @@
 		93B66BA82967EFCA00A621DD /* vulkan_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vulkan_common.c; sourceTree = "<group>"; };
 		93B66BCC2968004900A621DD /* vulkan_metal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vulkan_metal.h; sourceTree = "<group>"; };
 		93B66BDC29680D2D00A621DD /* libMoltenVK_RetroArch.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK_RetroArch.dylib; path = lib/libMoltenVK_RetroArch.dylib; sourceTree = "<group>"; };
-		93B66BEA2968382700A621DD /* griffin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = griffin.c; sourceTree = "<group>"; };
-		93B66BEC2968382700A621DD /* griffin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = griffin.m; sourceTree = "<group>"; };
 		93B66E39296854C000A621DD /* libretroarch.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libretroarch.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		93B716DA296591ED00F4CDC7 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		93B716DB296591EE00F4CDC7 /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/iOSSupport/System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
@@ -847,11 +815,16 @@
 		93D6B0F5296A16FB00D5EE11 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		93D6B107296A1ABE00D5EE11 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		93F66E9A29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+RetroArchUI.m"; sourceTree = "<group>"; };
-		93F66ECF2967246B00203EB3 /* PVRetroArchCore+Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+Controls.swift"; sourceTree = "<group>"; };
 		93F66EE229672D9000203EB3 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		93F66F182967465500203EB3 /* code-sign-cores.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "code-sign-cores.sh"; sourceTree = "<group>"; };
 		93FF38392966337100772659 /* cocoa_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cocoa_common.h; sourceTree = "<group>"; };
 		93FF383A2966337100772659 /* apple_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform.h; sourceTree = "<group>"; };
+		B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = griffin_slang.cpp; sourceTree = "<group>"; };
+		B30C8C7E2BF45AE200C91991 /* griffin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = griffin.c; sourceTree = "<group>"; };
+		B30C8C7F2BF45AE200C91991 /* griffin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = griffin.m; sourceTree = "<group>"; };
+		B30C8C802BF45AE200C91991 /* localintermediate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = localintermediate.h; sourceTree = "<group>"; };
+		B30C8C852BF45AFA00C91991 /* PVRetroArchCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVRetroArchCore.swift; sourceTree = "<group>"; };
+		B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVRetroArchCore+Controls.swift"; sourceTree = "<group>"; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3447E96218B809200557ACE /* PVRetroArchCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCore+Controls.h"; sourceTree = "<group>"; };
@@ -959,6 +932,7 @@
 				936E9A212A35AC6100B1D0F8 /* CFNetwork.framework in Frameworks */,
 				936E99EA2A35A3E600B1D0F8 /* CoreGraphics.framework in Frameworks */,
 				936E99E82A35A3A400B1D0F8 /* Metal.framework in Frameworks */,
+				B30C8C8C2BF45BDC00C91991 /* PVEmulatorCore in Frameworks */,
 				93B716E32965922200F4CDC7 /* MobileCoreServices.framework in Frameworks */,
 				B39C4BEB2BF3430C00F199BB /* MoltenVK.xcframework in Frameworks */,
 				93B716E02965921000F4CDC7 /* CoreVideo.framework in Frameworks */,
@@ -971,9 +945,10 @@
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				936E99EC2A35A94900B1D0F8 /* PVLogging in Frameworks */,
-				936E99E62A35A15900B1D0F8 /* PVSupport.framework in Frameworks */,
 				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
+				B37C00592BFF6A1000FEC6AC /* MoltenVK in Frameworks */,
 				93B716F2296595F600F4CDC7 /* AppKit.framework in Frameworks */,
+				B3C439532BF442920021B9C3 /* PVSupport in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 			);
@@ -1065,18 +1040,6 @@
 			path = RarArchive;
 			sourceTree = "<group>";
 		};
-		93B3B0E82A8C9AC200B60325 /* Archive */ = {
-			isa = PBXGroup;
-			children = (
-				937CCB5E2A8E132A0007F6DF /* SSZipArchive */,
-				938F2A162A8D4E24002F783A /* RarArchive */,
-				938F29DA2A8D2F2B002F783A /* LzhArchive */,
-				93B3B58E2A8CE90D00B60325 /* lhasa */,
-				93B3B4112A8CE56800B60325 /* UnrarKit */,
-			);
-			path = Archive;
-			sourceTree = "<group>";
-		};
 		93B3B4112A8CE56800B60325 /* UnrarKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -1155,7 +1118,6 @@
 		93B3B42E2A8CE56900B60325 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				93B3B51A2A8CE56A00B60325 /* UnrarExample.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1173,9 +1135,6 @@
 		93B3B4362A8CE56900B60325 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				93B3B5202A8CE56A00B60325 /* UnrarKit.framework */,
-				93B3B5222A8CE56A00B60325 /* UnrarKit Tests.xctest */,
-				93B3B5242A8CE56A00B60325 /* UnrarKitResources.bundle */,
 				93B3B5262A8CE56A00B60325 /* libunrar.a */,
 			);
 			name = Products;
@@ -1687,6 +1646,26 @@
 			path = scripts;
 			sourceTree = "<group>";
 		};
+		B30C8C812BF45AE200C91991 /* retroarch */ = {
+			isa = PBXGroup;
+			children = (
+				B30C8C7D2BF45AE200C91991 /* griffin_slang.cpp */,
+				B30C8C7E2BF45AE200C91991 /* griffin.c */,
+				B30C8C7F2BF45AE200C91991 /* griffin.m */,
+				B30C8C802BF45AE200C91991 /* localintermediate.h */,
+			);
+			path = retroarch;
+			sourceTree = "<group>";
+		};
+		B30C8C872BF45AFA00C91991 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				B30C8C852BF45AFA00C91991 /* PVRetroArchCore.swift */,
+				B30C8C862BF45AFA00C91991 /* PVRetroArchCore+Controls.swift */,
+			);
+			path = Swift;
+			sourceTree = "<group>";
+		};
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -1708,14 +1687,10 @@
 				93448E552980043E002F87BB /* PVRetroArchCore+Controls+PSX.m */,
 				9319F1092976C15900A7414A /* PVRetroArchCore+Controls+SNES.m */,
 				9328B14E2A3196D10094C712 /* PVRetroArchCore+Controls+PSP.m */,
-				93B66BEC2968382700A621DD /* griffin.m */,
 				93AC9F662A48952700D3F4D6 /* runloop.c */,
-				935E7D4E29A4C98C00D92748 /* griffin_slang.cpp */,
-				935E7D4C29A4C6E200D92748 /* localintermediate.h */,
 				B3447EA0218B881000557ACE /* PVRetroArch.mm */,
 				938E5BB4298B31D400F8596C /* PVDebug.c */,
 				93CFF5F4296C10C600D19529 /* dylib.c */,
-				93B66BEA2968382700A621DD /* griffin.c */,
 				93B66BA82967EFCA00A621DD /* vulkan_common.c */,
 				93FF383A2966337100772659 /* apple_platform.h */,
 				93FF38392966337100772659 /* cocoa_common.h */,
@@ -1742,8 +1717,6 @@
 				9366AC5E295976D000162286 /* PVRetroArchCore+Cheats.mm */,
 				B3447EAA218BC59D00557ACE /* PVRetroArchCore+Saves.mm */,
 				B3447EAE218BC5C500557ACE /* PVRetroArchCore+Video.mm */,
-				933CC6022952034E0070CF1D /* PVRetroArchCore.swift */,
-				93F66ECF2967246B00203EB3 /* PVRetroArchCore+Controls.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -1754,6 +1727,11 @@
 				932A5CC92968710B0032C168 /* modules */,
 				93B66E422968602E00A621DD /* libretroarch */,
 				B3447EBF218BE9DA00557ACE /* BuildFlags.xcconfig */,
+				937CCB5E2A8E132A0007F6DF /* SSZipArchive */,
+				938F2A162A8D4E24002F783A /* RarArchive */,
+				938F29DA2A8D2F2B002F783A /* LzhArchive */,
+				93B3B58E2A8CE90D00B60325 /* lhasa */,
+				93B3B4112A8CE56800B60325 /* UnrarKit */,
 				93F66F172967465500203EB3 /* scripts */,
 				B3C7621220783162009950E4 /* PVRetroArch */,
 				B3C762202078327B009950E4 /* PVRetroArchCore */,
@@ -1840,7 +1818,8 @@
 		B3C762202078327B009950E4 /* PVRetroArchCore */ = {
 			isa = PBXGroup;
 			children = (
-				93B3B0E82A8C9AC200B60325 /* Archive */,
+				B30C8C872BF45AFA00C91991 /* Swift */,
+				B30C8C812BF45AE200C91991 /* retroarch */,
 				B3447EB5218BCE2000557ACE /* Core */,
 			);
 			path = PVRetroArchCore;
@@ -2054,6 +2033,9 @@
 			name = PVRetroArch;
 			packageProductDependencies = (
 				936E99EB2A35A94900B1D0F8 /* PVLogging */,
+				B3C439522BF442920021B9C3 /* PVSupport */,
+				B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */,
+				B37C00582BFF6A1000FEC6AC /* MoltenVK */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVRetroArch.framework */;
@@ -2088,7 +2070,7 @@
 				};
 			};
 			buildConfigurationList = B3C7620A20783162009950E4 /* Build configuration list for PBXProject "PVRetroArch" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -2107,7 +2089,11 @@
 				nl,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				B3C439512BF442920021B9C3 /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30C8C8A2BF45BDC00C91991 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B37C00572BFF6A1000FEC6AC /* XCLocalSwiftPackageReference "../../MoltenVK" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -2136,34 +2122,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		93B3B51A2A8CE56A00B60325 /* UnrarExample.app */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.application;
-			path = UnrarExample.app;
-			remoteRef = 93B3B5192A8CE56A00B60325 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93B3B5202A8CE56A00B60325 /* UnrarKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = UnrarKit.framework;
-			remoteRef = 93B3B51F2A8CE56A00B60325 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93B3B5222A8CE56A00B60325 /* UnrarKit Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "UnrarKit Tests.xctest";
-			remoteRef = 93B3B5212A8CE56A00B60325 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		93B3B5242A8CE56A00B60325 /* UnrarKitResources.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = UnrarKitResources.bundle;
-			remoteRef = 93B3B5232A8CE56A00B60325 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		93B3B5262A8CE56A00B60325 /* libunrar.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -2305,11 +2263,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				93B66C1C296854C000A621DD /* griffin.c in Sources */,
-				93ACAAB22A4A763400A744F8 /* griffin.m in Sources */,
+				B30C8C842BF45AE200C91991 /* griffin.m in Sources */,
+				B30C8C822BF45AE200C91991 /* griffin_slang.cpp in Sources */,
 				935E7D5329A4CA7F00D92748 /* griffin_cpp.cpp in Sources */,
-				935E7D4F29A4C98C00D92748 /* griffin_slang.cpp in Sources */,
-				935E7D4D29A4C7AC00D92748 /* localintermediate.h in Sources */,
+				B30C8C832BF45AE200C91991 /* griffin.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2365,8 +2322,6 @@
 				93CFF5F5296C10C700D19529 /* dylib.c in Sources */,
 				93814F902AAA9E9900DEB9B9 /* PVRetroArchCore+Archive+AppleII.m in Sources */,
 				93654F7A298F4A2D0046503F /* PVRetroArchCore+Controls+PCE.m in Sources */,
-				93F66ED02967246B00203EB3 /* PVRetroArchCore+Controls.swift in Sources */,
-				93FF381E2965FF9C00772659 /* PVRetroArchCore.swift in Sources */,
 				93F66E9B29669AE900203EB3 /* PVRetroArchCore+RetroArchUI.m in Sources */,
 				93B3B19B2A8CBC7100B60325 /* PVRetroArchCore+Archive.m in Sources */,
 				93FF381F2965FF9C00772659 /* PVRetroArchCore.h in Sources */,
@@ -2374,6 +2329,8 @@
 				93FF38212965FF9C00772659 /* PVRetroArchCore+Audio.h in Sources */,
 				93A7278A2AAEB1C60052B279 /* PVRetroArchCore+Controls+MAME.m in Sources */,
 				9319F10A2976C15900A7414A /* PVRetroArchCore+Controls+SNES.m in Sources */,
+				B30C8C892BF45AFB00C91991 /* PVRetroArchCore+Controls.swift in Sources */,
+				B30C8C882BF45AFB00C91991 /* PVRetroArchCore.swift in Sources */,
 				936B47FA2969798B00C7D2A3 /* platform_darwin.m in Sources */,
 				93FF38222965FF9C00772659 /* PVRetroArchCore+Audio.mm in Sources */,
 				93FF38232965FF9C00772659 /* PVRetroArchCore+Video.h in Sources */,
@@ -2479,7 +2436,6 @@
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
 				SKIP_INSTALL = YES;
 				SYMROOT = "$(SRCROOT)/lib/zip";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
@@ -2501,9 +2457,9 @@
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/PVRetroArchCore/Archive/RarArchive",
-					"${SRCROOT}/PVRetroArchCore/Archive/RarArchive/Categories",
-					"${SRCROOT}/PVRetroArchCore/Archive/UnrarKit/Libraries/unrar",
+					"${SRCROOT}/RarArchive",
+					"${SRCROOT}/RarArchive/Categories",
+					"${SRCROOT}/UnrarKit/Libraries/unrar",
 					"$(inherited)",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -2533,10 +2489,10 @@
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/lib",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/src",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/lib/public",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/",
+					"${SRCROOT}/lhasa/lib",
+					"${SRCROOT}/lhasa/src",
+					"${SRCROOT}/lhasa/lib/public",
+					"${SRCROOT}/lhasa/",
 					"$(inherited)",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -2642,7 +2598,6 @@
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -2651,6 +2606,7 @@
 		93D6B0DE296A0DB200D5EE11 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
@@ -2714,7 +2670,7 @@
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -2750,7 +2706,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -2907,6 +2863,7 @@
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RetroArch-Swift.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -2923,7 +2880,7 @@
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -2959,7 +2916,7 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3115,6 +3072,7 @@
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RetroArch-Swift.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
@@ -3194,6 +3152,7 @@
 		B3D067C52BC4F99B00A7327F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
@@ -3260,7 +3219,6 @@
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3290,7 +3248,6 @@
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SYMROOT = "$(SRCROOT)/lib/zip";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3312,9 +3269,9 @@
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/PVRetroArchCore/Archive/RarArchive",
-					"${SRCROOT}/PVRetroArchCore/Archive/RarArchive/Categories",
-					"${SRCROOT}/PVRetroArchCore/Archive/UnrarKit/Libraries/unrar",
+					"${SRCROOT}/RarArchive",
+					"${SRCROOT}/RarArchive/Categories",
+					"${SRCROOT}/UnrarKit/Libraries/unrar",
 					"$(inherited)",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -3322,7 +3279,6 @@
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SYMROOT = "$(SRCROOT)/lib/rar";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3346,10 +3302,10 @@
 					"$(inherited)",
 				);
 				HEADER_SEARCH_PATHS = (
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/lib",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/src",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/lib/public",
-					"${SRCROOT}/PVRetroArchCore/Archive/lhasa/",
+					"${SRCROOT}/lhasa/lib",
+					"${SRCROOT}/lhasa/src",
+					"${SRCROOT}/lhasa/lib/public",
+					"${SRCROOT}/lhasa/",
 					"$(inherited)",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -3363,7 +3319,6 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SYMROOT = "$(SRCROOT)/lib/lha";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3456,6 +3411,21 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30C8C8A2BF45BDC00C91991 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B37C00572BFF6A1000FEC6AC /* XCLocalSwiftPackageReference "../../MoltenVK" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../MoltenVK;
+		};
+		B3C439512BF442920021B9C3 /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		93102A592A30F2DB002C86C6 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -3464,6 +3434,18 @@
 		936E99EB2A35A94900B1D0F8 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B30C8C8B2BF45BDC00C91991 /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B37C00582BFF6A1000FEC6AC /* MoltenVK */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MoltenVK;
+		};
+		B3C439522BF442920021B9C3 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

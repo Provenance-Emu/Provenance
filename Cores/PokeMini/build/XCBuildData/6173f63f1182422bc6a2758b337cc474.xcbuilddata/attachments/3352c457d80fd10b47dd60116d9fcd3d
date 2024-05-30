@@ -1,0 +1,10 @@
+framework module PVPokeMini {
+  umbrella header "PVPokeMini.h"
+  export *
+
+  module * { export * }
+}
+
+module PVPokeMini.__Swift {
+  exclude header "PVPokeMini-Swift.h"
+}

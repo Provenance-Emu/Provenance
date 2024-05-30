@@ -1,15 +1,18 @@
-    //
-    //  PVEmulatorViewController~iOS.swift
-    //  Provenance
-    //
-    //  Created by Joseph Mattiello on 7/20/18.
-    //  Copyright © 2018 Provenance. All rights reserved.
-    //
+//
+//  PVEmulatorViewController~iOS.swift
+//  Provenance
+//
+//  Created by Joseph Mattiello on 7/20/18.
+//  Copyright © 2018 Provenance. All rights reserved.
+//
 
 import Foundation
 import PVLibrary
 import PVSupport
 import UIKit
+import GameController
+import PVEmulatorCore
+import PVCoreBridge
 
 extension PVEmulatorViewController {
     @objc func showMenu(_ sender: AnyObject?) {

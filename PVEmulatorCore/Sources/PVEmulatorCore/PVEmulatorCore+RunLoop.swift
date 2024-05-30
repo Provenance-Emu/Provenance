@@ -1,0 +1,105 @@
+//
+//  PVEmulatorCore+RunLoop.swift
+//
+//
+//  Created by Joseph Mattiello on 5/22/24.
+//
+
+import Foundation
+import PVCoreBridge
+import PVLogging
+
+@objc
+extension PVEmulatorCore: EmulatorCoreRunLoop {
+    public var framerateMultiplier: Float {
+        switch gameSpeed {
+        case .slow: return 0.2
+        case .normal: return 1.0
+        case .fast: return 5.0
+        }
+    }
+
+    public func setPauseEmulation(_ flag: Bool) {
+        if flag {
+            stopHaptic()
+            isRunning = false
+        } else {
+            startHaptic()
+            isRunning = true
+        }
+    }
+
+    @objc
+    public var isEmulationPaused: Bool { return !isRunning }
+
+    public var isSpeedModified: Bool { return gameSpeed != .normal }
+
+
+    @objc
+    public func stopEmulation() {
+        self.stopEmulation(withMessage: nil)
+    }
+
+    @objc
+    public func stopEmulation(withMessage message: String? = nil) {
+        stopHaptic()
+        shouldStop = true
+        isRunning = false
+
+        isFrontBufferReady = false
+        frontBufferCondition.signal()
+
+        if let message = message {
+            // TODO: Show the message to the user
+        }
+        isOn = false
+    }
+
+
+    @objc
+    public func startEmulation() {
+        guard type(of: self) != PVEmulatorCore.self else {
+            ELOG("startEmulation Not implimented")
+            return
+        }
+
+        guard !isRunning else {
+            WLOG("Already running")
+            return
+        }
+
+        #if !os(tvOS) && !os(macOS)
+        startHaptic()
+        do {
+            try setPreferredSampleRate(sampleRate)
+        } catch {
+            ELOG("\(error.localizedDescription)")
+        }
+        #endif
+        isRunning = true
+        shouldStop = false
+        isOn = true
+        gameSpeed = .normal
+
+        if !skipEmulationLoop {
+            DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+                if let self = self {
+                    self.emulationLoopThread()
+                }
+            }
+        } else {
+            isFrontBufferReady = true
+        }
+    }
+
+    @objc
+    public func resetEmulation() {
+        ELOG("resetEmulation Not implimented")
+    }
+
+//    @MainActor
+    @objc
+    public func emulationLoopThread() {
+
+    }
+}

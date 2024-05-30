@@ -1,0 +1,1 @@
+../GBACore/AutoBuild.h

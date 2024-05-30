@@ -214,10 +214,11 @@ public extension PatreonAPI {
     }
     
     func signOut(completion: @escaping (Result<Void, Swift.Error>) -> Void) {
-        if let account = DatabaseManager.shared.patreonAccount() {
+        #warning("signOut method incomplete")
+//        if let account = DatabaseManager.shared.patreonAccount() {
             // TODO: This
 //                    context.delete(account)
-        }
+//        }
         
 //                try context.save()
         

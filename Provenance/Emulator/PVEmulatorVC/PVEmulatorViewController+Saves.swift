@@ -10,6 +10,8 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import UIKit
+import PVEmulatorCore
+import PVCoreBridge
 
 public enum SaveStateError: Error {
     case coreSaveError(Error?)
@@ -131,7 +133,7 @@ extension PVEmulatorViewController {
             }
         }
 
-        core.saveStateToFile(atPath: saveURL.path) { result, error in
+        core.saveState(toFileAtPath: saveURL.path) { result, error in
             guard result else {
                 completion(.error(.coreSaveError(error)))
                 return
@@ -209,7 +211,7 @@ extension PVEmulatorViewController {
             if !FileManager.default.fileExists(atPath: state.file.url.path) {
                 return
             }
-            self.core.loadStateFromFile(atPath: state.file.url.path) { success, error in
+            self.core.loadState(fromFileAtPath: state.file.url.path) { success, error in
                 let completion = {
                     self.core.setPauseEmulation(false)
                     self.isShowingMenu = false

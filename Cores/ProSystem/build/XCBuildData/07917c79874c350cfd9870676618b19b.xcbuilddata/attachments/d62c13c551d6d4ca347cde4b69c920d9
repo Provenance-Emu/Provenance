@@ -1,0 +1,6 @@
+framework module PVProSystem {
+  umbrella header "PVProSystem.h"
+  export *
+
+  module * { export * }
+}

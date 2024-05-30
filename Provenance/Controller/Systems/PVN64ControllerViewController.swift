@@ -8,7 +8,9 @@
 //
 
 import PVSupport
+import PVEmulatorCore
 import GameController
+import PVLogging
 
 private extension JSButton {
     var buttonTag: PVN64Button {

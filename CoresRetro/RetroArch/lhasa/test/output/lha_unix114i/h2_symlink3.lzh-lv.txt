@@ -1,0 +1,6 @@
+ PERMSSN    UID  GID      SIZE  RATIO     STAMP     LV
+---------- ----------- ------- ------ ------------ ---
+subdir/symlink|/absolute/path
+lrwxrwxrwx  1000/1000        0 ****** Feb  3 22:12 [2]
+---------- ----------- ------- ------ ------------ ---
+ Total         1 file        0 ****** Jan  1  2000

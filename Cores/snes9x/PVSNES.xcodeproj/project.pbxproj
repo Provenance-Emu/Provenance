@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -617,7 +617,7 @@
 				};
 			};
 			buildConfigurationList = 1ACEA8DF17F75F350031B1C9 /* Build configuration list for PBXProject "PVSNES" */;
-			compatibilityVersion = "Xcode 15.3";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -625,7 +625,6 @@
 				Base,
 			);
 			mainGroup = 1ACEA8DB17F75F350031B1C9;
-			minimizedProjectReferenceProxies = 1;
 			productRefGroup = 1ACEA8E517F75F350031B1C9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";

@@ -1,0 +1,1 @@
+../../Genesis-Plus-GX/core/genesis.h

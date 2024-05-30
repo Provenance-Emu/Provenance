@@ -1,0 +1,1 @@
+../GBACore/NLS.h
