@@ -8,19 +8,27 @@
 
 /* Begin PBXBuildFile section */
 		557DCAB1292A91E100045B02 /* ThemeOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 557DCAB0292A91E000045B02 /* ThemeOption.swift */; };
+		931C81012C36682B00969133 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
+		931C81042C3668FB00969133 /* input_keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54A28671EFF00B60497 /* input_keyboard.c */; };
+		931C81052C36693600969133 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
+		934DCA1A2C363B6900908E3D /* performance_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3782867180300B60497 /* performance_counters.c */; };
+		934DCA1B2C363BC300908E3D /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
+		934DCA1C2C363BD800908E3D /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6452867202D00B60497 /* dylib.c */; };
+		934DCA1E2C363C0700908E3D /* features_cpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6F72867202D00B60497 /* features_cpu.c */; };
+		934DCA202C363C4D00908E3D /* file_path_str.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225152286C6F28001FDF42 /* file_path_str.c */; };
+		934DCA212C363C7600908E3D /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
+		93CBA79D2C36438200797E98 /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
+		93CBA79E2C3643BB00797E98 /* msg_hash_us.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4E628671EFF00B60497 /* msg_hash_us.c */; };
+		93CBA79F2C3643DD00797E98 /* rhash.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6802867202D00B60497 /* rhash.c */; };
+		93CBA7AB2C364C1300797E98 /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6752867202D00B60497 /* file_path.c */; };
+		93CBA7B02C364DDC00797E98 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC63B2867202D00B60497 /* encoding_utf.c */; };
 		B30681502895D407003E465F /* PVLibRetroCore+Cheats.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814C2895D405003E465F /* PVLibRetroCore+Cheats.m */; };
 		B30681522895D407003E465F /* PVLibRetroCore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814D2895D406003E465F /* PVLibRetroCore+Video.m */; };
 		B30681542895D407003E465F /* PVLibRetroCore+Audio.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814E2895D406003E465F /* PVLibRetroCore+Audio.m */; };
 		B30681562895D407003E465F /* PVLibRetroCore+Options.m in Sources */ = {isa = PBXBuildFile; fileRef = B306814F2895D407003E465F /* PVLibRetroCore+Options.m */; };
 		B30F8013290516B900F21217 /* ScreenType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30F8012290516B900F21217 /* ScreenType.swift */; };
 		B3225132286C4728001FDF42 /* retro.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B322512F286C4728001FDF42 /* retro.h */; };
-		B32299422878CB3C00585AD8 /* input_driver.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54928671EFF00B60497 /* input_driver.c */; };
-		B32299462878CF2C00585AD8 /* rthreads.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC7072867202D00B60497 /* rthreads.c */; };
-		B322994A2878CF6200585AD8 /* input_keyboard.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC54A28671EFF00B60497 /* input_keyboard.c */; };
-		B32299512878D46F00585AD8 /* performance_counters.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC3782867180300B60497 /* performance_counters.c */; };
 		B32299672878DBE000585AD8 /* dynamic.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC36B286717AE00B60497 /* dynamic.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B322996C28792B4000585AD8 /* movie.c in Sources */ = {isa = PBXBuildFile; fileRef = B3225169286C6F2A001FDF42 /* movie.c */; };
-		B322996E28792BA000585AD8 /* nullinput.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC4ED28671EFF00B60497 /* nullinput.c */; };
 		B33FB2EB279BE0CC0013AAD8 /* CoreOptions+Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EA279BE0CC0013AAD8 /* CoreOptions+Serialization.swift */; };
 		B33FB2EF279BE0F50013AAD8 /* CoreOptionValueDisplay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2EE279BE0F50013AAD8 /* CoreOptionValueDisplay.swift */; };
 		B33FB2F3279BE1320013AAD8 /* CoreOptions+Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB2F2279BE1320013AAD8 /* CoreOptions+Protocols.swift */; };
@@ -30,8 +38,6 @@
 		B33FB304279BE21C0013AAD8 /* CoreOptionRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB303279BE21C0013AAD8 /* CoreOptionRange.swift */; };
 		B33FB308279BE2460013AAD8 /* CoreOptionValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB307279BE2460013AAD8 /* CoreOptionValue.swift */; };
 		B33FB30D279BE2710013AAD8 /* CoreOptional.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33FB30C279BE2710013AAD8 /* CoreOptional.swift */; };
-		B342325B286EB4060033EFA5 /* dylib.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC6452867202D00B60497 /* dylib.c */; };
-		B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */ = {isa = PBXBuildFile; fileRef = B34DC59528671EFF00B60497 /* dynamic_dummy.c */; };
 		B3447E86218B7E4B00557ACE /* CABitOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E7F218B7E4B00557ACE /* CABitOperations.h */; };
 		B3447E88218B7E4B00557ACE /* CAAudioTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447E80218B7E4B00557ACE /* CAAudioTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B3447E8A218B7E4B00557ACE /* CARingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3447E81218B7E4B00557ACE /* CARingBuffer.cpp */; };
@@ -62,7 +68,6 @@
 		B392849B286703F2003BAC21 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C96ED81D62C5E7003F1E93 /* PVSupport.framework */; };
 		B39C29C727A0FADF0078D028 /* OERingBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = B3FA5D5A1D6B908300060D71 /* OERingBuffer.m */; };
 		B39C29CE27A10EE50078D028 /* OEGameAudio.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA69217F748F80031B1C9 /* OEGameAudio.m */; };
-		B3A41BCF286E5E660054E9A5 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
 		B3A4FB5A278FE45D00A65248 /* OEGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A4FB59278FE45C00A65248 /* OEGeometry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AB37B321880FA5009D9244 /* iCadeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB378B2187F9A9009D9244 /* iCadeState.swift */; };
 		B3AB37BD218812BB009D9244 /* iCadeReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3AB37B02187FC4B009D9244 /* iCadeReaderView.swift */; };
@@ -79,7 +84,6 @@
 		B3AF6FD821916168000FA7F9 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD721916168000FA7F9 /* GameController.framework */; };
 		B3AF6FDA2191616C000FA7F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF6FD92191616C000FA7F9 /* Foundation.framework */; };
 		B3B1A740279021C4004D1EF2 /* AHAP in Resources */ = {isa = PBXBuildFile; fileRef = B3B1A73F279021C4004D1EF2 /* AHAP */; };
-		B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = B322515C286C6F29001FDF42 /* msg_hash.c */; };
 		B3C96EC91D62C5E7003F1E93 /* OEGameAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA69117F748F80031B1C9 /* OEGameAudio.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECA1D62C5E7003F1E93 /* DebugUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4E718C1A6C699F005CA80F /* DebugUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C96ECC1D62C5E7003F1E93 /* NSObject+PVAbstractAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -175,6 +179,11 @@
 		1ACEA6A017F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+PVAbstractAdditions.h"; sourceTree = "<group>"; };
 		1ACEA6A117F74A5A0031B1C9 /* NSObject+PVAbstractAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+PVAbstractAdditions.m"; sourceTree = "<group>"; };
 		557DCAB0292A91E000045B02 /* ThemeOption.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeOption.swift; sourceTree = "<group>"; };
+		931B1BDA2C367D3A00B78340 /* stdstring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stdstring.h; sourceTree = "<group>"; };
+		93CBA7A52C364BCB00797E98 /* vfs_implementation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vfs_implementation.c; sourceTree = "<group>"; };
+		93CBA7A72C364BCB00797E98 /* vfs_implementation_cdrom.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = vfs_implementation_cdrom.c; sourceTree = "<group>"; };
+		93CBA7A82C364BCB00797E98 /* vfs_implementation_uwp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = vfs_implementation_uwp.cpp; sourceTree = "<group>"; };
+		93CBA7AD2C364DB100797E98 /* rtime.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = rtime.c; sourceTree = "<group>"; };
 		B305EF99276B4F0A003AE510 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/GameKit.framework; sourceTree = DEVELOPER_DIR; };
 		B305EF9B276B4FDC003AE510 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS8.3.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		B306814C2895D405003E465F /* PVLibRetroCore+Cheats.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVLibRetroCore+Cheats.m"; sourceTree = "<group>"; };
@@ -1169,6 +1178,24 @@
 				B3447E7E218B7E2C00557ACE /* CARingBuffer */,
 			);
 			path = Audio;
+			sourceTree = "<group>";
+		};
+		93CBA7A92C364BCB00797E98 /* vfs */ = {
+			isa = PBXGroup;
+			children = (
+				93CBA7A52C364BCB00797E98 /* vfs_implementation.c */,
+				93CBA7A72C364BCB00797E98 /* vfs_implementation_cdrom.c */,
+				93CBA7A82C364BCB00797E98 /* vfs_implementation_uwp.cpp */,
+			);
+			path = vfs;
+			sourceTree = "<group>";
+		};
+		93CBA7AE2C364DB100797E98 /* time */ = {
+			isa = PBXGroup;
+			children = (
+				93CBA7AD2C364DB100797E98 /* rtime.c */,
+			);
+			path = time;
 			sourceTree = "<group>";
 		};
 		B30E94892793C77700871E57 /* PVSupport */ = {
@@ -2388,6 +2415,8 @@
 		B34DC6392867202D00B60497 /* libretro-common */ = {
 			isa = PBXGroup;
 			children = (
+				93CBA7AE2C364DB100797E98 /* time */,
+				93CBA7A92C364BCB00797E98 /* vfs */,
 				B34DC63A2867202D00B60497 /* encodings */,
 				B34DC63C2867202D00B60497 /* compat */,
 				B34DC6442867202D00B60497 /* dynamic */,
@@ -3005,6 +3034,7 @@
 		B34DC7172867202D00B60497 /* string */ = {
 			isa = PBXGroup;
 			children = (
+				931B1BDA2C367D3A00B78340 /* stdstring.h */,
 				B34DC7182867202D00B60497 /* stdstring.c */,
 			);
 			path = string;
@@ -3485,16 +3515,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B32299462878CF2C00585AD8 /* rthreads.c in Sources */,
-				B342325B286EB4060033EFA5 /* dylib.c in Sources */,
-				B3B3D17428712EE1008A0E2F /* msg_hash.c in Sources */,
-				B322996C28792B4000585AD8 /* movie.c in Sources */,
-				B3A41BCF286E5E660054E9A5 /* retro.m in Sources */,
-				B32299422878CB3C00585AD8 /* input_driver.c in Sources */,
-				B3423260286EB5CA0033EFA5 /* dynamic_dummy.c in Sources */,
-				B322994A2878CF6200585AD8 /* input_keyboard.c in Sources */,
-				B322996E28792BA000585AD8 /* nullinput.c in Sources */,
-				B32299512878D46F00585AD8 /* performance_counters.c in Sources */,
+				931C81052C36693600969133 /* retro.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3518,6 +3539,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				931C81042C3668FB00969133 /* input_keyboard.c in Sources */,
+				931C81012C36682B00969133 /* movie.c in Sources */,
+				93CBA7B02C364DDC00797E98 /* encoding_utf.c in Sources */,
+				93CBA7AB2C364C1300797E98 /* file_path.c in Sources */,
+				93CBA79F2C3643DD00797E98 /* rhash.c in Sources */,
+				93CBA79E2C3643BB00797E98 /* msg_hash_us.c in Sources */,
+				93CBA79D2C36438200797E98 /* msg_hash.c in Sources */,
+				934DCA212C363C7600908E3D /* nullinput.c in Sources */,
+				934DCA202C363C4D00908E3D /* file_path_str.c in Sources */,
+				934DCA1E2C363C0700908E3D /* features_cpu.c in Sources */,
+				934DCA1B2C363BC300908E3D /* dynamic_dummy.c in Sources */,
+				934DCA1C2C363BD800908E3D /* dylib.c in Sources */,
+				934DCA1A2C363B6900908E3D /* performance_counters.c in Sources */,
 				B3D180A528964C40001207AF /* PVLibRetroCore+Saves.m in Sources */,
 				B3D180A328964C40001207AF /* PVLibRetroCore+Controls.m in Sources */,
 				B30681562895D407003E465F /* PVLibRetroCore+Options.m in Sources */,
@@ -3763,8 +3797,9 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = $inherited;
 				PRODUCT_NAME = retro;
-				RUN_CLANG_STATIC_ANALYZER = YES;
+				RUN_CLANG_STATIC_ANALYZER = NO;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
@@ -3802,8 +3837,9 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = $inherited;
 				PRODUCT_NAME = retro;
-				RUN_CLANG_STATIC_ANALYZER = YES;
+				RUN_CLANG_STATIC_ANALYZER = NO;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
@@ -3841,8 +3877,9 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_LDFLAGS = $inherited;
 				PRODUCT_NAME = retro;
-				RUN_CLANG_STATIC_ANALYZER = YES;
+				RUN_CLANG_STATIC_ANALYZER = NO;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
@@ -3931,6 +3968,11 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "Supporting Files/PVSupport-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro\"",
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro/libretro-common\"",
+				);
 				INFOPLIST_FILE = "Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -4149,6 +4191,7 @@
 		};
 		B392849228670348003BAC21 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4182,7 +4225,6 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
 					"\"$(SRCROOT)/Sources/retro\"",
-					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4194,6 +4236,8 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
 				PRODUCT_NAME = PVLibRetro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -4207,6 +4251,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/retro/libretro-common/include\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -4214,6 +4259,7 @@
 		};
 		B392849328670348003BAC21 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4249,7 +4295,6 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
 					"\"$(SRCROOT)/Sources/retro\"",
-					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4261,6 +4306,8 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
 				PRODUCT_NAME = PVLibRetro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -4272,6 +4319,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/retro/libretro-common/include\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -4279,6 +4327,7 @@
 		};
 		B392849428670348003BAC21 /* Archive */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4314,7 +4363,6 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
 					"\"$(SRCROOT)/Sources/retro\"",
-					"$(inherited)",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4326,6 +4374,8 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
 				PRODUCT_NAME = PVLibRetro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -4337,6 +4387,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/retro/libretro-common/include\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -4364,6 +4415,11 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "Supporting Files/PVSupport-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro\"",
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro/libretro-common\"",
+				);
 				INFOPLIST_FILE = "Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -4417,6 +4473,11 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREFIX_HEADER = "Supporting Files/PVSupport-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/retro\"",
+					"\"$(SRCROOT)/Sources/retro/libretro-common/include\"",
+					"\"$(SRCROOT)/Sources/retro/libretro-common\"",
+				);
 				INFOPLIST_FILE = "Supporting Files/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;

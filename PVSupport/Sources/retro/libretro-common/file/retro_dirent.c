@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2020 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (retro_dirent.c).
@@ -20,189 +20,103 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <retro_common.h>
 
-#if defined(_WIN32)
-#  ifdef _MSC_VER
-#    define setmode _setmode
-#  endif
-#  ifdef _XBOX
-#    include <xtl.h>
-#    define INVALID_FILE_ATTRIBUTES -1
-#  else
-#    include <io.h>
-#    include <fcntl.h>
-#    include <direct.h>
-#    include <windows.h>
-#  endif
-#elif defined(VITA)
-#  include <psp2/io/fcntl.h>
-#  include <psp2/io/dirent.h>
-#else
-#  if defined(PSP)
-#    include <pspiofilemgr.h>
-#  endif
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  include <dirent.h>
-#  include <unistd.h>
-#endif
-
-#ifdef __CELLOS_LV2__
-#include <cell/cell_fs.h>
-#endif
-
 #include <boolean.h>
-#include <retro_stat.h>
 #include <retro_dirent.h>
+#define VFS_FRONTEND
+#include <vfs/vfs_implementation.h>
 
-struct RDIR
+/* TODO/FIXME - static globals */
+static retro_vfs_opendir_t dirent_opendir_cb                 = NULL;
+static retro_vfs_readdir_t dirent_readdir_cb                 = NULL;
+static retro_vfs_dirent_get_name_t dirent_dirent_get_name_cb = NULL;
+static retro_vfs_dirent_is_dir_t dirent_dirent_is_dir_cb     = NULL;
+static retro_vfs_closedir_t dirent_closedir_cb               = NULL;
+
+void dirent_vfs_init(const struct retro_vfs_interface_info* vfs_info)
 {
-#if defined(_WIN32)
-   WIN32_FIND_DATA entry;
-   HANDLE directory;
-   bool next;
-#elif defined(VITA) || defined(PSP)
-   SceUID directory;
-   SceIoDirent entry;
-#elif defined(__CELLOS_LV2__)
-   CellFsErrno error;
-   int directory;
-   CellFsDirent entry;
-#else
-   DIR *directory;
-   const struct dirent *entry;
-#endif
-};
+   const struct retro_vfs_interface* vfs_iface;
+
+   dirent_opendir_cb         = NULL;
+   dirent_readdir_cb         = NULL;
+   dirent_dirent_get_name_cb = NULL;
+   dirent_dirent_is_dir_cb   = NULL;
+   dirent_closedir_cb        = NULL;
+
+   vfs_iface                 = vfs_info->iface;
+
+   if (
+         vfs_info->required_interface_version < DIRENT_REQUIRED_VFS_VERSION || 
+         !vfs_iface)
+      return;
+
+   dirent_opendir_cb         = vfs_iface->opendir;
+   dirent_readdir_cb         = vfs_iface->readdir;
+   dirent_dirent_get_name_cb = vfs_iface->dirent_get_name;
+   dirent_dirent_is_dir_cb   = vfs_iface->dirent_is_dir;
+   dirent_closedir_cb        = vfs_iface->closedir;
+}
+
+struct RDIR *retro_opendir_include_hidden(
+      const char *name, bool include_hidden)
+{
+   if (dirent_opendir_cb)
+      return (struct RDIR *)dirent_opendir_cb(name, include_hidden);
+   return (struct RDIR *)retro_vfs_opendir_impl(name, include_hidden);
+}
 
 struct RDIR *retro_opendir(const char *name)
 {
-#if defined(_WIN32)
-   char path_buf[1024];
-#endif
-   struct RDIR *rdir = (struct RDIR*)calloc(1, sizeof(*rdir));
-
-   if (!rdir)
-      return NULL;
-
-#if defined(_WIN32)
-   snprintf(path_buf, sizeof(path_buf), "%s\\*", name);
-   rdir->directory = FindFirstFile(path_buf, &rdir->entry);
-#elif defined(VITA) || defined(PSP)
-   rdir->directory = sceIoDopen(name);
-#elif defined(__CELLOS_LV2__)
-   rdir->error = cellFsOpendir(name, &rdir->directory);
-#else
-   rdir->directory = opendir(name);
-   rdir->entry     = NULL;
-#endif
-
-   return rdir;
+   return retro_opendir_include_hidden(name, false);
 }
 
 bool retro_dirent_error(struct RDIR *rdir)
 {
-#if defined(_WIN32)
-   return (rdir->directory == INVALID_HANDLE_VALUE);
-#elif defined(VITA) || defined(PSP)
-   return (rdir->directory < 0);
-#elif defined(__CELLOS_LV2__)
-   return (rdir->error != CELL_FS_SUCCEEDED);
-#else
-   return !(rdir->directory);
-#endif
+   /* Left for compatibility */
+   return false;
 }
 
 int retro_readdir(struct RDIR *rdir)
 {
-#if defined(_WIN32)
-   if(rdir->next)
-      return (FindNextFile(rdir->directory, &rdir->entry) != 0);
-   else {
-      rdir->next = true;
-      return (rdir->directory != INVALID_HANDLE_VALUE);
-   }
-#elif defined(VITA) || defined(PSP)
-   return (sceIoDread(rdir->directory, &rdir->entry) > 0);
-#elif defined(__CELLOS_LV2__)
-   uint64_t nread;
-   rdir->error = cellFsReaddir(rdir->directory, &rdir->entry, &nread);
-   return (nread != 0);
-#else
-   return ((rdir->entry = readdir(rdir->directory)) != NULL);
-#endif
+   if (dirent_readdir_cb)
+      return dirent_readdir_cb((struct retro_vfs_dir_handle *)rdir);
+   return retro_vfs_readdir_impl((struct retro_vfs_dir_handle *)rdir);
 }
 
 const char *retro_dirent_get_name(struct RDIR *rdir)
 {
-#if defined(_WIN32)
-   return rdir->entry.cFileName;
-#elif defined(VITA) || defined(PSP) || defined(__CELLOS_LV2__)
-   return rdir->entry.d_name;
-#else
-   return rdir->entry->d_name;
-#endif
+   if (dirent_dirent_get_name_cb)
+      return dirent_dirent_get_name_cb((struct retro_vfs_dir_handle *)rdir);
+   return retro_vfs_dirent_get_name_impl((struct retro_vfs_dir_handle *)rdir);
 }
 
 /**
  *
  * retro_dirent_is_dir:
  * @rdir         : pointer to the directory entry.
- * @path         : path to the directory entry.
+ * @unused       : deprecated, included for compatibility reasons, pass NULL
  *
  * Is the directory listing entry a directory?
  *
  * Returns: true if directory listing entry is
  * a directory, false if not.
  */
-bool retro_dirent_is_dir(struct RDIR *rdir, const char *path)
+bool retro_dirent_is_dir(struct RDIR *rdir, const char *unused)
 {
-#if defined(_WIN32)
-   const WIN32_FIND_DATA *entry = (const WIN32_FIND_DATA*)&rdir->entry;
-   return entry->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY;
-#elif defined(PSP) || defined(VITA)
-   const SceIoDirent *entry = (const SceIoDirent*)&rdir->entry;
-#if defined(PSP)
-   return (entry->d_stat.st_attr & FIO_SO_IFDIR) == FIO_SO_IFDIR;
-#elif defined(VITA)
-   return SCE_S_ISDIR(entry->d_stat.st_mode);
-#endif
-#elif defined(__CELLOS_LV2__)
-   CellFsDirent *entry = (CellFsDirent*)&rdir->entry;
-   return (entry->d_type == CELL_FS_TYPE_DIRECTORY);
-#elif defined(DT_DIR)
-   const struct dirent *entry = (const struct dirent*)rdir->entry;
-   if (entry->d_type == DT_DIR)
-      return true;
-   /* This can happen on certain file systems. */
-   if (entry->d_type == DT_UNKNOWN || entry->d_type == DT_LNK)
-      return path_is_directory(path);
-   return false;
-#else
-   /* dirent struct doesn't have d_type, do it the slow way ... */
-   return path_is_directory(path);
-#endif
+   if (dirent_dirent_is_dir_cb)
+      return dirent_dirent_is_dir_cb((struct retro_vfs_dir_handle *)rdir);
+   return retro_vfs_dirent_is_dir_impl((struct retro_vfs_dir_handle *)rdir);
 }
 
 void retro_closedir(struct RDIR *rdir)
 {
-   if (!rdir)
-      return;
-
-#if defined(_WIN32)
-   if (rdir->directory != INVALID_HANDLE_VALUE)
-      FindClose(rdir->directory);
-#elif defined(VITA) || defined(PSP)
-   sceIoDclose(rdir->directory);
-#elif defined(__CELLOS_LV2__)
-   rdir->error = cellFsClosedir(rdir->directory);
-#else
-   if (rdir->directory)
-      closedir(rdir->directory);
-#endif
-
-   free(rdir);
+   if (dirent_closedir_cb)
+      dirent_closedir_cb((struct retro_vfs_dir_handle *)rdir);
+   else
+      retro_vfs_closedir_impl((struct retro_vfs_dir_handle *)rdir);
 }
