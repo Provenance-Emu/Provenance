@@ -1,12 +1,13 @@
-// swift-tools-version:5.7
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
 let package = Package(
     name: "PVJIT",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13)
+        .iOS(.v17),
+        .tvOS("15.4"),
+        .visionOS(.v1)
     ],
     products: [
         .library(
@@ -24,24 +25,20 @@ let package = Package(
             targets: ["PVJIT"]
         ),
 
-        .library(
-            name: "PVJITObjC",
-            targets: ["PVJITObjC"]
-        ),
-        .library(
-            name: "PVJITObjC-Dynamic",
-            type: .dynamic,
-            targets: ["PVJITObjC"]
-        ),
-        .library(
-            name: "PVJITObjC-Static",
-            type: .static,
-            targets: ["PVJITObjC"]
-        )
+//        .library(
+//            name: "FastmemUtil",
+//            targets: ["FastmemUtil"]
+//        ),
+//
+//        .library(
+//            name: "JITManager",
+//            targets: ["JITManager"]
+//        ),
     ],
 
     dependencies: [
         .package(url: "https://github.com/SideStore/SideKit.git", branch: "main"),
+//        .package(url: "https://github.com/SideStore/SideKit.git", .upToNextMajor(from: "0.0.1")),
         .package(name: "PVSupport", path: "../PVSupport/"),
         .package(name: "PVLogging", path: "../PVLogging/"),
     ],
@@ -51,29 +48,46 @@ let package = Package(
         .target(
             name: "PVJIT",
             dependencies: [
-                "PVJITObjC",
                 "PVSupport",
                 "PVLogging",
+                "SideKit",
+                "JITManager",
+                "FastmemUtil"
 			],
-            linkerSettings: [
-				.linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
-                .linkedFramework("AppKit", .when(platforms: [.macOS])),
-            ]),
-        .target(
-            name: "PVJITObjC",
-            dependencies: [
-                .productItem(name: "AltKit", package: "AltKit", moduleAliases: ["SideKit" : "AltKit"], condition: .when(platforms: [.iOS])),
-                "AltKit",
-                "PVSupport",
-                "PVLogging",
-            ],
             resources: [
                 .process("Resources/")
             ],
             linkerSettings: [
-                .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
+				.linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
                 .linkedFramework("AppKit", .when(platforms: [.macOS])),
             ]),
+
+//        .target(
+//            name: "PVJITObjC",
+//            dependencies: [
+//                "SideKit",
+//                "PVSupport",
+//                "PVLogging",
+//            ],
+//            linkerSettings: [
+//                .linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
+//                .linkedFramework("AppKit", .when(platforms: [.macOS])),
+//        ]),
+
+        .target(
+            name: "FastmemUtil"
+        ),
+
+        .target(
+            name: "JITManager",
+            dependencies: ["PVLogging" ,"DebuggerUtils"]
+        ),
+
+        .target(
+            name: "DebuggerUtils",
+            publicHeadersPath: "./"
+        ),
+
         // MARK: SwiftPM tests
         .testTarget(
             name: "PVJITTests",

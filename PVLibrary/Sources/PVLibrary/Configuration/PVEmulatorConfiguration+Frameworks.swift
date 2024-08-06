@@ -26,80 +26,48 @@ extension Sequence where Iterator.Element : Hashable {
 
 // MARK: - System Scanner
 
-struct CoreClasses {
-    static var coreClasses: [ClassInfo] {
-        let libRetroCoreClass: AnyClass? = NSClassFromString("PVLibRetroCore")
-        let libRetroGLESCoreClass: AnyClass? = NSClassFromString("PVLibRetroGLESCore")
-        let PVEmulatorCoreClass: AnyClass? = NSClassFromString("PVEmulatorCore")
-
-        // Using compactMap to automatically skip nil values
-        let motherClassInfo = [PVEmulatorCoreClass, libRetroCoreClass, libRetroGLESCoreClass].compactMap { ClassInfo($0) }
-
-        // Safely obtaining the class list
-        var count = UInt32(0)
-        guard let classListPointer = objc_copyClassList(&count) else {
-            return []
-        }
-        let classList = UnsafeBufferPointer(start: classListPointer, count: Int(count))
-
-        let superclasses = ["PVEmulatorCore", "PVLibRetroCore", "PVLibRetroGLESCore"]
-
-        let subclassList = classList.compactMap { clazz -> ClassInfo? in
-            guard let classInfo = ClassInfo(clazz, withSuperclass: superclasses) else {
-                return nil
-            }
-            return motherClassInfo.contains { $0.className == classInfo.className } ? nil : classInfo
-        }
-
-        let filteredList = subclassList.filter { info in
-            guard info.className != "PVEmulatorCore" else {
-                return false
-            }
-            return superclasses.contains(info.superclassInfo?.className ?? "")
-        }
-
-        // Log class names using functional approach
-        ILOG(filteredList.map(\.className).joined(separator: ","))
-
-        return filteredList
-    }
-}
-
 public extension PVEmulatorConfiguration {
-    static var coreClasses: [ClassInfo] {
-        return CoreClasses.coreClasses
+    public class func registerCore(_ core: CorePlistEntry) throws {
+        let database = RomDatabase.sharedInstance
+
+        let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
+        if let disabled = core.PVDisabled, disabled, !PVSettingsModel.shared.debugOptions.unsupportedCores {
+            // Do nothing
+            ILOG("Skipping disabled core \(core.PVCoreIdentifier)")
+        } else {
+            DLOG("Importing core \(core.PVCoreIdentifier)")
+            let newCore = PVCore(withIdentifier: core.PVCoreIdentifier,
+                                 principleClass: core.PVPrincipleClass,
+                                 supportedSystems: Array(supportedSystems),
+                                 name: core.PVProjectName,
+                                 url: core.PVProjectURL,
+                                 version: core.PVProjectVersion,
+                                 disabled: core.PVDisabled ?? false)
+            database.refresh()
+            try newCore.add(update: true)
+        }
+        if let cores=core.PVCores {
+            try cores.forEach { core in do {
+                    let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
+                    let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion, disabled: core.PVDisabled ?? false)
+                    database.refresh()
+                    try newCore.add(update: true)
+                } catch let error as DecodingError {
+                    ELOG("Failed to parse plist \(core.PVProjectName) : \(error)")
+                }
+            }
+        }
     }
 
     class func updateCores(fromPlists plists: [URL]) {
-        let database = RomDatabase.sharedInstance
+        typealias CorePlistEntries = [CorePlistEntry]
         let decoder = PropertyListDecoder()
 
         plists.forEach { plist in
             do {
                 let data = try Data(contentsOf: plist)
-                let core = try decoder.decode(CorePlistEntry.self, from: data)
-                let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
-				if let disabled = core.PVDisabled, disabled, !PVSettingsModel.shared.debugOptions.unsupportedCores {
-                    // Do nothing
-                    ILOG("Skipping disabled core \(core.PVCoreIdentifier)")
-                } else {
-                    DLOG("Importing core \(core.PVCoreIdentifier)")
-                    let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion, disabled: core.PVDisabled ?? false)
-                    database.refresh()
-                    try newCore.add(update: true)
-                }
-                if let cores=core.PVCores {
-                    try cores.forEach {
-                        core in do {
-                            let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
-                            let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion, disabled: core.PVDisabled ?? false)
-                            database.refresh()
-                            try newCore.add(update: true)
-                        } catch let error as DecodingError {
-                            ELOG("Failed to parse plist \(plist.path) : \(error)")
-                        }
-                    }
-                }
+                let core: CorePlistEntry = try decoder.decode(CorePlistEntry.self, from: data)
+                try registerCore(core)
             } catch let error as DecodingError {
                 switch error {
                 case let .keyNotFound(key, context):

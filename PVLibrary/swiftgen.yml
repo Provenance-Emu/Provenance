@@ -1,12 +1,12 @@
 input_dir: Sources/PVLibrary/Resources
 output_dir: ${DERIVED_SOURCES_DIR}
 
-plist:
-  inputs:
-    - systems.plist
-  outputs:
-    output: Systems.swift
-    templateName: runtime-swift5
+#plist:
+#  inputs:
+#    - systems.plist
+#  outputs:
+#    output: Systems.swift
+#    templateName: runtime-swift5
 
 files:
   inputs:

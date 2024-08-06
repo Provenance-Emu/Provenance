@@ -1,15 +1,16 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
 let package = Package(
     name: "PVCoreBridge",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
-        .watchOS(.v7),
+        .iOS(.v17),
+        .tvOS("15.4"),
+        .watchOS(.v9),
         .macOS(.v11),
-        .macCatalyst(.v14)
+        .macCatalyst(.v14),
+        .visionOS(.v1)
     ],
     products: [
         .library(
@@ -27,7 +28,12 @@ let package = Package(
 
     dependencies: [
         .package(name: "PVAudio", path: "../PVAudio/"),
-        .package(name: "PVLogging", path: "../PVLogging/")
+        .package(name: "PVLogging", path: "../PVLogging/"),
+        // MARK: Macros
+
+        // SwiftMacros
+        // https://github.com/ShenghaiWang/SwiftMacros?tab=readme-ov-file
+            .package(url: "https://github.com/ShenghaiWang/SwiftMacros.git", from: "1.0.0"),
     ],
 
     // MARK: - Targets
@@ -36,7 +42,8 @@ let package = Package(
             name: "PVCoreBridge",
             dependencies: [
                 "PVAudio",
-                "PVLogging"
+                "PVLogging",
+                "SwiftMacros"
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]
         ),
@@ -47,7 +54,7 @@ let package = Package(
             dependencies: ["PVCoreBridge"]
         )
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageVersions: [.v5, .v6],
     cLanguageStandard: .c17,
     cxxLanguageStandard: .cxx20
 )

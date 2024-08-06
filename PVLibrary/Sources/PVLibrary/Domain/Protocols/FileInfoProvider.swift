@@ -76,6 +76,7 @@ public protocol RemoteFileInfoProvider: FileInfoProvider {
 }
 
 // Cache for storing md5's
+@MainActor
 private let md5Cache: Cache<URL, String> = {
     let c = Cache<URL, String>(lowMemoryAware: false)
     c.countLimit = 1024
@@ -112,6 +113,7 @@ extension LocalFileInfoProvider {
         return url.deletingPathExtension().lastPathComponent
     }
 
+    @MainActor
     public var md5: String? {
         if let md5 = md5Cache.object(forKey: url) {
             return md5

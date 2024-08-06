@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import PVLogging
 
 @objcMembers
 public final class PVCore: Object {
@@ -21,7 +22,8 @@ public final class PVCore: Object {
     public dynamic var disabled = false
 
     public lazy var hasCoreClass: Bool = {
-        return NSClassFromString(principleClass) != nil
+        let _class = NSClassFromString(principleClass)
+        return _class != nil
     }()
 
     // Reverse links
@@ -74,7 +76,7 @@ internal extension Core {
         disabled = core.disabled
         // TODO: Supported systems
         let url = URL(string: core.projectURL) ?? URL(string: "https://provenance-emu.com")!
-		print("loadcore: \(core.projectName) class: \(core.principleClass) identifier: \(identifier) disable: \(disabled)")
+		ILOG("loadcore: \(core.projectName) class: \(core.principleClass) identifier: \(identifier) disable: \(disabled)")
         project = CoreProject(name: core.projectName, url: url, version: core.projectVersion)
     }
 }

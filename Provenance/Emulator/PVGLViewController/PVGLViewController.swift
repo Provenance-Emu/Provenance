@@ -23,7 +23,7 @@ import GLKit
 #endif
 import Metal
 import MetalKit
-
+import PVLogging
 
 internal let SHADER_DIR = "GLES"
 internal let VERTEX_DIR = SHADER_DIR + "/Vertex"
@@ -49,9 +49,9 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
     weak var emulatorCore: PVEmulatorCore?
 
 #if targetEnvironment(macCatalyst) || os(macOS)
-    var isPaused: Bool = false
-    var timeSinceLastDraw: TimeInterval = 0
-    var framesPerSecond: Int = 0
+//    var isPaused: Bool = false
+//    var timeSinceLastDraw: TimeInterval = 0
+//    var framesPerSecond: Int = 0
 #endif
 
     var alternateThreadFramebufferBack: GLuint = 0
@@ -193,7 +193,7 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             return
         }
 
-        print("Initiated GLES version \(glContext.api.rawValue)")
+        ILOG("Initiated GLES version \(glContext.api.rawValue)")
 
         // TODO: Need to benchmark this
         glContext.isMultiThreaded = PVSettingsModel.shared.videoOptions.multiThreadedGL
@@ -279,7 +279,7 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         defaultVertexShader = compileShaderResource("\(VERTEX_DIR)/default_vertex", ofType: GLenum(GL_VERTEX_SHADER), error: &error)
 
         if let error = error {
-            print("Error compiling default vertex shader: \(error.localizedDescription)")
+            ELOG("Error compiling default vertex shader: \(error.localizedDescription)")
         }
         assert(defaultVertexShader != GL_NO_ERROR, "Default vertex shader compilation failed")
 
@@ -316,9 +316,9 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
     /// Updates the preferred FPS based on the emulator core
     func updatePreferredFPS() {
         let preferredFPS = emulatorCore?.frameInterval ?? 60
-        print("updatePreferredFPS (\(preferredFPS))")
+        ILOG("updatePreferredFPS (\(preferredFPS))")
         if preferredFPS < 10 {
-            print("Core's frame interval (\(preferredFPS)) too low. Setting to 60")
+            WLOG("Core's frame interval (\(preferredFPS)) too low. Setting to 60")
 #if !USE_METAL
             preferredFramesPerSecond = 60
 #else
@@ -331,7 +331,7 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
             setFramesPerSecond(preferredFPS)
 #endif
         }
-        print("Actual FPS: \(framesPerSecond)")
+        ILOG("Actual FPS: \(framesPerSecond)")
     }
 
     override func viewDidLayoutSubviews() {
@@ -456,6 +456,9 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
     /// Compiles a shader from a resource file
     func compileShaderResource(_ shaderName: String, ofType shaderType: GLenum, error: inout Error?) -> GLuint {
         // load and compile shader code...
+        #warning("Finish me")
+        fatalError("Finish me")
+        return 0
     }
 
     /// Links a vertex and fragment shader into a shader program
@@ -681,7 +684,7 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 //        weak var weakSelf = self
 
         var screenRect: CGRect = .zero
-        var videoBuffer: UnsafeRawPointer? = nil
+        var videoBuffer: UnsafeMutableRawPointer? = nil
         var videoBufferPixelFormat: GLenum = 0
         var videoBufferPixelType: GLenum = 0
         var videoBufferSize: CGSize = .zero
@@ -709,8 +712,8 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 #endif
 
             let rendersToOpenGL = emulatorCore.rendersToOpenGL
-            let crtEnabled = self.renderSettings.crtFilterEnabled && ((emulatorCore.screenType?.lowercased().contains("lcd")) == nil)
-            let lcdEnabled = self.renderSettings.lcdFilterEnabled && ((emulatorCore.screenType?.lowercased().contains("lcd")) != nil)
+            let crtEnabled = self.renderSettings.crtFilterEnabled && emulatorCore.screenType.isCRT
+            let lcdEnabled = self.renderSettings.lcdFilterEnabled && emulatorCore.screenType.isLCD
 
             var frontBufferTex: GLuint = 0
 

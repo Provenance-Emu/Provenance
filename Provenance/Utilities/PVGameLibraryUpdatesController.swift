@@ -162,7 +162,7 @@ struct PVGameLibraryUpdatesController {
             #if os(tvOS)
             return "Extracting Archive: \(path.lastPathComponent)"
             #else
-            return "Extracting Archive…"
+            return "Extracting Archive\n\(path.lastPathComponent)"
             #endif
         }
 

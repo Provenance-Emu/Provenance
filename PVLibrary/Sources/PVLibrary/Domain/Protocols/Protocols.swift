@@ -9,7 +9,7 @@
 import Foundation
 
 @objc
-public enum VGRegion: Int, CaseIterable {
+public enum VGRegion: Int, CaseIterable, Sendable {
     case asia = 1
     case australia
     case brazil
@@ -76,7 +76,7 @@ public enum VGRegion: Int, CaseIterable {
     }()
 }
 
-public struct RegionOptions: OptionSet, Codable, Equatable {
+public struct RegionOptions: OptionSet, Codable, Equatable, Sendable {
     public let rawValue: Int64
 
     public init(rawValue: Int64) {

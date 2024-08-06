@@ -11,6 +11,8 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import PVThemes
+
 #if canImport(Introspect)
 import Introspect
 #endif
@@ -102,7 +104,7 @@ struct SideMenuView: SwiftUI.View {
             vc.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "provnavicon"))
         })
 #endif
-        .background(Theme.currentTheme.gameLibraryBackground.swiftUIColor)
+        .background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
         .add(self.searchBar)
         // search results
         .if(!searchBar.text.isEmpty) { view in
@@ -122,7 +124,7 @@ struct SideMenuView: SwiftUI.View {
                                 }
                                 .padding(.horizontal, 10)
                             }
-                            .background(Theme.currentTheme.gameLibraryBackground.swiftUIColor)
+                            .background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
                         }
                     }
                 }
@@ -141,14 +143,14 @@ struct MenuSectionHeaderView: SwiftUI.View {
 
     var body: some SwiftUI.View {
         VStack(spacing: 0) {
-            Divider().frame(height: 2).background(Theme.currentTheme.gameLibraryText.swiftUIColor)
+            Divider().frame(height: 2).background(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
             Spacer()
             HStack(alignment: .bottom) {
-                Text(sectionTitle).foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
+                Text(sectionTitle).foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
                 Spacer()
                 if sortable {
                     OptionsIndicator(pointDown: sortAscending, action: action) {
-                        Text("Sort").foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor).font(.system(.caption))
+                        Text("Sort").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(.system(.caption))
                     }
                 }
             }
@@ -156,7 +158,7 @@ struct MenuSectionHeaderView: SwiftUI.View {
             .padding(.bottom, 4)
         }
         .frame(height: 40.0)
-        .background(Theme.currentTheme.gameLibraryBackground.swiftUIColor)
+        .background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
     }
 }
 
@@ -173,11 +175,11 @@ struct MenuItemView: SwiftUI.View {
         } label: {
             HStack(spacing: 0) {
                 Image(imageName).resizable().scaledToFit().cornerRadius(4).padding(8)
-                Text(rowTitle).foregroundColor(Theme.currentTheme.settingsCellText?.swiftUIColor ?? Color.white)
+                Text(rowTitle).foregroundColor(ThemeManager.shared.currentTheme.settingsCellText?.swiftUIColor ?? Color.white)
                 Spacer()
             }
             .frame(height: 40.0)
-            .background(Theme.currentTheme.settingsCellBackground?.swiftUIColor.opacity(0.3) ?? Color.black)
+            .background(ThemeManager.shared.currentTheme.settingsCellBackground?.swiftUIColor.opacity(0.3) ?? Color.black)
         }
     }
 }
@@ -189,7 +191,7 @@ struct ApplyBackgroundWrapper<Content: SwiftUI.View>: SwiftUI.View {
         if #available(iOS 15, tvOS 15, *) {
             content().background(Material.ultraThinMaterial)
         } else {
-            content().background(Theme.currentTheme.gameLibraryBackground.swiftUIColor)
+            content().background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
         }
     }
 }

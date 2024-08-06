@@ -15,6 +15,7 @@ import SwiftUI
 import RealmSwift
 import Combine
 import PVLibrary
+import MBProgressHUD
 
 // PVRootViewController serves as a UIKit parent for child SwiftUI menu views.
 
@@ -70,7 +71,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
 
         self.determineInitialView()
 
-        let hud = MBProgressHUD(view: view)!
+        let hud = MBProgressHUD(view: view)
         hud.isUserInteractionEnabled = false
         view.addSubview(hud)
         updatesController.hudState
@@ -78,16 +79,18 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
             .subscribe(onNext: { state in
                 switch state {
                 case .hidden:
-                    hud.hide(true)
+                    hud.hide(animated:true)
                 case .title(let title):
-                    hud.show(true)
+                    hud.show(animated:true)
                     hud.mode = .indeterminate
-                    hud.labelText = title
+                    hud.label.text = title
+                    hud.label.numberOfLines = 2
                 case .titleAndProgress(let title, let progress):
-                    hud.show(true)
+                    hud.show(animated:true)
                     hud.mode = .annularDeterminate
                     hud.progress = progress
-                    hud.labelText = title
+                    hud.label.text = title
+                    hud.label.numberOfLines = 2
                 }
             })
             .disposed(by: disposeBag)
@@ -164,9 +167,18 @@ extension PVRootViewController: UIDocumentPickerDelegate {
             if url.hasDirectoryPath {
                 ILOG("Trying to import directory \(url.path). Scanning subcontents")
                 do {
-                    _ = url.startAccessingSecurityScopedResource()
-                    let subFiles = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: [URLResourceKey.isDirectoryKey, URLResourceKey.parentDirectoryURLKey, URLResourceKey.fileSecurityKey], options: .skipsHiddenFiles)
-                    url.stopAccessingSecurityScopedResource()
+                    guard url.startAccessingSecurityScopedResource() else {
+                        ELOG("startAccessingSecurityScopedResource failed")
+                        return nil
+                    }
+                    
+                    defer {
+                        url.stopAccessingSecurityScopedResource()
+                    }
+
+                    let subFiles = try FileManager.default.contentsOfDirectory(at: url,
+                                                                               includingPropertiesForKeys: [URLResourceKey.isDirectoryKey, URLResourceKey.parentDirectoryURLKey, URLResourceKey.fileSecurityKey],
+                                                                               options: .skipsHiddenFiles)
                     return subFiles
                 } catch {
                     ELOG("Subdir scan failed. \(error)")
@@ -187,7 +199,10 @@ extension PVRootViewController: UIDocumentPickerDelegate {
             }
 
             // Doesn't seem we need access in dev builds?
-            _ = url.startAccessingSecurityScopedResource()
+            guard url.startAccessingSecurityScopedResource() else {
+                ELOG("startAccessingSecurityScopedResource failed")
+                return
+            }
 
             let fileName = url.lastPathComponent
             let destination: URL

@@ -55,7 +55,7 @@ public final class PVSaveState: Object, Identifiable, Filed, LocalFileProvider {
             if FileManager.default.fileExists(atPath: fileURL.path) {
                 try FileManager.default.removeItem(atPath: fileURL.path)
             } else {
-                print("PVSaveState:Delete:SaveState Not Found at ", fileURL.path)
+                WLOG("PVSaveState:Delete:SaveState Not Found at \(fileURL.path)")
             }
             if let imageURl = imageURl, FileManager.default.fileExists(atPath: imageURl.path){
                 try FileManager.default.removeItem(at: imageURl)
@@ -120,6 +120,7 @@ extension SaveState: RealmRepresentable {
         return file.fileName
     }
 
+    @MainActor
     public func asRealm() -> PVSaveState {
         return PVSaveState.build { object in
 

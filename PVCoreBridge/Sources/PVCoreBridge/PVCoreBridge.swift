@@ -16,9 +16,10 @@ import UIKit
 #endif
 
 @objc
-public protocol EmulatorCoreAudioDataSource {
+public protocol EmulatorCoreAudioDataSource: Sendable {
 
     @objc var frameInterval: TimeInterval { get }
+    @objc var audioDelegate: PVAudioDelegate? { get set }
 
     var sampleRate: Double { get }
     var audioBitDepth: UInt { get }
@@ -80,132 +81,125 @@ public extension EmulatorCoreAudioDataSource {
 }
 
 @objc
-public protocol EmulatorCoreControllerDataSource {
-    var controller1: GCController? { get }
-    var controller2: GCController? { get }
-    var controller3: GCController? { get }
-    var controller4: GCController? { get }
-
-    var controller5: GCController? { get }
-    var controller6: GCController? { get }
-    var controller7: GCController? { get }
-    var controller8: GCController? { get }
-
-    func controller(forPlayer: UInt) -> GCController?
-    #if canImport(UIKit)
-    var touchViewController: UIViewController? { get }
-    #endif
-}
-
-@available(iOS 14.0, tvOS 14.0, *)
-private var hapticEngines: [CHHapticEngine?] = [CHHapticEngine?].init(repeating: nil, count: 4)
-
-public extension EmulatorCoreControllerDataSource {
-
-    func controller(for player: Int) -> GCController? {
-        switch player {
-        case 1:
-            if let controller1 = self.controller1, controller1.isAttachedToDevice {
-#if os(iOS) && !targetEnvironment(macCatalyst)
-                (self as? EmulatorCoreRumbleDataSource)?.rumblePhone()
-#else
-                VLOG("rumblePhone*(")
-#endif
-            }
-            return controller1
-        case 2: return controller2
-        case 3: return controller3
-        case 4: return controller4
-        case 5: return controller5
-        case 6: return controller6
-        case 7: return controller7
-        case 8: return controller7
-        default:
-            WLOG("No player \(player)")
-            return nil
-        }
-    }
-}
-
-@objc
 public protocol EmulatorCoreRumbleDataSource: EmulatorCoreControllerDataSource {
     var supportsRumble: Bool { get }
 }
 
-#if canImport(CoreHaptics)
-import CoreHaptics
-public extension EmulatorCoreRumbleDataSource {
-    var supportsRumble: Bool { false }
+@objc
+public protocol EmulatorCoreInfoProvider {
+    var identifier: String { get }
+    var principleClass: String { get }
 
-    func rumble() {
-        rumble(player: 0)
-    }
-}
-#endif
-public extension EmulatorCoreRumbleDataSource {
+    var supportedSystems: [String] { get }
 
-    @available(iOS 14.0, tvOS 14.0, *)
-    func hapticEngine(for player: Int) -> CHHapticEngine? {
-        if let engine = hapticEngines[player] {
-            return engine
-        } else if let controller = controller(for: player), let newEngine = controller.haptics?.createEngine(withLocality: .all) {
-            hapticEngines[player] = newEngine
-            newEngine.isAutoShutdownEnabled = true
-            return newEngine
-        } else {
-            return nil
-        }
-    }
-
-    func rumble(player: Int) {
-        guard self.supportsRumble else {
-            WLOG("Rumble called on core that doesn't support it")
-            return
-        }
-
-        if #available(iOS 14.0, tvOS 14.0, *) {
-            if let haptics = hapticEngine(for: player) {
-#warning("deviceHasHaptic incomplete")
-                // TODO: haptic vibrate
-            }
-        } else {
-            // Fallback on earlier versions
-        }
-    }
-
-    func rumblePhone() {
-#if os(iOS) && !targetEnvironment(macCatalyst)
-
-        let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
-
-        DispatchQueue.main.async {
-            if deviceHasHaptic {
-#warning("deviceHasHaptic incomplete")
-
-                //                AudioServicesStopSystemSound(kSystemSoundID_Vibrate)
-
-                let vibrationLength = 30
-
-                // Must use NSArray/NSDictionary to prevent crash.
-                let pattern: [Any] = [false, 0, true, vibrationLength]
-                let dictionary: [String: Any] = ["VibePattern": pattern, "Intensity": 1]
-
-                //                AudioServicesPlaySystemSoundWithVibration(kSystemSoundID_Vibrate, nil, dictionary as NSDictionary)
-                self.rumble()
-            }
-            //            else {
-            //                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
-            //            }
-        }
-#endif
-    }
+    var projectName: String { get }
+    var projectURL: String { get }
+    var projectVersion: String { get }
 }
 
 @objc
-public protocol EmulatorCoreSavesDataSource {
-    var saveStatesPath: String? { get }
-    var batterySavesPath: String? { get }
-    var supportsSaveStates: Bool { get }
+public protocol EmulatorCoreInfoPlistProvider {
+    static var corePlist: EmulatorCoreInfoPlist { get }
+    static var resourceBundle: Bundle { get }
+}
+
+public extension EmulatorCoreInfoPlistProvider {
+    var corePlist: EmulatorCoreInfoPlist { Self.corePlist }
+    var resourceBundle: Bundle { Self.resourceBundle }
+}
+
+public extension EmulatorCoreInfoProvider where Self: EmulatorCoreInfoPlistProvider {
+    var identifier: String { Self.corePlist.identifier }
+    var principleClass: String { Self.corePlist.principleClass }
+    var supportedSystems: [String] { Self.corePlist.supportedSystems }
+    var projectName: String { Self.corePlist.projectName }
+    var projectURL: String { Self.corePlist.projectURL }
+    var projectVersion: String { Self.corePlist.projectVersion }
+}
+
+public enum EmulatorCoreInfoPlistError: Error {
+    case missingIdentifier
+    case missingPrincipleClass
+    case missingSupportedSystems
+    case missingProjectName
+    case missingProjectURL
+    case missingProjectVersion
+
+    case couldNotReadPlist
+    case couldNotParsePlist
+}
+
+@objc
+public final class EmulatorCoreInfoPlist: NSObject, EmulatorCoreInfoProvider, Sendable {
+    public let identifier: String
+    public let principleClass: String
+
+    public let supportedSystems: [String]
+
+    public let projectName: String
+    public let projectURL: String
+    public let projectVersion: String
+
+    public init(identifier: String, principleClass: String, supportedSystems: [String], projectName: String, projectURL: String, projectVersion: String) {
+        self.identifier = identifier
+        self.principleClass = principleClass
+        self.supportedSystems = supportedSystems
+        self.projectName = projectName
+        self.projectURL = projectURL
+        self.projectVersion = projectVersion
+    }
+
+    public init?(fromInfoDictionary dict: [String: Any]) {
+        /// Identifier
+        guard let identifier = dict["PVCoreIdentifier"] as? String else {
+            return nil
+        }
+        self.identifier = identifier
+
+        /// Principle Class
+        guard let principleClass = dict["PVPrincipleClass"] as? String else {
+            return nil
+        }
+        self.principleClass = principleClass
+
+        /// Supported systems
+        guard let supportedSystems = dict["PVSupportedSystems"] as? [String] else {
+            return nil
+        }
+        self.supportedSystems = supportedSystems
+
+        /// Project name
+        guard let projectName = dict["PVProjectName"] as? String else {
+            return nil
+        }
+        self.projectName = projectName
+
+        /// Project URL
+        guard let projectURL = dict["PVProjectURL"] as? String else {
+            return nil
+        }
+        self.projectURL = projectURL
+
+        /// Project Version
+        guard let projectVersion = dict["PVProjectVersion"] as? String else {
+            return nil
+        }
+        self.projectVersion = identifier
+    }
+
+    public convenience init?(fromURL plistPath: URL) throws {
+        guard let data = try? Data(contentsOf: plistPath) else {
+            ELOG("Could not read Core.plist")
+            throw EmulatorCoreInfoPlistError.couldNotReadPlist
+        }
+
+        guard let plistObject = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any] else {
+            ELOG("Could not generate parse Core.plist")
+            throw EmulatorCoreInfoPlistError.couldNotParsePlist
+        }
+
+        self.init(fromInfoDictionary: plistObject)
+    }
 }
 
 //public extension EmulatorCoreSavesDataSource {
@@ -237,10 +231,10 @@ public protocol EmulatorCoreSavesDataSource {
     func loadState(fromFileAtPath fileName: String,
                    completionHandler block: SaveStateCompletion)
 
-//    typealias SaveCompletion = (Bool, Error)
-//
-//    func saveState(toFileAtPath path: String, completionHandler completion: SaveCompletion)
-//    func loadState(toFileAtPath path: String, completionHandler completion: SaveCompletion)
+    //    typealias SaveCompletion = (Bool, Error)
+    //
+    //    func saveState(toFileAtPath path: String, completionHandler completion: SaveCompletion)
+    //    func loadState(toFileAtPath path: String, completionHandler completion: SaveCompletion)
 }
 
 @objc
@@ -307,15 +301,15 @@ public protocol PVRenderDelegate {
     var presentationFramebuffer: AnyObject? { get }
 
     // Optional property
-    #if !os(visionOS)
+#if !os(visionOS)
     @objc(optional) var mtlView: MTKView? { get }
-    #endif
+#endif
 }
 
-@objc
-public protocol PVAudioDelegate {
-    func audioSampleRateDidChange();
-}
+//@objc
+//public protocol PVAudioDelegate {
+//    func audioSampleRateDidChange();
+//}
 
 // MARK: - Enums
 @objc
@@ -358,5 +352,5 @@ public protocol EmulatorCoreIOInterface {
     var romMD5: String? { get }
     var romSerial: String? { get }
 
-    var screenType: String? { get }
+    var screenType: ScreenTypeObjC { get }
 }

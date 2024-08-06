@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "PVStella",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
+        .iOS(.v17),
+        .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v14),
@@ -33,7 +33,9 @@ let package = Package(
         .package(path: "../../PVSupport"),
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
-        .package(path: "../../PVObjCUtils")
+        .package(path: "../../PVObjCUtils"),
+
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
         .target(
@@ -57,7 +59,7 @@ let package = Package(
                 .define("__LIBRETRO__", to: "1"),
                 .define("HAVE_COCOATOJUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+//                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],
             cxxSettings: [
                 .unsafeFlags([
@@ -69,7 +71,7 @@ let package = Package(
                 .define("__LIBRETRO__", to: "1"),
                 .define("HAVE_COCOATOJUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+//                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],
             swiftSettings: [
                 .interoperabilityMode(.Cxx)
@@ -87,13 +89,16 @@ let package = Package(
                 "libstella",
                 "PVStellaCPP"
             ],
+            resources: [
+                .process("Resources/Core.plist")
+            ],
             cSettings: [
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
                 .define("HAVE_COCOATOJUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+//                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],
             cxxSettings: [
                 .define("INLINE", to: "inline"),
@@ -101,10 +106,14 @@ let package = Package(
                 .define("__LIBRETRO__", to: "1"),
                 .define("HAVE_COCOATOJUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+//                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],
             swiftSettings: [
                 .interoperabilityMode(.Cxx)
+            ],
+            plugins: [
+                // Disabled until SwiftGenPlugin support Swift 6 concurrency
+                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
 
@@ -125,7 +134,6 @@ let package = Package(
                 .define("__LIBRETRO__", to: "1"),
                 .define("HAVE_COCOATOJUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],
             cxxSettings: [
                 .define("INLINE", to: "inline"),
@@ -133,7 +141,10 @@ let package = Package(
                 .define("__LIBRETRO__", to: "1"),
                 .define("HAVE_COCOATOJUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+                .unsafeFlags([
+                    "-fmodules",
+                    "-fcxx-modules"
+                ])
             ]
         ),
 
@@ -166,6 +177,7 @@ let package = Package(
                 "stella/src/gui/",
                 "stella/src/tools/"
             ],
+            publicHeadersPath: "include",
             packageAccess: true,
             cSettings: [
                 .define("__VEC4_OPT"),
@@ -280,9 +292,16 @@ let package = Package(
                     "-Wno-poison-system-directories"
                 ], .when(configuration: .release))
             ]
-        )
+        ),
+
+        // MARK: Tests
+        .testTarget(name: "PVStellaTests",
+                    dependencies: ["PVStella"],
+                    swiftSettings: [
+                        .interoperabilityMode(.Cxx)
+                    ])
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageVersions: [.v5, .v6],
     cLanguageStandard: .gnu99,
     cxxLanguageStandard: .gnucxx17
 )

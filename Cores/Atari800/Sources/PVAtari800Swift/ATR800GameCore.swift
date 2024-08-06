@@ -12,9 +12,12 @@ import Foundation
 
 @objc
 @objcMembers
-open class ATR800GameCore: PVEmulatorCore {
+public final class ATR800GameCore: PVEmulatorCore {
+    @MainActor
     public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
 
+    @MainActor
     public var mouseMovedHandler: GCExtendedGamepadValueChangedHandler? = nil
+    @MainActor
     public var keyChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
 }

@@ -1,9 +1,11 @@
 // Copyright 2021 Dolphin Emulator Project
 // Licensed under GPLv2+
 // Refer to the license.txt file included.
+#if os(iOS)
 
 import Foundation
 import UIKit
+import JITManager
 
 @objc class JitFailedJailbreakScreenViewController : UIViewController
 {
@@ -12,7 +14,7 @@ import UIKit
   
   override func viewDidLoad()
   {
-    let auxError = DOLJitManager.shared().getAuxiliaryError()
+    let auxError = DOLJitManager.shared.getAuxiliaryError()
     if (auxError != nil)
     {
       self.specificErrorLabel.text = auxError
@@ -26,3 +28,4 @@ import UIKit
   }
   
 }
+#endif

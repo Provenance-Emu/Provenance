@@ -3,7 +3,12 @@
 // Refer to the license.txt file included.
 
 #pragma once
-@import Foundation;
+
+#import <dlfcn.h>
+#import <stdio.h>
+#import <unistd.h>
+
+#import <Foundation/Foundation.h>
 
 #ifdef __cplusplus
 extern "C"

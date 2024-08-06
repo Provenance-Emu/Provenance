@@ -3357,7 +3357,7 @@ typedef int16_t (RETRO_CALLCONV *retro_input_state_t)(unsigned port, unsigned de
 RETRO_API void retro_set_environment(retro_environment_t);
 RETRO_API void retro_set_video_refresh(retro_video_refresh_t);
 RETRO_API void retro_set_audio_sample(retro_audio_sample_t);
-RETRO_API void retro_set_audio_sample_batch(retro_audio_sample_batch_t);
+RETRO_API void retro_set_audio_sample_batch_tgbdual(retro_audio_sample_batch_t);
 RETRO_API void retro_set_input_poll(retro_input_poll_t);
 RETRO_API void retro_set_input_state(retro_input_state_t);
 
@@ -3446,8 +3446,8 @@ RETRO_API void retro_unload_game(void);
 RETRO_API unsigned retro_get_region(void);
 
 /* Gets region of memory. */
-RETRO_API void *retro_get_memory_data(unsigned id);
-RETRO_API size_t retro_get_memory_size(unsigned id);
+RETRO_API void *retro_get_memory_data_tgbdual(unsigned id);
+RETRO_API size_t retro_get_memory_size_tgbdual(unsigned id);
 
 #ifdef __cplusplus
 }

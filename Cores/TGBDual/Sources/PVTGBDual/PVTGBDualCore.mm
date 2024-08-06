@@ -6,6 +6,10 @@
 //  Copyright © 2024 Provenance. All rights reserved.
 //
 
+@import PVEmulatorCore;
+@import PVCoreBridge;
+@import PVLoggingObjC;
+
 #import "PVTGBDualCore.h"
 #import "PVTGBDualCore+Audio.h"
 #import "PVTGBDualCore+Controls.h"
@@ -95,8 +99,8 @@ void log(retro_log_level level, const char *fmt, ...) {
     retro_set_input_poll(input_poll_callback);
     retro_set_input_state(input_state_callback);
     retro_set_audio_sample(audio_callback);
-    retro_set_audio_sample_batch(audio_batch_callback);
-    
+    retro_set_audio_sample_batch_tgbdual(audio_batch_callback);
+
     retro_init();
     
     const char *fullPath = [path UTF8String];

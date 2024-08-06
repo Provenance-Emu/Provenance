@@ -18,7 +18,7 @@ public protocol ArchiveSupport {
 //    }
 // }
 
-public struct ArchiveSupportOptions: OptionSet {
+public struct ArchiveSupportOptions: OptionSet, Sendable {
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }

@@ -24,6 +24,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+@import PVEmulatorCore;
+@import PVCoreBridge;
+
 #import "PVVisualBoyAdvance.h"
 
 @import PVAudio;
@@ -36,6 +39,7 @@
 #import <OpenGL/gl3.h>
 #import <OpenGL/OpenGL.h>
 #import <GLUT/GLUT.h>
+@import GameController;
 #else
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
@@ -58,7 +62,6 @@ uint32_t pad[PVGBAButtonCount];
 static __weak PVVisualBoyAdvanceCore *_current;
 
 @interface PVVisualBoyAdvanceCore (Objc) <PVGBASystemResponderClient>
-
 - (void)loadOverrides:(NSString *)gameID;
 - (void)writeSaveFile;
 - (void)migrateSaveFile;
@@ -176,8 +179,7 @@ static __weak PVVisualBoyAdvanceCore *_current;
     // Load battery save or migrate old one
     NSString *extensionlessFilename = [[self._romFile lastPathComponent] stringByDeletingPathExtension];
     NSString *batterySavesDirectory = [self batterySavesPath];
-    if([batterySavesDirectory length])
-    {
+    if([batterySavesDirectory length]) {
         [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
     }
     
@@ -194,28 +196,18 @@ static __weak PVVisualBoyAdvanceCore *_current;
     return YES;
 }
 
-- (void)executeFrame
-{
+- (void)executeFrame {
     [self executeFrameSkippingFrame:NO];
 }
 
-- (void)executeFrameSkippingFrame:(BOOL)skip
-{
+- (void)executeFrameSkippingFrame:(BOOL)skip {
     self._haveFrame = NO;
-
-    while (!self._haveFrame)
-    {
-        vba.emuMain(vba.emuCount);
-    }
+    while (!self._haveFrame) { vba.emuMain(vba.emuCount); }
 }
 
-- (void)resetEmulation
-{
-    vba.emuReset();
-}
+- (void)resetEmulation { vba.emuReset(); }
 
-- (void)stopEmulation
-{
+- (void)stopEmulation {
     [super stopEmulation]; //Leave emulation loop first
 
     emulating = 0;
@@ -226,52 +218,29 @@ static __weak PVVisualBoyAdvanceCore *_current;
     soundShutdown();
 }
 
-- (NSTimeInterval)frameInterval
-{
+- (NSTimeInterval)frameInterval {
     return 59.727501;
 }
 
 # pragma mark - Video
 
-- (const void *)videoBuffer
-{
-    return self._videoBuffer;
-}
+- (const void *)videoBuffer { return self._videoBuffer; }
 
-- (CGRect)screenRect
-{
-    return CGRectMake(0, 0, 240, 160);
-}
+- (CGRect)screenRect { return CGRectMake(0, 0, 240, 160); }
 
-- (CGSize)bufferSize
-{
-    return CGSizeMake(240, 160);
-}
+- (CGSize)bufferSize { return CGSizeMake(240, 160); }
 
-- (CGSize)aspectSize
-{
-    return CGSizeMake(3, 2);
-}
+- (CGSize)aspectSize { return CGSizeMake(3, 2); }
 
-- (GLenum)pixelFormat
-{
-    return GL_BGRA;
-}
+- (GLenum)pixelFormat { return GL_BGRA; }
 
-- (GLenum)pixelType
-{
-    return GL_UNSIGNED_BYTE;
-}
+- (GLenum)pixelType { return GL_UNSIGNED_BYTE; }
 
-- (GLenum)internalPixelFormat
-{
-    return GL_RGBA;
-}
+- (GLenum)internalPixelFormat { return GL_RGBA; }
 
 # pragma mark - Audio
 
-- (double)audioSampleRate
-{
+- (double)audioSampleRate {
     double samplerate = soundGetSampleRate();
     if(samplerate < 32768) {
         samplerate = 32768;
@@ -279,15 +248,11 @@ static __weak PVVisualBoyAdvanceCore *_current;
     return samplerate;
 }
 
-- (NSUInteger)channelCount
-{
-    return 2;
-}
+- (NSUInteger)channelCount { return 2; }
 
 # pragma mark - Save States
 
-- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error
-{
+- (BOOL)saveStateToFileAtPath:(NSString *)fileName error:(NSError**)error {
     @synchronized(self) {
         BOOL success = vba.emuWriteState([fileName UTF8String]);
 		if (!success) {
@@ -309,8 +274,7 @@ static __weak PVVisualBoyAdvanceCore *_current;
     }
 }
 
-- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error
-{
+- (BOOL)loadStateFromFileAtPath:(NSString *)fileName error:(NSError**)error {
     @synchronized(self) {
         BOOL success = vba.emuReadState([fileName UTF8String]);
 		if (!success) {
@@ -346,36 +310,28 @@ enum {
     KEY_BUTTON_R      = 1 << 8,
     KEY_BUTTON_L      = 1 << 9
 };
+
 const int GBAMap[] = {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_BUTTON_A, KEY_BUTTON_B, KEY_BUTTON_L, KEY_BUTTON_R, KEY_BUTTON_START, KEY_BUTTON_SELECT};
 
-- (void)didPushGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player {
-    pad[player] |= GBAMap[button];
-}
+- (void)didPushGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player { pad[player] |= GBAMap[button]; }
 
-- (void)didReleaseGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player {
-    pad[player] &= ~GBAMap[button];
-}
+- (void)didReleaseGBAButton:(PVGBAButton)button forPlayer:(NSInteger)player { pad[player] &= ~GBAMap[button]; }
 
 bool systemReadJoypads() {
     __strong PVVisualBoyAdvanceCore *strongCurrent = _current;
 
-    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++)
-    {
+    for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
         GCController *controller = nil;
-        if (strongCurrent.controller1 && playerIndex == 0)
-        {
+        if (strongCurrent.controller1 && playerIndex == 0) {
             controller = strongCurrent.controller1;
         }
-        else if (strongCurrent.controller2 && playerIndex == 1)
-        {
+        else if (strongCurrent.controller2 && playerIndex == 1) {
             controller = strongCurrent.controller2;
             playerIndex = 1;
         }
 
-        if (controller)
-        {
-            if ([controller extendedGamepad])
-            {
+        if (controller) {
+            if ([controller extendedGamepad]) {
                 GCExtendedGamepad *gamepad = [controller extendedGamepad];
                 GCControllerDirectionPad *dpad = [gamepad dpad];
 
@@ -435,27 +391,21 @@ bool systemReadJoypads() {
     NSString *temp;
 
     // Check if vba-over.ini has per-game settings for our gameID
-    for (NSString *s in settings)
-    {
+    for (NSString *s in settings) {
         temp = nil;
 
-        if ([s hasPrefix:@"["])
-        {
+        if ([s hasPrefix:@"["]) {
             NSScanner *scanner = [NSScanner scannerWithString:s];
             [scanner scanString:@"[" intoString:nil];
             [scanner scanUpToString:@"]" intoString:&temp];
 
-            if([temp caseInsensitiveCompare:gameID] == NSOrderedSame)
-            {
+            if([temp caseInsensitiveCompare:gameID] == NSOrderedSame) {
                 matchFound = YES;
                 self._romID = temp;
             }
 
             continue;
-        }
-
-        else if (matchFound && [s hasPrefix:@"saveType="])
-        {
+        } else if (matchFound && [s hasPrefix:@"saveType="]) {
             NSScanner *scanner = [NSScanner scannerWithString:s];
             [scanner scanString:@"saveType=" intoString:nil];
             [scanner scanUpToString:@"\n" intoString:&temp];
@@ -463,10 +413,7 @@ bool systemReadJoypads() {
             [overridesFound setObject:temp forKey:@"CPU saveType"];
 
             continue;
-        }
-
-        else if (matchFound && [s hasPrefix:@"rtcEnabled="])
-        {
+        } else if (matchFound && [s hasPrefix:@"rtcEnabled="]) {
             NSScanner *scanner = [NSScanner scannerWithString:s];
             [scanner scanString:@"rtcEnabled=" intoString:nil];
             [scanner scanUpToString:@"\n" intoString:&temp];
@@ -474,10 +421,7 @@ bool systemReadJoypads() {
             [overridesFound setObject:temp forKey:@"rtcEnabled"];
 
             continue;
-        }
-
-        else if (matchFound && [s hasPrefix:@"flashSize="])
-        {
+        } else if (matchFound && [s hasPrefix:@"flashSize="]) {
             NSScanner *scanner = [NSScanner scannerWithString:s];
             [scanner scanString:@"flashSize=" intoString:nil];
             [scanner scanUpToString:@"\n" intoString:&temp];
@@ -485,10 +429,7 @@ bool systemReadJoypads() {
             [overridesFound setObject:temp forKey:@"flashSize"];
 
             continue;
-        }
-
-        else if (matchFound && [s hasPrefix:@"mirroringEnabled="])
-        {
+        } else if (matchFound && [s hasPrefix:@"mirroringEnabled="]) {
             NSScanner *scanner = [NSScanner scannerWithString:s];
             [scanner scanString:@"mirroringEnabled=" intoString:nil];
             [scanner scanUpToString:@"\n" intoString:&temp];
@@ -496,10 +437,7 @@ bool systemReadJoypads() {
             [overridesFound setObject:temp forKey:@"mirroringEnabled"];
 
             continue;
-        }
-
-        else if (matchFound && [s hasPrefix:@"useBios="])
-        {
+        } else if (matchFound && [s hasPrefix:@"useBios="]) {
             NSScanner *scanner = [NSScanner scannerWithString:s];
             [scanner scanString:@"useBios=" intoString:nil];
             [scanner scanUpToString:@"\n" intoString:&temp];
@@ -508,13 +446,12 @@ bool systemReadJoypads() {
 
             continue;
         }
-
-        else if (matchFound)
+        else if (matchFound) {
             break;
+        }
     }
 
-    if (matchFound)
-        DLOG(@"VBA: overrides found: %@", overridesFound);
+    if (matchFound) { DLOG(@"VBA: overrides found: %@", overridesFound); }
 }
 
 - (void)writeSaveFile {
@@ -532,14 +469,12 @@ bool systemReadJoypads() {
  - FLASH sometimes saved corrupt/empty 66KB files instead of saves meant to be 131KB (131072 bytes).
  - Battery save files always generated even if a game did not support saving.
  */
-- (void)migrateSaveFile
-{
+- (void)migrateSaveFile {
     // Build a path to the old save file and check if it exists
     NSURL *extensionlessFilename = [self._saveFile URLByDeletingPathExtension];
     NSURL *saveFileToMigrate = [extensionlessFilename URLByAppendingPathExtension:@"sav"];
 
-    if (![saveFileToMigrate checkResourceIsReachableAndReturnError:nil])
-        return;
+    if (![saveFileToMigrate checkResourceIsReachableAndReturnError:nil]) { return; }
 
     /*
      +----------------+----------+-------------+-----------------+--------------------------------------+
@@ -568,16 +503,12 @@ bool systemReadJoypads() {
     // Seems high but save types for some games cannot be determined until 300+ cycles (e.g. Golden Sun)
     self._migratingSave = YES;
 
-    for (int i = 0; i < 500; i++)
-    {
-        vba.emuMain(vba.emuCount);
-    }
+    for (int i = 0; i < 500; i++) { vba.emuMain(vba.emuCount); }
 
     // Step 2
     // If VBA did not determine the save type while cycling the CPU, fall back to lookup by the GBA Cart Backup ID. Sometimes VBA cannot determine save types until certain points in game when memory is accessed. This routine, adapted from Util.cpp, is rarely used as cycling the CPU is usually enough.
     // Note: Lookup via GBA Cart Backup ID is not 100% accurate http://zork.net/~st/jottings/GBA_saves.html
-    if (saveType == 0 && !eepromInUse)
-    {
+    if (saveType == 0 && !eepromInUse) {
         uint8_t *data;
         size_t size;
 
@@ -656,8 +587,7 @@ bool systemReadJoypads() {
         memmove(saveFileData, saveFileData + 131072, saveFileSize -= 131072);
 
     // 139KB to 512 bytes - remove the front 131072 and last 7680 bytes
-    else if ((saveType == 3 || eepromInUse) && eepromSize == 512 && saveFileSize == 139264)
-    {
+    else if ((saveType == 3 || eepromInUse) && eepromSize == 512 && saveFileSize == 139264) {
         memmove(saveFileData, saveFileData + 131072, saveFileSize -= 131072);
         saveFileData[512] = 0; // null terminate to drop the last 7680 bytes
         saveFileSize = 512;
@@ -666,21 +596,18 @@ bool systemReadJoypads() {
     // FLASH saves
 
     // 139KB to 131KB - remove the last 8192 bytes
-    else if (saveType == 2 && flashSize == 131072 && saveFileSize == 139264)
-    {
+    else if (saveType == 2 && flashSize == 131072 && saveFileSize == 139264) {
         saveFileData[131072] = 0;
         saveFileSize = 131072;
     }
     // 139KB to 66KB  - remove the last 73728 bytes
-    else if (saveType == 2 && flashSize == 65536 && saveFileSize == 139264)
-    {
+    else if (saveType == 2 && flashSize == 65536 && saveFileSize == 139264) {
         saveFileData[65536] = 0;
         saveFileSize = 65536;
     }
     // Case where some 131KB FLASH saved as 66KB with nothing but 0xFF bytes and no save data
     // All we can do is delete so the game doesn't crash
-    else if (saveType == 2 && flashSize == 131072 && saveFileSize == 65536)
-    {
+    else if (saveType == 2 && flashSize == 131072 && saveFileSize == 65536) {
         [fileManager removeItemAtURL:saveFileToMigrate error:nil];
         CPUReset();
         self._migratingSave = NO;
@@ -690,16 +617,14 @@ bool systemReadJoypads() {
     // SRAM saves
 
     // 139KB to 66KB  - remove the last 73728 bytes
-    else if (saveType == 1 && saveFileSize == 139264)
-    {
+    else if (saveType == 1 && saveFileSize == 139264) {
         saveFileData[65536] = 0;
         saveFileSize = 65536;
     }
     // Case where some 66KB SRAM saved as 8KB - add 57344 bytes of 0xFF to the end
     // e.g. Kirby Nightmare in Dreamland
     // Note: This is a lot of potential data lost and might not fix all saves
-    else if (saveType == 1 && saveFileSize == 8192)
-    {
+    else if (saveType == 1 && saveFileSize == 8192) {
         NSMutableData *appendedData = [NSMutableData dataWithBytes:saveFileData length:saveFileSize];
         uint8_t *bytesToAppend = (uint8_t *)malloc(57344);
         memset(bytesToAppend, 0xFF, 57344);
@@ -708,16 +633,13 @@ bool systemReadJoypads() {
 
         saveFileData = (uint8_t *)[appendedData bytes];
         saveFileSize = [appendedData length];
-    }
-    else
-    {
+    } else {
         DLOG(@"VBA: Did not migrate save file because unnecessary or not detected.");
     }
 
     // Step 4
     // Save migrated file to .sav2 and delete old save file
-    if (saveFileSize < 139264)
-    {
+    if (saveFileSize < 139264) {
         NSError *error = nil;
         NSURL *extensionlessFilename = [saveFileToMigrate URLByDeletingPathExtension];
         NSURL *migratedSaveFile = [extensionlessFilename URLByAppendingPathExtension:@"sav2"];
@@ -725,8 +647,7 @@ bool systemReadJoypads() {
 
         [outData writeToURL:migratedSaveFile options:NSDataWritingAtomic error:&error];
 
-        if (error)
-        {
+        if (error) {
             DLOG(@"VBA: Error writing migrated save file: %@", error);
             CPUReset();
             self._migratingSave = NO;
@@ -741,9 +662,7 @@ bool systemReadJoypads() {
 
         if (vba.emuReadBattery([[migratedSaveFile path] UTF8String]))
             DLOG(@"VBA: Battery loaded");
-    }
-    else
-    {
+    } else {
         CPUReset();
         self._migratingSave = NO;
     }
@@ -787,8 +706,7 @@ void systemOnSoundShutdown() {}
 void systemOnWriteDataToSoundBuffer(const uint16_t *finalWave, int length) {}
 
 // VBA video and execution
-void system10Frames(int rate)
-{
+void system10Frames(int rate) {
     __strong PVVisualBoyAdvanceCore *strongCurrent = _current;
 
     if(systemSaveUpdateCounter && !strongCurrent._migratingSave)
@@ -801,8 +719,7 @@ void system10Frames(int rate)
     }
 }
 
-void systemDrawScreen()
-{
+void systemDrawScreen() {
     __strong PVVisualBoyAdvanceCore *strongCurrent = _current;
 
     strongCurrent._haveFrame = YES;
@@ -816,8 +733,7 @@ void systemDrawScreen()
 }
 
 // VBA input
-uint32_t systemReadJoypad(int which)
-{
+uint32_t systemReadJoypad(int which) {
     uint32_t res = 0;
 
     which %= 4;
@@ -839,8 +755,7 @@ uint32_t systemReadJoypad(int which)
 }
 
 // VBA audio
-class DummySound : public SoundDriver
-{
+class DummySound : public SoundDriver {
 public:
     DummySound();
     virtual ~DummySound();
@@ -854,15 +769,13 @@ public:
 
 DummySound::DummySound() {}
 
-void DummySound::write(u16 * finalWave, int length)
-{
+void DummySound::write(u16 * finalWave, int length) {
     __strong PVVisualBoyAdvanceCore *strongCurrent = _current;
 
     [[strongCurrent ringBufferAtIndex:0] writeBuffer:finalWave maxLength:length];
 }
 
-bool DummySound::init(long sampleRate)
-{
+bool DummySound::init(long sampleRate) {
     return true;
 }
 
@@ -871,16 +784,14 @@ void DummySound::pause() {}
 void DummySound::resume() {}
 void DummySound::reset() {}
 
-SoundDriver *systemSoundInit()
-{
+SoundDriver *systemSoundInit() {
     soundShutdown();
 
     return new DummySound();
 }
 
 // VBA logging
-void systemMessage(int, const char * str, ...)
-{
+void systemMessage(int, const char * str, ...) {
     DLOG(@"VBA message: %s", str);
 }
 
@@ -893,7 +804,6 @@ void systemMessage(int, const char * str, ...)
 }
 
 @end
-
 
 #pragma mark - Cheats
 

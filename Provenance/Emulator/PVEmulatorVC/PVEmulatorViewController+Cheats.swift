@@ -85,14 +85,16 @@ extension PVEmulatorViewController: PVCheatsViewControllerDelegate {
                         cheatsState = PVCheats(withGame: self.game, core: core, code: modString, type: saveType, enabled: false, file: saveFile)
                         realm.add(cheatsState)
                     }
-                    LibrarySerializer.storeMetadata(cheatsState, completion: { result in
-                        switch result {
-                        case let .success(url):
-                            ILOG("Serialized cheats state metadata to (\(url.path))")
-                        case let .error(error):
-                            ELOG("Failed to serialize cheats metadata. \(error)")
-                        }
-                    })
+                    Task {
+                       await LibrarySerializer.storeMetadata(cheatsState, completion: { result in
+                            switch result {
+                            case let .success(url):
+                                ILOG("Serialized cheats state metadata to (\(url.path))")
+                            case let .error(error):
+                                ELOG("Failed to serialize cheats metadata. \(error)")
+                            }
+                        })
+                    }
                 } catch {
                     completion(.error(.realmWriteError(error)))
                     return

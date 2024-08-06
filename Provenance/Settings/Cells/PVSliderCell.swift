@@ -8,6 +8,7 @@
 
 #if canImport(UIKit) && !os(tvOS)
 import UIKit
+import PVThemes
 
 final class PVSliderCell: SliderCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -28,9 +29,9 @@ final class PVSliderCell: SliderCell {
         let bg = UIView(frame: bounds)
         bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         #if os(iOS)
-            slider.tintColor = Theme.currentTheme.defaultTintColor
+            slider.tintColor = ThemeManager.shared.currentTheme.defaultTintColor
 		#if !targetEnvironment(macCatalyst)
-            slider.thumbTintColor = Theme.currentTheme.switchThumb
+            slider.thumbTintColor = ThemeManager.shared.currentTheme.switchThumb
 		#endif
             slider.isContinuous = false
         #endif

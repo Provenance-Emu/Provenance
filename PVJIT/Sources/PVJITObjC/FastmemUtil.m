@@ -5,6 +5,7 @@
 #import "FastmemUtil.h"
 
 #import <mach/mach.h>
+#import <Foundation/Foundation.h>
 
 static bool s_can_enable_fastmem = false;
 static DOLFastmemType s_fastmem_type;
@@ -48,7 +49,7 @@ bool CanEnableFastmem(void)
   return s_can_enable_fastmem;
 }
 
-DOLFastmemType GetFastmemType()
+DOLFastmemType GetFastmemType(void)
 {
   return s_fastmem_type;
 }

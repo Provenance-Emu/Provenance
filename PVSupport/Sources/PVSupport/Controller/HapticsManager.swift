@@ -152,7 +152,7 @@ public final class HapticsManager {
         }
 
         // Get the AHAP file URL.
-		let bundle = Bundle.init(for: Self.self)
+        let bundle = Bundle.module
 		guard let url = bundle.url(forResource: filename, withExtension: "ahap") else {
             ELOG("Unable to find haptics file named '\(filename)'.")
             return

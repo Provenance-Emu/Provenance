@@ -24,9 +24,12 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define VIDEO_UPSCALE 1
+@import GameController;
+@import PVCoreBridge;
 
 #import "PVPokeMiniEmulatorCore.h"
+
+#define VIDEO_UPSCALE 1
 
 #if SWIFT_PACKAGE
 @import PokeMiniSwift;
@@ -34,9 +37,11 @@
 #import <PVPokeMini/PVPokeMini-Swift.h>
 #endif
 @import PVLoggingObjC;
+
 @import PVEmulatorCore;
 @import PVAudio;
 @import PokeMiniC;
+@import libpokemini;
 
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -49,12 +54,6 @@
 #endif
 
 #import <AudioToolbox/AudioToolbox.h>
-#import "PokeMini.h"
-#import "Hardware.h"
-#import "Joystick.h"
-#import "Video_x1.h"
-#import "Video_x4.h"
-
 
 @interface PVPokeMiniEmulatorCore (ObjC) <PVPokeMiniSystemResponderClient>
 
@@ -71,18 +70,20 @@ __weak PVPokeMiniEmulatorCore *current;
 
 - (instancetype)init {
     if(self = [super init]) {
+        dispatch_sync(dispatch_get_main_queue(), ^{
 #if VIDEO_UPSCALE
-        self.videoWidth = 96 * 4;
-        self.videoHeight = 64 * 4;
+            self.videoWidth = 96 * 4;
+            self.videoHeight = 64 * 4;
 #else
-        videoWidth = 96;
-        videoHeight = 64;
+            self.videoWidth = 96;
+            self.videoHeight = 64;
 #endif
 
-        self.audioStream = malloc(PMSOUNDBUFF);
-        self._videoBuffer = malloc(self.videoWidth * self.videoHeight*4);
-        memset(self._videoBuffer, 0, self.videoWidth * self.videoHeight*4);
-        memset(self.audioStream, 0, PMSOUNDBUFF);
+            self.audioStream = malloc(PMSOUNDBUFF);
+            self._videoBuffer = malloc(self.videoWidth * self.videoHeight*4);
+            memset(self._videoBuffer, 0, self.videoWidth * self.videoHeight*4);
+            memset(self.audioStream, 0, PMSOUNDBUFF);
+        });
     }
 
     current = self;
@@ -92,8 +93,10 @@ __weak PVPokeMiniEmulatorCore *current;
 - (void)dealloc {
     PokeMini_VideoPalette_Free();
     PokeMini_Destroy();
-    free(self.audioStream);
-    free(self._videoBuffer);
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        if(self.audioStream) free(self.audioStream);
+        if(self._videoBuffer) free(self._videoBuffer);
+    });
 }
 
 #pragma - mark Execution

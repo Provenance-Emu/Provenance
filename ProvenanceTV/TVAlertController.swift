@@ -344,14 +344,14 @@ final class TVAlertController: UIViewController, UIAlertControllerProtocol {
             if (Pressed.timestamp == nil) {
                 Pressed.timestamp = now
             }
-            print("Action Button Pressed ", now, Pressed.timestamp)
+            ILOG("Action Button Pressed \(now) \(Pressed.timestamp ?? 0)")
             self.dismiss(animated:true, completion: {
                 if let timestamp = Pressed.timestamp,
                    (now == timestamp || now - timestamp > 500) {
                     Pressed.timestamp = now
                     action.callActionHandler()
                 } else {
-                    print("Action Doubled: Skipped ", now, Pressed.timestamp)
+                    ILOG("Action Doubled: Skipped \(now) \(Pressed.timestamp ?? 0)")
                 }
             })
         } else {

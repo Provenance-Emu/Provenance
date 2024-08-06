@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PVCoreBridge
 
 public enum SystemBits: Int, Codable {
     case unknown = 0

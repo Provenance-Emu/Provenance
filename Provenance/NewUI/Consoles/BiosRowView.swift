@@ -12,6 +12,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import PVThemes
 
 extension BIOSStatus.State {
     var biosStatusImageName: String {
@@ -43,14 +44,14 @@ struct BiosRowView: SwiftUI.View {
                     .foregroundColor(Color.white)
                 Text("\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes")
                     .font(.system(size: 10))
-                    .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
+                    .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
             }
             Spacer()
             HStack(alignment: .center, spacing: 4) {
                 switch biosState() {
                 case .match:
                     Image(systemName: "checkmark")
-                        .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
+                        .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
                         .font(.system(size: 13, weight: .light))
                 case .missing:
                     Text("Missing")

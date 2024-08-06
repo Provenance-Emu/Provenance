@@ -12,13 +12,15 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import PVThemes
 
 @available(iOS 14, tvOS 14, *)
 struct GamesDividerView: SwiftUI.View {
+    var currentTheme: Color {ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor}
     var body: some SwiftUI.View {
         Divider()
             .frame(height: 1)
-            .background(Theme.currentTheme.gameLibraryText.swiftUIColor)
+            .background(currentTheme)
             .opacity(0.1)
     }
 }

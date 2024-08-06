@@ -17,7 +17,7 @@ let ISO_TIMEZONE_OFFSET_FORMAT: String = "%+02d%02d"
 @objcMembers
 public final class PVLogging: NSObject {
     @objc(sharedInstance)
-    public static let shared = PVLogging()
+    nonisolated(unsafe) public static let shared = PVLogging()
 
     public var entity: PVLoggingEntity?
     public let startupTime: Date = Date()

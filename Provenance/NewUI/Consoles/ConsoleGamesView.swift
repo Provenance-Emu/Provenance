@@ -11,6 +11,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import PVThemes
 
 // TODO: might be able to reuse this view for collections
 @available(iOS 14, tvOS 14, *)
@@ -110,14 +111,14 @@ struct ConsoleGamesView: SwiftUI.View {
                             GamesDividerView()
                         }
                     }
-                    .background(Theme.currentTheme.settingsCellBackground?.swiftUIColor.opacity(0.3) ?? Color.black)
+                    .background(ThemeManager.shared.currentTheme.settingsCellBackground?.swiftUIColor.opacity(0.3) ?? Color.black)
                 }
             }
             //        .scrollDisabled(self.zooming)
             .scaleEffect(scale, anchor: .top)
             .background(
                 GeometryReader { proxy in
-                    Theme.currentTheme.gameLibraryBackground.swiftUIColor
+                    ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor
                         .onAppear {
                             self.gridWidth = proxy.frame(in: .local).width
                             self.calculateZoomFactor(at: self.currentZoomStageIndex)

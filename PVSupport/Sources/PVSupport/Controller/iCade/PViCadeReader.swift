@@ -17,9 +17,21 @@ public final class PViCadeReader: NSObject, iCadeEventDelegate {
     var stateChangedHandler: iCadeStateEventHandler?
     var buttonDownHandler: iCadeButtonEventHandler?
     var buttonUpHandler: iCadeButtonEventHandler?
+
     var internalReader: iCadeReaderView = iCadeReaderView(frame: CGRect.zero)
 
-    public static var shared: PViCadeReader = PViCadeReader()
+    init(stateChangedHandler: iCadeStateEventHandler? = nil, buttonDownHandler: iCadeButtonEventHandler? = nil, buttonUpHandler: iCadeButtonEventHandler? = nil, internalReader: iCadeReaderView) {
+        self.stateChangedHandler = stateChangedHandler
+        self.buttonDownHandler = buttonDownHandler
+        self.buttonUpHandler = buttonUpHandler
+        self.internalReader = internalReader
+    }
+
+    public convenience init(stateChangedHandler: iCadeStateEventHandler?, buttonDownHandler: iCadeButtonEventHandler?, buttonUpHandler: iCadeButtonEventHandler?) {
+        self.init(stateChangedHandler: stateChangedHandler, buttonDownHandler: buttonDownHandler, buttonUpHandler: buttonUpHandler, internalReader: iCadeReaderView(frame: CGRect.zero))
+    }
+
+    public static var shared: PViCadeReader = PViCadeReader(internalReader: iCadeReaderView(frame: CGRect.zero))
 
     public func listen(to window: UIWindow?) {
         let keyWindow: UIWindow? = window ?? UIApplication.shared.windows.first { $0.isKeyWindow }
@@ -45,11 +57,6 @@ public final class PViCadeReader: NSObject, iCadeEventDelegate {
 
     public var states: [iCadeControllerState] {
         return internalReader.states
-    }
-
-    deinit {
-        internalReader.active = false
-        internalReader.delegate = nil
     }
 
     // MARK: - iCadeEventDelegate

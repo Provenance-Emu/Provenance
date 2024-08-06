@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum PackageResult {
+public enum PackageResult: Sendable {
     case success(URL)
     case error(Error)
 }

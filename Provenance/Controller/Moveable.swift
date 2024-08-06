@@ -118,19 +118,19 @@ public extension UIGestureRecognizer {
 
     private var block:((_ recognizer:UIGestureRecognizer) -> Void) {
         get {
-            return Associator.getAssociatedObject(object: self, associativeKey:&PropertyKeys.blockKey)!
+            return Associator.getAssociatedObject(object: self, associativeKey:PropertyKeys.blockKey)!
         }
         set {
-            Associator.setAssociatedObject(object: self, value: newValue, associativeKey:&PropertyKeys.blockKey, policy: .OBJC_ASSOCIATION_RETAIN)
+            Associator.setAssociatedObject(object: self, value: newValue, associativeKey:PropertyKeys.blockKey, policy: .OBJC_ASSOCIATION_RETAIN)
         }
     }
 
     private var multiDelegate:MultiDelegate {
         get {
-            return Associator.getAssociatedObject(object: self, associativeKey:&PropertyKeys.multiDelegateKey)!
+            return Associator.getAssociatedObject(object: self, associativeKey:PropertyKeys.multiDelegateKey)!
         }
         set {
-            Associator.setAssociatedObject(object: self, value: newValue, associativeKey:&PropertyKeys.multiDelegateKey, policy: .OBJC_ASSOCIATION_RETAIN)
+            Associator.setAssociatedObject(object: self, value: newValue, associativeKey:PropertyKeys.multiDelegateKey, policy: .OBJC_ASSOCIATION_RETAIN)
         }
     }
 

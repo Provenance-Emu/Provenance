@@ -10,6 +10,7 @@ import PVLibrary
 
 import RealmSwift
 import UIKit
+import MBProgressHUD
 
 final class PVCoresTableViewController: QuickTableViewController {
     override func viewDidLoad() {
@@ -86,11 +87,11 @@ final class PVCoresTableViewController: QuickTableViewController {
 
             view.addSubview(webView)
 
-            let hud = MBProgressHUD(view: view)!
+            let hud = MBProgressHUD(view: view)
             hud.isUserInteractionEnabled = false
             hud.mode = .determinateHorizontalBar
             hud.progress = 0
-            hud.labelText = NSLocalizedString("Loading", comment: "Loading") + "…"
+            hud.label.text = NSLocalizedString("Loading", comment: "Loading") + "…"
 
             self.hud = hud
             webView.addSubview(hud)
@@ -110,12 +111,12 @@ final class PVCoresTableViewController: QuickTableViewController {
     extension WebkitViewController: WKNavigationDelegate {
         func webView(_: WKWebView, didStartProvisionalNavigation _: WKNavigation!) {
             UIApplication.shared.isNetworkActivityIndicatorVisible = true
-            hud.show(true)
+            hud.show(animated: true)
         }
 
         func webView(_: WKWebView, didFinish _: WKNavigation!) {
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            hud.hide(true, afterDelay: 0.0)
+            hud.hide(animated: true, afterDelay: 0.0)
         }
     }
 #endif

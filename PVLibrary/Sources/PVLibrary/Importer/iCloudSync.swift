@@ -128,7 +128,7 @@ extension iCloudTypeSyncer {
             do {
                 try FileManager.default.removeItem(at: url)
             } catch {
-                print("error: \(error.localizedDescription)")
+                ELOG("error: \(error.localizedDescription)")
             }
         }
     }
@@ -354,6 +354,15 @@ public enum iCloudSync {
                 let realm = try! Realm()
                 jsonFiles.forEach { json in
                     do {
+                        guard json.startAccessingSecurityScopedResource() else {
+                            ELOG("startAccessingSecurityScopedResource failed")
+                            return
+                        }
+
+                        defer {
+                            json.stopAccessingSecurityScopedResource()
+                        }
+                        
                         var dataMaybe = FileManager.default.contents(atPath: json.path)
                         if dataMaybe == nil {
                             dataMaybe = try Data(contentsOf: json, options: [.uncached])

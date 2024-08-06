@@ -10,7 +10,7 @@ import Foundation
 import PVLogging
 
 @objc
-public enum ThemeOptions: UInt, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable {
+public enum ThemeOptionsStandard: UInt, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable {
     case light
     case dark
     case auto
@@ -27,11 +27,11 @@ public enum ThemeOptions: UInt, CustomStringConvertible, CaseIterable, UserDefau
         return rawValue
     }
 
-    public static var themes: [ThemeOptions] {
+    public static var themes: [ThemeOptionsStandard] {
         return allCases
     }
 
-    public static func optionForRow(_ row: UInt) -> ThemeOptions {
+    public static func optionForRow(_ row: UInt) -> ThemeOptionsStandard {
         switch row {
         case 0:
             return .light
@@ -45,3 +45,53 @@ public enum ThemeOptions: UInt, CustomStringConvertible, CaseIterable, UserDefau
         }
     }
 }
+
+@objc
+public enum ThemeOptionsCGA: UInt, CustomStringConvertible, CaseIterable, UserDefaultsRepresentable {
+    case blue
+    case cyan
+    case green
+    case magenta
+    case red
+    case yellow
+
+    public var description: String {
+        switch self {
+        case .blue: return "Blue"
+        case .cyan: return "Cyan"
+        case .green: return "Green"
+        case .magenta: return "Magenta"
+        case .red: return "Red"
+        case .yellow: return "Yellow"
+        }
+    }
+
+    public var row: UInt {
+        return rawValue
+    }
+
+    public static var themes: [ThemeOptionsCGA] {
+        return allCases
+    }
+
+    public static func optionForRow(_ row: UInt) -> ThemeOptionsCGA {
+        switch row {
+        case 0:
+            return .blue
+        case 1:
+            return .cyan
+        case 2:
+            return .green
+        case 3:
+            return .magenta
+        case 4:
+            return .red
+        case 5:
+            return .yellow
+        default:
+            ELOG("Bad row \(row)")
+            return .blue
+        }
+    }
+}
+

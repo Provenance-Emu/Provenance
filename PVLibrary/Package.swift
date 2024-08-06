@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import PackageDescription
 
@@ -23,10 +23,12 @@ let linkerSettings: [LinkerSetting] = [
 let package = Package(
     name: "PVLibrary",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
-        .watchOS(.v7),
-        .macOS(.v11)
+        .iOS(.v17),
+        .tvOS("15.4"),
+        .watchOS(.v9),
+        .macOS(.v11),
+        .macCatalyst(.v14),
+        .visionOS(.v1)
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
@@ -59,13 +61,13 @@ let package = Package(
             name: "PVHashing",
             path: "../PVHashing"
         ),
-//        .package(
-//            name: "PVObjCUtils",
-//            path: "../PVObjCUtils"
-//        ),
         .package(
             name: "PVEmulatorCore",
             path: "../PVEmulatorCore"
+        ),
+        .package(
+            name: "PVCoreLoader",
+            path: "../PVCoreLoader"
         ),
         .package(
             url: "https://github.com/ReactiveX/RxSwift.git",
@@ -95,14 +97,7 @@ let package = Package(
             url: "https://github.com/tsolomko/SWCompression.git",
             .upToNextMinor(from: "4.8.4")
         ),
-		.package(
-			url: "https://github.com/SwiftGen/SwiftGenPlugin",
-			from: "6.6.0"
-		),
-//        .package(
-//            url: "https://github.com/JoeMatt/ZamzamKit.git",
-//			revision: "dbbf712"
-//        )
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop")
     ],
     targets: [
         .target(
@@ -112,21 +107,20 @@ let package = Package(
                 "PLzmaSDK",
                 "SWCompression",
                 "PVLogging",
-                "PVHashing", // TODO: Use the objC or Swift version, when it's tested @JoeMatt
+                "PVHashing",
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
+                .product(name: "PVCoreLoader", package: "PVCoreLoader"),
                 .product(name: "GRDB", package: "GRDB.swift"),
                 .product(name: "SQLite", package: "SQLite.swift"),
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
                 .product(name: "ZipArchive", package: "ZipArchive"),
-//                .product(name: "ZamzamUI", package: "ZamzamKit")
             ],
 			resources: [
-				.copy("Resources/cheatbase.sqlite"),
-				.copy("Resources/openvgdb.sqlite"),
-				.copy("Resources/systems.plist")
-				// .process("Resources/")
+				.process("Resources/cheatbase.sqlite"),
+				.process("Resources/openvgdb.sqlite"),
+				.process("Resources/systems.plist")
 			],
 //			cSettings: cSettings,
 //			cxxSettings: cxxSettings,

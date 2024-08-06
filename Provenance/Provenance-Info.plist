@@ -229,7 +229,7 @@
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
 			<key>NSUbiquitousContainerName</key>
-			<string>Provenance</string>
+			<string>provenance</string>
 			<key>NSUbiquitousContainerSupportedFolderLevels</key>
 			<string>Any</string>
 		</dict>
@@ -254,7 +254,7 @@
 	</array>
 	<key>UIFileSharingEnabled</key>
 	<true/>
-    <key>UILaunchScreen</key>
+	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIDefaultLaunchScreen</key>
 		<string></string>
@@ -270,7 +270,7 @@
 		<key>UIURLToLaunchScreenAssociations</key>
 		<dict/>
 	</dict>
-    <key>UILaunchStoryboardName</key>
+	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen.storyboard</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>

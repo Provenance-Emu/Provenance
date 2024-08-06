@@ -6,7 +6,7 @@
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
 
-public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible {
+public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible, Sendable {
     public let rawValue: Int
 
     public init(rawValue: Int) {
@@ -67,7 +67,7 @@ public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible
         return "iCadeControllerState(rawValue: \(rawValue)) \(result)"
     }
 
-    static var debugDescriptions: [iCadeControllerState: String] = {
+    static let debugDescriptions: [iCadeControllerState: String] = {
         var descriptions = [iCadeControllerState: String]()
 
         descriptions[.joystickUp] = "JoyUp"

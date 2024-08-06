@@ -20,6 +20,7 @@
 #include "Endianess.h"
 #include <time.h>
 
+
 // Dependencies
 #ifndef NO_ZIP
 #include "unzip.h"
@@ -40,7 +41,6 @@ int PokeMini_LCDMode = 0;	// LCD Mode
 int PokeMini_ColorFormat = 0;	// Color Format (0 = 8x8, 1 = 4x4)
 int PokeMini_HostBattStatus = 0;// Host battery status
 int PokeMini_RumbleAnim = 0;	// Rumble animation
-
 
 int PokeMini_RumbleAmount[4] = { -2,  1, -1,  2 };
 const int PokeMini_RumbleAmountTable[16] = {

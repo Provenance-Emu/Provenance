@@ -3,7 +3,7 @@ import PVSupport
 import PVEmulatorCore
 
 extension PVRetroArchCore: CoreOptional {
-    static var gsOption: CoreOption = {
+    static var gsOption: CoreOption {
          .enumeration(.init(title: "Graphics Handler",
                description: "(Requires Restart)",
                requiresRestart: true),
@@ -13,22 +13,22 @@ extension PVRetroArchCore: CoreOptional {
                .init(title: "Vulkan", description: "Vulkan", value: 2)
           ],
           defaultValue: 0)
-    }()
-    static var retroArchControllerOption: CoreOption = {
+    }
+    static var retroArchControllerOption: CoreOption {
         .bool(.init(
             title: USE_RETROARCH_CONTROLLER,
             description: nil,
             requiresRestart: false),
               defaultValue: false)
-    }()
-    static var secondScreenOption: CoreOption = {
+    }
+    static var secondScreenOption: CoreOption {
         .bool(.init(
             title: USE_SECOND_SCREEN,
             description: nil,
             requiresRestart: false),
               defaultValue: false)
-    }()
-    static var mupenRDPOption: CoreOption = {
+    }
+    static var mupenRDPOption: CoreOption {
           .enumeration(.init(title: "Mupen RDP Plugin",
                description: "(Requires Restart)",
                requiresRestart: true),
@@ -37,8 +37,8 @@ extension PVRetroArchCore: CoreOptional {
                .init(title: "GlideN64", description: "GlideN64", value: 1)
           ],
           defaultValue: 1)
-    }()
-    static var apple2MachineOption: CoreOption = {
+    }
+    static var apple2MachineOption: CoreOption {
           .enumeration(.init(title: "System Model",
                description: "(Requires Restart)",
                requiresRestart: true),
@@ -52,8 +52,8 @@ extension PVRetroArchCore: CoreOptional {
                .init(title: "Apple III", description: "Apple III", value: 222),
           ],
           defaultValue: 212)
-    }()
-    static var volumeOption: CoreOption = {
+    }
+    static var volumeOption: CoreOption {
         .enumeration(.init(title: "Audio Volume",
                            description: "",
                            requiresRestart: false),
@@ -71,8 +71,8 @@ extension PVRetroArchCore: CoreOptional {
                         .init(title: "0%", description: "0%", value: 0),
                      ],
                      defaultValue: 80)
-    }()
-    static var ffOption: CoreOption = {
+    }
+    static var ffOption: CoreOption {
         .enumeration(.init(title: "Fast Forward Speed",
                            description: "",
                            requiresRestart: false),
@@ -90,8 +90,8 @@ extension PVRetroArchCore: CoreOptional {
                         .init(title: "Unlimited", description: "Unlimited", value: 0),
                      ],
                      defaultValue: 125)
-    }()
-    static var smOption: CoreOption = {
+    }
+    static var smOption: CoreOption {
         .enumeration(.init(title: "Slow Motion Speed",
                            description: "",
                            requiresRestart: false),
@@ -107,34 +107,34 @@ extension PVRetroArchCore: CoreOptional {
                         .init(title: "500%", description: "500%", value: 500),
                      ],
                      defaultValue: 125)
-    }()
-    static var analogKeyControllerOption: CoreOption = {
+    }
+    static var analogKeyControllerOption: CoreOption {
         .bool(.init(
             title: ENABLE_ANALOG_KEY,
             description: nil,
             requiresRestart: false),
-              defaultValue: true)}()
-    static var analogDpadControllerOption: CoreOption = {
+              defaultValue: true)}
+    static var analogDpadControllerOption: CoreOption {
         .bool(.init(
             title: ENABLE_ANALOG_DPAD,
             description: nil,
             requiresRestart: false),
               defaultValue: false)
-    }()
-    static var numKeyControllerOption: CoreOption = {
+    }
+    static var numKeyControllerOption: CoreOption {
         .bool(.init(
             title: ENABLE_NUM_KEY,
             description: nil,
             requiresRestart: false),
               defaultValue: false)
-    }()
-    static var mameOSDOption: CoreOption = {
+    }
+    static var mameOSDOption: CoreOption {
         .bool(.init(
             title: "Launch into OSD",
             description: nil,
             requiresRestart: false),
               defaultValue: false)
-    }()
+    }
 
     public static var options: [CoreOption] {
         var options = [CoreOption]()
@@ -174,8 +174,8 @@ extension PVRetroArchCore: CoreOptional {
             isDOS=true
             coreOptions.append(numKeyControllerOption)
         }
-        if let status = PVEmulatorCore.status["isOn"],
-           (status && self.systemName.contains("appleII")) {
+        if let status = PVEmulatorCore.status["isOn"], status,
+           self.systemName.contains("appleII") {
             coreOptions.append(apple2MachineOption)
         }
         analogKeyControllerOption = {

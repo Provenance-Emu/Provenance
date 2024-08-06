@@ -424,7 +424,7 @@ public extension RomDatabase {
         }
     }
     func deleteAllData() throws {
-        print("!!!Delete Called!!!")
+        WLOG("!!!deleteAllData Called!!!")
         let realm = try! Realm()
         let games = realm.objects(PVGame.self)
         let system = realm.objects(PVSystem.self)
@@ -568,9 +568,9 @@ extension RomDatabase {
     private func deleteFromSpotlight(game: PVGame) {
         CSSearchableIndex.default().deleteSearchableItems(withIdentifiers: [game.spotlightUniqueIdentifier], completionHandler: { error in
             if let error = error {
-                print("Error deleting game spotlight item: \(error)")
+                ELOG("Error deleting game spotlight item: \(error)")
             } else {
-                print("Game indexing deleted.")
+                ILOG("Game indexing deleted.")
             }
         })
     }
@@ -578,9 +578,9 @@ extension RomDatabase {
     private func deleteAllGamesFromSpotlight() {
         CSSearchableIndex.default().deleteAllSearchableItems { error in
             if let error = error {
-                print("Error deleting all games spotlight index: \(error)")
+                ELOG("Error deleting all games spotlight index: \(error)")
             } else {
-                print("Game indexing deleted.")
+                ILOG("Game indexing deleted.")
             }
         }
     }
@@ -801,9 +801,11 @@ public extension RomDatabase {
                 openVGDB = db
             } else {
                 openVGDB = try {
-                    let ThisBundle: Bundle = Bundle(for: RomDatabase.self)
-                    let bundle = ThisBundle
-                    let _openVGDB = try OESQLiteDatabase(withURL: bundle.url(forResource: "openvgdb", withExtension: "sqlite")!)
+                    let bundle = Bundle.module
+                    guard let openvgdbSQLITE = bundle.url(forResource: "openvgdb", withExtension: "sqlite") else {
+                        fatalError("Could not find openvgdb.sqlite resource")
+                    }
+                    let _openVGDB = try OESQLiteDatabase(withURL: openvgdbSQLITE)
                     return _openVGDB
                 }()
             }

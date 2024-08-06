@@ -8,7 +8,7 @@
 import Foundation
 
 @objc
-public enum PVLogLevel: Int, CaseIterable {
+public enum PVLogLevel: Int, CaseIterable, Sendable {
     case U
     case Error
     case Warn

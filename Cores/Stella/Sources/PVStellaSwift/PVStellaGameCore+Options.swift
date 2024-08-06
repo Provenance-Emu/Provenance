@@ -26,7 +26,7 @@ import PVLogging
  */
 
 extension PVStellaGameCore: CoreOptional {
-    public static var options: [CoreOption] = {
+    public static var options: [CoreOption] {
         var options = [CoreOption]()
 
         let videoGroup = CoreOption.group(.init(title: "Video",
@@ -41,21 +41,21 @@ extension PVStellaGameCore: CoreOptional {
         options.append(audioGroup)
 
         return options
-    }()
+    }
 
-    static var audioStereoOption: CoreOption = {
+    static var audioStereoOption: CoreOption {
         .enumeration(.init(title: "Stereo sound"),
                      values: [
                         .init(title: "Auto", value: 0),
                         .init(title: "On", value: 1),
                         .init(title: "Off", value: 2)
                      ])
-    }()
+    }
 
-    static var videoCropOverscan: CoreOption = {
+    static var videoCropOverscan: CoreOption {
         .bool(.init(title: "Crop overscan",
                     description: "Crop horizontal oversca", requiresRestart: true), defaultValue: false)
-    }()
+    }
 
     @objc(getVariable:)
     public func get(variable: String) -> Any? {

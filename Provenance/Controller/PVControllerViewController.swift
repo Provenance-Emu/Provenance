@@ -432,22 +432,7 @@ class PVControllerViewController<T: ResponderClient> : UIViewController, Control
 	func vibrate() {
 #if os(iOS) && !targetEnvironment(macCatalyst)
 		if PVSettingsModel.shared.buttonVibration {
-				// only iPhone 7 and 7 Plus support the taptic engine APIs for now.
-				// everything else should fall back to the vibration motor.
-            if UIDevice.hasTapticMotor {
                 feedbackGenerator?.selectionChanged()
-            }
-//			} else if UIDevice.current.systemName == "iOS" {
-// #if !targetEnvironment(macCatalyst) && !os(macOS)
-//				AudioServicesStopSystemSound(Int32(kSystemSoundID_Vibrate))
-//				let vibrationLength: Int = 30
-//				let pattern: [Any] = [false, 0, true, vibrationLength]
-//				var dictionary = [AnyHashable: Any]()
-//				dictionary["VibePattern"] = pattern
-//				dictionary["Intensity"] = 1
-//				AudioServicesPlaySystemSoundWithVibration(Int32(kSystemSoundID_Vibrate), nil, dictionary)
-// #endif
-//			}
 		}
 #endif
 	}

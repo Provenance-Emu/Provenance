@@ -12,6 +12,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import PVThemes
 
 @available(iOS 14, tvOS 14, *)
 struct GamesDisplayOptionsView: SwiftUI.View {
@@ -27,14 +28,14 @@ struct GamesDisplayOptionsView: SwiftUI.View {
         HStack(spacing: 12) {
             Spacer()
             OptionsIndicator(pointDown: true, action: { toggleFilterAction() }) {
-                Text("Filter").foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
+                Text("Filter").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
             }
             OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
-                Text("Sort").foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
+                Text("Sort").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
             }
             OptionsIndicator(pointDown: true, action: { toggleViewTypeAction() }) {
                 Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal")
-                    .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
+                    .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
                     .font(.system(size: 13, weight: .light))
             }
             .padding(.trailing, 10)

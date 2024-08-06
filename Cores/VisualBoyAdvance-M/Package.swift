@@ -1,13 +1,20 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
+let HAVE_COCOATOUCH = "1"
+let INLINE = "inline"
+let NO_ZIP = "0"
+let USE_STRUCTS = "1"
+let __GCCUNIX__ = "1"
+let __LIBRETRO__ = "0"
+
 let package = Package(
     name: "PVVisualBoyAdvance",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
+        .iOS(.v17),
+        .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v14),
@@ -33,7 +40,9 @@ let package = Package(
         .package(path: "../../PVSupport"),
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
-        .package(path: "../../PVObjCUtils")
+        .package(path: "../../PVObjCUtils"),
+
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
         .target(
@@ -44,7 +53,7 @@ let package = Package(
                 "PVSupport",
                 "PVObjCUtils",
                 "PVVisualBoyAdvanceSwift",
-                //                "PVVisualBoyAdvanceC",
+//              "PVVisualBoyAdvanceC",
                 "libvisualboyadvance",
             ],
             resources: [
@@ -53,17 +62,17 @@ let package = Package(
             ],
             publicHeadersPath: "include",
             cSettings: [
+
                 .define("C_CORE"),
                 .define("FINAL_VERSION"),
+                .define("HAVE_COCOATOUCH", to: "1"),
+                .define("INLINE", to: "inline"),
                 .define("NO_LINK"),
                 .define("NO_PNG"),
                 .define("TILED_RENDERING"),
-
-                .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
-//                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
+//                .define("__LIBRETRO__", to: __LIBRETRO__),
 
                 .headerSearchPath("../libvisualboyadvance/include/"),
                 .headerSearchPath("../libvisualboyadvance/GBACore/"),
@@ -85,8 +94,8 @@ let package = Package(
 
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
-//                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+//                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
                 .headerSearchPath("../libvisualboyadvance/include/"),
                 .headerSearchPath("../libvisualboyadvance/GBACore/"),
@@ -108,7 +117,6 @@ let package = Package(
                 "PVAudio",
                 "PVSupport",
                 "libvisualboyadvance",
-                //                "PVVisualBoyAdvanceC"
             ],
             cSettings: [
                 .define("C_CORE"),
@@ -119,14 +127,9 @@ let package = Package(
 
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
-//                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+//                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libvisualboyadvance/include/"),
-                .headerSearchPath("../libvisualboyadvance/GBACore/"),
-                .headerSearchPath("../libvisualboyadvance/GBACore/apu"),
-                .headerSearchPath("../libvisualboyadvance/GBACore/common"),
-                .headerSearchPath("../libvisualboyadvance/GBACore/gba"),
             ],
             cxxSettings: [
                 .define("C_CORE"),
@@ -135,53 +138,19 @@ let package = Package(
                 .define("NO_PNG"),
                 .define("TILED_RENDERING"),
 
-                    .define("INLINE", to: "inline"),
+                .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
-//                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+//                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libvisualboyadvance/include/"),
-                .headerSearchPath("../libvisualboyadvance/GBACore/"),
-                .headerSearchPath("../libvisualboyadvance/GBACore/apu"),
-                .headerSearchPath("../libvisualboyadvance/GBACore/common"),
-                .headerSearchPath("../libvisualboyadvance/GBACore/gba"),
             ],
             swiftSettings: [
                 .interoperabilityMode(.Cxx)
+            ],
+            plugins: [
+                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
-
-    //        .target(
-    //            name: "PVVisualBoyAdvanceC",
-    //            dependencies: [
-    //                "libvisualboyadvance",
-    //            ],
-    //            publicHeadersPath: "./",
-    //            cSettings: [
-    //                .define("INLINE", to: "inline"),
-    //                .define("USE_STRUCTS", to: "1"),
-    //                .define("__LIBRETRO__", to: "1"),
-    //                .define("HAVE_COCOATOJUCH", to: "1"),
-    //                .define("__GCCUNIX__", to: "1"),
-    //                .headerSearchPath("../libvisualboyadvance/include/"),
-    //                .headerSearchPath("../libvisualboyadvance/GBACore/"),
-    //                .headerSearchPath("../libvisualboyadvance/GBACore/apu"),
-    //                .headerSearchPath("../libvisualboyadvance/GBACore/common"),
-    //                .headerSearchPath("../libvisualboyadvance/GBACore/gba"),
-    //            ],
-    //            cxxSettings: [
-    //                .define("INLINE", to: "inline"),
-    //                .define("USE_STRUCTS", to: "1"),
-    //                .define("__LIBRETRO__", to: "1"),
-    //                .define("HAVE_COCOATOJUCH", to: "1"),
-    //                .define("__GCCUNIX__", to: "1"),
-    //                .headerSearchPath("../libvisualboyadvance/include/"),
-    //                .headerSearchPath("../libvisualboyadvance/GBACore/"),
-    //                .headerSearchPath("../libvisualboyadvance/GBACore/apu"),
-    //                .headerSearchPath("../libvisualboyadvance/GBACore/common"),
-    //                .headerSearchPath("../libvisualboyadvance/GBACore/gba"),
-    //            ]
-    //        ),
 
         .target(
             name: "libvisualboyadvance",
@@ -228,14 +197,14 @@ let package = Package(
                 .define("NO_PNG"),
                 .define("TILED_RENDERING"),
 
-                    .define("__GCCUNIX__", to: "1"),
-//                .define("__LIB_RETRO__", to: "1"),
-//                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
+//                .define("__LIB_RETRO__", to: __LIBRETRO__),
+//                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
 
-                    .headerSearchPath("include/"),
+                .headerSearchPath("include/"),
                 .headerSearchPath("GBACore/"),
                 .headerSearchPath("GBACore/apu"),
                 .headerSearchPath("GBACore/common"),
@@ -248,20 +217,25 @@ let package = Package(
                 .define("NO_PNG"),
                 .define("TILED_RENDERING"),
 
-                    .define("__GCCUNIX__", to: "1"),
-//                .define("__LIB_RETRO__", to: "1"),
-//                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
+//                .define("__LIBRETRO__", to: __LIBRETRO__),
+//                .define("__LIB_RETRO__", to: __LIBRETRO__),
 
-                    .headerSearchPath("include/"),
+                .headerSearchPath("include/"),
                 .headerSearchPath("GBACore/"),
                 .headerSearchPath("GBACore/apu"),
                 .headerSearchPath("GBACore/common"),
                 .headerSearchPath("GBACore/gba"),
             ]
-        )
+        ),
+
+        // MARK: Tests
+        .testTarget(
+            name: "PVVisualBoyAdvanceTests",
+            dependencies: ["PVVisualBoyAdvance"])
     ],
     swiftLanguageVersions: [.v5],
     cLanguageStandard: .gnu99,

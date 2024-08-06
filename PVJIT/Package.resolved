@@ -1,29 +1,13 @@
 {
+  "originHash" : "f9eb1cb06f334257780e0e09827289c6aaf9f1d47f9efd7cac2a9e1f9d22bf98",
   "pins" : [
-    {
-      "identity" : "nslogger",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/fpillet/NSLogger",
-      "state" : {
-        "revision" : "e8c453142da7051462cca189d3fcee74de0500ea"
-      }
-    },
     {
       "identity" : "sidekit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SideStore/SideKit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "0143ec21aaae8b65766ffdb850e5cd9169710f7f"
-      }
-    },
-    {
-      "identity" : "swift-log",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-log.git",
-      "state" : {
-        "revision" : "32e8d724467f8fe623624570367e3d50c5638e46",
-        "version" : "1.5.2"
+        "revision" : "ab959a54fc2217464ffabd09322ec3351e3ca456"
       }
     },
     {
@@ -36,5 +20,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

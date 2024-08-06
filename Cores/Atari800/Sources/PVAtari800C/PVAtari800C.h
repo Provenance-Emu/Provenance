@@ -8,38 +8,13 @@
 #ifndef PVAtari800C_h
 #define PVAtari800C_h
 
-// ataria800 project includes
-#include "afile.h"
-#include "akey.h"
-#include "antic.h"
-#include "atari.h"
-#include "cartridge.h"
-#include "cassette.h"
-#include "cfg.h"
-#include "colours.h"
-#include "colours_ntsc.h"
-#include "config.h"
-#include "devices.h"
-#include "gtia.h"
-#include "ide.h"
-#include "input.h"
-#include "memory.h"
-#include "pbi.h"
-#include "pia.h"
-#include "platform.h"
-#include "pokey.h"
-#include "pokeysnd.h"
-#include "rtime.h"
-#include "sio.h"
-#include "sound.h"
-#include "statesav.h"
-#include "sysrom.h"
-#include "ui.h"
+@import libatari800;
+//#include <ui.h>
 
-int UI_is_active = FALSE;
-int UI_alt_function = -1;
-int UI_n_atari_files_dir = 0;
-int UI_n_saved_files_dir = 0;
+int UI_is_active;
+int UI_alt_function;
+int UI_n_atari_files_dir;
+int UI_n_saved_files_dir;
 char UI_atari_files_dir[UI_MAX_DIRECTORIES][FILENAME_MAX];
 char UI_saved_files_dir[UI_MAX_DIRECTORIES][FILENAME_MAX];
 

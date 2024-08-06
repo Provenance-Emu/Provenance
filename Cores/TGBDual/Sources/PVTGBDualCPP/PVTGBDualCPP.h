@@ -10,6 +10,8 @@
 
 #import <Foundation/Foundation.h>
 
+#include <libtgbdual.h>
+
 #define TGBDUAL_PITCH_SHIFT  1
 #define NUMBER_OF_PADS       2
 #define NUMBER_OF_PAD_INPUTS 16

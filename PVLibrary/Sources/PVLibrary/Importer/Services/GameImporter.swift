@@ -11,6 +11,8 @@ import CoreSpotlight
 import Foundation
 import PVSupport
 import RealmSwift
+import PVCoreBridge
+import PVCoreLoader
 
 import SQLite
 import PVLogging
@@ -20,6 +22,22 @@ import UIKit
 #else
 import AppKit
 #endif
+
+#warning("I hate this @JoeMatt")
+
+#if canImport(PVVirtualJaguar)
+import PVVirtualJaguar
+#endif
+
+#if canImport(PVAtari800Swift)
+import PVAtari800Swift
+#endif
+
+#if canImport(PVStella)
+import PVAtari800
+#endif
+
+#warning("--- End --- I hate this @JoeMatt")
 
 public enum GameImporterError: Error {
     case couldNotCalculateMD5
@@ -107,7 +125,9 @@ public final class GameImporter {
 
     public let documentsPath: URL = PVEmulatorConfiguration.documentsPath
     public let romsImportPath: URL = PVEmulatorConfiguration.Paths.romsImportPath
-	public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
+    public let romsPath: URL = PVEmulatorConfiguration.Paths.romsPath
+
+    public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
 
     public func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
@@ -126,19 +146,24 @@ public final class GameImporter {
     }
 
     public lazy var openVGDB: OESQLiteDatabase = {
-		let bundle = ThisBundle
-        let _openVGDB = try! OESQLiteDatabase(withURL: bundle.url(forResource: "openvgdb", withExtension: "sqlite")!)
+        let _openVGDB = try! OESQLiteDatabase(withURL: openvgdbPath)
         return _openVGDB
     }()
 
     lazy var sqldb: Connection = {
-        let bundle = ThisBundle
-		let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite")!
-        let sqldb = try! Connection(sqlFile.path, readonly: true)
+        let sqldb = try! Connection(openvgdbPath.path, readonly: true)
         return sqldb
     }()
 
-	fileprivate let ThisBundle: Bundle = Bundle(for: GameImporter.self)
+    lazy var openvgdbPath: URL = {
+        let bundle = ThisBundle
+        guard let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite") else {
+            fatalError("Unable to locate `openvgdb.sqlite`")
+        }
+        return sqlFile
+    }()
+
+    fileprivate let ThisBundle: Bundle = Bundle.module
 
     public var conflictedFiles: [URL]? {
         guard FileManager.default.fileExists(atPath: conflictPath.path),
@@ -146,30 +171,17 @@ public final class GameImporter {
                                                                        includingPropertiesForKeys: nil,
                                                                        options: [.skipsHiddenFiles, .skipsSubdirectoryDescendants])
         else {
-			DLOG("")
-			return nil
-		}
+            DLOG("")
+            return nil
+        }
         return files
     }
 
     fileprivate var notificationToken: NotificationToken?
     public let initialized = DispatchGroup()
 
-    fileprivate func initSystemPlists() {
-        // Scane all subclasses of  PVEmulator core, and get their metadata
-        // like their subclass name and the bundle the belong to
-        let coreClasses = PVEmulatorConfiguration.coreClasses
-        let corePlists = coreClasses.compactMap { (classInfo) -> URL? in
-            classInfo.bundle.url(forResource: "Core", withExtension: "plist")
-        }
-
-        let bundle = ThisBundle
-        PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
-        PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
-    }
-
     fileprivate init() {
-		let fm = FileManager.default
+        let fm = FileManager.default
         if !FileManager.default.fileExists(atPath: conflictPath.path, isDirectory: nil) {
             ILOG("Path <\(conflictPath)> doesn't exist. Creating.")
             do {
@@ -180,31 +192,57 @@ public final class GameImporter {
             }
         }
 
-        initSystems()
+        Task {
+            await initSystems()
+        }
     }
 
-    public func initSystems() {
+    var coreLoader: CoreLoader { .shared }
+
+    public func initSystems() async {
         initialized.enter()
-        initSystemPlists()
-        let systems = PVSystem.all
+        initCorePlists()
+
+        let plists: [URL] =
+        await Task {
+            do {
+                return try coreLoader.parseSystemsPlist()
+            } catch {
+                fatalError("\(error.localizedDescription)")
+            }
+        }.value
 
         // Observe Results Notifications
-        notificationToken = systems.observe { [unowned self] (changes: RealmCollectionChange) in
-            switch changes {
-            case .initial:
-                // Results are now populated and can be accessed without blocking the UI
-                self.systemToPathMap = self.updateSystemToPathMap()
-                self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
-                self.initialized.leave()
-            case .update:
-                self.systemToPathMap = self.updateSystemToPathMap()
-                self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
-            case let .error(error):
-                // An error occurred while opening the Realm file on the background worker thread
-                fatalError("\(error)")
+        Task { @MainActor in
+            let systems = PVSystem.all
+
+            notificationToken = systems.observe { [unowned self] (changes: RealmCollectionChange) in
+                switch changes {
+                case .initial:
+                    // Results are now populated and can be accessed without blocking the UI
+                    self.systemToPathMap = self.updateSystemToPathMap()
+                    self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
+                    self.initialized.leave()
+                case .update:
+                    self.systemToPathMap = self.updateSystemToPathMap()
+                    self.romExtensionToSystemsMap = self.updateromExtensionToSystemsMap()
+                case let .error(error):
+                    // An error occurred while opening the Realm file on the background worker thread
+                    fatalError("\(error)")
+                }
             }
         }
     }
+
+    fileprivate func initCorePlists()  {
+
+        let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
+
+
+        PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
+        PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
+    }
+
     deinit {
         notificationToken?.invalidate()
     }
@@ -212,11 +250,12 @@ public final class GameImporter {
     @objc
     public func calculateMD5(forGame game: PVGame) -> String? {
         var offset: UInt64 = 0
+        #warning("Don't hardcode this offset.")
         if game.systemIdentifier == "com.provenance.snes" {
             offset = 16
         }
 
-        let romPath = documentsPath.appendingPathComponent(game.romPath, isDirectory: false)
+        let romPath = romsPath.appendingPathComponent(game.romPath, isDirectory: false)
         let fm = FileManager.default
         if !fm.fileExists(atPath: romPath.path) {
             ELOG("Cannot find file at path: \(romPath)")
@@ -927,8 +966,6 @@ public extension GameImporter {
         }
     }
 
-    
-    // TODO: Mabye this should throw
     private func importToDatabaseROM(atPath path: URL, system: PVSystem, relatedFiles: [URL]?) throws {
         let filename = path.lastPathComponent
         let filenameSansExtension = path.deletingPathExtension().lastPathComponent
@@ -955,7 +992,7 @@ public extension GameImporter {
             }
         }
         guard let md5 = calculateMD5(forGame: game) else {
-            NSLog("Couldn't calculate MD5 for game \(partialPath)")
+            ELOG("Couldn't calculate MD5 for game \(partialPath)")
             throw GameImporterError.couldNotCalculateMD5
         }
         game.relatedFiles.append(objectsIn: relatedPVFiles)
@@ -1016,7 +1053,7 @@ public extension GameImporter {
             default:
                 offset = 0
             }
-            let romFullPath = PVEmulatorConfiguration.documentsPath.appendingPathComponent(game.romPath).path
+            let romFullPath = romsPath.appendingPathComponent(game.romPath).path
             if let md5Hash = FileManager.default.md5ForFile(atPath: romFullPath, fromOffset: offset) {
                 game.md5Hash = md5Hash
             }
@@ -1259,10 +1296,10 @@ public extension GameImporter {
         return game
     }
 
-    func releaseID(forCRCs crcs: Set<String>) -> Int? {
+    func releaseID(forCRCs crcs: Set<String>) -> String? {
         let roms = Table("ROMs")
-        let romID = Expression<Int>("romID")
-        let romHashCRC = Expression<String>("romHashCRC")
+        let romID = Expression<Int>(value: "romID")
+        let romHashCRC = Expression<String>(value: "romHashCRC")
 
         let query = roms.select(romID).filter(crcs.contains(romHashCRC))
 

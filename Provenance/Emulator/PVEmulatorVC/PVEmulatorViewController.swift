@@ -17,6 +17,7 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVAudio
 import PVCoreAudio
+import PVThemes
 
 private weak var staticSelf: PVEmulatorViewController?
 
@@ -40,7 +41,11 @@ func uncaughtExceptionHandler(exception _: NSException?) {
 #endif
 
 final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudioDelegate, PVSaveStatesViewControllerDelegate {
+    // TODO: Use protocols instead
+    #warning("TODO: Use protocols instead")
+//    let core: any PVEmulatorCoreT
     let core: PVEmulatorCore
+
     let game: PVGame
 
     var batterySavesPath: URL { return PVEmulatorConfiguration.batterySavesPath(forGame: game) }
@@ -91,7 +96,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         self.core = core
         self.game = game
 
-        core.screenType = game.system.screenType.rawValue
+        core.screenType = game.system.screenType.objcType
 
         super.init(nibName: nil, bundle: nil)
         let app = UIApplication.shared as! PVApplication
@@ -151,7 +156,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.stopEmulation()
         // Leave emulation loop first
         if audioInited {
-            gameAudio.stopAudio()
+            Task { @MainActor in
+                gameAudio.stopAudio()
+            }
         }
         NSSetUncaughtExceptionHandler(nil)
         staticSelf = nil
@@ -190,7 +197,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         core.audioDelegate = self
         core.saveStatesPath = saveStatePath.path
         core.batterySavesPath = batterySavesPath.path
-        core.biosPath = BIOSPath.path
+        core.BIOSPath = BIOSPath.path
         core.controller1 = PVControllerManager.shared.player1
         core.controller2 = PVControllerManager.shared.player2
         core.controller3 = PVControllerManager.shared.player3
@@ -335,7 +342,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         return totalUsageOfCPU
     }
 
-    // TODO: This method is way too big, break it up
+#warning("TODO: This method is way too big, break it up")
     override func viewDidLoad() {
         super.viewDidLoad()
         title = game.title
@@ -395,9 +402,13 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         //			presentingViewController?.presentError("File doesn't exist at path \(romPath.absoluteString)")
         //			return
         //		}
-        print("Loading ROM %@", romPath.path)
+        ILOG("Loading ROM: \(romPath.path)")
         do {
-            try core.loadFile(atPath: romPath.path)
+            let success = try core.loadFile(atPath: romPath.path)
+            if !success {
+                ELOG("loadFile: unknown error")
+                return
+            }
         } catch {
             let alert = UIAlertController(title: error.localizedDescription, message: (error as NSError).localizedRecoverySuggestion, preferredStyle: .alert)
             alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
@@ -819,7 +830,11 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         PVControllerManager.shared.controllers().forEach {
             $0.clearPauseHandler()
         }
-        Theme.currentTheme = Theme.currentTheme
+
+        // EEEEEWWWW WTF X - X?
+        // TODO: You that lazy or retarded bro? @JoeMatt 7/25/24
+        ThemeManager.shared.setCurrentTheme(ThemeManager.shared.currentTheme)
+
         #endif
         updatePlayedDuration()
         destroyAutosaveTimer()

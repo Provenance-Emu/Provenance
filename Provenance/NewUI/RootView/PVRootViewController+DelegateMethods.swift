@@ -10,6 +10,12 @@ import Foundation
 import PVLibrary
 #if canImport(SwiftUI)
 import SwiftUI
+#if canImport(PVWebServer)
+import PVWebServer
+import SafariServices
+#endif
+
+import UniformTypeIdentifiers
 
 // MARK: - PVRootDelegate
 
@@ -79,6 +85,15 @@ public protocol PVMenuDelegate: AnyObject {
     func didTapCollection(with collection: Int)
 }
 
+
+extension PVRootViewController: WebServerActivatorController {
+    
+}
+
+extension PVRootViewController: SFSafariViewControllerDelegate {
+
+}
+
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVMenuDelegate {
     func didTapSettings() {
@@ -110,19 +125,30 @@ extension PVRootViewController: PVMenuDelegate {
         /// from PVGameLibraryViewController#getMoreROMs
         let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
-            let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data, UTI.rar].map { $0.rawValue }
 
-            let documentPicker = UIDocumentPickerViewController(documentTypes: extensions, in: .import)
+            let documentPicker: UIDocumentPickerViewController
+            if #available(iOS 14, *) {
+                let utis: [UTType] = [UTType.rom, UTType.artwork, UTType.savestate, UTType.zip, UTType.sevenZipArchive, UTType.gzip, UTType.image, UTType.jpeg, UTType.png, UTType.bios, UTType.data, UTType.rar]
+
+                documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: utis, asCopy: true)
+            } else {
+                let utis: [UTI] = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data, UTI.rar]
+
+                let extensions = utis.map { $0.rawValue }
+                documentPicker = UIDocumentPickerViewController(documentTypes: extensions, in: .import)
+            }
             documentPicker.allowsMultipleSelection = true
             documentPicker.delegate = self
             self.present(documentPicker, animated: true, completion: nil)
         }))
 
+        #if canImport(PVWebServer)
         let webServerAction = UIAlertAction(title: "Web Server", style: .default, handler: { _ in
-//            self.startWebServer() // TODO: this
+            self.startWebServer()
         })
 
         actionSheet.addAction(webServerAction)
+        #endif
         actionSheet.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: nil))
         actionSheet.preferredContentSize = CGSize(width: 300, height: 150)
 
@@ -158,7 +184,66 @@ extension PVRootViewController: PVMenuDelegate {
         self.loadIntoContainer(.console(consoleId: consoleId, title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 
-    func didTapCollection(with collection: Int) { /* TODO: collections */ }
+    func didTapCollection(with collection: Int) {
+        /* TODO: collections */
+    }
+
+#if canImport(PVWebServer)
+    func startWebServer() {
+        // start web transfer service
+        if PVWebServer.shared.startServers() {
+            // show alert view
+            showServerActiveAlert(sender: self.view, barButtonItem: navigationItem.rightBarButtonItem)
+        } else {
+#if targetEnvironment(simulator) || targetEnvironment(macCatalyst) || os(macOS)
+            let message = "Check your network connection or settings and free up ports: 8080, 8081."
+#else
+            let message = "Check your network connection or settings and free up ports: 80, 81."
+#endif
+            let alert = UIAlertController(title: "Unable to start web server!", message: message, preferredStyle: .alert)
+            alert.preferredContentSize = CGSize(width: 300, height: 150)
+            alert.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+            alert.popoverPresentationController?.sourceView = self.view
+            alert.popoverPresentationController?.sourceRect = self.view?.bounds ?? UIScreen.main.bounds
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
+            }))
+            present(alert, animated: true) { () -> Void in }
+        }
+    }
+
+    func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?) {
+        let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
+        alert.popoverPresentationController?.barButtonItem = barButtonItem
+        alert.popoverPresentationController?.sourceView = sender
+        alert.popoverPresentationController?.sourceRect = sender?.bounds ?? UIScreen.main.bounds
+        alert.preferredContentSize = CGSize(width: 300, height: 150)
+        alert.addAction(UIAlertAction(title: "Stop", style: .cancel, handler: { (_: UIAlertAction) -> Void in
+            PVWebServer.shared.stopServers()
+        }))
+        let viewAction = UIAlertAction(title: "View", style: .default, handler: { (_: UIAlertAction) -> Void in
+            self.showServer()
+        })
+        alert.addAction(viewAction)
+        alert.preferredAction = alert.actions.last
+        present(alert, animated: true) { () -> Void in }
+    }
+
+    func showServer() {
+        let ipURL: String = PVWebServer.shared.urlString
+        let url = URL(string: ipURL)!
+#if targetEnvironment(macCatalyst)
+        UIApplication.shared.open(url, options: [:]) { completed in
+            ILOG("Completed: \(completed ? "Yes":"No")")
+        }
+#else
+        let config = SFSafariViewController.Configuration()
+        config.entersReaderIfAvailable = false
+        let safariVC = SFSafariViewController(url: url, configuration: config)
+        safariVC.delegate = self
+        present(safariVC, animated: true) { () -> Void in }
+#endif
+    }
+#endif
 }
 
 #endif

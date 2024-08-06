@@ -17,6 +17,7 @@ extension Object {
 // }
 
 extension Reactive where Base == Realm {
+    @MainActor
     func save<R: RealmRepresentable>(entity: R, update: Bool = true) -> Observable<()> where R.RealmType: Object {
         return Observable.create { observer in
             do {
@@ -32,6 +33,7 @@ extension Reactive where Base == Realm {
         }
     }
 
+    @MainActor
     func delete<R: RealmRepresentable>(entity: R) -> Observable<()> where R.RealmType: Object {
         return Observable.create { observer in
             do {

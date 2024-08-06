@@ -4,7 +4,7 @@
 
 import Foundation
 import UIKit
-import PVJITObjC
+import JITManager
 
 @objc final class JitWaitScreenViewController : UIViewController {
   @objc weak var delegate: JitScreenDelegate?
@@ -15,21 +15,21 @@ import PVJITObjC
     NotificationCenter.default.addObserver(self, selector: #selector(jitAcquired), name: NSNotification.Name.DOLJitAcquired, object: nil)
     NotificationCenter.default.addObserver(self, selector: #selector(altJitFailed), name: NSNotification.Name.DOLJitAltJitFailure, object: nil)
     
-    DOLJitManager.shared().attemptToAcquireJitByWaitingForDebugger(using: cancellation_token)
+    DOLJitManager.shared.attemptToAcquireJitByWaitingForDebugger(using: cancellation_token)
     
     let device_id = Bundle.main.object(forInfoDictionaryKey: "ALTDeviceID") as! String
     if (device_id != "dummy") {
       // ALTDeviceID has been set, so we should attempt to acquire by AltJIT instead
       // of just sitting around and waiting for a debugger.
-      DOLJitManager.shared().attemptToAcquireJitByAltJIT()
+      DOLJitManager.shared.attemptToAcquireJitByAltJIT()
     }
     
     // We can always try this. If the device is not connected to the VPN, then this request will just silently fail.
-    DOLJitManager.shared().attemptToAcquireJitByJitStreamer()
+    DOLJitManager.shared.attemptToAcquireJitByJitStreamer()
   }
   
   override func viewDidAppear(_ animated: Bool) {
-    if let auxError = DOLJitManager.shared().getAuxiliaryError() {
+    if let auxError = DOLJitManager.shared.getAuxiliaryError() {
       self.is_presenting_alert = true
       
       let controller = UIAlertController(title: "Failed to Activate Workaround", message: "Provenance attempted to enable JIT with a different workaround, but the following error was returned:\n\n\(auxError)\n\nProvenance will now fallback to waiting for a remote debugger.", preferredStyle: .alert)
@@ -72,7 +72,7 @@ import PVJITObjC
       alert.addAction(UIAlertAction.init(title: "Retry AltJIT", style: .default, handler: { _ in
         self.is_presenting_alert = false
         
-        DOLJitManager.shared().attemptToAcquireJitByAltJIT()
+        DOLJitManager.shared.attemptToAcquireJitByAltJIT()
       }))
       
       alert.addAction(UIAlertAction.init(title: "Cancel", style: .cancel, handler: { _ in

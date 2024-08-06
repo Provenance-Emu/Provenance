@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,17 +6,26 @@ import PackageDescription
 let package = Package(
     name: "PVAtari800",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
+        .iOS(.v17),
+        .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
-        .macCatalyst(.v14)
+        .macCatalyst(.v14),
+        .visionOS(.v1)
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "PVAtari800",
-            targets: ["PVAtari800", "PVAtari800Swift"]),
+            targets: ["PVAtari800"]),
+        .library(
+            name: "PVAtari800-Dynamic",
+            type: .dynamic,
+            targets: ["PVAtari800"]),
+        .library(
+            name: "PVAtari800-Static",
+            type: .static,
+            targets: ["PVAtari800"])
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
@@ -24,7 +33,9 @@ let package = Package(
         .package(path: "../../PVSupport"),
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
-        .package(path: "../../PVObjCUtils")
+        .package(path: "../../PVObjCUtils"),
+
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
         .target(
@@ -46,7 +57,7 @@ let package = Package(
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
                 .headerSearchPath("../libatari800/src"),
                 .headerSearchPath("../libatari800/src/m68000"),
@@ -66,16 +77,23 @@ let package = Package(
                 "libatari800",
                 "PVAtari800C"
             ],
+            resources: [
+                .process("Resources/Core.plist")
+            ],
             cSettings: [
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
                 .headerSearchPath("../libatari800/src"),
                 .headerSearchPath("../libatari800/src/m68000"),
                 .headerSearchPath("../libatari800/libretro-common"),
                 .headerSearchPath("../libatari800/libretro-common/include"),
+            ],
+            plugins: [
+                // Disabled until SwiftGenPlugin support Swift 6 concurrency
+                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
 
@@ -93,7 +111,7 @@ let package = Package(
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
                 .headerSearchPath("../libatari800/include"),
                 .headerSearchPath("../libatari800/atari800-src"),
@@ -150,17 +168,24 @@ let package = Package(
                 "atari800-src/ui_basic.c",
                 "atari800-src/util.c"
             ],
-            packageAccess: true,
+            resources: [
+                .copy("atari800-src/act/"),
+            ],
+            packageAccess: false,
             cSettings: [
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
             ]
-        )
+        ),
+
+        // MARK: Tests
+        .testTarget(name: "PVAtari800Tests",
+                    dependencies: ["PVAtari800"])
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageVersions: [.v5, .v6],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx14
 )

@@ -6,6 +6,8 @@
 //  Copyright © 2018 Provenance. All rights reserved.
 //
 
+import UIKit
+
 @IBDesignable public final class VerticalAlignLabel: UILabel {
     @IBInspectable var alignmentCode: Int = 0 {
         didSet {

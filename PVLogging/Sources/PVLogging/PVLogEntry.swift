@@ -5,10 +5,10 @@
 //
 import Foundation
 
-internal var __PVLogEntryIndexCounter:UInt = 0
+nonisolated(unsafe) internal var __PVLogEntryIndexCounter:UInt = 0
 // Time of initialization.
 // Used to calculate offsets
-internal var __PVLoggingStartupTime: Date = Date()
+internal let __PVLoggingStartupTime: Date = Date()
 
 @objc
 public final class PVLogEntry: NSObject {
@@ -26,7 +26,9 @@ public final class PVLogEntry: NSObject {
         self.time = Date()
         self.entryIndex = __PVLogEntryIndexCounter
         self.offset = __PVLoggingStartupTime.timeIntervalSinceNow * -1
-        __PVLogEntryIndexCounter += 1
+        Task { @MainActor in
+            __PVLogEntryIndexCounter += 1
+        }
     }
     
     @objc
@@ -48,15 +50,14 @@ public final class PVLogEntry: NSObject {
         return "\(offset) [\(functionString):\(lineNumberString):\(level.rawValue)] \(text)"
     }
     
-    var string: String {
-        return "\(offset) [\(level.rawValue)] \(text)"
-    }
-    
-    var stringWithLocation: String {
-        return "\(offset) [\(functionString):\(lineNumberString):\(level.rawValue)] \(text)"
-    }
-    
-    var htmlString: String {
+    public
+    lazy var string: String = { "\(offset) [\(level.rawValue)] \(text)" }()
+
+    public
+    lazy var stringWithLocation: String = { "\(offset) [\(functionString):\(lineNumberString):\(level.rawValue)] \(text)" }()
+
+    public
+    lazy var htmlString: String = {
         let toggle = entryIndex % 2 == 0
         let color1 = "#ECE9F9"
         let color2 = "#D4D1E0"
@@ -83,5 +84,5 @@ public final class PVLogEntry: NSObject {
         <span style="color:\(textColor)";>\(text)</span>
         </span>
         """
-    }
+    }()
 }

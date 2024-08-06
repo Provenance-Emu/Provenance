@@ -4,15 +4,55 @@
 
 #import "DOLJitManager.h"
 
-#if !TARGET_OS_TV
-@import AltKit;
+// Copyright 2021 Dolphin Emulator Project
+// Licensed under GPLv2+
+// Refer to the license.txt file included.
+
+#import <Foundation/Foundation.h>
+#import "JitAcquisitionUtils.h"
+
+#import <dlfcn.h>
+#import <stdio.h>
+#import <unistd.h>
+
+// Use forward declaration here instead of the Swift header to avoid a build failure
+@class DOLCancellationToken;
+
+extern NSString* _Nonnull const DOLJitAcquiredNotification;
+extern NSString* _Nonnull const DOLJitAltJitFailureNotification;
+
+NS_ASSUME_NONNULL_BEGIN
+
+@interface DOLJitManager : NSObject
+
++ (DOLJitManager*)sharedManager;
+
+- (void)attemptToAcquireJitOnStartup;
+- (void)recheckHasAcquiredJit;
+- (void)attemptToAcquireJitByWaitingForDebuggerUsingCancellationToken:(DOLCancellationToken*)token;
+- (void)attemptToAcquireJitByAltJIT;
+- (void)attemptToAcquireJitByJitStreamer;
+- (DOLJitType)jitType;
+- (bool)appHasAcquiredJit;
+- (void)setAuxiliaryError:(NSString*)error;
+- (nullable NSString*)getAuxiliaryError;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
+
+#define _USE_ALTKIT (!TARGET_OS_TV && !TARGET_OS_WATCH && !TARGET_OS_MACCATALYST)
+
+#if _USE_ALTKIT
+@import SideKit;
 #endif
+
 @import PVLoggingObjC;
 
 #import <dlfcn.h>
 
 #import <sys/sysctl.h>
-#import "Provenance-Swift.h"
 
 #import "CodeSignatureUtils.h"
 #import "DebuggerUtils.h"
@@ -81,7 +121,7 @@ NSString* const DOLJitAltJitFailureNotification = @"org.provenance-emu.provenanc
     
     if (cpu_architecture == nil)
     {
-        [self setAuxillaryError:@"CPU architecture check failed."];
+        [self setAuxiliaryError:@"CPU architecture check failed."];
         return false;
     }
     else if (![cpu_architecture isEqualToString:@"arm64e"])
@@ -223,7 +263,7 @@ NSString* const DOLJitAltJitFailureNotification = @"org.provenance-emu.provenanc
 }
 
 - (void)attemptToAcquireJitByAltJIT {
-#if !TARGET_OS_TV
+#if _USE_ALTKIT
     if (self->_m_jit_type != DOLJitTypeDebugger) {
         return;
     }
@@ -314,7 +354,7 @@ NSString* const DOLJitAltJitFailureNotification = @"org.provenance-emu.provenanc
     return _m_has_acquired_jit;
 }
 
-- (void)setAuxillaryError:(NSString*)error {
+- (void)setAuxiliaryError:(NSString*)error {
     self->_m_aux_error = error;
 }
 

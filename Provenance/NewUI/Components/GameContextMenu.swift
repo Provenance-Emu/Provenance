@@ -27,25 +27,32 @@ struct GameContextMenu: SwiftUI.View {
                 } label: { Label("Open in...", systemImage: "gamecontroller") }
 //            }
             Button {
-                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+                self.rootDelegate?.showUnderConstructionAlert()
+#warning("TODO: Game Info button action")
             } label: { Label("Game Info", systemImage: "info.circle") }
             Button {
-                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+#warning("TODO: Favorite button action")
+                self.rootDelegate?.showUnderConstructionAlert()
             } label: { Label("Favorite", systemImage: "heart") }
             Button {
-                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+#warning("TODO: Rename button action")
+                self.rootDelegate?.showUnderConstructionAlert()
             } label: { Label("Rename", systemImage: "rectangle.and.pencil.and.ellipsis") }
             Button {
-                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+#warning("TODO: Copy MD5 URL button action")
+                self.rootDelegate?.showUnderConstructionAlert()
             } label: { Label("Copy MD5 URL", systemImage: "number.square") }
             Button {
-                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+#warning("TODO: Choose cover button action")
+                self.rootDelegate?.showUnderConstructionAlert()
             } label: { Label("Choose Cover", systemImage: "book.closed") }
             Button {
-                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+#warning("TODO: Paste cover button action")
+                self.rootDelegate?.showUnderConstructionAlert()
             } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
             Button {
-                self.rootDelegate?.showUnderConstructionAlert() // TODO: this
+#warning("TODO: Share button action")
+                self.rootDelegate?.showUnderConstructionAlert()
             } label: { Label("Share", systemImage: "square.and.arrow.up") }
             Divider()
             if #available(iOS 15, tvOS 15, *) {

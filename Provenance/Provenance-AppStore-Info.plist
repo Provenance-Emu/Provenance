@@ -253,6 +253,10 @@
 	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Provenance can set custom artworks from your photos or save screenshots to the Photo Library.</string>
+	<key>NSServices</key>
+	<array>
+		<dict/>
+	</array>
 	<key>NSSupportsPurgeableLocalStorage</key>
 	<true/>
 	<key>NSUbiquitousContainers</key>
@@ -262,7 +266,7 @@
 			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
 			<true/>
 			<key>NSUbiquitousContainerName</key>
-			<string>Provenance</string>
+			<string>provenance</string>
 			<key>NSUbiquitousContainerSupportedFolderLevels</key>
 			<string>Any</string>
 		</dict>
@@ -402,13 +406,11 @@
 					<string>32x</string>
 					<string>32X</string>
 					<string>min</string>
-					<string>7z</string>
 					<string>cdi</string>
 					<string>gdi</string>
 					<string>bios</string>
 					<string>z80</string>
 					<string>tzx</string>
-					<string>rar</string>
 					<string>chd</string>
 					<string>rvz</string>
 				</array>
@@ -421,6 +423,8 @@
 			<string>ROM file</string>
 			<key>UTTypeIconFiles</key>
 			<array/>
+			<key>UTTypeIcons</key>
+			<dict/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.rom</string>
 			<key>UTTypeTagSpecification</key>
@@ -463,13 +467,11 @@
 					<string>32x</string>
 					<string>32X</string>
 					<string>min</string>
-					<string>7z</string>
 					<string>cdi</string>
 					<string>gdi</string>
 					<string>bios</string>
 					<string>msx</string>
 					<string>col</string>
-					<string>rar</string>
 					<string>z80</string>
 					<string>tzx</string>
 					<string>chd</string>
@@ -486,6 +488,7 @@
 			<dict>
 				<key>public.filename-extension</key>
 				<array>
+					<string>jpeg</string>
 					<string>jpg</string>
 					<string>png</string>
 				</array>
@@ -495,11 +498,14 @@
 				<string>public.image</string>
 				<string>public.png</string>
 				<string>public.jpeg</string>
+				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>Artwork</string>
 			<key>UTTypeIconFiles</key>
 			<array/>
+			<key>UTTypeIcons</key>
+			<dict/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.artwork</string>
 			<key>UTTypeTagSpecification</key>
@@ -508,6 +514,12 @@
 				<array>
 					<string>jpg</string>
 					<string>png</string>
+					<string>jpeg</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>image/jpeg</string>
+					<string>image/png</string>
 				</array>
 			</dict>
 		</dict>
@@ -538,6 +550,62 @@
 				<key>public.mime-type</key>
 				<array>
 					<string>com.provenance.savestate</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.archive</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>7zip</string>
+			<key>UTTypeIcons</key>
+			<dict>
+				<key>UTTypeIconText</key>
+				<string>7zip</string>
+			</dict>
+			<key>UTTypeIdentifier</key>
+			<string>org.7-zip.7-zip-archive</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>7z</string>
+					<string>7zip</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/x-7z-compressed</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.archive</string>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>RAR Archive</string>
+			<key>UTTypeIcons</key>
+			<dict>
+				<key>UTTypeIconText</key>
+				<string>RAR</string>
+			</dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.rarlab.rar-archive</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>rar</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/x-rar</string>
+					<string>application/x-rar-compressed</string>
 				</array>
 			</dict>
 		</dict>

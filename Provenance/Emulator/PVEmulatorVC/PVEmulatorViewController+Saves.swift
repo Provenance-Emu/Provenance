@@ -146,26 +146,29 @@ extension PVEmulatorViewController {
                 return
             }
 
-            do {
-                var saveState: PVSaveState!
+            Task {
+                do {
+                    var saveState: PVSaveState!
 
-                try realm.write {
-                    saveState = PVSaveState(withGame: self.game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
-                    realm.add(saveState)
-                }
-
-                LibrarySerializer.storeMetadata(saveState, completion: { result in
-                    switch result {
-                    case let .success(url):
-                        ILOG("Serialized save state metadata to (\(url.path))")
-                    case let .error(error):
-                        ELOG("Failed to serialize save metadata. \(error)")
+                    try realm.write {
+                        saveState = PVSaveState(withGame: self.game, core: core, file: saveFile, image: imageFile, isAutosave: auto)
+                        realm.add(saveState)
                     }
-                })
-            } catch {
-                completion(.error(.realmWriteError(error)))
-                return
+
+                    await LibrarySerializer.storeMetadata(saveState, completion: { result in
+                        switch result {
+                        case let .success(url):
+                            ILOG("Serialized save state metadata to (\(url.path))")
+                        case let .error(error):
+                            ELOG("Failed to serialize save metadata. \(error)")
+                        }
+                    })
+                } catch {
+                    completion(.error(.realmWriteError(error)))
+                    return
+                }
             }
+
 
             do {
                 // Delete the oldest auto-saves over 5 count
@@ -317,7 +320,7 @@ extension PVEmulatorViewController {
 
     func convertOldSaveStatesToNewIfNeeded() {
         let fileManager = FileManager.default
-        let infoURL = saveStatePath.appendingPathComponent("info.plist", isDirectory: false)
+        let infoURL = saveStatePath.appendingPathComponent("Info.plist", isDirectory: false)
         let autoSaveURL = saveStatePath.appendingPathComponent("auto.svs", isDirectory: false)
         let saveStateURLs = (0 ... 4).map { saveStatePath.appendingPathComponent("\($0).svs", isDirectory: false) }
 
@@ -325,7 +328,7 @@ extension PVEmulatorViewController {
             do {
                 try fileManager.removeItem(at: infoURL)
             } catch {
-                presentError("Unable to remove old save state info.plist: \(error.localizedDescription)", source: self.view)
+                presentError("Unable to remove old save state Info.plist: \(error.localizedDescription)", source: self.view)
             }
         }
 

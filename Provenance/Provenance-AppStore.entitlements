@@ -9,6 +9,10 @@
 		<string>applinks:provenance-emu.com</string>
 		<string>applinks:provenance.app</string>
 	</array>
+	<key>com.apple.developer.devicecheck.appattest-environment</key>
+	<string>development</string>
+	<key>com.apple.developer.driverkit.communicates-with-drivers</key>
+	<true/>
 	<key>com.apple.developer.group-session</key>
 	<true/>
 	<key>com.apple.developer.icloud-container-identifiers</key>
@@ -19,6 +23,10 @@
 	<array>
 		<string>CloudDocuments</string>
 		<string>CloudKit</string>
+	</array>
+	<key>com.apple.developer.journal.allow</key>
+	<array>
+		<string>suggestions</string>
 	</array>
 	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
 	<true/>
@@ -59,9 +67,9 @@
 	<true/>
 	<key>com.apple.security.device.usb</key>
 	<true/>
-	<key>com.apple.security.files.downloads.read-only</key>
+	<key>com.apple.security.files.downloads.read-write</key>
 	<true/>
-	<key>com.apple.security.files.user-selected.read-only</key>
+	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
 	<key>com.apple.security.network.client</key>
 	<true/>

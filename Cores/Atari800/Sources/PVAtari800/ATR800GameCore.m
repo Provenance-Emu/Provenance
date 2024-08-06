@@ -24,7 +24,6 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "ATR800GameCore.h"
 
 @import PVSupport;
 @import PVLoggingObjC;
@@ -33,6 +32,13 @@
 @import libatari800;
 @import PVAtari800C;
 @import PVAtari800Swift;
+@import PVAtari800;
+
+@import GameController;
+@import PVEmulatorCore;
+@import PVCoreBridge;
+
+#import "ATR800GameCore.h"
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>

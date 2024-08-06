@@ -13,9 +13,7 @@ import PVCoreBridge
 
 extension PVEmulatorViewController {
     func showCoreOptions() {
-        guard var coreClass = type(of: core) as? PVEmulatorCore.Type else {
-            return // Handle the error appropriately
-        }
+        var coreClass = type(of: core)
 
         coreClass.coreClassName = core.coreIdentifier ?? ""
 

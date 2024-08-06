@@ -14,6 +14,10 @@ import PVLogging
 
 public typealias OptionalCore = PVEmulatorCore & CoreOptional
 
+public protocol PVEmulatorCoreT: EmulatorCoreRunLoop, EmulatorCoreIOInterface, EmulatorCoreVideoDelegate, EmulatorCoreSavesSerializer, EmulatorCoreAudioDataSource, EmulatorCoreRumbleDataSource, EmulatorCoreControllerDataSource, EmulatorCoreSavesDataSource, EmulatorCoreInfoProvider {
+
+}
+
 @objc
 @objcMembers
 open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesDataSource {
@@ -23,6 +27,12 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
 
     @objc
     public static var systemName: String = ""
+
+    @objc
+    dynamic open var resourceBundle: Bundle { Bundle.module }
+
+    @available(*, deprecated, message: "Why does this need to exist? Only used for macII in PVRetroCore")
+    public static var status: [String: Any] = .init()
 
     // MARK: EmulatorCoreAudioDataSource
 
@@ -98,15 +108,49 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
 
     public var discCount: UInt { 0 }
 
-    public var screenType: String? = nil
+    public var screenType: ScreenTypeObjC = .crt
+
+    public var extractArchive: Bool = true
+
+    // MARK: Audio
+    @objc
+    public var audioDelegate: (any PVAudioDelegate)? = nil
+
 
     // MARK: Class
+
+    @objc
+    open func initialize() {
+        // Do nothing
+        // used by subclasses
+        // TODO: Use a better method, use by PVRetroCore only atm @JoeMatt 6/2/24
+    }
+
+    @nonobjc
+    open func loadFile(atPath path: String) throws -> Bool {
+        var error: NSError?
+        let success = loadFile(atPath: path, error: &error)
+        if !success {
+            if let error = error {
+                throw error
+            }
+        }
+        return success
+    }
+
+    @objc(loadFileAtPath:error:)
+    open func loadFile(atPath path: String, error: AutoreleasingUnsafeMutablePointer<NSError?>?) -> Bool {
+        // method implementation goes here
+        return false
+    }
 
     @objc
     required
     public override init() {
         super.init()
-        ringBuffers = Array(repeating: RingBuffer.init(withLength: Int(audioBufferSize(forBuffer: 0)))!, count: Int(audioBufferCount))
+        DispatchQueue.main.sync {
+            ringBuffers = Array(repeating: RingBuffer.init(withLength: Int(audioBufferSize(forBuffer: 0)))!, count: Int(audioBufferCount))
+        }
     }
 
     // EmulatorCoreAudioDataSource

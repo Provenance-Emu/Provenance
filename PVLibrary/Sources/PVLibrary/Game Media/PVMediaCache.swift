@@ -62,9 +62,9 @@ public enum MediaCacheError: Error {
     case failedToScaleImage
 }
 
-public final class PVMediaCache: NSObject {
+public final class PVMediaCache: NSObject, Sendable {
 #if canImport(UIKit)
-    static let memCache: NSCache<NSString, UIImage> = {
+    @MainActor static let memCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
         return cache
     }()
@@ -75,7 +75,7 @@ public final class PVMediaCache: NSObject {
     }()
     #endif
 
-    private var operationQueue: OperationQueue = {
+    private let operationQueue: OperationQueue = {
         let queue = OperationQueue() // Was this meant to be a serial queue?
         queue.qualityOfService = .userInitiated
         return queue
@@ -83,12 +83,12 @@ public final class PVMediaCache: NSObject {
 
     // MARK: - Object life cycle
 
-    static var _sharedInstance: PVMediaCache = PVMediaCache()
+    static let _sharedInstance: PVMediaCache = PVMediaCache()
     public class func shareInstance() -> PVMediaCache {
         return _sharedInstance
     }
 
-    static var cachePath: URL = {
+    static var cachePath: URL {
 //        #if os(tvOS)
 //        let cachesDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
 //        #else
@@ -104,7 +104,7 @@ public final class PVMediaCache: NSObject {
         }
 
         return cachePath
-    }()
+    }
 
     @objc
     public class func filePath(forKey key: String) -> URL? {
@@ -189,14 +189,16 @@ public final class PVMediaCache: NSObject {
         let keyHash: String = key.md5Hash
         let cachePath = self.cachePath.appendingPathComponent(keyHash, isDirectory: false)
 
-        memCache.removeObject(forKey: keyHash as NSString)
+        Task { @MainActor in
+            memCache.removeObject(forKey: keyHash as NSString)
 
-        if FileManager.default.fileExists(atPath: cachePath.path) {
-            do {
-                try FileManager.default.removeItem(at: cachePath)
-            } catch {
-                DLOG("Unable to delete cache item: \(cachePath.path) because: \(error.localizedDescription)")
-                throw error
+            if FileManager.default.fileExists(atPath: cachePath.path) {
+                do {
+                    try FileManager.default.removeItem(at: cachePath)
+                } catch {
+                    DLOG("Unable to delete cache item: \(cachePath.path) because: \(error.localizedDescription)")
+                    throw error
+                }
             }
         }
     }
@@ -211,9 +213,11 @@ public final class PVMediaCache: NSObject {
                 try? FileManager.default.removeItem(atPath: cachePath)
             }
 
-            memCache.removeAllObjects()
-            ILOG("Cache emptied")
-            NotificationCenter.default.post(name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
+            Task { @MainActor in
+                memCache.removeAllObjects()
+                ILOG("Cache emptied")
+                NotificationCenter.default.post(name: NSNotification.Name.PVMediaCacheWasEmptied, object: nil)
+            }
         }
     }
 
@@ -251,8 +255,10 @@ public final class PVMediaCache: NSObject {
         return operation
     }
     #else
+    public typealias ImageFetchCompletion = @Sendable (_ key: String, _ image: UIImage?) -> Void
+
     @discardableResult
-    public func image(forKey key: String, completion: ((_ key: String, _ image: UIImage?) -> Void)? = nil) -> BlockOperation? {
+    public func image(forKey key: String, completion: ImageFetchCompletion? = nil) -> BlockOperation? {
         if key.isEmpty {
             completion?(key, nil)
             return nil
@@ -264,20 +270,20 @@ public final class PVMediaCache: NSObject {
 
             let cachePath = cacheDir.appendingPathComponent(keyHash, isDirectory: false).path
 
-            var image: UIImage?
-            image = PVMediaCache.memCache.object(forKey: keyHash as NSString)
+            Task { @MainActor in
+                var image: UIImage?
+                image = PVMediaCache.memCache.object(forKey: keyHash as NSString)
 
-            if image == nil, FileManager.default.fileExists(atPath: cachePath) {
-                image = UIImage(contentsOfFile: cachePath)
+                if image == nil, FileManager.default.fileExists(atPath: cachePath) {
+                    image = UIImage(contentsOfFile: cachePath)
 
-                if let image = image {
-                    PVMediaCache.memCache.setObject(image, forKey: keyHash as NSString)
+                    if let image = image {
+                        PVMediaCache.memCache.setObject(image, forKey: keyHash as NSString)
+                    }
                 }
-            }
 
-            DispatchQueue.main.async(execute: { () -> Void in
                 completion?(key, image)
-            })
+            }
         })
 
         operationQueue.addOperation(operation)

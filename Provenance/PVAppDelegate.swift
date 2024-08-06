@@ -12,6 +12,7 @@ import RealmSwift
 import RxSwift
 import PVEmulatorCore
 import PVCoreBridge
+import PVThemes
 
 #if !targetEnvironment(macCatalyst) && !os(macOS)
 #if canImport(SteamController)
@@ -58,14 +59,15 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func _initUITheme() {
         #if os(iOS)
         let darkTheme = (PVSettingsModel.shared.theme == .auto && self.window?.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
-        Theme.currentTheme = darkTheme ? Theme.darkTheme : Theme.lightTheme
-        self.window?.overrideUserInterfaceStyle = darkTheme ? .dark : .light
+        let newTheme = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
+//        ThemeManager.shared.setCurrentTheme(newTheme)
+        self.window?.overrideUserInterfaceStyle = ThemeManager.shared.currentTheme.dark ? .dark : .light
         #elseif os(tvOS)
-        if PVSettingsModel.shared.debugOptions.tvOSThemes {
-            DispatchQueue.main.async {
-                Theme.currentTheme = Theme.darkTheme
-            }
-        }
+//        if PVSettingsModel.shared.debugOptions.tvOSThemes {
+//            DispatchQueue.main.async {
+//                ThemeManager.shared.currentTheme = Theme.darkTheme
+//            }
+//        }
         #endif
     }
 
@@ -193,6 +195,19 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 shortcutItemGame = matchedGame
             }
         #endif
+
+        if #available(iOS 17.0, *) {
+            withObservationTracking {
+                _ = ThemeManager.shared.currentTheme
+            } onChange: { [unowned self] in
+                print("changed: ", ThemeManager.shared.currentTheme)
+                //            Task { @MainActor in
+                self._initUITheme()
+                //            }
+            }
+        } else {
+            // Fallback on earlier versions
+        }
 
         // Setup importing/updating library
         let gameImporter = GameImporter.shared
@@ -327,9 +342,11 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                     do {
                         NSLog("PVAppDelegate: Completed ResetLibrary, Re-Importing")
                         try RomDatabase.sharedInstance.deleteAllData()
-                        GameImporter.shared.initSystems()
-                        self.gameLibraryViewController?.checkROMs(false)
-                        observer(.completed)
+                        Task {
+                            await GameImporter.shared.initSystems()
+                            self.gameLibraryViewController?.checkROMs(false)
+                            observer(.completed)
+                        }
                     } catch {
                         NSLog("Failed to delete all objects. \(error.localizedDescription)")
                         observer(.error(error))

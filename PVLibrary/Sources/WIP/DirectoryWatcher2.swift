@@ -182,7 +182,7 @@ public final class DirectoryWatcher2 {
 
             let filesize: UInt64 = attributes[FileAttributeKey.size] as? UInt64 ?? 0
             let immutable: Bool = attributes[FileAttributeKey.immutable] as? Bool ?? false
-            print("immutable \(immutable)")
+            VLOG("immutable \(immutable)")
 
             DispatchQueue.main.async { [weak self] () in
                 if let weakSelf = self {

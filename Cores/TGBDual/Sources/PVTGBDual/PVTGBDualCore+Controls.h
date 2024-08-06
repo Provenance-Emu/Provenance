@@ -7,6 +7,7 @@
 //
 
 #import <PVTGBDual/PVTGBDual.h>
+@import GameController;
 @import PVTGBDualSwift;
 
 @interface PVTGBDualCore (Controls)

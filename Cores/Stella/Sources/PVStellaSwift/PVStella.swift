@@ -22,22 +22,30 @@ import libstella
 
 @objc
 @objcMembers
-open class PVStellaGameCore: PVEmulatorCore {
+public final class PVStellaGameCore: PVEmulatorCore {
 
+    @MainActor
     public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
 
     // MARK: Cheats
-    public var cheats: NSMutableArray = .init()
+    @MainActor
+    public let cheats: NSMutableArray = .init()
 
     public var supportsCheatCode: Bool { true }
 
     // Stella
+    @MainActor
     public var region :Region = .NTSC
+    @MainActor
     public var _sampleRate: Double = 31400.0
+    @MainActor
     public var _frameInterval: TimeInterval = 0
 
+    @MainActor
     public var _videoBuffer: UnsafeMutablePointer<stellabuffer_t> = .allocate(capacity: 1)
+    @MainActor
     public var _videoWidth: Int32 = STELLA_WIDTH
+    @MainActor
     public var _videoHeight: Int32 = STELLA_HEIGHT
 
     // MARK: Lifecycle

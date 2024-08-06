@@ -10,204 +10,6 @@ import PVSupport
 import RealmSwift
 import PVLogging
 
-public struct SystemDictionaryKeys {
-    public static let BIOSEntries = "PVBIOSNames"
-    public static let ControlLayout = "PVControlLayout"
-    public static let DatabaseID = "PVDatabaseID"
-    public static let RequiresBIOS = "PVRequiresBIOS"
-    public static let SystemShortName = "PVSystemShortName"
-    public static let SupportedExtensions = "PVSupportedExtensions"
-    public static let SystemIdentifier = "PVSystemIdentifier"
-    public static let SystemName = "PVSystemName"
-    public static let Manufacturer = "PVManufacturer"
-    public static let Bit = "PVBit"
-    public static let ReleaseYear = "PVReleaseYear"
-    public static let UsesCDs = "PVUsesCDs"
-    public static let SupportsRumble = "PVSupportsRumble"
-    public static let ScreenType = "PVScreenType"
-    public static let Portable = "PVPortable"
-
-    public struct ControllerLayoutKeys {
-        public static let Button = "PVButton"
-        public static let ButtonGroup = "PVButtonGroup"
-        public static let ControlFrame = "PVControlFrame"
-        public static let ControlSize = "PVControlSize"
-        public static let ControlTitle = "PVControlTitle"
-        public static let ControlTint = "PVControlTint"
-        public static let ControlType = "PVControlType"
-        public static let DPad = "PVDPad"
-        public static let JoyPad = "PVJoyPad"
-        public static let JoyPad2 = "PVJoyPad2"
-        public static let GroupedButtons = "PVGroupedButtons"
-        public static let LeftShoulderButton = "PVLeftShoulderButton"
-        public static let RightShoulderButton = "PVRightShoulderButton"
-        public static let LeftShoulderButton2 = "PVLeftShoulderButton2"
-        public static let RightShoulderButton2 = "PVRightShoulderButton2"
-        public static let LeftAnalogButton = "PVLeftAnalogButton"
-        public static let RightAnalogButton = "PVRightAnalogButton"
-        public static let ZTriggerButton = "PVZTriggerButton"
-        public static let SelectButton = "PVSelectButton"
-        public static let StartButton = "PVStartButton"
-    }
-}
-
-public enum SystemIdentifier: String, CaseIterable, Codable {
-    case _3DO = "com.provenance.3DO"
-    case _3DS = "com.provenance.3ds"
-    case AppleII = "com.provenance.appleII"
-    case Atari2600 = "com.provenance.2600"
-    case Atari5200 = "com.provenance.5200"
-    case Atari7800 = "com.provenance.7800"
-    case Atari8bit = "com.provenance.atari8bit"
-    case AtariJaguar = "com.provenance.jaguar"
-    case AtariJaguarCD = "com.provenance.jaguarcd"
-    case AtariST = "com.provenance.atarist"
-    case C64 = "com.provenance.c64"
-    case ColecoVision = "com.provenance.colecovision"
-    case DOS = "com.provenance.dos"
-    case Dreamcast = "com.provenance.dreamcast"
-    case DS = "com.provenance.ds"
-    case EP128 = "com.provenance.ep128"
-    case FDS = "com.provenance.fds"
-    case GameCube = "com.provenance.gamecube"
-    case GameGear = "com.provenance.gamegear"
-    case GB = "com.provenance.gb"
-    case GBA = "com.provenance.gba"
-    case GBC = "com.provenance.gbc"
-    case Genesis = "com.provenance.genesis"
-    case Intellivision = "com.provenance.intellivision"
-    case Lynx = "com.provenance.lynx"
-    case Macintosh = "com.provenance.macintosh"
-    case MAME = "com.provenance.mame"
-    case MasterSystem = "com.provenance.mastersystem"
-    case MegaDuck = "com.provenance.megaduck"
-    case MSX = "com.provenance.msx"
-    case MSX2 = "com.provenance.msx2"
-    case Music = "com.provenance.music"
-    case N64 = "com.provenance.n64"
-    case NeoGeo = "com.provenance.neogeo"
-    case NES = "com.provenance.nes"
-    case NGP = "com.provenance.ngp"
-    case NGPC = "com.provenance.ngpc"
-    case Odyssey2 = "com.provenance.odyssey2"
-    case PalmOS = "com.provenance.palmos"
-    case PCE = "com.provenance.pce"
-    case PCECD = "com.provenance.pcecd"
-    case PCFX = "com.provenance.pcfx"
-    case PokemonMini = "com.provenance.pokemonmini"
-    case PS2 = "com.provenance.ps2"
-    case PS3 = "com.provenance.ps3"
-    case PSP = "com.provenance.psp"
-    case PSX = "com.provenance.psx"
-    case Saturn = "com.provenance.saturn"
-    case Sega32X = "com.provenance.32X"
-    case SegaCD = "com.provenance.segacd"
-    case SG1000 = "com.provenance.sg1000"
-    case SGFX = "com.provenance.sgfx"
-    case SNES = "com.provenance.snes"
-    case Supervision = "com.provenance.supervision"
-    case TIC80 = "com.provenance.tic80"
-    case Vectrex = "com.provenance.vectrex"
-    case VirtualBoy = "com.provenance.vb"
-    case Wii = "com.provenance.wii"
-    case WonderSwan = "com.provenance.ws"
-    case WonderSwanColor = "com.provenance.wsc"
-    case ZXSpectrum = "com.provenance.zxspectrum"
-
-    case Unknown
-
-    static public let betas: [SystemIdentifier] =
-    [
-        ._3DO,
-        .Atari8bit,
-        .AtariJaguarCD,
-        .AtariST,
-        .C64,
-        .ColecoVision,
-        .DOS,
-        .Dreamcast,
-        .DS,
-        .EP128,
-        .GameCube,
-        .Intellivision,
-        .Macintosh,
-        .MSX,
-        .MSX2,
-        .Odyssey2,
-        .Wii,
-        .Supervision,
-        .Vectrex,
-        .ZXSpectrum
-    ]
-
-    static public let unsupported: [SystemIdentifier] =
-    [
-    ]
-    // MARK: Assistance accessors for properties
-
-    public var system: PVSystem? {
-        return PVEmulatorConfiguration.system(forIdentifier: self)
-    }
-
-//    var name : String {
-//        return PVEmulatorConfiguration.name(forSystemIdentifier: self)!
-//    }
-//
-//    var shortName : String {
-//        return PVEmulatorConfiguration.shortName(forSystemIdentifier: self)!
-//    }
-//
-//    var controllerLayout : [ControlLayoutEntry] {
-//        return PVEmulatorConfiguration.controllerLayout(forSystemIdentifier: self)!
-//    }
-//
-//    var biosPath : URL {
-//        return PVEmulatorConfiguration.biosPath(forSystemIdentifier: self)
-//    }
-//
-//    var requiresBIOS : Bool {
-//        return PVEmulatorConfiguration.requiresBIOS(forSystemIdentifier: self)
-//    }
-//
-//    var biosEntries : [PVBIOS]? {
-//        return PVEmulatorConfiguration.biosEntries(forSystemIdentifier: self)
-//    }
-//
-//    var fileExtensions : [String] {
-//        return PVEmulatorConfiguration.fileExtensions(forSystemIdentifier: self)!
-//    }
-
-    // TODO: Eventaully wouldl make sense to add batterySavesPath, savesStatePath that
-    // are a sub-directory of the current paths. Right now those are just a folder
-    // for all games by the game filename - extensions. Even then would be better
-    // to use the ROM md5 not the name, since names might have collisions - jm
-}
-
-// MARK: - PVSystem convenience extension
-
-public extension SystemProtocol {
-    var biosDirectory: URL {
-        return PVEmulatorConfiguration.biosPath(forSystemIdentifier: identifier)
-    }
-
-    var romsDirectory: URL {
-        return PVEmulatorConfiguration.romDirectory(forSystemIdentifier: identifier)
-    }
-}
-
-// MARK: - PVGame convenience extension
-
-public extension PVGame {
-    // TODO: See above TODO, this should be based on the ROM systemid/md5
-    var batterSavesPath: URL {
-        return PVEmulatorConfiguration.batterySavesPath(forGame: self)
-    }
-
-    var saveStatePath: URL {
-        return PVEmulatorConfiguration.saveStatePath(forGame: self)
-    }
-}
-
 public enum PVEmulatorConfigurationError: Error {
     case systemNotFound
 }
@@ -321,12 +123,15 @@ public final class PVEmulatorConfiguration: NSObject {
 
         let documentsURL = iCloudContainerDirectory?.appendingPathComponent("Documents")
         if let documentsURL = documentsURL {
-            do {
-                try FileManager.default.createDirectory(at: documentsURL, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                ELOG("Failed creating dir on iCloud: \(error)")
+            if !FileManager.default.fileExists(atPath: documentsURL.path, isDirectory: nil) {
+                do {
+                    try FileManager.default.createDirectory(at: documentsURL, withIntermediateDirectories: true, attributes: nil)
+                } catch {
+                    ELOG("Failed creating dir on iCloud: \(error)")
+                }
             }
         }
+
         return documentsURL
     }
 
@@ -363,6 +168,11 @@ public final class PVEmulatorConfiguration: NSObject {
         }
 
         /// Should be called on BG Thread, iCloud blocks
+        public static var romsPath: URL {
+            return documentsiCloudOrLocalPath.appendingPathComponent("ROMs", isDirectory: true)
+        }
+
+        /// Should be called on BG Thread, iCloud blocks
         public static var batterySavesPath: URL {
             return documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true)
         }
@@ -383,9 +193,9 @@ public final class PVEmulatorConfiguration: NSObject {
         }
     }
 
-    public static let archiveExtensions: [String] = ["7z"]
+    public static let archiveExtensions: [String] = ["7z", "gzip", "gz", "rar", "zip", "7zip"]
     public static let artworkExtensions: [String] = ["png", "jpg", "jpeg"]
-    public static let specialExtensions: [String] = ["cue", "m3u", "svs", "mcr", "plist", "ccd", "img", "iso", "sub", "bin"]
+    public static let specialExtensions: [String] = ["cue", "m3u", "svs", "mcr", "plist", "ccd", "img", "iso", "sub", "bin", "chd"]
     public static let allKnownExtensions: [String] = {
         archiveExtensions + supportedROMFileExtensions + artworkExtensions + supportedBIOSFileExtensions + Array(supportedCDFileExtensions) + specialExtensions
     }()
@@ -455,78 +265,6 @@ public final class PVEmulatorConfiguration: NSObject {
 
     public class func string(fromDate date: Date) -> String {
         return dateFormatter.string(from: date)
-    }
-}
-
-public struct ClassInfo: CustomStringConvertible, Equatable {
-    public let classObject: AnyClass
-    public let className: String
-    public let bundle: Bundle
-
-    public init?(_ classObject: AnyClass?, withSuperclass superclass: [String]? = nil) {
-        guard let classObject = classObject else { return nil }
-
-        self.classObject = classObject
-
-        let cName = class_getName(classObject)
-        let classString = String(cString: cName)
-        className = classString
-
-        if let superclass = superclass,
-            let superclassName = ClassInfo.superClassName(forClass: classObject),
-            !superclass.contains(superclassName) {
-            return nil
-        }
-
-        bundle = Bundle(for: classObject)
-    }
-
-    public var superclassesInfo: [ClassInfo]? {
-        var classInfos = [ClassInfo]()
-        var superClass: ClassInfo? = superclassInfo
-
-        while(superClass != nil) {
-            if let classInfo = ClassInfo(superClass?.classObject) {
-                classInfos.append(classInfo)
-                superClass = classInfo.superclassInfo
-            } else {
-                superClass = nil
-            }
-        }
-
-        return classInfos.isEmpty ? nil : classInfos
-    }
-
-    public var superclassInfo: ClassInfo? {
-        if let superclassObject: AnyClass = class_getSuperclass(self.classObject) {
-            return ClassInfo(superclassObject)
-        } else {
-            return nil
-        }
-    }
-
-    public var description: String {
-        return className
-    }
-
-    public static func == (lhs: ClassInfo, rhs: ClassInfo) -> Bool {
-        return lhs.className == rhs.className
-    }
-
-    static func superClassName(forClass c: AnyClass) -> String? {
-        guard let superClass = class_getSuperclass(c) else {
-            return nil
-        }
-        let cName = class_getName(superClass)
-        let classString = String(cString: cName)
-        return classString
-    }
-}
-
-extension ClassInfo: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(className)
-        hasher.combine(bundle.bundleIdentifier)
     }
 }
 
@@ -694,7 +432,7 @@ public extension PVEmulatorConfiguration {
 
 public extension PVEmulatorConfiguration {
     class func stripDiscNames(fromFilename filename: String) -> String {
-        var altName = filename.replacingOccurrences(of: "(Disk|Disc|CD|Track|disc|track|cd|disk)[\\s]*[\\d]+", with: "", options: .regularExpression)
+        var altName = filename.replacingOccurrences(of: "(Disk|Disc|DISK|DISC|CD|Track|disc|track|cd|disk)[\\s]*[\\d]+", with: "", options: .regularExpression)
         altName = altName.replacingOccurrences(of: "[\\s]*[\\(\\[][\\s]*[\\)\\]]", with: "", options: .regularExpression)
         return altName
     }
@@ -757,6 +495,7 @@ public extension PVEmulatorConfiguration {
         }
         return obj1Extension > obj2Extension
     }
+
     class func cmp(obj1: URL, obj2: URL) -> Bool {
         let obj1Filename = obj1.lastPathComponent
         let obj2Filename = obj2.lastPathComponent
@@ -774,6 +513,7 @@ public extension PVEmulatorConfiguration {
             return name1 < name2
         }
     }
+
     class func sortImportURLs(urls: [URL]) -> [URL] {
         var ext:[String:[URL]] = [:]
         // separate array by file extension
@@ -798,9 +538,7 @@ public extension PVEmulatorConfiguration {
                 ext[$0] = values
             }
         }
-        sorted.forEach {
-            print("sorted ", $0.lastPathComponent)
-        }
+        VLOG(sorted.map { $0.lastPathComponent }.joined(separator: ", "))
         return sorted
     }
 }
@@ -813,75 +551,6 @@ public extension PVEmulatorConfiguration {
     }
 
     class func romDirectory(forSystemIdentifier system: String) -> URL {
-        return documentsPath.appendingPathComponent(system, isDirectory: true)
-    }
-}
-
-// MARK: Move legacy files
-
-public extension PVEmulatorConfiguration {
-    class func moveLegacyPaths() {
-        if documentsPath != documentsiCloudOrLocalPath {
-            let fm = FileManager.default
-
-            // TODO: Update PVGames and PVSaves for new paths for screenshots and saves
-
-            ILOG("Looking up legecy saves")
-            if let saves = try? fm.contentsOfDirectory(at: Paths.Legacy.saveSavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !saves.isEmpty {
-                ILOG("Found (\(saves.count)) saves in old path")
-
-                saves.forEach {
-                    let newPath = Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent)
-                    do {
-                        try fm.moveItem(at: $0, to: newPath)
-                    } catch {
-                        ELOG("\(error)")
-                    }
-                }
-                // TODO: Remove old directory?
-            }
-
-            ILOG("Looking up legecy bios")
-            if let bioses = try? fm.contentsOfDirectory(at: Paths.Legacy.biosesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !bioses.isEmpty {
-                ILOG("Found (\(bioses.count)) BIOSes in old path")
-
-                bioses.forEach {
-                    let newPath = Paths.biosesPath.appendingPathComponent($0.lastPathComponent)
-                    do {
-                        try fm.moveItem(at: $0, to: newPath)
-                    } catch {
-                        ELOG("\(error)")
-                    }
-                }
-            }
-
-            ILOG("Looking up legecy screenshots")
-            if let screenshots = try? fm.contentsOfDirectory(at: Paths.Legacy.screenShotsPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !screenshots.isEmpty {
-                ILOG("Found (\(screenshots.count)) Screenshots in old path")
-
-                screenshots.forEach {
-                    let newPath = Paths.screenShotsPath.appendingPathComponent($0.lastPathComponent)
-                    do {
-                        try fm.moveItem(at: $0, to: newPath)
-                    } catch {
-                        ELOG("\(error)")
-                    }
-                }
-            }
-
-            ILOG("Looking up legecy battery saves")
-            if let batterySaves = try? fm.contentsOfDirectory(at: Paths.Legacy.batterySavesPath, includingPropertiesForKeys: nil, options: .skipsHiddenFiles), !batterySaves.isEmpty {
-                ILOG("Found (\(batterySaves.count)) Battery Saves in old path")
-
-                batterySaves.forEach {
-                    let newPath = Paths.batterySavesPath.appendingPathComponent($0.lastPathComponent)
-                    do {
-                        try fm.moveItem(at: $0, to: newPath)
-                    } catch {
-                        ELOG("\(error)")
-                    }
-                }
-            }
-        }
+        return Paths.romsPath.appendingPathComponent(system, isDirectory: true)
     }
 }

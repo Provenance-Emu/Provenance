@@ -25,17 +25,20 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "PVStellaGameCore.h"
-
 @import PVAudio;
 @import PVSupport;
 @import libstella;
 @import PVStellaCPP;
 @import PVStellaSwift;
+@import PVLoggingObjC;
+@import GameController;
+@import PVCoreBridge;
+@import PVObjCUtils;
+@import PVEmulatorCore;
+#import <libstella/libretro/libretro.h>
+#import <libstella/libstella.h>
 
-#import <PVObjCUtils/DebugUtils.h>
-#import <PVLogging/PVLogging.h>
-
+#import "PVStellaGameCore.h"
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -260,7 +263,10 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (void)dealloc {
-    free(self._videoBuffer);
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        if(self._videoBuffer)
+            free(self._videoBuffer);
+    });
 }
 
 - (void)executeFrame {

@@ -6,14 +6,15 @@
 // Refer to the license.txt file included.
 
 #import <Foundation/Foundation.h>
+#import "CodeSignatureUtils.h"
+#import "DOLJitManager.h"
+#import "StringUtils.h"
+
 #import <dlfcn.h>
 #import <errno.h>
 #import <mach/mach.h>
 #import <mach-o/loader.h>
 #import <mach-o/getsect.h>
-
-#import "DOLJitManager.h"
-#import "StringUtils.h"
 
 // partly adapted from iSH: app/AppGroup.m
 
@@ -70,7 +71,10 @@ struct cs_codedirectory {
     uint64_t execSegmentFlags;
 };
 
-bool HasValidCodeSignature()
+bool HasValidCodeSignature(void);
+
+
+bool HasValidCodeSignature(void)
 {
   // Find our mach-o header
   Dl_info dl_info;
@@ -132,7 +136,7 @@ bool HasValidCodeSignature()
         char error[128];
         sprintf(error, "CodeDirectory version is 0x%x. Should be 0x20400 or higher.", version);
         
-        [[DOLJitManager sharedManager] setAuxillaryError:CToFoundationString(error)];
+        [[DOLJitManager sharedManager] setAuxiliaryError:CToFoundationString(error)];
         
         continue;
       }
@@ -142,7 +146,7 @@ bool HasValidCodeSignature()
         char error[128];
         sprintf(error, "CS_EXECSEG_ALLOW_UNSIGNED is not set. The current executable segment flags are 0x%llx.", execSegmentFlags);
         
-        [[DOLJitManager sharedManager] setAuxillaryError:CToFoundationString(error)];
+        [[DOLJitManager sharedManager] setAuxiliaryError:CToFoundationString(error)];
         
         continue;
       }
@@ -153,7 +157,7 @@ bool HasValidCodeSignature()
   
   if (entitlementsData == nil)
   {
-    [[DOLJitManager sharedManager] setAuxillaryError:@"Could not find entitlements data within the code signature."];
+    [[DOLJitManager sharedManager] setAuxiliaryError:@"Could not find entitlements data within the code signature."];
     
     return false;
   }
@@ -167,14 +171,14 @@ bool HasValidCodeSignature()
   if (ent_error)
   {
     NSString* error_str = [NSString stringWithFormat:@"Entitlement data parsing failed with error \"%@\".", [ent_error localizedDescription]];
-    [[DOLJitManager sharedManager] setAuxillaryError:error_str];
+    [[DOLJitManager sharedManager] setAuxiliaryError:error_str];
     
     return false;
   }
   
   if (![[entitlements objectForKey:@"get-task-allow"] boolValue])
   {
-    [[DOLJitManager sharedManager] setAuxillaryError:@"get-task-allow entitlement is not set to true."];
+    [[DOLJitManager sharedManager] setAuxiliaryError:@"get-task-allow entitlement is not set to true."];
     
     return false;
   }

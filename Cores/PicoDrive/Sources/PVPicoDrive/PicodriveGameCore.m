@@ -34,6 +34,8 @@
 @import PVPicoDriveSwift;
 @import PVLoggingObjC;
 @import PVSupport;
+@import GameController;
+@import PVEmulatorCore;
 
 #import <TargetConditionals.h>
 

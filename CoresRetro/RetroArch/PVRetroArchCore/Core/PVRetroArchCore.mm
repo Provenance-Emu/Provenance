@@ -83,6 +83,7 @@ extern int g_gs_preference;
 	return self;
 }
 - (void)initialize {
+    [super initialize];
     [self parseOptions];
     NSLog(@"RetroArch: Extract %d\n", self.extractArchive);
 }

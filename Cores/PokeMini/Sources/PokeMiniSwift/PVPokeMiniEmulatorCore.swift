@@ -14,7 +14,7 @@ import PokeMiniC
 
 @objc
 @objcMembers
-public final class PokeMFiState: NSObject {
+public final class PokeMFiState: NSObject, @unchecked Sendable {
     public var a: Bool = false
     public var b: Bool = false
     public var c: Bool = false
@@ -30,18 +30,37 @@ public final class PokeMFiState: NSObject {
 
 @objc
 @objcMembers
-public class PVPokeMiniEmulatorCore: PVEmulatorCore {
+public final class PVPokeMiniEmulatorCore: PVEmulatorCore {
 
     @objc
+    @MainActor
     public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
 
-    public var controllerState: PokeMFiState = .init()
+    public let controllerState: PokeMFiState = .init()
 
     @objc
+    @MainActor
     public var audioStream: UnsafeMutablePointer<UInt8>?
 
+    @MainActor
     public var _videoBuffer: UnsafeMutablePointer<UInt32>? = nil
+
+//    @objc
+//    public var videoBuffer: UnsafeMutableBufferPointer<UInt32> {
+//        get {
+//            _videoBuffer?.bindMemory(to: UInt32.self, capacity: videoWidth * videoHeight) ?? UnsafeMutableBufferPointer<UInt32>.init(start: nil, count: 0)
+//        }
+//    }
+
+
+    /// Width in pixels
+    /// Bindable
+
+    @MainActor
+    @objc
     public var videoWidth: Int = 0
+    @MainActor
     public var videoHeight: Int = 0
+    @MainActor
     public var romPath: String?
 }

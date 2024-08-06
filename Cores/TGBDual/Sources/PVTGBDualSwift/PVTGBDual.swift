@@ -17,17 +17,23 @@ import libtgbdual
 
 @objc
 @objcMembers
-open class PVTGBDualCore: PVEmulatorCore { //, PVGBSystemResponderClient {
+public final class PVTGBDualCore: PVEmulatorCore { //, PVGBSystemResponderClient {
 
+    @MainActor
     public var _videoBuffer: UnsafeMutablePointer<UInt16>? = nil // uint16_t *_videoBuffer;
 
+    @MainActor
     public var _videoWidth: Int = 0
+    @MainActor
     public var _videoHeight: Int = 0
 
     // TGBDual
+    @MainActor
     public var _sampleRate: Double = 44100.0
+    @MainActor
     public var _frameInterval: TimeInterval = 0
 
+    @MainActor
     public var emulationHasRun: Bool = false
 
 //    // MARK: Lifecycle

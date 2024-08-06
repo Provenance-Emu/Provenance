@@ -14,7 +14,7 @@ import PVLogging
 import UIKit
 #endif
 
-public enum RelativeRoot: Int {
+public enum RelativeRoot: Int, Sendable {
     case documents
     case caches
     case iCloud
@@ -57,10 +57,14 @@ public enum RelativeRoot: Int {
 public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     public typealias DomainType = LocalFile
 
+    nonisolated(unsafe)
     internal dynamic var partialPath: String = ""
+    nonisolated(unsafe)
     internal dynamic var md5Cache: String?
     //    @objc private dynamic var crcCache: String?
+    nonisolated(unsafe)
     public private(set) dynamic var createdDate = Date()
+    nonisolated(unsafe)
     internal dynamic var _relativeRoot: Int = RelativeRoot.documents.rawValue
 
     public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
@@ -77,6 +81,8 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
 }
 
 public extension PVFile {
+
+    nonisolated(unsafe)
     internal(set) var relativeRoot: RelativeRoot {
         get {
             return RelativeRoot(rawValue: _relativeRoot)!
@@ -85,6 +91,7 @@ public extension PVFile {
         }
     }
 
+    nonisolated(unsafe)
     private(set) var url: URL {
         get {
             if partialPath.contains("iCloud") || partialPath.contains("private") {
@@ -110,6 +117,7 @@ public extension PVFile {
         }
     }
 
+    nonisolated(unsafe)
     private(set) var md5: String? {
         get {
             if let md5 = md5Cache {
@@ -161,6 +169,7 @@ public extension PVFile {
     //        }
     //    }
 
+    nonisolated(unsafe)
     var size: UInt64 {
         let fileSize: UInt64
         guard FileManager.default.fileExists(atPath: url.path) else {
@@ -177,6 +186,7 @@ public extension PVFile {
         return fileSize
     }
 
+    nonisolated(unsafe)
     var online: Bool {
         return FileManager.default.fileExists(atPath: url.path)
     }
@@ -185,6 +195,7 @@ public extension PVFile {
         return url.pathExtension
     }
 
+    nonisolated(unsafe)
     var fileName: String {
         return url.lastPathComponent
     }

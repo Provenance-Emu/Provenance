@@ -202,6 +202,18 @@
 	<true/>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Provenance uses the local network to find and communicate with AltServer.</string>
+	<key>NSUbiquitousContainers</key>
+	<dict>
+		<key>iCloud.org.provenance-emu.provenance</key>
+		<dict>
+			<key>NSUbiquitousContainerIsDocumentScopePublic</key>
+			<true/>
+			<key>NSUbiquitousContainerName</key>
+			<string>provenance</string>
+			<key>NSUbiquitousContainerSupportedFolderLevels</key>
+			<string>Any</string>
+		</dict>
+	</dict>
 	<key>NSUserActivityTypes</key>
 	<array>
 		<string>org.provenance-emu.game.play</string>

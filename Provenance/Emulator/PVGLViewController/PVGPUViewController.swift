@@ -8,6 +8,10 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 #if os(macOS)
 public typealias BaseViewController = NSViewController
 #elseif targetEnvironment(macCatalyst)
@@ -33,25 +37,26 @@ struct float4 {
 
 @usableFromInline
 struct CRT_Data {
-    var DisplayRect: float4
-    var EmulatedImageSize: float2
-    var FinalRes: float2
+    var DisplayRect: SIMD4<Float> // float4
+    var EmulatedImageSize: SIMD2<Float> //float2
+    var FinalRes: SIMD2<Float> // float2
 }
 
 //#pragma pack(push,4)
 //@_rawLayout(size: 16, alignment: 4)
 @usableFromInline
 struct SimpleCrtUniforms {
-    var mame_screen_dst_rect: float4
-    var mame_screen_src_rect: float4
-    var curv_vert: Float = 5.0   // 5.0 default  1.0, 10.0
-    var curv_horiz: Float = 4.0   // 4.0 default 1.0, 10.0
-    var curv_strength: Float = 0.25 // 0.25 default 0.0, 1.0
-    var light_boost: Float = 1.2  // 1.3 default 0.1, 3.0
-    var vign_strength: Float = 0.05 // 0.05 default 0.0, 1.0
-    var zoom_out: Float = 1.1     // 1.1 default 0.01, 5.0
+    var mameScreenDstRect: SIMD4<Float>
+    var mameScreenSrcRect: SIMD4<Float>
+    var curvVert: Float = 5.0   // 5.0 default  1.0, 10.0
+    var curvHoriz: Float = 4.0   // 4.0 default 1.0, 10.0
+    var curvStrength: Float = 0.25 // 0.25 default 0.0, 1.0
+    var lightBoost: Float = 1.2  // 1.3 default 0.1, 3.0
+    var vignStrength: Float = 0.05 // 0.05 default 0.0, 1.0
+    var zoomOut: Float = 1.1     // 1.1 default 0.01, 5.0
     var brightness: Float = 1.0  // 1.0 default 0.666, 1.333
-};
+}
+
 //#pragma pack(pop)
 
 @frozen
@@ -73,7 +78,7 @@ public struct RenderSettings {
 @objc
 @objcMembers
 public class PVGPUViewController: BaseViewController {
-    var screenType: String? = nil
+    var screenType: String = "crt"
 
     #if os(macOS) || targetEnvironment(macCatalyst)
     public var isPaused: Bool = false

@@ -145,7 +145,7 @@ public final class DirectoryWatcher: NSObject {
 
             let filesize: UInt64 = attributes[FileAttributeKey.size] as? UInt64 ?? 0
             let immutable: Bool = attributes[FileAttributeKey.immutable] as? Bool ?? false
-            print("immutable \(immutable)")
+            VLOG("immutable \(immutable)")
 
             DispatchQueue.main.async { [weak self] () in
                 if let weakSelf = self {
@@ -295,7 +295,7 @@ public final class DirectoryWatcher: NSObject {
                 let crcs = Set(entries.filter {
                     guard let crc = $0.info.crc, crc != 0 else { return false }
                     return true
-                }.map { String($0.info.crc!, radix: 16, uppercase: true) })
+                }.map { String($0.info.crc ?? 0, radix: 16, uppercase: true) })
                 if let releaseID = GameImporter.shared.releaseID(forCRCs: crcs) {
                     ILOG("Found a release ID \(releaseID) inside this 7Zip")
                 }

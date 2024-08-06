@@ -1,13 +1,13 @@
 {
-  "originHash" : "06baed3fb9978b164c11c51e4f590c71322eec3ef4c6258d8b00df668b71142e",
+  "originHash" : "b5a0b42fbd4b5319d0cc085ec410c12ef0bec19502ffb08a03119c463e75c36f",
   "pins" : [
     {
       "identity" : "swiftgenplugin",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftGen/SwiftGenPlugin",
+      "location" : "https://github.com/BookBeat/SwiftGenPlugin.git",
       "state" : {
-        "revision" : "879b85a470cacd70c19e22eb7e11a3aed66f4068",
-        "version" : "6.6.2"
+        "branch" : "xcodeproject-support",
+        "revision" : "1228d5a43ca791db0719d42f641c34a00b9c32f3"
       }
     }
   ],

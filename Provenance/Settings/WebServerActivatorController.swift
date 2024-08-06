@@ -10,6 +10,7 @@ import PVLibrary
 import PVSupport
 import Reachability
 import UIKit
+import PVWebServer
 
 protocol WebServerActivatorController: AnyObject {
     func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?)
@@ -55,7 +56,7 @@ protocol WebServerActivatorController: AnyObject {
         func showServer() {
             let ipURL: String = PVWebServer.shared.urlString
             let url = URL(string: ipURL)!
-			#if targetEnvironment(macCatalyst)
+			#if targetEnvironment(macCatalyst) || os(macOS)
 			UIApplication.shared.open(url, options: [:]) { completed in
 				ILOG("Completed: \(completed ? "Yes":"No")")
 			}

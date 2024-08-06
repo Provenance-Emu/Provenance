@@ -333,5 +333,5 @@ extension MirroredSettings {
     public dynamic var largeGameArt = true
 #endif
 
-    public dynamic var theme: ThemeOptions = .dark
+    public dynamic var theme: ThemeOptionsStandard = .dark
 }

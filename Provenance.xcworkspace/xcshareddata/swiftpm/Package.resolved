@@ -33,8 +33,26 @@
         "repositoryURL": "https://github.com/groue/GRDB.swift.git",
         "state": {
           "branch": null,
-          "revision": "639fa9168d36931b36a79e60dc06b7d23852f1f4",
-          "version": "6.27.0"
+          "revision": "1cd6c7cbffa7ecac14a8a7c0f27d5c3e7c35c87e",
+          "version": "6.29.0"
+        }
+      },
+      {
+        "package": "HexColors",
+        "repositoryURL": "https://github.com/alvmo/HexColors.git",
+        "state": {
+          "branch": null,
+          "revision": "c4eec839362649c478b1d39a57ec47e194bf7929",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "MBProgressHUD",
+        "repositoryURL": "https://github.com/jdg/MBProgressHUD.git",
+        "state": {
+          "branch": null,
+          "revision": "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
+          "version": "1.2.0"
         }
       },
       {
@@ -60,7 +78,7 @@
         "repositoryURL": "https://github.com/ashleymills/Reachability.swift",
         "state": {
           "branch": "master",
-          "revision": "57da4b1270cab7c2228919eabc0e4e1bf93e48ea",
+          "revision": "7cbd73f46a7dfaeca079e18df7324c6de6d1834a",
           "version": null
         }
       },
@@ -69,8 +87,8 @@
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "9cf7ef4ad8e2f4c7a519c9a395ca3d253bb87aa8",
-          "version": "14.6.2"
+          "revision": "60867846a0aca0c7da5e482282b293236f730216",
+          "version": "14.11.0"
         }
       },
       {
@@ -78,8 +96,8 @@
         "repositoryURL": "https://github.com/realm/realm-swift.git",
         "state": {
           "branch": null,
-          "revision": "6e0772315809ff0a11cd265126350039a6aac59d",
-          "version": "10.50.1"
+          "revision": "13b12f8665f0c8173693a4d3f6e6d32b5a24d9a9",
+          "version": "10.52.2"
         }
       },
       {
@@ -93,7 +111,7 @@
       },
       {
         "package": "RxRealm",
-        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm",
+        "repositoryURL": "https://github.com/RxSwiftCommunity/RxRealm.git",
         "state": {
           "branch": null,
           "revision": "267cc8b587a5d5c74b57105050f9838cf20e2541",
@@ -110,8 +128,17 @@
         }
       },
       {
+        "package": "SideKit",
+        "repositoryURL": "https://github.com/SideStore/SideKit.git",
+        "state": {
+          "branch": "main",
+          "revision": "ab959a54fc2217464ffabd09322ec3351e3ca456",
+          "version": null
+        }
+      },
+      {
         "package": "SQLite.swift",
-        "repositoryURL": "https://github.com/stephencelis/SQLite.swift",
+        "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
         "state": {
           "branch": null,
           "revision": "a95fc6df17d108bd99210db5e8a9bac90fe984b8",
@@ -137,12 +164,30 @@
         }
       },
       {
-        "package": "SwiftGenPlugin",
-        "repositoryURL": "https://github.com/SwiftGen/SwiftGenPlugin",
+        "package": "swift-syntax",
+        "repositoryURL": "https://github.com/apple/swift-syntax.git",
         "state": {
           "branch": null,
-          "revision": "879b85a470cacd70c19e22eb7e11a3aed66f4068",
-          "version": "6.6.2"
+          "revision": "64889f0c732f210a935a0ad7cda38f77f876262d",
+          "version": "509.1.1"
+        }
+      },
+      {
+        "package": "SwiftGenPlugin",
+        "repositoryURL": "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
+        "state": {
+          "branch": "develop",
+          "revision": "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f",
+          "version": null
+        }
+      },
+      {
+        "package": "SwiftMacros",
+        "repositoryURL": "https://github.com/ShenghaiWang/SwiftMacros.git",
+        "state": {
+          "branch": null,
+          "revision": "fcb92029bb19594f9ae9a079e8aa5fc7acc77c10",
+          "version": "1.4.1"
         }
       },
       {
@@ -155,12 +200,21 @@
         }
       },
       {
-        "package": "ZipArchive",
-        "repositoryURL": "https://github.com/ZipArchive/ZipArchive",
+        "package": "Turbo-Base64.swift",
+        "repositoryURL": "https://github.com/JoeMatt/Turbo-Base64.swift.git",
         "state": {
-          "branch": null,
-          "revision": "38e0ce0598e06b034271f296a8e15b149c91aa19",
-          "version": "2.4.3"
+          "branch": "master",
+          "revision": "8195ad501aa970e7b9cbe26bc6800f4e3e6e192a",
+          "version": null
+        }
+      },
+      {
+        "package": "ZipArchive",
+        "repositoryURL": "https://github.com/ZipArchive/ZipArchive.git",
+        "state": {
+          "branch": "master",
+          "revision": "79d4dc9729096c6ad83dd3cee2b9f354d1b4ab7b",
+          "version": null
         }
       },
       {
@@ -168,7 +222,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "78955f5f9ddb3601566884ce217d91c132f5edc1",
+          "revision": "6b16169ccf018fc310dd52353c66ba2759b7cffa",
           "version": null
         }
       }

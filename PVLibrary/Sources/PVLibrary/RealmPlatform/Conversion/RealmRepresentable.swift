@@ -5,5 +5,6 @@ public protocol RealmRepresentable {
 
     var uid: String { get }
 
+    @MainActor
     func asRealm() -> RealmType
 }

@@ -11,6 +11,7 @@
 import Foundation
 import SwiftUI
 import PVLibrary
+import PVThemes
 
 #if os(tvOS) || targetEnvironment(macCatalyst) || os(macOS)
     public let PVRowHeight: CGFloat = 300.0
@@ -139,7 +140,7 @@ struct GameItemThumbnail: SwiftUI.View {
     let radius: CGFloat = 3.0
     var body: some SwiftUI.View {
         ArtworkImageBaseView(artwork: artwork, gameTitle: gameTitle, boxartAspectRatio: boxartAspectRatio)
-            .overlay(RoundedRectangle(cornerRadius: radius).stroke(Theme.currentTheme.gameLibraryText.swiftUIColor.opacity(0.5), lineWidth: 1))
+            .overlay(RoundedRectangle(cornerRadius: radius).stroke(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor.opacity(0.5), lineWidth: 1))
             .background(GeometryReader { geometry in
                 Color.clear.preference(
                     key: ArtworkDynamicWidthPreferenceKey.self,
@@ -198,7 +199,7 @@ struct GameItemSubtitle: SwiftUI.View {
     var body: some SwiftUI.View {
         Text(text ?? "blank")
             .font(.system(size: viewType.subtitleFontSize))
-            .foregroundColor(Theme.currentTheme.gameLibraryText.swiftUIColor)
+            .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
             .opacity(text != nil ? 1.0 : 0.0) // hide rather than not render so that cell keeps consistent height
@@ -228,7 +229,7 @@ extension SwiftImage {
         #if os(tvOS)
         let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
         #else
-        let backgroundColor: UIColor = Theme.currentTheme.settingsCellBackground!
+        let backgroundColor: UIColor = ThemeManager.shared.currentTheme.settingsCellBackground!
         #endif
 
         #if os(tvOS)
@@ -238,7 +239,7 @@ extension SwiftImage {
         #else
         let attributedText = NSAttributedString(string: gameTitle, attributes: [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0),
-            NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
+            NSAttributedString.Key.foregroundColor: ThemeManager.shared.currentTheme.settingsCellText!])
         #endif
 
         let height: CGFloat = CGFloat(PVThumbnailMaxResolution)

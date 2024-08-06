@@ -1,13 +1,23 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
+let HAVE_COCOATOUCH = "1"
+let INLINE = "inline"
+let NO_ZIP = "0"
+let USE_STRUCTS = "1"
+let __GCCUNIX__ = "1"
+let __LIBRETRO__ = "1"
+
+let VIDEO_UPSCALE = "1"
+
+
 let package = Package(
     name: "PVPokeMini",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
+        .iOS(.v17),
+        .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v14),
@@ -17,22 +27,24 @@ let package = Package(
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "PVPokeMini",
-            targets: ["PVPokeMini", "PokeMiniSwift", "libpokemini"]),
+            targets: ["PVPokeMini", "PokeMiniSwift"]),
         .library(
             name: "PVPokeMini-Dynamic",
             type: .dynamic,
-            targets: ["PVPokeMini", "PokeMiniSwift", "libpokemini"]),
+            targets: ["PVPokeMini", "PokeMiniSwift"]),
         .library(
             name: "PVPokeMini-Static",
             type: .static,
-            targets: ["PVPokeMini", "PokeMiniSwift", "libpokemini"])
+            targets: ["PVPokeMini", "PokeMiniSwift"])
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
-        .package(path: "../../PVObjCUtils")
+        .package(path: "../../PVObjCUtils"),
+
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
         .target(
@@ -47,21 +59,17 @@ let package = Package(
                 "libpokemini"
             ],
             resources: [
-                .copy("Resources/Core.plist")
+                .process("Resources/Core.plist")
             ],
             publicHeadersPath: "include",
             cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .define("NO_ZIP", to: "1"),
-                .headerSearchPath("../libpokemini/include"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/src"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/src/m68000"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/libretro-common"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/libretro-common/include"),
+                .define("HAVE_COCOATOUCH", to: HAVE_COCOATOUCH),
+                .define("INLINE", to: INLINE),
+                .define("NO_ZIP", to: NO_ZIP),
+                .define("USE_STRUCTS", to: USE_STRUCTS),
+                .define("__GCCUNIX__", to: __GCCUNIX__),
+                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("VIDEO_UPSCALE", to: VIDEO_UPSCALE),
             ]
         ),
 
@@ -75,18 +83,20 @@ let package = Package(
                 "libpokemini",
                 "PokeMiniC"
             ],
+            resources: [
+                .process("Resources/Core.plist")
+            ],
             cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .define("NO_ZIP", to: "1"),
-                .headerSearchPath("../libpokemini/include"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/src"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/src/m68000"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/libretro-common"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/libretro-common/include"),
+                .define("HAVE_COCOATOUCH", to: HAVE_COCOATOUCH),
+                .define("INLINE", to: INLINE),
+                .define("NO_ZIP", to: NO_ZIP),
+                .define("USE_STRUCTS", to: USE_STRUCTS),
+                .define("__GCCUNIX__", to: __GCCUNIX__),
+                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("VIDEO_UPSCALE", to: VIDEO_UPSCALE),
+            ],
+            plugins: [
+                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
 
@@ -99,20 +109,15 @@ let package = Package(
                 "PVAudio",
                 "libpokemini",
             ],
+            packageAccess: true,
             cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .define("NO_ZIP", to: "1"),
-                .headerSearchPath("../libpokemini/include/"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/source"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/freebios/"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/resource/"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/libretro/"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/libretro/libretro-common"),
-                .headerSearchPath("../libpokemini/PokeMini-libretro/libretro/libretro-common/include"),
+                .define("HAVE_COCOATOUCH", to: HAVE_COCOATOUCH),
+                .define("INLINE", to: INLINE),
+                .define("NO_ZIP", to: NO_ZIP),
+                .define("USE_STRUCTS", to: USE_STRUCTS),
+                .define("__GCCUNIX__", to: __GCCUNIX__),
+                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("VIDEO_UPSCALE", to: VIDEO_UPSCALE),
             ]
         ),
 
@@ -159,12 +164,13 @@ let package = Package(
             ],
             packageAccess: true,
             cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .define("NO_ZIP", to: "1"),
+                .define("INLINE", to: INLINE),
+                .define("USE_STRUCTS", to: USE_STRUCTS),
+                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("HAVE_COCOATOUCH", to: HAVE_COCOATOUCH),
+                .define("__GCCUNIX__", to: __GCCUNIX__),
+                .define("NO_ZIP", to: NO_ZIP),
+                .define("VIDEO_UPSCALE", to: VIDEO_UPSCALE),
                 .headerSearchPath("include"),
                 .headerSearchPath("PokeMini-libretro/source"),
                 .headerSearchPath("PokeMini-libretro/freebios/"),
@@ -173,9 +179,24 @@ let package = Package(
                 .headerSearchPath("PokeMini-libretro/libretro/libretro-common"),
                 .headerSearchPath("PokeMini-libretro/libretro/libretro-common/include"),
             ]
+        ),
+
+        // MARK: Tests
+        .testTarget(
+            name: "PVPokeMiniTests",
+            dependencies: [
+                "PVPokeMini",
+            ]
+        ),
+
+        .testTarget(
+            name: "PVPokeMini_DynamicTests",
+            dependencies: [
+                "PVPokeMini"
+            ]
         )
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageVersions: [.v5, .v6],
     cLanguageStandard: .gnu17,
     cxxLanguageStandard: .gnucxx14
 )

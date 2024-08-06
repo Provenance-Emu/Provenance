@@ -11,6 +11,7 @@ import PVSupport
 import RealmSwift
 import UIKit
 import ZipArchive
+import MBProgressHUD
 
 private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
 
@@ -165,11 +166,11 @@ extension GameSharingViewController where Self: UIViewController {
             let zipPath = tempDirURL.appendingPathComponent("\(game.title)-\(game.system.shortNameAlt ?? game.system.shortName).zip", isDirectory: false)
             let paths: [String] = files.map { $0.path }
 
-            let hud = MBProgressHUD.showAdded(to: view, animated: true)!
+            let hud = MBProgressHUD.showAdded(to: view, animated: true)
             hud.isUserInteractionEnabled = false
             hud.mode = .indeterminate
-            hud.labelText = "Creating ZIP"
-            hud.detailsLabelText = "Please be patient, this could take a while…"
+            hud.label.text = "Creating ZIP"
+            hud.detailsLabel.text = "Please be patient, this could take a while…"
 
             DispatchQueue.global(qos: .background).async {
                 let success = SSZipArchive.createZipFile(atPath: zipPath.path, withFilesAtPaths: paths)
@@ -177,7 +178,7 @@ extension GameSharingViewController where Self: UIViewController {
                 DispatchQueue.main.async { [weak self] in
                     guard let `self` = self else { return }
 
-                    hud.hide(true, afterDelay: 0.1)
+                    hud.hide(animated: true, afterDelay: 0.1)
                     guard success else {
                         deleteTempDir()
                         ELOG("Failed to zip of game files")
@@ -497,7 +498,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         present(coreChoiceAlert, animated: true)
     }
 
-    func load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState? = nil) {
+    func load(_ game: PVGame, sender: Any? = nil, core: PVCore? = nil, saveState: PVSaveState? = nil) {
         guard !(presentedViewController is PVEmulatorViewController) else {
             let currentGameVC = presentedViewController as! PVEmulatorViewController
             displayAndLogError(withTitle: "Cannot open new game", message: "A game is already running the game \(currentGameVC.game.title).")
@@ -522,6 +523,7 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         do {
             try canLoad(game)
+            VLOG("canLoad \(game.title)")
             // Init emulator VC
 
             guard let system = game.system else {
@@ -529,11 +531,17 @@ extension GameLaunchingViewController where Self: UIViewController {
                 return
             }
 
+            VLOG("\(game.title) matched system \(system.name)\n Cores: \(system.cores.map{$0.principleClass}.joined(separator: ", "))")
+
             let cores = system.cores.filter({
                 guard !$0.disabled else {
+                    ILOG("Filtering core \($0.identifier) as `disabled`, unless `unsupportedCores` == true")
                     return PVSettingsModel.shared.debugOptions.unsupportedCores
                 }
-                guard $0.hasCoreClass else { return false }
+                guard $0.hasCoreClass else {
+                    ILOG("Filtering core \($0.identifier) as `.hasCoreClass` == `false`. Class: \($0.principleClass)")
+                    return false
+                }
                 return true
             })
 
@@ -549,7 +557,9 @@ extension GameLaunchingViewController where Self: UIViewController {
                 if cores.contains(saveState.core) {
                     selectedCore = saveState.core
                 } else {
-                    // TODO: Present Error
+                    ELOG("Core doesn't match save state system")
+                    displayAndLogError(withTitle: "Cannot open game", message: "Available cores does not match core used to save state.")
+                    return
                 }
             }
 
@@ -574,7 +584,11 @@ extension GameLaunchingViewController where Self: UIViewController {
                 // User has no core preference, present dialogue to pick
                 presentCoreSelection(forGame: game, sender: sender)
             } else {
-                presentEMU(withCore: selectedCore ?? cores.first!, forGame: game, fromSaveState: saveState, source: sender as? UIView ?? self.view)
+                guard let selectedCore = selectedCore ?? cores.first else {
+                    displayAndLogError(withTitle: "Cannot open game", message: "No core found.")
+                    return
+                }
+                presentEMU(withCore: selectedCore, forGame: game, fromSaveState: saveState, source: sender as? UIView ?? self.view)
 //                let contentId : String = "\(system.shortName):\(game.title)"
 //                let customAttributes : [String : Any] = ["timeSpent" : game.timeSpentInGame, "md5" : game.md5Hash]
 //                Answers.logContentView(withName: "Play ROM",

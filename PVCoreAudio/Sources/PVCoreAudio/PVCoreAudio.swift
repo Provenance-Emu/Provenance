@@ -20,10 +20,10 @@ import PVCoreBridge
 
 public typealias AudioDeviceID = UInt32
 
-final class OEGameAudioContext {
-    var buffer: RingBuffer
-    var channelCount: Int32
-    var bytesPerSample: Int32
+final class OEGameAudioContext: Sendable {
+    let buffer: RingBuffer
+    let channelCount: Int32
+    let bytesPerSample: Int32
 
     init(buffer: RingBuffer, channelCount: Int32, bytesPerSample: Int32) {
         self.buffer = buffer
@@ -32,25 +32,37 @@ final class OEGameAudioContext {
     }
 }
 
-var recordingFile: ExtAudioFileRef?
+@MainActor var recordingFile: ExtAudioFileRef?
 
 import AudioToolbox
 
 @objc(OEGameAudio)
-public class OEGameAudio: NSObject {
+public final class OEGameAudio: NSObject, Sendable{
+    @MainActor
     private var _contexts: [OEGameAudioContext] = [OEGameAudioContext]()
+    @MainActor
     private var _outputDeviceID: NSNumber?
+    @MainActor
     @objc public var running: Bool = false
 
+    @MainActor
     @objc public var gameCore: EmulatorCoreAudioDataSource?
-    private var mGraph: AUGraph!
-    private var mOutputNode: AUNode = 0
-    private var mOutputUnit: AudioUnit?
-    private var mMixerNode: AUNode = 0
-    private var mMixerUnit: AudioUnit?
-    private var mConverterNode: AUNode = 0
-    private var mConverterUnit: AudioUnit?
 
+    @MainActor
+    internal struct AUMetaData: Sendable {
+        var mGraph: AUGraph! = nil
+        var mOutputNode: AUNode = 0
+        var mOutputUnit: AudioUnit? = nil
+        var mMixerNode: AUNode = 0
+        var mMixerUnit: AudioUnit? = nil
+        var mConverterNode: AUNode = 0
+        var mConverterUnit: AudioUnit? = nil
+    }
+
+    @MainActor
+    internal var auMetaData: AUMetaData = .init()
+
+    @MainActor
     @objc public var volume: Float = 1.0 {
         didSet {
             volumeUpdated()
@@ -58,11 +70,13 @@ public class OEGameAudio: NSObject {
     }
 
     // No default version for this class
+    @MainActor
     override private init() {
         super.init()
     }
 
     // Designated Initializer
+    @MainActor
     @objc public init(core: EmulatorCoreAudioDataSource) {
         super.init()
 
@@ -82,45 +96,52 @@ public class OEGameAudio: NSObject {
     }
 
     deinit {
-        AUGraphUninitialize(mGraph)
-        DisposeAUGraph(mGraph)
+        let auMetaData = self.auMetaData
+        Task{ @MainActor in
+            AUGraphUninitialize(auMetaData.mGraph)
+            DisposeAUGraph(auMetaData.mGraph)
+        }
     }
 
-    @objc public func pauseAudio() {
+    @MainActor @objc public func pauseAudio() {
         stopAudio()
         running = false
     }
 
+    @MainActor
     @objc public func startAudio() {
         createGraph()
         running = true
     }
 
-    @objc public func stopAudio() {
-        if let recordingFile = recordingFile {
-            ExtAudioFileDispose(recordingFile)
+    @MainActor @objc public func stopAudio() {
+        Task { @MainActor in
+            if let recordingFile = recordingFile {
+                ExtAudioFileDispose(recordingFile)
+            }
         }
-        AUGraphStop(mGraph)
-        AUGraphClose(mGraph)
-        AUGraphUninitialize(mGraph)
+        AUGraphStop(auMetaData.mGraph)
+        AUGraphClose(auMetaData.mGraph)
+        AUGraphUninitialize(auMetaData.mGraph)
         running = false
     }
 
+    @MainActor
     private func createGraph() {
         var err: OSStatus
 
-        AUGraphStop(mGraph)
-        AUGraphClose(mGraph)
-        AUGraphUninitialize(mGraph)
+        AUGraphStop(auMetaData.mGraph)
+        AUGraphClose(auMetaData.mGraph)
+        AUGraphUninitialize(auMetaData.mGraph)
 
         // Create the graph
-        err = NewAUGraph(&mGraph)
+        err = NewAUGraph(&auMetaData.mGraph)
         if err != 0 {
             ELOG("NewAUGraph failed")
         }
 
         // Open the graph
-        err = AUGraphOpen(mGraph)
+        err = AUGraphOpen(auMetaData.mGraph)
         if err != 0 {
             ELOG("couldn't open graph")
         }
@@ -138,12 +159,12 @@ public class OEGameAudio: NSObject {
         desc.componentFlags = 0
 
         // Create the output node
-        err = AUGraphAddNode(mGraph, &desc, &mOutputNode)
+        err = AUGraphAddNode(auMetaData.mGraph, &desc, &auMetaData.mOutputNode)
         if err != 0 {
             ELOG("couldn't create node for output unit")
         }
 
-        err = AUGraphNodeInfo(mGraph, mOutputNode, nil, &mOutputUnit)
+        err = AUGraphNodeInfo(auMetaData.mGraph, auMetaData.mOutputNode, nil, &auMetaData.mOutputUnit)
         if err != 0 {
             ELOG("couldn't get output from node")
         }
@@ -153,12 +174,12 @@ public class OEGameAudio: NSObject {
         desc.componentManufacturer = kAudioUnitManufacturer_Apple
 
         // Create the mixer node
-        err = AUGraphAddNode(mGraph, &desc, &mMixerNode)
+        err = AUGraphAddNode(auMetaData.mGraph, &desc, &auMetaData.mMixerNode)
         if err != 0 {
             ELOG("couldn't create node for file player")
         }
 
-        err = AUGraphNodeInfo(mGraph, mMixerNode, nil, &mMixerUnit)
+        err = AUGraphNodeInfo(auMetaData.mGraph, auMetaData.mMixerNode, nil, &auMetaData.mMixerUnit)
         if err != 0 {
             ELOG("couldn't get player unit from node")
         }
@@ -178,12 +199,12 @@ public class OEGameAudio: NSObject {
             }
 
             // Create the converter node
-            err = AUGraphAddNode(mGraph, &desc, &mConverterNode)
+            err = AUGraphAddNode(auMetaData.mGraph, &desc, &auMetaData.mConverterNode)
             if err != 0 {
                 ELOG("couldn't create node for converter")
             }
 
-            err = AUGraphNodeInfo(mGraph, mConverterNode, nil, &mConverterUnit)
+            err = AUGraphNodeInfo(auMetaData.mGraph, auMetaData.mConverterNode, nil, &auMetaData.mConverterUnit)
             if err != 0 {
                 ELOG("couldn't get player unit from converter")
             }
@@ -225,7 +246,7 @@ public class OEGameAudio: NSObject {
             renderCallbackStruct.inputProcRefCon = UnsafeMutableRawPointer(Unmanaged.passUnretained(_contexts[i]).toOpaque())
 
 
-            err = AudioUnitSetProperty(mConverterUnit!, kAudioUnitProperty_SetRenderCallback,
+            err = AudioUnitSetProperty(auMetaData.mConverterUnit!, kAudioUnitProperty_SetRenderCallback,
                                        kAudioUnitScope_Input, 0, &renderCallbackStruct, UInt32(MemoryLayout<AURenderCallbackStruct>.size))
             if err != 0 {
                 ELOG("Couldn't set the render callback")
@@ -246,14 +267,14 @@ public class OEGameAudio: NSObject {
             mDataFormat.mChannelsPerFrame = channelCount
             mDataFormat.mBitsPerChannel = 8 * bytesPerSample
 
-            err = AudioUnitSetProperty(mConverterUnit!, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &mDataFormat, UInt32(MemoryLayout<AudioStreamBasicDescription>.size))
+            err = AudioUnitSetProperty(auMetaData.mConverterUnit!, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &mDataFormat, UInt32(MemoryLayout<AudioStreamBasicDescription>.size))
             if err != 0 {
                 ELOG("couldn't set player's input stream format")
             } else {
                 DLOG("Set the player's input stream format")
             }
 
-            err = AUGraphConnectNodeInput(mGraph, mConverterNode, 0, mMixerNode, UInt32(i))
+            err = AUGraphConnectNodeInput(auMetaData.mGraph, auMetaData.mConverterNode, 0, auMetaData.mMixerNode, UInt32(i))
             if err != 0 {
                 ELOG("Couldn't connect the converter to the mixer")
             } else {
@@ -262,29 +283,29 @@ public class OEGameAudio: NSObject {
         }
 
         // Connect the player to the output unit (stream format will propagate)
-        err = AUGraphConnectNodeInput(mGraph, mMixerNode, 0, mOutputNode, 0)
+        err = AUGraphConnectNodeInput(auMetaData.mGraph, auMetaData.mMixerNode, 0, auMetaData.mOutputNode, 0)
         if err != 0 {
             ELOG("Could not connect the input of the output")
         } else {
             DLOG("Connected input of the output")
         }
 
-        AudioUnitSetParameter(mOutputUnit!, AudioUnitParameterUnit.linearGain.rawValue, kAudioUnitScope_Global, 0, 1.0, 0)
+        AudioUnitSetParameter(auMetaData.mOutputUnit!, AudioUnitParameterUnit.linearGain.rawValue, kAudioUnitScope_Global, 0, 1.0, 0)
 
         var outputDeviceID = _outputDeviceID?.uint32Value ?? 0
-        err = AudioUnitSetProperty(mOutputUnit!, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &outputDeviceID, UInt32(MemoryLayout<AudioDeviceID>.size))
+        err = AudioUnitSetProperty(auMetaData.mOutputUnit!, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &outputDeviceID, UInt32(MemoryLayout<AudioDeviceID>.size))
         if err != 0 {
             ELOG("couldn't set device properties")
         }
 
-        err = AUGraphInitialize(mGraph)
+        err = AUGraphInitialize(auMetaData.mGraph)
         if err != 0 {
             ELOG("couldn't initialize graph")
         } else {
             DLOG("Initialized the graph")
         }
 
-        err = AUGraphStart(mGraph)
+        err = AUGraphStart(auMetaData.mGraph)
         if err != 0 {
             ELOG("couldn't start graph")
         } else {
@@ -294,31 +315,33 @@ public class OEGameAudio: NSObject {
         volumeUpdated()
     }
 
-    @objc public lazy var outputDeviceID: AudioDeviceID = _outputDeviceID?.uint32Value ?? 0 {
+    @MainActor
+    @objc public var outputDeviceID: AudioDeviceID = 0 {
         didSet {
             _setOutputDeviceID(outputDeviceID)
         }
     }
 
+    @MainActor
     func _setOutputDeviceID(_ outputDeviceID: AudioDeviceID) {
         var outputDeviceID = outputDeviceID
         let currentID = self.outputDeviceID
         if outputDeviceID != currentID {
             _outputDeviceID = (outputDeviceID == 0 ? nil : NSNumber(value: outputDeviceID))
 
-            if let mOutputUnit = mOutputUnit {
+            if let mOutputUnit = auMetaData.mOutputUnit {
                 AudioUnitSetProperty(mOutputUnit, kAudioOutputUnitProperty_CurrentDevice, kAudioUnitScope_Global, 0, &outputDeviceID, UInt32(MemoryLayout<AudioDeviceID>.size))
             }
         }
     }
 
-    private func volumeUpdated() {
-        if let mMixerUnit = mMixerUnit {
+    @MainActor private func volumeUpdated() {
+        if let mMixerUnit = auMetaData.mMixerUnit {
             AudioUnitSetParameter(mMixerUnit, kMultiChannelMixerParam_Volume, kAudioUnitScope_Input, 0, volume, 0)
         }
     }
 
-    @objc public func volumeUp() {
+    @MainActor @objc public func volumeUp() {
         var newVolume = volume + 0.1
         if newVolume > 1.0 {
             newVolume = 1.0
@@ -327,7 +350,7 @@ public class OEGameAudio: NSObject {
         self.volume = newVolume
     }
 
-    @objc public func volumeDown() {
+    @MainActor @objc public func volumeDown() {
         var newVolume = volume - 0.1
         if newVolume < 0.0 {
             newVolume = 0.0

@@ -7,9 +7,13 @@
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
 #if canImport(UIKit)
+
+// MARK: - Imports
+
 import GameController
 import PVLogging
 
+// MARK: - PViCadeController
 
 public class PViCadeController: GCController {
     internal private(set) var iCadeGamepad: PViCadeGamepad = PViCadeGamepad()
@@ -22,7 +26,10 @@ public class PViCadeController: GCController {
     }
 
     deinit {
-        reader.stopListening()
+        let _reader = self.reader
+        DispatchQueue.main.async { [weak _reader] in
+            _reader?.stopListening()
+        }
     }
 
     func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {

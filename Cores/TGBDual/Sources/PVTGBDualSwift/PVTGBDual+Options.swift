@@ -11,6 +11,7 @@ import PVSupport
 import PVCoreBridge
 import PVLogging
 import libtgbdual
+import PVEmulatorCore
 
 /*
  { "tgbdual_gblink_enable", "Link cable emulation (reload); disabled|enabled" },
@@ -20,8 +21,8 @@ import libtgbdual
  { "tgbdual_audio_output", "Audio output; Game Boy #1|Game Boy #2" },
  */
 
-extension PVTGBDualCore: CoreOptional {
-    public static var options: [CoreOption] = {
+extension PVTGBDualCore: @preconcurrency CoreOptional {
+    @MainActor public static var options: [CoreOption] {
         var options = [CoreOption]()
 
         let consoleGroup = CoreOption.group(.init(title: "Console",
@@ -41,52 +42,52 @@ extension PVTGBDualCore: CoreOptional {
         options.append(audioGroup)
 
         return options
-    }()
+    }
 
     // MARK: Link Cable
-    static var linkCableEmulationOption: CoreOption = {
+    @MainActor static var linkCableEmulationOption: CoreOption {
         .bool(.init(title: "tgbdual_gblink_enable",
                     description: "Link cable emulation (reload)",
                     requiresRestart: true), defaultValue: false)
-    }()
+    }
 
     // MARK: Video
-    static var screenPlacementOption: CoreOption = {
+    @MainActor static var screenPlacementOption: CoreOption {
         .enumeration(.init(title: "Screen layout"),
                      values: [
                         .init(title: "Left/Right", value: 0),
                         .init(title: "Top/Down", value: 1),
                      ])
-    }()
+    }
 
-    static var switchScreensOptions: CoreOption = {
+    @MainActor static var switchScreensOptions: CoreOption {
         .enumeration(.init(title: "Switch Screen"),
                      values: [
                         .init(title: "Normal", value: 0),
                         .init(title: "Switched", value: 1),
                      ])
-    }()
+    }
 
-    static var showPlayerScreensOption: CoreOption = {
+    @MainActor static var showPlayerScreensOption: CoreOption {
         .enumeration(.init(title: "Show player screens"),
                      values: [
                         .init(title: "Both Players", value: 0),
                         .init(title: "Player 1 Only", value: 1),
                         .init(title: "Player 2 Only", value: 2),
                      ])
-    }()
+    }
 
     // MARK: Audio
-    static var audioOutputOption: CoreOption = {
+    @MainActor static var audioOutputOption: CoreOption {
         .enumeration(.init(title: "Audio output"),
                      values: [
                         .init(title: "Game Boy #1", value: 0),
                         .init(title: "Game Boy #2", value: 1),
                      ])
-    }()
+    }
 
 
-    @objc(getVariable:)
+    @MainActor @objc(getVariable:)
     public func get(variable: String) -> Any? {
         switch variable {
         case "tgbdual_gblink_enable":

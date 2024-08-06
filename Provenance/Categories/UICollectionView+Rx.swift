@@ -9,6 +9,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import UIKit
 
 extension Reactive where Base: UICollectionView {
     func longPressed<Model>(_ model: Model.Type) -> ControlEvent<(item: Model, at: IndexPath, point: CGPoint)> {

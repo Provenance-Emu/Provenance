@@ -1,4 +1,4 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,8 +6,8 @@ import PackageDescription
 let package = Package(
     name: "PVTGBDual",
     platforms: [
-        .iOS(.v13),
-        .tvOS(.v13),
+        .iOS(.v17),
+        .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
         .macCatalyst(.v14),
@@ -16,15 +16,15 @@ let package = Package(
     products: [
         .library(
             name: "PVTGBDual",
-            targets: ["PVTGBDual", "PVTGBDualSwift"]),
+            targets: ["PVTGBDual"]),
         .library(
             name: "PVTGBDual-Dynamic",
             type: .dynamic,
-            targets: ["PVTGBDual", "PVTGBDualSwift"]),
+            targets: ["PVTGBDual"]),
         .library(
             name: "PVTGBDual-Static",
             type: .static,
-            targets: ["PVTGBDual", "PVTGBDualSwift"]),
+            targets: ["PVTGBDual"]),
 
     ],
     dependencies: [
@@ -33,7 +33,9 @@ let package = Package(
         .package(path: "../../PVSupport"),
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
-        .package(path: "../../PVObjCUtils")
+        .package(path: "../../PVObjCUtils"),
+
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
         .target(
@@ -87,6 +89,9 @@ let package = Package(
                 "libtgbdual",
                 "PVTGBDualCPP"
             ],
+            resources: [
+                .process("Resources/Core.plist")
+            ],
             cSettings: [
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
@@ -105,6 +110,10 @@ let package = Package(
             ],
             swiftSettings: [
                 .interoperabilityMode(.Cxx)
+            ],
+            plugins: [
+                // Disabled until SwiftGenPlugin support Swift 6 concurrency
+                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
 
@@ -165,9 +174,15 @@ let package = Package(
                 .define("USE_STRUCTS", to: "1"),
                 .headerSearchPath("include/"),
             ]
-        )
+        ),
+
+        // MARK: Tests
+        .testTarget(
+            name: "PVTGBDualTests",
+            dependencies: [
+                "PVTGBDual"])
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageVersions: [.v5, .v6],
     cLanguageStandard: .gnu99,
-    cxxLanguageStandard: .gnucxx17
+    cxxLanguageStandard: .gnucxx20
 )

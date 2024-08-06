@@ -62,7 +62,8 @@ private final class PingThread: Thread {
         super.init()
         self.name = "WatchDog"
     }
-    
+
+    @MainActor
     override func main() {
         while !isCancelled {
             pingTaskIsRunning = true

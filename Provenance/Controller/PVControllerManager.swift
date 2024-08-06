@@ -647,6 +647,7 @@ extension ControllerButtonPressTableView {
                     }
                     if let _ = cell.accessoryView as? UISlider {
                         // TODO: do we care?
+                        WLOG("UISlider not implimented")
                     }
                 }
             }

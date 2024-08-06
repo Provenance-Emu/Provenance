@@ -9,20 +9,47 @@
 //
 
 import Foundation
-import Darwin.Mach.machine.vm_types
+//@preconcurrency import Darwin.Mach.machine.vm_types
+@preconcurrency import Darwin
 
-private func trunc_page(_ x: vm_size_t) -> vm_size_t
-{
-    return x & ~(vm_page_size - 1)
+// Create constant wrappers for vm_page_size and mach_task_self_
+private let VM_PAGE_SIZE: vm_size_t = {
+    var size: vm_size_t = 0
+    Darwin.host_page_size(Darwin.mach_host_self(), &size)
+    return size
+}()
+
+//@Sendable
+//private func getMachTaskSelf() -> mach_port_t {
+//    Darwin.mach_task_self_
+////    var task_info: mach_task_basic_info_t = mach_task_basic_info_t()
+//    //    Darwin.mach_task_flavor_t(MACH_TASK_BASIC_INFO, &task_info, MemoryLayout<mach_task_basic_info_t>.size)
+//
+//    //    Darwin.task_identity_token_get_task_port(token, flavor, port)
+//
+////    var task_info: thread_act_array_t = thread_act_array_t()
+////    Darwin.task_threads(mach_task_self(), &task_info, MemoryLayout<mach_task_basic_info_t>.size)
+//
+//}
+
+private let MACH_TASK_SELF: mach_port_t = {
+    mach_task_self_
+}()
+
+
+private func trunc_page(_ x: vm_size_t) -> vm_size_t {
+    @Sendable func truncate() -> vm_size_t {
+        return x & ~(VM_PAGE_SIZE - 1)
+    }
+    return truncate()
 }
 
-private func round_page(_ x: vm_size_t) -> vm_size_t
-{
-    return trunc_page(x + (vm_size_t(vm_page_size) - 1))
+private func round_page(_ x: vm_size_t) -> vm_size_t {
+    return trunc_page(x + (vm_size_t(VM_PAGE_SIZE) - 1))
 }
 
 @objc(OERingBuffer) @objcMembers
-public class RingBuffer: NSObject
+public final class RingBuffer: NSObject, Sendable
 {
     public var isEnabled: Bool = true
 
@@ -62,10 +89,10 @@ public class RingBuffer: NSObject
             self.bufferLength = Int(length)
 
             var bufferAddress: vm_address_t = 0
-            guard vm_allocate(mach_task_self_, &bufferAddress, vm_size_t(length * 2), VM_FLAGS_ANYWHERE) == ERR_SUCCESS else { continue }
+            guard vm_allocate(MACH_TASK_SELF, &bufferAddress, vm_size_t(length * 2), VM_FLAGS_ANYWHERE) == ERR_SUCCESS else { continue }
 
-            guard vm_deallocate(mach_task_self_, bufferAddress + length, length) == ERR_SUCCESS else {
-                vm_deallocate(mach_task_self_, bufferAddress, length)
+            guard vm_deallocate(MACH_TASK_SELF, bufferAddress + length, length) == ERR_SUCCESS else {
+                vm_deallocate(MACH_TASK_SELF, bufferAddress, length)
                 continue
             }
 
@@ -73,14 +100,14 @@ public class RingBuffer: NSObject
             var current_protection: vm_prot_t = 0
             var max_protection: vm_prot_t = 0
 
-            guard vm_remap(mach_task_self_, &virtualAddress, length, 0, 0, mach_task_self_, bufferAddress, 0, &current_protection, &max_protection, VM_INHERIT_DEFAULT) == ERR_SUCCESS else {
-                vm_deallocate(mach_task_self_, bufferAddress, length)
+            guard vm_remap(MACH_TASK_SELF, &virtualAddress, length, 0, 0, MACH_TASK_SELF, bufferAddress, 0, &current_protection, &max_protection, VM_INHERIT_DEFAULT) == ERR_SUCCESS else {
+                vm_deallocate(MACH_TASK_SELF, bufferAddress, length)
                 continue
             }
 
             guard virtualAddress == bufferAddress + length else {
-                vm_deallocate(mach_task_self_, virtualAddress, length)
-                vm_deallocate(mach_task_self_, bufferAddress, length)
+                vm_deallocate(MACH_TASK_SELF, virtualAddress, length)
+                vm_deallocate(MACH_TASK_SELF, bufferAddress, length)
 
                 continue
             }
@@ -96,7 +123,7 @@ public class RingBuffer: NSObject
     deinit
     {
         let address = UInt(bitPattern: self.buffer)
-        vm_deallocate(mach_task_self_, vm_address_t(address), vm_size_t(self.bufferLength * 2))
+        vm_deallocate(MACH_TASK_SELF, vm_address_t(address), vm_size_t(self.bufferLength * 2))
     }
 }
 

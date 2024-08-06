@@ -18,6 +18,7 @@ import OpenGLES
 @objc
 extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     open var alwaysUseMetal: Bool { false }
+    @MainActor
     open var aspectSize: CGSize { .zero }
     open var depthFormat: GLenum { 0 }
     open var emulationFPS: Double { 0.0 }
@@ -30,7 +31,10 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     open var screenRect: CGRect { .zero }
 
     @objc
-    open var videoBuffer: UnsafeRawPointer? { nil }
+    @MainActor
+    open var videoBuffer: UnsafeMutableRawPointer? { nil }
+
+    @MainActor
     open var videoBufferSize: CGSize { .zero }
 
     // Requires Override

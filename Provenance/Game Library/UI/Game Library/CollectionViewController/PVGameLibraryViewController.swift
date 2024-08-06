@@ -24,6 +24,12 @@ import RxSwift
 import UIKit
 import PVEmulatorCore
 import PVCoreBridge
+import MBProgressHUD
+import PVThemes
+
+#if canImport(PVWebServer)
+import PVWebServer
+#endif
 
 let PVGameLibraryHeaderViewIdentifier = "PVGameLibraryHeaderView"
 let PVGameLibraryFooterViewIdentifier = "PVGameLibraryFooterView"
@@ -164,7 +170,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     #endif
 
     var hud: MBProgressHUD!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         isInitialAppearance = true
@@ -178,8 +184,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.handleAppDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
 
         #if os(iOS)
-            navigationController?.navigationBar.backgroundColor = Theme.currentTheme.navigationBarBackgroundColor
-            navigationController?.navigationBar.tintColor = Theme.currentTheme.barButtonItemTint
+            navigationController?.navigationBar.backgroundColor = ThemeManager.shared.currentTheme.navigationBarBackgroundColor
+            navigationController?.navigationBar.tintColor = ThemeManager.shared.currentTheme.barButtonItemTint
 
             NotificationCenter.default.addObserver(forName: NSNotification.Name.PVInterfaceDidChangeNotification, object: nil, queue: nil, using: { (_: Notification) -> Void in
                 DispatchQueue.main.async {
@@ -515,7 +521,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             layout.sectionInsetReference = .fromSafeArea
         #endif
         
-        self.hud = MBProgressHUD(view: view)!
+        self.hud = MBProgressHUD(view: view)
         self.hud.isUserInteractionEnabled = true
         view.addSubview(self.hud)
         
@@ -524,30 +530,32 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             .subscribe(onNext: { state in
                     switch state {
                     case .hidden:
-                        self.hud.hide(true, afterDelay: 1.0)
+                        self.hud.hide(animated: true, afterDelay: 1.0)
                         break;
                     case .title(let title):
                         self.hud.mode = .indeterminate
-                        self.hud.labelText = title
-                        self.hud.show(true)
-                        self.hud.hide(true, afterDelay: 1.0)
+                        self.hud.label.text = title
+                        self.hud.label.numberOfLines = 2
+                        self.hud.show(animated: true)
+                        self.hud.hide(animated: true, afterDelay: 1.0)
                         break;
                     case .titleAndProgress(let title, let progress):
                         self.hud.mode = .annularDeterminate
                         self.hud.progress = progress
-                        self.hud.labelText = title
-                        self.hud.show(true)
+                        self.hud.label.text = title
+                        self.hud.label.numberOfLines = 2
+                        self.hud.show(animated: true)
                         if (progress == 1.0) {
-                            self.hud.hide(true, afterDelay: 1.0)
+                            self.hud.hide(animated: true, afterDelay: 1.0)
                         }
                         break;
                     }
             }, onError: { (err) in
-                print("Error")
+                ELOG("\(err.localizedDescription)")
             }, onCompleted: {
-                print("Completed")
+                ILOG("Completed")
             }) {
-                print("Disposed")
+                ILOG("Disposed")
             }
             .disposed(by: disposeBag)
 
@@ -556,21 +564,23 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             .subscribe(onNext: { state in
                     switch state {
                     case .hidden:
-                        self.hud.hide(true, afterDelay: 1.0)
+                        self.hud.hide(animated: true, afterDelay: 1.0)
                         break;  
                     case .title(let title):
                         self.hud.mode = .indeterminate
-                        self.hud.labelText = title
-                        self.hud.show(true)
-                        self.hud.hide(true, afterDelay: 1.0)
+                        self.hud.label.text = title
+                        self.hud.label.numberOfLines = 2
+                        self.hud.show(animated:true)
+                        self.hud.hide(animated:true, afterDelay: 1.0)
                         break;
                     case .titleAndProgress(let title, let progress):
                         self.hud.mode = .annularDeterminate
                         self.hud.progress = progress
-                        self.hud.labelText = title
-                        self.hud.show(true)
+                        self.hud.label.text = title
+                        self.hud.label.numberOfLines = 2
+                        self.hud.show(animated:true)
                         if (progress == 1) {
-                            self.hud.hide(true, afterDelay: 1.0)
+                            self.hud.hide(animated:true, afterDelay: 1.0)
                         }
                         break;
                     }
@@ -597,9 +607,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             .disposed(by: disposeBag)
 
         self.hud.mode = .indeterminate
-        self.hud.labelText = "Initializing Games Library..."
-        self.hud.show(true)
-        self.hud.hide(true, afterDelay: TimeInterval(1))
+        self.hud.label.text = "Initializing Games Library..."
+        self.hud.show(animated: true)
+        self.hud.hide(animated: true, afterDelay: TimeInterval(1))
         self.checkROMs(true)
 
         loadGameFromShortcut()
@@ -608,12 +618,12 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     
     public func checkROMs(_ once:Bool) {
         self.hud.mode = .indeterminate
-        self.hud.labelText = "Initializing ROM Database..."
-        self.hud.show(true)
+        self.hud.label.text = "Initializing ROM Database..."
+        self.hud.show(animated: true)
         if !once || !isLoaded {
             self.updatesController.importROMDirectories()
         }
-        self.hud.hide(true)
+        self.hud.hide(animated: true)
         isLoaded = true
     }
 
@@ -744,7 +754,8 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
-        Theme.currentTheme = Theme.currentTheme
+        // TODO: wtf? @JoeMatt
+        ThemeManager.shared.setCurrentTheme(ThemeManager.shared.currentTheme)
 
         transitioningToSize = size
         collectionView?.collectionViewLayout.invalidateLayout()
@@ -785,7 +796,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         }
     }
 
-    #if os(iOS)
+    #if os(iOS) && canImport(PVWebServer)
         // Show web server (stays on)
         func showServer() {
 			let ipURL: String = PVWebServer.shared.urlString
@@ -874,21 +885,27 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             ELOG("Unable to start notifier")
         }
 
-        #if !os(tvOS)
+        #if !os(tvOS) && canImport(PVWebServer)
+
             // connected via wifi, let's continue
 
             let actionSheet = UIAlertController(title: "Select Import Source", message: nil, preferredStyle: .actionSheet)
             actionSheet.popoverPresentationController?.barButtonItem = navigationItem.leftBarButtonItem
 
             actionSheet.addAction(UIAlertAction(title: "Cloud & Local Files", style: .default, handler: { _ in
-                let extensions = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data, UTI.rar].map { $0.rawValue }
+                let documentPicker: UIDocumentPickerViewController
+                
+                if #available(iOS 14, *) {
+                    let utis: [UTType] = [UTType.rom, UTType.artwork, UTType.savestate, UTType.zip, UTType.sevenZipArchive, UTType.gzip, UTType.image, UTType.jpeg, UTType.png, UTType.bios, UTType.data, UTType.rar]
 
-                //        let documentMenu = UIDocumentMenuViewController(documentTypes: extensions, in: .import)
-                //        documentMenu.delegate = self
-                //        present(documentMenu, animated: true, completion: nil)
+                    documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: utis, asCopy: true)
+                } else {
+                    let utis: [UTI] = [UTI.rom, UTI.artwork, UTI.savestate, UTI.zipArchive, UTI.sevenZipArchive, UTI.gnuZipArchive, UTI.image, UTI.jpeg, UTI.png, UTI.bios, UTI.data, UTI.rar]
 
-                let documentPicker = UIDocumentPickerViewController(documentTypes: extensions, in: .import)
-                documentPicker.allowsMultipleSelection = true
+                    let extensions = utis.map { $0.rawValue }
+                    documentPicker = UIDocumentPickerViewController(documentTypes: extensions, in: .import)
+                }
+
                 documentPicker.delegate = self
                 self.present(documentPicker, animated: true, completion: nil)
             }))
@@ -941,6 +958,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         #endif
     }
 
+    #if canImport(PVWebServer)
     func startWebServer(sender: UIView?) {
         // start web transfer service
         if PVWebServer.shared.startServers() {
@@ -962,7 +980,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             present(alert, animated: true) { () -> Void in }
         }
     }
-
+    #endif
     // MARK: - Game Library Management
 
     // TODO: It would be nice to move this and the importer-logic out of the ViewController at some point
@@ -970,7 +988,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
         UserDefaults.standard.register(defaults: [PVRequiresMigrationKey: true])
         if UserDefaults.standard.bool(forKey: PVRequiresMigrationKey) {
             if (hud == nil) {
-                self.hud = MBProgressHUD.init(view: view)!
+                self.hud = MBProgressHUD.init(view: view)
             }
             gameLibrary.migrate()
                 .observe(on: MainScheduler.instance)
@@ -979,15 +997,16 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                     case .starting:
                         self.hud.isUserInteractionEnabled = true
                         self.hud.mode = .indeterminate
-                        self.hud.labelText = "Migrating Game Library"
-                        self.hud.detailsLabelText = "Please be patient, this could take a while…"
-                        self.hud.show(true)
-                        self.hud.hide(true, afterDelay: 1.0)
+                        self.hud.label.text = "Migrating Game Library"
+                        self.hud.detailsLabel.text = "Please be patient, this could take a while…"
+                        self.hud.show(animated:true)
+                        self.hud.hide(animated:true, afterDelay: 1.0)
                         break;
                     case .pathsToImport(let paths):
-                        self.hud.labelText = "Checking " + paths.description
-                        self.hud.show(true)
-                        self.hud.hide(true, afterDelay: 1.0)
+                        self.hud.label.text = "Checking " + paths.description
+                        self.hud.label.numberOfLines = 2
+                        self.hud.show(animated:true)
+                        self.hud.hide(animated:true, afterDelay: 1.0)
                         do {
                             try self.gameImporter.importFiles(atPaths: paths)
                         } catch {
@@ -998,7 +1017,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
                 }, onError: { error in
                     ELOG(error.localizedDescription)
                 }, onCompleted: {
-                    self.hud.hide(true)
+                    self.hud.hide(animated: true)
                     UserDefaults.standard.set(false, forKey: PVRequiresMigrationKey)
                 })
                 .disposed(by: disposeBag)
@@ -1213,7 +1232,9 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 
         if UIPasteboard.general.hasImages || UIPasteboard.general.hasURLs {
             actionSheet.addAction(UIAlertAction(title: "Paste Cover", symbol:"arrow.down.doc", style: .default, handler: { (_: UIAlertAction) -> Void in
-                self.pasteCustomArtwork(for: game)
+                DispatchQueue.global(qos: .userInitiated).async {
+                    self.pasteCustomArtwork(for: game)
+                }
             }))
         }
 
@@ -1344,7 +1365,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             coreChoiceAlert.popoverPresentationController?.sourceRect = senderView.bounds
         }
         for disc in discs {
-            let action = UIAlertAction(title: disc.fileName, style:.default) { [unowned self] _ in
+            let action = UIAlertAction(title: disc.fileName, style:.default) { _ in
                 UserDefaults.standard.set(disc.url, forKey: game.romPath)
             }
             if let url = UserDefaults.standard.url(forKey: game.romPath) {
@@ -1485,7 +1506,7 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
             if pastedImageMaybe == nil {
                 if let pastedURL = pastedURL {
                     do {
-                        let data = try Data(contentsOf: pastedURL)
+                        let data = try Data(contentsOf: pastedURL, options: [.mappedIfSafe])
                         pastedImageMaybe = UIImage(data: data)
                     } catch {
                         ELOG("Failed to read pasteboard URL: \(error.localizedDescription)")
@@ -1565,17 +1586,17 @@ final class PVGameLibraryViewController: GCEventViewController, UITextFieldDeleg
 extension PVGameLibraryViewController {
     @objc public func databaseMigrationStarted(_: Notification) {
         if (self.hud == nil) {
-            self.hud = MBProgressHUD.init(view: view)!
+            self.hud = MBProgressHUD.init(view: view)
         }
         self.hud.isUserInteractionEnabled = true
         self.hud.mode = .indeterminate
-        self.hud.labelText = "Migrating Game Library..."
-        self.hud.detailsLabelText = "Please be patient, this could take a while…"
-        self.hud.show(true);
+        self.hud.label.text = "Migrating Game Library..."
+        self.hud.detailsLabel.text = "Please be patient, this could take a while…"
+        self.hud.show(animated: true);
     }
 
     @objc public func databaseMigrationFinished(_: Notification) {
-        self.hud.hide(true)
+        self.hud.hide(animated: true)
     }
 }
 
@@ -1603,9 +1624,15 @@ extension PVGameLibraryViewController {
                 if url.hasDirectoryPath {
                     ILOG("Trying to import directory \(url.path). Scanning subcontents")
                     do {
-                        _ = url.startAccessingSecurityScopedResource()
+                        guard url.startAccessingSecurityScopedResource() else {
+                            ELOG("startAccessingSecurityScopedResource failed")
+                            return nil
+                        }
+
+                        defer {
+                            url.stopAccessingSecurityScopedResource()
+                        }
                         let subFiles = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: [URLResourceKey.isDirectoryKey, URLResourceKey.parentDirectoryURLKey, URLResourceKey.fileSecurityKey], options: .skipsHiddenFiles)
-                        url.stopAccessingSecurityScopedResource()
                         return subFiles
                     } catch {
                         ELOG("Subdir scan failed. \(error)")

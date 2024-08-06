@@ -9,8 +9,33 @@
 #define PVStellaCPP_hxx
 
 #import <Foundation/Foundation.h>
+#import <libstella/libstella.h>
+#import <libstella/libretro/libretro.h>
+@import libstella;
 
-#include "libretro.h"
+#warning "This needs to be fixed"
+// This should show up from the imports above,
+// but XCode and spm still complain?
+#define RETRO_DEVICE_ID_JOYPAD_B        0
+#define RETRO_DEVICE_ID_JOYPAD_Y        1
+#define RETRO_DEVICE_ID_JOYPAD_SELECT   2
+#define RETRO_DEVICE_ID_JOYPAD_START    3
+#define RETRO_DEVICE_ID_JOYPAD_UP       4
+#define RETRO_DEVICE_ID_JOYPAD_DOWN     5
+#define RETRO_DEVICE_ID_JOYPAD_LEFT     6
+#define RETRO_DEVICE_ID_JOYPAD_RIGHT    7
+#define RETRO_DEVICE_ID_JOYPAD_A        8
+#define RETRO_DEVICE_ID_JOYPAD_X        9
+#define RETRO_DEVICE_ID_JOYPAD_L       10
+#define RETRO_DEVICE_ID_JOYPAD_R       11
+#define RETRO_DEVICE_ID_JOYPAD_L2      12
+#define RETRO_DEVICE_ID_JOYPAD_R2      13
+#define RETRO_DEVICE_ID_JOYPAD_L3      14
+#define RETRO_DEVICE_ID_JOYPAD_R3      15
+
+#define RETRO_DEVICE_ID_JOYPAD_MASK    256
+// END Warning
+
 
 // Size and screen buffer consants
 typedef                         uint32_t     stellabuffer_t;
@@ -26,7 +51,6 @@ typedef                         uint32_t     stellabuffer_t;
 
 #define STELLA_WIDTH 160
 #define STELLA_HEIGHT 256
-
 
 const NSUInteger A2600EmulatorValues[] = {
     RETRO_DEVICE_ID_JOYPAD_UP,

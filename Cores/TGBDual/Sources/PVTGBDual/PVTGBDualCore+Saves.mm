@@ -97,9 +97,9 @@
 
 - (BOOL)loadSaveFile:(NSString *)path forType:(int)type {
     /*
-    size_t size = retro_get_memory_size(type);
-    void *ramData = retro_get_memory_data(type);
-    
+    size_t size = retro_get_memory_size_tgbdual(type);
+    void *ramData = retro_get_memory_data_tgbdual(type);
+
     if (size == 0 || !ramData)
     {
         return NO;
@@ -121,9 +121,9 @@
 
 - (BOOL)writeSaveFile:(NSString *)path forType:(int)type {
     /*
-    size_t size = retro_get_memory_size(type);
-    void *ramData = retro_get_memory_data(type);
-    
+    size_t size = retro_get_memory_size_tgbdual(type);
+    void *ramData = retro_get_memory_data_tgbdual(type);
+
     if (ramData && (size > 0))
     {
         retro_serialize(ramData, size);
@@ -152,9 +152,9 @@ static void loadSaveFile(const char* path, int type) {
         return;
     }
     
-    size_t size = retro_get_memory_size(type);
-    void *data = retro_get_memory_data(type);
-    
+    size_t size = retro_get_memory_size_tgbdual(type);
+    void *data = retro_get_memory_data_tgbdual(type);
+
     if (size == 0 || !data)
     {
         fclose(file);
@@ -176,8 +176,8 @@ static void loadSaveFile(const char* path, int type) {
 
 /*
 static void writeSaveFile(const char* path, int type) {
-    size_t size = retro_get_memory_size(type);
-    void *data = retro_get_memory_data(type);
+    size_t size = retro_get_memory_size_tgbdual(type);
+    void *data = retro_get_memory_data_tgbdual(type);
     
     if ( data && size > 0 )
     {

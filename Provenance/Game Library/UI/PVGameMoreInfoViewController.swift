@@ -10,6 +10,7 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import UIKit
+import PVThemes
 
 #if os(iOS)
     import AssetsLibrary
@@ -413,7 +414,7 @@ final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewCon
         paragraphStyle.alignment = .center
 
         #if os(iOS)
-            let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: Theme.currentTheme.settingsCellText!])
+            let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: ThemeManager.shared.currentTheme.settingsCellText!])
         #else
             let attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0), NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.foregroundColor: UIColor.gray])
         #endif
@@ -957,7 +958,7 @@ extension PVGameMoreInfoViewController {
             if pastedImageMaybe == nil {
                 if let pastedURL = pastedURL {
                     do {
-                        let data = try Data(contentsOf: pastedURL)
+                        let data = try Data(contentsOf: pastedURL, options: [.mappedIfSafe])
                         pastedImageMaybe = UIImage(data: data)
                     } catch {
                         ELOG("Failed to read pasteboard URL: \(error.localizedDescription)")

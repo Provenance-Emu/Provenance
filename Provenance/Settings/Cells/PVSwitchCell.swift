@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PVThemes
 
 final class PVSwitchCell: SwitchCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -27,9 +28,9 @@ final class PVSwitchCell: SwitchCell {
         let bg = UIView(frame: bounds)
         bg.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         #if os(iOS)
-            switchControl.onTintColor = Theme.currentTheme.switchON
+            switchControl.onTintColor = ThemeManager.shared.currentTheme.switchON
 		#if !targetEnvironment(macCatalyst)
-            switchControl.thumbTintColor = Theme.currentTheme.switchThumb
+            switchControl.thumbTintColor = ThemeManager.shared.currentTheme.switchThumb
 		#endif
         #endif
         backgroundView = bg

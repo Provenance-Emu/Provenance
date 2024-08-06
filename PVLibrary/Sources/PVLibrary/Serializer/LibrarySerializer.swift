@@ -53,8 +53,8 @@ extension PVGame: Packageable {
     }
 }
 
-public typealias SerliazeCompletion = (_ result: PackageResult) -> Void
-public typealias PackageCompletion = (_ result: PackageResult) -> Void
+public typealias SerliazeCompletion = @Sendable (_ result: PackageResult) -> Void
+public typealias PackageCompletion =  @Sendable (_ result: PackageResult) -> Void
 
 public final class LibrarySerializer {
     fileprivate init() {}
@@ -63,7 +63,8 @@ public final class LibrarySerializer {
 
     // MARK: - Metadata
 
-    public static func storeMetadata<O: JSONMetadataSerialable>(_ object: O, completion: @escaping SerliazeCompletion) {
+    
+    public static func storeMetadata<O: JSONMetadataSerialable>(_ object: O, completion: @escaping SerliazeCompletion) async {
         let directory = object.url.deletingLastPathComponent()
         let fileName = object.fileName
         let data = object.asDomain()
@@ -82,7 +83,7 @@ public final class LibrarySerializer {
 
     // MARK: - Packaging
 
-    public static func storePackage<P: Packageable & JSONMetadataSerialable>(_ object: P, completion: @escaping PackageCompletion) {
+    public static func storePackage<P: Packageable & JSONMetadataSerialable & Sendable>(_ object: P, completion: @escaping PackageCompletion) async {
         let path = object.url
         let directory = path.deletingLastPathComponent()
         let fileName = object.fileName
