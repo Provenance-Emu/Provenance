@@ -1,21 +1,21 @@
 import Foundation
 import RxSwift
+import AsyncAlgorithms
 
-extension Observable where Element: Sequence, Element.Iterator.Element: DomainConvertibleType {
+extension RxSwift.Observable where Element: Sequence, Element.Iterator.Element: DomainConvertibleType {
     typealias DomainType = Element.Iterator.Element.DomainType
 
-    func mapToDomain() -> Observable<[DomainType]> {
-        return map { sequence -> [DomainType] in
-            sequence.mapToDomain()
-        }
+    func mapToDomain() async -> RxSwift.Observable<[DomainType]> {
+        let values = self.values.map { await $0.mapToDomain() }
+        return values.asObservable()
     }
 }
 
 extension Sequence where Iterator.Element: DomainConvertibleType {
     typealias Element = Iterator.Element
-    func mapToDomain() -> [Element.DomainType] {
-        return map {
-            $0.asDomain()
+    func mapToDomain() async -> [Element.DomainType] {
+        return await asyncMap {
+            await $0.asDomain()
         }
     }
 }

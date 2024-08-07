@@ -69,6 +69,7 @@ let package = Package(
             name: "PVCoreLoader",
             path: "../PVCoreLoader"
         ),
+        .package(path: "../PVPlists"),
         .package(
             url: "https://github.com/ReactiveX/RxSwift.git",
             .upToNextMajor(from: "6.7.1")
@@ -97,6 +98,7 @@ let package = Package(
             url: "https://github.com/tsolomko/SWCompression.git",
             .upToNextMinor(from: "4.8.4")
         ),
+        .package(url: "https://github.com/apple/swift-async-algorithms", from: "1.0.0"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop")
     ],
     targets: [
@@ -108,6 +110,7 @@ let package = Package(
                 "SWCompression",
                 "PVLogging",
                 "PVHashing",
+                "PVPlists",
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
                 .product(name: "PVCoreLoader", package: "PVCoreLoader"),
                 .product(name: "GRDB", package: "GRDB.swift"),
@@ -116,6 +119,7 @@ let package = Package(
                 .product(name: "RxSwift", package: "RxSwift"),
                 .product(name: "RxRealm", package: "RxRealm"),
                 .product(name: "ZipArchive", package: "ZipArchive"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ],
 			resources: [
 				.process("Resources/cheatbase.sqlite"),

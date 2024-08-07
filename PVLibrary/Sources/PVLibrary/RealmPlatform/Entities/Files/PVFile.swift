@@ -27,26 +27,33 @@ public enum RelativeRoot: Int, Sendable {
 
     static let documentsDirectory: URL = PVEmulatorConfiguration.documentsPath
     static let cachesDirectory: URL = PVEmulatorConfiguration.cachesPath
-    static var iCloudDocumentsDirectory: URL? { return PVEmulatorConfiguration.iCloudDocumentsDirectory }
-
-    var directoryURL: URL {
-        switch self {
-        case .documents:
-            return RelativeRoot.documentsDirectory
-        case .caches:
-            return RelativeRoot.cachesDirectory
-        case .iCloud:
-            return RelativeRoot.iCloudDocumentsDirectory ?? Self.platformDefault.directoryURL
+    static var iCloudDocumentsDirectory: URL? {
+        get async {
+            return await PVEmulatorConfiguration.iCloudDocumentsDirectory
         }
     }
 
-    func createRelativePath(fromURL url: URL) -> String {
-        // We need the dropFirst to remove the leading /
-        return String(url.path.replacingOccurrences(of: directoryURL.path, with: "").dropFirst())
+    var directoryURL: URL {
+        get async {
+            switch self {
+            case .documents:
+                return RelativeRoot.documentsDirectory
+            case .caches:
+                return RelativeRoot.cachesDirectory
+            case .iCloud:
+                if let iCloudDocumentsDirectory = await RelativeRoot.iCloudDocumentsDirectory { return iCloudDocumentsDirectory }
+                else { return await Self.platformDefault.directoryURL }
+            }
+        }
     }
 
-    func appendingPath(_ path: String) -> URL {
-        let directoryURL = self.directoryURL
+    func createRelativePath(fromURL url: URL) async -> String {
+        // We need the dropFirst to remove the leading /
+        return await String(url.path.replacingOccurrences(of: directoryURL.path, with: "").dropFirst())
+    }
+
+    func appendingPath(_ path: String) async -> URL {
+        let directoryURL = await self.directoryURL
         let url = directoryURL.appendingPathComponent(path)
 //        let url = URL(fileURLWithPath: path, relativeTo: directoryURL)
         return url
@@ -67,16 +74,16 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     nonisolated(unsafe)
     internal dynamic var _relativeRoot: Int = RelativeRoot.documents.rawValue
 
-    public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+    public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) async {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = partialPath
     }
 
-    public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+    public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) async {
         self.init()
         self.relativeRoot = relativeRoot
-        partialPath = relativeRoot.createRelativePath(fromURL: url)
+        partialPath = await relativeRoot.createRelativePath(fromURL: url)
     }
 }
 
@@ -91,56 +98,66 @@ public extension PVFile {
         }
     }
 
-    nonisolated(unsafe)
-    private(set) var url: URL {
-        get {
+    var url: URL {
+        get async {
             if partialPath.contains("iCloud") || partialPath.contains("private") {
                 var pathComponents = (partialPath as NSString).pathComponents
                 pathComponents.removeFirst()
                 let path = pathComponents.joined(separator: "/")
-                let iCloudBase = path.contains("Documents") ? PVEmulatorConfiguration.iCloudContainerDirectory : PVEmulatorConfiguration.iCloudDocumentsDirectory
-                let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
-                return url
+                let isDocumentsDir = path.contains("Documents")
+
+                if isDocumentsDir {
+                    let iCloudBase = PVEmulatorConfiguration.iCloudContainerDirectory
+                    let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
+                    return url
+                } else {
+                    if let iCloudBase = await PVEmulatorConfiguration.iCloudDocumentsDirectory {
+                        return iCloudBase.appendingPathComponent(path)
+                    } else {
+                        return RelativeRoot.documentsDirectory.appendingPathComponent(path)
+                    }
+                }
             }
             let root = relativeRoot
-            let resolvedURL = root.appendingPath(partialPath)
+            let resolvedURL = await root.appendingPath(partialPath)
             return resolvedURL
-        }
-        set {
-            do {
-                try realm?.write {
-                    partialPath = relativeRoot.createRelativePath(fromURL: newValue)
-                }
-            } catch {
-                ELOG("\(error)")
-            }
         }
     }
 
-    nonisolated(unsafe)
-    private(set) var md5: String? {
-        get {
+    private func setURL(_ url: URL) async {
+        do {
+            let newPath = await relativeRoot.createRelativePath(fromURL: url)
+            try realm?.write {
+                partialPath = newPath
+            }
+        } catch {
+            ELOG("\(error)")
+        }
+    }
+
+    var md5: String? {
+        get async {
             if let md5 = md5Cache {
                 return md5
             }
-
+            let path = await url.path
             // Lazy make MD5
-            guard let calculatedMD5 = FileManager.default.md5ForFile(atPath: url.path, fromOffset: 0) else {
-				ELOG("calculatedMD5 nil")
+            guard let calculatedMD5 = FileManager.default.md5ForFile(atPath: path, fromOffset: 0) else {
+                ELOG("calculatedMD5 nil")
                 return nil
             }
 
-            self.md5 = calculatedMD5
-            return calculatedMD5
-        }
-        set {
-            do {
-                try realm?.write {
-                    md5Cache = newValue
+            Task {
+                do {
+                    try realm?.write {
+                        md5Cache = calculatedMD5
+                    }
+                } catch {
+                    ELOG("\(error)")
                 }
-            } catch {
-                ELOG("\(error)")
             }
+
+            return calculatedMD5
         }
     }
 
@@ -169,38 +186,39 @@ public extension PVFile {
     //        }
     //    }
 
+    var size: UInt64 { get async {
+        return await Task {
+            let path = await url.path
+            guard FileManager.default.fileExists(atPath: path) else {
+                ELOG("No file at path: \(path)")
+                return 0
+            }
+            
+            let fileSize: UInt64
+            if let attr = try? FileManager.default.attributesOfItem(atPath: path) as NSDictionary {
+                fileSize = attr.fileSize()
+            } else {
+                ELOG("No attributesOfItem at path: \(path)")
+                fileSize = 0
+            }
+            return fileSize
+        }.value
+    }}
+
+    var online: Bool { get async {
+        return await FileManager.default.fileExists(atPath: url.path)
+    }}
+
+    var pathExtension: String {get async {
+        return await url.pathExtension
+    }}
+
     nonisolated(unsafe)
-    var size: UInt64 {
-        let fileSize: UInt64
-        guard FileManager.default.fileExists(atPath: url.path) else {
-            ELOG("No file at path: \(url.path)")
-            return 0
-        }
+        var fileName: String {get async {
+            return await url.lastPathComponent
+        }}
 
-        if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
-            fileSize = attr.fileSize()
-        } else {
-			ELOG("No attributesOfItem at path: \(url.path)")
-            fileSize = 0
-        }
-        return fileSize
-    }
-
-    nonisolated(unsafe)
-    var online: Bool {
-        return FileManager.default.fileExists(atPath: url.path)
-    }
-
-    var pathExtension: String {
-        return url.pathExtension
-    }
-
-    nonisolated(unsafe)
-    var fileName: String {
-        return url.lastPathComponent
-    }
-
-    var fileNameWithoutExtension: String {
-        return url.deletingPathExtension().lastPathComponent
-    }
+    var fileNameWithoutExtension: String {get async {
+        return await url.deletingPathExtension().lastPathComponent
+    }}
 }

@@ -30,7 +30,7 @@ public protocol SystemProtocol {
     var BIOSes: [BIOSInfoProviderType]? { get }
     var extensions: [String] { get }
 
-    var gameStructs: [Game] { get }
+    var gameStructs: [Game] { get async }
     var coreStructs: [Core] { get }
     var userPreferredCore: Core? { get }
 

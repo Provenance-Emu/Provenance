@@ -68,7 +68,7 @@ let package = Package(
             dependencies: ["PVSupport"]
         )
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageVersions: [.v5, .v6],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx20
 )

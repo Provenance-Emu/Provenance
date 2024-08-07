@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum SerializerPackageType: String, Codable {
+public enum SerializerPackageType: String, Codable, Sendable {
     case game
     case saveState
 

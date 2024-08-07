@@ -12,15 +12,15 @@ import PVLogging
 
 public struct LocalFile: LocalFileProvider, Codable, Equatable, Sendable {
     public let url: URL
-    public var data: Data? {
+    public var data: Data? { get async {
         return try? Data(contentsOf: url)
-    }
+    }}
 
     private var md5Cache: String?
 
     public var md5: String? {
-        mutating get {
-            guard online else {
+        mutating get async {
+            guard await online else {
                 return nil
             }
 
@@ -34,7 +34,7 @@ public struct LocalFile: LocalFileProvider, Codable, Equatable, Sendable {
         }
     }
 
-    public var size: UInt64 {
+    public var size: UInt64 { get async {
         do {
             guard let s = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize else {
                 return 0
@@ -45,7 +45,7 @@ public struct LocalFile: LocalFileProvider, Codable, Equatable, Sendable {
             ELOG("\(error.localizedDescription)")
             return 0
         }
-    }
+    }}
 
     public init?(url: URL) {
         guard url.isFileURL else {

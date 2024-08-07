@@ -15,6 +15,7 @@ import UIKit
 #endif
 import SQLite
 import PVHashing
+import AsyncAlgorithms
 
 let schemaVersion: UInt64 = 11
 
@@ -459,15 +460,17 @@ public extension RomDatabase {
         }
     }
 
-    func renameGame(_ game: PVGame, toTitle title: String) {
+    func renameGame(_ game: PVGame, toTitle title: String) async {
         if !title.isEmpty {
             do {
                 try RomDatabase.sharedInstance.writeTransaction {
                     game.realm?.refresh()
                     game.title = title
-                    if game.releaseID == nil || game.releaseID!.isEmpty {
-                        ILOG("Game isn't already matched, going to try to re-match after a rename")
-                        GameImporter.shared.lookupInfo(for: game, overwrite: false)
+                    Task {
+                        if game.releaseID == nil || game.releaseID!.isEmpty {
+                            ILOG("Game isn't already matched, going to try to re-match after a rename")
+                            await GameImporter.shared.lookupInfo(for: game, overwrite: false)
+                        }
                     }
                 }
             } catch {
@@ -485,8 +488,8 @@ public extension RomDatabase {
             NSLog("Failed to hide game \(game.title)\n\(error.localizedDescription)")
         }
     }
-    func delete(game: PVGame, deleteArtwork: Bool = false, deleteSaves: Bool = false) throws {
-        let romURL = PVEmulatorConfiguration.path(forGame: game)
+    func delete(game: PVGame, deleteArtwork: Bool = false, deleteSaves: Bool = false) async throws {
+        let romURL = await PVEmulatorConfiguration.path(forGame: game)
         if deleteArtwork, !game.customArtworkURL.isEmpty {
             do {
                 try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
@@ -496,7 +499,7 @@ public extension RomDatabase {
             }
         }
         if deleteSaves {
-            let savesPath = PVEmulatorConfiguration.saveStatePath(forGame: game)
+            let savesPath = await PVEmulatorConfiguration.saveStatePath(forGame: game)
             if FileManager.default.fileExists(atPath: savesPath.path) {
                 do {
                     try FileManager.default.removeItem(at: savesPath)
@@ -505,7 +508,7 @@ public extension RomDatabase {
                 }
             }
 
-            let batteryPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
+            let batteryPath = await PVEmulatorConfiguration.batterySavesPath(forGame: game)
             if FileManager.default.fileExists(atPath: batteryPath.path) {
                 do {
                     try FileManager.default.removeItem(at: batteryPath)
@@ -526,7 +529,7 @@ public extension RomDatabase {
         deleteFromSpotlight(game: game)
 #endif
         do {
-            deleteRelatedFilesGame(game)
+            await deleteRelatedFilesGame(game)
             game.saveStates.forEach { try? $0.delete() }
             game.cheats.forEach { try? $0.delete() }
             game.recentPlays.forEach { try? $0.delete() }
@@ -541,14 +544,14 @@ public extension RomDatabase {
         }
     }
 
-    func deleteRelatedFilesGame(_ game: PVGame) {
+    func deleteRelatedFilesGame(_ game: PVGame) async {
 //        guard let system = game.system else {
 //            ELOG("Game \(game.title) belongs to an unknown system \(game.systemIdentifier)")
 //            return
 //        }
-        game.relatedFiles.forEach {
+        await game.relatedFiles.concurrentForEach {
             do {
-                let file = PVEmulatorConfiguration.path(forGame: game, url: $0.url)
+                let file = await PVEmulatorConfiguration.path(forGame: game, url: $0.url)
                 if FileManager.default.fileExists(atPath: file.path) {
                     try FileManager.default.removeItem(at: file)
                 }
@@ -595,24 +598,24 @@ public extension RomDatabase {
 }
 
 public extension RomDatabase {
-    func reloadCache() {
+    func reloadCache() async {
         NSLog("RomDatabase:reloadCache")
         self.refresh()
-        reloadGamesCache()
+        await reloadGamesCache()
         reloadSystemsCache()
         reloadCoresCache()
-        reloadBIOSCache()
+        await reloadBIOSCache()
     }
-    func reloadBIOSCache() {
+    func reloadBIOSCache() async {
         var files:[String:[String]]=[:]
-        getSystemCache().values.forEach { system in
-            files = addFileSystemBIOSCache(system, files:files)
+        await getSystemCache().values.asyncForEach { system in
+            files = await addFileSystemBIOSCache(system, files:files)
         }
         RomDatabase.biosCache = files
     }
-    func addFileSystemBIOSCache(_ system:PVSystem, files:[String:[String]]) -> [String:[String]] {
+    func addFileSystemBIOSCache(_ system:PVSystem, files:[String:[String]]) async -> [String:[String]] {
         var files = files
-        let systemDir = system.biosDirectory
+        let systemDir = await system.biosDirectory
         if !FileManager.default.fileExists(atPath: systemDir.path) {
             do {
                 try FileManager.default.createDirectory(atPath: systemDir.path, withIntermediateDirectories: true, attributes: nil)
@@ -647,21 +650,21 @@ public extension RomDatabase {
             dbSystem[system.identifier] = system.detached()
         }
     }
-    func reloadGamesCache() {
+    func reloadGamesCache() async {
         let games = PVGame.all.toArray()
-        RomDatabase.gamesCache = games.reduce(into: [:]) {
+        RomDatabase.gamesCache = await games.async.reduce(into: [:]) {
             dbGames, game in
-            dbGames=addGameCache(game, cache: dbGames)
+            dbGames = await addGameCache(game, cache: dbGames)
         }
     }
-    func addGameCache(_ game:PVGame, cache:[String:PVGame]) -> [String:PVGame] {
+    func addGameCache(_ game:PVGame, cache:[String:PVGame]) async -> [String:PVGame] {
         var cache:[String:PVGame] = cache
-        game.relatedFiles.forEach {
+        await game.relatedFiles.asyncForEach {
             relatedFile in
-            cache = addRelativeFileCache(relatedFile.url, game:game, cache:cache)
+            cache = await addRelativeFileCache(relatedFile.url, game:game, cache:cache)
         }
         cache[game.romPath] = game.detached()
-        cache[altName(game.file.url, systemIdentifier: game.systemIdentifier)]=game.detached()
+        await cache[altName(game.file.url, systemIdentifier: game.systemIdentifier)]=game.detached()
         return cache
     }
     func addRelativeFileCache(_ file:URL, game: PVGame) {
@@ -676,31 +679,31 @@ public extension RomDatabase {
         cache[altName(file, systemIdentifier: game.systemIdentifier)]=game.detached()
         return cache
     }
-    func addGamesCache(_ game:PVGame) {
+    func addGamesCache(_ game:PVGame) async {
         if RomDatabase.gamesCache == nil {
-            self.reloadCache()
+            await self.reloadCache()
         }
-        RomDatabase.gamesCache=addGameCache(game, cache: RomDatabase.gamesCache ?? [:])
+        RomDatabase.gamesCache=await addGameCache(game, cache: RomDatabase.gamesCache ?? [:])
     }
     func altName(_ romPath:URL, systemIdentifier:String) -> String {
         var similarName = romPath.deletingPathExtension().lastPathComponent
         similarName = PVEmulatorConfiguration.stripDiscNames(fromFilename: similarName)
         return (systemIdentifier as NSString).appendingPathComponent(similarName)
     }
-    func getGamesCache() -> [String:PVGame] {
+    func getGamesCache() async -> [String:PVGame] {
         if RomDatabase.gamesCache == nil {
-            self.reloadCache()
+            await self.reloadCache()
         }
         if let gamesCache = RomDatabase.gamesCache {
             return gamesCache
         } else {
-            reloadGamesCache()
+            await reloadGamesCache()
             return RomDatabase.gamesCache ?? [:]
         }
     }
-    func getSystemCache() -> [String:PVSystem] {
+    func getSystemCache() async -> [String:PVSystem] {
         if RomDatabase.systemCache == nil {
-            self.reloadCache()
+            await self.reloadCache()
         }
         if let systemCache = RomDatabase.systemCache {
             return systemCache
@@ -709,9 +712,9 @@ public extension RomDatabase {
             return RomDatabase.systemCache ?? [:]
         }
     }
-    func getCoreCache() -> [String:PVCore] {
+    func getCoreCache() async -> [String:PVCore] {
         if RomDatabase.coreCache == nil {
-            self.reloadCache()
+            await self.reloadCache()
         }
         if let coreCache = RomDatabase.coreCache {
             return coreCache
@@ -720,25 +723,25 @@ public extension RomDatabase {
             return RomDatabase.coreCache ?? [:]
         }
     }
-    func getBIOSCache() -> [String:[String]] {
+    func getBIOSCache() async -> [String:[String]] {
         if let biosCache = RomDatabase.biosCache {
             return biosCache
         } else {
-            reloadBIOSCache()
+            await reloadBIOSCache()
             return RomDatabase.biosCache ?? [:]
         }
     }
-    func reloadFileSystemROMCache() {
+    func reloadFileSystemROMCache() async {
         NSLog("RomDatabase: reloadFileSystemROMCache")
         var files:[URL:PVSystem]=[:]
-        getSystemCache().values.forEach { system in
-            files = addFileSystemROMCache(system, files:files)
+        await getSystemCache().values.asyncForEach { system in
+            files = await addFileSystemROMCache(system, files:files)
         }
         RomDatabase.fileSystemROMCache = files
     }
-    func addFileSystemROMCache(_ system:PVSystem, files:[URL:PVSystem]) -> [URL:PVSystem] {
+    func addFileSystemROMCache(_ system:PVSystem, files:[URL:PVSystem]) async -> [URL:PVSystem] {
         var files = files
-        let systemDir = system.romsDirectory
+        let systemDir = await system.romsDirectory
         if !FileManager.default.fileExists(atPath: systemDir.path) {
             do {
                 try FileManager.default.createDirectory(atPath: systemDir.path, withIntermediateDirectories: true, attributes: nil)
@@ -758,14 +761,14 @@ public extension RomDatabase {
             }
         return files
     }
-    func addFileSystemROMCache(_ system:PVSystem) {
+    func addFileSystemROMCache(_ system:PVSystem) async {
         if let files = RomDatabase.fileSystemROMCache {
-            RomDatabase.fileSystemROMCache = addFileSystemROMCache(system, files:files)
+            RomDatabase.fileSystemROMCache = await addFileSystemROMCache(system, files:files)
         }
     }
-    func getFileSystemROMCache() -> [URL:PVSystem] {
+    func getFileSystemROMCache() async -> [URL:PVSystem] {
         if RomDatabase.fileSystemROMCache == nil {
-            self.reloadFileSystemROMCache()
+            await self.reloadFileSystemROMCache()
         }
         var files:[URL:PVSystem] = [:]
         if let fileCache = RomDatabase.fileSystemROMCache {
@@ -774,9 +777,9 @@ public extension RomDatabase {
         return files
     }
 
-    func getFileSystemROMCache(for system: PVSystem) -> [URL:PVSystem] {
+    func getFileSystemROMCache(for system: PVSystem) async -> [URL:PVSystem] {
         if RomDatabase.fileSystemROMCache == nil {
-            self.reloadFileSystemROMCache()
+            await self.reloadFileSystemROMCache()
         }
         var files:[URL:PVSystem] = [:]
         if let fileCache = RomDatabase.fileSystemROMCache {

@@ -12,28 +12,6 @@ import RxSwift
 import SWCompression
 import Combine
 
-enum CompressionFormats {
-    case lzma
-    case zlib
-}
-
-enum ArchiveFormats {
-    case bzip
-    case gzip
-    case sevenZip
-    case tar
-    case xz
-}
-
-struct DecompressedEntry {
-    let data: Data?
-    let info: ContainerEntryInfo
-}
-
-enum ExtractionError: Error {
-    case unknownCompressionMethod
-}
-
 extension SWCompression.CompressionMethod {
     func decompress(data: Data) throws -> Data {
         let decompressedData: Data

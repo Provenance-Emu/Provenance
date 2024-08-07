@@ -13,15 +13,15 @@ import PVLogging
 public protocol Packageable {
     associatedtype PackageType: Package
     var packageType: SerializerPackageType { get }
-    func toPackage() throws -> PackageType
+    func toPackage() async throws -> PackageType
 }
 
 public typealias JSONMetadataSerialable = DomainConvertibleType & LocalFileInfoProvider & DataProvider
 
 extension Packageable where Self: JSONMetadataSerialable {
-    internal func packageParts() throws -> (Data, Self.DomainType) {
-        let data = try readData()
-        return (data, asDomain())
+    internal func packageParts() async throws -> (Data, Self.DomainType) {
+        let data = try await readData()
+        return await (data, asDomain())
     }
 }
 
@@ -29,9 +29,66 @@ extension PVSaveState: Packageable {
     public var packageType: SerializerPackageType { return .saveState }
 
     public typealias PackageType = SavePackage
-    public func toPackage() throws -> PackageType {
-        let (data, metadata) = try packageParts()
+    public func toPackage() async throws -> PackageType {
+        let (data, metadata) = try await packageParts()
         return SavePackage(data: data, metadata: metadata)
+    }
+}
+
+extension Sequence {
+    func asyncMap<T>(
+        _ transform: (Self.Element) async throws -> T
+    ) async rethrows -> [T] {
+        var values = [T]()
+
+        for element in self {
+            try await values.append(transform(element))
+        }
+
+        return values
+    }
+}
+
+extension Sequence {
+    func concurrentMap<T>(
+        _ transform: @escaping (Self.Element) async throws -> T
+    ) async throws -> [T] {
+        let tasks = map { element in
+            Task {
+                try await transform(element)
+            }
+        }
+
+        return try await tasks.asyncMap { task in
+            try await task.value
+        }
+    }
+}
+
+extension Sequence {
+    func asyncForEach(
+        _ operation: (Self.Element) async throws -> Void
+    ) async rethrows {
+        for element in self {
+            try await operation(element)
+        }
+    }
+}
+
+extension Sequence {
+    func concurrentForEach(
+        _ operation: @escaping (Self.Element) async -> Void
+    ) async {
+        // A task group automatically waits for all of its
+        // sub-tasks to complete, while also performing those
+        // tasks in parallel:
+        await withTaskGroup(of: Void.self) { group in
+            for element in self {
+                group.addTask {
+                    await operation(element)
+                }
+            }
+        }
     }
 }
 
@@ -39,12 +96,12 @@ extension PVGame: Packageable {
     public var packageType: SerializerPackageType { return .game }
 
     public typealias PackageType = GamePackage
-    public func toPackage() throws -> GamePackage {
-        let (data, metadata) = try packageParts()
-
-        let saves = Array(saveStates).map { save -> SavePackage in
-            let data = try! Data(contentsOf: save.file.url)
-            let metadata = save.asDomain()
+    public func toPackage() async throws -> GamePackage {
+        let (data, metadata) = try await packageParts()
+        let saveStatesArray = Array(saveStates)
+        let saves = await saveStatesArray.asyncMap { save async -> SavePackage in
+            let data = try! await Data(contentsOf: save.file.url)
+            let metadata = await save.asDomain()
             return SavePackage(data: data, metadata: metadata)
         }
 
@@ -54,7 +111,6 @@ extension PVGame: Packageable {
 }
 
 public typealias SerliazeCompletion = @Sendable (_ result: PackageResult) -> Void
-public typealias PackageCompletion =  @Sendable (_ result: PackageResult) -> Void
 
 public final class LibrarySerializer {
     fileprivate init() {}
@@ -65,9 +121,9 @@ public final class LibrarySerializer {
 
     
     public static func storeMetadata<O: JSONMetadataSerialable>(_ object: O, completion: @escaping SerliazeCompletion) async {
-        let directory = object.url.deletingLastPathComponent()
-        let fileName = object.fileName
-        let data = object.asDomain()
+        let directory = await object.url.deletingLastPathComponent()
+        let fileName = await object.fileName
+        let data = await object.asDomain()
 
         LibrarySerializer.serializeQueue.async {
             let jsonFilename = fileName + ".json"
@@ -83,22 +139,18 @@ public final class LibrarySerializer {
 
     // MARK: - Packaging
 
-    public static func storePackage<P: Packageable & JSONMetadataSerialable & Sendable>(_ object: P, completion: @escaping PackageCompletion) async {
-        let path = object.url
+    public static func storePackage<P: Packageable & JSONMetadataSerialable & Sendable>(_ object: P) async throws -> URL {
+        let path = await object.url
         let directory = path.deletingLastPathComponent()
-        let fileName = object.fileName
+        let fileName = await object.fileName
 
-        LibrarySerializer.serializeQueue.async {
+        return try await Task {
             let jsonFilename = fileName + "." + object.packageType.extension
             let saveURL = directory.appendingPathComponent(jsonFilename, isDirectory: false)
-            do {
-                let package = try object.toPackage()
-                try store(package, to: saveURL)
-                completion(.success(saveURL))
-            } catch {
-                completion(.error(error))
-            }
-        }
+            let package = try await object.toPackage()
+            try store(package, to: saveURL)
+            return saveURL
+        }.value
     }
 }
 

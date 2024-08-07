@@ -8,6 +8,7 @@ import Foundation
 
 #if canImport(PVCoreBridge)
 @_exported import PVCoreBridge
+@_exported import PVPlists
 #endif
 
 // swiftlint:disable superfluous_disable_command

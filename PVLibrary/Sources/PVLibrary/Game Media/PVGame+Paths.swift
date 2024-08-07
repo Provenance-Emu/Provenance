@@ -11,11 +11,11 @@ import Foundation
 
 public extension PVGame {
     // TODO: See above TODO, this should be based on the ROM systemid/md5
-    var batterSavesPath: URL {
-        return PVEmulatorConfiguration.batterySavesPath(forGame: self)
-    }
+    var batterSavesPath: URL { get async {
+        return await PVEmulatorConfiguration.batterySavesPath(forGame: self)
+    }}
 
-    var saveStatePath: URL {
-        return PVEmulatorConfiguration.saveStatePath(forGame: self)
-    }
+    var saveStatePath: URL { get async {
+        return await PVEmulatorConfiguration.saveStatePath(forGame: self)
+    }}
 }

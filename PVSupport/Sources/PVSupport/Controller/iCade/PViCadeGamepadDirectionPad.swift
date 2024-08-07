@@ -11,7 +11,8 @@
 import GameController
 
 // TODO: Make a class for gamepad and another for joystick to support dpad and joystick as seperate inputs
-@objc @objcMembers
+//@objc @objcMembers
+
 public final class PViCadeGamepadDirectionPad: GCControllerDirectionPad {
     var handler: GCControllerDirectionPadValueChangedHandler?
     let _xAxis: PViCadeAxisInput = PViCadeAxisInput()
@@ -21,12 +22,18 @@ public final class PViCadeGamepadDirectionPad: GCControllerDirectionPad {
     let _left: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
     let _right: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()
 
-    func padChanged(_ controllerIndex: Int = 0) {
-        let state: iCadeControllerState = PViCadeReader.shared.states[controllerIndex]
+    func padChanged(_ controllerIndex: Int = 0) async {
+        typealias ButtonTuple = (x: Float, y: Float)
 
-        let x: Float = state.contains(.joystickLeft) ? -1.0 : state.contains(.joystickRight) ? 1.0 : 0.0
-        let y: Float = state.contains(.joystickDown) ? -1.0 : state.contains(.joystickUp) ? 1.0 : 0.0
+        let values: Task<ButtonTuple , Never > = Task { @MainActor in
+            let state: iCadeControllerState = PViCadeReader.shared.shared.states[controllerIndex]
+            let x: Float = state.contains(.joystickLeft) ? -1.0 : state.contains(.joystickRight) ? 1.0 : 0.0
+            let y: Float = state.contains(.joystickDown) ? -1.0 : state.contains(.joystickUp) ? 1.0 : 0.0
+            return (x,y)
+        }
 
+        let x = await values.value.0
+        let y = await values.value.1
         _xAxis.value = x
         _yAxis.value = y
 

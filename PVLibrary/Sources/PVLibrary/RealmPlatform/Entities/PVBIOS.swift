@@ -11,6 +11,8 @@ import RealmSwift
 
 @objcMembers
 public final class PVBIOS: Object, BIOSFileProvider {
+//    public var status: BIOSStatus
+    
     public dynamic var system: PVSystem!
 
     public dynamic var descriptionText: String = ""
@@ -41,28 +43,28 @@ public final class PVBIOS: Object, BIOSFileProvider {
 }
 
 public extension PVBIOS {
-    var expectedPath: URL {
-        return system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false)
-    }
+    var expectedPath: URL { get async {
+        return await system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false)
+    }}
 }
 
 extension PVBIOS {
-    public var status: BIOSStatus {
-        return BIOSStatus(withBios: self)
-    }
+    public var status: BIOSStatus { get async {
+        return await BIOSStatus(withBios: self)
+    }}
 }
 
 // MARK: - Conversions
 
 private extension BIOS {
-    init(with bios: PVBIOS) {
+    init(with bios: PVBIOS) async {
         descriptionText = bios.descriptionText
         optional = bios.optional
         expectedMD5 = bios.expectedMD5
         expectedSize = bios.expectedSize
         expectedFilename = bios.expectedFilename
-        status = bios.status
-        file = bios.file?.asDomain()
+        status = await bios.status
+        file = await bios.file?.asDomain()
         regions = bios.regions
         version = bios.version
     }
@@ -71,8 +73,8 @@ private extension BIOS {
 extension PVBIOS: DomainConvertibleType {
     public typealias DomainType = BIOS
 
-    public func asDomain() -> BIOS {
-        return BIOS(with: self)
+    public func asDomain() async -> BIOS {
+        return await BIOS(with: self)
     }
 }
 
@@ -81,8 +83,8 @@ extension BIOS: RealmRepresentable {
         return expectedFilename
     }
 
-    public func asRealm() -> PVBIOS {
-        return PVBIOS.build({ object in
+    public func asRealm() async -> PVBIOS {
+        return await PVBIOS.build({ object in
             object.descriptionText = descriptionText
             object.optional = optional
             object.expectedMD5 = expectedMD5

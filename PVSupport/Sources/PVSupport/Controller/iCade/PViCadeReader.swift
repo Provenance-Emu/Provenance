@@ -18,8 +18,10 @@ public final class PViCadeReader: NSObject, iCadeEventDelegate {
     var buttonDownHandler: iCadeButtonEventHandler?
     var buttonUpHandler: iCadeButtonEventHandler?
 
+    @MainActor
     var internalReader: iCadeReaderView = iCadeReaderView(frame: CGRect.zero)
 
+    @MainActor
     init(stateChangedHandler: iCadeStateEventHandler? = nil, buttonDownHandler: iCadeButtonEventHandler? = nil, buttonUpHandler: iCadeButtonEventHandler? = nil, internalReader: iCadeReaderView) {
         self.stateChangedHandler = stateChangedHandler
         self.buttonDownHandler = buttonDownHandler
@@ -27,12 +29,18 @@ public final class PViCadeReader: NSObject, iCadeEventDelegate {
         self.internalReader = internalReader
     }
 
+    @MainActor
     public convenience init(stateChangedHandler: iCadeStateEventHandler?, buttonDownHandler: iCadeButtonEventHandler?, buttonUpHandler: iCadeButtonEventHandler?) {
         self.init(stateChangedHandler: stateChangedHandler, buttonDownHandler: buttonDownHandler, buttonUpHandler: buttonUpHandler, internalReader: iCadeReaderView(frame: CGRect.zero))
     }
 
-    public static var shared: PViCadeReader = PViCadeReader(internalReader: iCadeReaderView(frame: CGRect.zero))
+    public struct SharedPViCadeReader: @unchecked Sendable {
+        let shared: PViCadeReader
+    }
 
+    @MainActor public static var shared: SharedPViCadeReader = SharedPViCadeReader(shared: PViCadeReader(internalReader: iCadeReaderView(frame: CGRect.zero)))
+
+    @MainActor
     public func listen(to window: UIWindow?) {
         let keyWindow: UIWindow? = window ?? UIApplication.shared.windows.first { $0.isKeyWindow }
         if keyWindow != internalReader.window {
@@ -45,16 +53,19 @@ public final class PViCadeReader: NSObject, iCadeEventDelegate {
         internalReader.active = true
     }
 
+    @MainActor
     public func listenToKeyWindow() {
         listen(to: nil)
     }
 
+    @MainActor
     public func stopListening() {
         internalReader.active = false
         internalReader.delegate = nil
         internalReader.removeFromSuperview()
     }
 
+    @MainActor
     public var states: [iCadeControllerState] {
         return internalReader.states
     }

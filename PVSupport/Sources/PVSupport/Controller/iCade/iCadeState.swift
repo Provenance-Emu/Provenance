@@ -6,10 +6,11 @@
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
 
-public struct iCadeControllerState: OptionSet, Hashable, CustomStringConvertible, Sendable {
+@MainActor
+public struct iCadeControllerState: OptionSet, @preconcurrency Hashable, @preconcurrency CustomStringConvertible, Sendable {
     public let rawValue: Int
 
-    public init(rawValue: Int) {
+    nonisolated public init(rawValue: Int) {
         self.rawValue = rawValue
     }
 

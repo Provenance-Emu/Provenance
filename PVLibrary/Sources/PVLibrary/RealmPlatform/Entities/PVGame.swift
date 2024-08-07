@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import AsyncAlgorithms
 
 // Hack for game library having eitehr PVGame or PVRecentGame in containers
 protocol PVLibraryEntry where Self: Object {}
@@ -119,24 +120,33 @@ public extension PVGame {
         return exts.contains(ext.lowercased())
     }
 
-    var discCount: Int {
-        if isCD {
-            return relatedFiles.filter({ $0.pathExtension.lowercased() != "m3u" }).filter({ PVEmulatorConfiguration.supportedCDFileExtensions.contains($0.pathExtension.lowercased()) }).count
+    var discCount: Int { get async {
+
+        @Sendable func _isM3U(_ file: PVFile) async -> Bool { await file.pathExtension.lowercased() != "m3u" }
+        @Sendable func _isCD(_ file: PVFile) async -> Bool { await PVEmulatorConfiguration.supportedCDFileExtensions.contains(file.pathExtension.lowercased()) }
+        let relatedFilesArray = relatedFiles.toArray().async
+
+        if self.isCD {
+            let filtered = await relatedFilesArray
+                .filter({ await _isM3U($0) })
+                .filter({ await _isCD($0)}).map(\.self).collect()
+                .count
+            return filtered
         } else {
             return 0
         }
-    }
-    var diskCount: Int {
-        return relatedFiles
-            .filter({ $0.pathExtension.lowercased() != "m3u" })
+    }}
+
+    var diskCount: Int { get async {
+        return await relatedFiles.async
+            .filter({ await $0.pathExtension.lowercased() != "m3u" })
             .filter({
-                if let extensions=RomDatabase.sharedInstance.getSystemCache()[self.systemIdentifier]?.supportedExtensions {
-                    return extensions.contains($0.pathExtension.lowercased())
+                if let extensions=await RomDatabase.sharedInstance.getSystemCache()[self.systemIdentifier]?.supportedExtensions {
+                    return await extensions.contains($0.pathExtension.lowercased())
                 }
                 return false
-            }).count
-    }
-
+            }).map(\.self).collect().count
+    }}
 }
 
 extension PVGame: Filed, LocalFileProvider {}
@@ -162,7 +172,7 @@ public extension PVGame {
 // MARK: Conversions
 
 public extension Game {
-    init(withGame game: PVGame) {
+    init(withGame game: PVGame) async {
         id = game.id
         title = game.title
         systemIdentifier = game.systemIdentifier
@@ -181,7 +191,7 @@ public extension Game {
         regionName = game.regionName
         systemShortName = game.systemShortName
         language = game.language
-        file = FileInfo(fileName: game.file.fileName, size: game.file.size, md5: game.file.md5, online: game.file.online, local: true)
+        file = await FileInfo(fileName: game.file.fileName, size: game.file.size, md5: game.file.md5, online: game.file.online, local: true)
         gameDescription = game.gameDescription
         publishDate = game.publishDate
         // TODO: Screenshots
@@ -191,8 +201,8 @@ public extension Game {
 extension PVGame: DomainConvertibleType {
     public typealias DomainType = Game
 
-    public func asDomain() -> Game {
-        return Game(withGame: self)
+    public func asDomain() async -> Game {
+        return await Game(withGame: self)
     }
 }
 
@@ -201,17 +211,16 @@ extension Game: RealmRepresentable {
         return md5
     }
 
-    public func asRealm() -> PVGame {
-        let realm = try! Realm()
+    public func asRealm() async -> PVGame {
+        let realm = try! await Realm()
         if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
             return existing
         }
 
-        return PVGame.build { object in
+        return await PVGame.build { object in
             object.id = id
             object.title = title
             // TODO: Test that file is correct
-            object.file = PVFile(withPartialPath: file.fileName)
             object.md5Hash = md5
             object.crc = crc
             object.isFavorite = isFavorite
@@ -233,6 +242,9 @@ extension Game: RealmRepresentable {
             object.regionID.value = regionID
             object.systemShortName = systemShortName
             object.language = language
+            Task {
+                object.file = await PVFile(withPartialPath: file.fileName)
+            }
         }
     }
 }

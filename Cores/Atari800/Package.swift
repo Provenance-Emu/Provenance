@@ -29,6 +29,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVCPlist"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVSupport"),
         .package(path: "../../PVAudio"),
@@ -44,6 +45,7 @@ let package = Package(
                 "PVEmulatorCore",
                 "PVCoreBridge",
                 "PVSupport",
+                "PVPlist",
                 "PVObjCUtils",
                 "PVAtari800Swift",
                 "PVAtari800C",

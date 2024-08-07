@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Game: Codable {
+public struct Game: Codable, Sendable {
     public let id: String
     public let title: String
     public let file: FileInfo

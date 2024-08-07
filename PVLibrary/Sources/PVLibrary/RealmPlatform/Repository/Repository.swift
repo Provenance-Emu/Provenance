@@ -5,9 +5,9 @@ import RxSwift
 
 protocol AbstractRepository {
     associatedtype T
-    func queryAll() -> Observable<[T]>
+    func queryAll() async -> Observable<[T]>
     func query(with predicate: NSPredicate,
-               sortDescriptors: [NSSortDescriptor]) -> Observable<[T]>
+               sortDescriptors: [NSSortDescriptor]) async -> Observable<[T]>
 //    func save(entity: T) -> Observable<()>
 //    func delete(entity: T) -> Observable<()>
 }
@@ -27,20 +27,19 @@ final class Repository<T: RealmRepresentable>: AbstractRepository where T == T.R
 //        print("File 📁 url: \(RLMRealmPathForFile("default.realm"))")
     }
 
-    func queryAll() -> Observable<[T]> {
-        return Observable.deferred {
+    func queryAll() async -> Observable<[T]> {
+        return await Observable.deferred {
             let realm = self.realm
             let objects = realm.objects(T.RealmType.self)
 
             return Observable.array(from: objects)
-                .mapToDomain()
-        }
+        }.mapToDomain()
         .subscribe(on: scheduler)
     }
 
     func query(with _: NSPredicate,
-               sortDescriptors _: [NSSortDescriptor] = []) -> Observable<[T]> {
-        return Observable.deferred {
+               sortDescriptors _: [NSSortDescriptor] = []) async -> Observable<[T]> {
+        return await Observable.deferred {
             let realm = self.realm
             let objects = realm.objects(T.RealmType.self)
 //            The implementation is broken since we are not using predicate and sortDescriptors
@@ -49,8 +48,7 @@ final class Repository<T: RealmRepresentable>: AbstractRepository where T == T.R
 //                            .sorted(by: sortDescriptors.map(SortDescriptor.init))
 
             return Observable.array(from: objects)
-                .mapToDomain()
-        }
+        }.mapToDomain()
         .subscribe(on: scheduler)
     }
 

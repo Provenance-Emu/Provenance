@@ -11,6 +11,15 @@ import PVSupport
 import RealmSwift
 import PVLogging
 import PVCoreBridge
+import AsyncAlgorithms
+import PVPlists
+
+extension AsyncSequence {
+    func collect() async rethrows -> [Element] {
+        try await reduce(into: [Element]()) { $0.append($1) }
+    }
+}
+
 #if os(tvOS)
     import TVServices
 #endif
@@ -29,6 +38,8 @@ public struct SystemOptions: OptionSet, Codable {
 
 @objcMembers
 public final class PVSystem: Object, Identifiable, SystemProtocol {
+//    public var gameStructs: [Game]
+    
     public typealias BIOSInfoProviderType = PVBIOS
 
     public dynamic var name: String = ""
@@ -76,9 +87,9 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     public private(set) var games = LinkingObjects(fromType: PVGame.self, property: "system")
     public private(set) var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
 
-    public var gameStructs: [Game] {
-        return games.map { Game(withGame: $0) }
-    }
+    public var gameStructs: [Game] { get async {
+        try! await games.concurrentMap( { await Game(withGame: $0) } )
+    }}
 
     public var coreStructs: [Core] {
         let _cores: [Core]  = cores.map { Core(with: $0) }
@@ -156,25 +167,25 @@ public extension PVSystem {
         return SystemIdentifier(rawValue: identifier) ?? .Unknown
     }
 
-    var biosesHave: [PVBIOS]? {
-        let have = bioses.filter({ (bios) -> Bool in
-            bios.online
-        })
+    var biosesHave: [PVBIOS]? { get async {
+        let have = await bioses.toArray().async.filter({ (bios) -> Bool in
+            await bios.online
+        }).map(\.self).collect()
 
-        return !have.isEmpty ? Array(have) : nil
-    }
+        return have.count > 0 ? have : nil
+    }}
 
-    var missingBIOSes: [PVBIOS]? {
-        let missing = bioses.filter({ (bios) -> Bool in
-            !bios.online
-        })
+    var missingBIOSes: [PVBIOS]? { get async {
+        let missing = await bioses.async.filter({ (bios) -> Bool in
+            await !bios.online
+        }).map(\.self).collect()
 
         return !missing.isEmpty ? Array(missing) : nil
-    }
+    }}
 
-    var hasAllRequiredBIOSes: Bool {
-        return missingBIOSes != nil
-    }
+    var hasAllRequiredBIOSes: Bool { get async {
+        return await missingBIOSes != nil
+    }}
 
     #if os(tvOS)
         var imageType: TVContentItemImageShape {
@@ -193,8 +204,8 @@ public extension PVSystem {
 extension PVSystem: DomainConvertibleType {
     public typealias DomainType = System
 
-    public func asDomain() -> System {
-        return System(with: self)
+    public func asDomain() async -> System {
+        return await System(with: self)
     }
 }
 
@@ -203,8 +214,8 @@ extension System: RealmRepresentable {
         return identifier
     }
 
-    public func asRealm() -> PVSystem {
-        return PVSystem.build({ object in
+    public func asRealm() async -> PVSystem {
+        return await PVSystem.build({ object in
             object.name = name
             object.shortName = shortName
             object.shortNameAlt = shortNameAlt

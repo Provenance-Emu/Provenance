@@ -154,13 +154,8 @@ public struct PVGameLibrary {
     }
     public func refreshLibrary() -> Completable {
         Completable.create { observer in
-            do {
-                try self.database.refresh()
-                observer(.completed)
-            } catch {
-                NSLog("Failed to refresh all objects. \(error.localizedDescription)")
-                observer(.error(error))
-            }
+            self.database.refresh()
+            observer(.completed)
             return Disposables.create()
         }
     }

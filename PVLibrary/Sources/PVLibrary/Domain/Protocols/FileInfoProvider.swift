@@ -9,13 +9,13 @@
 import Foundation
 import PVSupport
 
-public enum FileSystemType {
+public enum FileSystemType: Sendable {
     case local
     case remote
     case iCloud
 }
 
-public struct FileInfo: Codable, FileInfoProvider {
+public struct FileInfo: Codable, FileInfoProvider, Sendable {
     public let fileName: String
     public let size: UInt64
     public let md5: String?
@@ -36,39 +36,32 @@ public typealias FileProviderFetch = (() throws -> Data) -> Void
 ///
 ///
 public protocol FileInfoProvider {
-    var fileName: String { get }
-    var md5: String? { get }
+    var fileName: String { get async }
+    var md5: String? { get async }
     //	var crc : String? { get }
-    var size: UInt64 { get }
-    var online: Bool { get }
+    var size: UInt64 { get async }
+    var online: Bool { get async }
 }
 
 public protocol LocalFileInfoProvider: FileInfoProvider {
-    var url: URL { get }
+    var url: URL { get async }
 }
 
 public protocol LocalFileProvider: LocalFileInfoProvider, DataProvider {}
 
 public extension LocalFileProvider {
-    func readData() throws -> Data {
-        return try Data(contentsOf: url)
-    }
-
-    func fetchData(completion: @escaping FileProviderFetch) {
-        DispatchQueue.global(qos: .userInitiated).async {
-            completion(self.readData)
-        }
+    func readData() async throws -> Data {
+        return try await Data(contentsOf: url)
     }
 }
 
 public protocol DataProvider {
-    var data: Data? { get }
-    func readData() throws -> Data
-    func fetchData(completion: @escaping FileProviderFetch)
+    var data: Data? { get async }
+    func readData() async throws -> Data
 }
 
 public extension DataProvider {
-    var data: Data? { return try? readData() }
+    var data: Data? { get async { return try? await readData() } }
 }
 
 public protocol RemoteFileInfoProvider: FileInfoProvider {
@@ -86,47 +79,46 @@ private let md5Cache: Cache<URL, String> = {
 }()
 
 extension LocalFileInfoProvider {
-    public var size: UInt64 {
+    public var size: UInt64 { get async {
         let fileSize: UInt64
 
-        if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
+        if let attr = try? await FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
             fileSize = attr.fileSize()
         } else {
             fileSize = 0
         }
         return fileSize
-    }
+    } }
 
-    public var online: Bool {
-        return FileManager.default.fileExists(atPath: url.path)
-    }
+    public var online: Bool { get async {
+        return await FileManager.default.fileExists(atPath: url.path)
+    }}
 
-    public var pathExtension: String {
-        return url.pathExtension
-    }
+    public var pathExtension: String { get async {
+        return await url.pathExtension
+    }}
 
-    public var fileName: String {
-        return url.lastPathComponent
-    }
+    public var fileName: String { get async {
+        return await url.lastPathComponent
+    }}
 
-    public var fileNameWithoutExtension: String {
-        return url.deletingPathExtension().lastPathComponent
-    }
+    public var fileNameWithoutExtension: String { get async {
+        return await url.deletingPathExtension().lastPathComponent
+    }}
 
-    @MainActor
-    public var md5: String? {
-        if let md5 = md5Cache.object(forKey: url) {
+    public var md5: String? { get async {
+        if let md5 = await md5Cache.object(forKey: url) {
             return md5
         }
 
         // Lazy make MD5
-        guard let calculatedMD5 = FileManager.default.md5ForFile(atPath: url.path, fromOffset: 0) else {
+        guard let calculatedMD5 = await FileManager.default.md5ForFile(atPath: url.path, fromOffset: 0) else {
             return nil
         }
 
-        md5Cache.setObject(calculatedMD5, forKey: url)
+        await md5Cache.setObject(calculatedMD5, forKey: url)
         return calculatedMD5
-    }
+    }}
 }
 
 public protocol FileBacked {

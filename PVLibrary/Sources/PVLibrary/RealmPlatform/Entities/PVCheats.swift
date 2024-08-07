@@ -10,12 +10,12 @@ import PVLogging
 
 public protocol CheatFile {
     associatedtype LocalFileProviderType: LocalFileProvider
-    var file: LocalFileProviderType! { get }
+    var file: LocalFileProviderType! { get async }
 }
 
 extension LocalFileProvider where Self: CheatFile {
-    public var url: URL { return file.url }
-    public var fileInfo: Self.LocalFileProviderType? { return file }
+    public var url: URL { get async { return await file.url }}
+    public var fileInfo: Self.LocalFileProviderType? { get async { return await file }}
 }
 
 @objcMembers
@@ -64,24 +64,24 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
 // MARK: - Conversions
 
 private extension Cheats {
-    init(with saveState: PVCheats) {
+    init(with saveState: PVCheats) async {
         id = saveState.id
-        game = saveState.game.asDomain()
-        core = saveState.core.asDomain()
+        game = await saveState.game.asDomain()
+        core = await saveState.core.asDomain()
         code = saveState.code
         type = saveState.type
         date = saveState.date
         lastOpened = saveState.lastOpened
         enabled=saveState.enabled
-        file = FileInfo(fileName: saveState.file.fileName, size: saveState.file.size, md5: saveState.file.md5, online: saveState.file.online, local: true)
+        file = await FileInfo(fileName: saveState.file.fileName, size: saveState.file.size, md5: saveState.file.md5, online: saveState.file.online, local: true)
     }
 }
 
 extension PVCheats: DomainConvertibleType {
     public typealias DomainType = Cheats
 
-    public func asDomain() -> Cheats {
-        return Cheats(with: self)
+    public func asDomain() async -> Cheats {
+        return await Cheats(with: self)
     }
 }
 
@@ -90,17 +90,23 @@ extension Cheats: RealmRepresentable {
         return code
     }
 
-    public func asRealm() -> PVCheats {
-        return PVCheats.build { object in
+    public func asRealm() async -> PVCheats {
+        return await PVCheats.build { object in
             object.id = id
-            let realm = try! Realm()
-            let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5) ?? game.asRealm()
-            object.game = rmGame
-            let rmCore = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) ?? core.asRealm()
-            object.core = rmCore
+            let realm = try! await Realm()
+            if let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5) {
+                object.game = rmGame
+            } else {
+                object.game = await game.asRealm()
+            }
+            if let rmCore = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) {
+                object.core = rmCore
+            } else {
+                object.core = await core.asRealm()
+            }
             object.date = date
-            let path = PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName).appendingPathComponent(file.fileName)
-            object.file = PVFile(withURL: path)
+            let path = await PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName).appendingPathComponent(file.fileName)
+            object.file = await PVFile(withURL: path)
             object.lastOpened = lastOpened
             object.code=code
             object.type=type

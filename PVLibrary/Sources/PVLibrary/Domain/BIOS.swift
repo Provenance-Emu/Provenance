@@ -17,7 +17,7 @@ public protocol BIOSInfoProvider: BIOSExpectationsInfoProvider {
 }
 
 public protocol BIOSStatusProvider: BIOSInfoProvider {
-    var status: BIOSStatus { get }
+    var status: BIOSStatus { get async }
 }
 
 public typealias BIOSFileProvider = BIOSStatusProvider & BIOSInfoProvider & LocalFileBacked
@@ -145,21 +145,21 @@ public struct BIOSStatus: Codable {
             }
         }
 
-        public init(expectations: BIOSExpectationsInfoProvider, file: FileInfoProvider) {
-            if file.online {
-                let md5Match = file.md5?.uppercased() == expectations.expectedMD5.uppercased()
-                let sizeMatch = file.size == UInt64(expectations.expectedSize)
-                let filenameMatch = file.fileName == expectations.expectedFilename
+        public init(expectations: BIOSExpectationsInfoProvider, file: FileInfoProvider) async {
+            if await file.online {
+                let md5Match = await file.md5?.uppercased() == expectations.expectedMD5.uppercased()
+                let sizeMatch = await file.size == UInt64(expectations.expectedSize)
+                let filenameMatch = await file.fileName == expectations.expectedFilename
 
                 var misses = [Mismatch]()
                 if !md5Match {
-                    misses.append(.md5(expected: expectations.expectedMD5.uppercased(), actual: file.md5?.uppercased() ?? "0"))
+                    await misses.append(.md5(expected: expectations.expectedMD5.uppercased(), actual: file.md5?.uppercased() ?? "0"))
                 }
                 if !sizeMatch {
-                    misses.append(.size(expected: UInt(expectations.expectedSize), actual: UInt(file.size)))
+                    await misses.append(.size(expected: UInt(expectations.expectedSize), actual: UInt(file.size)))
                 }
                 if !filenameMatch {
-                    misses.append(.filename(expected: expectations.expectedFilename, actual: file.fileName))
+                    await misses.append(.filename(expected: expectations.expectedFilename, actual: file.fileName))
                 }
 
                 self = misses.isEmpty ? .match : .mismatch(misses)
@@ -175,22 +175,22 @@ public struct BIOSStatus: Codable {
 }
 
 public extension BIOSStatus {
-    init<T: BIOSFileProvider>(withBios bios: T) {
+    init<T: BIOSFileProvider>(withBios bios: T) async {
         available = bios.fileInfo != nil
         if available {
-            let md5Match = bios.fileInfo?.md5?.uppercased() == bios.expectedMD5.uppercased()
-            let sizeMatch = bios.fileInfo?.size == UInt64(bios.expectedSize)
-            let filenameMatch = bios.fileInfo?.fileName == bios.expectedFilename
+            let md5Match = await bios.fileInfo?.md5?.uppercased() == bios.expectedMD5.uppercased()
+            let sizeMatch = await bios.fileInfo?.size == UInt64(bios.expectedSize)
+            let filenameMatch = await bios.fileInfo?.fileName == bios.expectedFilename
 
             var misses = [Mismatch]()
             if !md5Match {
-                misses.append(.md5(expected: bios.expectedMD5.uppercased(), actual: bios.fileInfo?.md5?.uppercased() ?? "0"))
+                await misses.append(.md5(expected: bios.expectedMD5.uppercased(), actual: bios.fileInfo?.md5?.uppercased() ?? "0"))
             }
             if !sizeMatch {
-                misses.append(.size(expected: UInt(bios.expectedSize), actual: UInt(bios.fileInfo?.size ?? 0)))
+                await misses.append(.size(expected: UInt(bios.expectedSize), actual: UInt(bios.fileInfo?.size ?? 0)))
             }
             if !filenameMatch {
-                misses.append(.filename(expected: bios.expectedFilename, actual: bios.fileInfo?.fileName ?? "Nil"))
+                await misses.append(.filename(expected: bios.expectedFilename, actual: bios.fileInfo?.fileName ?? "Nil"))
             }
 
             state = misses.isEmpty ? .match : .mismatch(misses)

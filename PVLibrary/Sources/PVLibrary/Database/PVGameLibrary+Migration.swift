@@ -10,6 +10,7 @@ import Foundation
 import RxSwift
 import PVSupport
 import PVLogging
+import AsyncAlgorithms
 
 extension PVGameLibrary {
     public enum MigrationEvent {
@@ -23,7 +24,7 @@ extension PVGameLibrary {
         case unableToGetRomPaths(error: Error)
     }
     // This method is probably outdated
-    public func migrate(fileManager: FileManager = .default) -> Observable<MigrationEvent> {
+    public func migrate(fileManager: FileManager = .default) async -> Observable<MigrationEvent> {
 
         let libraryPath: String = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
         let libraryURL = URL(fileURLWithPath: libraryPath)
@@ -40,8 +41,10 @@ extension PVGameLibrary {
                                 }
                         })
 
-        let createDirectory = fileManager.rx
-            .createDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, withIntermediateDirectories: true, attributes: nil)
+        let romsImportPath = await PVEmulatorConfiguration.Paths.romsImportPath
+        let createDirectory = fileManager
+            .rx
+            .createDirectory(at: romsImportPath, withIntermediateDirectories: true, attributes: nil)
             .catch { .error(MigrationError.unableToCreateRomsDirectory(error: $0)) }
 
         // Move everything that isn't a realm file, into the the import folder so it wil be re-imported
@@ -60,7 +63,7 @@ extension PVGameLibrary {
             })
             .flatMapCompletable({ filesToMove -> Completable in
                 let moves = filesToMove
-                    .map { ($0, PVEmulatorConfiguration.Paths.romsImportPath.appendingPathComponent($0.lastPathComponent))}
+                    .map { ($0, romsImportPath.appendingPathComponent($0.lastPathComponent))}
                     .map { path, toPath in
                         fileManager.rx.moveItem(at: path, to: toPath)
                             .catch({ error in
@@ -72,7 +75,7 @@ extension PVGameLibrary {
             })
 
         let getRomPaths: Observable<MigrationEvent> = fileManager.rx
-            .contentsOfDirectory(at: PVEmulatorConfiguration.Paths.romsImportPath, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
+            .contentsOfDirectory(at: romsImportPath, includingPropertiesForKeys: nil, options: [.skipsSubdirectoryDescendants, .skipsHiddenFiles])
             .catch { Single<[URL]>.error(MigrationError.unableToGetRomPaths(error: $0)) }
             .flatMapMaybe({ paths in
                 if paths.isEmpty {

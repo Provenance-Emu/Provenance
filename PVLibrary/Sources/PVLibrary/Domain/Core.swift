@@ -15,15 +15,15 @@ public struct Core: Codable {
 //    public let systems: [System]
     public let disabled: Bool
 
-    public var systems: [System] {
-        let realm = try! Realm()
-        let systems = realm.objects(PVSystem.self).filter { $0.cores.contains(where: {
+    public var systems: [System] {get async {
+        let realm = try! await Realm()
+        let systems = await realm.objects(PVSystem.self).filter { $0.cores.contains(where: {
             $0.identifier == self.identifier
-        }) }.map {
-            System(with: $0)
+        }) }.asyncMap {
+            await System(with: $0)
         }
         return systems.map { $0 }
-    }
+    }}
     public let project: CoreProject
 
 //    public init(identifier: String, principleClass: String, systems: [System], project: CoreProject) {

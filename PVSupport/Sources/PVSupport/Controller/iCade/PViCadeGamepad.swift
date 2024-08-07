@@ -9,6 +9,7 @@
 #if canImport(UIKit)
 import GameController
 
+//@MainActor
 internal final class PViCadeGamepad: GCExtendedGamepad {
     private let _dpad: PViCadeGamepadDirectionPad = PViCadeGamepadDirectionPad()
     private let _buttonA: PViCadeGamepadButtonInput = PViCadeGamepadButtonInput()

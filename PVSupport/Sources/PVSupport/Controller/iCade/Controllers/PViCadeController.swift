@@ -15,20 +15,23 @@ import PVLogging
 
 // MARK: - PViCadeController
 
+@MainActor
 public class PViCadeController: GCController {
     internal private(set) var iCadeGamepad: PViCadeGamepad = PViCadeGamepad()
-    public let reader: PViCadeReader = PViCadeReader.shared
+
+    public let reader: PViCadeReader.SharedPViCadeReader = PViCadeReader.shared
     public var controllerPressedAnyKey: ((_ controller: PViCadeController?) -> Void)?
 
+    @MainActor
     public func refreshListener() {
-        reader.stopListening()
-        reader.listenToKeyWindow()
+        reader.shared.stopListening()
+        reader.shared.listenToKeyWindow()
     }
 
     deinit {
-        let _reader = self.reader
-        DispatchQueue.main.async { [weak _reader] in
-            _reader?.stopListening()
+        let reader = reader.shared
+        DispatchQueue.main.async {
+            reader.stopListening()
         }
     }
 
@@ -59,41 +62,49 @@ public class PViCadeController: GCController {
         }
     }
 
+    @MainActor
     public override init() {
         super.init()
 
-        reader.buttonDownHandler = { [weak self] button in
-            guard let `self` = self else { return }
+        Task { @MainActor in
+            let dpad = self.iCadeGamepad.dpad
 
-            switch button {
-            case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
-                DLOG("Pad Changed: \(button)")
-                self.iCadeGamepad.dpad.padChanged()
-            default:
-                if let button = self.button(forState: button) {
-                    DLOG("Pressed button: \(button)")
-                    button.isPressed = true
-                } else {
-                    DLOG("Unsupported button: \(button)")
+            reader.shared.buttonDownHandler = { [weak self] button in
+                guard let `self` = self else { return }
+
+                switch button {
+                case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
+                    DLOG("Pad Changed: \(button)")
+                    Task {
+                        await dpad.padChanged()
+                    }
+                default:
+                    if let button = self.button(forState: button) {
+                        DLOG("Pressed button: \(button)")
+                        button.isPressed = true
+                    } else {
+                        DLOG("Unsupported button: \(button)")
+                    }
                 }
+
+                self.controllerPressedAnyKey?(self)
             }
+            reader.shared.buttonUpHandler = { [weak self] button in
+                guard let `self` = self else { return }
 
-            self.controllerPressedAnyKey?(self)
-        }
-
-        reader.buttonUpHandler = { [weak self] button in
-            guard let `self` = self else { return }
-
-            switch button {
-            case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
-                DLOG("Pad Changed: \(button)")
-                self.iCadeGamepad.dpad.padChanged()
-            default:
-                if let button = self.button(forState: button) {
-                    DLOG("De-Pressed button: \(button)")
-                    button.isPressed = false
-                } else {
-                    DLOG("Unsupported button: \(button)")
+                switch button {
+                case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
+                    DLOG("Pad Changed: \(button)")
+                    Task {
+                        await dpad.padChanged()
+                    }
+                default:
+                    if let button = self.button(forState: button) {
+                        DLOG("De-Pressed button: \(button)")
+                        button.isPressed = false
+                    } else {
+                        DLOG("Unsupported button: \(button)")
+                    }
                 }
             }
         }

@@ -3,19 +3,19 @@ import Foundation
 public protocol DomainConvertibleType {
     associatedtype DomainType: Codable
 
-    func asDomain() -> DomainType
+    func asDomain() async -> DomainType
 }
 
 // MARK: - Default implimentations
 
 extension LocalFileProvider where Self: DomainConvertibleType {
-    public func asDomain() -> LocalFile {
-        return LocalFile(url: url)!
+    public func asDomain() async -> LocalFile {
+        return await LocalFile(url: url)!
     }
 }
 
 extension DomainConvertibleType where Self: LocalFileInfoProvider {
-    public func asDomain() -> LocalFile {
-        return LocalFile(url: url)!
+    public func asDomain() async -> LocalFile {
+        return await LocalFile(url: url)!
     }
 }

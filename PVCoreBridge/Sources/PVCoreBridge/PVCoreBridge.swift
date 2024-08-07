@@ -9,31 +9,13 @@ import Foundation
 import PVAudio
 import GameController
 import PVLogging
+import PVPlists
+
 @_exported import MetalKit
 
 #if canImport(UIKit)
 import UIKit
 #endif
-
-@objc
-public protocol EmulatorCoreAudioDataSource: Sendable {
-
-    @objc var frameInterval: TimeInterval { get }
-    @objc var audioDelegate: PVAudioDelegate? { get set }
-
-    var sampleRate: Double { get }
-    var audioBitDepth: UInt { get }
-    var channelCount: UInt { get }
-
-    var audioBufferCount: UInt { get }
-
-    func channelCount(forBuffer: UInt) -> UInt
-    func audioBufferSize(forBuffer: UInt) -> UInt
-    func audioSampleRate(forBuffer: UInt) -> Double
-
-    var ringBuffers: [RingBuffer]? { get set }
-    func ringBuffer(atIndex: UInt) -> RingBuffer?
-}
 
 public extension EmulatorCoreAudioDataSource {
 
@@ -85,7 +67,6 @@ public protocol EmulatorCoreRumbleDataSource: EmulatorCoreControllerDataSource {
     var supportsRumble: Bool { get }
 }
 
-@objc
 public protocol EmulatorCoreInfoProvider {
     var identifier: String { get }
     var principleClass: String { get }
@@ -95,112 +76,24 @@ public protocol EmulatorCoreInfoProvider {
     var projectName: String { get }
     var projectURL: String { get }
     var projectVersion: String { get }
+    var disabled: Bool { get }
+    var subCores: [Self]? { get }
 }
 
-@objc
-public protocol EmulatorCoreInfoPlistProvider {
-    static var corePlist: EmulatorCoreInfoPlist { get }
-    static var resourceBundle: Bundle { get }
+extension EmulatorCoreInfoPlist: EmulatorCoreInfoProvider { }
+
+extension CorePlistEntry: EmulatorCoreInfoProvider {
+
+    public var identifier: String { PVCoreIdentifier }
+    public var principleClass: String { PVPrincipleClass }
+    public var supportedSystems: [String] { PVSupportedSystems }
+    public var projectName: String { PVProjectName }
+    public var projectURL: String { PVProjectURL }
+    public var projectVersion: String { PVProjectVersion }
+    public var disabled: Bool { PVDisabled ?? false }
+    public var subCores: [CorePlistEntry]? { subCores }
 }
 
-public extension EmulatorCoreInfoPlistProvider {
-    var corePlist: EmulatorCoreInfoPlist { Self.corePlist }
-    var resourceBundle: Bundle { Self.resourceBundle }
-}
-
-public extension EmulatorCoreInfoProvider where Self: EmulatorCoreInfoPlistProvider {
-    var identifier: String { Self.corePlist.identifier }
-    var principleClass: String { Self.corePlist.principleClass }
-    var supportedSystems: [String] { Self.corePlist.supportedSystems }
-    var projectName: String { Self.corePlist.projectName }
-    var projectURL: String { Self.corePlist.projectURL }
-    var projectVersion: String { Self.corePlist.projectVersion }
-}
-
-public enum EmulatorCoreInfoPlistError: Error {
-    case missingIdentifier
-    case missingPrincipleClass
-    case missingSupportedSystems
-    case missingProjectName
-    case missingProjectURL
-    case missingProjectVersion
-
-    case couldNotReadPlist
-    case couldNotParsePlist
-}
-
-@objc
-public final class EmulatorCoreInfoPlist: NSObject, EmulatorCoreInfoProvider, Sendable {
-    public let identifier: String
-    public let principleClass: String
-
-    public let supportedSystems: [String]
-
-    public let projectName: String
-    public let projectURL: String
-    public let projectVersion: String
-
-    public init(identifier: String, principleClass: String, supportedSystems: [String], projectName: String, projectURL: String, projectVersion: String) {
-        self.identifier = identifier
-        self.principleClass = principleClass
-        self.supportedSystems = supportedSystems
-        self.projectName = projectName
-        self.projectURL = projectURL
-        self.projectVersion = projectVersion
-    }
-
-    public init?(fromInfoDictionary dict: [String: Any]) {
-        /// Identifier
-        guard let identifier = dict["PVCoreIdentifier"] as? String else {
-            return nil
-        }
-        self.identifier = identifier
-
-        /// Principle Class
-        guard let principleClass = dict["PVPrincipleClass"] as? String else {
-            return nil
-        }
-        self.principleClass = principleClass
-
-        /// Supported systems
-        guard let supportedSystems = dict["PVSupportedSystems"] as? [String] else {
-            return nil
-        }
-        self.supportedSystems = supportedSystems
-
-        /// Project name
-        guard let projectName = dict["PVProjectName"] as? String else {
-            return nil
-        }
-        self.projectName = projectName
-
-        /// Project URL
-        guard let projectURL = dict["PVProjectURL"] as? String else {
-            return nil
-        }
-        self.projectURL = projectURL
-
-        /// Project Version
-        guard let projectVersion = dict["PVProjectVersion"] as? String else {
-            return nil
-        }
-        self.projectVersion = identifier
-    }
-
-    public convenience init?(fromURL plistPath: URL) throws {
-        guard let data = try? Data(contentsOf: plistPath) else {
-            ELOG("Could not read Core.plist")
-            throw EmulatorCoreInfoPlistError.couldNotReadPlist
-        }
-
-        guard let plistObject = try? PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: Any] else {
-            ELOG("Could not generate parse Core.plist")
-            throw EmulatorCoreInfoPlistError.couldNotParsePlist
-        }
-
-        self.init(fromInfoDictionary: plistObject)
-    }
-}
 
 //public extension EmulatorCoreSavesDataSource {
 //    public var saveStatesPath: String {
@@ -230,6 +123,9 @@ public final class EmulatorCoreInfoPlist: NSObject, EmulatorCoreInfoProvider, Se
 
     func loadState(fromFileAtPath fileName: String,
                    completionHandler block: SaveStateCompletion)
+
+//    func saveState(toFileAtPath fileName: String) async throws -> Bool
+//    func loadState(fromFileAtPath fileName: String) async throws -> Bool
 
     //    typealias SaveCompletion = (Bool, Error)
     //

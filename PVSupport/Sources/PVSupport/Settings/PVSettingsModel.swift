@@ -91,6 +91,7 @@ extension Set: UserDefaultsRepresentable {
 /// 5 Quick flip of Bools via keyPath. .toggle(\.keyPath)
 /// 6 Supports grouping settings into sub-keys by using local NSObject classes
 
+@MainActor
 public class MirroredSettings: NSObject {
     var plistPath: String? {
         return Bundle.main.path(forResource: "Defaults", ofType: "plist")
@@ -99,12 +100,14 @@ public class MirroredSettings: NSObject {
     override init() {
         super.init()
 
-        if let path = plistPath {
-            UserDefaults.standard.register(defaults: NSDictionary(contentsOfFile: path) as? [String: Any] ?? [:])
-        }
+        Task { @MainActor in
+            if let path = plistPath {
+                UserDefaults.standard.register(defaults: NSDictionary(contentsOfFile: path) as? [String: Any] ?? [:])
+            }
 
-        setInitialValues(self, rootKey: nil)
-        UserDefaults.standard.synchronize()
+            setInitialValues(self, rootKey: nil)
+            UserDefaults.standard.synchronize()
+        }
     }
 
     private final func setInitialValues(_ settings: NSObject, rootKey: String? = nil) {
@@ -222,41 +225,40 @@ extension MirroredSettings {
     }
 }
 
-@objcMembers
-@objc public final class PVSettingsModel: MirroredSettings {
+public final class PVSettingsModel: MirroredSettings {
     public static let shared = PVSettingsModel()
 
-    @objc public class DebugOptions: NSObject {
+    @objc public actor DebugOptions {
         #if os(macOS) || targetEnvironment(macCatalyst) || os(visionOS)
-		@objc public dynamic var useMetal = true
+		public dynamic var useMetal = true
         #else
-        @objc public dynamic var useMetal = false
+        public dynamic var useMetal = false
         #endif
-        @objc public dynamic var autoJIT = false
+        public dynamic var autoJIT = false
         #if os(macOS) || targetEnvironment(macCatalyst)
-        @objc public dynamic var useSwiftUI = true
+        public dynamic var useSwiftUI = true
         #elseif os(visionOS)
-        @objc public dynamic var useSwiftUI = true
+        public dynamic var useSwiftUI = true
         #else
-        @objc public dynamic var useSwiftUI = false
+        public dynamic var useSwiftUI = false
         #endif
-//		@objc public dynamic var experimentalCores = false
-        @objc public dynamic var iCloudSync = false
-        @objc public dynamic var unsupportedCores = false
-//        @objc public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
-        @objc public dynamic var multiThreadedGL = true
-        @objc public dynamic var multiSampling = true
+//		public dynamic var experimentalCores = false
+        public dynamic var iCloudSync = false
+        public dynamic var unsupportedCores = false
+//        public dynamic var multiThreadedGL = BoolSetting(false, title: "Multi-threaded GL", info: "Use threaded GLES calls.")
+        public dynamic var multiThreadedGL = true
+        public dynamic var multiSampling = true
         #if os(tvOS)
-        @objc public dynamic var tvOSThemes = false
+        public dynamic var tvOSThemes = false
         #endif
         #if os(macOS) || targetEnvironment(macCatalyst)
-        @objc public dynamic var movableButtons = false
-        @objc public dynamic var onscreenJoypad = false
-        @objc public dynamic var onscreenJoypadWithKeyboard = false
+        public dynamic var movableButtons = false
+        public dynamic var onscreenJoypad = false
+        public dynamic var onscreenJoypadWithKeyboard = false
         #elseif os(iOS)
-        @objc public dynamic var movableButtons = false
-        @objc public dynamic var onscreenJoypad = true
-        @objc public dynamic var onscreenJoypadWithKeyboard = true
+        public dynamic var movableButtons = false
+        public dynamic var onscreenJoypad = true
+        public dynamic var onscreenJoypadWithKeyboard = true
         #endif
     }
     

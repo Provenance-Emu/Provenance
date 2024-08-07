@@ -29,6 +29,8 @@ let package = Package(
     dependencies: [
         .package(name: "PVAudio", path: "../PVAudio/"),
         .package(name: "PVLogging", path: "../PVLogging/"),
+        .package(name: "PVPlists", path: "../PVPlists/"),
+
         // MARK: Macros
 
         // SwiftMacros
@@ -43,6 +45,7 @@ let package = Package(
             dependencies: [
                 "PVAudio",
                 "PVLogging",
+                "PVPlists",
                 "SwiftMacros"
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]

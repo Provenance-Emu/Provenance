@@ -25,30 +25,32 @@ public final class PVImageFile: PVFile {
     public dynamic var height: Int = 0
     public dynamic var layout: String = ""
 
-    public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+    public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) async {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = partialPath
-        calculateSizeData()
+        await calculateSizeData()
     }
 
-    public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
+    public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) async {
         self.init()
         self.relativeRoot = relativeRoot
-        let partialPath = relativeRoot.createRelativePath(fromURL: url)
+        let partialPath = await relativeRoot.createRelativePath(fromURL: url)
         self.partialPath = partialPath
-        calculateSizeData()
+        await calculateSizeData()
     }
 
-    private func calculateSizeData() {
+    private func calculateSizeData() async {
         #if canImport(UIKit)
-        guard let image = UIImage(contentsOfFile: url.path) else {
-            ELOG("Failed to create UIImage from path <\(url.path)>")
+        let path = await url.path
+        guard let image = UIImage(contentsOfFile: path) else {
+            ELOG("Failed to create UIImage from path <\(path)>")
             return
         }
         #else
-        guard let image = NSImage(contentsOfFile: url.path) else {
-            ELOG("Failed to create UIImage from path <\(url.path)>")
+        let path = await url.path
+        guard let image = NSImage(contentsOfFile: path) else {
+            ELOG("Failed to create UIImage from path <\(path)>")
             return
         }
         #endif

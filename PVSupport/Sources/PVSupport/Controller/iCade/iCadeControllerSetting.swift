@@ -34,6 +34,7 @@ public enum iCadeControllerSetting: Int, CustomStringConvertible, CaseIterable, 
         }
     }
 
+    @MainActor
     public func createController() -> PViCadeController? {
         switch self {
         case .disabled:

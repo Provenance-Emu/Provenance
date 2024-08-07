@@ -3,9 +3,9 @@ import RealmSwift
 import RxSwift
 
 extension Object {
-    static func build<O: Object>(_ builder: (O) -> Void) -> O {
+    static func build<O: Object>(_ builder: (O) async -> Void) async -> O {
         let object = O()
-        builder(object)
+        await builder(object)
         return object
     }
 }
@@ -22,7 +22,9 @@ extension Reactive where Base == Realm {
         return Observable.create { observer in
             do {
                 try self.base.write {
-                    self.base.add(entity.asRealm(), update: update ? .all : .error)
+                    Task {
+                        await self.base.add(entity.asRealm(), update: update ? .all : .error)
+                    }
                 }
                 observer.onNext(())
                 observer.onCompleted()

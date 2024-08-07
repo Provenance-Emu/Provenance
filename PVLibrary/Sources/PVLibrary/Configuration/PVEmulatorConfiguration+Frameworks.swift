@@ -10,6 +10,7 @@ import PVSupport
 import RealmSwift
 import PVLogging
 import PVCoreBridge
+import PVPlists
 
 #if canImport(UIKit)
 import UIKit
@@ -18,7 +19,7 @@ import UIKit
 extension Sequence where Iterator.Element : Hashable {
 
     func intersects<S : Sequence>(with sequence: S) -> Bool
-        where S.Iterator.Element == Iterator.Element {
+    where S.Iterator.Element == Iterator.Element {
         let sequenceSet = Set(sequence)
         return self.contains(where: sequenceSet.contains)
     }
@@ -27,57 +28,58 @@ extension Sequence where Iterator.Element : Hashable {
 // MARK: - System Scanner
 
 public extension PVEmulatorConfiguration {
-    public class func registerCore(_ core: CorePlistEntry) throws {
+    @MainActor class func registerCore(_ core: EmulatorCoreInfoProvider) async throws {
         let database = RomDatabase.sharedInstance
 
-        let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
-        if let disabled = core.PVDisabled, disabled, !PVSettingsModel.shared.debugOptions.unsupportedCores {
+        let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.supportedSystems]))
+        let unsupportedCoresAvailable = Task {
+            return  await !PVSettingsModel.shared.debugOptions.unsupportedCores
+        }
+
+        if core.disabled, await !unsupportedCoresAvailable.value {
             // Do nothing
-            ILOG("Skipping disabled core \(core.PVCoreIdentifier)")
+            ILOG("Skipping disabled core \(core.identifier)")
         } else {
-            DLOG("Importing core \(core.PVCoreIdentifier)")
-            let newCore = PVCore(withIdentifier: core.PVCoreIdentifier,
-                                 principleClass: core.PVPrincipleClass,
+            DLOG("Importing core \(core.identifier)")
+            let newCore = PVCore(withIdentifier: core.identifier,
+                                 principleClass: core.principleClass,
                                  supportedSystems: Array(supportedSystems),
-                                 name: core.PVProjectName,
-                                 url: core.PVProjectURL,
-                                 version: core.PVProjectVersion,
-                                 disabled: core.PVDisabled ?? false)
+                                 name: core.projectName,
+                                 url: core.projectURL,
+                                 version: core.projectVersion,
+                                 disabled: core.disabled)
             database.refresh()
             try newCore.add(update: true)
         }
-        if let cores=core.PVCores {
-            try cores.forEach { core in do {
-                    let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.PVSupportedSystems]))
-                    let newCore = PVCore(withIdentifier: core.PVCoreIdentifier, principleClass: core.PVPrincipleClass, supportedSystems: Array(supportedSystems), name: core.PVProjectName, url: core.PVProjectURL, version: core.PVProjectVersion, disabled: core.PVDisabled ?? false)
-                    database.refresh()
-                    try newCore.add(update: true)
-                } catch let error as DecodingError {
-                    ELOG("Failed to parse plist \(core.PVProjectName) : \(error)")
-                }
+        if let subCorescores = core.subCores {
+            try subCorescores.forEach { subCore in do {
+                let supportedSystems = database.all(
+                    PVSystem.self,
+                    filter: NSPredicate(format: "identifier IN %@", argumentArray: [subCore.supportedSystems]))
+                let newSubCore = PVCore(withIdentifier: subCore.identifier,
+                                        principleClass: subCore.principleClass,
+                                        supportedSystems: Array(supportedSystems),
+                                        name: subCore.projectName,
+                                        url: subCore.projectURL,
+                                        version: subCore.projectVersion,
+                                        disabled: subCore.disabled)
+                database.refresh()
+                try newSubCore.add(update: true)
+            } catch let error as DecodingError {
+                ELOG("Failed to parse plist \(core.projectName) : \(error)")
+            }
             }
         }
     }
 
-    class func updateCores(fromPlists plists: [URL]) {
+    class func updateCores(fromPlists plists: [EmulatorCoreInfoPlist]) async {
         typealias CorePlistEntries = [CorePlistEntry]
-        let decoder = PropertyListDecoder()
 
-        plists.forEach { plist in
+        await plists.concurrentForEach { corePlist in
             do {
-                let data = try Data(contentsOf: plist)
-                let core: CorePlistEntry = try decoder.decode(CorePlistEntry.self, from: data)
-                try registerCore(core)
-            } catch let error as DecodingError {
-                switch error {
-                case let .keyNotFound(key, context):
-                    ELOG("Failed to parse plist \(plist.path), \(key), \(context.codingPath): \(error)")
-                default:
-                    ELOG("Failed to parse plist \(plist.path), : \(error)")
-                }
+                try await registerCore(corePlist)
             } catch {
-                // Handle error
-                ELOG("Failed to parse plist \(plist.path) : \(error)")
+                ELOG("Failed to register core \(corePlist.identifier)")
             }
         }
     }
@@ -137,11 +139,11 @@ public extension PVEmulatorConfiguration {
         pvSystem.bit = Int(system.PVBit) ?? 0
         pvSystem.releaseYear = Int(system.PVReleaseYear)!
         pvSystem.name = system.PVSystemName
-        #if os(tvOS)    // Show full system names on tvOS
-            pvSystem.shortName = system.PVSystemName
-        #else           // And short names on iOS???
-            pvSystem.shortName = system.PVSystemShortName
-        #endif
+#if os(tvOS)    // Show full system names on tvOS
+        pvSystem.shortName = system.PVSystemName
+#else           // And short names on iOS???
+        pvSystem.shortName = system.PVSystemShortName
+#endif
         pvSystem.shortNameAlt = system.PVSystemShortNameAlt
         pvSystem.controllerLayout = system.PVControlLayout
         pvSystem.portableSystem = system.PVPortable ?? false
@@ -154,7 +156,7 @@ public extension PVEmulatorConfiguration {
         } else {
             pvSystem.screenType = .unknown
         }
-
+        
         // Iterate extensions and add to Realm object
         pvSystem.supportedExtensions.removeAll()
         pvSystem.supportedExtensions.append(objectsIn: system.PVSupportedExtensions)

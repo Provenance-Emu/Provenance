@@ -25,12 +25,12 @@ import UniformTypeIdentifiers
 // also declare the content type in the Info.plist
 @available(iOS 14.0, tvOS 14.0, *)
 public extension UTType {
-    nonisolated(unsafe) static let rom: UTType = UTType(importedAs: "com.provenance.rom",  conformingTo: .data)
-    nonisolated(unsafe) static let bios: UTType = UTType(importedAs: "com.provenance.rom",  conformingTo: .data)
-    nonisolated(unsafe) static let artwork: UTType = UTType(importedAs: "com.provenance.artwork", conformingTo: .image)
-    nonisolated(unsafe) static let savestate: UTType = UTType(exportedAs: "com.provenance.savestate", conformingTo: .data)
-    nonisolated(unsafe) static let sevenZipArchive: UTType = UTType(importedAs: "org.7-zip.7-zip-archive", conformingTo: .archive)
-    nonisolated(unsafe) static let rar: UTType = UTType(importedAs: "com.rarlab.rar-archive", conformingTo: .archive)
+    static let rom: UTType = UTType(importedAs: "com.provenance.rom",  conformingTo: .data)
+    static let bios: UTType = UTType(importedAs: "com.provenance.rom",  conformingTo: .data)
+    static let artwork: UTType = UTType(importedAs: "com.provenance.artwork", conformingTo: .image)
+    static let savestate: UTType = UTType(exportedAs: "com.provenance.savestate", conformingTo: .data)
+    static let sevenZipArchive: UTType = UTType(importedAs: "org.7-zip.7-zip-archive", conformingTo: .archive)
+    static let rar: UTType = UTType(importedAs: "com.rarlab.rar-archive", conformingTo: .archive)
 }
 #endif
 

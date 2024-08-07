@@ -14,9 +14,9 @@ import CoreServices
 // import UIKit
 
 public extension PVGame {
-    var url: URL {
-        return file.url
-    }
+    var url: URL { get async {
+        return await file.url
+    }}
 
     #if os(iOS)
     var spotlightContentSet: CSSearchableItemAttributeSet {

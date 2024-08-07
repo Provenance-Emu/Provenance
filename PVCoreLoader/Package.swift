@@ -21,6 +21,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../PVCoreBridge/"),
+        .package(path: "../PVPlists/"),
         .package(path: "../PVEmulatorCore/"),
         .package(path: "../PVLogging/"),
         .package(path: "../PVSupport/"),

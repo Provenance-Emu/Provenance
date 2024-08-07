@@ -84,7 +84,7 @@ internal extension Core {
 extension PVCore: DomainConvertibleType {
     public typealias DomainType = Core
 
-    public func asDomain() -> Core {
+    public func asDomain() async -> Core {
         return Core(with: self)
     }
 }
@@ -94,22 +94,25 @@ extension Core: RealmRepresentable {
         return identifier
     }
 
-    public func asRealm() -> PVCore {
-        let realm = try! Realm()
+    public func asRealm() async -> PVCore {
+        let realm = try! await Realm()
         if let existing = realm.object(ofType: PVCore.self, forPrimaryKey: identifier) {
             return existing
         }
 
-        return PVCore.build({ object in
+        return await PVCore.build({ object in
             object.identifier = identifier
             object.principleClass = principleClass
-            let realm = try! Realm()
-            let rmSystems = systems.compactMap { realm.object(ofType: PVSystem.self, forPrimaryKey: $0.identifier) }
-            object.supportedSystems.append(objectsIn: rmSystems)
             object.projectName = project.name
             object.projectVersion = project.version
             object.projectURL = project.url.absoluteString
             object.disabled = disabled
+
+            Task {
+                let realm = try! await Realm()
+                let rmSystems = await systems.compactMap { realm.object(ofType: PVSystem.self, forPrimaryKey: $0.identifier) }
+                object.supportedSystems.append(objectsIn: rmSystems)
+            }
         })
     }
 }

@@ -97,7 +97,7 @@ func compareThing1<T: LocalFileBacked>(_ thing1: T) -> Bool {
 }
 
 public extension System {
-    init<S: SystemProtocol>(with system: S) where S.BIOSInfoProviderType: BIOSFileProvider {
+    init<S: SystemProtocol>(with system: S) async where S.BIOSInfoProviderType: BIOSFileProvider {
         let name = system.name
         let identifier = system.identifier
         let shortName = system.shortName
@@ -110,7 +110,7 @@ public extension System {
         let openvgDatabaseID = system.openvgDatabaseID
 
         let options = system.options
-        let bioses = system.BIOSes?.map { (bios: BIOSInfoProvider) -> BIOS in
+        let bioses = await system.BIOSes?.asyncMap { (bios: BIOSInfoProvider) -> BIOS in
 
             let file: LocalFile?
             if let b = bios as? BIOS {
@@ -121,14 +121,14 @@ public extension System {
 
             let status: BIOSStatus
             if let sp = bios as? BIOSStatusProvider {
-                status = sp.status
+                status = await sp.status
             } else {
                 let available: Bool
                 let state: BIOSStatus.State
 
                 if let file = file {
-                    available = file.online
-                    state = BIOSStatus.State(expectations: bios, file: file)
+                    available = await file.online
+                    state = await BIOSStatus.State(expectations: bios, file: file)
                 } else {
                     available = false
                     state = .missing
@@ -150,7 +150,7 @@ public extension System {
 
         let extensions = system.extensions
         let requiresBIOS = system.requiresBIOS
-        let games = system.gameStructs
+        let games = await system.gameStructs
         let cores = system.coreStructs
         let userPreferredCore = system.userPreferredCore
 

@@ -25,12 +25,12 @@ public enum SyncResult {
 }
 
 public protocol Container {
-    var containerURL: URL? { get }
+    var containerURL: URL? { get async }
 }
 
 extension Container {
-    public var containerURL: URL? { return PVEmulatorConfiguration.iCloudContainerDirectory }
-    var documentsURL: URL? { return PVEmulatorConfiguration.iCloudDocumentsDirectory }
+    public var containerURL: URL? { get async { return PVEmulatorConfiguration.iCloudContainerDirectory }}
+    var documentsURL: URL? { get async { return await PVEmulatorConfiguration.iCloudDocumentsDirectory }}
 }
 
 public protocol SyncFileToiCloud: Container {
@@ -68,16 +68,18 @@ final class NotificationObserver {
 extension iCloudTypeSyncer {
     public func loadAllFromICloud() -> Completable {
         return Completable.create { completable in
-            guard self.containerURL != nil else {
-                completable(.error(SyncError.noUbiquityURL))
+            Task {
+                guard await self.containerURL != nil else {
+                    completable(.error(SyncError.noUbiquityURL))
+                    return Disposables.create {}
+                }
                 return Disposables.create {}
             }
-
             //        metadataQuery = NSMetadataQuery()
             self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
             self.metadataQuery.predicate = self.metadataQueryPredicate
 
-            let observer: NotificationObserver = .init(
+            let _: NotificationObserver = .init(
                 forName: Notification.Name.NSMetadataQueryDidFinishGathering,
                 object: self.metadataQuery,
                 queue: nil) {[self] notification in
@@ -92,9 +94,12 @@ extension iCloudTypeSyncer {
 
     public func removeAllFromICloud() -> Completable {
         return Completable.create { completable in
+            Task {
 
-            guard self.containerURL != nil else {
-                completable(.error(SyncError.noUbiquityURL))
+                guard await self.containerURL != nil else {
+                    completable(.error(SyncError.noUbiquityURL))
+                    return Disposables.create {}
+                }
                 return Disposables.create {}
             }
             //        metadataQuery = NSMetadataQuery()
@@ -157,19 +162,20 @@ extension iCloudTypeSyncer {
 }
 
 extension SyncFileToiCloud where Self: LocalFileInfoProvider {
-    private var destinationURL: URL? {
-        guard let containerURL = containerURL else { return nil }
-        return containerURL.appendingPathComponent(url.relativePath)
-    }
+    private var destinationURL: URL? { get async {
+        await Task {
+            guard let containerURL = await containerURL else { return nil }
+            return await containerURL.appendingPathComponent(url.relativePath)
+        }.value
+    }}
 
-    func syncToiCloud(completionHandler: @escaping (SyncResult) -> Void) {
-        DispatchQueue.global(qos: .utility).async {
-            guard let destinationURL = self.destinationURL else {
-                completionHandler(.denied)
-                return
+    func syncToiCloud() async -> SyncResult {
+        await Task {
+            guard let destinationURL = await self.destinationURL else {
+                return SyncResult.denied
             }
 
-            let url = self.url
+            let url = await self.url
 
             self.metadataQuery.disableUpdates()
             defer {
@@ -184,12 +190,12 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
             do {
                 ILOG("Trying to set Ubiquitious from local (\(url.path)) to ICloud (\(destinationURL.path))")
                 try fm.setUbiquitous(true, itemAt: url, destinationURL: destinationURL)
-                completionHandler(.success)
+                return .success
             } catch {
                 ELOG("iCloud failed to set Ubiquitous: \(error.localizedDescription)")
-                completionHandler(.saveFailure)
+                return .saveFailure
             }
-        }
+        }.value
     }
 
     /// - Parameter completionHandler: Non-main
@@ -223,8 +229,8 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
 
     /// - Parameters:
     ///   - completionHandler: Non-main
-    func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) {
-        guard let destinationURL = destinationURL else {
+    func downloadingFile(completionHandler: @escaping (SyncResult) -> Void) async {
+        guard let destinationURL = await destinationURL else {
             completionHandler(.denied)
             return
         }
@@ -297,8 +303,8 @@ public enum iCloudSync {
             return
         }
 
-        DispatchQueue.global(qos: .background).async {
-            let savesDirectory = PVEmulatorConfiguration.Paths.saveSavesPath
+        Task {
+            let savesDirectory = await PVEmulatorConfiguration.Paths.saveSavesPath
             let legacySavesDirectory = PVEmulatorConfiguration.Paths.Legacy.saveSavesPath
             let fm = FileManager.default
             guard let subDirs = try? fm.contentsOfDirectory(at: savesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
@@ -321,9 +327,9 @@ public enum iCloudSync {
                 legacySubDirs = nil
             }
 
-            legacySubDirs?.forEach {
+            await legacySubDirs?.asyncForEach {
                 do {
-                    let destinationURL = PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
+                    let destinationURL = await PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
                     if !fm.isUbiquitousItem(at: destinationURL) {
                         try fm.setUbiquitous(true,
                                              itemAt: $0,
@@ -350,9 +356,9 @@ public enum iCloudSync {
                 }
             }
 
-            DispatchQueue.main.async {
-                let realm = try! Realm()
-                jsonFiles.forEach { json in
+            Task { @MainActor in
+                let realm = try! await Realm()
+                await jsonFiles.concurrentForEach { @MainActor json in
                     do {
                         guard json.startAccessingSecurityScopedResource() else {
                             ELOG("startAccessingSecurityScopedResource failed")
@@ -393,7 +399,7 @@ public enum iCloudSync {
                             return
                         }
 
-                        let newSave = save.asRealm()
+                        let newSave = await save.asRealm()
                         if !realm.isInWriteTransaction {
                             do {
                                 try realm.write {
