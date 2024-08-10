@@ -23,6 +23,7 @@ extension PVGameLibrary {
         case unableToGetContentsOfDocuments(error: Error)
         case unableToGetRomPaths(error: Error)
     }
+    
     // This method is probably outdated
     public func migrate(fileManager: FileManager = .default) async -> Observable<MigrationEvent> {
 
@@ -41,7 +42,7 @@ extension PVGameLibrary {
                                 }
                         })
 
-        let romsImportPath = await PVEmulatorConfiguration.Paths.romsImportPath
+        let romsImportPath = PVEmulatorConfiguration.Paths.romsImportPath
         let createDirectory = fileManager
             .rx
             .createDirectory(at: romsImportPath, withIntermediateDirectories: true, attributes: nil)

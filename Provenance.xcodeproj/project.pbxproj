@@ -560,7 +560,7 @@
 		B33589AC2B464D51000CCAC5 /* PVGameLibrarySectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BC83A817E6775E00E9A607 /* PVGameLibrarySectionHeaderView.swift */; };
 		B33625FC26EDF88200DC41EA /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FA26EDF88200DC41EA /* MetalKit.framework */; };
 		B33625FD26EDF88200DC41EA /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B33625FB26EDF88200DC41EA /* Metal.framework */; };
-		B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = B33B4F3F2C198F32007371C5 /* MBProgressHUD */; };
+		B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, maccatalyst, tvos, ); productRef = B33B4F3F2C198F32007371C5 /* MBProgressHUD */; };
 		B33B4F422C1991F8007371C5 /* UIImage+ImageEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33B4F412C1991F8007371C5 /* UIImage+ImageEffects.swift */; };
 		B33B4F432C1991F8007371C5 /* UIImage+ImageEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33B4F412C1991F8007371C5 /* UIImage+ImageEffects.swift */; };
 		B33B4F442C1991F8007371C5 /* UIImage+ImageEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33B4F412C1991F8007371C5 /* UIImage+ImageEffects.swift */; };
@@ -1145,6 +1145,7 @@
 		B347B3962BC4CD4C006A3B2D /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93C792242954E869001212D2 /* MoltenVK.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B347B3982BC4CD80006A3B2D /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B347B3972BC4CD80006A3B2D /* CoreData.framework */; };
 		B34969582C4E64AD00D37F79 /* PVThemes in Frameworks */ = {isa = PBXBuildFile; productRef = B34969572C4E64AD00D37F79 /* PVThemes */; };
+		B34A20152C62F96100E34059 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B34A20142C62F96100E34059 /* PVPlists */; };
 		B34CFF5D295F2BE90014C8AF /* PVFlycast.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; platformFilter = ios; };
 		B34CFF5E295F2BE90014C8AF /* PVFlycast.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B309C7A42717C49F00279529 /* PVFlycast.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B34E4F4A2C11796B001559E8 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B34E4F492C11796B001559E8 /* PVLogging */; };
@@ -1523,7 +1524,6 @@
 		B394CD382BDEE53A006B63E8 /* TapActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0F276B470B00D85327 /* TapActionCell.swift */; };
 		B394CD392BDEE53A006B63E8 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
 		B394CD3A2BDEE53A006B63E8 /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C10276B470B00D85327 /* SwitchCell.swift */; };
-		B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; platformFilter = ios; };
 		B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
 		B394CD782BDEE53A006B63E8 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
@@ -1577,11 +1577,23 @@
 		B394CDEB2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
 		B394CDEC2BDF701A006B63E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 551DA2FB2ABF7E98004BA3E9 /* LaunchScreen.storyboard */; };
 		B395958F2BF47033004C5AA9 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B395958E2BF47033004C5AA9 /* RxDataSources */; };
+		B396208B2C66E14C0094F6F0 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B396208E2C66E14C0094F6F0 /* SpotlightImportExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B39620922C66E1BE0094F6F0 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B39620912C66E1BE0094F6F0 /* PVCoreBridge */; };
+		B39620942C66E1C70094F6F0 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B39620932C66E1C70094F6F0 /* PVLogging */; };
+		B39620962C66E1D20094F6F0 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B39620952C66E1D20094F6F0 /* PVLibrary */; };
+		B39620982C66E1D70094F6F0 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B39620972C66E1D70094F6F0 /* PVSupport */; };
+		B396209A2C66E1EF0094F6F0 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B39620992C66E1EF0094F6F0 /* PVLibrary */; };
+		B396209C2C66E1F30094F6F0 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B396209B2C66E1F30094F6F0 /* PVSupport */; };
+		B396209E2C66E1FC0094F6F0 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B396209D2C66E1FC0094F6F0 /* PVLogging */; };
+		B39620A02C66E20B0094F6F0 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B396209F2C66E20B0094F6F0 /* PVCoreBridge */; };
 		B3976927285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
 		B3976928285A020800558958 /* PVDOSControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3976926285A020800558958 /* PVDOSControllerViewController.swift */; };
 		B398800D27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B398800E27A521AC004DEFCA /* ConflictsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B398800C27A521AC004DEFCA /* ConflictsController.swift */; };
 		B39AF05F28754EB8004882FC /* PVAppDelegate+VolumeButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39AF05E28754EB8004882FC /* PVAppDelegate+VolumeButton.swift */; };
+		B39B53882C66E7A900C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53872C66E7A900C220C6 /* PVSettings */; };
+		B39B538A2C66E7BA00C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53892C66E7BA00C220C6 /* PVSettings */; };
 		B39C4B6B2BF0A3F000F199BB /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */; platformFilters = (ios, tvos, ); };
 		B39C4B6C2BF0A3F000F199BB /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B39C4B6E2BF0AB6100F199BB /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; };
@@ -1751,6 +1763,9 @@
 		B3E88CBE2977AB7C00C90E86 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B3E88CBD2977AB7C00C90E86 /* Reachability */; };
 		B3EA0CD32070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
 		B3EA0CD42070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EA0CD22070BCCE00BBEAA1 /* PVSaveStateInfoViewController.swift */; };
+		B3EE55DE2C66EBC0004D06E4 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3EE55DD2C66EBC0004D06E4 /* PVSettings */; };
+		B3EE55E12C66EC09004D06E4 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3EE55E02C66EC09004D06E4 /* Defaults */; };
+		B3EE55E32C66EC14004D06E4 /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3EE55E22C66EC14004D06E4 /* Defaults */; };
 		B3EEED8A2920B006008E2603 /* DriverKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EEED892920B006008E2603 /* DriverKit.framework */; };
 		B3EEED8D2920B00A008E2603 /* ControllerDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED8C2920B00A008E2603 /* ControllerDriver.cpp */; };
 		B3EEED8F2920B00A008E2603 /* ControllerDriver.iig in Sources */ = {isa = PBXBuildFile; fileRef = B3EEED8E2920B00A008E2603 /* ControllerDriver.iig */; };
@@ -2532,12 +2547,19 @@
 			remoteGlobalIDString = B3B29D3F2156177100903290;
 			remoteInfo = "Create Version files";
 		};
-		B394CC5C2BDEE53A006B63E8 /* PBXContainerItemProxy */ = {
+		B396208C2C66E14C0094F6F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B3E21D6A203211BE009939D3;
 			remoteInfo = Spotlight;
+		};
+		B396208F2C66E14C0094F6F0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B355E0102920AA9700E4C858;
+			remoteInfo = SpotlightImportExtension;
 		};
 		B3B29D452156183D00903290 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2902,8 +2924,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed App Extensions */,
 				B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed App Extensions */,
+				B396208B2C66E14C0094F6F0 /* Spotlight.appex in Embed App Extensions */,
+				B396208E2C66E14C0094F6F0 /* SpotlightImportExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 1;
@@ -4116,6 +4139,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3EE55E12C66EC09004D06E4 /* Defaults in Frameworks */,
+				B3EE55DE2C66EBC0004D06E4 /* PVSettings in Frameworks */,
+				B39620982C66E1D70094F6F0 /* PVSupport in Frameworks */,
+				B39620962C66E1D20094F6F0 /* PVLibrary in Frameworks */,
+				B39620942C66E1C70094F6F0 /* PVLogging in Frameworks */,
+				B39620922C66E1BE0094F6F0 /* PVCoreBridge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4131,8 +4160,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B396209C2C66E1F30094F6F0 /* PVSupport in Frameworks */,
+				B396209A2C66E1EF0094F6F0 /* PVLibrary in Frameworks */,
 				B355E03B2920AC1A00E4C858 /* SwiftUI.framework in Frameworks */,
 				B355E03A2920AC1A00E4C858 /* WidgetKit.framework in Frameworks */,
+				B39620A02C66E20B0094F6F0 /* PVCoreBridge in Frameworks */,
+				B396209E2C66E1FC0094F6F0 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4148,6 +4181,7 @@
 				B3E0CF9F2C054DEB00F45074 /* RxDataSources in Frameworks */,
 				B3EF26EA2BE7F8BD0066D4B6 /* libz.tbd in Frameworks */,
 				B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */,
+				B34A20152C62F96100E34059 /* PVPlists in Frameworks */,
 				B30585692C0C14EE00B91D7A /* PVWebServer in Frameworks */,
 				B3E0CFA52C054FC200F45074 /* PVEmulatorCore in Frameworks */,
 				B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */,
@@ -4164,6 +4198,7 @@
 				B39C4B6E2BF0AB6100F199BB /* libMoltenVK.dylib in Frameworks */,
 				B394CD952BDEE53A006B63E8 /* CoreData.framework in Frameworks */,
 				B394CD9A2BDEE53A006B63E8 /* AudioToolbox.framework in Frameworks */,
+				B39B53882C66E7A900C220C6 /* PVSettings in Frameworks */,
 				B33B4F402C198F32007371C5 /* MBProgressHUD in Frameworks */,
 				B394CD9F2BDEE53A006B63E8 /* UIKit.framework in Frameworks */,
 				B34969582C4E64AD00D37F79 /* PVThemes in Frameworks */,
@@ -4213,10 +4248,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B323B0102BF46DC200CEA3CF /* PVSupport in Frameworks */,
+				B39B538A2C66E7BA00C220C6 /* PVSettings in Frameworks */,
 				B323B00B2BF46D9700CEA3CF /* PVLibrary in Frameworks */,
 				B3F904A72C2002F9002283B3 /* PVCoreBridge in Frameworks */,
 				B3AFCF962977A80700A01010 /* PVLogging in Frameworks */,
 				111962BE249FDCD2006EAA16 /* CoreServices.framework in Frameworks */,
+				B3EE55E32C66EC14004D06E4 /* Defaults in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6089,8 +6126,9 @@
 			dependencies = (
 				B394CC572BDEE53A006B63E8 /* PBXTargetDependency */,
 				B394CC592BDEE53A006B63E8 /* PBXTargetDependency */,
-				B394CC5B2BDEE53A006B63E8 /* PBXTargetDependency */,
 				B38C69B62BEB2CB300AE4F86 /* PBXTargetDependency */,
+				B396208D2C66E14C0094F6F0 /* PBXTargetDependency */,
+				B39620902C66E14C0094F6F0 /* PBXTargetDependency */,
 			);
 			name = "Provenance (AppStore)";
 			packageProductDependencies = (
@@ -6108,6 +6146,8 @@
 				B33B4F4A2C1A5B4B007371C5 /* RealmSwift */,
 				B34969572C4E64AD00D37F79 /* PVThemes */,
 				B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */,
+				B34A20142C62F96100E34059 /* PVPlists */,
+				B39B53872C66E7A900C220C6 /* PVSettings */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -6152,6 +6192,8 @@
 				B323B00A2BF46D9700CEA3CF /* PVLibrary */,
 				B323B00F2BF46DC200CEA3CF /* PVSupport */,
 				B3F904A62C2002F9002283B3 /* PVCoreBridge */,
+				B39B53892C66E7BA00C220C6 /* PVSettings */,
+				B3EE55E22C66EC14004D06E4 /* Defaults */,
 			);
 			productName = Spotlight;
 			productReference = B3E21D6B203211BE009939D3 /* Spotlight.appex */;
@@ -6471,6 +6513,9 @@
 				B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */,
 				B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */,
 				B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "Cores/VirtualJaguar" */,
+				B34A20132C62F96100E34059 /* XCLocalSwiftPackageReference "PVPlists" */,
+				B39B53862C66E7A900C220C6 /* XCLocalSwiftPackageReference "PVSettings" */,
+				B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -9136,14 +9181,23 @@
 			target = B3B29D3F2156177100903290 /* Create Version files */;
 			targetProxy = B394CC5A2BDEE53A006B63E8 /* PBXContainerItemProxy */;
 		};
-		B394CC5B2BDEE53A006B63E8 /* PBXTargetDependency */ = {
+		B396208D2C66E14C0094F6F0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
 				maccatalyst,
 			);
 			target = B3E21D6A203211BE009939D3 /* Spotlight */;
-			targetProxy = B394CC5C2BDEE53A006B63E8 /* PBXContainerItemProxy */;
+			targetProxy = B396208C2C66E14C0094F6F0 /* PBXContainerItemProxy */;
+		};
+		B39620902C66E14C0094F6F0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+			);
+			target = B355E0102920AA9700E4C858 /* SpotlightImportExtension */;
+			targetProxy = B396208F2C66E14C0094F6F0 /* PBXContainerItemProxy */;
 		};
 		B3B29D462156183D00903290 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -11502,12 +11556,13 @@
 				INFOPLIST_FILE = Extensions/SpotlightImportExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SpotlightImportExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.SpotlightImportExtension";
@@ -11552,12 +11607,13 @@
 				INFOPLIST_FILE = Extensions/SpotlightImportExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SpotlightImportExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.SpotlightImportExtension";
@@ -11601,12 +11657,13 @@
 				INFOPLIST_FILE = Extensions/SpotlightImportExtension/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SpotlightImportExtension;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.SpotlightImportExtension";
@@ -12365,7 +12422,7 @@
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -12462,7 +12519,7 @@
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -12555,7 +12612,7 @@
 				PRODUCT_NAME = Provenance;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
@@ -14139,6 +14196,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVThemes;
 		};
+		B34A20132C62F96100E34059 /* XCLocalSwiftPackageReference "PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVPlists;
+		};
 		B34E4F482C11796B001559E8 /* XCLocalSwiftPackageReference "PVLogging" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVLogging;
@@ -14146,6 +14207,10 @@
 		B36343CE2C4BCC2F002C5D08 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "Cores/VisualBoyAdvance-M";
+		};
+		B39B53862C66E7A900C220C6 /* XCLocalSwiftPackageReference "PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = PVSettings;
 		};
 		B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */ = {
 			isa = XCLocalSwiftPackageReference;
@@ -14366,6 +14431,14 @@
 				kind = branch;
 			};
 		};
+		B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/Defaults.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		B3F7E2A0297736BE00362B92 /* XCRemoteSwiftPackageReference "AltKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/rileytestut/AltKit";
@@ -14541,6 +14614,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = PVThemes;
 		};
+		B34A20142C62F96100E34059 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
 		B34E4F492C11796B001559E8 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
@@ -14569,6 +14646,55 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B395958D2BF47033004C5AA9 /* XCRemoteSwiftPackageReference "RxDataSources" */;
 			productName = RxDataSources;
+		};
+		B39620912C66E1BE0094F6F0 /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */;
+			productName = PVCoreBridge;
+		};
+		B39620932C66E1C70094F6F0 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B34E4F482C11796B001559E8 /* XCLocalSwiftPackageReference "PVLogging" */;
+			productName = PVLogging;
+		};
+		B39620952C66E1D20094F6F0 /* PVLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
+			productName = PVLibrary;
+		};
+		B39620972C66E1D70094F6F0 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */;
+			productName = PVSupport;
+		};
+		B39620992C66E1EF0094F6F0 /* PVLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
+			productName = PVLibrary;
+		};
+		B396209B2C66E1F30094F6F0 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */;
+			productName = PVSupport;
+		};
+		B396209D2C66E1FC0094F6F0 /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B34E4F482C11796B001559E8 /* XCLocalSwiftPackageReference "PVLogging" */;
+			productName = PVLogging;
+		};
+		B396209F2C66E20B0094F6F0 /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */;
+			productName = PVCoreBridge;
+		};
+		B39B53872C66E7A900C220C6 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		B39B53892C66E7BA00C220C6 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B39B53862C66E7A900C220C6 /* XCLocalSwiftPackageReference "PVSettings" */;
+			productName = PVSettings;
 		};
 		B3AFCF952977A80700A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -14629,6 +14755,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3E88CB62977AB4300C90E86 /* XCRemoteSwiftPackageReference "Reachability" */;
 			productName = Reachability;
+		};
+		B3EE55DD2C66EBC0004D06E4 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B39B53862C66E7A900C220C6 /* XCLocalSwiftPackageReference "PVSettings" */;
+			productName = PVSettings;
+		};
+		B3EE55E02C66EC09004D06E4 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
+		B3EE55E22C66EC14004D06E4 /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
 		};
 		B3F7E29F297736BE00362B92 /* AltKit */ = {
 			isa = XCSwiftPackageProductDependency;

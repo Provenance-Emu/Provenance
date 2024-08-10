@@ -68,9 +68,21 @@ public protocol RemoteFileInfoProvider: FileInfoProvider {
     var dataProvider: DataProvider { get }
 }
 
+//private final class MD5Cache: Cache<KeyWrapper<URL>, String> {
+//    public init() {
+//        super.init(lowMemoryAware: false)
+//    }
+//    
+//    public func md5(for url: URL) async throws -> String {
+//        if let cached = try? await self.object(forKey: KeyWrapper(url)) {
+//            return cached.md5
+//        }
+//    }
+//}
+
 // Cache for storing md5's
-@MainActor
-private let md5Cache: Cache<URL, String> = {
+//@MainActor
+nonisolated(unsafe) private let md5Cache: Cache<URL, String> = {
     let c = Cache<URL, String>(lowMemoryAware: false)
     c.countLimit = 1024
     let d = Data()
@@ -106,6 +118,7 @@ extension LocalFileInfoProvider {
         return await url.deletingPathExtension().lastPathComponent
     }}
 
+    @preconcurrency
     public var md5: String? { get async {
         if let md5 = await md5Cache.object(forKey: url) {
             return md5

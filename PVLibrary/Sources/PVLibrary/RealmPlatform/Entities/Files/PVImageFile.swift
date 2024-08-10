@@ -25,19 +25,24 @@ public final class PVImageFile: PVFile {
     public dynamic var height: Int = 0
     public dynamic var layout: String = ""
 
-    public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) async {
+    public convenience init(withPartialPath partialPath: String, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = partialPath
-        await calculateSizeData()
+        Task {
+            await calculateSizeData()
+        }
     }
 
-    public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) async {
+    public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
-        let partialPath = await relativeRoot.createRelativePath(fromURL: url)
-        self.partialPath = partialPath
-        await calculateSizeData()
+        Task {
+            let partialPath = await relativeRoot.createRelativePath(fromURL: url)
+            self.partialPath = partialPath
+
+            await calculateSizeData()
+        }
     }
 
     private func calculateSizeData() async {

@@ -105,18 +105,30 @@ extension iCloudTypeSyncer {
             //        metadataQuery = NSMetadataQuery()
             self.metadataQuery.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
             self.metadataQuery.predicate = self.metadataQueryPredicate
-            var token: NSObjectProtocol?
-            token = NotificationCenter.default.addObserver(
+
+            let token: NSObjectProtocol? = NotificationCenter.default.addObserver(
                 forName: Notification.Name.NSMetadataQueryDidFinishGathering,
                 object: self.metadataQuery,
                 queue: nil) { notification in
                     self.removeQueryFinished(notification: notification)
-                    NotificationCenter.default.removeObserver(token!)
+//                    if let token = token {
+//                        NotificationCenter.default.removeObserver(token)
+//                    }
                     completable(.completed)
                 }
 
+//            token = NotificationCenter.default.addObserver(
+//                forName: Notification.Name.NSMetadataQueryDidUpdate,
+//                object: self.metadataQuery,
+//                queue: nil) { notification in
+//                    self.queryFinished(notification: notification)
+//                }
             self.metadataQuery.start()
-            return Disposables.create {}
+            return Disposables.create {
+                if let token = token {
+                    NotificationCenter.default.removeObserver(token)
+                }
+            }
         }
     }
 

@@ -72,7 +72,7 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
 
     case Unknown
 
-
+    public
     var isBeta: Bool {
         switch self {
 
@@ -200,6 +200,14 @@ public enum SystemIdentifier: String, CaseIterable, Codable {
             true
         case .Unknown:
             true
+        }
+    }
+    
+    public
+    var offset: UInt64 {
+        switch self {
+        case .SNES: return 16
+        default: return 0
         }
     }
 

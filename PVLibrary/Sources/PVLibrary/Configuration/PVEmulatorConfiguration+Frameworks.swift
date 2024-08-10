@@ -16,15 +16,6 @@ import PVPlists
 import UIKit
 #endif
 
-extension Sequence where Iterator.Element : Hashable {
-
-    func intersects<S : Sequence>(with sequence: S) -> Bool
-    where S.Iterator.Element == Iterator.Element {
-        let sequenceSet = Set(sequence)
-        return self.contains(where: sequenceSet.contains)
-    }
-}
-
 // MARK: - System Scanner
 
 public extension PVEmulatorConfiguration {
@@ -32,11 +23,9 @@ public extension PVEmulatorConfiguration {
         let database = RomDatabase.sharedInstance
 
         let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.supportedSystems]))
-        let unsupportedCoresAvailable = Task {
-            return  await !PVSettingsModel.shared.debugOptions.unsupportedCores
-        }
-
-        if core.disabled, await !unsupportedCoresAvailable.value {
+        let unsupportedCoresAvailable: Bool = Defaults[.unsupportedCores]
+        
+        if core.disabled, unsupportedCoresAvailable {
             // Do nothing
             ILOG("Skipping disabled core \(core.identifier)")
         } else {

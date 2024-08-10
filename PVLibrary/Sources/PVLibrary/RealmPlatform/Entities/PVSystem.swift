@@ -24,7 +24,7 @@ extension AsyncSequence {
     import TVServices
 #endif
 
-public struct SystemOptions: OptionSet, Codable {
+public struct SystemOptions: OptionSet, Codable, Sendable {
     public init(rawValue: Int) {
         self.rawValue = rawValue
     }

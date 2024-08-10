@@ -1,0 +1,15 @@
+{
+  "originHash" : "b5a0b42fbd4b5319d0cc085ec410c12ef0bec19502ffb08a03119c463e75c36f",
+  "pins" : [
+    {
+      "identity" : "swiftgenplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BookBeat/SwiftGenPlugin.git",
+      "state" : {
+        "branch" : "xcodeproject-support",
+        "revision" : "1228d5a43ca791db0719d42f641c34a00b9c32f3"
+      }
+    }
+  ],
+  "version" : 3
+}

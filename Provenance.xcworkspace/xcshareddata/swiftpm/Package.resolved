@@ -29,12 +29,12 @@
         }
       },
       {
-        "package": "GRDB",
-        "repositoryURL": "https://github.com/groue/GRDB.swift.git",
+        "package": "Defaults",
+        "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
-          "branch": null,
-          "revision": "1cd6c7cbffa7ecac14a8a7c0f27d5c3e7c35c87e",
-          "version": "6.29.0"
+          "branch": "main",
+          "revision": "bf717462d969a1b024d731261c29a27e3965d390",
+          "version": null
         }
       },
       {
@@ -240,7 +240,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "6b16169ccf018fc310dd52353c66ba2759b7cffa",
+          "revision": "9a5c74b2ca1d213268df97803460744f044d8f3e",
           "version": null
         }
       }

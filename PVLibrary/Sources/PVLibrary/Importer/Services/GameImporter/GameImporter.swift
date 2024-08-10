@@ -69,7 +69,7 @@ public final class GameImporter {
     // MARK: - Paths
 
     public var documentsPath: URL { get async { PVEmulatorConfiguration.documentsPath }}
-    public var romsImportPath: URL { get async { await PVEmulatorConfiguration.Paths.romsImportPath }}
+    public var romsImportPath: URL { PVEmulatorConfiguration.Paths.romsImportPath }
     public var romsPath: URL { get async { await PVEmulatorConfiguration.Paths.romsPath }}
 
     public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
@@ -217,9 +217,11 @@ public final class GameImporter {
     @objc
     public func calculateMD5(forGame game: PVGame) async -> String? {
         var offset: UInt64 = 0
-#warning("Don't hardcode this offset.")
-        if game.systemIdentifier == "com.provenance.snes" {
-            offset = 16
+    
+        if game.systemIdentifier == SystemIdentifier.SNES.rawValue {
+            offset = SystemIdentifier.SNES.offset
+        } else if let system = SystemIdentifier(rawValue: game.systemIdentifier) {
+            offset = system.offset
         }
 
         let romPath = await romsPath.appendingPathComponent(game.romPath, isDirectory: false)
@@ -301,9 +303,9 @@ public final class GameImporter {
 
     @discardableResult
     private func deleteIfJunk(_ filePath: URL) async -> Bool {
-        if filePath.lastPathComponent != "0", await filePath.path.contains(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent), !PVEmulatorConfiguration.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
+        if filePath.lastPathComponent != "0", filePath.path.contains(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent), !PVEmulatorConfiguration.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
             let extLHS = filePath.lastPathComponent
-            let extRHS = await PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent
+            let extRHS = PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent
             ILOG("\(extLHS) doesn't matching any known possible extensions and is in \(extRHS) directory. Deleting.")
             do {
                 if FileManager.default.fileExists(atPath: filePath.path) {

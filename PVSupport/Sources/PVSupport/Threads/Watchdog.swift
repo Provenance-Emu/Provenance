@@ -1,7 +1,7 @@
 import Foundation
 
 /// Class for logging excessive blocking on the main thread.
-final public class Watchdog: NSObject {
+final public class Watchdog {
     fileprivate let pingThread: PingThread
 
     @objc public static let defaultThreshold = 0.4
@@ -28,7 +28,6 @@ final public class Watchdog: NSObject {
         self.pingThread = PingThread(threshold: threshold, handler: watchdogFiredCallback)
 
         self.pingThread.start()
-        super.init()
     }
     
     deinit {
@@ -63,13 +62,16 @@ private final class PingThread: Thread {
         self.name = "WatchDog"
     }
 
-    @MainActor
+    @preconcurrency
+    nonisolated
     override func main() {
         while !isCancelled {
             pingTaskIsRunning = true
-            DispatchQueue.main.async {
-                self.pingTaskIsRunning = false
-                self.semaphore.signal()
+            #warning("TODO: Implement a proper ping task")
+            DispatchQueue.main.async { [weak self] in
+//                guard let self else { return }
+//                self.pingTaskIsRunning = false
+//                self.semaphore.signal()
             }
             
             Thread.sleep(forTimeInterval: threshold)
@@ -81,3 +83,38 @@ private final class PingThread: Thread {
         }
     }
 }
+
+//private final class PingController {
+//    private var pingTask: Task<Void, Never>?
+//    private let semaphore = DispatchSemaphore(value: 0)
+//    private var isCancelled = false
+//    private let threshold: TimeInterval = 5 // Adjust according to your needs
+//
+//    func start() {
+//        self.pingTask = Task {
+//            while !isCancelled {
+//                await performPingTask()
+//                try? await Task.sleep(nanoseconds: UInt64(threshold * 1_000_000_000))
+//                semaphore.signal()
+////                semaphore.wait()
+//            }
+//        }
+//    }
+//
+//    func cancel() {
+//        isCancelled = true
+//        pingTask?.cancel()
+//    }
+//
+//    private func performPingTask() async {
+//        // Perform the ping task here
+//        // Example:
+//        await withUnsafeContinuation { continuation in
+//            // Placeholder for actual ping operation
+//            DispatchQueue.main.asyncAfter(deadline: .now() + threshold) {
+//                self.semaphore.signal()
+//                continuation.resume()
+//            }
+//        }
+//    }
+//}

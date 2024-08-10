@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-public struct Core: Codable {
+public struct Core: Codable, Sendable {
     public let identifier: String
     public let principleClass: String
 //    public let systems: [System]
@@ -40,7 +40,7 @@ extension Core: Equatable {
     }
 }
 
-public struct CoreProject: Codable {
+public struct CoreProject: Codable, Sendable {
     public let name: String
     public let url: URL
     public let version: String

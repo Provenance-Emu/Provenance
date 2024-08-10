@@ -13,6 +13,7 @@ import RxSwift
 import PVEmulatorCore
 import PVCoreBridge
 import PVThemes
+import PVSettings
 
 #if !targetEnvironment(macCatalyst) && !os(macOS)
 #if canImport(SteamController)
@@ -58,12 +59,12 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
     func _initUITheme() {
         #if os(iOS)
-        let darkTheme = (PVSettingsModel.shared.theme == .auto && self.window?.traitCollection.userInterfaceStyle == .dark) || PVSettingsModel.shared.theme == .dark
+        let darkTheme = (Defaults[.theme] == .auto && self.window?.traitCollection.userInterfaceStyle == .dark) || Defaults[.theme] == .dark
         let newTheme = darkTheme ? ProvenanceThemes.dark.palette : ProvenanceThemes.light.palette
 //        ThemeManager.shared.setCurrentTheme(newTheme)
         self.window?.overrideUserInterfaceStyle = ThemeManager.shared.currentTheme.dark ? .dark : .light
         #elseif os(tvOS)
-//        if PVSettingsModel.shared.debugOptions.tvOSThemes {
+//        if Defaults[.tvOSThemes] {
 //            DispatchQueue.main.async {
 //                ThemeManager.shared.currentTheme = Theme.darkTheme
 //            }
@@ -87,7 +88,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         #endif
 
         if #available(iOS 14, tvOS 14, macCatalyst 15.0, visionOS 1.0, *),
-           PVSettingsModel.shared.debugOptions.useSwiftUI {
+           Defaults[.useSwiftUI] {
             let viewModel = PVRootViewModel()
             let rootViewController = PVRootViewController.instantiate(
                 updatesController: libraryUpdatesController,
@@ -125,7 +126,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         #if os(iOS) && !APP_STORE
-        if PVSettingsModel.shared.debugOptions.autoJIT {
+        if Defaults[.autoJIT] {
             DOLJitManager.shared().attemptToAcquireJitOnStartup()
         }
         DispatchQueue.main.async { [unowned self] in
@@ -135,7 +136,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        application.isIdleTimerDisabled = PVSettingsModel.shared.disableAutoLock
+        application.isIdleTimerDisabled = Defaults[.disableAutoLock]
 
         _initLogging()
         _initAppCenter()
@@ -144,7 +145,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 //		#if !(targetEnvironment(macCatalyst) || os(macOS))
         PVEmulatorConfiguration.initICloud()
         DispatchQueue.global(qos: .background).async {
-            let useiCloud = PVSettingsModel.shared.debugOptions.iCloudSync && PVEmulatorConfiguration.supportsICloud
+            let useiCloud = Defaults[.iCloudSync] && PVEmulatorConfiguration.supportsICloud
             if useiCloud {
                 DispatchQueue.main.async {
                     iCloudSync.initICloudDocuments()
@@ -201,9 +202,9 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
                 _ = ThemeManager.shared.currentTheme
             } onChange: { [unowned self] in
                 print("changed: ", ThemeManager.shared.currentTheme)
-                //            Task { @MainActor in
-                self._initUITheme()
-                //            }
+                Task.detached { @MainActor in
+                    self._initUITheme()
+                }
             }
         } else {
             // Fallback on earlier versions
@@ -211,18 +212,24 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
         // Setup importing/updating library
         let gameImporter = GameImporter.shared
-        let libraryUpdatesController = PVGameLibraryUpdatesController(gameImporter: gameImporter)
-        #if os(iOS) || os(macOS)
-            libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
-        #endif
 
-        // Handle refreshing library
         self.handleNotifications()
-        _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
 
-        let database = RomDatabase.sharedInstance
-        database.refresh()
-        database.reloadCache()
+        Task { @MainActor in
+            let libraryUpdatesController = await PVGameLibraryUpdatesController(gameImporter: gameImporter)
+#if os(iOS) || os(macOS)
+            libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
+#endif
+
+            // Handle refreshing library
+            _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
+        }
+
+        Task.detached {
+            let database = RomDatabase.sharedInstance
+            database.refresh()
+            await database.reloadCache()
+        }
 
         #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
         // SteamController is build with STEAMCONTROLLER_NO_PRIVATE_API, so dont call this! ??
@@ -234,6 +241,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
             ApplicationMonitor.shared.start()
         #endif
 
+        
 		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
 			self.startOptionalWebDavServer()
 		})
@@ -243,28 +251,21 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    func saveCoreState(_ application: PVApplication) {
+    func saveCoreState(_ application: PVApplication) async throws {
         if let core = application.core {
             if core.isOn, let emulator = application.emulator {
-                if PVSettingsModel.shared.autoSave, core.supportsSaveStates {
-                    NSLog("PVAppDelegate: Saving Core State\n")
-                    emulator.autoSaveState { result in
-                        switch result {
-                            case .success:
-                                NSLog("PVAppDelegate: Save Successful")
-                                break
-                            case let .error(error):
-                                NSLog("PVAppDelegate: \(error.localizedDescription)")
-                        }
-                    }
+                if Defaults[.autoSave], core.supportsSaveStates {
+                    ILOG("PVAppDelegate: Saving Core State\n")
+                    try await emulator.autoSaveState()
                 }
             }
         }
     }
+
     func pauseCore(_ application: PVApplication) {
         if let core = application.core {
             if core.isOn && core.isRunning {
-                NSLog("PVAppDelegate: Pausing Core\n")
+                ILOG("PVAppDelegate: Pausing Core\n")
                 core.setPauseEmulation(true)
             }
         }
@@ -273,7 +274,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
     func stopCore(_ application: PVApplication) {
         if let core = application.core {
             if core.isOn {
-                NSLog("PVAppDelegate: Stopping Core\n")
+                ILOG("PVAppDelegate: Stopping Core\n")
                 core.stopEmulation()
             }
         }
@@ -285,7 +286,10 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
             pauseCore(app)
             sleep(1)
-            saveCoreState(app)
+
+            Task {
+                try await saveCoreState(app)
+            }
         }
     }
 

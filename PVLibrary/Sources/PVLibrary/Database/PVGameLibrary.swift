@@ -12,6 +12,7 @@ import RxSwift
 import RealmSwift
 import RxRealm
 import PVLogging
+@_exported public import PVSettings
 
 public struct PVGameLibrary {
     public let saveStates: Observable<[PVSaveState]>

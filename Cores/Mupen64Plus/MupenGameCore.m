@@ -169,7 +169,7 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
         CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
         float widthScale = size.width / WIDTHf;
         float heightScale = size.height / HEIGHTf;
-        if (PVSettingsModel.shared.integerScaleEnabled) {
+        if (PVSettingsModel.shared.shared.integerScaleEnabled) {
             widthScale = floor(widthScale);
             heightScale = floor(heightScale);
         }

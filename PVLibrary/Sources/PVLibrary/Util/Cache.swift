@@ -19,7 +19,7 @@ private class ObjectWrapper {
     }
 }
 
-private class KeyWrapper<KeyType: Hashable>: NSObject {
+internal final class KeyWrapper<KeyType: Hashable & Sendable>: NSObject, Sendable {
     let key: KeyType
     init(_ key: KeyType) {
         self.key = key
@@ -37,7 +37,7 @@ private class KeyWrapper<KeyType: Hashable>: NSObject {
     }
 }
 
-open class Cache<KeyType: Hashable, ObjectType> {
+open class Cache<KeyType: Hashable & Sendable, ObjectType> {
     private let cache: NSCache<KeyWrapper<KeyType>, ObjectWrapper> = NSCache()
 
     public init(lowMemoryAware: Bool = true) {

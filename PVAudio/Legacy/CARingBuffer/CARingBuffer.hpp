@@ -47,8 +47,7 @@
 #if !defined(__COREAUDIO_USE_FLAT_INCLUDES__)
 	#include <CoreAudio/CoreAudioTypes.h>
 #else
-	#include <
-.h>
+	#include <CoreAudioTypes.h>
 #endif
 
 

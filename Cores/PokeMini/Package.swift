@@ -39,7 +39,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
-        .package(path: "../../PVCPlist"),
+        .package(path: "../../PVPlists"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
@@ -55,6 +55,7 @@ let package = Package(
                 "PVCoreBridge",
                 "PVObjCUtils",
                 "PVLogging",
+                "PVPlists",
                 "PokeMiniSwift",
                 "PokeMiniC",
                 "libpokemini"

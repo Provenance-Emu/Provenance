@@ -15,24 +15,33 @@ import PVLogging
 
 // MARK: - PViCadeController
 
-@MainActor
 public class PViCadeController: GCController {
-    internal private(set) var iCadeGamepad: PViCadeGamepad = PViCadeGamepad()
+    
+    internal let iCadeGamepad: PViCadeGamepad = PViCadeGamepad()
 
-    public let reader: PViCadeReader.SharedPViCadeReader = PViCadeReader.shared
-    public var controllerPressedAnyKey: ((_ controller: PViCadeController?) -> Void)?
+    nonisolated public var isConnected: Bool {
+        return iCadeGamepad.controller?.isAttachedToDevice ?? false
+    }
+    
+    @MainActor
+    public var reader: PViCadeReader.SharedPViCadeReader { PViCadeReader.shared }
+    
+    public var controllerPressedAnyKey: ((_ controller: PViCadeController?) -> Void)? = nil {
+        didSet {
+            controllerPressedAnyKey?(self)
+        }
+    }
 
     @MainActor
-    public func refreshListener() {
+    public func refreshListener() async {
         reader.shared.stopListening()
         reader.shared.listenToKeyWindow()
     }
 
     deinit {
-        let reader = reader.shared
-        DispatchQueue.main.async {
-            reader.stopListening()
-        }
+//        Task { @MainActor in
+//            await reader.shared.stopListening()
+//        }
     }
 
     func button(forState button: iCadeControllerState) -> PViCadeGamepadButtonInput? {
@@ -62,49 +71,62 @@ public class PViCadeController: GCController {
         }
     }
 
-    @MainActor
+    @preconcurrency
     public override init() {
         super.init()
 
-        Task { @MainActor in
+//        Task { @MainActor in
+//            await self.createButtonDownHandler()
+//            await self.createButtonUpHandler()
+//        }
+    }
+    
+    @MainActor
+    @preconcurrency
+    private func createButtonDownHandler() {
+        reader.shared.buttonDownHandler = { [weak self] button in
+            guard let `self` = self else { return }
+
+            let dpad = self.iCadeGamepad.dpad
+            
+            switch button {
+            case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
+                DLOG("Pad Changed: \(button)")
+                Task {
+                    await dpad.padChanged()
+                }
+            default:
+                if let button = self.button(forState: button) {
+                    DLOG("Pressed button: \(button)")
+                    button.isPressed = true
+                } else {
+                    DLOG("Unsupported button: \(button)")
+                }
+            }
+
+            self.controllerPressedAnyKey?(self)
+        }
+    }
+    
+    @MainActor
+    private func createButtonUpHandler() {
+        reader.shared.buttonUpHandler = { [weak self] button in
+            guard let `self` = self else { return }
+
             let dpad = self.iCadeGamepad.dpad
 
-            reader.shared.buttonDownHandler = { [weak self] button in
-                guard let `self` = self else { return }
-
-                switch button {
-                case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
-                    DLOG("Pad Changed: \(button)")
-                    Task {
-                        await dpad.padChanged()
-                    }
-                default:
-                    if let button = self.button(forState: button) {
-                        DLOG("Pressed button: \(button)")
-                        button.isPressed = true
-                    } else {
-                        DLOG("Unsupported button: \(button)")
-                    }
+            switch button {
+            case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
+                DLOG("Pad Changed: \(button)")
+                Task {
+                    await dpad.padChanged()
                 }
-
-                self.controllerPressedAnyKey?(self)
-            }
-            reader.shared.buttonUpHandler = { [weak self] button in
-                guard let `self` = self else { return }
-
-                switch button {
-                case iCadeControllerState.joystickDown, iCadeControllerState.joystickLeft, iCadeControllerState.joystickRight, iCadeControllerState.joystickUp:
-                    DLOG("Pad Changed: \(button)")
-                    Task {
-                        await dpad.padChanged()
-                    }
-                default:
-                    if let button = self.button(forState: button) {
-                        DLOG("De-Pressed button: \(button)")
-                        button.isPressed = false
-                    } else {
-                        DLOG("Unsupported button: \(button)")
-                    }
+            default:
+                if let button = self.button(forState: button) {
+                    DLOG("De-Pressed button: \(button)")
+                    button.isPressed = false
+                } else {
+                    DLOG("Unsupported button: \(button)")
                 }
             }
         }

@@ -27,9 +27,8 @@ let package = Package(
     ],
 
     dependencies: [
-        .package(
-            name: "PVLogging",
-            path: "../PVLogging/"),
+        .package(path: "../PVLogging/"),
+        .package(path: "../PVSettings/"),
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git",branch: "develop")
     ],
 
@@ -40,6 +39,7 @@ let package = Package(
             name: "PVSupport",
             dependencies: [
                 "PVLogging",
+                "PVSettings"
             ],
             resources: [
                 .process("Resources/AHAP/"),
@@ -68,7 +68,7 @@ let package = Package(
             dependencies: ["PVSupport"]
         )
     ],
-    swiftLanguageVersions: [.v5, .v6],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx20
 )

@@ -78,10 +78,10 @@ let package = Package(
             url: "https://github.com/RxSwiftCommunity/RxRealm.git",
             .upToNextMajor(from: "5.1.0")
         ),
-        .package(
-            url: "https://github.com/groue/GRDB.swift.git",
-            .upToNextMajor(from: "6.6.0")
-        ),
+//        .package(
+//            url: "https://github.com/groue/GRDB.swift.git",
+//            .upToNextMajor(from: "6.6.0")
+//        ),
         .package(
             url: "https://github.com/stephencelis/SQLite.swift.git",
             .upToNextMajor(from: "0.15.3")
@@ -113,7 +113,7 @@ let package = Package(
                 "PVPlists",
                 .product(name: "PVEmulatorCore", package: "PVEmulatorCore"),
                 .product(name: "PVCoreLoader", package: "PVCoreLoader"),
-                .product(name: "GRDB", package: "GRDB.swift"),
+//                .product(name: "GRDB", package: "GRDB.swift"),
                 .product(name: "SQLite", package: "SQLite.swift"),
                 .product(name: "RxCocoa", package: "RxSwift"),
                 .product(name: "RxSwift", package: "RxSwift"),
@@ -143,7 +143,7 @@ let package = Package(
             path: "Tests"
         )
     ],
-    swiftLanguageVersions: [.v5],
-    cLanguageStandard: .gnu17,
+    swiftLanguageModes: [.v5],
+    cLanguageStandard: .gnu18,
     cxxLanguageStandard: .gnucxx20
 )

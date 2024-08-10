@@ -30,7 +30,15 @@ struct PVGameLibraryUpdatesController {
     }
 
     // TODO: Would be nice to inject the DirectoryWatcher as well
-    init(gameImporter: GameImporter, importPath: URL = PVEmulatorConfiguration.Paths.romsImportPath, scheduler: SchedulerType = MainScheduler.asyncInstance) {
+    init(gameImporter: GameImporter, importPath: URL? = nil, scheduler: SchedulerType = MainScheduler.asyncInstance) async {
+        var importPath = importPath
+        if importPath == nil {
+            importPath = PVEmulatorConfiguration.Paths.romsImportPath
+        }
+        guard let importPath = importPath else {
+            ELOG("No import path?")
+            fatalError("No import path?")
+        }
         self.gameImporter = gameImporter
         self.gameImporterEvents = Reactive(gameImporter).events.share()
 
@@ -60,11 +68,13 @@ struct PVGameLibraryUpdatesController {
 
         let _systemDirsConflicts = Observable.just(PVSystem.all.map { $0 })
             .map({ systems -> [(System, [URL])] in
-                systems
-                    .map { $0.asDomain() }
-                    .compactMap { system in
-                        guard let candidates = FileManager.default.candidateROMs(for: system) else { return nil }
-                        return (system, candidates)
+                Task {
+                    systems
+                        .asyncMap { $0.asDomain() }
+                        .compactMap { system in
+                            guard let candidates = FileManager.default.candidateROMs(for: system) else { return nil }
+                            return (system, candidates)
+                    }
                 }
             })
             .flatMap({ systems -> Observable<Void> in
@@ -95,16 +105,16 @@ struct PVGameLibraryUpdatesController {
             .share(replay: 1, scope: .forever)
     }
 
-    func importROMDirectories() {
+    func importROMDirectories() async {
             NSLog("PVGameLibrary: Starting Import")
-            RomDatabase.sharedInstance.reloadCache()
-            RomDatabase.sharedInstance.reloadFileSystemROMCache()
-            let dbGames: [AnyHashable: PVGame] = RomDatabase.sharedInstance.getGamesCache()
-            let dbSystems: [AnyHashable: PVSystem] = RomDatabase.sharedInstance.getSystemCache()
+        await RomDatabase.sharedInstance.reloadCache()
+        await RomDatabase.sharedInstance.reloadFileSystemROMCache()
+        let dbGames: [AnyHashable: PVGame] = await RomDatabase.sharedInstance.getGamesCache()
+        let dbSystems: [AnyHashable: PVSystem] = await RomDatabase.sharedInstance.getSystemCache()
             let disposeBag = DisposeBag()
-            dbSystems.values.forEach({ system in
+        await dbSystems.values.asyncForEach({ system in
                 NSLog("PVGameLibrary: Importing \(system.identifier)")
-                let files = RomDatabase.sharedInstance.getFileSystemROMCache(for: system)
+            let files = await RomDatabase.sharedInstance.getFileSystemROMCache(for: system)
                 let newGames = files.keys.filter({
                         return dbGames.index(forKey:
                                                 (system.identifier as NSString)
@@ -112,7 +122,7 @@ struct PVGameLibraryUpdatesController {
                     })
                 if newGames.count > 0 {
                     print("PVGameLibraryUpdatesController: Importing ", newGames)
-                    GameImporter.shared.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
+                    await GameImporter.shared.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
 #if os(iOS) || os(macOS)
                     addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
 #endif
@@ -187,8 +197,10 @@ struct PVGameLibraryUpdatesController {
 
 extension PVGameLibraryUpdatesController: ConflictsController {
     func resolveConflicts(withSolutions solutions: [URL : System]) {
-        gameImporter.resolveConflicts(withSolutions: solutions)
-        updateConflicts.onNext(())
+        Task {
+            await gameImporter.resolveConflicts(withSolutions: solutions)
+            updateConflicts.onNext(())
+        }
     }
     func deleteConflict(path: URL) {
         do {
@@ -232,8 +244,8 @@ private extension Observable where Element == RxDirectoryWatcher.Event {
 
 private extension FileManager {
     /// Returns a list of all the files in a systems directory that are potential ROMs (AKA has the correct extension)
-    func candidateROMs(for system: System) -> [URL]? {
-        let systemDir = system.romsDirectory
+    func candidateROMs(for system: System) async -> [URL]? {
+        let systemDir = await system.romsDirectory
 
         // Check if a folder actually exists, nothing to do if it doesn't
         guard fileExists(atPath: systemDir.path) else {

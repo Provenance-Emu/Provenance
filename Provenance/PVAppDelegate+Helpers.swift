@@ -9,6 +9,8 @@
 import Foundation
 import PVSupport
 import PVLogging
+import PVSettings
+
 #if canImport(PVWebServer)
 import PVWebServer
 #endif
@@ -28,7 +30,7 @@ extension PVAppDelegate {
     func startOptionalWebDavServer() {
 #if canImport(PVWebServer)
         // Check if the user setting is set or the optional ENV variable
-        if PVSettingsModel.shared.webDavAlwaysOn || isWebDavServerEnvironmentVariableSet() {
+        if Defaults[.webDavAlwaysOn] || isWebDavServerEnvironmentVariableSet() {
             PVWebServer.shared.startWebDavServer()
         }
 #endif

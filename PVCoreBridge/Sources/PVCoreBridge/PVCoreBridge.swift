@@ -118,14 +118,14 @@ extension CorePlistEntry: EmulatorCoreInfoProvider {
     func loadState(toFileAtPath path: String, error: NSError) -> Bool
 
 #warning("Finish this async wrapper")
-    func saveState(toFileAtPath fileName: String,
-                   completionHandler block: SaveStateCompletion)
+//    func saveState(toFileAtPath fileName: String,
+//                   completionHandler block: SaveStateCompletion)
+//
+//    func loadState(fromFileAtPath fileName: String,
+//                   completionHandler block: SaveStateCompletion)
 
-    func loadState(fromFileAtPath fileName: String,
-                   completionHandler block: SaveStateCompletion)
-
-//    func saveState(toFileAtPath fileName: String) async throws -> Bool
-//    func loadState(fromFileAtPath fileName: String) async throws -> Bool
+    func saveState(toFileAtPath fileName: String) async throws -> Bool
+    func loadState(fromFileAtPath fileName: String) async throws -> Bool
 
     //    typealias SaveCompletion = (Bool, Error)
     //

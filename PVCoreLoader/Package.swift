@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 import CompilerPluginSupport
 import PackageDescription
@@ -125,5 +125,5 @@ let package = Package(
                 "PVCoreEnumerator"
             ])
     ],
-    swiftLanguageVersions: [.v5, .v6]
+    swiftLanguageModes: [.v5, .v6]
 )

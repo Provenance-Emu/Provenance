@@ -73,7 +73,12 @@ final class PVSearchViewController: UICollectionViewController, GameLaunchingVie
 
         sections.bind(to: collectionView.rx.items(dataSource: dataSource)).disposed(by: disposeBag)
         collectionView.rx.modelSelected(PVGame.self)
-            .bind(onNext: { self.load($0, sender: self.collectionView, core: nil) })
+            .bind(onNext: { game in
+                Task { @MainActor [weak self] in
+                    guard let self = self else { return }
+                    await self.load(game, sender: self.collectionView, core: nil)
+                }
+            })
             .disposed(by: disposeBag)
 
         let longPressRecognizer = UILongPressGestureRecognizer()

@@ -7,13 +7,14 @@
 //
 
 @MainActor
-public struct iCadeControllerState: OptionSet, @preconcurrency Hashable, @preconcurrency CustomStringConvertible, Sendable {
+public struct iCadeControllerState: OptionSet, Hashable, @preconcurrency CustomStringConvertible, Sendable {
     public let rawValue: Int
 
     nonisolated public init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
+    nonisolated
     public var hashValue: Int {
         return rawValue
     }
@@ -93,7 +94,8 @@ public struct iCadeControllerState: OptionSet, @preconcurrency Hashable, @precon
     }()
 }
 
-public protocol iCadeEventDelegate: AnyObject {
+@preconcurrency
+public protocol iCadeEventDelegate: AnyObject, Sendable {
     func stateChanged(state: iCadeControllerState)
     func buttonDown(button: iCadeControllerState)
     func buttonUp(button: iCadeControllerState)

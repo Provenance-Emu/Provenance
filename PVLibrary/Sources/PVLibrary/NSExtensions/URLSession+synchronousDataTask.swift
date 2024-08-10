@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 8/6/24.
 //
 
+#if false
 import Foundation
 
 extension URLSession {
@@ -33,3 +34,4 @@ extension URLSession {
         return (data, response)
     }
 }
+#endif

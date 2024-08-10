@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import PVSupport
+@_exported import PVSupport
 import RealmSwift
 import PVLogging
 import PVPlists
@@ -114,11 +114,9 @@ public final class PVEmulatorConfiguration: NSObject {
 
     /// This should be called on a background thread
     public static var iCloudDocumentsDirectory: URL? {get async {
-        let iCloudSync = Task {
-            await PVSettingsModel.shared.debugOptions.iCloudSync
-        }
-        let ic = await iCloudSync.value
-        guard ic else {
+        let iCloudSync = Defaults[.iCloudSync]
+        
+        guard iCloudSync else {
             return nil
         }
 
@@ -164,9 +162,9 @@ public final class PVEmulatorConfiguration: NSObject {
             }
         }
 
-        public static var romsImportPath: URL { get async {
+        public static var romsImportPath: URL {
             return documentsPath.appendingPathComponent("Imports", isDirectory: true)
-        }}
+        }
 
         /// Should be called on BG Thread, iCloud blocks
         public static var romsPath: URL { get async {

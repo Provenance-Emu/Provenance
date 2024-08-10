@@ -466,7 +466,7 @@
         GCExtendedGamepad *gamepad = controller.extendedGamepad; //[[controller extendedGamepad] capture];
         GCControllerDirectionPad *dpad = [gamepad dpad];
         // Maps the Sega Saturn Controls to the 8BitDo M30 if enabled in Settings/Controller
-        if (PVSettingsModel.shared.use8BitdoM30) {
+        if (PVSettingsModel.shared.shared.use8BitdoM30) {
             switch (buttonID) {
             case PVSaturnButtonUp:
                 return DPAD_PRESSED(up);
@@ -1070,7 +1070,7 @@
     {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
-        if (PVSettingsModel.shared.use8BitdoM30) // M30 Mode
+        if (PVSettingsModel.shared.shared.use8BitdoM30) // M30 Mode
         {switch (buttonID) {
                 // D-Pad
             case PVPCEButtonUp:

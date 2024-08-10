@@ -147,15 +147,18 @@ public extension PVFile {
                 return nil
             }
 
-            Task {
+//            Task {
+                guard let realm = self.realm else {
+                    return nil
+                }
                 do {
-                    try realm?.write {
+                    try realm.write {
                         md5Cache = calculatedMD5
                     }
                 } catch {
                     ELOG("\(error)")
                 }
-            }
+//            }
 
             return calculatedMD5
         }
@@ -187,7 +190,7 @@ public extension PVFile {
     //    }
 
     var size: UInt64 { get async {
-        return await Task {
+//        return await Task {
             let path = await url.path
             guard FileManager.default.fileExists(atPath: path) else {
                 ELOG("No file at path: \(path)")
@@ -202,9 +205,10 @@ public extension PVFile {
                 fileSize = 0
             }
             return fileSize
-        }.value
+//        }.value
     }}
 
+    // TODO: Make this live update and observable
     var online: Bool { get async {
         return await FileManager.default.fileExists(atPath: url.path)
     }}

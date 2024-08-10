@@ -9,6 +9,7 @@
 import Foundation
 import PVSupport
 import UIKit
+import PVSettings
 
 // MARK: - JIT
 extension PVAppDelegate {
@@ -18,7 +19,7 @@ extension PVAppDelegate {
             ILOG("JIT: JIT already enabled")
             return
         }
-        if PVSettingsModel.shared.debugOptions.autoJIT {
+        if Defaults[.autoJIT] {
             _enableJIT()
         }
 #else
@@ -28,7 +29,7 @@ extension PVAppDelegate {
     
 #if os(iOS)
     public func showJITWaitScreen() {
-        if PVSettingsModel.shared.debugOptions.autoJIT {
+        if Defaults[.autoJIT] {
             guard !DOLJitManager.shared().appHasAcquiredJit() else {
                 ILOG("JIT: JIT already enabled")
                 return
