@@ -178,8 +178,8 @@
 [submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/UnrarKit"]
 	path = CoresRetro/RetroArch/UnrarKit
 	url = https://github.com/abbeycode/UnrarKit.git
-[submodule "CoresRetro/RetroArch/PVRetroArchCore/Archive/lhasa"]
-	path = CoresRetro/RetroArch/PVRetroArchCore/Archive/lhasa
+[submodule "CoresRetro/RetroArch/lhasa"]
+	path = CoresRetro/RetroArch/lhasa
 	url = https://github.com/fragglet/lhasa.git
 [submodule "CoresRetro/RetroArch/ZipArchive"]
 	path = CoresRetro/RetroArch/ZipArchive
