@@ -13,18 +13,22 @@ import RealmSwift
 
 public protocol PVObject {}
 public extension PVObject where Self: Object {
+    public
     static var all: Results<Self> {
         return RomDatabase.sharedInstance.all(Self.self)
     }
 
+    public
     func add(update: Bool = false) throws {
         try RomDatabase.sharedInstance.add(self, update: update)
     }
-
+    
+    public
     func delete() throws {
         try RomDatabase.sharedInstance.delete(self.warmUp())
     }
 
+    public
     func warmUp() -> Self {
         if self.isFrozen, let thawed = self.thaw() {
             return thawed
@@ -32,14 +36,17 @@ public extension PVObject where Self: Object {
         return self
     }
 
+    public
     static func with(primaryKey: String) -> Self? {
         return RomDatabase.sharedInstance.object(ofType: Self.self, wherePrimaryKeyEquals: primaryKey)
     }
 }
 
+public
 protocol DetachableObject: AnyObject {
     func detached() -> Self
 }
+
 // Now all Objects can use PVObject methods
 extension Object: PVObject {
     public func detached() -> Self {

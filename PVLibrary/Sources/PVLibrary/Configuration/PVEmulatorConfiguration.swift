@@ -113,7 +113,7 @@ public final class PVEmulatorConfiguration: NSObject {
     }
 
     /// This should be called on a background thread
-    public static var iCloudDocumentsDirectory: URL? {get async {
+    public static var iCloudDocumentsDirectory: URL? { get {
         let iCloudSync = Defaults[.iCloudSync]
         
         guard iCloudSync else {
@@ -139,8 +139,8 @@ public final class PVEmulatorConfiguration: NSObject {
     }
 
     /// This should be called on a background thread
-    public static var documentsiCloudOrLocalPath: URL { get async {
-        return await iCloudDocumentsDirectory ?? documentsPath
+    public static var documentsiCloudOrLocalPath: URL { get {
+        return iCloudDocumentsDirectory ?? documentsPath
     }}
 
     public struct Paths {
@@ -167,28 +167,28 @@ public final class PVEmulatorConfiguration: NSObject {
         }
 
         /// Should be called on BG Thread, iCloud blocks
-        public static var romsPath: URL { get async {
-            return await documentsiCloudOrLocalPath.appendingPathComponent("ROMs", isDirectory: true)
+        public static var romsPath: URL { get {
+            return documentsiCloudOrLocalPath.appendingPathComponent("ROMs", isDirectory: true)
         }}
 
         /// Should be called on BG Thread, iCloud blocks
-        public static var batterySavesPath: URL { get async {
-            return await documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true)
+        public static var batterySavesPath: URL { get {
+            return documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true)
         }}
 
         /// Should be called on BG Thread, iCloud blocks
-        public static var saveSavesPath: URL { get async {
-            return await documentsiCloudOrLocalPath.appendingPathComponent("Save States", isDirectory: true)
+        public static var saveSavesPath: URL { get {
+            return documentsiCloudOrLocalPath.appendingPathComponent("Save States", isDirectory: true)
         }}
 
         /// Should be called on BG Thread, iCloud blocks
-        public static var screenShotsPath: URL { get async {
-            return await documentsiCloudOrLocalPath.appendingPathComponent("Screenshots", isDirectory: true)
+        public static var screenShotsPath: URL { get {
+            return documentsiCloudOrLocalPath.appendingPathComponent("Screenshots", isDirectory: true)
         }}
 
         /// Should be called on BG Thread, iCloud blocks
-        public static var biosesPath: URL { get async {
-            return await documentsiCloudOrLocalPath.appendingPathComponent("BIOS", isDirectory: true)
+        public static var biosesPath: URL { get {
+            return documentsiCloudOrLocalPath.appendingPathComponent("BIOS", isDirectory: true)
         }}
     }
     
@@ -235,8 +235,8 @@ public final class PVEmulatorConfiguration: NSObject {
         })
     }
     
-    public class func systemsFromCache(forFileExtension fileExtension: String) async -> [PVSystem]? {
-        let systems = await RomDatabase.sharedInstance.getSystemCache().values
+    public class func systemsFromCache(forFileExtension fileExtension: String) -> [PVSystem]? {
+        let systems = RomDatabase.sharedInstance.getSystemCache().values
         return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
                 var newSystems: [PVSystem] = systems ?? [PVSystem]() // Create initial if doesn't exist
@@ -291,12 +291,12 @@ public extension PVEmulatorConfiguration {
     }
 
     @objc
-    class func biosPath(forSystemIdentifier systemID: String) async -> URL {
-        return await Paths.biosesPath.appendingPathComponent(systemID, isDirectory: true)
+    class func biosPath(forSystemIdentifier systemID: String) -> URL {
+        return Paths.biosesPath.appendingPathComponent(systemID, isDirectory: true)
     }
 
-    class func biosPath(forGame game: PVGame) async -> URL {
-        return await biosPath(forSystemIdentifier: game.systemIdentifier)
+    class func biosPath(forGame game: PVGame) -> URL {
+        return biosPath(forSystemIdentifier: game.systemIdentifier)
     }
 
     class func biosEntries(forSystemIdentifier systemID: String) -> [PVBIOS]? {
@@ -340,8 +340,8 @@ public extension PVEmulatorConfiguration {
         return controllerLayout(forSystemIdentifier: systemID.rawValue)
     }
 
-    class func biosPath(forSystemIdentifier systemID: SystemIdentifier) async -> URL {
-        return await biosPath(forSystemIdentifier: systemID.rawValue)
+    class func biosPath(forSystemIdentifier systemID: SystemIdentifier) -> URL {
+        return biosPath(forSystemIdentifier: systemID.rawValue)
     }
 
     class func biosEntries(forSystemIdentifier systemID: SystemIdentifier) -> [PVBIOS]? {
@@ -360,16 +360,16 @@ public extension PVEmulatorConfiguration {
 // MARK: - Rom queries
 
 public extension PVEmulatorConfiguration {
-    class func batterySavesPath(forGame game: PVGame) async -> URL {
-        return await batterySavesPath(forROM: game.url)
+    class func batterySavesPath(forGame game: PVGame) -> URL {
+        return batterySavesPath(forROM: game.url)
     }
     
-    class func batterySavesPath(forROM romPath: URL) async -> URL {
+    class func batterySavesPath(forROM romPath: URL) -> URL {
         let romName: String = romPath.deletingPathExtension().lastPathComponent
-        let batterySavesDirectory = await Paths.batterySavesPath.appendingPathComponent(romName, isDirectory: true)
+        let batterySavesDirectory = Paths.batterySavesPath.appendingPathComponent(romName, isDirectory: true)
         
         do {
-            try await FileManager.default.createDirectory(at: Paths.batterySavesPath, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(at: Paths.batterySavesPath, withIntermediateDirectories: true, attributes: nil)
         } catch {
             ELOG("Error creating save state directory: \(batterySavesDirectory.path) : \(error.localizedDescription)")
         }
@@ -377,13 +377,13 @@ public extension PVEmulatorConfiguration {
         return batterySavesDirectory
     }
     
-    class func saveStatePath(forGame game: PVGame) async  -> URL {
-        return await saveStatePath(forROM: game.url)
+    class func saveStatePath(forGame game: PVGame)  -> URL {
+        return saveStatePath(forROM: game.url)
     }
     
-    class func saveStatePath(forROM romPath: URL) async -> URL {
+    class func saveStatePath(forROM romPath: URL) -> URL {
         let romName: String = romPath.deletingPathExtension().lastPathComponent
-        let saveSavesPath = await Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
+        let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
         
         do {
             try FileManager.default.createDirectory(at: saveSavesPath, withIntermediateDirectories: true, attributes: nil)
@@ -394,8 +394,8 @@ public extension PVEmulatorConfiguration {
         return saveSavesPath
     }
     
-    class func saveStatePath(forROMFilename romName: String) async -> URL {
-        let saveSavesPath = await Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
+    class func saveStatePath(forROMFilename romName: String) -> URL {
+        let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
         
         do {
             try FileManager.default.createDirectory(at: saveSavesPath, withIntermediateDirectories: true, attributes: nil)
@@ -406,8 +406,8 @@ public extension PVEmulatorConfiguration {
         return saveSavesPath
     }
     
-    class func screenshotsPath(forGame game: PVGame) async -> URL {
-        let screenshotsPath = await Paths.screenShotsPath.appendingPathComponent(game.system.shortName, isDirectory: true).appendingPathComponent(game.title, isDirectory: true)
+    class func screenshotsPath(forGame game: PVGame) -> URL {
+        let screenshotsPath = Paths.screenShotsPath.appendingPathComponent(game.system.shortName, isDirectory: true).appendingPathComponent(game.title, isDirectory: true)
         
         do {
             try FileManager.default.createDirectory(at: screenshotsPath, withIntermediateDirectories: true, attributes: nil)
@@ -418,11 +418,11 @@ public extension PVEmulatorConfiguration {
         return screenshotsPath
     }
     
-    class func path(forGame game: PVGame) async -> URL {
-        return await documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(game.file.url.lastPathComponent)
+    class func path(forGame game: PVGame) -> URL {
+        return documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(game.file.url.lastPathComponent)
     }
-    class func path(forGame game: PVGame, url:URL) async -> URL {
-        return await documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(url.lastPathComponent)
+    class func path(forGame game: PVGame, url:URL) -> URL {
+        return documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(url.lastPathComponent)
     }
 }
 
@@ -436,14 +436,14 @@ public extension PVEmulatorConfiguration {
     }
 
     @objc
-    class func m3uFile(forGame game: PVGame) async -> URL? {
-        let gamePath = await path(forGame: game)
-        return await m3uFile(forURL: gamePath, identifier: game.system.identifier)
+    class func m3uFile(forGame game: PVGame) -> URL? {
+        let gamePath = path(forGame: game)
+        return m3uFile(forURL: gamePath, identifier: game.system.identifier)
     }
 
     @objc
-    class func m3uFile(forURL gamePath: URL, identifier: String) async -> URL? {
-        let gameDirectory = await romDirectory(forSystemIdentifier: identifier)
+    class func m3uFile(forURL gamePath: URL, identifier: String) -> URL? {
+        let gameDirectory = romDirectory(forSystemIdentifier: identifier)
         let filenameWithoutExtension = stripDiscNames(fromFilename: gamePath.deletingPathExtension().lastPathComponent)
 
         do {
@@ -466,8 +466,8 @@ public extension PVEmulatorConfiguration {
 // MARK: Helpers
 
 public extension PVEmulatorConfiguration {
-    class func createBIOSDirectory(forSystemIdentifier system: SystemIdentifier) async {
-        let biosPath = await PVEmulatorConfiguration.biosPath(forSystemIdentifier: system)
+    class func createBIOSDirectory(forSystemIdentifier system: SystemIdentifier) {
+        let biosPath = PVEmulatorConfiguration.biosPath(forSystemIdentifier: system)
         let fm = FileManager.default
         if !fm.fileExists(atPath: biosPath.path) {
             do {
@@ -544,11 +544,11 @@ public extension PVEmulatorConfiguration {
 // MARK: System queries
 
 public extension PVEmulatorConfiguration {
-    class func romDirectory(forSystemIdentifier system: SystemIdentifier) async -> URL {
-        return await romDirectory(forSystemIdentifier: system.rawValue)
+    class func romDirectory(forSystemIdentifier system: SystemIdentifier) -> URL {
+        return romDirectory(forSystemIdentifier: system.rawValue)
     }
 
-    class func romDirectory(forSystemIdentifier system: String) async -> URL {
-        return await Paths.romsPath.appendingPathComponent(system, isDirectory: true)
+    class func romDirectory(forSystemIdentifier system: String) -> URL {
+        return Paths.romsPath.appendingPathComponent(system, isDirectory: true)
     }
 }

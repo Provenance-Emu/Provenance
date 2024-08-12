@@ -31,18 +31,15 @@ struct BiosRowView: SwiftUI.View {
     var bios: PVBIOS
 
     @MainActor
-    var biosState: BIOSStatus.State { get async {
-        return await (bios as BIOSStatusProvider).status.state
-        }
-    }
+    @State
+    var biosState: BIOSStatus.State? = nil
 
-   
+
     var body: some SwiftUI.View {
         
-        let biosState = self.biosState
 
         return HStack(alignment: .center, spacing: 0) {
-            Image(biosState.biosStatusImageName).resizable().scaledToFit()
+            Image(biosState?.biosStatusImageName ?? BIOSStatus.State.missing.biosStatusImageName).resizable().scaledToFit()
                 .padding(.vertical, 4)
                 .padding(.horizontal, 12)
             VStack(alignment: .leading) {
@@ -67,8 +64,15 @@ struct BiosRowView: SwiftUI.View {
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(Color.yellow)
                         .font(.system(size: 12, weight: .light))
-                case let .mismatch(_):
+                case .mismatch(_):
                     Text("Mismatch")
+                        .font(.system(size: 12))
+                        .foregroundColor(Color.red)
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(Color.red)
+                        .font(.system(size: 12, weight: .medium))
+                case .none:
+                    Text("Loading...")
                         .font(.system(size: 12))
                         .foregroundColor(Color.red)
                     Image(systemName: "exclamationmark.triangle.fill")
@@ -79,6 +83,10 @@ struct BiosRowView: SwiftUI.View {
             .padding(.horizontal, 12)
         }
         .frame(height: 40)
+        .task {
+            let biosState  = await (bios as BIOSStatusProvider).status
+            self.biosState = biosState.state
+        }
     }
 }
 #endif

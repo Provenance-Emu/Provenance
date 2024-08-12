@@ -137,15 +137,15 @@ public extension PVGame {
         }
     }}
 
-    var diskCount: Int { get async {
-        return await relatedFiles.async
-            .filter({ await $0.pathExtension.lowercased() != "m3u" })
+    var diskCount: Int { get {
+        return relatedFiles
+            .filter({ $0.pathExtension.lowercased() != "m3u" })
             .filter({
-                if let extensions=await RomDatabase.sharedInstance.getSystemCache()[self.systemIdentifier]?.supportedExtensions {
-                    return await extensions.contains($0.pathExtension.lowercased())
+                if let extensions = RomDatabase.sharedInstance.getSystemCache()[self.systemIdentifier]?.supportedExtensions {
+                    return extensions.contains($0.pathExtension.lowercased())
                 }
                 return false
-            }).map(\.self).collect().count
+            }).count
     }}
 }
 

@@ -10,11 +10,15 @@ import Foundation
 
 #if canImport(SwiftUI)
 #if canImport(Combine)
+#if canImport(UIKit)
 import UIKit
+#endif
+import PVUIBase
 import SwiftUI
 import RealmSwift
 import Combine
 import PVLibrary
+@_exported import PVUIBase
 
 #if canImport(MBProgressHUD)
 import MBProgressHUD
@@ -27,7 +31,7 @@ import MBProgressHUD
 // to UIViewControllers, etc.) it will be more easier to integrate by starting here
 // and porting the remaining views/logic over to as conditions change moving forward.
 
-enum PVNavOption {
+public enum PVNavOption {
     case settings
     case home
     case console(consoleId: String, title: String)
@@ -42,7 +46,7 @@ enum PVNavOption {
 }
 
 @available(iOS 14, tvOS 14, *)
-class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
+public class PVRootViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
 
     let containerView = UIView()
     var viewModel: PVRootViewModel!
@@ -57,7 +61,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
 
-    static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
+    public static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
         controller.updatesController = updatesController
         controller.gameLibrary = gameLibrary
@@ -66,7 +70,7 @@ class PVRootViewController: UIViewController, GameLaunchingViewController, GameS
         return controller
     }
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         self.view.addSubview(containerView)
@@ -164,7 +168,7 @@ extension UIViewController {
 @available(iOS 14.0.0, *)
 extension PVRootViewController: UIDocumentPickerDelegate {
     // copied from PVGameLibraryViewController#documentPicker()
-    func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    public func documentPicker(_: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         // If directory, map out sub directories if folder
         let urls: [URL] = urls.compactMap { (url) -> [URL]? in
             if url.hasDirectoryPath {
@@ -245,7 +249,7 @@ extension PVRootViewController: UIDocumentPickerDelegate {
 //            }
     }
 
-    func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
+    public func documentPickerWasCancelled(_: UIDocumentPickerViewController) {
         ILOG("Document picker was cancelled")
     }
 }

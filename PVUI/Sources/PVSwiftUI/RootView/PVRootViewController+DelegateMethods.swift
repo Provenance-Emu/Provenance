@@ -8,52 +8,41 @@
 
 import Foundation
 import PVLibrary
+import PVUIBase
+import PVUIKit
 #if canImport(SwiftUI)
 import SwiftUI
 #if canImport(PVWebServer)
 import PVWebServer
 import SafariServices
 #endif
+@_exported import PVUIBase
 
 import UniformTypeIdentifiers
 
-// MARK: - PVRootDelegate
-
-public protocol PVRootDelegate: AnyObject {
-    func attemptToDelete(game: PVGame)
-    func showUnderConstructionAlert()
-    // objects fetched via @ObservedResults are `frozen`, so we need to thaw them before Realm lets us use them
-    // the following methods call their equivalent GameLaunchingViewController methods with thawed objects
-    func root_canLoad(_ game: PVGame) async throws
-    func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async
-    func root_openSaveState(_ saveState: PVSaveState)
-    func root_updateRecentGames(_ game: PVGame)
-    func root_presentCoreSelection(forGame game: PVGame, sender: Any?)
-}
-
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVRootDelegate {
-    func root_canLoad(_ game: PVGame) async throws {
+    public func root_canLoad(_ game: PVGame) async throws {
         try await self.canLoad(game.warmUp())
     }
 
-    func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
+    public func root_load(_ game: PVGame, sender: Any?, core: PVCore?, saveState: PVSaveState?) async {
         await self.load(game.warmUp(), sender: sender, core: core?.warmUp(), saveState: saveState?.warmUp())
     }
 
-    func root_openSaveState(_ saveState: PVSaveState) {
-        self.openSaveState(saveState.warmUp())
+    public func root_openSaveState(_ saveState: PVSaveState) async {
+        await self.openSaveState(saveState.warmUp())
     }
 
-    func root_updateRecentGames(_ game: PVGame) {
+    public func root_updateRecentGames(_ game: PVGame) {
         self.updateRecentGames(game.warmUp())
     }
 
-    func root_presentCoreSelection(forGame game: PVGame, sender: Any?) {
+    public func root_presentCoreSelection(forGame game: PVGame, sender: Any?) {
         self.presentCoreSelection(forGame: game.warmUp(), sender: sender)
     }
 
-    func attemptToDelete(game: PVGame) {
+    public func attemptToDelete(game: PVGame) {
         do {
             try self.delete(game: game)
         } catch {
@@ -61,7 +50,7 @@ extension PVRootViewController: PVRootDelegate {
         }
     }
 
-    func showUnderConstructionAlert() {
+    public func showUnderConstructionAlert() {
         self.presentMessage("Please try again in a future update.", title: "⚠️ Under Construction ⚠️", source: self.view)
     }
 }
@@ -98,11 +87,11 @@ extension PVRootViewController: SFSafariViewControllerDelegate {
 
 @available(iOS 14, tvOS 14, *)
 extension PVRootViewController: PVMenuDelegate {
-    func didTapSettings() {
+    public func didTapSettings() {
         #if os(iOS)
 
         guard
-            let settingsNav = UIStoryboard(name: "Provenance", bundle: nil).instantiateViewController(withIdentifier: "settingsNavigationController") as? UINavigationController,
+            let settingsNav = UIStoryboard(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle).instantiateViewController(withIdentifier: "settingsNavigationController") as? UINavigationController,
             let settingsVC = settingsNav.topViewController as? PVSettingsViewController
         else { return }
 
@@ -114,13 +103,13 @@ extension PVRootViewController: PVMenuDelegate {
         #endif
     }
 
-    func didTapHome() {
+    public func didTapHome() {
         self.closeMenu()
         let homeView = HomeView(gameLibrary: self.gameLibrary, delegate: self)
         self.loadIntoContainer(.home, newVC: UIHostingController(rootView: homeView))
     }
 
-    func didTapAddGames() {
+    public func didTapAddGames() {
         self.closeMenu()
         #if os(iOS)
 
@@ -158,7 +147,7 @@ extension PVRootViewController: PVMenuDelegate {
         #endif
     }
 
-    func didTapConsole(with consoleId: String) {
+    public func didTapConsole(with consoleId: String) {
         self.closeMenu()
 
         guard let console = gameLibrary.system(identifier: consoleId) else { return }
@@ -186,7 +175,7 @@ extension PVRootViewController: PVMenuDelegate {
         self.loadIntoContainer(.console(consoleId: consoleId, title: console.name), newVC: UIHostingController(rootView: consolesView))
     }
 
-    func didTapCollection(with collection: Int) {
+    public func didTapCollection(with collection: Int) {
         /* TODO: collections */
     }
 
@@ -213,7 +202,7 @@ extension PVRootViewController: PVMenuDelegate {
         }
     }
 
-    func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?) {
+    public func showServerActiveAlert(sender: UIView?, barButtonItem: UIBarButtonItem?) {
         let alert = UIAlertController(title: "Web Server Active", message: webServerAlertMessage, preferredStyle: .alert)
         alert.popoverPresentationController?.barButtonItem = barButtonItem
         alert.popoverPresentationController?.sourceView = sender

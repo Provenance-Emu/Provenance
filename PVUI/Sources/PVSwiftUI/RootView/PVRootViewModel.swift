@@ -9,14 +9,14 @@
 import Foundation
 #if canImport(SwiftUI)
 import SwiftUI
+#endif
 
 @available(iOS 14, tvOS 14, *)
-class PVRootViewModel: ObservableObject {
+public class PVRootViewModel: ObservableObject {
 
-    @Published var sortConsolesAscending: Bool = true
-    @Published var sortGamesAscending: Bool = true
-    @Published var viewGamesAsGrid: Bool = true
+    @Published public var sortConsolesAscending: Bool = true
+    @Published public var sortGamesAscending: Bool = true
+    @Published public var viewGamesAsGrid: Bool = true
 
-    init() {}
+    public init() {}
 }
-#endif

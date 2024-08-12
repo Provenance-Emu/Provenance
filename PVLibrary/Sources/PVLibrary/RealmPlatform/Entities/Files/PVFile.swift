@@ -28,32 +28,32 @@ public enum RelativeRoot: Int, Sendable {
     static let documentsDirectory: URL = PVEmulatorConfiguration.documentsPath
     static let cachesDirectory: URL = PVEmulatorConfiguration.cachesPath
     static var iCloudDocumentsDirectory: URL? {
-        get async {
-            return await PVEmulatorConfiguration.iCloudDocumentsDirectory
+        get {
+            return PVEmulatorConfiguration.iCloudDocumentsDirectory
         }
     }
 
     var directoryURL: URL {
-        get async {
+        get {
             switch self {
             case .documents:
                 return RelativeRoot.documentsDirectory
             case .caches:
                 return RelativeRoot.cachesDirectory
             case .iCloud:
-                if let iCloudDocumentsDirectory = await RelativeRoot.iCloudDocumentsDirectory { return iCloudDocumentsDirectory }
-                else { return await Self.platformDefault.directoryURL }
+                if let iCloudDocumentsDirectory = RelativeRoot.iCloudDocumentsDirectory { return iCloudDocumentsDirectory }
+                else { return Self.platformDefault.directoryURL }
             }
         }
     }
 
-    func createRelativePath(fromURL url: URL) async -> String {
+    func createRelativePath(fromURL url: URL) -> String {
         // We need the dropFirst to remove the leading /
-        return await String(url.path.replacingOccurrences(of: directoryURL.path, with: "").dropFirst())
+        return String(url.path.replacingOccurrences(of: directoryURL.path, with: "").dropFirst())
     }
 
-    func appendingPath(_ path: String) async -> URL {
-        let directoryURL = await self.directoryURL
+    func appendingPath(_ path: String) -> URL {
+        let directoryURL = self.directoryURL
         let url = directoryURL.appendingPathComponent(path)
 //        let url = URL(fileURLWithPath: path, relativeTo: directoryURL)
         return url
@@ -99,7 +99,7 @@ public extension PVFile {
     }
 
     var url: URL {
-        get async {
+        get {
             if partialPath.contains("iCloud") || partialPath.contains("private") {
                 var pathComponents = (partialPath as NSString).pathComponents
                 pathComponents.removeFirst()
@@ -111,7 +111,7 @@ public extension PVFile {
                     let url = (iCloudBase ?? RelativeRoot.documentsDirectory).appendingPathComponent(path)
                     return url
                 } else {
-                    if let iCloudBase = await PVEmulatorConfiguration.iCloudDocumentsDirectory {
+                    if let iCloudBase = PVEmulatorConfiguration.iCloudDocumentsDirectory {
                         return iCloudBase.appendingPathComponent(path)
                     } else {
                         return RelativeRoot.documentsDirectory.appendingPathComponent(path)
@@ -119,14 +119,14 @@ public extension PVFile {
                 }
             }
             let root = relativeRoot
-            let resolvedURL = await root.appendingPath(partialPath)
+            let resolvedURL = root.appendingPath(partialPath)
             return resolvedURL
         }
     }
 
-    private func setURL(_ url: URL) async {
+    private func setURL(_ url: URL) {
         do {
-            let newPath = await relativeRoot.createRelativePath(fromURL: url)
+            let newPath = relativeRoot.createRelativePath(fromURL: url)
             try realm?.write {
                 partialPath = newPath
             }
@@ -136,11 +136,11 @@ public extension PVFile {
     }
 
     var md5: String? {
-        get async {
+        get {
             if let md5 = md5Cache {
                 return md5
             }
-            let path = await url.path
+            let path = url.path
             // Lazy make MD5
             guard let calculatedMD5 = FileManager.default.md5ForFile(atPath: path, fromOffset: 0) else {
                 ELOG("calculatedMD5 nil")
@@ -189,9 +189,9 @@ public extension PVFile {
     //        }
     //    }
 
-    var size: UInt64 { get async {
+    var size: UInt64 { get {
 //        return await Task {
-            let path = await url.path
+            let path = url.path
             guard FileManager.default.fileExists(atPath: path) else {
                 ELOG("No file at path: \(path)")
                 return 0
@@ -209,20 +209,20 @@ public extension PVFile {
     }}
 
     // TODO: Make this live update and observable
-    var online: Bool { get async {
-        return await FileManager.default.fileExists(atPath: url.path)
+    var online: Bool { get {
+        return FileManager.default.fileExists(atPath: url.path)
     }}
 
-    var pathExtension: String {get async {
-        return await url.pathExtension
+    var pathExtension: String {get {
+        return url.pathExtension
     }}
 
     nonisolated(unsafe)
-        var fileName: String {get async {
-            return await url.lastPathComponent
+        var fileName: String {get {
+            return url.lastPathComponent
         }}
 
-    var fileNameWithoutExtension: String {get async {
-        return await url.deletingPathExtension().lastPathComponent
+    var fileNameWithoutExtension: String {get {
+        return url.deletingPathExtension().lastPathComponent
     }}
 }

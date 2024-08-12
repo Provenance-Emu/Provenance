@@ -12,7 +12,7 @@ import PVLogging
 public extension GameImporter {
 
     @discardableResult
-    func lookupInfo(for game: PVGame, overwrite: Bool = true) async -> PVGame {
+    func lookupInfo(for game: PVGame, overwrite: Bool = true) -> PVGame {
         game.requiresSync = false
         if game.md5Hash.isEmpty {
             let offset: UInt64
@@ -22,7 +22,7 @@ public extension GameImporter {
             default:
                 offset = 0
             }
-            let romFullPath = await romsPath.appendingPathComponent(game.romPath).path
+            let romFullPath = romsPath.appendingPathComponent(game.romPath).path
             if let md5Hash = FileManager.default.md5ForFile(atPath: romFullPath, fromOffset: offset) {
                 game.md5Hash = md5Hash
             }
@@ -42,7 +42,7 @@ public extension GameImporter {
             ELOG("\(error.localizedDescription)")
         }
         if resultsMaybe == nil || resultsMaybe!.isEmpty { //PVEmulatorConfiguration.supportedROMFileExtensions.contains(game.file.url.pathExtension.lowercased()) {
-            let fileName: String = await game.file.url.lastPathComponent
+            let fileName: String = game.file.url.lastPathComponent
             // Remove any extraneous stuff in the rom name such as (U), (J), [T+Eng] etc
             let nonCharRange: NSRange = (fileName as NSString).rangeOfCharacter(from: GameImporter.charset)
             var gameTitleLen: Int
@@ -204,7 +204,7 @@ public extension GameImporter {
         }
         if PVMediaCache.fileExists(forKey: url) {
             if let localURL = PVMediaCache.filePath(forKey: url) {
-                let file = await PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
                 game.originalArtworkFile = file
                 return game
             }
@@ -259,7 +259,7 @@ public extension GameImporter {
             if let artwork = UIImage(data: data) {
                 do {
                     let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)
-                    let file = await PVImageFile(withURL: localURL, relativeRoot: .iCloud)
+                    let file = PVImageFile(withURL: localURL, relativeRoot: .iCloud)
                     game.originalArtworkFile = file
                 } catch { ELOG("\(error.localizedDescription)") }
             }

@@ -8,7 +8,10 @@
 //
 
 import GameController
+import PVUIBase
+#if canImport(UIKit)
 import UIKit
+#endif
 
 final class PVControllerSelectionViewController: UITableViewController {
     override func viewDidLoad() {
@@ -84,7 +87,7 @@ final class PVControllerSelectionViewController: UITableViewController {
         }
         #endif
 
-        for controller: GCController in PVControllerManager.shared.controllers() {
+        for controller: GCController in PVControllerManager.shared.controllers {
             var title = controller.vendorName ?? ""
 
             if controller == PVControllerManager.shared.player1 {

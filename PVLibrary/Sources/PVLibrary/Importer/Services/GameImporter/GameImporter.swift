@@ -68,9 +68,9 @@ public final class GameImporter {
 
     // MARK: - Paths
 
-    public var documentsPath: URL { get async { PVEmulatorConfiguration.documentsPath }}
+    public var documentsPath: URL { get { PVEmulatorConfiguration.documentsPath }}
     public var romsImportPath: URL { PVEmulatorConfiguration.Paths.romsImportPath }
-    public var romsPath: URL { get async { await PVEmulatorConfiguration.Paths.romsPath }}
+    public var romsPath: URL { get { PVEmulatorConfiguration.Paths.romsPath }}
 
     public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
 
@@ -722,10 +722,10 @@ public extension GameImporter {
         return hash
     }
 
-    fileprivate class func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem]?, romFilename: String) async -> [PVGame]? {
+    fileprivate class func findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(_ systems: [PVSystem]?, romFilename: String) -> [PVGame]? {
         // Check if existing ROM
 
-        let allGames = await RomDatabase.sharedInstance.getGamesCache().values.filter ({
+        let allGames = RomDatabase.sharedInstance.getGamesCache().values.filter ({
             $0.romPath.lowercased() == romFilename.lowercased()
         })
         /*
@@ -766,13 +766,13 @@ public extension GameImporter {
         } // for each
     }
 
-    func saveRelativePath(_ existingGame: PVGame, partialPath:String, file:URL) async {
-        if await RomDatabase.sharedInstance.getGamesCache()[partialPath] == nil {
+    func saveRelativePath(_ existingGame: PVGame, partialPath:String, file:URL) {
+        if RomDatabase.sharedInstance.getGamesCache()[partialPath] == nil {
             RomDatabase.sharedInstance.addRelativeFileCache(file, game:existingGame)
         }
     }
 
-    func _handlePath(path: URL, userChosenSystem chosenSystem: System?) async throws {
+    func _handlePath(path: URL, userChosenSystem chosenSystem: System?) throws {
         var systemsMaybe: [PVSystem]?
         let urlPath = path
         let filename = urlPath.lastPathComponent
@@ -788,20 +788,22 @@ public extension GameImporter {
             let partialPath: String = (chosenSystem.identifier as NSString).appendingPathComponent(filename)
             // TODO: Better to use MD5 instead?
             let similarName = RomDatabase.sharedInstance.altName(path, systemIdentifier: chosenSystem.identifier)
-            if let existingGame = await RomDatabase.sharedInstance.getGamesCache()[partialPath], chosenSystem.identifier == existingGame.systemIdentifier {
+            if let existingGame = RomDatabase.sharedInstance.getGamesCache()[partialPath], chosenSystem.identifier == existingGame.systemIdentifier {
                 //if let existingGame = database.all(PVGame.self, filter: NSPredicate(format: "romPath CONTAINS[c] %@", argumentArray: [partialPath])).first ?? // Exact filename match
                 //database.all(PVGame.self, filter: NSPredicate(format: "ANY relatedFiles.partialPath = %@", argumentArray: [partialPath])).first, // Check if it's an associated file of another game
                 //chosenSystem.identifier == existingGame.system.identifier { // Check it's a same system too
                 //finishUpdateOrImport(ofGame: existingGame, path: path)
                 // Matched, Return
                 return
-            } else if let existingGame = await RomDatabase.sharedInstance.getGamesCache()[similarName], chosenSystem.identifier == existingGame.systemIdentifier {
-                await saveRelativePath(existingGame, partialPath: partialPath, file:path)
+            } else if let existingGame = RomDatabase.sharedInstance.getGamesCache()[similarName], chosenSystem.identifier == existingGame.systemIdentifier {
+                saveRelativePath(existingGame, partialPath: partialPath, file:path)
                 // Matched, Return
                 return
             } else {
-                if let system = await RomDatabase.sharedInstance.getSystemCache()[chosenSystem.identifier] {
-                    try await importToDatabaseROM(atPath: path, system: system, relatedFiles: nil)
+                if let system = RomDatabase.sharedInstance.getSystemCache()[chosenSystem.identifier] {
+                    Task.detached(priority: .utility) {
+                        try await self.importToDatabaseROM(atPath: path, system: system, relatedFiles: nil)
+                    }
                     return
                 }
             }
@@ -818,9 +820,9 @@ public extension GameImporter {
                         ILOG("Deleted empty import folder \(path.path)")
                     } else {
                         ILOG("Found non-empty folder in imports dir. Will iterate subcontents for import")
-                        await subContents.asyncForEach { subFile in
+                         subContents.forEach { subFile in
                             do {
-                                try await self._handlePath(path: subFile, userChosenSystem: nil)
+                                try self._handlePath(path: subFile, userChosenSystem: nil)
                             } catch {
                                 ELOG("\(error)")
                             }
@@ -834,7 +836,7 @@ public extension GameImporter {
             }
         }
         if let chosenSystem = chosenSystem {
-            if let system = await RomDatabase.sharedInstance.getSystemCache()[chosenSystem.identifier] {
+            if let system = RomDatabase.sharedInstance.getSystemCache()[chosenSystem.identifier] {
                 systemsMaybe = [system]
             }
             // First check if it's a chosen system that supports CDs and this is a non-cd extension
@@ -845,7 +847,7 @@ public extension GameImporter {
                 return
             }
         } else {
-            systemsMaybe = await PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtensionLower)
+            systemsMaybe = PVEmulatorConfiguration.systemsFromCache(forFileExtension: fileExtensionLower)
         }
 
         // No system found to match this file
@@ -860,7 +862,7 @@ public extension GameImporter {
         if systems.count > 1 {
             // Try to match by MD5 first
             if let systemIDMatch = systemIdFromCache(forROMCandidate: ImportCandidateFile(filePath: urlPath)),
-               let system = await RomDatabase.sharedInstance.getSystemCache()[systemIDMatch]
+               let system = RomDatabase.sharedInstance.getSystemCache()[systemIDMatch]
             //let system = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: systemIDMatch)
             {
                 systems = [system]
@@ -873,7 +875,7 @@ public extension GameImporter {
                 // NOT WHAT WHAT TO DO HERE. -jm
                 // IS IT TOO LATE TO MOVE TO CONFLICTS DIR?
 
-                guard let existingGames = await GameImporter.findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(systems, romFilename: filename) else {
+                guard let existingGames = GameImporter.findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(systems, romFilename: filename) else {
                     // NO matches to existing games, I suppose we move to conflicts dir
                     self.encounteredConflicts = true
                     try moveAndOverWrite(sourcePath: path, destinationPath: conflictPath)
@@ -913,7 +915,7 @@ public extension GameImporter {
         // Would instead see if contains first, then query for the full object
         // If we have a matching game from a multi-match above, use that, or run a query by path and see if there's a match there
 
-        let gamesCache = await RomDatabase.sharedInstance.getGamesCache()
+        let gamesCache = RomDatabase.sharedInstance.getGamesCache()
 
         // For multi-cd games, make the most inert version of the filename
         let similarName = RomDatabase.sharedInstance.altName(path, systemIdentifier: system.identifier)
@@ -933,12 +935,14 @@ public extension GameImporter {
             // perhaps we should add more info to the PVGame entry for the file modified date and compare that instead,
             // then check md5 only if the date differs. - Joe M
             //finishUpdateOrImport(ofGame: existingGame, path: path)
-            await saveRelativePath(existingGame, partialPath: partialPath, file:path)
+            saveRelativePath(existingGame, partialPath: partialPath, file:path)
             return
         } else {
             // New game
             // TODO: Look for new related files?
-            try await importToDatabaseROM(atPath: path, system: system, relatedFiles: nil)
+            Task.detached(priority: .utility) {
+                try await self.importToDatabaseROM(atPath: path, system: system, relatedFiles: nil)
+            }
         }
     }
 

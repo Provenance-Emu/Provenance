@@ -9,11 +9,19 @@
 import Foundation
 import UIKit
 import PVThemes
+import PVUIBase
+import PVUIKit
 
 func themeAppUI(withTheme theme: iOSTheme) {
     // Settings
     Task { @MainActor in
-        appearance(inAny: [PVSettingsViewController.self, SystemsSettingsTableViewController.self, CoreOptionsViewController.self, PVAppearanceViewController.self, PVCoresTableViewController.self]) {
+        appearance(inAny:[
+            PVSettingsViewController.self,
+            SystemsSettingsTableViewController.self,
+            CoreOptionsViewController.self,
+            PVAppearanceViewController.self,
+            PVCoresTableViewController.self]
+        ) {
             UITableViewCell.appearance {
                 $0.backgroundColor = theme.settingsCellBackground
                 $0.textLabel?.backgroundColor = theme.settingsCellBackground
@@ -38,7 +46,7 @@ func themeAppUI(withTheme theme: iOSTheme) {
             }
         }
     }
-
+    
     Task { @MainActor in
         appearance(in: [UITableViewCell.self, SwitchCell.self]) {
             UILabel.appearance {
@@ -46,13 +54,13 @@ func themeAppUI(withTheme theme: iOSTheme) {
             }
         }
     }
-
+    
     let selectedView = UIView()
     selectedView.backgroundColor = theme.defaultTintColor
-
+    
     SwitchCell.appearance().selectedBackgroundView = selectedView
     UITableViewCell.appearance().selectedBackgroundView = selectedView
-
+    
 #if false
     // Search bar
     appearance(in: UISearchBar.self) {
@@ -60,12 +68,12 @@ func themeAppUI(withTheme theme: iOSTheme) {
             $0.textColor = theme.searchTextColor
         }
     }
-
+    
     // Game Library Headers
     PVGameLibrarySectionHeaderView.appearance {
         $0.backgroundColor = theme.gameLibraryHeaderBackground
     }
-
+    
     appearance(in: [PVGameLibrarySectionHeaderView.self]) {
         UILabel.appearance {
             $0.backgroundColor = theme.gameLibraryHeaderBackground
@@ -73,7 +81,7 @@ func themeAppUI(withTheme theme: iOSTheme) {
         }
     }
 #endif
-
+    
     // Game Library Main
     Task { @MainActor in
         appearance(inAny: [PVGameLibraryCollectionViewCell.self]) {

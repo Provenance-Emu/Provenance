@@ -184,7 +184,7 @@ let package = Package(
             dependencies: [
                 "PVTGBDual"])
     ],
-    swiftLanguageVersions: [.v5, .v6],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu99,
     cxxLanguageStandard: .gnucxx20
 )

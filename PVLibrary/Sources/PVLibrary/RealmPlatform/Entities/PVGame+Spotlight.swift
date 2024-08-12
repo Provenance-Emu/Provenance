@@ -14,8 +14,8 @@ import CoreServices
 // import UIKit
 
 public extension PVGame {
-    var url: URL { get async {
-        return await file.url
+    var url: URL { get {
+        return file.url
     }}
 
     #if os(iOS)

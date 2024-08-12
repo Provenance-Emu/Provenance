@@ -7,11 +7,13 @@
 //
 
 import Foundation
+
 #if canImport(SwiftUI)
 import SwiftUI
 import RealmSwift
 import PVLibrary
 import PVThemes
+import PVUIBase
 
 // TODO: might be able to reuse this view for collections
 @available(iOS 14, tvOS 14, *)

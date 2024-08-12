@@ -6,7 +6,9 @@
 //  Copyright © 2019 Digipolitan. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
 open class SideNavigationController: UIViewController {
 

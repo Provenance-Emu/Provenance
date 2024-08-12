@@ -44,11 +44,11 @@ public final class PVSaveState: Object, Identifiable, Filed, LocalFileProvider {
         createdWithCoreVersion = core.projectVersion
     }
 
-    public class func delete(_ state: PVSaveState) async throws {
+    public class func delete(_ state: PVSaveState) throws {
         do {
             // Temp store these URLs
-            let fileURL = await state.file.url
-            let imageURl = await state.image?.url
+            let fileURL = state.file.url
+            let imageURl = state.image?.url
 
             let database = RomDatabase.sharedInstance
             try database.delete(state)

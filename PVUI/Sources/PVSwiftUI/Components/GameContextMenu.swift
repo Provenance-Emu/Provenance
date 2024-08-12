@@ -6,11 +6,10 @@
 //  Copyright © 2022 Provenance Emu. All rights reserved.
 //
 
-#if canImport(SwiftUI)
-
 import Foundation
 import SwiftUI
 import PVLibrary
+@_exported import PVUIBase
 
 @available(iOS 14, tvOS 14, *)
 struct GameContextMenu: SwiftUI.View {
@@ -69,4 +68,3 @@ struct GameContextMenu: SwiftUI.View {
         }
     }
 }
-#endif

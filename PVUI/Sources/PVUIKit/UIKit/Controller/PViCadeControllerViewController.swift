@@ -8,8 +8,11 @@
 //
 
 import PVSupport
+#if canImport(UIKit)
 import UIKit
+#endif
 import PVSettings
+import PVUIBase
 
 final class PViCadeControllerViewController: UITableViewController {
     override func viewDidLoad() {

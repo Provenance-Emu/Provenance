@@ -12,13 +12,14 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 import PVThemes
+@_exported import PVUIBase
 
 #if canImport(Introspect)
 import Introspect
 #endif
 
 @available(iOS 14, tvOS 14, *)
-struct SideMenuView: SwiftUI.View {
+public struct SideMenuView: SwiftUI.View {
 
     weak var delegate: PVMenuDelegate!
 
@@ -35,14 +36,14 @@ struct SideMenuView: SwiftUI.View {
 
     @ObservedObject var searchBar: SearchBar = SearchBar()
 
-    init(gameLibrary: PVGameLibrary, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
+    public init(gameLibrary: PVGameLibrary, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.viewModel = viewModel
         self.delegate = delegate
         self.rootDelegate = rootDelegate
     }
 
-    static func instantiate(gameLibrary: PVGameLibrary, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
+    public static func instantiate(gameLibrary: PVGameLibrary, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
         let view = SideMenuView(gameLibrary: gameLibrary, viewModel: viewModel, delegate: delegate, rootDelegate: rootDelegate)
         let hostingView = UIHostingController(rootView: view)
         let nav = UINavigationController(rootViewController: hostingView)
@@ -67,7 +68,7 @@ struct SideMenuView: SwiftUI.View {
         return self.gameLibrary.searchResults(for: self.searchBar.text)
     }
 
-    var body: some SwiftUI.View {
+    public var body: some SwiftUI.View {
         StatusBarProtectionWrapper {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 0) {

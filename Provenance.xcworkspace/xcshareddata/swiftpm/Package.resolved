@@ -87,8 +87,8 @@
         "repositoryURL": "https://github.com/realm/realm-core.git",
         "state": {
           "branch": null,
-          "revision": "60867846a0aca0c7da5e482282b293236f730216",
-          "version": "14.11.0"
+          "revision": "c2552e1d36867cb42b28130e894a81fc17081062",
+          "version": "14.12.0"
         }
       },
       {
@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/realm/realm-swift.git",
         "state": {
           "branch": null,
-          "revision": "13b12f8665f0c8173693a4d3f6e6d32b5a24d9a9",
-          "version": "10.52.2"
+          "revision": "5221a83dc720823e3017493394d00d49ccf13446",
+          "version": "10.52.3"
         }
       },
       {
@@ -240,7 +240,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "9a5c74b2ca1d213268df97803460744f044d8f3e",
+          "revision": "1eb32ff5941b735994a834656e93c24b1df9483e",
           "version": null
         }
       }

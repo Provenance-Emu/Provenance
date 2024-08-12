@@ -67,5 +67,5 @@ let package = Package(
             name: "PVWebServerTests",
             dependencies: ["PVWebServer"])
     ],
-    swiftLanguageVersions: [.v5]
+    swiftLanguageModes: [.v5]
 )

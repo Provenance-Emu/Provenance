@@ -14,6 +14,10 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVThemes
 import PVSettings
+import PVUIBase
+import PVUIKit
+import PVSwiftUI
+
 
 #if !targetEnvironment(macCatalyst) && !os(macOS)
 #if canImport(SteamController)
@@ -22,27 +26,7 @@ import SteamController
 import UIKit
 #endif
 
-final class PVApplication: UIApplication {
-    var core: PVEmulatorCore?
-    var emulator: PVEmulatorViewController?
-    var isInBackground: Bool = false
-    override func sendEvent(_ event: UIEvent) {
-        if let core=self.core {
-            core.send(event:event)
-        }
-        super.sendEvent(event)
-    }
-}
-
-#if !os(tvOS)
-final class PVUINavigationController: UINavigationController {
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
-}
-#endif
-
-final class PVAppDelegate: UIResponder, UIApplicationDelegate {
+final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     internal var window: UIWindow?
     var shortcutItemGame: PVGame?
     let disposeBag = DisposeBag()
@@ -104,7 +88,7 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
             window.rootViewController = sideNav
         } else {
-            let storyboard = UIStoryboard.init(name: "Provenance", bundle: Bundle.main)
+            let storyboard = UIStoryboard.init(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
             let vc = storyboard.instantiateInitialViewController()
 
             window.rootViewController = vc
@@ -223,12 +207,13 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 
             // Handle refreshing library
             _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
+            self.window!.makeKeyAndVisible()
         }
 
         Task.detached {
             let database = RomDatabase.sharedInstance
             database.refresh()
-            await database.reloadCache()
+            database.reloadCache()
         }
 
         #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
@@ -245,8 +230,6 @@ final class PVAppDelegate: UIResponder, UIApplicationDelegate {
 		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
 			self.startOptionalWebDavServer()
 		})
-
-        self.window!.makeKeyAndVisible()
 
         return true
     }
