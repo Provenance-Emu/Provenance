@@ -11,13 +11,7 @@
          location = "group:Cores/4DO/PV4DO.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/Atari800/PVAtari800.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Bliss/PVBliss.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/CrabEMU/PVCrabEmu.xcodeproj">
       </FileRef>
       <FileRef
          location = "group:Cores/Dolphin/PVDolphin.xcodeproj">
@@ -50,9 +44,6 @@
          location = "group:Cores/O2EM/PVO2EM.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/PicoDrive/PVPicoDrive.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Play/PVPlayCore.xcodeproj">
       </FileRef>
       <FileRef
@@ -72,15 +63,6 @@
       </FileRef>
       <FileRef
          location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/Stella/PVStella.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/TGBDual/PVTGBDual.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/VirtualJaguar/PVVirtualJaguar.xcodeproj">
       </FileRef>
    </Group>
    <Group

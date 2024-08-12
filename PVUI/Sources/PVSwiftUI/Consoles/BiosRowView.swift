@@ -83,7 +83,7 @@ struct BiosRowView: SwiftUI.View {
             .padding(.horizontal, 12)
         }
         .frame(height: 40)
-        .task {
+        .task { @MainActor in
             let biosState  = await (bios as BIOSStatusProvider).status
             self.biosState = biosState.state
         }

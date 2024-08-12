@@ -22,6 +22,7 @@ public final class PVCore: Object {
     public dynamic var disabled = false
 
     public lazy var hasCoreClass: Bool = {
+        return true
         let _class: AnyClass? = NSClassFromString(principleClass)
         return _class != nil
     }()

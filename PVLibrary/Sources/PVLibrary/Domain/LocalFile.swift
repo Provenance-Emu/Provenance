@@ -34,7 +34,7 @@ public struct LocalFile: LocalFileProvider, Codable, Equatable, Sendable {
         }
     }
 
-    public var size: UInt64 { get async {
+    public var size: UInt64 { get {
         do {
             guard let s = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize else {
                 return 0

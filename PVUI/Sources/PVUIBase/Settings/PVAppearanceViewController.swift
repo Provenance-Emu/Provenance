@@ -115,17 +115,17 @@ public final class PVAppearanceViewController: UITableViewController {
     public override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         #if os(tvOS)
             let cell: UITableViewCell? = tableView.cellForRow(at: indexPath)
-            let settings = PVSettingsModel.shared.shared
-            if indexPath.section == 0 {
+
+        if indexPath.section == 0 {
                 if indexPath.row == 0 {
-                    settings.showGameTitles = !settings.showGameTitles
-                    cell?.detailTextLabel?.text = settings.showGameTitles ? "On" : "Off"
+                    settings.showGameTitles = !Defaults[.showGameTitles]
+                    cell?.detailTextLabel?.text = Defaults[.showGameTitles] ? "On" : "Off"
                 } else if indexPath.row == 1 {
-                    settings.showRecentGames = !settings.showRecentGames
-                    cell?.detailTextLabel?.text = settings.showRecentGames ? "On" : "Off"
+                    settings.showRecentGames = !Defaults[.showRecentGames]
+                    cell?.detailTextLabel?.text = Defaults[.showRecentGames] ? "On" : "Off"
                 } else if indexPath.row == 2 {
-                    settings.showRecentSaveStates = !settings.showRecentSaveStates
-                    cell?.detailTextLabel?.text = settings.showRecentSaveStates ? "On" : "Off"
+                    settings.showRecentSaveStates = !Defaults[.showRecentSaveStates]
+                    cell?.detailTextLabel?.text = Defaults[.showRecentGames] ? "On" : "Off"
                 }
             }
         #endif

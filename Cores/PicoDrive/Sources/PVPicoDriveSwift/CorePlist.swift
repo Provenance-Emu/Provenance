@@ -10,13 +10,15 @@ import PVCoreBridge
 import PVLogging
 
 #if SWIFT_PACKAGE
-public let PicodriveGameCoreBundle: Bundle = Bundle.module
+public extension PVBundleFinder {
+    static public var PicodriveGameCoreModule: Bundle { Bundle.module }
+    static public var PicodriveGameCoreBundle: Bundle { Bundle(for: PicodriveGameCore.self) }
+}
 #else
-internal class BundleFinder {}
-public let PicodriveGameCoreBundle: Bundle = Bundle(for: BundleFinder.self)
+public extension PVBundleFinder {
+    static public var PicodriveGameCoreBundle: Bundle { Bundle(for: PicodriveGameCore.self) }
+}
 #endif
-
-fileprivate let CorePlistPath: URL = PicodriveGameCoreBundle.url(forResource: "Core", withExtension: "plist")!
 
 extension PicodriveGameCore: EmulatorCoreInfoPlistProvider {
 

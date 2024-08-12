@@ -10,12 +10,12 @@ import PVLogging
 
 public protocol CheatFile {
     associatedtype LocalFileProviderType: LocalFileProvider
-    var file: LocalFileProviderType! { get async }
+    var file: LocalFileProviderType! { get }
 }
 
 extension LocalFileProvider where Self: CheatFile {
-    public var url: URL { get async { return await file.url }}
-    public var fileInfo: Self.LocalFileProviderType? { get async { return await file }}
+    public var url: URL { get { return file.url }}
+    public var fileInfo: Self.LocalFileProviderType? { get { return file }}
 }
 
 @objcMembers

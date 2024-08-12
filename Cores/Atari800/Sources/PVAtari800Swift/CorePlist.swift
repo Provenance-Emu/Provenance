@@ -11,13 +11,15 @@ import PVLogging
 import PVPlists
 
 #if SWIFT_PACKAGE
-public let ATR800GameCoreBundle: Bundle = Bundle.module
+public extension PVBundleFinder {
+    static public var ATR800GameCoreModule: Bundle { Bundle.module }
+    static public var ATR800GameCoreBundle: Bundle { Bundle(for: ATR800GameCore.self) }
+}
 #else
-internal class BundleFinder {}
-public let ATR800GameCoreBundle: Bundle = Bundle(for: BundleFinder.self)
+public extension PVBundleFinder {
+    static public var ATR800GameCoreBundle: Bundle { Bundle(for: ATR800GameCore.self) }
+}
 #endif
-
-fileprivate let CorePlistPath: URL = ATR800GameCoreBundle.url(forResource: "Core", withExtension: "plist")!
 
 extension ATR800GameCore: EmulatorCoreInfoPlistProvider {
 

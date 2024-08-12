@@ -41,7 +41,7 @@ open class NavigationRow<T: UITableViewCell>: NavigationRowCompatible, Equatable
     text: String,
     detailText: DetailText,
     icon: Icon? = nil,
-    customization: ((UITableViewCell, Row & RowStyle) async -> Void)? = nil,
+    customization: (@MainActor (UITableViewCell, Row & RowStyle) async -> Void)? = nil,
     action: ((Row) -> Void)? = nil,
     accessoryButtonAction: ((Row) -> Void)? = nil
   ) {
@@ -61,7 +61,7 @@ open class NavigationRow<T: UITableViewCell>: NavigationRowCompatible, Equatable
     text: String,
     detailText: DetailText,
     icon: Icon? = nil,
-    customization: ((UITableViewCell, Row & RowStyle) -> Void)? = nil,
+    customization: ((UITableViewCell, Row & RowStyle) async -> Void)? = nil,
     action: ((Row) -> Void)? = nil
   ) {
     self.text = text

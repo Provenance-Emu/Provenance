@@ -240,7 +240,7 @@
         "repositoryURL": "https://github.com/facebook/zstd",
         "state": {
           "branch": "dev",
-          "revision": "1eb32ff5941b735994a834656e93c24b1df9483e",
+          "revision": "a761013b0390892e8728fc45171f831cf23c3792",
           "version": null
         }
       }

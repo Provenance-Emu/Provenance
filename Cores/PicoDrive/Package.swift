@@ -28,13 +28,14 @@ let package = Package(
             targets: ["PVPicoDrive"])
     ],
     dependencies: [
-        .package(path: "../../PVCoreBridge"),
-        .package(path: "../../PVPlists"),
-        .package(path: "../../PVEmulatorCore"),
-        .package(path: "../../PVSupport"),
         .package(path: "../../PVAudio"),
+        .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVLogging"),
         .package(path: "../../PVObjCUtils"),
+        .package(path: "../../PVPlists"),
+        .package(path: "../../PVSettings"),
+        .package(path: "../../PVSupport"),
 
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
@@ -48,7 +49,8 @@ let package = Package(
                 "PVPlists",
                 "PVObjCUtils",
                 "PVPicoDriveSwift",
-                "libpicodrive"
+                "libpicodrive",
+                "PVSettings"
             ],
             resources: [
                 .process("Resources/Core.plist")
@@ -74,7 +76,8 @@ let package = Package(
                     "PVLogging",
                     "PVAudio",
                     "PVSupport",
-                    "libpicodrive"
+                    "libpicodrive",
+                    "PVSettings"
                 ],
                 resources: [
                     .process("Resources/Core.plist")

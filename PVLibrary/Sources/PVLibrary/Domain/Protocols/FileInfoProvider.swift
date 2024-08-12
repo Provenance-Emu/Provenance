@@ -36,15 +36,15 @@ public typealias FileProviderFetch = (() throws -> Data) -> Void
 ///
 ///
 public protocol FileInfoProvider {
-    var fileName: String { get async }
-    var md5: String? { get async }
+    var fileName: String { get }
+    var md5: String? { get }
     //	var crc : String? { get }
-    var size: UInt64 { get async }
+    var size: UInt64 { get }
     var online: Bool { get async }
 }
 
 public protocol LocalFileInfoProvider: FileInfoProvider {
-    var url: URL { get async }
+    var url: URL { get }
 }
 
 public protocol LocalFileProvider: LocalFileInfoProvider, DataProvider {}
@@ -91,10 +91,10 @@ nonisolated(unsafe) private let md5Cache: Cache<URL, String> = {
 }()
 
 extension LocalFileInfoProvider {
-    public var size: UInt64 { get async {
+    public var size: UInt64 { get {
         let fileSize: UInt64
 
-        if let attr = try? await FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
+        if let attr = try? FileManager.default.attributesOfItem(atPath: url.path) as NSDictionary {
             fileSize = attr.fileSize()
         } else {
             fileSize = 0
@@ -102,34 +102,34 @@ extension LocalFileInfoProvider {
         return fileSize
     } }
 
-    public var online: Bool { get async {
-        return await FileManager.default.fileExists(atPath: url.path)
+    public var online: Bool { get {
+        return FileManager.default.fileExists(atPath: url.path)
     }}
 
-    public var pathExtension: String { get async {
-        return await url.pathExtension
+    public var pathExtension: String { get {
+        return url.pathExtension
     }}
 
-    public var fileName: String { get async {
-        return await url.lastPathComponent
+    public var fileName: String { get {
+        return url.lastPathComponent
     }}
 
-    public var fileNameWithoutExtension: String { get async {
-        return await url.deletingPathExtension().lastPathComponent
+    public var fileNameWithoutExtension: String { get {
+        return url.deletingPathExtension().lastPathComponent
     }}
 
     @preconcurrency
-    public var md5: String? { get async {
-        if let md5 = await md5Cache.object(forKey: url) {
+    public var md5: String? { get {
+        if let md5 = md5Cache.object(forKey: url) {
             return md5
         }
 
         // Lazy make MD5
-        guard let calculatedMD5 = await FileManager.default.md5ForFile(atPath: url.path, fromOffset: 0) else {
+        guard let calculatedMD5 = FileManager.default.md5ForFile(atPath: url.path, fromOffset: 0) else {
             return nil
         }
 
-        await md5Cache.setObject(calculatedMD5, forKey: url)
+        md5Cache.setObject(calculatedMD5, forKey: url)
         return calculatedMD5
     }}
 }

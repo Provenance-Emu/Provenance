@@ -79,7 +79,7 @@ public final class SystemsSettingsTableViewController: QuickTableViewController 
 
                             var accessoryType: UITableViewCell.AccessoryType = .none
 
-                            let biosStatus = Task {(bios as! BIOSStatusProvider).status}.value
+                            let biosStatus = await Task {await (bios as! BIOSStatusProvider).status}.value
 
                             switch biosStatus.state {
                             case .match:

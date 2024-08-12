@@ -10,13 +10,15 @@ import PVCoreBridge
 import PVLogging
 
 #if SWIFT_PACKAGE
-public let PVStellaGameCoreBundle: Bundle = Bundle.module
+public extension PVBundleFinder {
+    static public var PVStellaGameCoreModule: Bundle { Bundle.module }
+    static public var PVStellaGameCoreBundle: Bundle { Bundle(for: PVStellaGameCore.self) }
+}
 #else
-internal class BundleFinder {}
-public let PVStellaGameCoreBundle: Bundle = Bundle(for: BundleFinder.self)
+public extension PVBundleFinder {
+    static public var PVStellaGameCoreBundle: Bundle { Bundle(for: PVStellaGameCore.self) }
+}
 #endif
-
-fileprivate let CorePlistPath: URL = PVStellaGameCoreBundle.url(forResource: "Core", withExtension: "plist")!
 
 extension PVStellaGameCore: EmulatorCoreInfoPlistProvider {
 

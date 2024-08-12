@@ -10,15 +10,15 @@ import PVCoreBridge
 import PVLogging
 
 #if SWIFT_PACKAGE
-public let PVPokeMiniEmulatorCoreBundle: Bundle = Bundle.module
+public extension PVBundleFinder {
+    static public var PVPokeMiniEmulatorCoreModule: Bundle { Bundle.module }
+    static public var PVPokeMiniEmulatorCoreBundle: Bundle { Bundle(for: PVPokeMiniEmulatorCore.self) }
+}
 #else
-internal class BundleFinder {}
-public let PVPokeMiniEmulatorCoreBundle: Bundle = Bundle(for: BundleFinder.self)
+public extension PVBundleFinder {
+    static public var PVPokeMiniEmulatorCoreBundle: Bundle { Bundle(for: PVPokeMiniEmulatorCore.self) }
+}
 #endif
-
-fileprivate let ThisBundle: Bundle = { Bundle.module }()
-
-fileprivate let CorePlistPath: URL = PVPokeMiniEmulatorCoreBundle.url(forResource: "Core", withExtension: "plist")!
 
 extension PVPokeMiniEmulatorCore: EmulatorCoreInfoPlistProvider {
 
@@ -52,4 +52,3 @@ extension PVPokeMiniEmulatorCore: EmulatorCoreInfoPlistProvider {
     @objc
     public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }
 }
-

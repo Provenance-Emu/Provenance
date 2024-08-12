@@ -156,7 +156,7 @@ let package = Package(
             dependencies: [
             ],
             resources: [
-                .process("Resources/StoryBoards"),
+                .process("Resources/StoryBoards/"),
                 .process("Resources/XIBs"),
                 .process("Resources/TVAssets.xcassets"),
                 .process("Resources/LaunchImageTV.png")

@@ -337,6 +337,20 @@
 		B33B4F4F2C1A5D31007371C5 /* PVAltKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33B4F4D2C1A5D31007371C5 /* PVAltKitService.swift */; };
 		B33B4F522C1A5D31007371C5 /* PVAltKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33B4F4D2C1A5D31007371C5 /* PVAltKitService.swift */; };
 		B33B4F532C1A5D31007371C5 /* PVAltKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33B4F4D2C1A5D31007371C5 /* PVAltKitService.swift */; };
+		B33BD1B52C6A619F001E933A /* PVAtari800-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */; };
+		B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B33BD1B92C6A61DD001E933A /* MoltenVK-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1B82C6A61DD001E933A /* MoltenVK-Dynamic */; };
+		B33BD1BA2C6A61EF001E933A /* MoltenVK-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1B82C6A61DD001E933A /* MoltenVK-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B33BD1BC2C6A6204001E933A /* PVCrabEmu-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1BB2C6A6204001E933A /* PVCrabEmu-Dynamic */; };
+		B33BD1BD2C6A6204001E933A /* PVCrabEmu-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1BB2C6A6204001E933A /* PVCrabEmu-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B33BD1BF2C6A6212001E933A /* PVPicoDrive-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1BE2C6A6212001E933A /* PVPicoDrive-Dynamic */; };
+		B33BD1C02C6A6212001E933A /* PVPicoDrive-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1BE2C6A6212001E933A /* PVPicoDrive-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B33BD1C22C6A621A001E933A /* PVPokeMini-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C12C6A621A001E933A /* PVPokeMini-Dynamic */; };
+		B33BD1C32C6A621A001E933A /* PVPokeMini-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C12C6A621A001E933A /* PVPokeMini-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B33BD1C52C6A622A001E933A /* PVTGBDual-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */; };
+		B33BD1C62C6A622A001E933A /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B33BD1C82C6A6261001E933A /* PVStella-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C72C6A6261001E933A /* PVStella-Dynamic */; };
+		B33BD1C92C6A6261001E933A /* PVStella-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1C72C6A6261001E933A /* PVStella-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B341FCD12BE61EC100718929 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
 		B341FCD32BE61EC100718929 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE2287EA0CE0054C1B5 /* ulTron.metal */; };
 		B341FCD42BE61EC100718929 /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
@@ -1684,10 +1698,17 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B33BD1C92C6A6261001E933A /* PVStella-Dynamic in Embed Frameworks */,
+				B33BD1C62C6A622A001E933A /* PVTGBDual-Dynamic in Embed Frameworks */,
+				B33BD1C02C6A6212001E933A /* PVPicoDrive-Dynamic in Embed Frameworks */,
 				B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
 				B33B4F4C2C1A5B4B007371C5 /* RealmSwift in Embed Frameworks */,
+				B33BD1BA2C6A61EF001E933A /* MoltenVK-Dynamic in Embed Frameworks */,
 				B39C4B6F2BF0AB6100F199BB /* libMoltenVK.dylib in Embed Frameworks */,
 				B39C4B6C2BF0A3F000F199BB /* MoltenVK.xcframework in Embed Frameworks */,
+				B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */,
+				B33BD1BD2C6A6204001E933A /* PVCrabEmu-Dynamic in Embed Frameworks */,
+				B33BD1C32C6A621A001E933A /* PVPokeMini-Dynamic in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2746,17 +2767,21 @@
 				B3EF26EE2BE7F8EC0066D4B6 /* libc++.tbd in Frameworks */,
 				B3EF26EC2BE7F8DD0066D4B6 /* libxml2.tbd in Frameworks */,
 				B3E0CF9F2C054DEB00F45074 /* RxDataSources in Frameworks */,
+				B33BD1BF2C6A6212001E933A /* PVPicoDrive-Dynamic in Frameworks */,
 				B3952F582C698F54000B0308 /* Defaults in Frameworks */,
 				B3952F562C697A02000B0308 /* PVUI in Frameworks */,
 				B3EF26EA2BE7F8BD0066D4B6 /* libz.tbd in Frameworks */,
 				B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */,
+				B33BD1B92C6A61DD001E933A /* MoltenVK-Dynamic in Frameworks */,
 				B34A20152C62F96100E34059 /* PVPlists in Frameworks */,
 				B30585692C0C14EE00B91D7A /* PVWebServer in Frameworks */,
 				B3E0CFA52C054FC200F45074 /* PVEmulatorCore in Frameworks */,
 				B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */,
 				B3E0CFA22C054F9F00F45074 /* ZipArchive in Frameworks */,
 				B394CD782BDEE53A006B63E8 /* GameController.framework in Frameworks */,
+				B33BD1C82C6A6261001E933A /* PVStella-Dynamic in Frameworks */,
 				B305856E2C0D52F200B91D7A /* PVLibrary in Frameworks */,
+				B33BD1B52C6A619F001E933A /* PVAtari800-Dynamic in Frameworks */,
 				B394CD7A2BDEE53A006B63E8 /* MetalKit.framework in Frameworks */,
 				B394CD7C2BDEE53A006B63E8 /* CoreServices.framework in Frameworks */,
 				B394CD872BDEE53A006B63E8 /* AVFoundation.framework in Frameworks */,
@@ -2765,6 +2790,7 @@
 				B39C4B6B2BF0A3F000F199BB /* MoltenVK.xcframework in Frameworks */,
 				B394CD942BDEE53A006B63E8 /* SystemConfiguration.framework in Frameworks */,
 				B39C4B6E2BF0AB6100F199BB /* libMoltenVK.dylib in Frameworks */,
+				B33BD1C52C6A622A001E933A /* PVTGBDual-Dynamic in Frameworks */,
 				B394CD952BDEE53A006B63E8 /* CoreData.framework in Frameworks */,
 				B394CD9A2BDEE53A006B63E8 /* AudioToolbox.framework in Frameworks */,
 				B39B53882C66E7A900C220C6 /* PVSettings in Frameworks */,
@@ -2775,6 +2801,7 @@
 				B394CDA72BDEE53A006B63E8 /* SteamController in Frameworks */,
 				B394CDA82BDEE53A006B63E8 /* Metal.framework in Frameworks */,
 				B394CDA92BDEE53A006B63E8 /* OpenGLES.framework in Frameworks */,
+				B33BD1BC2C6A6204001E933A /* PVCrabEmu-Dynamic in Frameworks */,
 				B34E4F4A2C11796B001559E8 /* PVLogging in Frameworks */,
 				B394CDAC2BDEE53A006B63E8 /* Foundation.framework in Frameworks */,
 				B3B925A22C6141BC006317EC /* PVVirtualJaguar-Dynamic in Frameworks */,
@@ -2782,6 +2809,7 @@
 				B394CDAE2BDEE53A006B63E8 /* CoreGraphics.framework in Frameworks */,
 				B394CDB12BDEE53A006B63E8 /* Introspect in Frameworks */,
 				B3E0CFA82C05508500F45074 /* PVCoreAudio in Frameworks */,
+				B33BD1C22C6A621A001E933A /* PVPokeMini-Dynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4271,6 +4299,13 @@
 				B39B53872C66E7A900C220C6 /* PVSettings */,
 				B3952F552C697A02000B0308 /* PVUI */,
 				B3952F572C698F54000B0308 /* Defaults */,
+				B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */,
+				B33BD1B82C6A61DD001E933A /* MoltenVK-Dynamic */,
+				B33BD1BB2C6A6204001E933A /* PVCrabEmu-Dynamic */,
+				B33BD1BE2C6A6212001E933A /* PVPicoDrive-Dynamic */,
+				B33BD1C12C6A621A001E933A /* PVPokeMini-Dynamic */,
+				B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */,
+				B33BD1C72C6A6261001E933A /* PVStella-Dynamic */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -4640,6 +4675,7 @@
 				B39B53862C66E7A900C220C6 /* XCLocalSwiftPackageReference "PVSettings" */,
 				B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */,
 				B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */,
+				B33BD1B72C6A61DD001E933A /* XCLocalSwiftPackageReference "MoltenVK" */,
 			);
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
@@ -8354,10 +8390,10 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extensions/SpotlightImportExtension/SpotlightImportExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -8403,11 +8439,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extensions/SpotlightImportExtension/SpotlightImportExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -8453,11 +8489,11 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extensions/SpotlightImportExtension/SpotlightImportExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -9224,6 +9260,7 @@
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-Wno-deprecated-declarations";
 				OTHER_LDFLAGS = "$(inherited)";
@@ -9318,6 +9355,7 @@
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -9411,6 +9449,7 @@
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 					"$(PROJECT_DIR)/MoltenVK/MoltenVK/dynamic/dylib/macOS",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -11001,6 +11040,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVmemcpy;
 		};
+		B33BD1B72C6A61DD001E933A /* XCLocalSwiftPackageReference "MoltenVK" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = MoltenVK;
+		};
 		B34969562C4E64AD00D37F79 /* XCLocalSwiftPackageReference "PVThemes" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVThemes;
@@ -11384,6 +11427,40 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3E0CF982C054D3F00F45074 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
+		};
+		B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			productName = "PVAtari800-Dynamic";
+		};
+		B33BD1B82C6A61DD001E933A /* MoltenVK-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "MoltenVK-Dynamic";
+		};
+		B33BD1BB2C6A6204001E933A /* PVCrabEmu-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */;
+			productName = "PVCrabEmu-Dynamic";
+		};
+		B33BD1BE2C6A6212001E933A /* PVPicoDrive-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */;
+			productName = "PVPicoDrive-Dynamic";
+		};
+		B33BD1C12C6A621A001E933A /* PVPokeMini-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
+			productName = "PVPokeMini-Dynamic";
+		};
+		B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */;
+			productName = "PVTGBDual-Dynamic";
+		};
+		B33BD1C72C6A6261001E933A /* PVStella-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
+			productName = "PVStella-Dynamic";
 		};
 		B341FCC02BE61EC100718929 /* SteamController */ = {
 			isa = XCSwiftPackageProductDependency;

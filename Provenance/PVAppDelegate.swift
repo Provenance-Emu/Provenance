@@ -18,7 +18,6 @@ import PVUIBase
 import PVUIKit
 import PVSwiftUI
 
-
 #if !targetEnvironment(macCatalyst) && !os(macOS)
 #if canImport(SteamController)
 import SteamController
@@ -121,7 +120,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         application.isIdleTimerDisabled = Defaults[.disableAutoLock]
-
+        loadRocketSimConnect()
         _initLogging()
         _initAppCenter()
         setDefaultsFromSettingsBundle()
@@ -343,4 +342,14 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             }
             .subscribe(onCompleted: {}).disposed(by: disposeBag)
     }
+}
+
+private func loadRocketSimConnect() {
+    #if DEBUG
+    guard (Bundle(path: "/Applications/RocketSim.app/Contents/Frameworks/RocketSimConnectLinker.nocache.framework")?.load() == true) else {
+        print("Failed to load linker framework")
+        return
+    }
+    print("RocketSim Connect successfully linked")
+    #endif
 }

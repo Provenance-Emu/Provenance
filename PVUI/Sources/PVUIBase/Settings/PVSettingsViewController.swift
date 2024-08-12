@@ -296,7 +296,9 @@ final class PVSettingsViewController: QuickTableViewController {
         controllerRows.append(contentsOf: [
             SegueNavigationRow(text: NSLocalizedString("Controllers", comment: "Controllers"), detailText: .subtitle("Assign players"), icon:.sfSymbol("gamecontroller"), viewController: self, segue: "controllersSegue"),
             SegueNavigationRow(text: NSLocalizedString("iCade Controller", comment: "iCade Controller"), detailText: .subtitle(Defaults[.myiCadeControllerSetting].description), icon:.sfSymbol("keyboard"), viewController: self, segue: "iCadeSegue", customization: { cell, _ in
-                cell.detailTextLabel?.text = Defaults[.myiCadeControllerSetting].description
+                Task { @MainActor in
+                    cell.detailTextLabel?.text = Defaults[.myiCadeControllerSetting].description
+                }
             })
         ])
 #if os(tvOS)

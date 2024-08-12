@@ -9,10 +9,16 @@ import Foundation
 import PVCoreBridge
 import PVLogging
 
-fileprivate let PVTGBDualCoreBundle: Bundle = Bundle.module
-fileprivate let ThisBundle: Bundle = { Bundle.module }()
-
-fileprivate let CorePlistPath: URL = PVTGBDualCoreBundle.url(forResource: "Core", withExtension: "plist")!
+#if SWIFT_PACKAGE
+public extension PVBundleFinder {
+    static public var PVTGBDualCoreModule: Bundle { Bundle.module }
+    static public var PVTGBDualCoreBundle: Bundle { Bundle(for: PVTGBDualCore.self) }
+}
+#else
+public extension PVBundleFinder {
+    static public var PVTGBDualCoreBundle: Bundle { Bundle(for: PVTGBDualCore.self) }
+}
+#endif
 
 extension PVTGBDualCore: EmulatorCoreInfoPlistProvider {
 

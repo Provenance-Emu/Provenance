@@ -17,7 +17,7 @@ public protocol Filed {
 }
 
 extension LocalFileProvider where Self: Filed {
-    public var url: URL { get async { return await file.url } }
+    public var url: URL { get { return file.url } }
     public var fileInfo: Self.LocalFileProviderType? { return file }
 }
 

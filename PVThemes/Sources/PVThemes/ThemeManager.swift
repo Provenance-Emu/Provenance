@@ -10,19 +10,14 @@ import Foundation
 import SwiftMacros
 @_exported import UIKit
 
-//@Observable
 //@Singleton
+@Observable
 public final class ThemeManager {
 
     nonisolated(unsafe) public static let shared: ThemeManager = .init()
-
-    private init() {
-
-    }
+    private init() { }
 
     public let themes: Array<iOSTheme> = []
-
-    @Published
     public private(set) var currentTheme: iOSTheme = ProvenanceThemes.default.palette
 
     public func setCurrentTheme(_ theme: iOSTheme) {
@@ -35,7 +30,10 @@ public final class ThemeManager {
 
     @MainActor
     static weak var statusBarView: UIView?
-    private class func styleStatusBar(withColor color: UIColor) {
+}
+
+private extension ThemeManager {
+    class func styleStatusBar(withColor color: UIColor) {
         #if !os(tvOS)
         DispatchQueue.main.async {
             let keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
@@ -54,9 +52,9 @@ public final class ThemeManager {
         }
         #endif
     }
-
+    
     @MainActor
-    private class func setTheme(_ theme: iOSTheme) {
+    class func setTheme(_ theme: iOSTheme) {
         #if false
         UINavigationBar.appearance {
             $0.backgroundColor = theme.navigationBarBackgroundColor
@@ -79,9 +77,9 @@ public final class ThemeManager {
         #if !os(tvOS)
         UISwitch.appearance {
             $0.onTintColor = theme.switchON
-			#if !targetEnvironment(macCatalyst)
+            #if !targetEnvironment(macCatalyst)
             $0.thumbTintColor = theme.switchThumb
-			#endif
+            #endif
         }
 
         #if false

@@ -587,7 +587,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
 #if os(iOS) && !targetEnvironment(simulator)
     // Check Controller Manager if it has a Controller connected and thus if Home Indicator should hide…
-    override var prefersHomeIndicatorAutoHidden: Bool {
+    public override var prefersHomeIndicatorAutoHidden: Bool {
         let shouldHideHomeIndicator: Bool = PVControllerManager.shared.hasControllers
         return shouldHideHomeIndicator
     }

@@ -28,7 +28,6 @@
 #import "PicodriveGameCore.h"
 #include "libretro.h"
 
-@import libpicodrive;
 @import PVAudio;
 @import PVCoreBridge;
 @import PVPicoDriveSwift;
@@ -36,6 +35,7 @@
 @import PVSupport;
 @import GameController;
 @import PVEmulatorCore;
+@import PVSettings;
 
 #import <TargetConditionals.h>
 
@@ -48,6 +48,8 @@
 @import OpenGL;
 @import GLUT;
 #endif
+
+@import libpicodrive;
 
 __weak PicodriveGameCore *_current;
 
@@ -545,7 +547,11 @@ static void writeSaveFile(const char* path, int type)
     {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
-        if (PVSettingsModel.shared.shared.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
+        // TODO: Read this from Swift Defaults pacakge somehow? @JoeMatt
+        
+        BOOL use8BitdoM30 = PVSettingsWrapper.use8BitdoM30;
+//        BOOL use8BitdoM30 = [NSUserDefaults.standardUserDefaults boolForKey:@"use8BitdoM30"];
+        if (use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
         { switch (buttonID) {
             case PVSega32XButtonUp:
                 return [[[gamepad leftThumbstick] up] value] > 0.1;

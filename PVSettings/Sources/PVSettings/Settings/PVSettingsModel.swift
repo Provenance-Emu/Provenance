@@ -123,3 +123,39 @@ public extension Defaults.Keys {
     static let multiThreadedGL = Key<Bool>("multiThreadedGL", default: true)
     static let multiSampling = Key<Bool>("multiSampling", default: true)
 }
+
+// MARK: Objective-C Helper
+
+@objc
+@objcMembers
+public final class PVSettingsWrapper: NSObject {        
+    @objc
+    public static var use8BitdoM30: Bool {
+        get { Defaults[.use8BitdoM30] }
+        set { Defaults[.use8BitdoM30] = newValue }}
+    
+    @objc
+    public static var nativeScaleEnabled: Bool {
+        get { Defaults[.nativeScaleEnabled] }
+        set { Defaults[.nativeScaleEnabled] = newValue }}
+    
+    @objc
+    public static var imageSmoothing: Bool {
+        get { Defaults[.imageSmoothing] }
+        set { Defaults[.imageSmoothing] = newValue }}
+    
+    @objc
+    public static var crtFilterEnabled: Bool {
+        get { Defaults[.crtFilterEnabled] }
+        set { Defaults[.crtFilterEnabled] = newValue }}
+    
+    @objc
+    public static var lcdFilterEnabled: Bool {
+        get { Defaults[.lcdFilterEnabled] }
+        set { Defaults[.lcdFilterEnabled] = newValue }}
+    
+    @objc
+    public static var volume: Float {
+        get { Defaults[.volume] }
+        set { Defaults[.volume] = newValue }}
+}
