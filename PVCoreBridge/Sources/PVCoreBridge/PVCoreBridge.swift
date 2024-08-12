@@ -255,4 +255,6 @@ public protocol EmulatorCoreIOInterface {
     var romSerial: String? { get }
 
     var screenType: ScreenTypeObjC { get }
+    
+    func loadFile(atPath path: String) throws
 }

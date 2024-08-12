@@ -18,9 +18,23 @@ public protocol PVEmulatorCoreT: EmulatorCoreRunLoop, EmulatorCoreIOInterface, E
 
 }
 
+public enum EmilationError: Error, CustomStringConvertible {
+    
+    case failedToLoadFile
+    case coreDoesNotImplimentLoadFile
+    
+    public var description: String {
+        switch self {
+        case .failedToLoadFile: return "Failed to load file"
+        case .coreDoesNotImplimentLoadFile: return "Core does not implement loadFile:error: method"
+        }
+    }
+
+}
+
 @objc
 @objcMembers
-open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesDataSource {
+open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesDataSource, @unchecked Sendable {
 
     @objc
     public static var coreClassName: String = ""
@@ -126,31 +140,28 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
         // TODO: Use a better method, use by PVRetroCore only atm @JoeMatt 6/2/24
     }
 
-    @nonobjc
-    open func loadFile(atPath path: String) throws -> Bool {
-        var error: NSError?
-        let success = loadFile(atPath: path, error: &error)
-        if !success {
-            if let error = error {
-                throw error
-            }
-        }
-        return success
-    }
+//    @nonobjc
+//    open func loadFile(atPath path: String) throws -> Bool {
+//        var error: NSError?
+//        let success = loadFile(atPath: path, error: &error)
+//        if !success {
+//            if let error = error {
+//                throw error
+//            }
+//        }
+//        return success
+//    }
 
     @objc(loadFileAtPath:error:)
-    open func loadFile(atPath path: String, error: AutoreleasingUnsafeMutablePointer<NSError?>?) -> Bool {
-        // method implementation goes here
-        return false
+    open func loadFile(atPath path: String) throws {
+        throw EmilationError.coreDoesNotImplimentLoadFile
     }
 
     @objc
     required
     public override init() {
         super.init()
-        DispatchQueue.main.sync {
-            ringBuffers = Array(repeating: RingBuffer.init(withLength: Int(audioBufferSize(forBuffer: 0)))!, count: Int(audioBufferCount))
-        }
+        ringBuffers = Array(repeating: RingBuffer.init(withLength: Int(audioBufferSize(forBuffer: 0)))!, count: Int(audioBufferCount))
     }
 
     // EmulatorCoreAudioDataSource

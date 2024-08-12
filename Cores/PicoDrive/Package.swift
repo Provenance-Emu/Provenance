@@ -234,7 +234,7 @@ let package = Package(
         .testTarget(name: "PVPicoDriveTests",
                     dependencies: ["PVPicoDrive"])
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageModes: [.v5],
     cLanguageStandard: .gnu99,
     cxxLanguageStandard: .gnucxx14
 )

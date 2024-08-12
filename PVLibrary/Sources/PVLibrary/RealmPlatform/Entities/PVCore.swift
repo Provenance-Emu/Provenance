@@ -20,12 +20,12 @@ public final class PVCore: Object {
     public dynamic var projectURL = ""
     public dynamic var projectVersion = ""
     public dynamic var disabled = false
-
-    public lazy var hasCoreClass: Bool = {
-        return true
+    
+    public var hasCoreClass: Bool {
         let _class: AnyClass? = NSClassFromString(principleClass)
+        DLOG("Class: \(String(describing: _class)) for \(principleClass)")
         return _class != nil
-    }()
+    }
 
     // Reverse links
     public var saveStates = LinkingObjects(fromType: PVSaveState.self, property: "core")

@@ -446,6 +446,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             let success = try core.loadFile(atPath: romPath.path)
             if !success {
                 ELOG("loadFile: unknown error")
+                Task { @MainActor in
+                    presentError("Loading core failed with unknown error", source: self.view)
+                }
                 return
             }
         } catch {

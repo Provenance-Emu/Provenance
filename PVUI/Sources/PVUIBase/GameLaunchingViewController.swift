@@ -92,22 +92,13 @@ extension GameLaunchingViewController where Self: UIViewController {
 
             VLOG("\(game.title) matched system \(system.name)\n Cores: \(system.cores.map{$0.principleClass}.joined(separator: ", "))")
 
+            // Are unsupported cr
             let unsupportedCores = Defaults[.unsupportedCores]
-            let cores: [PVCore] = system.cores.reduce(into: [PVCore]() as [PVCore], { partialResult, core in
-                var partialResult = partialResult
-                guard !core.disabled else {
-                    ILOG("Filtering core \(core.identifier) as `disabled`, unless `unsupportedCores` == true")
-                    if unsupportedCores {
-                        partialResult.append(core)
-                    }
-                    return
-                }
-                guard core.hasCoreClass else {
-                    ILOG("Filtering core \(core.identifier) as `.hasCoreClass` == `false`. Class: \(core.principleClass)")
-                    return
-                }
-                partialResult.append(core)
-            }).sorted(by: { $0.projectName < $1.projectName })
+            
+            
+            let cores: [PVCore] = system.cores.filter {
+                (!$0.disabled || unsupportedCores) && $0.hasCoreClass
+            }.sorted(by: { $0.projectName < $1.projectName })
 
             guard !cores.isEmpty else {
                 displayAndLogError(withTitle: "Cannot open game", message: "No core found for game system '\(system.shortName)'.")
