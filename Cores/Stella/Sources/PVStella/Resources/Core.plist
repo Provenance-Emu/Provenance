@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.stella</string>
 	<key>PVPrincipleClass</key>
-	<string>PVStellaGameCore</string>
+	<string>PVStellaSwift.PVStellaGameCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.2600</string>

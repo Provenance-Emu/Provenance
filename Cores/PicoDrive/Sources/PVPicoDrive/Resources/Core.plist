@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.picodrive</string>
 	<key>PVPrincipleClass</key>
-	<string>PicodriveGameCore</string>
+	<string>PVPicoDriveSwift.PicodriveGameCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.32X</string>

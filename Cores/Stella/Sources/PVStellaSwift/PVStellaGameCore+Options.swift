@@ -25,24 +25,24 @@ import PVLogging
  { "stella_paddle_analog_sensitivity", "Paddle analog sensitivity; 20|21|22|23|24|25|26|27|28|29|30|0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19" },
  */
 
-extension PVStellaGameCore: CoreOptional {
+internal final class StellaCoreOptions: Sendable {
     public static var options: [CoreOption] {
         var options = [CoreOption]()
-
+        
         let videoGroup = CoreOption.group(.init(title: "Video",
                                                 description: nil),
                                           subOptions: [videoCropOverscan])
-
+        
         let audioGroup = CoreOption.group(.init(title: "Audio",
                                                 description: nil),
                                           subOptions: [audioStereoOption])
-
+        
         options.append(videoGroup)
         options.append(audioGroup)
-
+        
         return options
     }
-
+    
     static var audioStereoOption: CoreOption {
         .enumeration(.init(title: "Stereo sound"),
                      values: [
@@ -51,24 +51,54 @@ extension PVStellaGameCore: CoreOptional {
                         .init(title: "Off", value: 2)
                      ])
     }
-
+    
     static var videoCropOverscan: CoreOption {
         .bool(.init(title: "Crop overscan",
                     description: "Crop horizontal oversca", requiresRestart: true), defaultValue: false)
     }
-
+}
+extension PVStellaGameCore: CoreOptional {
+    enum StellaCoreOptionsError: Error {
+        case invalidOption
+    }
+    
+    enum StellaCoreOptionsVariable: String {
+        case stereo = "stella_stereo"
+        case cropOverscan = "stella_crop_hoverscan"
+        
+        var coreOption: CoreOption {
+            switch self {
+            case .stereo:
+                return StellaCoreOptions.audioStereoOption
+            case .cropOverscan:
+                return StellaCoreOptions.videoCropOverscan
+            }
+        }
+        
+    }
+    
+    public static var options: [PVCoreBridge.CoreOption] {
+        StellaCoreOptions.options
+    }
+    
+    
     @objc(getVariable:)
     public func get(variable: String) -> Any? {
+        guard let variable = StellaCoreOptionsVariable(rawValue: variable) else {
+            WLOG("Unsupported variable <\(variable)>")
+            return nil
+        }
+        
         switch variable {
-        case "stella_stereo":
-            switch Self.valueForOption(Self.videoCropOverscan).asInt ?? 0 {
+        case .stereo:
+            switch Self.valueForOption(variable.coreOption).asInt ?? 0 {
             case 0: return "auto"
             case 1: return "on"
             case 2: return "off"
             default: return "auto"
             }
-        case "stella_crop_hoverscan":
-            return Self.valueForOption(Self.videoCropOverscan).asBool
+        case .cropOverscan:
+            return Self.valueForOption(variable.coreOption).asBool
         default:
             WLOG("Unsupported variable <\(variable)>")
             return nil

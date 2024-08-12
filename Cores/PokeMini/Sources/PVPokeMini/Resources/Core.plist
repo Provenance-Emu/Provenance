@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.pokemini</string>
 	<key>PVPrincipleClass</key>
-	<string>PVPokeMiniEmulatorCore</string>
+	<string>PokeMiniSwift.PVPokeMiniEmulatorCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.pokemonmini</string>
