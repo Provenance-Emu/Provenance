@@ -578,7 +578,6 @@
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-mno-thumb",
-					"-mfpu=neon",
 					"-fno-operator-names",
 					"-fno-rtti",
 					"-ffast-math",
@@ -703,7 +702,20 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-mno-thumb",
+					"-fno-operator-names",
+					"-fno-rtti",
+					"-ffast-math",
+					"-ftree-vectorize",
+					"-fno-strict-aliasing",
+					"-frename-registers",
+					"-fno-rtti",
+					"-fpermissive",
+					"-fno-operator-names",
+					"-fsingle-precision-constant",
+				);
 				SDKROOT = auto;
 				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -781,7 +793,6 @@
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-mno-thumb",
-					"-mfpu=neon",
 					"-fno-operator-names",
 					"-fno-rtti",
 					"-ffast-math",

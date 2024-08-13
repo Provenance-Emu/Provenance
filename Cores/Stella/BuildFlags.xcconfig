@@ -22,7 +22,7 @@ CLANG_CXX_LANGUAGE_STANDARD = c++14
 
     // Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1 NEON=1
-OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -mfpu=neon -D__VEC4_OPT -D__NEON_OPT
+OTHER_CFLAGS[sdk=iphoneos*] = $(inherited) -D__VEC4_OPT -D__NEON_OPT
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = $(inherited)
 
 // Simulator
