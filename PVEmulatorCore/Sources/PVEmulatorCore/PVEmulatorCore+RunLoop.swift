@@ -37,6 +37,9 @@ extension PVEmulatorCore: EmulatorCoreRunLoop {
 
     @objc
     public func stopEmulation() {
+        if let objcBridge = self as? ObjCCoreBridge {
+            objcBridge.stopEmulation()
+        }
         self.stopEmulation(withMessage: nil)
     }
 
@@ -57,7 +60,7 @@ extension PVEmulatorCore: EmulatorCoreRunLoop {
 
 
     @objc
-    public func startEmulation() {
+    public func startEmulation() {screenRect
         guard type(of: self) != PVEmulatorCore.self else {
             ELOG("startEmulation Not implimented")
             return
@@ -94,7 +97,11 @@ extension PVEmulatorCore: EmulatorCoreRunLoop {
 
     @objc
     public func resetEmulation() {
-        ELOG("resetEmulation Not implimented")
+        if let objcBridge = self as? ObjCCoreBridge {
+            objcBridge.resetEmulation()
+        } else {
+            ELOG("resetEmulation Not implimented")
+        }
     }
 
 //    @MainActor

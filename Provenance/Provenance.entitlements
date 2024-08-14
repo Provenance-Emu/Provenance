@@ -14,6 +14,8 @@
 	<true/>
 	<key>com.apple.developer.kernel.increased-memory-limit</key>
 	<true/>
+	<key>com.apple.developer.siri</key>
+	<true/>
 	<key>com.apple.developer.sustained-execution</key>
 	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>

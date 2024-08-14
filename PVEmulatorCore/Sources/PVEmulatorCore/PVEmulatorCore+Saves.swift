@@ -9,20 +9,21 @@ import Foundation
 import PVCoreBridge
 import PVLogging
 
-@objc
-extension PVEmulatorCore: EmulatorCoreSavesSerializer {
-    @objc open func saveState(toFileAtPath path: String, error: NSError) -> Bool {
-        return false
+@objc extension PVEmulatorCore: EmulatorCoreSavesSerializer {
+    
+    @objc(saveStateToFileAtPath:error:) open func saveStateSync(toFileAtPath path: String) throws {
+        throw EmulatorCoreSavesSerializerError.coreDoesNotSupportSaves
     }
     
-    @objc open func loadState(toFileAtPath path: String, error: NSError) -> Bool {
-        return false
+    @objc(loadStateToFileAtPath:error:) open func loadStateSync(toFileAtPath path: String) throws {
+        throw EmulatorCoreSavesSerializerError.coreDoesNotSupportSaves
     }
 
-    @objc open func saveState(toFileAtPath fileName: String) async throws -> Bool {
-        return false
+    @objc open func saveState(toFileAtPath path: String) async throws {
+        try saveStateSync(toFileAtPath: path)
     }
-    @objc open func loadState(fromFileAtPath fileName: String) async throws -> Bool {
-        return false
+    
+    @objc open func loadState(fromFileAtPath path: String) async throws {
+        try loadStateSync(toFileAtPath: path)
     }
 }

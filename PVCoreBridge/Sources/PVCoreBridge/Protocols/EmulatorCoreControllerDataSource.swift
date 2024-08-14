@@ -8,8 +8,7 @@
 import GameController
 import PVLogging
 
-@objc
-public protocol EmulatorCoreControllerDataSource {
+@objc public protocol EmulatorCoreControllerDataSource {
     var controller1: GCController? { get }
     var controller2: GCController? { get }
     var controller3: GCController? { get }

@@ -15,6 +15,18 @@ import OpenGL
 import OpenGLES
 #endif
 
+/*
+ - (GLenum)pixelType {
+     return GL_UNSIGNED_SHORT_5_6_5;
+ }
+
+ - (GLenum)internalPixelFormat {
+     // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
+ #if !TARGET_OS_MAC && !TARGET_OS_MACCATALYST
+     return GL_RGB565;
+ #else
+      return GL_UNSIGNED_SHORT_5_6_5;
+ */
 @objc
 extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     open var alwaysUseMetal: Bool { false }
@@ -22,17 +34,63 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     open var aspectSize: CGSize { .zero }
     open var depthFormat: GLenum { 0 }
     open var emulationFPS: Double { 0.0 }
-    open var internalPixelFormat: GLenum  { 0 }
-    open var isDoubleBuffered: Bool { false }
-    open var pixelFormat: GLenum  { 0 }
-    open var pixelType: GLenum {  0 }
+    open var internalPixelFormat: GLenum  {
+        if let objcBridge = self as? ObjCCoreBridge {
+            return objcBridge.internalPixelFormat
+        } else {
+            return GLenum(GL_UNSIGNED_SHORT_5_6_5)
+        }
+    }
+    open var isDoubleBuffered: Bool {
+        if let objcBridge = self as? ObjCCoreBridge {
+            return objcBridge.isDoubleBuffered
+        } else {
+            return false
+        }
+    }
+    
+    open var pixelFormat: GLenum  {
+        if let objcBridge = self as? ObjCCoreBridge {
+            return objcBridge.pixelFormat
+        } else {
+            return GLenum(GL_RGBA)
+        }
+    }
+    
+    open var pixelType: GLenum {
+        if let objcBridge = self as? ObjCCoreBridge {
+            return objcBridge.pixelType
+        } else {
+            return GLenum(GL_UNSIGNED_SHORT_5_6_5)
+        }
+    }
     open var renderFPS: Double { 0.0 }
-    open var rendersToOpenGL: Bool { false }
-    open var screenRect: CGRect { .zero }
+    
+    open var rendersToOpenGL: Bool {
+//        if let objcBridge = self as? ObjCCoreBridge {
+//            return objcBridge.rendersToOpenGL
+//        } else {
+            return false
+//        }
+    }
+   
+    open var screenRect: CGRect {
+        if let objcBridge = self as? ObjCCoreBridge {
+            return objcBridge.screenRect
+        } else {
+            return .zero
+        }
+    }
 
     @objc
     @MainActor
-    open var videoBuffer: UnsafeMutableRawPointer? { nil }
+    open var videoBuffer: UnsafeMutableRawPointer? {
+        if let objcBridge = self as? ObjCCoreBridge {
+            return objcBridge.videoBuffer
+        } else {
+            return nil
+        }
+    }
 
     @MainActor
     open var videoBufferSize: CGSize { .zero }
@@ -40,11 +98,19 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     // Requires Override
     @objc
     open func executeFrame() {
-        assertionFailure("Should be implimented in subclasses")
+        if let objcBridge = self as? ObjCCoreBridge {
+            objcBridge.executeFrame()
+        } else {
+            assertionFailure("Should be implimented in subclasses")
+        }
     }
 
     @objc
     open func swapBuffers() {
-        assert(!self.isDoubleBuffered, "Cores that are double-buffered must implement swapBuffers!")
+        if let objcBridge = self as? ObjCCoreBridge, self.isDoubleBuffered {
+            objcBridge.swapBuffers()
+        } else {
+            assert(!self.isDoubleBuffered, "Cores that are double-buffered must implement swapBuffers!")
+        }
     }
 }

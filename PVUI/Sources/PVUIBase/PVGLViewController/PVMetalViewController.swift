@@ -34,12 +34,15 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     var presentationFramebuffer: AnyObject? = nil
 
     weak var emulatorCore: PVEmulatorCore? = nil
+    
+    #if !os(visionOS)
     var mtlView: MTKView!
+    #endif
 
 #if os(macOS) || targetEnvironment(macCatalyst)
-    var isPaused: Bool = false
-    var timeSinceLastDraw: TimeInterval = 0
-    var framesPerSecond: Int = 0
+//    var isPaused: Bool = false
+//    var timeSinceLastDraw: TimeInterval = 0
+//    var framesPerSecond: Double = 0
 #endif
 
 
@@ -70,11 +73,11 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     var  inputTexture: MTLTexture? = nil
     var  previousCommandBuffer: MTLCommandBuffer? = nil // used for scheduling with OpenGL context
 
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+#if !os(macOS) && !targetEnvironment(macCatalyst)
     var  glContext: EAGLContext?
     var  alternateThreadGLContext: EAGLContext?
     var  alternateThreadBufferCopyGLContext: EAGLContext?
-#else
+#elseif !targetEnvironment(macCatalyst)
     var  glContext: NSOpenGLContext?
     var  alternateThreadGLContext: NSOpenGLContext?
     var  alternateThreadBufferCopyGLContext: NSOpenGLContext?
@@ -260,7 +263,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     //        super.preferredFramesPerSecond(preferredFramesPerSecond)
     //    }
 #else
-    override var framesPerSecond: Int {
+    override var framesPerSecond: Double {
         get { super.framesPerSecond }
         set { super.framesPerSecond = newValue }
     }

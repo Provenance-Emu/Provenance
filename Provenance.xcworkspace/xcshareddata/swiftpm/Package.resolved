@@ -33,17 +33,17 @@
         "repositoryURL": "https://github.com/sindresorhus/Defaults.git",
         "state": {
           "branch": "main",
-          "revision": "bf717462d969a1b024d731261c29a27e3965d390",
+          "revision": "4c009d5c2496e7aa126e922c94dd3d6ae049efa2",
           "version": null
         }
       },
       {
         "package": "HexColors",
-        "repositoryURL": "https://github.com/alvmo/HexColors.git",
+        "repositoryURL": "https://github.com/JoeMatt/HexColors.git",
         "state": {
-          "branch": null,
-          "revision": "c4eec839362649c478b1d39a57ec47e194bf7929",
-          "version": "1.0.0"
+          "branch": "main",
+          "revision": "c0116b59626909012e95d7faf2fdd499b1d680e1",
+          "version": null
         }
       },
       {

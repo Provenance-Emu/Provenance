@@ -8,22 +8,21 @@
 import Foundation
 import PVPlists
 
-@objc
-public protocol EmulatorCoreInfoPlistProvider {
+@objc public protocol EmulatorCoreInfoPlistProvider {
     static var corePlist: EmulatorCoreInfoPlist { get }
     static var resourceBundle: Bundle { get }
 }
 
 public extension EmulatorCoreInfoPlistProvider {
-    public var corePlist: EmulatorCoreInfoPlist { Self.corePlist }
-    public var resourceBundle: Bundle { Self.resourceBundle }
+    var corePlist: EmulatorCoreInfoPlist { Self.corePlist }
+    var resourceBundle: Bundle { Self.resourceBundle }
 }
 
 public extension EmulatorCoreInfoProvider where Self: EmulatorCoreInfoPlistProvider {
-    public var identifier: String { Self.corePlist.identifier }
-    public var principleClass: String { Self.corePlist.principleClass }
-    public var supportedSystems: [String] { Self.corePlist.supportedSystems }
-    public var projectName: String { Self.corePlist.projectName }
-    public var projectURL: String { Self.corePlist.projectURL }
-    public var projectVersion: String { Self.corePlist.projectVersion }
+    var identifier: String { Self.corePlist.identifier }
+    var principleClass: String { Self.corePlist.principleClass }
+    var supportedSystems: [String] { Self.corePlist.supportedSystems }
+    var projectName: String { Self.corePlist.projectName }
+    var projectURL: String { Self.corePlist.projectURL }
+    var projectVersion: String { Self.corePlist.projectVersion }
 }

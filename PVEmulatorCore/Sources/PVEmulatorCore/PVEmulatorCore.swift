@@ -14,11 +14,12 @@ import PVLogging
 
 public typealias OptionalCore = PVEmulatorCore & CoreOptional
 
-public protocol PVEmulatorCoreT: EmulatorCoreRunLoop, EmulatorCoreIOInterface, EmulatorCoreVideoDelegate, EmulatorCoreSavesSerializer, EmulatorCoreAudioDataSource, EmulatorCoreRumbleDataSource, EmulatorCoreControllerDataSource, EmulatorCoreSavesDataSource, EmulatorCoreInfoProvider {
+@objc
+public protocol PVEmulatorCoreT: EmulatorCoreRunLoop, EmulatorCoreIOInterface, EmulatorCoreVideoDelegate, EmulatorCoreSavesSerializer, EmulatorCoreAudioDataSource, EmulatorCoreRumbleDataSource, EmulatorCoreControllerDataSource, EmulatorCoreSavesDataSource {
 
 }
 
-public enum EmilationError: Error, CustomStringConvertible {
+public enum EmulationError: Error, CustomStringConvertible, CustomNSError {
     
     case failedToLoadFile
     case coreDoesNotImplimentLoadFile
@@ -30,6 +31,9 @@ public enum EmilationError: Error, CustomStringConvertible {
         }
     }
 
+    public var errorUserInfo: [String: Any] {
+        return ["description": description]
+    }
 }
 
 @objc
@@ -51,7 +55,8 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
     // MARK: EmulatorCoreAudioDataSource
 
     // MARK: EmulatorCoreControllerDataSource
-    public var controller1: GCController? = nil 
+    @objc
+    dynamic open var controller1: GCController? = nil
     {
         didSet {
             guard let controller1 = controller1, !controller1.isAttachedToDevice else {
@@ -61,80 +66,76 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
             startHaptic()
         }
     }
-    public var controller2: GCController? = nil
-    public var controller3: GCController? = nil
-    public var controller4: GCController? = nil
+    @objc dynamic open var controller2: GCController? = nil
+    @objc dynamic open var controller3: GCController? = nil
+    @objc dynamic open var controller4: GCController? = nil
 
-    public var controller5: GCController? = nil
-    public var controller6: GCController? = nil
-    public var controller7: GCController? = nil
-    public var controller8: GCController? = nil
+    @objc dynamic open var controller5: GCController? = nil
+    @objc dynamic open var controller6: GCController? = nil
+    @objc dynamic open var controller7: GCController? = nil
+    @objc dynamic open var controller8: GCController? = nil
 
     #if !os(macOS)
-    public var touchViewController: UIViewController? = nil
+    @objc dynamic open var touchViewController: UIViewController? = nil
     #endif
 
     // MARK: EmulatorCoreRumbleDataSource
 
     // MARK: EmulatorCoreSavesDataSource
 
-    public var batterySavesPath: String? = nil
-    public var saveStatesPath: String? = nil
+    @objc dynamic open var batterySavesPath: String? = nil
+    @objc dynamic open var saveStatesPath: String? = nil
 
-    public var supportsSaveStates: Bool { return false }
+    @objc dynamic open var supportsSaveStates: Bool { return false }
 
     // MARK: EmulatorCoreVideoDelegate
 
-    public var glesVersion: GLESVersion = .version3
+    @objc dynamic open var glesVersion: GLESVersion = .version3
 
 
     // PVRenderDelegate
-    @objc
-    open weak var renderDelegate: (any PVCoreBridge.PVRenderDelegate)? = nil
+    @objc open weak var renderDelegate: (any PVCoreBridge.PVRenderDelegate)? = nil
 
     // MARK: EmulatorCoreRunLoop
 
-
-    public var shouldStop: Bool = false
-    public var isRunning: Bool = false
-    public var shouldResyncTime: Bool  = true
-    public var skipEmulationLoop: Bool = true
-    public var skipLayout: Bool = false
+    @objc dynamic open var shouldStop: Bool = false
+    @objc dynamic open var isRunning: Bool = false
+    @objc dynamic open var shouldResyncTime: Bool  = true
+    @objc dynamic open var skipEmulationLoop: Bool = true
+    @objc dynamic open var skipLayout: Bool = false
 
     @available(*, deprecated, message: "What is this even used for?")
-    public var isOn: Bool = false
+    @objc dynamic open var isOn: Bool = false
 
-    public var isFrontBufferReady: Bool = false
+    @objc dynamic open var isFrontBufferReady: Bool = false
 
-    public var gameSpeed: PVCoreBridge.GameSpeed = .normal
+    @objc dynamic open var gameSpeed: PVCoreBridge.GameSpeed = .normal
 
-    public var emulationLoopThreadLock: NSLock = { NSLock() }()
-    public var frontBufferCondition: NSCondition = { NSCondition() }()
-    public var frontBufferLock: NSLock = { NSLock() }()
+    @objc dynamic open var emulationLoopThreadLock: NSLock = { NSLock() }()
+    @objc dynamic open var frontBufferCondition: NSCondition = { NSCondition() }()
+    @objc dynamic open var frontBufferLock: NSLock = { NSLock() }()
 
     // MARK: EmulatorCoreIOInterfaceEmulatorCoreIOInterface
-    public var romName: String? = nil
-    public var BIOSPath: String? = nil
-    public var systemIdentifier: String? = nil
-    public var coreIdentifier: String? = nil
-    public var romMD5: String? = nil
-    public var romSerial: String? = nil
+    @objc dynamic open var romName: String? = nil
+    @objc dynamic open var BIOSPath: String? = nil
+    @objc dynamic open var systemIdentifier: String? = nil
+    @objc dynamic open var coreIdentifier: String? = nil
+    @objc dynamic open var romMD5: String? = nil
+    @objc dynamic open var romSerial: String? = nil
 
-    public var discCount: UInt { 0 }
+    @objc dynamic open var discCount: UInt { 0 }
 
-    public var screenType: ScreenTypeObjC = .crt
+    @objc dynamic open var screenType: ScreenTypeObjC = .crt
 
-    public var extractArchive: Bool = true
+    @objc dynamic open var extractArchive: Bool = true
 
     // MARK: Audio
-    @objc
-    public var audioDelegate: (any PVAudioDelegate)? = nil
+    @objc dynamic open var audioDelegate: (any PVAudioDelegate)? = nil
 
 
     // MARK: Class
 
-    @objc
-    open func initialize() {
+    @objc open func initialize() {
         // Do nothing
         // used by subclasses
         // TODO: Use a better method, use by PVRetroCore only atm @JoeMatt 6/2/24
@@ -152,10 +153,14 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
 //        return success
 //    }
 
-    @objc(loadFileAtPath:error:)
-    open func loadFile(atPath path: String) throws {
-        throw EmilationError.coreDoesNotImplimentLoadFile
-    }
+//    @objc(loadFileAtPath:error:)
+//    open func loadFile(atPath path: String) throws {
+//        if let bridge = self as? ObjCCoreBridge {
+//            bridge.test()
+//            try bridge.objCLoadFile(atPath: path)
+//        }
+//        throw EmulationError.coreDoesNotImplimentLoadFile
+//    }
 
     @objc
     required
@@ -165,7 +170,36 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
     }
 
     // EmulatorCoreAudioDataSource
-    public var ringBuffers: [RingBuffer]? = nil
+    @objc
+    dynamic open var ringBuffers: [RingBuffer]? = nil
+}
+
+@objc public protocol ObjCCoreBridge where Self: PVEmulatorCore {
+
+    // MARK: Lifecycle
+    @objc func loadFile(atPath: String) throws
+//    @objc func executeFrameSkippingFrame(skip: Bool)
+    @objc func executeFrame()
+    @objc func swapBuffers()
+    @objc func stopEmulation()
+    @objc func resetEmulation()
+    
+    // MARK: Output
+    @objc var screenRect: CGRect { get }
+    @objc var videoBuffer: UnsafeMutableRawPointer? { get }
+    @objc var frameInterval: TimeInterval { get }
+    @objc var rendersToOpenGL: Bool { get }
+
+    
+    // MARK: Input
+    @objc func pollControllers()
+    
+    // MARK: Save States
+    @objc func saveStateToFileAtPath(fileName: String) async throws
+    @objc func loadStateFromFileAtPath(fileName: String) async throws
+
+//    @objc func saveStateToFileAtPath(fileName: String, completionHandler block: @escaping (Bool, Error?) -> Void)
+//    @objc func loadStateFromFileAtPath(fileName: String, completionHandler block: @escaping (Bool, Error?) -> Void)
 }
 
 #if !os(macOS)

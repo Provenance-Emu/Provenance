@@ -15,21 +15,27 @@ import PVAudio
 @objc
 extension PVEmulatorCore: EmulatorCoreAudioDataSource {
 
-    open var frameInterval: TimeInterval {  return (self as EmulatorCoreAudioDataSource).frameInterval }
+    @objc open var frameInterval: TimeInterval {
+        if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+            return objcBridge.frameInterval
+        } else {
+            return (self as EmulatorCoreAudioDataSource).frameInterval
+        }
+    }
 
-    open var sampleRate: Double { 48000.00 }
-    open var audioBitDepth: UInt { 16 }
-    open var channelCount: UInt { 1 }
+    @objc open var sampleRate: Double { 48000.00 }
+    @objc open var audioBitDepth: UInt { 16 }
+    @objc open var channelCount: UInt { 1 }
 
-    open var audioBufferCount: UInt { 1 }
+    @objc open var audioBufferCount: UInt { 1 }
 
-    public func getAudioBuffer(_ buffer: UnsafeMutableRawPointer, frameCount: UInt32, bufferIndex index: UInt) {
+    @objc public func getAudioBuffer(_ buffer: UnsafeMutableRawPointer, frameCount: UInt32, bufferIndex index: UInt) {
         let channelCount = channelCount(forBuffer: index)
         let maxLength = UInt(frameCount) * channelCount * audioBitDepth
         ringBuffer(atIndex: index)?.read(into: buffer, preferredSize: Int(maxLength))
     }
 
-    public func channelCount(forBuffer buffer: UInt) -> UInt {
+    @objc public func channelCount(forBuffer buffer: UInt) -> UInt {
         if buffer == 0 {
             return channelCount
         } else {
@@ -37,7 +43,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
         }
     }
     
-    public func audioBufferSize(forBuffer buffer: UInt) -> UInt {
+    @objc public func audioBufferSize(forBuffer buffer: UInt) -> UInt {
         // 4 frames is a complete guess
         let frameSampleCount = audioSampleRate(forBuffer: buffer) / frameInterval
         let channelCount = channelCount(forBuffer:buffer)
@@ -46,7 +52,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
         return channelCount * bytesPerSample * UInt(frameSampleCount)
     }
 
-    public func ringBuffer(atIndex index: UInt) -> RingBuffer? {
+    @objc  public func ringBuffer(atIndex index: UInt) -> RingBuffer? {
         let index: Int = Int(index)
         if ringBuffers == nil || ringBuffers!.count < index + 1 {
             let length: Int = Int(audioBufferSize(forBuffer: UInt(index)) * audioBitDepth)
@@ -63,7 +69,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
         return ringBuffer
     }
 
-    public func audioSampleRate(forBuffer buffer: UInt = 0) -> Double {
+    @objc public func audioSampleRate(forBuffer buffer: UInt = 0) -> Double {
         if buffer == 0 {
             return sampleRate
         }

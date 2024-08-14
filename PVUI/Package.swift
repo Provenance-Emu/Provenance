@@ -11,7 +11,7 @@ let package = Package(
         .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
-        .macCatalyst(.v14),
+        .macCatalyst(.v17),
         .visionOS(.v1)
     ],
     products: [
@@ -59,6 +59,21 @@ let package = Package(
             resources: [
                 .copy("Resources/Shaders/"),
                 .copy("Resources/PrivacyInfo.xcprivacy")
+            ],
+            cSettings: [
+                .define("GL_SILENCE_DEPRECATION", to: "1"),
+                .define("GLES_SILENCE_DEPRECATION", to: "1"),
+                .define("CI_SILENCE_GL_DEPRECATION", to: "1")
+            ],
+            swiftSettings: [
+                .define("USE_DISPLAY_LINK"),
+                .define("USE_OPENGL", .when(platforms: [.macCatalyst, .macOS])),
+                .define("USE_OPENGLES", .when(platforms: [.iOS, .tvOS, .visionOS])),
+                .define("USE_METAL", .when(platforms: [.macCatalyst, .macOS])),
+                .define("USE_EFFECT", .when(platforms: [.iOS, .tvOS, .visionOS, .macCatalyst])),
+                .define("GL_SILENCE_DEPRECATION"),
+                .define("GLES_SILENCE_DEPRECATION"),
+                .define("CI_SILENCE_GL_DEPRECATION")
             ]
         ),
         
@@ -93,6 +108,20 @@ let package = Package(
             resources: [
                 .copy("Resources/Shaders/"),
                 .copy("Resources/PrivacyInfo.xcprivacy")
+            ],
+            cSettings: [
+                .define("GL_SILENCE_DEPRECATION", to: "1"),
+                .define("GLES_SILENCE_DEPRECATION", to: "1"),
+                .define("CI_SILENCE_GL_DEPRECATION", to: "1")
+            ],
+            swiftSettings: [
+                .define("USE_OPENGL", .when(platforms: [.macCatalyst, .macOS])),
+                .define("USE_OPENGLES", .when(platforms: [.iOS, .tvOS, .visionOS])),
+                .define("USE_METAL", .when(platforms: [.macCatalyst, .macOS])),
+                .define("USE_EFFECT", .when(platforms: [.iOS, .tvOS, .visionOS, .macCatalyst])),
+                .define("GL_SILENCE_DEPRECATION"),
+                .define("GLES_SILENCE_DEPRECATION"),
+                .define("CI_SILENCE_GL_DEPRECATION")
             ]
         ),
         
@@ -109,6 +138,7 @@ let package = Package(
             name: "PVSwiftUI",
             dependencies: [
                 "PVUIBase",
+                "PVUIKit",
                 "PVLogging",
                 "PVCoreBridge",
                 "PVEmulatorCore",

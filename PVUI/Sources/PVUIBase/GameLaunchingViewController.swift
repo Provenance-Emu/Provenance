@@ -192,8 +192,8 @@ extension GameLaunchingViewController where Self: UIViewController {
             gameVC.core.setPauseEmulation(true)
             
             do {
-                let success = try await gameVC.core.loadState(fromFileAtPath: saveState.file.url.path)
-                gameVC.core.setPauseEmulation(!success)
+                try await gameVC.core.loadState(fromFileAtPath: saveState.file.url.path)
+                gameVC.core.setPauseEmulation(false)
             } catch {
                 let description = error.localizedDescription
                 let reason = (error as NSError).localizedFailureReason

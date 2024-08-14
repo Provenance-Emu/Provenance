@@ -72,7 +72,7 @@ public final class GameImporter {
     public var romsImportPath: URL { PVEmulatorConfiguration.Paths.romsImportPath }
     public var romsPath: URL { get { PVEmulatorConfiguration.Paths.romsPath }}
 
-    public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
+    public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts/", isDirectory: true)
 
     public func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]

@@ -9,7 +9,7 @@ let package = Package(
         .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
-        .macCatalyst(.v14),
+        .macCatalyst(.v17),
         .visionOS(.v1)
     ],
     products: [
@@ -30,7 +30,7 @@ let package = Package(
         /// Macros
 
         /// https://github.com/alvmo/HexColors
-        .package(url: "https://github.com/alvmo/HexColors.git", from: "1.0.0"),
+        .package(url: "https://github.com/JoeMatt/HexColors.git", branch: "main"),
         .package(url: "https://github.com/ShenghaiWang/SwiftMacros.git", from: "1.0.0")
     ],
 

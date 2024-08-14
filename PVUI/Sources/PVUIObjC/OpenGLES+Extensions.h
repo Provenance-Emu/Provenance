@@ -29,6 +29,17 @@
 
 // Add SPI https://developer.apple.com/documentation/opengles/eaglcontext/2890259-teximageiosurface?language=objc
 #if TARGET_OS_MACCATALYST || TARGET_OS_OSX
+typedef NS_ENUM(GLint, GLKVertexAttrib)
+{
+    GLKVertexAttribPosition,
+    GLKVertexAttribNormal,
+    GLKVertexAttribColor,
+    GLKVertexAttribTexCoord0,
+    GLKVertexAttribTexCoord1
+} NS_ENUM_AVAILABLE(10_8, 5_0);
+//#import <GLKit/GLKBaseEffect.h>
+//#import <GLKit/GLKEffects.h>
+
 // TODO: This?
 //        [CAOpenGLLayer layer];
 //        CGLPixelFormatObj *pf;

@@ -13,3 +13,19 @@ public protocol EmulatorCoreSavesDataSource {
     var batterySavesPath: String? { get }
     var supportsSaveStates: Bool { get }
 }
+
+//public extension EmulatorCoreSavesDataSource {
+//    public var saveStatesPath: String {
+//        #warning("saveStatesPath incomplete")
+//        // WARN: Copy from PVEMulatorConfiguration or refactor it here?
+//        return ""
+//    }
+//
+//    public var batterySavesPath: String {
+//        #warning("batterySavesPath incomplete")
+//
+//        return ""
+//    }
+
+//    public var supportsSaveStates: Bool { true }
+//}

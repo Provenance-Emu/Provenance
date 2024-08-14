@@ -9,27 +9,28 @@ let package = Package(
         .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
-        .macCatalyst(.v14),
+        .macCatalyst(.v17),
         .visionOS(.v1)
     ],
     products: [
         .library(
             name: "PVCoreBridge",
-            targets: ["PVCoreBridge"]),
+            targets: ["PVCoreBridge", "PVCoreObjCBridge"]),
         .library(
             name: "PVCoreBridge-Dynamic",
             type: .dynamic,
-            targets: ["PVCoreBridge"]),
+            targets: ["PVCoreBridge", "PVCoreObjCBridge"]),
         .library(
             name: "PVCoreBridge-Static",
             type: .static,
-            targets: ["PVCoreBridge"]),
+            targets: ["PVCoreBridge", "PVCoreObjCBridge"]),
     ],
 
     dependencies: [
         .package(name: "PVAudio", path: "../PVAudio/"),
         .package(name: "PVLogging", path: "../PVLogging/"),
         .package(name: "PVPlists", path: "../PVPlists/"),
+        .package(name: "PVObjCUtils", path: "../PVObjCUtils/"),
 
         // MARK: Macros
 
@@ -48,8 +49,32 @@ let package = Package(
                 "PVPlists",
                 "SwiftMacros"
             ],
-            resources: [.copy("PrivacyInfo.xcprivacy")]
+            resources: [.copy("PrivacyInfo.xcprivacy")],
+            cSettings: [
+                .define("GL_SILENCE_DEPRECATION", to: "1"),
+                .define("GLES_SILENCE_DEPRECATION", to: "1"),
+                .define("CI_SILENCE_GL_DEPRECATION", to: "1")
+            ],
+            swiftSettings: [
+                .define("USE_OPENGL", .when(platforms: [.macCatalyst, .macOS])),
+                .define("USE_OPENGLES", .when(platforms: [.iOS, .tvOS, .visionOS])),
+                .define("USE_METAL", .when(platforms: [.macCatalyst, .macOS])),
+                .define("USE_EFFECT", .when(platforms: [.iOS, .tvOS, .visionOS, .macCatalyst])),
+                .define("GL_SILENCE_DEPRECATION"),
+                .define("GLES_SILENCE_DEPRECATION"),
+                .define("CI_SILENCE_GL_DEPRECATION")
+            ]
         ),
+        
+        .target(
+            name: "PVCoreObjCBridge",
+            dependencies: [
+                "PVLogging",
+                "PVCoreBridge",
+                "PVObjCUtils"
+            ]
+        ),
+
 
         // MARK: SwiftPM tests
         .testTarget(
@@ -57,7 +82,7 @@ let package = Package(
             dependencies: ["PVCoreBridge"]
         )
     ],
-    swiftLanguageVersions: [.v5, .v6],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .c17,
     cxxLanguageStandard: .cxx20
 )

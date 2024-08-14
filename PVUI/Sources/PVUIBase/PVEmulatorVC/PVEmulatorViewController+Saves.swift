@@ -129,15 +129,10 @@ public extension PVEmulatorViewController {
             }
         }
 
-        let result: Bool
         do {
-            result = try await core.saveState(toFileAtPath: saveURL.path)
+            try await core.saveState(toFileAtPath: saveURL.path)
         } catch {
             throw .coreSaveError(error)
-        }
-
-        if !result {
-            return false
         }
 
         DLOG("Succeeded saving state, auto: \(auto)")
@@ -219,16 +214,7 @@ public extension PVEmulatorViewController {
             }
 
             do {
-                let success = try await self.core.loadState(fromFileAtPath: state.file.url.path)
-
-                guard success else {
-                    Task.detached { @MainActor in
-                        let message = "Unknown error"
-                        self.presentError("Failed to load save state. " + message, source: self.view, completion: completion)
-                    }
-                    return false
-                }
-
+                try await self.core.loadState(fromFileAtPath: state.file.url.path)
                 completion()
                 return true
             } catch {

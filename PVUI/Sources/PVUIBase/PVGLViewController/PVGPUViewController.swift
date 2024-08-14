@@ -72,11 +72,25 @@ struct PVVertex {
 
 //#define BUFFER_OFFSET(x) ((char *)NULL + (x))
 
+import Metal
+import CoreGraphics
+#if canImport(OpenGL)
+import OpenGL
+#endif
+#if canImport(OpenGLES)
+import OpenGLES.ES3
+#endif
+
 @frozen
 public struct RenderSettings: Sendable {
     var crtFilterEnabled = false
     var lcdFilterEnabled = false
     var smoothingEnabled = false
+    
+    var videoBufferSize: CGSize = .zero
+    var videoBufferPixelFormat: GLenum = GLenum(GL_RGB)
+    var videoBufferPixelType: GLenum = GLenum(GL_RGB8)
+    var videoBuffer: UnsafeMutableRawPointer? = nil
 }
 
 @objc

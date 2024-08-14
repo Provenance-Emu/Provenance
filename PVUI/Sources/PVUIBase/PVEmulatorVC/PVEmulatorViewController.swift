@@ -443,14 +443,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         //        }
         ILOG("Loading ROM: \(romPath.path)")
         do {
-            let success = try core.loadFile(atPath: romPath.path)
-            if !success {
-                ELOG("loadFile: unknown error")
-                Task { @MainActor in
-                    presentError("Loading core failed with unknown error", source: self.view)
-                }
-                return
-            }
+            try (core as? ObjCCoreBridge)?.loadFile(atPath: romPath.path)
         } catch {
             let alert = UIAlertController(title: error.localizedDescription, message: (error as NSError).localizedRecoverySuggestion, preferredStyle: .alert)
             alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem

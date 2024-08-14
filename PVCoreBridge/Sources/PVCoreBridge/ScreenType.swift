@@ -48,6 +48,17 @@ public enum ScreenTypeObjC: UInt, CaseIterable, Codable {
         case .dotMatrix: self = .dotMatrix
         }
     }
+    
+    public var stringValue: String {
+        switch self {
+        case .unknown: return ""
+        case .monochromaticLCD: return "MonoLCD"
+        case .colorLCD: return "ColorLCD"
+        case .crt: return "CRT"
+        case .modern: return "Modern"
+        case .dotMatrix: return "DotMatrix"
+        }
+    }
 }
 
 public enum ScreenType: String, CaseIterable, Codable {
