@@ -1232,8 +1232,8 @@ public extension GameImporter {
 
     func releaseID(forCRCs crcs: Set<String>) -> Int? {
         let roms = Table("ROMs")
-        let romID = Expression<Int>("romID")
-        let romHashCRC = Expression<String>("romHashCRC")
+        let romID = SQLite.Expression<Int>("romID")
+        let romHashCRC = SQLite.Expression<String>("romHashCRC")
 
         let query = roms.select(romID).filter(crcs.contains(romHashCRC))
 
