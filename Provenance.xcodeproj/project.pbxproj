@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -370,7 +370,7 @@
 		930499A02A93073800BF257F /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		930499A12A93073800BF257F /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 930498CD2A93073800BF257F /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		930499A22A93073800BF257F /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		930499A42A93073800BF257F /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		930499A42A93073800BF257F /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		930499A62A93073800BF257F /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C8A6AE28781E9F0037A946 /* PVLibRetro.framework */; };
 		930499A72A93073800BF257F /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3062B1D2971A60D00686D31 /* libMoltenVK.dylib */; };
 		930499A82A93073800BF257F /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; };
@@ -494,7 +494,7 @@
 		936BFD882986A719001FF097 /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936BFD802986A5B4001FF097 /* libMoltenVK.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		936FDBEB295855670073628A /* libMoltenVK_Play.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; platformFilter = ios; };
 		936FDBEC295855A50073628A /* libMoltenVK_Play.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		93943E892A36DEF800E06513 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		93943E892A36DEF800E06513 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		939A43092A35ADE2001AFF6B /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		939A430A2A35AE14001AFF6B /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		93A7277C2AAEB0DB0052B279 /* PVMameControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93A7277A2AAEB0DA0052B279 /* PVMameControllerViewController.swift */; };
@@ -571,7 +571,6 @@
 		B3054372272026E800F5257D /* PVPSPControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3054370272026E800F5257D /* PVPSPControllerViewController.swift */; };
 		B305EEFB276B4C71003AE510 /* Provenance Watch WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B305EF00276B4C72003AE510 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B305EEFF276B4C72003AE510 /* Assets.xcassets */; };
-		B305EF06276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B305EF0B276B4C73003AE510 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B305EF0A276B4C73003AE510 /* ContentView.swift */; };
 		B305EF0D276B4C73003AE510 /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B305EF0C276B4C73003AE510 /* ProvenanceApp.swift */; };
 		B305EF0F276B4C73003AE510 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B305EF0E276B4C73003AE510 /* ComplicationController.swift */; };
@@ -655,7 +654,7 @@
 		B32987D42B66198700728996 /* Cheats.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296ED126CABFDE0088AC32 /* Cheats.storyboard */; platformFilters = (tvos, ); };
 		B32987D52B661A7C00728996 /* PVAppDelegate+NitoTV.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3290498270D1F95002707AC /* PVAppDelegate+NitoTV.swift */; };
 		B32987D72B661C7A00728996 /* TVUIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32987D62B661C7A00728996 /* TVUIKit.framework */; platformFilters = (tvos, ); };
-		B32987D82B661C8900728996 /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B32987D82B661C8900728996 /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B32D8F801EA7FDB900175FBF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3D409717B2DCE4004DFFFC /* UIKit.framework */; };
 		B32D8F821EA7FDBE00175FBF /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B33468D320AB347300092CA6 /* CenterFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33468D120AB347300092CA6 /* CenterFlowLayout.swift */; };
@@ -1026,6 +1025,8 @@
 		B3427C03287EA0CF0054C1B5 /* MetalViewShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BEA287EA0CE0054C1B5 /* MetalViewShaders.metal */; };
 		B3427C04287EA0CF0054C1B5 /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BEC287EA0CE0054C1B5 /* fullscreen_vs.metal */; };
 		B3427C05287EA0CF0054C1B5 /* fullscreen_vs.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BEC287EA0CE0054C1B5 /* fullscreen_vs.metal */; };
+		B34327A52C6B0A930047E5BB /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilter = ios; };
+		B34327AF2C6B0EA20047E5BB /* PVRetroArch.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3437176276B0B650014F87C /* PVIntellivisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437173276B0B650014F87C /* PVIntellivisionControllerViewController.swift */; };
 		B3437177276B0B650014F87C /* PVIntellivisionControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437173276B0B650014F87C /* PVIntellivisionControllerViewController.swift */; };
 		B3437178276B0B650014F87C /* PV3DOControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3437174276B0B650014F87C /* PV3DOControllerViewController.swift */; };
@@ -1244,7 +1245,7 @@
 		B347B3252BC4CA98006A3B2D /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64E219216DD009F4EDC /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B347B32A2BC4CA98006A3B2D /* PVLogging in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B347B2442BC4CA98006A3B2D /* PVLogging */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B347B32B2BC4CA98006A3B2D /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B347B3322BC4CA98006A3B2D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B347B3322BC4CA98006A3B2D /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B347B3372BC4CA98006A3B2D /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C61A219203AF009F4EDC /* libc++.tbd */; };
 		B347B33B2BC4CA98006A3B2D /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C618219203A5009F4EDC /* libsqlite3.tbd */; };
 		B347B33C2BC4CA98006A3B2D /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = B347B2422BC4CA98006A3B2D /* Reachability */; };
@@ -1385,6 +1386,7 @@
 		B35E6C30207ED7050040709A /* AppearanceStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C1F207ED7040040709A /* AppearanceStyle.swift */; };
 		B35E6C31207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
 		B35E6C32207ED7050040709A /* AppearanceStyleHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */; };
+		B35EED642C6C50F400EBD1A8 /* PVFreeDO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35EED632C6C50F400EBD1A8 /* PVFreeDO.framework */; };
 		B361F62E27C07AD10080D368 /* PVRootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29627BC7E610070E222 /* PVRootViewModel.swift */; };
 		B361F62F27C07B240080D368 /* ConsoleGamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29927BC7E610070E222 /* ConsoleGamesView.swift */; };
 		B361F63027C07B240080D368 /* ConsolesWrapperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EEA29827BC7E610070E222 /* ConsolesWrapperView.swift */; };
@@ -1538,12 +1540,13 @@
 		B3890BF520B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3890BF320B995A9005BB001 /* PVGameLibraryViewController+CollectionView.swift */; };
 		B3890BF920B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; };
 		B38A2A48210233FE00374CDD /* EmulatorActionCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B38A2A47210233FE00374CDD /* EmulatorActionCell.xib */; platformFilters = (ios, maccatalyst, ); };
-		B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; platformFilters = (tvos, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B38C69B72BEB35E200AE4F86 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; platformFilters = (tvos, ); };
 		B38C69B82BEB37A100AE4F86 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; platformFilters = (tvos, ); };
 		B38D02342884D03B008FBED8 /* SettingsOptionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B38D02332884D03A008FBED8 /* SettingsOptionRow.swift */; };
 		B38D30FD202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
 		B38D30FE202AC26500E9A068 /* GCDWebDAVServer.m in Sources */ = {isa = PBXBuildFile; fileRef = B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */; };
+		B38F50E02C6B146600177BA9 /* libMoltenVK_Play.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 936FDBEA295855670073628A /* libMoltenVK_Play.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B390B0EA276B2DB20018E065 /* AltKit in Frameworks */ = {isa = PBXBuildFile; platformFilter = ios; productRef = B390B0E9276B2DB20018E065 /* AltKit */; };
 		B394C98A20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
 		B394C98B20609E180014A65D /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = B394C98920609E180014A65D /* UIColor+Hex.swift */; };
@@ -1768,7 +1771,7 @@
 		B394CD672BDEE53A006B63E8 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD682BDEE53A006B63E8 /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B394CD692BDEE53A006B63E8 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B394CD742BDEE53A006B63E8 /* PVGB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C9D4AD1DEA74390068D057 /* PVGB.framework */; };
 		B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3271BDC276B8B660031AECC /* CoreTelephony.framework */; platformFilter = ios; };
 		B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C13CC82823CABE2800463EDD /* Photos.framework */; };
@@ -1856,7 +1859,7 @@
 		B39C4B6C2BF0A3F000F199BB /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B39C4B6E2BF0AB6100F199BB /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; };
 		B39C4B6F2BF0AB6100F199BB /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A320372720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
 		B3A320382720974F00F338F6 /* PVGameCubeControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A320362720974F00F338F6 /* PVGameCubeControllerViewController.swift */; };
 		B3A32150218EB4D700BD7DA2 /* UIView+FrameAdditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AADCDB517BD998A00F53CFE /* UIView+FrameAdditions.swift */; };
@@ -2286,7 +2289,7 @@
 		B3F7E3E5297736BE00362B92 /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B3F7E3F8297736BE00362B92 /* PVSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF700F21916C30000FA7F9 /* PVSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E3FB297736BE00362B92 /* PVLibrary.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3AF701221916C3A000FA7F9 /* PVLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F7E41C297736BE00362B92 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3F7E41C297736BE00362B92 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3F7E433297736C200362B92 /* RadioSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3411C0A276B470B00D85327 /* RadioSection.swift */; };
 		B3F7E434297736C200362B92 /* PVSliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B378225B21D32FCC0077E86F /* PVSliderCell.swift */; };
 		B3F7E435297736C200362B92 /* PVSaveStatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2FB108206EE8A700A1F942 /* PVSaveStatesViewController.swift */; };
@@ -2630,7 +2633,7 @@
 		B3F7E5A4297736C200362B92 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E5A5297736C200362B92 /* PVBliss.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3DEEF912942F92C00A6957C /* PVBliss.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F7E5A6297736C200362B92 /* PVMupen64Plus.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37263A426EA159400E95488 /* PVMupen64Plus.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F7E5A9297736C200362B92 /* Spotlight.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3F7E5A9297736C200362B92 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3F94A4C27093794002A71EF /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B3FAC921292B44F3005E8B11 /* PVAtari800.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; };
 		B3FAC922292B44F4005E8B11 /* PVAtari800.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B354693B1DECDA710018B6F3 /* PVAtari800.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2786,13 +2789,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B305EEF9276B4C71003AE510;
 			remoteInfo = "Provenance Watch WatchKit App";
-		};
-		B305EF07276B4C73003AE510 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B305EF04276B4C73003AE510;
-			remoteInfo = "Provenance Watch WatchKit Extension";
 		};
 		B341FCB92BE61EC100718929 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3092,15 +3088,15 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		930499A32A93073800BF257F /* Embed App Extensions */ = {
+		930499A32A93073800BF257F /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				930499A42A93073800BF257F /* Spotlight.appex in Embed App Extensions */,
+				930499A42A93073800BF257F /* Spotlight.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B305EF19276B4C74003AE510 /* Embed Watch Content */ = {
@@ -3112,17 +3108,6 @@
 				B305EEFB276B4C71003AE510 /* Provenance Watch WatchKit App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B305EF1D276B4C74003AE510 /* Embed App Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				B305EF06276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex in Embed App Extensions */,
-			);
-			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B305EF27276B4C7E003AE510 /* Embed Frameworks */ = {
@@ -3188,15 +3173,15 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B347B3312BC4CA98006A3B2D /* Embed App Extensions */ = {
+		B347B3312BC4CA98006A3B2D /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B347B3322BC4CA98006A3B2D /* TopShelf.appex in Embed App Extensions */,
+				B347B3322BC4CA98006A3B2D /* TopShelf.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B36B852C2959987D00FDEA29 /* Embed Frameworks */ = {
@@ -3230,8 +3215,10 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B34327AF2C6B0EA20047E5BB /* PVRetroArch.framework in Embed Frameworks */,
 				B39C4B6F2BF0AB6100F199BB /* libMoltenVK.dylib in Embed Frameworks */,
 				B394CD442BDEE53A006B63E8 /* PVFCEU.framework in Embed Frameworks */,
+				B38F50E02C6B146600177BA9 /* libMoltenVK_Play.dylib in Embed Frameworks */,
 				B394CD452BDEE53A006B63E8 /* PVMednafen.framework in Embed Frameworks */,
 				B394CD482BDEE53A006B63E8 /* PVPicoDrive.framework in Embed Frameworks */,
 				B394CD492BDEE53A006B63E8 /* PVAtari800.framework in Embed Frameworks */,
@@ -3260,27 +3247,27 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B394CD6A2BDEE53A006B63E8 /* Embed App Extensions */ = {
+		B394CD6A2BDEE53A006B63E8 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed App Extensions */,
-				B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed App Extensions */,
+				B394CD6B2BDEE53A006B63E8 /* Spotlight.appex in Embed Foundation Extensions */,
+				B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 1;
 		};
-		B39DC780279E79D40017E28D /* Embed App Extensions */ = {
+		B39DC780279E79D40017E28D /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */,
+				B39DC77D279E79D40017E28D /* TopShelf.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3DFEE132686D848005C6CF2 /* Embed Frameworks */ = {
@@ -3293,16 +3280,16 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3E21D77203211BE009939D3 /* Embed App Extensions */ = {
+		B3E21D77203211BE009939D3 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				93943E892A36DEF800E06513 /* Spotlight.appex in Embed App Extensions */,
-				B32987D82B661C8900728996 /* TopShelf.appex in Embed App Extensions */,
+				93943E892A36DEF800E06513 /* Spotlight.appex in Embed Foundation Extensions */,
+				B32987D82B661C8900728996 /* TopShelf.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 		B3F7E3E7297736BE00362B92 /* Embed Frameworks */ = {
@@ -3321,15 +3308,15 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3F7E41B297736BE00362B92 /* Embed App Extensions */ = {
+		B3F7E41B297736BE00362B92 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B3F7E41C297736BE00362B92 /* Spotlight.appex in Embed App Extensions */,
+				B3F7E41C297736BE00362B92 /* Spotlight.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B3F7E574297736C200362B92 /* Embed Frameworks */ = {
@@ -3401,15 +3388,15 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B3F7E5A8297736C200362B92 /* Embed App Extensions */ = {
+		B3F7E5A8297736C200362B92 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 8;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				B3F7E5A9297736C200362B92 /* Spotlight.appex in Embed App Extensions */,
+				B3F7E5A9297736C200362B92 /* Spotlight.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -3577,7 +3564,6 @@
 		B305EEF7276B4C71003AE510 /* Provenance Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Watch WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305EEFF276B4C72003AE510 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Provenance Watch WatchKit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305EF0A276B4C73003AE510 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B305EF0C276B4C73003AE510 /* ProvenanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvenanceApp.swift; sourceTree = "<group>"; };
 		B305EF0E276B4C73003AE510 /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
@@ -3887,6 +3873,7 @@
 		B35E6C1E207ED7040040709A /* UIWindowExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIWindowExtensions.swift; sourceTree = "<group>"; };
 		B35E6C1F207ED7040040709A /* AppearanceStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyle.swift; sourceTree = "<group>"; };
 		B35E6C20207ED7050040709A /* AppearanceStyleHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppearanceStyleHelpers.swift; sourceTree = "<group>"; };
+		B35EED632C6C50F400EBD1A8 /* PVFreeDO.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVFreeDO.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B35FD0F2295970300055CA78 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PVGameLibraryCollectionViewCell.xib; sourceTree = "<group>"; };
 		B35FD0F32959703D0055CA78 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/PVGameLibraryCollectionViewCell.strings; sourceTree = "<group>"; };
 		B35FD0F4295970450055CA78 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/PVGameLibraryCollectionViewCell.strings"; sourceTree = "<group>"; };
@@ -3997,6 +3984,8 @@
 		B38D30FB202AC26500E9A068 /* GCDWebDAVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDWebDAVServer.h; sourceTree = "<group>"; };
 		B38D30FC202AC26500E9A068 /* GCDWebDAVServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDWebDAVServer.m; sourceTree = "<group>"; };
 		B38E0F10289290E5004720DA /* PVPCSXRearmed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPCSXRearmed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B38F50DB2C6B138C00177BA9 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = CoresRetro/RetroArch/RetroArch/pkg/apple/iOS/modules/libMoltenVK.dylib; sourceTree = "<group>"; };
+		B38F50DC2C6B139700177BA9 /* libMoltenVK.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libMoltenVK.dylib; path = CoresRetro/RetroArch/RetroArch/pkg/apple/tvOS/modules/libMoltenVK.dylib; sourceTree = "<group>"; };
 		B3918FD82873EDC3000838F6 /* PVEP128Emu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEP128Emu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3918FDB2873EE5F000838F6 /* PVfMSX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVfMSX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3918FDE2873EEA8000838F6 /* PVMiniVMac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMiniVMac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4126,6 +4115,57 @@
 		B3D5E2BE218EC62E0015C690 /* Sections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sections.swift; sourceTree = "<group>"; };
 		B3DB11AC205C973E00A6E845 /* PVCoresTableViewContorller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVCoresTableViewContorller.swift; sourceTree = "<group>"; };
 		B3DDB0A720291E8E001C6B64 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3DE15C42C6B0966008DF262 /* a5200_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = a5200_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/a5200_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15CA2C6B09F2008DF262 /* ppsspp_libretro.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = ppsspp_libretro.dylib; path = CoresRetro/RetroArch/modules/ppsspp_libretro.dylib; sourceTree = "<group>"; };
+		B3DE15CB2C6B09F2008DF262 /* sameboy_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = sameboy_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/sameboy_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15CC2C6B09F2008DF262 /* mednafen_pcfx_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_pcfx_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_pcfx_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15CD2C6B09F2008DF262 /* yabause_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = yabause_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/yabause_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15CE2C6B09F2008DF262 /* mednafen_snes_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_snes_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_snes_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15CF2C6B09F2008DF262 /* mednafen_wswan_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_wswan_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_wswan_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15D02C6B09F2008DF262 /* stella2014_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = stella2014_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/stella2014_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15D12C6B09F2008DF262 /* fceumm_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = fceumm_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/fceumm_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15D22C6B09F3008DF262 /* nestopia_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = nestopia_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/nestopia_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15D32C6B09F3008DF262 /* dosbox_pure_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = dosbox_pure_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/dosbox_pure_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15D42C6B09F3008DF262 /* opera_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = opera_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/opera_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15D52C6B09F3008DF262 /* mednafen_psx_hw_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_psx_hw_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_psx_hw_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15D62C6B09F3008DF262 /* pcsx_rearmed_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = pcsx_rearmed_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/pcsx_rearmed_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15D72C6B09F3008DF262 /* mednafen_pce_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_pce_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_pce_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15D82C6B09F3008DF262 /* mame2010_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mame2010_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mame2010_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15D92C6B09F3008DF262 /* nekop2_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = nekop2_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/nekop2_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15DA2C6B09F3008DF262 /* parallel_n64_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = parallel_n64_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/parallel_n64_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15DB2C6B09F4008DF262 /* genesis_plus_gx_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = genesis_plus_gx_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/genesis_plus_gx_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15DC2C6B09F4008DF262 /* mednafen_psx_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_psx_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_psx_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15DD2C6B09F4008DF262 /* gearcoleco_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = gearcoleco_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/gearcoleco_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15DE2C6B09F4008DF262 /* stella_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = stella_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/stella_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15DF2C6B09F4008DF262 /* minivmac_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = minivmac_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/minivmac_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15E02C6B09F4008DF262 /* flycast_libretro.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = flycast_libretro.dylib; path = CoresRetro/RetroArch/modules/flycast_libretro.dylib; sourceTree = "<group>"; };
+		B3DE15E12C6B09F4008DF262 /* mednafen_pce_fast_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_pce_fast_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_pce_fast_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15E22C6B09F4008DF262 /* prosystem_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = prosystem_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/prosystem_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15E32C6B09F4008DF262 /* fbneo_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = fbneo_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/fbneo_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15E42C6B09F4008DF262 /* numero_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = numero_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/numero_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15E52C6B09F4008DF262 /* hatari_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = hatari_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/hatari_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15E62C6B09F5008DF262 /* gambatte_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = gambatte_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/gambatte_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15E72C6B09F5008DF262 /* virtualjaguar_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = virtualjaguar_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/virtualjaguar_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15E82C6B09F5008DF262 /* flycast_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = flycast_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/flycast_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15E92C6B09F5008DF262 /* mednafen_ngp_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_ngp_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_ngp_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15EA2C6B09F5008DF262 /* o2em_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = o2em_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/o2em_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15EB2C6B09F5008DF262 /* mednafen_saturn_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_saturn_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_saturn_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15EC2C6B09F5008DF262 /* melonds_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = melonds_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/melonds_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15ED2C6B09F5008DF262 /* race_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = race_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/race_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15EE2C6B09F5008DF262 /* mednafen_lynx_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_lynx_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_lynx_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15EF2C6B09F5008DF262 /* mgba_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mgba_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mgba_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15F02C6B09F6008DF262 /* mame_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mame_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mame_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15F12C6B09F6008DF262 /* np2kai_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = np2kai_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/np2kai_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15F22C6B09F6008DF262 /* mednafen_gba_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_gba_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_gba_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15F32C6B09F6008DF262 /* snes9x_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = snes9x_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/snes9x_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15F42C6B09F6008DF262 /* bsnes_mercury_accuracy_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = bsnes_mercury_accuracy_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/bsnes_mercury_accuracy_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15F52C6B09F6008DF262 /* mupen64plus_next_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mupen64plus_next_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mupen64plus_next_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15F62C6B09F6008DF262 /* mednafen_supergrafx_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_supergrafx_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_supergrafx_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15F72C6B09F6008DF262 /* bsnes_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = bsnes_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/bsnes_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15F82C6B09F6008DF262 /* atari800_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = atari800_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/atari800_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15F92C6B09F7008DF262 /* mednafen_vb_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = mednafen_vb_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/mednafen_vb_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15FA2C6B09F7008DF262 /* vbam_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = vbam_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/vbam_libretro_ios.dylib; sourceTree = "<group>"; };
+		B3DE15FB2C6B09F7008DF262 /* fuse_libretro_ios.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = fuse_libretro_ios.dylib; path = CoresRetro/RetroArch/modules/fuse_libretro_ios.dylib; sourceTree = "<group>"; };
 		B3DEEF912942F92C00A6957C /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3DEEF942942F96900A6957C /* PVBliss.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVBliss.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3E0A580215647BD004B4322 /* Scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Scripts; sourceTree = "<group>"; };
@@ -4220,6 +4260,10 @@
 		EF474BA7279CCDD100578663 /* TVFullscreenController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVFullscreenController.swift; sourceTree = "<group>"; };
 		EF474BA9279E63B700578663 /* TVAlertController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TVAlertController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B3DE15B62C6B0913008DF262 /* CoreLibRetro */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CoreLibRetro; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		1A3D409117B2DCE4004DFFFC /* Frameworks */ = {
@@ -4594,6 +4638,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B34327A52C6B0A930047E5BB /* PVRetroArch.framework in Frameworks */,
 				B3EF26F02BE7F9690066D4B6 /* libc.tbd in Frameworks */,
 				B3EF26EE2BE7F8EC0066D4B6 /* libc++.tbd in Frameworks */,
 				B3EF26EC2BE7F8DD0066D4B6 /* libxml2.tbd in Frameworks */,
@@ -4614,6 +4659,7 @@
 				B394CD8D2BDEE53A006B63E8 /* PVPokeMini.framework in Frameworks */,
 				B394CD8E2BDEE53A006B63E8 /* Security.framework in Frameworks */,
 				B394CD8F2BDEE53A006B63E8 /* PVTGBDual.framework in Frameworks */,
+				B35EED642C6C50F400EBD1A8 /* PVFreeDO.framework in Frameworks */,
 				B394CD902BDEE53A006B63E8 /* PVBliss.framework in Frameworks */,
 				B39C4B6B2BF0A3F000F199BB /* MoltenVK.xcframework in Frameworks */,
 				B394CD912BDEE53A006B63E8 /* PVFCEU.framework in Frameworks */,
@@ -4904,6 +4950,8 @@
 		1A3D408B17B2DCE4004DFFFC = {
 			isa = PBXGroup;
 			children = (
+				B38F50DB2C6B138C00177BA9 /* libMoltenVK.dylib */,
+				B38F50DC2C6B139700177BA9 /* libMoltenVK.dylib */,
 				934BE9B3296F178400FB9933 /* modules */,
 				B381A2792926345F00305322 /* StickerPack.entitlements */,
 				B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */,
@@ -4922,6 +4970,7 @@
 				B3E0A580215647BD004B4322 /* Scripts */,
 				B3270F8027DCB25100E83180 /* Cores */,
 				B3C8A6A328781E810037A946 /* CoresRetro */,
+				B3DE15B62C6B0913008DF262 /* CoreLibRetro */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 			);
@@ -4937,7 +4986,6 @@
 				B3E21D6B203211BE009939D3 /* Spotlight.appex */,
 				B305EEF7276B4C71003AE510 /* Provenance Watch.app */,
 				B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */,
-				B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */,
 				B3270F7F27DCB25100E83180 /* Cores.framework */,
 				B3C8A6EF2878238C0037A946 /* CoresRetro.framework */,
 				B355DF9729209B6200E4C858 /* QuickLookPreview.appex */,
@@ -4962,6 +5010,58 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B35EED632C6C50F400EBD1A8 /* PVFreeDO.framework */,
+				B3DE15F82C6B09F6008DF262 /* atari800_libretro_ios.dylib */,
+				B3DE15F72C6B09F6008DF262 /* bsnes_libretro_ios.dylib */,
+				B3DE15F42C6B09F6008DF262 /* bsnes_mercury_accuracy_libretro_ios.dylib */,
+				B3DE15D32C6B09F3008DF262 /* dosbox_pure_libretro_ios.dylib */,
+				B3DE15E32C6B09F4008DF262 /* fbneo_libretro_ios.dylib */,
+				B3DE15D12C6B09F2008DF262 /* fceumm_libretro_ios.dylib */,
+				B3DE15E02C6B09F4008DF262 /* flycast_libretro.dylib */,
+				B3DE15E82C6B09F5008DF262 /* flycast_libretro_ios.dylib */,
+				B3DE15FB2C6B09F7008DF262 /* fuse_libretro_ios.dylib */,
+				B3DE15E62C6B09F5008DF262 /* gambatte_libretro_ios.dylib */,
+				B3DE15DD2C6B09F4008DF262 /* gearcoleco_libretro_ios.dylib */,
+				B3DE15DB2C6B09F4008DF262 /* genesis_plus_gx_libretro_ios.dylib */,
+				B3DE15E52C6B09F4008DF262 /* hatari_libretro_ios.dylib */,
+				B3DE15F02C6B09F6008DF262 /* mame_libretro_ios.dylib */,
+				B3DE15D82C6B09F3008DF262 /* mame2010_libretro_ios.dylib */,
+				B3DE15F22C6B09F6008DF262 /* mednafen_gba_libretro_ios.dylib */,
+				B3DE15EE2C6B09F5008DF262 /* mednafen_lynx_libretro_ios.dylib */,
+				B3DE15E92C6B09F5008DF262 /* mednafen_ngp_libretro_ios.dylib */,
+				B3DE15E12C6B09F4008DF262 /* mednafen_pce_fast_libretro_ios.dylib */,
+				B3DE15D72C6B09F3008DF262 /* mednafen_pce_libretro_ios.dylib */,
+				B3DE15CC2C6B09F2008DF262 /* mednafen_pcfx_libretro_ios.dylib */,
+				B3DE15D52C6B09F3008DF262 /* mednafen_psx_hw_libretro_ios.dylib */,
+				B3DE15DC2C6B09F4008DF262 /* mednafen_psx_libretro_ios.dylib */,
+				B3DE15EB2C6B09F5008DF262 /* mednafen_saturn_libretro_ios.dylib */,
+				B3DE15CE2C6B09F2008DF262 /* mednafen_snes_libretro_ios.dylib */,
+				B3DE15F62C6B09F6008DF262 /* mednafen_supergrafx_libretro_ios.dylib */,
+				B3DE15F92C6B09F7008DF262 /* mednafen_vb_libretro_ios.dylib */,
+				B3DE15CF2C6B09F2008DF262 /* mednafen_wswan_libretro_ios.dylib */,
+				B3DE15EC2C6B09F5008DF262 /* melonds_libretro_ios.dylib */,
+				B3DE15EF2C6B09F5008DF262 /* mgba_libretro_ios.dylib */,
+				B3DE15DF2C6B09F4008DF262 /* minivmac_libretro_ios.dylib */,
+				B3DE15F52C6B09F6008DF262 /* mupen64plus_next_libretro_ios.dylib */,
+				B3DE15D92C6B09F3008DF262 /* nekop2_libretro_ios.dylib */,
+				B3DE15D22C6B09F3008DF262 /* nestopia_libretro_ios.dylib */,
+				B3DE15F12C6B09F6008DF262 /* np2kai_libretro_ios.dylib */,
+				B3DE15E42C6B09F4008DF262 /* numero_libretro_ios.dylib */,
+				B3DE15EA2C6B09F5008DF262 /* o2em_libretro_ios.dylib */,
+				B3DE15D42C6B09F3008DF262 /* opera_libretro_ios.dylib */,
+				B3DE15DA2C6B09F3008DF262 /* parallel_n64_libretro_ios.dylib */,
+				B3DE15D62C6B09F3008DF262 /* pcsx_rearmed_libretro_ios.dylib */,
+				B3DE15CA2C6B09F2008DF262 /* ppsspp_libretro.dylib */,
+				B3DE15E22C6B09F4008DF262 /* prosystem_libretro_ios.dylib */,
+				B3DE15ED2C6B09F5008DF262 /* race_libretro_ios.dylib */,
+				B3DE15CB2C6B09F2008DF262 /* sameboy_libretro_ios.dylib */,
+				B3DE15F32C6B09F6008DF262 /* snes9x_libretro_ios.dylib */,
+				B3DE15DE2C6B09F4008DF262 /* stella_libretro_ios.dylib */,
+				B3DE15D02C6B09F2008DF262 /* stella2014_libretro_ios.dylib */,
+				B3DE15FA2C6B09F7008DF262 /* vbam_libretro_ios.dylib */,
+				B3DE15E72C6B09F5008DF262 /* virtualjaguar_libretro_ios.dylib */,
+				B3DE15CD2C6B09F2008DF262 /* yabause_libretro_ios.dylib */,
+				B3DE15C42C6B0966008DF262 /* a5200_libretro_ios.dylib */,
 				B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */,
 				B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */,
 				B39C4B5E2BF09AD300F199BB /* PVPPSSPP.framework */,
@@ -6365,7 +6465,7 @@
 				9304F9692AB355ED00A92418 /* Script: Get RetroArch Modules */,
 				1A3D409017B2DCE4004DFFFC /* Sources */,
 				1AAE7D3F1BC86C41003066C0 /* Embed Frameworks */,
-				B3E21D77203211BE009939D3 /* Embed App Extensions */,
+				B3E21D77203211BE009939D3 /* Embed Foundation Extensions */,
 				1A3D409117B2DCE4004DFFFC /* Frameworks */,
 				934BE9A5296F171E00FB9933 /* Code Sign libretro.h Cores */,
 				1A3D409217B2DCE4004DFFFC /* Resources */,
@@ -6398,7 +6498,7 @@
 				9304F9682AB355D200A92418 /* Script: Get RetroArch Modules */,
 				1AD481B01BA350A400FDA50A /* Sources */,
 				1AACCAE61BB60DB500DC21AE /* Embed Frameworks */,
-				B39DC780279E79D40017E28D /* Embed App Extensions */,
+				B39DC780279E79D40017E28D /* Embed Foundation Extensions */,
 				1AD481B11BA350A400FDA50A /* Frameworks */,
 				1AD481B21BA350A400FDA50A /* Resources */,
 				1A44C0AE1D0A1E730018751A /* Script: Set Build Number */,
@@ -6448,7 +6548,7 @@
 				9304F96B2AB3564B00A92418 /* Script: Get RetroArch Modules */,
 				930498CE2A93073800BF257F /* Sources */,
 				9304999B2A93073800BF257F /* Embed Frameworks */,
-				930499A32A93073800BF257F /* Embed App Extensions */,
+				930499A32A93073800BF257F /* Embed Foundation Extensions */,
 				930499A52A93073800BF257F /* Frameworks */,
 				930499C72A93073800BF257F /* Code Sign libretro.h Cores */,
 				930499C82A93073800BF257F /* Resources */,
@@ -6495,35 +6595,18 @@
 			buildConfigurationList = B305EF22276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit App" */;
 			buildPhases = (
 				B305EEF8276B4C71003AE510 /* Resources */,
-				B305EF1D276B4C74003AE510 /* Embed App Extensions */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B305EF08276B4C73003AE510 /* PBXTargetDependency */,
-			);
-			name = "Provenance Watch WatchKit App";
-			productName = "Provenance Watch WatchKit App";
-			productReference = B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */;
-			productType = "com.apple.product-type.application.watchapp2";
-		};
-		B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B305EF21276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit Extension" */;
-			buildPhases = (
 				B305EF01276B4C73003AE510 /* Sources */,
 				B305EF02276B4C73003AE510 /* Frameworks */,
-				B305EF03276B4C73003AE510 /* Resources */,
 				B305EF27276B4C7E003AE510 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "Provenance Watch WatchKit Extension";
-			productName = "Provenance Watch WatchKit Extension";
-			productReference = B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */;
-			productType = "com.apple.product-type.watchkit2-extension";
+			name = "Provenance Watch WatchKit App";
+			productName = "Provenance Watch WatchKit App";
+			productReference = B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */;
+			productType = "com.apple.product-type.application";
 		};
 		B3270F7E27DCB25100E83180 /* Cores */ = {
 			isa = PBXNativeTarget;
@@ -6577,7 +6660,7 @@
 				B347B2452BC4CA98006A3B2D /* Script: Get RetroArch Modules */,
 				B347B2462BC4CA98006A3B2D /* Sources */,
 				B347B3112BC4CA98006A3B2D /* Embed Frameworks */,
-				B347B3312BC4CA98006A3B2D /* Embed App Extensions */,
+				B347B3312BC4CA98006A3B2D /* Embed Foundation Extensions */,
 				B347B3332BC4CA98006A3B2D /* Frameworks */,
 				B347B3652BC4CA98006A3B2D /* Resources */,
 				B347B3842BC4CA98006A3B2D /* Script: Set Build Number */,
@@ -6707,7 +6790,7 @@
 			buildPhases = (
 				B394CC672BDEE53A006B63E8 /* Sources */,
 				B394CD3B2BDEE53A006B63E8 /* Embed Frameworks */,
-				B394CD6A2BDEE53A006B63E8 /* Embed App Extensions */,
+				B394CD6A2BDEE53A006B63E8 /* Embed Foundation Extensions */,
 				B394CD6C2BDEE53A006B63E8 /* Frameworks */,
 				B394CDB62BDEE53A006B63E8 /* Resources */,
 				B394CDDA2BDEE53A006B63E8 /* Script: Set Build Number */,
@@ -6831,7 +6914,7 @@
 				9304F96A2AB3563200A92418 /* Script: Get RetroArch Modules */,
 				B3F7E2A5297736BE00362B92 /* Sources */,
 				B3F7E3E7297736BE00362B92 /* Embed Frameworks */,
-				B3F7E41B297736BE00362B92 /* Embed App Extensions */,
+				B3F7E41B297736BE00362B92 /* Embed Foundation Extensions */,
 				B3F7E373297736BE00362B92 /* Frameworks */,
 				B3F7E3C2297736BE00362B92 /* Code Sign libretro.h Cores */,
 				B3F7E3C3297736BE00362B92 /* Resources */,
@@ -6863,7 +6946,7 @@
 				9304F9652AB3557B00A92418 /* Script: Get RetroArch Modules */,
 				B3F7E432297736C200362B92 /* Sources */,
 				B3F7E574297736C200362B92 /* Embed Frameworks */,
-				B3F7E5A8297736C200362B92 /* Embed App Extensions */,
+				B3F7E5A8297736C200362B92 /* Embed Foundation Extensions */,
 				B3F7E500297736C200362B92 /* Frameworks */,
 				B3F7E54F297736C200362B92 /* Script: Code Sign libretro.h Cores */,
 				B3F7E550297736C200362B92 /* Resources */,
@@ -6919,7 +7002,7 @@
 				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftUpdateCheck = 1410;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1610;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
 					1A3D409317B2DCE4004DFFFC = {
@@ -6969,9 +7052,6 @@
 						CreatedOnToolsVersion = 13.2;
 					};
 					B305EEF9276B4C71003AE510 = {
-						CreatedOnToolsVersion = 13.2;
-					};
-					B305EF04276B4C73003AE510 = {
 						CreatedOnToolsVersion = 13.2;
 					};
 					B3270F7E27DCB25100E83180 = {
@@ -7085,7 +7165,6 @@
 				B383225D26ED9C530029D12F /* Check Git Submodules */,
 				B30E94832793B8BE00871E57 /* Check CodeSigning */,
 				B305EEF6276B4C71003AE510 /* Provenance Watch */,
-				B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
 				B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */,
 				B3270F7E27DCB25100E83180 /* Cores */,
 				B3C8A6BB2878238C0037A946 /* CoresRetro */,
@@ -7258,16 +7337,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B305EF00276B4C72003AE510 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B305EF03276B4C73003AE510 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 				B305EF14276B4C73003AE510 /* Preview Assets.xcassets in Resources */,
 				B305EF11276B4C73003AE510 /* Assets.xcassets in Resources */,
+				B305EF00276B4C72003AE510 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9940,11 +10012,6 @@
 			target = B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */;
 			targetProxy = B305EEFC276B4C71003AE510 /* PBXContainerItemProxy */;
 		};
-		B305EF08276B4C73003AE510 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */;
-			targetProxy = B305EF07276B4C73003AE510 /* PBXContainerItemProxy */;
-		};
 		B32987DA2B661C8A00728996 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			platformFilters = (
@@ -10311,6 +10378,7 @@
 			baseConfigurationReference = B380EAC12759D689001B8532 /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -10337,10 +10405,12 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -10375,6 +10445,7 @@
 			baseConfigurationReference = B380EAC12759D689001B8532 /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -10400,10 +10471,12 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -10444,7 +10517,9 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10472,6 +10547,7 @@
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-Wno-deprecated-declarations";
 				OTHER_LDFLAGS = "$(inherited)";
@@ -10488,9 +10564,11 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6,7";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Debug;
 		};
@@ -10509,6 +10587,8 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -10536,6 +10616,7 @@
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -10553,9 +10634,11 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Release;
 		};
@@ -10680,6 +10763,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDK_DIR)/Developer/Library/Frameworks",
@@ -10741,6 +10825,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -11094,6 +11179,7 @@
 			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -11112,9 +11198,15 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -11136,6 +11228,7 @@
 			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -11156,9 +11249,15 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -11179,6 +11278,7 @@
 			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -11199,9 +11299,15 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
+				INFOPLIST_KEY_CLKComplicationPrincipalClass = "$(PRODUCT_MODULE_NAME).ComplicationController";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
 				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -11217,163 +11323,13 @@
 			};
 			name = Archive;
 		};
-		B305EF1E276B4C74003AE510 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
-				ENABLE_PREVIEWS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
-				INFOPLIST_KEY_WKWatchOnly = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_EXTENSION_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
-			};
-			name = Debug;
-		};
-		B305EF1F276B4C74003AE510 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_PREVIEWS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
-				INFOPLIST_KEY_WKWatchOnly = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_EXTENSION_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
-			};
-			name = Release;
-		};
-		B305EF20276B4C74003AE510 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_PREVIEWS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
-				INFOPLIST_KEY_WKWatchOnly = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_EXTENSION_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
-			};
-			name = Archive;
-		};
 		B30E94862793B8BE00871E57 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -11384,7 +11340,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -11395,7 +11353,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -11418,16 +11378,17 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2782;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -11452,6 +11413,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -11464,7 +11427,10 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Debug;
 		};
@@ -11484,17 +11450,18 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2782;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -11519,6 +11486,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -11530,7 +11499,10 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Release;
 		};
@@ -11549,17 +11521,18 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2782;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -11584,6 +11557,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Cores";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -11595,7 +11570,10 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Archive;
 		};
@@ -11997,7 +11975,9 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -12044,7 +12024,9 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12091,7 +12073,9 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12138,7 +12122,9 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -12176,7 +12162,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12215,7 +12203,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12252,7 +12242,9 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -12299,7 +12291,9 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12346,7 +12340,9 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12393,7 +12389,9 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -12442,7 +12440,9 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12491,7 +12491,9 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12539,7 +12541,9 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -12588,7 +12592,9 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12637,7 +12643,9 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12686,7 +12694,9 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
@@ -12735,7 +12745,9 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12784,7 +12796,9 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -12817,6 +12831,7 @@
 			baseConfigurationReference = B380EAC12759D689001B8532 /* Build.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
@@ -12842,9 +12857,11 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -12883,6 +12900,8 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -12910,6 +12929,7 @@
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -12927,9 +12947,11 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Archive;
 		};
@@ -13001,6 +13023,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -13100,8 +13123,9 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -13137,6 +13161,7 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -13149,6 +13174,7 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -13159,7 +13185,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -13170,7 +13198,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -13181,7 +13211,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -13207,8 +13239,10 @@
 				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13300,8 +13334,10 @@
 				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13392,8 +13428,10 @@
 				"CODE_SIGN_ENTITLEMENTS[sdk=appletvsimulator*]" = "$(TVOS_CODE_SIGN_ENTITLEMENTS_AppStore)";
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -13471,6 +13509,7 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -13483,6 +13522,7 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -13495,6 +13535,7 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -13507,6 +13548,7 @@
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
@@ -13529,16 +13571,17 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 2782;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -13563,6 +13606,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.CoresRetro";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -13575,7 +13620,10 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Debug;
 		};
@@ -13595,17 +13643,18 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2782;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -13630,6 +13679,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.CoresRetro";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -13641,7 +13692,10 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Release;
 		};
@@ -13660,17 +13714,18 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 2782;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -13695,6 +13750,8 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++11";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.CoresRetro";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -13706,7 +13763,10 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6,7";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Archive;
 		};
@@ -13726,6 +13786,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = Extensions/Spotlight/Spotlight.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_HARDENED_RUNTIME = NO;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
@@ -13775,6 +13836,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/Spotlight/Spotlight.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_HARDENED_RUNTIME = NO;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
@@ -13937,6 +13999,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/QuickLookMacOS/QuickLookMacOS.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -13982,6 +14045,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -14027,6 +14091,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -14071,6 +14136,7 @@
 				CODE_SIGN_ENTITLEMENTS = Extensions/ThumbnailExtensionMacOS/ThumbnailExtensionMacOS.entitlements;
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -14116,6 +14182,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -14161,6 +14228,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -14413,7 +14481,9 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14447,6 +14517,7 @@
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = "-Wno-deprecated-declarations";
 				OTHER_LDFLAGS = "$(inherited)";
@@ -14464,6 +14535,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = NO;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -14484,7 +14556,9 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14518,6 +14592,7 @@
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -14536,6 +14611,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -14556,7 +14632,9 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
 				"ENABLE_HARDENED_RUNTIME[sdk=macosx*]" = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -14590,6 +14668,7 @@
 					"$(PROJECT_DIR)/Cores/PPSSPP/lib",
 					"$(PROJECT_DIR)/Cores/emuThree/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				OTHER_CFLAGS = (
 					"-DNS_BLOCK_ASSERTIONS=1",
@@ -14608,6 +14687,7 @@
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
 				WARNING_LDFLAGS = "";
 				WRAPPER_EXTENSION = app;
@@ -14741,16 +14821,6 @@
 				930499EC2A93073800BF257F /* Debug */,
 				930499ED2A93073800BF257F /* Release */,
 				930499EE2A93073800BF257F /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B305EF21276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit Extension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B305EF1E276B4C74003AE510 /* Debug */,
-				B305EF1F276B4C74003AE510 /* Release */,
-				B305EF20276B4C74003AE510 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

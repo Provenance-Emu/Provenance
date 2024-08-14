@@ -14115,7 +14115,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGNING_REQUIRED = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu89;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				ONLY_ACTIVE_ARCH = NO;
 				PROJECT_TEMP_DIR = "$(SRCROOT)/../lib/ppsspp/build/$(PROJECT_NAME).build";
 				SDKROOT = auto;
@@ -14125,6 +14125,7 @@
 				SYMROOT = "$(SRCROOT)/../lib/ppsspp";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TARGET_BUILD_DIR = "$(SRCROOT)/../lib";
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};

@@ -3,7 +3,7 @@ LAST_TIMESTAMP=0
 INTERVAL=3600*168
 CORES_DIR="${SRCROOT}/CoresRetro/RetroArch/modules"
 cd "${SRCROOT}/CoresRetro/RetroArch/scripts"
-if [ "$1" = "tvos" ]; then
+if [ "$1" == *"tvos"* ]; then
 	CORES_ARCHIVE_DIR="${SRCROOT}/CoresRetro/RetroArch/modules_compressed/tvOS"
 	MODULE_LIST="${SRCROOT}/CoresRetro/RetroArch/scripts/urls-tv.txt"
 	rm "${CORES_DIR}/"*ios*.dylib

@@ -854,6 +854,12 @@
 		93FF383A2966337100772659 /* apple_platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = apple_platform.h; sourceTree = "<group>"; };
 		B339468820783F41008DBAB4 /* libpthread.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpthread.tbd; path = usr/lib/libpthread.tbd; sourceTree = SDKROOT; };
 		B339468A20783F48008DBAB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B34328132C6B11ED0047E5BB /* get-modules.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "get-modules.sh"; sourceTree = "<group>"; };
+		B34328142C6B11ED0047E5BB /* output_modules.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = output_modules.xcfilelist; sourceTree = "<group>"; };
+		B34328152C6B11ED0047E5BB /* output_modules_tv.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = output_modules_tv.xcfilelist; sourceTree = "<group>"; };
+		B34328162C6B11ED0047E5BB /* output_modules_xl.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = output_modules_xl.xcfilelist; sourceTree = "<group>"; };
+		B34328172C6B11ED0047E5BB /* urls.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = urls.txt; sourceTree = "<group>"; };
+		B34328182C6B11ED0047E5BB /* urls-tv.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "urls-tv.txt"; sourceTree = "<group>"; };
 		B3447E96218B809200557ACE /* PVRetroArchCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PVRetroArchCore+Controls.h"; sourceTree = "<group>"; };
 		B3447E97218B809300557ACE /* PVRetroArchCore+Controls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PVRetroArchCore+Controls.m"; sourceTree = "<group>"; };
 		B3447EA0218B881000557ACE /* PVRetroArch.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVRetroArch.mm; sourceTree = "<group>"; };
@@ -1681,6 +1687,12 @@
 		93F66F172967465500203EB3 /* scripts */ = {
 			isa = PBXGroup;
 			children = (
+				B34328132C6B11ED0047E5BB /* get-modules.sh */,
+				B34328142C6B11ED0047E5BB /* output_modules.xcfilelist */,
+				B34328152C6B11ED0047E5BB /* output_modules_tv.xcfilelist */,
+				B34328162C6B11ED0047E5BB /* output_modules_xl.xcfilelist */,
+				B34328172C6B11ED0047E5BB /* urls.txt */,
+				B34328182C6B11ED0047E5BB /* urls-tv.txt */,
 				93CFF608296C138D00D19529 /* code-sign-test-cores.sh */,
 				93F66F182967465500203EB3 /* code-sign-cores.sh */,
 			);
