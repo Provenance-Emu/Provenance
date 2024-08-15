@@ -999,7 +999,6 @@
 		B341FDF92BE61EC100718929 /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC526CABFB00088AC32 /* Settings.storyboard */; platformFilters = (tvos, ); };
 		B341FDFA2BE61EC100718929 /* Provenance.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3296EC026CABF9F0088AC32 /* Provenance.storyboard */; platformFilters = (tvos, ); };
 		B341FDFC2BE61EC100718929 /* LaunchScreenTV.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 555454422AC09998006A065F /* LaunchScreenTV.storyboard */; platformFilters = (tvos, ); };
-		B341FDFD2BE61EC100718929 /* PVGameLibraryCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3296EE026CAC27C0088AC32 /* PVGameLibraryCollectionViewCell.xib */; platformFilters = (ios, maccatalyst, ); };
 		B341FDFE2BE61EC100718929 /* MonoLCD.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034E2896314100F75595 /* MonoLCD.fsh */; };
 		B341FDFF2BE61EC100718929 /* Scale2x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B367034F2896314100F75595 /* Scale2x.fsh */; };
 		B341FE002BE61EC100718929 /* Scale4x.fsh in Resources */ = {isa = PBXBuildFile; fileRef = B36703582896314200F75595 /* Scale4x.fsh */; };
@@ -1036,6 +1035,8 @@
 		B343717D276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */; };
 		B343717E276B0FA40014F87C /* PVVectrexControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B343717C276B0FA40014F87C /* PVVectrexControllerViewController.swift */; };
 		B3447E73218B596600557ACE /* PVDreamcastControllerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3447E72218B596500557ACE /* PVDreamcastControllerViewController.swift */; };
+		B3463D8F2C6E8FE500424152 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3AE1F752073504400AD06D4 /* PVSaveStateCollectionViewCell~tvOS.xib */; };
+		B3463D902C6E8FFA00424152 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3890BF820B9E135005BB001 /* PVGameLibraryCollectionViewCell~tvOS.xib */; };
 		B346AED2297602210090E014 /* PVYabause.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; };
 		B346AED3297602210090E014 /* PVYabause.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3FF641C2873EAEB00829C14 /* PVYabause.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B346AEDF297617E30090E014 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 934855C829708D5A00A5BBC6 /* main.m */; };
@@ -7368,6 +7369,7 @@
 				B341FDE92BE61EC100718929 /* OmniScale.fsh in Resources */,
 				B341FDEA2BE61EC100718929 /* LaunchImageTV.png in Resources */,
 				B341FDEB2BE61EC100718929 /* MasterShader.fsh in Resources */,
+				B3463D8F2C6E8FE500424152 /* PVSaveStateCollectionViewCell~tvOS.xib in Resources */,
 				B341FDEC2BE61EC100718929 /* TVAssets.xcassets in Resources */,
 				B341FDED2BE61EC100718929 /* AAScale4x.fsh in Resources */,
 				B341FDEE2BE61EC100718929 /* Default.xib in Resources */,
@@ -7382,8 +7384,8 @@
 				B341FDF92BE61EC100718929 /* Settings.storyboard in Resources */,
 				B341FDFA2BE61EC100718929 /* Provenance.storyboard in Resources */,
 				B341FDFC2BE61EC100718929 /* LaunchScreenTV.storyboard in Resources */,
-				B341FDFD2BE61EC100718929 /* PVGameLibraryCollectionViewCell.xib in Resources */,
 				B341FDFE2BE61EC100718929 /* MonoLCD.fsh in Resources */,
+				B3463D902C6E8FFA00424152 /* PVGameLibraryCollectionViewCell~tvOS.xib in Resources */,
 				B341FDFF2BE61EC100718929 /* Scale2x.fsh in Resources */,
 				B341FE002BE61EC100718929 /* Scale4x.fsh in Resources */,
 				B341FE012BE61EC100718929 /* OmniScaleLegacy.fsh in Resources */,
