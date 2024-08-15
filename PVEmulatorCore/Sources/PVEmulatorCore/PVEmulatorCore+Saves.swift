@@ -20,10 +20,18 @@ import PVLogging
     }
 
     @objc open func saveState(toFileAtPath path: String) async throws {
-        try saveStateSync(toFileAtPath: path)
+        if self.supportsSaveStates {
+            try await (self as? ObjCCoreBridge)?.saveState(toFileAtPath: path)
+        } else {
+            throw EmulatorCoreSavesSerializerError.coreDoesNotSupportSaves
+        }
     }
     
     @objc open func loadState(fromFileAtPath path: String) async throws {
-        try loadStateSync(toFileAtPath: path)
+        if self.supportsSaveStates {
+            try await (self as? ObjCCoreBridge)?.loadState(fromFileAtPath: path)
+        } else {
+            throw EmulatorCoreSavesSerializerError.coreDoesNotSupportSaves
+        }
     }
 }

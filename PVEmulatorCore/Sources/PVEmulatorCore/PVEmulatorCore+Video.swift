@@ -15,22 +15,9 @@ import OpenGL
 import OpenGLES
 #endif
 
-/*
- - (GLenum)pixelType {
-     return GL_UNSIGNED_SHORT_5_6_5;
- }
-
- - (GLenum)internalPixelFormat {
-     // TODO: use struct retro_pixel_format var, set with, RETRO_ENVIRONMENT_SET_PIXEL_FORMAT
- #if !TARGET_OS_MAC && !TARGET_OS_MACCATALYST
-     return GL_RGB565;
- #else
-      return GL_UNSIGNED_SHORT_5_6_5;
- */
 @objc
 extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     open var alwaysUseMetal: Bool { false }
-    @MainActor
     open var aspectSize: CGSize { .zero }
     open var depthFormat: GLenum { 0 }
     open var emulationFPS: Double { 0.0 }
