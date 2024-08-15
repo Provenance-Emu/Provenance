@@ -12,14 +12,12 @@
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
 #import <AVFoundation/AVFoundation.h>
-#import "OGLGraphicsContext.h"
-#import "VulkanGraphicsContext.h"
 
 /* PSP Includes */
 #import <dlfcn.h>
 #import <pthread.h>
 #import <signal.h>
-#import <string>
+#import <string.h>
 #import <stdio.h>
 #import <stdlib.h>
 #import <sys/syscall.h>
@@ -79,6 +77,9 @@
 #include "Core/CwCheat.h"
 #include "Core/ELF/ParamSFO.h"
 #include "Core/SaveState.h"
+
+#import "OGLGraphicsContext.h"
+#import "VulkanGraphicsContext.h"
 
 #define IS_IPAD() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)

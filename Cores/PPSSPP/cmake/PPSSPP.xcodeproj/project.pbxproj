@@ -244,7 +244,6 @@
 		195D29F60A994E4BBE42A001 /* SymbolData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 829385483CA04DF19D7DB16A /* SymbolData.cpp */; };
 		1961685F8EEA44D88FB0DEE2 /* ProfilerDraw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF0DD84A468044E68E53E37B /* ProfilerDraw.cpp */; };
 		197CF0948F9E415E9496164F /* IRPassSimplify.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E080FE1C064A46A1AFC4B297 /* IRPassSimplify.cpp */; };
-		19820F66023348E38E52D7CD /* OpenXRLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19BADF23347F4CD3B745C54F /* OpenXRLoader.cpp */; };
 		19AD7D1ADADB45C09BCFF968 /* zip_extra_field_api.c in Sources */ = {isa = PBXBuildFile; fileRef = 35C5EBB4B1454C349E7F0554 /* zip_extra_field_api.c */; };
 		1A07F02D2DF84EBC81CFCECE /* GPUDriverTestScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D54AADB16D1A47D1993151F7 /* GPUDriverTestScreen.cpp */; };
 		1A15BA85200744748A2899DE /* CoreTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 220E3478C6E24D2EBD6E6156 /* CoreTiming.cpp */; };
@@ -744,6 +743,7 @@
 		B23AA0544BCA45D4850A5DEC /* FuncId.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A518F7D1EF34EEE883F6C4F /* FuncId.cpp */; };
 		B268EA3D40EA4CC48C5A865A /* sceVaudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D00EC16727E240D997711F57 /* sceVaudio.cpp */; };
 		B30B3A1316684D4AB096A2F0 /* PsxRelocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D06C98658A2640459DEC6BCF /* PsxRelocator.cpp */; };
+		B35EEED92C6C64B900EBD1A8 /* OpenXRLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19BADF23347F4CD3B745C54F /* OpenXRLoader.cpp */; };
 		B383388831584AE8862C98F6 /* MipsExpressionFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDFF8FF11860438D94D97472 /* MipsExpressionFunctions.cpp */; };
 		B3C1B8C429204D3AB315EDC6 /* sceNp2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 600FD4F07FDA45899CC03FA1 /* sceNp2.cpp */; };
 		B3CF378946614C7AAF60E68E /* entropy_common.c in Sources */ = {isa = PBXBuildFile; fileRef = B868543F5E174054841F411A /* entropy_common.c */; };
@@ -10158,6 +10158,7 @@
 				47575CDC18594B318432EC59 /* RIFF.cpp in Sources */,
 				14653507BA8547F9A11CC1B1 /* ZIMLoad.cpp in Sources */,
 				6B74BD019DA248D48633967C /* ZIMSave.cpp in Sources */,
+				B35EEED92C6C64B900EBD1A8 /* OpenXRLoader.cpp in Sources */,
 				DD5E112E776941ECAEDF256F /* Hash.cpp in Sources */,
 				A1A7ABC17EDC49E4B5976649 /* I18n.cpp in Sources */,
 				A91D245CA8DE40A4B9E4B52A /* Parsers.cpp in Sources */,
@@ -10260,7 +10261,6 @@
 				43D397D4980E4D6BA34737EC /* UIScreen.cpp in Sources */,
 				B52FE515E1384D3A94313332 /* View.cpp in Sources */,
 				A492215557B64C789E2D75E7 /* ViewGroup.cpp in Sources */,
-				19820F66023348E38E52D7CD /* OpenXRLoader.cpp in Sources */,
 				C6FC4B90F39D4BCFB72C7DE2 /* PPSSPPVR.cpp in Sources */,
 				BEDD5BA5ECC74142A78C9454 /* VRBase.cpp in Sources */,
 				C09C83E5495D4FC297498316 /* VRFramebuffer.cpp in Sources */,
@@ -14111,10 +14111,10 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				BUILD_DIR = "$(SRCROOT)/../lib";
 				CACHE_ROOT = "$(SRCROOT)/../lib/cache";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CODE_SIGNING_REQUIRED = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu89;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				ONLY_ACTIVE_ARCH = NO;
 				PROJECT_TEMP_DIR = "$(SRCROOT)/../lib/ppsspp/build/$(PROJECT_NAME).build";

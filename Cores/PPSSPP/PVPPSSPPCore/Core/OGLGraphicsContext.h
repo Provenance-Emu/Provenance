@@ -17,7 +17,7 @@
 #import <dlfcn.h>
 #import <pthread.h>
 #import <signal.h>
-#import <string>
+#import <string.h>
 #import <stdio.h>
 #import <stdlib.h>
 #import <sys/syscall.h>
