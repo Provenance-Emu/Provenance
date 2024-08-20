@@ -1,0 +1,1 @@
+../../mednafen/src/state-common.h

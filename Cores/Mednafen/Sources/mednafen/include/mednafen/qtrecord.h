@@ -1,0 +1,1 @@
+../../mednafen/src/qtrecord.h

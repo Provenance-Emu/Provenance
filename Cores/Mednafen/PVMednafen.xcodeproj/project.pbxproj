@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -34,9 +34,10 @@
 		11AFB33124881CBB000A3922 /* MThreading_POSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2F824880D19000A3922 /* MThreading_POSIX.cpp */; };
 		11AFB33424882054000A3922 /* idct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB33324882053000A3922 /* idct.cpp */; };
 		11AFB339248820AF000A3922 /* crc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB3382488209B000A3922 /* crc.cpp */; };
-		93891C9F294F671D009EB211 /* MednafenGameCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93891C9D294F671C009EB211 /* MednafenGameCore+Cheats.mm */; };
+		B30E98F72C6EF13E00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98F62C6EF13E00C1431E /* PVSupport */; };
+		B30E9AC92C6FADCA00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AC82C6FADCA00C1431E /* PVCoreBridge */; };
+		B30E9ACC2C6FADDA00C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9ACB2C6FADDA00C1431E /* PVEmulatorCore */; };
 		B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 824088340FFDDCF400F0FE7D /* MednafenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B324C63221920C56009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B314E30F21081E9200D0C27A /* PVSupport.framework */; };
 		B3335036207AFBDE0036A448 /* cdc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB10B20736EEA0097D86F /* cdc.cpp */; };
 		B3335037207AFBDE0036A448 /* cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0F520736EEA0097D86F /* cpu.cpp */; };
 		B3335038207AFBDE0036A448 /* dis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAB0EF20736EEA0097D86F /* dis.cpp */; };
@@ -462,19 +463,54 @@
 		B33355EF207B27B60036A448 /* triostr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD520736EE80097D86F /* triostr.c */; };
 		B33355F0207B28570036A448 /* libtrio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355E4207B278E0036A448 /* libtrio.a */; };
 		B33355F1207B2A650036A448 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
-		B340E4661E08887700AD0E8B /* PVMednafen.h in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B340E4661E08887700AD0E8B /* PVMednafen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B340E5E71E0889FB00AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E61E0889FB00AD0E8B /* libz.tbd */; };
 		B340E5EB1E088A1100AD0E8B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5EA1E088A1100AD0E8B /* libiconv.tbd */; };
 		B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F01E088A3A00AD0E8B /* Foundation.framework */; };
 		B3547B60205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
 		B393F252277C0C1C0097F71C /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
 		B393F261277C109C0097F71C /* libhwcpu-m68k.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B393F251277C0BF70097F71C /* libhwcpu-m68k.a */; };
+		B396AE632C719E3B00DF1EBD /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = B396AE622C719E3B00DF1EBD /* PVObjCUtils */; };
+		B396AE662C719E4600DF1EBD /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B396AE652C719E4600DF1EBD /* PVSettings */; };
+		B396AE692C719E5A00DF1EBD /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B396AE682C719E5A00DF1EBD /* PVPlists */; };
+		B396AE6B2C71A65200DF1EBD /* MednafenGameCore+MultiTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396AE6A2C71A65200DF1EBD /* MednafenGameCore+MultiTap.swift */; };
+		B396AE6E2C71A83200DF1EBD /* MednafenGameCore+MultiDisc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396AE6D2C71A83200DF1EBD /* MednafenGameCore+MultiDisc.swift */; };
+		B396AE722C71A9AE00DF1EBD /* MednafenGameCore+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396AE712C71A9AE00DF1EBD /* MednafenGameCore+Cheats.swift */; };
 		B3AAB425207379230097D86F /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
-		B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */; };
-		B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */ = {isa = PBXBuildFile; fileRef = B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */; };
 		B3AFCF7A2977A6EA00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF792977A6EA00A01010 /* PVLogging */; };
-		B3B8C3BF290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */; };
+		B3C0790F2C75461A006F109B /* PVMednafenGameCoreC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */; };
+		B3C0791F2C75463B006F109B /* libmpcdec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355A2207B1E930036A448 /* libmpcdec.a */; };
+		B3C079202C75463B006F109B /* libhwvideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352B4207B06620036A448 /* libhwvideo.a */; };
+		B3C079212C75463B006F109B /* libsaturn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E1B66E25AAC123007C3CF1 /* libsaturn.a */; };
+		B3C079222C75463B006F109B /* libhwcpu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352C1207B06730036A448 /* libhwcpu.a */; };
+		B3C079232C75463B006F109B /* libpsx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B333502D207AFBA30036A448 /* libpsx.a */; };
+		B3C079242C75463B006F109B /* libwonderswan.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335062207AFD3D0036A448 /* libwonderswan.a */; };
+		B3C079252C75463B006F109B /* libpcefast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351D8207B01970036A448 /* libpcefast.a */; };
+		B3C079262C75463B006F109B /* libsound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335493207B1BF30036A448 /* libsound.a */; };
+		B3C079272C75463B006F109B /* libmednafen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33354CB207B1D850036A448 /* libmednafen.a */; };
+		B3C079282C75463B006F109B /* libsnes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDEF8207FF0E300E661D1 /* libsnes.a */; };
+		B3C079292C75463B006F109B /* libgba.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351A4207B01460036A448 /* libgba.a */; };
+		B3C0792A2C75463B006F109B /* liblynx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351B1207B01570036A448 /* liblynx.a */; };
+		B3C0792B2C75463B006F109B /* libpcfx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351FC207B020C0036A448 /* libpcfx.a */; };
+		B3C0792C2C75463B006F109B /* libquicklz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355B8207B20420036A448 /* libquicklz.a */; };
+		B3C0792D2C75463B006F109B /* libhwmisc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352CE207B067F0036A448 /* libhwmisc.a */; };
+		B3C0792E2C75463B006F109B /* libsnes_faust.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */; };
+		B3C0792F2C75463B006F109B /* libvirtualboy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335092207AFF2B0036A448 /* libvirtualboy.a */; };
+		B3C079302C75463B006F109B /* libneogeopocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351BE207B016F0036A448 /* libneogeopocket.a */; };
+		B3C079312C75463B006F109B /* libpce.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33351CB207B01860036A448 /* libpce.a */; };
+		B3C079322C75463B006F109B /* libtremor.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355C7207B20BE0036A448 /* libtremor.a */; };
+		B3C079332C75463B006F109B /* libnes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33350A5207AFFE80036A448 /* libnes.a */; };
+		B3C079342C75463B006F109B /* libvideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33354B4207B1C520036A448 /* libvideo.a */; };
+		B3C079352C75463B006F109B /* libgb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3335190207B00F70036A448 /* libgb.a */; };
+		B3C079362C75463B006F109B /* libtrio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355E4207B278E0036A448 /* libtrio.a */; };
+		B3C079372C75463B006F109B /* libhwaudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352A7207B06550036A448 /* libhwaudio.a */; };
+		B3C079382C75463B006F109B /* libcdrom.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B333546F207B1B500036A448 /* libcdrom.a */; };
+		B3C0793A2C754646006F109B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079392C754646006F109B /* libiconv.tbd */; };
+		B3C0793C2C754651006F109B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C0793B2C754651006F109B /* libz.tbd */; };
+		B3C0793E2C754658006F109B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C0793D2C754658006F109B /* Foundation.framework */; };
+		B3C0793F2C75477A006F109B /* PVMednafenGameCoreC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); };
+		B3C079402C75477A006F109B /* PVMednafenGameCoreC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3FBDF01207FF13400E661D1 /* interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8F20736EE90097D86F /* interface.cpp */; };
 		B3FBDF02207FF19800E661D1 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9820736EE90097D86F /* generic.cpp */; };
 		B3FBDF03207FF19800E661D1 /* smemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9920736EE90097D86F /* smemory.cpp */; };
@@ -837,6 +873,20 @@
 			remoteGlobalIDString = B3FBDF9E207FF5D800E661D1;
 			remoteInfo = snes_faust;
 		};
+		B3C079102C75461A006F109B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3C079042C75461A006F109B;
+			remoteInfo = PVMednafenGameCoreC;
+		};
+		B3C079412C75477A006F109B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3C079042C75461A006F109B;
+			remoteInfo = PVMednafenGameCoreC;
+		};
 		C6E1B69025AAC1D5007C3CF1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
@@ -1088,6 +1138,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3C079432C75477A006F109B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B3C079402C75477A006F109B /* PVMednafenGameCoreC.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B3FBDEF6207FF0E300E661D1 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1142,7 +1203,7 @@
 		11AFB2F324880C64000A3922 /* debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		11AFB2F424880C66000A3922 /* dis65816.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dis65816.h; sourceTree = "<group>"; };
 		11AFB2F524880C67000A3922 /* ppu_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ppu_common.h; sourceTree = "<group>"; };
-		11AFB2F824880D19000A3922 /* MThreading_POSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MThreading_POSIX.cpp; path = ../mthreading/MThreading_POSIX.cpp; sourceTree = "<group>"; };
+		11AFB2F824880D19000A3922 /* MThreading_POSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MThreading_POSIX.cpp; sourceTree = "<group>"; };
 		11AFB2FD248811EB000A3922 /* superfx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = superfx.h; sourceTree = "<group>"; };
 		11AFB2FE248811EB000A3922 /* dsp1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dsp1.h; sourceTree = "<group>"; };
 		11AFB2FF248811EC000A3922 /* sa1cpu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sa1cpu.h; sourceTree = "<group>"; };
@@ -1216,7 +1277,7 @@
 		B33355C7207B20BE0036A448 /* libtremor.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtremor.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33355E4207B278E0036A448 /* libtrio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtrio.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B340E4621E08887600AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B340E4641E08887700AD0E8B /* PVMednafen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMednafen.h; sourceTree = "<group>"; };
+		B340E4641E08887700AD0E8B /* PVMednafen.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PVMednafen.hpp; sourceTree = "<group>"; };
 		B340E4651E08887700AD0E8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B340E5E61E0889FB00AD0E8B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B340E5E81E088A0100AD0E8B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
@@ -1229,6 +1290,9 @@
 		B34CB0EC2274BA81009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B3547B5F205858EF00CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B393F251277C0BF70097F71C /* libhwcpu-m68k.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwcpu-m68k.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B396AE6A2C71A65200DF1EBD /* MednafenGameCore+MultiTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MednafenGameCore+MultiTap.swift"; sourceTree = "<group>"; };
+		B396AE6D2C71A83200DF1EBD /* MednafenGameCore+MultiDisc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MednafenGameCore+MultiDisc.swift"; sourceTree = "<group>"; };
+		B396AE712C71A9AE00DF1EBD /* MednafenGameCore+Cheats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MednafenGameCore+Cheats.swift"; sourceTree = "<group>"; };
 		B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MednafenGameCore.swift; sourceTree = "<group>"; };
 		B3AA9D6A20736B030097D86F /* README.PORTING */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.PORTING; sourceTree = "<group>"; };
 		B3AA9D6B20736B030097D86F /* acinclude.m4 */ = {isa = PBXFileReference; lastKnownFileType = text; path = acinclude.m4; sourceTree = "<group>"; };
@@ -1287,7 +1351,7 @@
 		B3AA9DA120736B030097D86F /* pcfx.html */ = {isa = PBXFileReference; lastKnownFileType = text.html.documentation; path = pcfx.html; sourceTree = "<group>"; };
 		B3AA9DA220736B030097D86F /* pce.html */ = {isa = PBXFileReference; lastKnownFileType = text.html.documentation; path = pce.html; sourceTree = "<group>"; };
 		B3AA9DA320736B030097D86F /* snes_faust.php */ = {isa = PBXFileReference; lastKnownFileType = text.script.php; path = snes_faust.php; sourceTree = "<group>"; };
-		B3AA9DA420736B030097D86F /* README.jpeg4a */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.jpeg4a; sourceTree = "<group>"; };
+		B3AA9DA420736B030097D86F /* README.jpeg4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = README.jpeg4a; sourceTree = "<group>"; };
 		B3AA9DA520736B030097D86F /* vb.php */ = {isa = PBXFileReference; lastKnownFileType = text.script.php; path = vb.php; sourceTree = "<group>"; };
 		B3AA9DA620736B030097D86F /* modules.def */ = {isa = PBXFileReference; lastKnownFileType = text; path = modules.def; sourceTree = "<group>"; };
 		B3AA9DA720736B030097D86F /* install-sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-sh"; sourceTree = "<group>"; };
@@ -1596,7 +1660,7 @@
 		B3AAAB4C20736EE80097D86F /* dsound.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = dsound.cpp; sourceTree = "<group>"; };
 		B3AAAB4D20736EE80097D86F /* oss.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = oss.cpp; sourceTree = "<group>"; };
 		B3AAAB4E20736EE80097D86F /* convert.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = convert.cpp; sourceTree = "<group>"; };
-		B3AAAB4F20736EE80097D86F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B3AAAB4F20736EE80097D86F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile; sourceTree = "<group>"; };
 		B3AAAB5020736EE80097D86F /* sexyal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sexyal.cpp; sourceTree = "<group>"; };
 		B3AAAB5120736EE80097D86F /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		B3AAAB5220736EE80097D86F /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
@@ -1672,7 +1736,7 @@
 		B3AAABBE20736EE80097D86F /* README.LZO */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.LZO; sourceTree = "<group>"; };
 		B3AAABBF20736EE80097D86F /* _minilzo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _minilzo.h; sourceTree = "<group>"; };
 		B3AAABC220736EE80097D86F /* minilzo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = minilzo.c; sourceTree = "<group>"; };
-		B3AAABC420736EE80097D86F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B3AAABC420736EE80097D86F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile; sourceTree = "<group>"; };
 		B3AAABC520736EE80097D86F /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		B3AAABC620736EE80097D86F /* Makefile.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.in; sourceTree = "<group>"; };
 		B3AAABC820736EE80097D86F /* trionan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trionan.h; sourceTree = "<group>"; };
@@ -1740,7 +1804,7 @@
 		B3AAAC2620736EE80097D86F /* icon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = icon.h; sourceTree = "<group>"; };
 		B3AAAC2720736EE80097D86F /* shader_sabr.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = shader_sabr.inc; sourceTree = "<group>"; };
 		B3AAAC2820736EE80097D86F /* console.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = console.cpp; sourceTree = "<group>"; };
-		B3AAAC2920736EE80097D86F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B3AAAC2920736EE80097D86F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile; sourceTree = "<group>"; };
 		B3AAAC2A20736EE80097D86F /* help.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = help.cpp; sourceTree = "<group>"; };
 		B3AAAC2B20736EE80097D86F /* hqxx-common.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "hqxx-common.cpp"; sourceTree = "<group>"; };
 		B3AAAC2C20736EE80097D86F /* libmdfnsdl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libmdfnsdl.a; sourceTree = "<group>"; };
@@ -2052,7 +2116,7 @@
 		B3AAAE4F20736EE90097D86F /* video-driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "video-driver.h"; sourceTree = "<group>"; };
 		B3AAAE5020736EE90097D86F /* settings-common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "settings-common.h"; sourceTree = "<group>"; };
 		B3AAAE5120736EE90097D86F /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
-		B3AAAE5220736EE90097D86F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B3AAAE5220736EE90097D86F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile; sourceTree = "<group>"; };
 		B3AAAE5320736EE90097D86F /* mempatcher-driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mempatcher-driver.h"; sourceTree = "<group>"; };
 		B3AAAE5420736EE90097D86F /* general.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = general.h; sourceTree = "<group>"; };
 		B3AAAE5620736EE90097D86F /* sound.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sound.h; sourceTree = "<group>"; };
@@ -2583,7 +2647,7 @@
 		B3AAB1AF20736EEA0097D86F /* db.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = db.cpp; sourceTree = "<group>"; };
 		B3AAB1B020736EEA0097D86F /* vdp1_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vdp1_common.h; sourceTree = "<group>"; };
 		B3AAB1B120736EEA0097D86F /* db.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = db.h; sourceTree = "<group>"; };
-		B3AAB1B320736EEA0097D86F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		B3AAB1B320736EEA0097D86F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile; sourceTree = "<group>"; };
 		B3AAB1B620736EEA0097D86F /* ss.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ss.h; sourceTree = "<group>"; };
 		B3AAB1B720736EEA0097D86F /* sh7095_opdefs.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = sh7095_opdefs.inc; sourceTree = "<group>"; };
 		B3AAB1B820736EEA0097D86F /* scu_dsp_mvi.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = scu_dsp_mvi.cpp; sourceTree = "<group>"; };
@@ -2904,6 +2968,70 @@
 		B3AAB3CA20736EEC0097D86F /* git.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = git.cpp; sourceTree = "<group>"; };
 		B3B5BF9B293F13F1006BFC55 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MednafenGameCore+Controls.mm"; sourceTree = "<group>"; };
+		B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMednafenGameCoreC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C0790E2C75461A006F109B /* PVMednafenGameCoreCTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVMednafenGameCoreCTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C079392C754646006F109B /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		B3C0793B2C754651006F109B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B3C0793D2C754658006F109B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		B3C079442C754846006F109B /* config.h.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = config.h.in; sourceTree = "<group>"; };
+		B3C079452C754846006F109B /* AtomicFIFO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomicFIFO.h; sourceTree = "<group>"; };
+		B3C079462C754846006F109B /* debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
+		B3C079472C754846006F109B /* driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = driver.h; sourceTree = "<group>"; };
+		B3C079482C754846006F109B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
+		B3C079492C754846006F109B /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
+		B3C0794A2C754846006F109B /* ExtMemStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtMemStream.h; sourceTree = "<group>"; };
+		B3C0794B2C754846006F109B /* file.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = file.h; sourceTree = "<group>"; };
+		B3C0794C2C754846006F109B /* FileStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileStream.h; sourceTree = "<group>"; };
+		B3C0794D2C754846006F109B /* general.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = general.h; sourceTree = "<group>"; };
+		B3C0794E2C754846006F109B /* gettext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gettext.h; sourceTree = "<group>"; };
+		B3C0794F2C754846006F109B /* git.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = git.h; sourceTree = "<group>"; };
+		B3C079502C754846006F109B /* IPSPatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPSPatcher.h; sourceTree = "<group>"; };
+		B3C079512C754846006F109B /* jump.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jump.h; sourceTree = "<group>"; };
+		B3C079522C754846006F109B /* lepacker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lepacker.h; sourceTree = "<group>"; };
+		B3C079532C754846006F109B /* math_ops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = math_ops.h; sourceTree = "<group>"; };
+		B3C079542C754846006F109B /* mednafen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mednafen.h; sourceTree = "<group>"; };
+		B3C079552C754846006F109B /* mednafen-driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mednafen-driver.h"; sourceTree = "<group>"; };
+		B3C079562C754846006F109B /* memory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = memory.h; sourceTree = "<group>"; };
+		B3C079572C754846006F109B /* MemoryStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemoryStream.h; sourceTree = "<group>"; };
+		B3C079582C754846006F109B /* mempatcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mempatcher.h; sourceTree = "<group>"; };
+		B3C079592C754846006F109B /* mempatcher-driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mempatcher-driver.h"; sourceTree = "<group>"; };
+		B3C0795A2C754846006F109B /* movie.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = movie.h; sourceTree = "<group>"; };
+		B3C0795B2C754846006F109B /* movie-driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "movie-driver.h"; sourceTree = "<group>"; };
+		B3C0795C2C754846006F109B /* MThreading.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MThreading.h; sourceTree = "<group>"; };
+		B3C0795D2C754846006F109B /* MTStreamReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTStreamReader.h; sourceTree = "<group>"; };
+		B3C0795E2C754846006F109B /* NativeVFS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NativeVFS.h; sourceTree = "<group>"; };
+		B3C0795F2C754846006F109B /* netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = netplay.h; sourceTree = "<group>"; };
+		B3C079602C754846006F109B /* netplay-driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "netplay-driver.h"; sourceTree = "<group>"; };
+		B3C079612C754846006F109B /* player.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = player.h; sourceTree = "<group>"; };
+		B3C079622C754846006F109B /* PSFLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PSFLoader.h; sourceTree = "<group>"; };
+		B3C079632C754846006F109B /* qtrecord.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = qtrecord.h; sourceTree = "<group>"; };
+		B3C079642C754846006F109B /* settings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = settings.h; sourceTree = "<group>"; };
+		B3C079652C754846006F109B /* settings-common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "settings-common.h"; sourceTree = "<group>"; };
+		B3C079662C754846006F109B /* settings-driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "settings-driver.h"; sourceTree = "<group>"; };
+		B3C079672C754846006F109B /* SimpleBitset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleBitset.h; sourceTree = "<group>"; };
+		B3C079682C754846006F109B /* SNSFLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SNSFLoader.h; sourceTree = "<group>"; };
+		B3C079692C754846006F109B /* SPCReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SPCReader.h; sourceTree = "<group>"; };
+		B3C0796A2C754846006F109B /* SSFLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSFLoader.h; sourceTree = "<group>"; };
+		B3C0796B2C754846006F109B /* state.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = state.h; sourceTree = "<group>"; };
+		B3C0796C2C754846006F109B /* state_rewind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = state_rewind.h; sourceTree = "<group>"; };
+		B3C0796D2C754846006F109B /* state-common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "state-common.h"; sourceTree = "<group>"; };
+		B3C0796E2C754846006F109B /* state-driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "state-driver.h"; sourceTree = "<group>"; };
+		B3C0796F2C754846006F109B /* Stream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stream.h; sourceTree = "<group>"; };
+		B3C079702C754846006F109B /* tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests.h; sourceTree = "<group>"; };
+		B3C079712C754846006F109B /* testsexp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = testsexp.h; sourceTree = "<group>"; };
+		B3C079722C754846006F109B /* Time.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Time.h; sourceTree = "<group>"; };
+		B3C079732C754846006F109B /* types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		B3C079742C754846006F109B /* video.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = video.h; sourceTree = "<group>"; };
+		B3C079752C754846006F109B /* video-driver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "video-driver.h"; sourceTree = "<group>"; };
+		B3C079762C754846006F109B /* VirtualFS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualFS.h; sourceTree = "<group>"; };
+		B3C079772C754846006F109B /* win32-common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "win32-common.h"; sourceTree = "<group>"; };
+		B3C079792C754846006F109B /* minilzo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minilzo.h; sourceTree = "<group>"; };
+		B3C0797B2C754846006F109B /* minilzo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = minilzo.h; sourceTree = "<group>"; };
+		B3C0797D2C754846006F109B /* trio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trio.h; sourceTree = "<group>"; };
+		B3C0797E2C754846006F109B /* triodef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = triodef.h; sourceTree = "<group>"; };
+		B3C0797F2C754846006F109B /* trionan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trionan.h; sourceTree = "<group>"; };
+		B3C079802C754846006F109B /* triop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = triop.h; sourceTree = "<group>"; };
+		B3C079812C754846006F109B /* triostr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = triostr.h; sourceTree = "<group>"; };
 		B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiDisc.m; sourceTree = "<group>"; };
 		B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiTap.m; sourceTree = "<group>"; };
 		B3FBDEF8207FF0E300E661D1 /* libsnes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnes.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2920,6 +3048,35 @@
 		C66D56212626B4E700CDECE9 /* CDAFReader_PCM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDAFReader_PCM.h; sourceTree = "<group>"; };
 		C6E1B66E25AAC123007C3CF1 /* libsaturn.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsaturn.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B3C079162C75461A006F109B /* Exceptions for "PVMednafenGameCoreC" folder in "PVMednafenGameCoreC" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				PVMednafenGameCoreC.m,
+			);
+			publicHeaders = (
+				PVMednafenGameCoreC.h,
+			);
+			target = B3C079042C75461A006F109B /* PVMednafenGameCoreC */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B3C079062C75461A006F109B /* PVMednafenGameCoreC */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B3C079162C75461A006F109B /* Exceptions for "PVMednafenGameCoreC" folder in "PVMednafenGameCoreC" target */,
+			);
+			path = PVMednafenGameCoreC;
+			sourceTree = "<group>";
+		};
+		B3C079122C75461A006F109B /* PVMednafenGameCoreCTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PVMednafenGameCoreCTests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B333502A207AFBA30036A448 /* Frameworks */ = {
@@ -3102,7 +3259,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B324C63221920C56009F4EDC /* PVSupport.framework in Frameworks */,
 				B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */,
 				B3FBDFAE207FFB1F00E661D1 /* libsnes_faust.a in Frameworks */,
 				B3FBDF9A207FF51D00E661D1 /* libsnes.a in Frameworks */,
@@ -3111,15 +3267,19 @@
 				B33355C2207B207F0036A448 /* libquicklz.a in Frameworks */,
 				B33355B3207B1EBC0036A448 /* libmpcdec.a in Frameworks */,
 				B333559C207B1DB10036A448 /* libmednafen.a in Frameworks */,
+				B30E9AC92C6FADCA00C1431E /* PVCoreBridge in Frameworks */,
 				C6E1B69525AAC5A3007C3CF1 /* libsaturn.a in Frameworks */,
 				B33354BD207B1C600036A448 /* libvideo.a in Frameworks */,
 				B33354A2207B1C0D0036A448 /* libsound.a in Frameworks */,
 				B3335488207B1B8E0036A448 /* libcdrom.a in Frameworks */,
 				B33352E2207B072C0036A448 /* libhwaudio.a in Frameworks */,
 				B33352E3207B072C0036A448 /* libhwcpu.a in Frameworks */,
+				B396AE662C719E4600DF1EBD /* PVSettings in Frameworks */,
 				B33352E4207B072C0036A448 /* libhwmisc.a in Frameworks */,
 				B33352E5207B072C0036A448 /* libhwvideo.a in Frameworks */,
 				B333527E207B02EB0036A448 /* libgba.a in Frameworks */,
+				B396AE632C719E3B00DF1EBD /* PVObjCUtils in Frameworks */,
+				B30E98F72C6EF13E00C1431E /* PVSupport in Frameworks */,
 				B333527F207B02EB0036A448 /* liblynx.a in Frameworks */,
 				B3335281207B02EB0036A448 /* libneogeopocket.a in Frameworks */,
 				B3335282207B02EB0036A448 /* libpce.a in Frameworks */,
@@ -3127,7 +3287,10 @@
 				B3AFCF7A2977A6EA00A01010 /* PVLogging in Frameworks */,
 				B3335284207B02EB0036A448 /* libpcfx.a in Frameworks */,
 				B333519F207B01230036A448 /* libgb.a in Frameworks */,
+				B30E9ACC2C6FADDA00C1431E /* PVEmulatorCore in Frameworks */,
+				B396AE692C719E5A00DF1EBD /* PVPlists in Frameworks */,
 				B33350AE207B00080036A448 /* libnes.a in Frameworks */,
+				B3C0793F2C75477A006F109B /* PVMednafenGameCoreC.framework in Frameworks */,
 				B333509C207AFF3F0036A448 /* libvirtualboy.a in Frameworks */,
 				B3335075207AFD9C0036A448 /* libwonderswan.a in Frameworks */,
 				B333504F207AFBFC0036A448 /* libpsx.a in Frameworks */,
@@ -3140,6 +3303,50 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C079022C75461A006F109B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C0793E2C754658006F109B /* Foundation.framework in Frameworks */,
+				B3C0793C2C754651006F109B /* libz.tbd in Frameworks */,
+				B3C0793A2C754646006F109B /* libiconv.tbd in Frameworks */,
+				B3C0791F2C75463B006F109B /* libmpcdec.a in Frameworks */,
+				B3C079202C75463B006F109B /* libhwvideo.a in Frameworks */,
+				B3C079212C75463B006F109B /* libsaturn.a in Frameworks */,
+				B3C079222C75463B006F109B /* libhwcpu.a in Frameworks */,
+				B3C079232C75463B006F109B /* libpsx.a in Frameworks */,
+				B3C079242C75463B006F109B /* libwonderswan.a in Frameworks */,
+				B3C079252C75463B006F109B /* libpcefast.a in Frameworks */,
+				B3C079262C75463B006F109B /* libsound.a in Frameworks */,
+				B3C079272C75463B006F109B /* libmednafen.a in Frameworks */,
+				B3C079282C75463B006F109B /* libsnes.a in Frameworks */,
+				B3C079292C75463B006F109B /* libgba.a in Frameworks */,
+				B3C0792A2C75463B006F109B /* liblynx.a in Frameworks */,
+				B3C0792B2C75463B006F109B /* libpcfx.a in Frameworks */,
+				B3C0792C2C75463B006F109B /* libquicklz.a in Frameworks */,
+				B3C0792D2C75463B006F109B /* libhwmisc.a in Frameworks */,
+				B3C0792E2C75463B006F109B /* libsnes_faust.a in Frameworks */,
+				B3C0792F2C75463B006F109B /* libvirtualboy.a in Frameworks */,
+				B3C079302C75463B006F109B /* libneogeopocket.a in Frameworks */,
+				B3C079312C75463B006F109B /* libpce.a in Frameworks */,
+				B3C079322C75463B006F109B /* libtremor.a in Frameworks */,
+				B3C079332C75463B006F109B /* libnes.a in Frameworks */,
+				B3C079342C75463B006F109B /* libvideo.a in Frameworks */,
+				B3C079352C75463B006F109B /* libgb.a in Frameworks */,
+				B3C079362C75463B006F109B /* libtrio.a in Frameworks */,
+				B3C079372C75463B006F109B /* libhwaudio.a in Frameworks */,
+				B3C079382C75463B006F109B /* libcdrom.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C0790B2C75461A006F109B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C0790F2C75461A006F109B /* PVMednafenGameCoreC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3170,12 +3377,14 @@
 		089C166AFE841209C02AAC07 /* Mednafen */ = {
 			isa = PBXGroup;
 			children = (
+				B396AE5E2C71989500DF1EBD /* Sources */,
 				B3B5BF9B293F13F1006BFC55 /* Config.xcconfig */,
 				11AFB33D248828D5000A3922 /* UPDATING.md */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C167CFE841241C02AAC07 /* Resources */,
 				B340E4631E08887700AD0E8B /* PVMednafen */,
+				B3C079122C75461A006F109B /* PVMednafenGameCoreCTests */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 				B340E5E51E0889FB00AD0E8B /* Frameworks */,
 			);
@@ -3194,18 +3403,6 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				8CB3E08917F1DFFF0090372A /* include */,
-				B3AA9D6920736B030097D86F /* mednafen */,
-				824088340FFDDCF400F0FE7D /* MednafenGameCore.h */,
-				824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */,
-				93891C9D294F671C009EB211 /* MednafenGameCore+Cheats.mm */,
-				B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */,
-				B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */,
-				B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */,
-				B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */,
-				94454E3B17852E61006C057B /* stubs.mm */,
-				94454E3617852E44006C057B /* thread.cpp */,
-				94454E3717852E44006C057B /* thread.h */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -3276,6 +3473,8 @@
 				B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */,
 				C6E1B66E25AAC123007C3CF1 /* libsaturn.a */,
 				B393F251277C0BF70097F71C /* libhwcpu-m68k.a */,
+				B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */,
+				B3C0790E2C75461A006F109B /* PVMednafenGameCoreCTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3291,6 +3490,11 @@
 			isa = PBXGroup;
 			children = (
 				8CB3E09917F1DFFF0090372A /* trio */,
+				B3C079442C754846006F109B /* config.h.in */,
+				B3C079782C754846006F109B /* mednafen */,
+				B3C0797A2C754846006F109B /* minilzo_external */,
+				B3C0797C2C754846006F109B /* minilzo_internal */,
+				B3C079822C754846006F109B /* trio_external */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -3312,7 +3516,7 @@
 			isa = PBXGroup;
 			children = (
 				B3547B5F205858EF00CFF7D8 /* Core.plist */,
-				B340E4641E08887700AD0E8B /* PVMednafen.h */,
+				B340E4641E08887700AD0E8B /* PVMednafen.hpp */,
 				B340E4651E08887700AD0E8B /* Info.plist */,
 			);
 			path = PVMednafen;
@@ -3321,6 +3525,9 @@
 		B340E5E51E0889FB00AD0E8B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3C0793D2C754658006F109B /* Foundation.framework */,
+				B3C0793B2C754651006F109B /* libz.tbd */,
+				B3C079392C754646006F109B /* libiconv.tbd */,
 				B314E30F21081E9200D0C27A /* PVSupport.framework */,
 				B340E5F41E088A4500AD0E8B /* Foundation.framework */,
 				B340E5F21E088A4000AD0E8B /* UIKit.framework */,
@@ -3332,6 +3539,61 @@
 				B340E5E61E0889FB00AD0E8B /* libz.tbd */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B396AE5D2C71989500DF1EBD /* MednafenGameCore */ = {
+			isa = PBXGroup;
+			children = (
+				824088340FFDDCF400F0FE7D /* MednafenGameCore.h */,
+				824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */,
+				94454E3B17852E61006C057B /* stubs.mm */,
+				94454E3617852E44006C057B /* thread.cpp */,
+				94454E3717852E44006C057B /* thread.h */,
+			);
+			path = MednafenGameCore;
+			sourceTree = "<group>";
+		};
+		B396AE5E2C71989500DF1EBD /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B396AE6C2C71A73200DF1EBD /* Legacy */,
+				B396AE602C7198DC00DF1EBD /* mednafen */,
+				B396AE5F2C7198A800DF1EBD /* MednafenGameCoreSwift */,
+				B396AE5D2C71989500DF1EBD /* MednafenGameCore */,
+				B3C079062C75461A006F109B /* PVMednafenGameCoreC */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		B396AE5F2C7198A800DF1EBD /* MednafenGameCoreSwift */ = {
+			isa = PBXGroup;
+			children = (
+				B396AE712C71A9AE00DF1EBD /* MednafenGameCore+Cheats.swift */,
+				B396AE6D2C71A83200DF1EBD /* MednafenGameCore+MultiDisc.swift */,
+				B396AE6A2C71A65200DF1EBD /* MednafenGameCore+MultiTap.swift */,
+				B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */,
+			);
+			path = MednafenGameCoreSwift;
+			sourceTree = "<group>";
+		};
+		B396AE602C7198DC00DF1EBD /* mednafen */ = {
+			isa = PBXGroup;
+			children = (
+				8CB3E08917F1DFFF0090372A /* include */,
+				B3AA9D6920736B030097D86F /* mednafen */,
+			);
+			path = mednafen;
+			sourceTree = "<group>";
+		};
+		B396AE6C2C71A73200DF1EBD /* Legacy */ = {
+			isa = PBXGroup;
+			children = (
+				B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */,
+				B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */,
+				93891C9D294F671C009EB211 /* MednafenGameCore+Cheats.mm */,
+				B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */,
+			);
+			path = Legacy;
 			sourceTree = "<group>";
 		};
 		B3AA9D6920736B030097D86F /* mednafen */ = {
@@ -3770,6 +4032,7 @@
 				B3AAAAA020736EE70097D86F /* Time.h */,
 				B3AAAE4D20736EE90097D86F /* types.h */,
 				B3AAAE4F20736EE90097D86F /* video-driver.h */,
+				B3AAB2D920736EEB0097D86F /* quicklz */,
 				B3AAB2B220736EEB0097D86F /* video.h */,
 				11AFB2CB24880BB8000A3922 /* VirtualFS.h */,
 				B3AAB3A820736EEC0097D86F /* Makefile.in */,
@@ -3801,7 +4064,6 @@
 				B3AAB21920736EEB0097D86F /* pce_fast */,
 				B3AAB13B20736EEA0097D86F /* pcfx */,
 				B3AAB0B220736EEA0097D86F /* psx */,
-				B3AAB2D920736EEB0097D86F /* quicklz */,
 				B3AAB13120736EEA0097D86F /* resampler */,
 				B3AAAB2920736EE80097D86F /* sexyal */,
 				B3AAAE2320736EE90097D86F /* sms */,
@@ -6253,6 +6515,92 @@
 			path = snes_faust;
 			sourceTree = "<group>";
 		};
+		B3C079782C754846006F109B /* mednafen */ = {
+			isa = PBXGroup;
+			children = (
+				B3C079452C754846006F109B /* AtomicFIFO.h */,
+				B3C079462C754846006F109B /* debug.h */,
+				B3C079472C754846006F109B /* driver.h */,
+				B3C079482C754846006F109B /* endian.h */,
+				B3C079492C754846006F109B /* error.h */,
+				B3C0794A2C754846006F109B /* ExtMemStream.h */,
+				B3C0794B2C754846006F109B /* file.h */,
+				B3C0794C2C754846006F109B /* FileStream.h */,
+				B3C0794D2C754846006F109B /* general.h */,
+				B3C0794E2C754846006F109B /* gettext.h */,
+				B3C0794F2C754846006F109B /* git.h */,
+				B3C079502C754846006F109B /* IPSPatcher.h */,
+				B3C079512C754846006F109B /* jump.h */,
+				B3C079522C754846006F109B /* lepacker.h */,
+				B3C079532C754846006F109B /* math_ops.h */,
+				B3C079542C754846006F109B /* mednafen.h */,
+				B3C079552C754846006F109B /* mednafen-driver.h */,
+				B3C079562C754846006F109B /* memory.h */,
+				B3C079572C754846006F109B /* MemoryStream.h */,
+				B3C079582C754846006F109B /* mempatcher.h */,
+				B3C079592C754846006F109B /* mempatcher-driver.h */,
+				B3C0795A2C754846006F109B /* movie.h */,
+				B3C0795B2C754846006F109B /* movie-driver.h */,
+				B3C0795C2C754846006F109B /* MThreading.h */,
+				B3C0795D2C754846006F109B /* MTStreamReader.h */,
+				B3C0795E2C754846006F109B /* NativeVFS.h */,
+				B3C0795F2C754846006F109B /* netplay.h */,
+				B3C079602C754846006F109B /* netplay-driver.h */,
+				B3C079612C754846006F109B /* player.h */,
+				B3C079622C754846006F109B /* PSFLoader.h */,
+				B3C079632C754846006F109B /* qtrecord.h */,
+				B3C079642C754846006F109B /* settings.h */,
+				B3C079652C754846006F109B /* settings-common.h */,
+				B3C079662C754846006F109B /* settings-driver.h */,
+				B3C079672C754846006F109B /* SimpleBitset.h */,
+				B3C079682C754846006F109B /* SNSFLoader.h */,
+				B3C079692C754846006F109B /* SPCReader.h */,
+				B3C0796A2C754846006F109B /* SSFLoader.h */,
+				B3C0796B2C754846006F109B /* state.h */,
+				B3C0796C2C754846006F109B /* state_rewind.h */,
+				B3C0796D2C754846006F109B /* state-common.h */,
+				B3C0796E2C754846006F109B /* state-driver.h */,
+				B3C0796F2C754846006F109B /* Stream.h */,
+				B3C079702C754846006F109B /* tests.h */,
+				B3C079712C754846006F109B /* testsexp.h */,
+				B3C079722C754846006F109B /* Time.h */,
+				B3C079732C754846006F109B /* types.h */,
+				B3C079742C754846006F109B /* video.h */,
+				B3C079752C754846006F109B /* video-driver.h */,
+				B3C079762C754846006F109B /* VirtualFS.h */,
+				B3C079772C754846006F109B /* win32-common.h */,
+			);
+			path = mednafen;
+			sourceTree = "<group>";
+		};
+		B3C0797A2C754846006F109B /* minilzo_external */ = {
+			isa = PBXGroup;
+			children = (
+				B3C079792C754846006F109B /* minilzo.h */,
+			);
+			path = minilzo_external;
+			sourceTree = "<group>";
+		};
+		B3C0797C2C754846006F109B /* minilzo_internal */ = {
+			isa = PBXGroup;
+			children = (
+				B3C0797B2C754846006F109B /* minilzo.h */,
+			);
+			path = minilzo_internal;
+			sourceTree = "<group>";
+		};
+		B3C079822C754846006F109B /* trio_external */ = {
+			isa = PBXGroup;
+			children = (
+				B3C0797D2C754846006F109B /* trio.h */,
+				B3C0797E2C754846006F109B /* triodef.h */,
+				B3C0797F2C754846006F109B /* trionan.h */,
+				B3C079802C754846006F109B /* triop.h */,
+				B3C079812C754846006F109B /* triostr.h */,
+			);
+			path = trio_external;
+			sourceTree = "<group>";
+		};
 		C66D56092626B12100CDECE9 /* time */ = {
 			isa = PBXGroup;
 			children = (
@@ -6270,8 +6618,15 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B340E4661E08887700AD0E8B /* PVMednafen.h in Headers */,
+				B340E4661E08887700AD0E8B /* PVMednafen.hpp in Headers */,
 				B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C079002C75461A006F109B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6712,6 +7067,7 @@
 				B340E45D1E08887600AD0E8B /* Sources */,
 				B340E45E1E08887600AD0E8B /* Frameworks */,
 				B340E4601E08887600AD0E8B /* Resources */,
+				B3C079432C75477A006F109B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -6744,10 +7100,17 @@
 				B34AB5BA2106DF8400C45F09 /* PBXTargetDependency */,
 				B34AB5BC2106DF8400C45F09 /* PBXTargetDependency */,
 				C6E1B69725AAC5A3007C3CF1 /* PBXTargetDependency */,
+				B3C079422C75477A006F109B /* PBXTargetDependency */,
 			);
 			name = PVMednafen;
 			packageProductDependencies = (
 				B3AFCF792977A6EA00A01010 /* PVLogging */,
+				B30E98F62C6EF13E00C1431E /* PVSupport */,
+				B30E9AC82C6FADCA00C1431E /* PVCoreBridge */,
+				B30E9ACB2C6FADDA00C1431E /* PVEmulatorCore */,
+				B396AE622C719E3B00DF1EBD /* PVObjCUtils */,
+				B396AE652C719E4600DF1EBD /* PVSettings */,
+				B396AE682C719E5A00DF1EBD /* PVPlists */,
 			);
 			productName = PVMednafen;
 			productReference = B340E4621E08887600AD0E8B /* PVMednafen.framework */;
@@ -6769,6 +7132,52 @@
 			productName = hwcpu;
 			productReference = B393F251277C0BF70097F71C /* libhwcpu-m68k.a */;
 			productType = "com.apple.product-type.library.static";
+		};
+		B3C079042C75461A006F109B /* PVMednafenGameCoreC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3C079172C75461A006F109B /* Build configuration list for PBXNativeTarget "PVMednafenGameCoreC" */;
+			buildPhases = (
+				B3C079002C75461A006F109B /* Headers */,
+				B3C079012C75461A006F109B /* Sources */,
+				B3C079022C75461A006F109B /* Frameworks */,
+				B3C079032C75461A006F109B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B3C079062C75461A006F109B /* PVMednafenGameCoreC */,
+			);
+			name = PVMednafenGameCoreC;
+			packageProductDependencies = (
+			);
+			productName = PVMednafenGameCoreC;
+			productReference = B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B3C0790D2C75461A006F109B /* PVMednafenGameCoreCTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3C0791B2C75461A006F109B /* Build configuration list for PBXNativeTarget "PVMednafenGameCoreCTests" */;
+			buildPhases = (
+				B3C0790A2C75461A006F109B /* Sources */,
+				B3C0790B2C75461A006F109B /* Frameworks */,
+				B3C0790C2C75461A006F109B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3C079112C75461A006F109B /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B3C079122C75461A006F109B /* PVMednafenGameCoreCTests */,
+			);
+			name = PVMednafenGameCoreCTests;
+			packageProductDependencies = (
+			);
+			productName = PVMednafenGameCoreCTests;
+			productReference = B3C0790E2C75461A006F109B /* PVMednafenGameCoreCTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		B3FBDEF7207FF0E300E661D1 /* snes */ = {
 			isa = PBXNativeTarget;
@@ -6829,8 +7238,8 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastSwiftUpdateCheck = 1160;
-				LastUpgradeCheck = 1300;
+				LastSwiftUpdateCheck = 1610;
+				LastUpgradeCheck = 1610;
 				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B333502C207AFBA30036A448 = {
@@ -6937,6 +7346,12 @@
 						CreatedOnToolsVersion = 8.1;
 						LastSwiftMigration = 1020;
 					};
+					B3C079042C75461A006F109B = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					B3C0790D2C75461A006F109B = {
+						CreatedOnToolsVersion = 16.1;
+					};
 					B3FBDEF7207FF0E300E661D1 = {
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
@@ -6948,7 +7363,6 @@
 				};
 			};
 			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "PVMednafen" */;
-			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -6957,10 +7371,21 @@
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* Mednafen */;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E98F52C6EF13E00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E9AC72C6FADCA00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B30E9ACA2C6FADDA00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B396AE612C719E3B00DF1EBD /* XCLocalSwiftPackageReference "../../PVObjCUtils" */,
+				B396AE642C719E4600DF1EBD /* XCLocalSwiftPackageReference "../../PVSettings" */,
+				B396AE672C719E5A00DF1EBD /* XCLocalSwiftPackageReference "../../PVPlists" */,
+			);
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				B340E4611E08887600AD0E8B /* PVMednafen */,
+				B3C079042C75461A006F109B /* PVMednafenGameCoreC */,
+				B3C0790D2C75461A006F109B /* PVMednafenGameCoreCTests */,
 				B333502C207AFBA30036A448 /* psx */,
 				B3335061207AFD3D0036A448 /* wonderswan */,
 				B3335091207AFF2B0036A448 /* virtualboy */,
@@ -7000,6 +7425,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3547B60205858EF00CFF7D8 /* Core.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C079032C75461A006F109B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C0790C2C75461A006F109B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7608,14 +8047,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B33355F1207B2A650036A448 /* MednafenGameCore.swift in Sources */,
-				B3AAB43F2073820C0097D86F /* MednafenMultiDisc.m in Sources */,
 				B3AAB425207379230097D86F /* stubs.mm in Sources */,
-				B3AAB4402073820C0097D86F /* MednafenMultiTap.m in Sources */,
 				B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */,
+				B396AE6E2C71A83200DF1EBD /* MednafenGameCore+MultiDisc.swift in Sources */,
+				B396AE722C71A9AE00DF1EBD /* MednafenGameCore+Cheats.swift in Sources */,
 				C66D56112626B12100CDECE9 /* Time_POSIX.cpp in Sources */,
-				B3B8C3BF290E15EC002B839A /* MednafenGameCore+Controls.mm in Sources */,
-				93891C9F294F671D009EB211 /* MednafenGameCore+Cheats.mm in Sources */,
 				B333559D207B1DC50036A448 /* thread.cpp in Sources */,
+				B396AE6B2C71A65200DF1EBD /* MednafenGameCore+MultiTap.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7624,6 +8062,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				B393F252277C0C1C0097F71C /* m68k.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C079012C75461A006F109B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C0790A2C75461A006F109B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7957,6 +8409,22 @@
 			target = B3FBDF9E207FF5D800E661D1 /* snes_faust */;
 			targetProxy = B34AB5BB2106DF8400C45F09 /* PBXContainerItemProxy */;
 		};
+		B3C079112C75461A006F109B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3C079042C75461A006F109B /* PVMednafenGameCoreC */;
+			targetProxy = B3C079102C75461A006F109B /* PBXContainerItemProxy */;
+		};
+		B3C079422C75477A006F109B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				maccatalyst,
+				macos,
+				xros,
+			);
+			target = B3C079042C75461A006F109B /* PVMednafenGameCoreC */;
+			targetProxy = B3C079412C75477A006F109B /* PBXContainerItemProxy */;
+		};
 		C6E1B69125AAC1D5007C3CF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C6E1B65325AAC123007C3CF1 /* saturn */;
@@ -8016,9 +8484,9 @@
 				ENABLE_TESTABILITY = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/src\"",
+					"\"$(SRCROOT)/Sources/mednafen/src\"",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -8037,9 +8505,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/include\"",
-					"\"$(SRCROOT)/mednafen/intl\"",
-					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
+					"\"$(SRCROOT)/Sources/mednafen/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -8094,9 +8562,9 @@
 				ENABLE_TESTABILITY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/src\"",
+					"\"$(SRCROOT)/Sources/mednafen/src\"",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
@@ -8115,9 +8583,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/include\"",
-					"\"$(SRCROOT)/mednafen/intl\"",
-					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
+					"\"$(SRCROOT)/Sources/mednafen/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -8173,9 +8641,9 @@
 				ENABLE_TESTABILITY = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/src\"",
+					"\"$(SRCROOT)/Sources/mednafen/src\"",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
@@ -8194,9 +8662,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/include\"",
-					"\"$(SRCROOT)/mednafen/intl\"",
-					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
+					"\"$(SRCROOT)/Sources/mednafen/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -8229,7 +8697,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -8239,22 +8707,25 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/mednafen/src\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.27.1;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c++ objective-c swift";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafen";
@@ -8264,15 +8735,19 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/PVMednafen\"";
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/Sources/mednafen/mednafen/src\" \"$(SRCROOT)/Sources/mednafen/mednafen/\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
+				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				USE_HEADERMAP = YES;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Archive;
 		};
@@ -8297,7 +8772,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8325,7 +8799,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8352,7 +8825,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8379,7 +8851,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8408,7 +8879,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8437,7 +8907,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8464,7 +8933,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8492,7 +8960,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8519,7 +8986,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8546,7 +9012,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8573,7 +9038,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8600,7 +9064,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8627,7 +9090,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8654,7 +9116,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8681,7 +9142,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8709,7 +9169,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8736,7 +9195,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8763,7 +9221,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8790,7 +9247,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8817,7 +9273,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8844,7 +9299,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8871,7 +9325,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8899,7 +9352,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8930,7 +9382,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8957,7 +9408,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -8978,22 +9428,21 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu89;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/include\"",
-					"\"$(SRCROOT)/mednafen/intl\"",
-					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
+					"\"$(SRCROOT)/Sources/mednafen/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/src/snes/src/lib\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9020,7 +9469,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9050,7 +9498,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9077,7 +9524,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9107,7 +9553,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9134,7 +9579,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9163,7 +9607,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9189,7 +9632,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9218,7 +9660,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9244,7 +9685,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9274,7 +9714,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9302,7 +9741,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9332,7 +9770,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9360,7 +9797,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9389,7 +9825,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9415,7 +9850,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9445,7 +9879,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9472,7 +9905,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9501,7 +9933,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9527,7 +9958,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9556,7 +9986,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9582,7 +10011,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9611,7 +10039,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9637,7 +10064,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9666,7 +10092,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9692,7 +10117,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9721,7 +10145,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9747,7 +10170,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9776,7 +10198,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9802,7 +10223,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9831,7 +10251,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9857,7 +10276,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9886,7 +10304,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9913,7 +10330,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9942,7 +10358,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -9968,7 +10383,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -9997,7 +10411,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10023,7 +10436,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10052,7 +10464,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10078,7 +10489,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10107,7 +10517,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10133,7 +10542,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10162,7 +10570,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10188,7 +10595,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10217,7 +10623,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10243,7 +10648,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10273,7 +10677,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10300,7 +10703,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10329,7 +10731,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10359,7 +10760,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10388,7 +10788,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10414,7 +10813,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10433,7 +10831,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -10444,8 +10842,8 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/mednafen/src\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -10453,14 +10851,17 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.27.1;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c++ objective-c swift";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafen";
@@ -10471,14 +10872,18 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_COMPILATION_MODE = singlefile;
-				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/PVMednafen\"";
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/Sources/mednafen/mednafen/src\" \"$(SRCROOT)/Sources/mednafen/mednafen/\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				USE_HEADERMAP = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Debug;
 		};
@@ -10494,7 +10899,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
@@ -10504,22 +10909,25 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_BITCODE = NO;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/mednafen/src\"";
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVMednafen/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.27.1;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c++ objective-c swift";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafen";
@@ -10529,15 +10937,19 @@
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/PVMednafen\"";
+				SWIFT_INCLUDE_PATHS = "$(inherited) $(SRCROOT) \"$(SRCROOT)/Sources/mednafen/mednafen/src\" \"$(SRCROOT)/Sources/mednafen/mednafen/\"";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
+				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				TVOS_DEPLOYMENT_TARGET = 13.0;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
 				USE_HEADERMAP = YES;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 8.0;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Release;
 		};
@@ -10564,7 +10976,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10592,7 +11003,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10621,10 +11031,343 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Archive;
+		};
+		B3C079182C75461A006F109B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Sources/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
+					"\"$(SRCROOT)/PVMednafen\"",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafenGameCoreC";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		B3C079192C75461A006F109B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Sources/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
+					"\"$(SRCROOT)/PVMednafen\"",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafenGameCoreC";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		B3C0791A2C75461A006F109B /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Sources/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
+					"\"$(SRCROOT)/PVMednafen\"",
+				);
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafenGameCoreC";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Archive;
+		};
+		B3C0791C2C75461A006F109B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafenGameCoreCTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		B3C0791D2C75461A006F109B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafenGameCoreCTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		B3C0791E2C75461A006F109B /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafenGameCoreCTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Archive;
 		};
@@ -10642,24 +11385,23 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu89;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/include\"",
-					"\"$(SRCROOT)/mednafen/intl\"",
-					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
+					"\"$(SRCROOT)/Sources/mednafen/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/src/snes/src/lib\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10679,22 +11421,21 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu89;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/mednafen/include\"",
-					"\"$(SRCROOT)/mednafen/intl\"",
-					"\"$(SRCROOT)/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
+					"\"$(SRCROOT)/Sources/mednafen/include\"",
 					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/mednafen/src/snes/src/lib\"",
+					"\"$(SRCROOT)/Sources/mednafen/mednafen/src/snes/src/lib\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10723,7 +11464,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10749,7 +11489,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10778,7 +11517,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -10804,7 +11542,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -10831,7 +11568,6 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				VALIDATE_PRODUCT = YES;
@@ -11121,6 +11857,26 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B3C079172C75461A006F109B /* Build configuration list for PBXNativeTarget "PVMednafenGameCoreC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C079182C75461A006F109B /* Debug */,
+				B3C079192C75461A006F109B /* Release */,
+				B3C0791A2C75461A006F109B /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3C0791B2C75461A006F109B /* Build configuration list for PBXNativeTarget "PVMednafenGameCoreCTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C0791C2C75461A006F109B /* Debug */,
+				B3C0791D2C75461A006F109B /* Release */,
+				B3C0791E2C75461A006F109B /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B3FBDF00207FF0E400E661D1 /* Build configuration list for PBXNativeTarget "snes" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -11153,7 +11909,58 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30E98F52C6EF13E00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E9AC72C6FADCA00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B30E9ACA2C6FADDA00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B396AE612C719E3B00DF1EBD /* XCLocalSwiftPackageReference "../../PVObjCUtils" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVObjCUtils;
+		};
+		B396AE642C719E4600DF1EBD /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
+		B396AE672C719E5A00DF1EBD /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B30E98F62C6EF13E00C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9AC82C6FADCA00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B30E9ACB2C6FADDA00C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B396AE622C719E3B00DF1EBD /* PVObjCUtils */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVObjCUtils;
+		};
+		B396AE652C719E4600DF1EBD /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		B396AE682C719E5A00DF1EBD /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
 		B3AFCF792977A6EA00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

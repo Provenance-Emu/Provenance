@@ -1,0 +1,124 @@
+Animaniacs		 - HTIME!=0, race between CPU and HDMA
+Battle Blaze		 - Title screen really timing sensitive...
+Demon's Crest		 - HTIME!=0, lots of different HTIME values used on mode 7 overhead world map
+F-1 Grand Prix		 - HV IRQ shenanigans
+F1 ROC			 - HTIME!=0, ?
+Jungle Strike		 - WAI; HV IRQ shenanigans
+Mortal Kombat II	 - WAI; HV IRQ shenanigans?
+Secret of Mana		 - HTIME!=0, CPU/HDMA race on mode 7 overworld view?
+Super Off Road: The Baja - WAI; HV IRQ shenanigans, race between CPU M7HOFS writes and HDMA M7VOFS writes
+//
+//
+//
+Mighty Morphin Power Rangers: The Fighting Edition
+Nichibutsu Arcade Classics - "Frisky Tom"
+Wild Guns 		 - 89AB DMA/NMI race condition
+//
+//
+//
+F-Zero			- HTIME != 0
+Ganbare Goemon II	- HTIME != 0
+Hyper Zone		- HTIME != 0
+Mega Man X		- HTIME != 0
+Street Fighter II Turbo - HTIME != 0
+Super Metroid		- HTIME != 0
+
+//
+// Attempts to write to VRAM with HDMA during active display:
+//
+Hook
+Tecmo Super Bowl II
+
+//
+// Attempts to write(non-HDMA) to VRAM during active display:
+//
+NBA Pro Basketball: Bulls vs Blazers
+Zen-Nihon Pro Wres
+
+//
+// Interlace:
+//
+Air Strike Patrol
+Bishoujo Wrestler Retsuden
+GT Racing
+Power Drive
+RPM Racing
+Syvalion
+Yuu Yuu Hakusho Tokubetsu Hen
+
+//
+// Fancy Mode 7 effects:
+//
+Air Cavalry (gameplay)
+Albert Odyssey (overhead map)
+Axelay (gameplay)
+Battle Racers (somewhat sensitive to HDMA overhead, does mid-frame DMA to OAM)
+Brett Hull Hockey 95 (gameplay)
+Chrono Trigger (racing sequence in attract mode, and later in game)
+Demon's Crest (overhead world map)
+F-15 Super Strike Eagle (takeoff)
+F-Zero (gameplay)
+F1 Pole Position (gameplay; flickering line?)
+F1 ROC (gameplay)
+Final Fantasy 5 (Meteor crash)
+Final Fantasy 6 (Overworld view)
+GP-1 Part II
+GT Racing (gameplay)
+HyperZone (gameplay)
+J.League Super Soccer (gameplay)
+J.League Excite Stage 94, 95, 96 (gameplay; flickering line?)
+Jumbo Ozaki
+Kat's Run (gameplay)
+!!! Mecarobot Golf (gameplay)
+Mickey Mania (attract mode moose?)
+Mohawk and Headphone Jack (title screen)
+NCAA Basketball (gameplay)
+NHL Stanley Cup (gameplay)
+SD F-1 Grand Prix
+!!! Secret of Mana (overhead world view after starting new game)
+Seiken Densetsu III (overhead world view after starting new game)
+Street Racer (title screen, gameplay)
+Super Castlevania IV (block 4-3)
+Super Formation Soccer, II, 94, 95, 96 (gameplay)
+!!! Super Off Road: The Baja (gameplay)
+Super Star Wars (attract mode, hoverthing sequence)
+Super Turrican 2 (stage 2-2)
+Tales of Phantasia
+Tenchi Souzou (underworld sky)
+Touge Densetsu (gameplay)
+Wakuwaku Ski Wonder Spur (gameplay)
+
+//
+// Line flickering:
+//
+Great Battle IV - PC=$8584CC 85851F 8584D1 $1BDC    --- 8584F7
+Lemmings
+Mouryou Senki Madara 2
+
+//
+//
+//
+Metal Marines - TXS in 65816 emulation mode
+
+//
+// SA-1 DMA:
+//
+Marvelous
+
+//
+// SA-1 char conv DMA:
+//
+Masters New - Harukanaru Augusta 3
+Pebble Beach no Hatou New
+SD Gundam G Next
+Super Mario RPG (level up screen)
+
+//
+// SPC700 timing sensitive games
+//
+Illusion of Gaia
+N-Warp Daisakusen?
+Tales of Phantasia
+Tenchi Souzo
+Tenshi no Uta - Especially SPC700 opcode 0xFA
+Terranigma

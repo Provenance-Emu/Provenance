@@ -1,0 +1,89 @@
+2012-01-03  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* gettext.m4: Upgrade to gettext-0.18.1.
+	* iconv.m4: Upgrade to gettext-0.18.1.
+	* lib-ld.m4: Upgrade to gettext-0.18.1.
+	* lib-link.m4: Upgrade to gettext-0.18.1.
+	* lib-prefix.m4: Upgrade to gettext-0.18.1.
+	* nls.m4: Upgrade to gettext-0.18.1.
+	* po.m4: Upgrade to gettext-0.18.1.
+	* progtest.m4: Upgrade to gettext-0.18.1.
+	* codeset.m4: Upgrade to gettext-0.18.1.
+	* fcntl-o.m4: New file, from gettext-0.18.1.
+	* glibc2.m4: Upgrade to gettext-0.18.1.
+	* glibc21.m4: Upgrade to gettext-0.18.1.
+	* intdiv0.m4: Upgrade to gettext-0.18.1.
+	* intl.m4: Upgrade to gettext-0.18.1.
+	* intldir.m4: Upgrade to gettext-0.18.1.
+	* intlmacosx.m4: Upgrade to gettext-0.18.1.
+	* intmax.m4: Upgrade to gettext-0.18.1.
+	* inttypes_h.m4: Upgrade to gettext-0.18.1.
+	* inttypes-pri.m4: Upgrade to gettext-0.18.1.
+	* lcmessage.m4: Upgrade to gettext-0.18.1.
+	* lock.m4: Upgrade to gettext-0.18.1.
+	* longlong.m4: Upgrade to gettext-0.18.1.
+	* printf-posix.m4: Upgrade to gettext-0.18.1.
+	* size_max.m4: Upgrade to gettext-0.18.1.
+	* stdint_h.m4: Upgrade to gettext-0.18.1.
+	* threadlib.m4: New file, from gettext-0.18.1.
+	* uintmax_t.m4: Upgrade to gettext-0.18.1.
+	* visibility.m4: Upgrade to gettext-0.18.1.
+	* wchar_t.m4: Upgrade to gettext-0.18.1.
+	* wint_t.m4: Upgrade to gettext-0.18.1.
+	* xsize.m4: Upgrade to gettext-0.18.1.
+
+2008-06-09  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* gettext.m4: Upgrade to gettext-0.17.
+	* iconv.m4: Upgrade to gettext-0.17.
+	* lib-link.m4: Upgrade to gettext-0.17.
+	* po.m4: Upgrade to gettext-0.17.
+	* codeset.m4: Upgrade to gettext-0.17.
+	* intdiv0.m4: Upgrade to gettext-0.17.
+	* intl.m4: New file, from gettext-0.17.
+	* intldir.m4: New file, from gettext-0.17.
+	* intlmacosx.m4: New file, from gettext-0.17.
+	* intmax.m4: Upgrade to gettext-0.17.
+	* inttypes_h.m4: Upgrade to gettext-0.17.
+	* inttypes-pri.m4: Upgrade to gettext-0.17.
+	* lock.m4: Upgrade to gettext-0.17.
+	* longlong.m4: Upgrade to gettext-0.17.
+	* printf-posix.m4: Upgrade to gettext-0.17.
+	* size_max.m4: Upgrade to gettext-0.17.
+	* stdint_h.m4: Upgrade to gettext-0.17.
+	* uintmax_t.m4: Upgrade to gettext-0.17.
+	* wint_t.m4: Upgrade to gettext-0.17.
+
+2006-12-21  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* codeset.m4: New file, from gettext-0.15.
+	* gettext.m4: New file, from gettext-0.15.
+	* glibc2.m4: New file, from gettext-0.15.
+	* glibc21.m4: New file, from gettext-0.15.
+	* iconv.m4: New file, from gettext-0.15.
+	* intdiv0.m4: New file, from gettext-0.15.
+	* intmax.m4: New file, from gettext-0.15.
+	* inttypes_h.m4: New file, from gettext-0.15.
+	* inttypes-h.m4: New file, from gettext-0.15.
+	* inttypes-pri.m4: New file, from gettext-0.15.
+	* lcmessage.m4: New file, from gettext-0.15.
+	* lib-ld.m4: New file, from gettext-0.15.
+	* lib-link.m4: New file, from gettext-0.15.
+	* lib-prefix.m4: New file, from gettext-0.15.
+	* lock.m4: New file, from gettext-0.15.
+	* longdouble.m4: New file, from gettext-0.15.
+	* longlong.m4: New file, from gettext-0.15.
+	* nls.m4: New file, from gettext-0.15.
+	* po.m4: New file, from gettext-0.15.
+	* printf-posix.m4: New file, from gettext-0.15.
+	* progtest.m4: New file, from gettext-0.15.
+	* signed.m4: New file, from gettext-0.15.
+	* size_max.m4: New file, from gettext-0.15.
+	* stdint_h.m4: New file, from gettext-0.15.
+	* uintmax_t.m4: New file, from gettext-0.15.
+	* ulonglong.m4: New file, from gettext-0.15.
+	* visibility.m4: New file, from gettext-0.15.
+	* wchar_t.m4: New file, from gettext-0.15.
+	* wint_t.m4: New file, from gettext-0.15.
+	* xsize.m4: New file, from gettext-0.15.
+

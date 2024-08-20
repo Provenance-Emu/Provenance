@@ -1,0 +1,691 @@
+--- SDL-2.0.8-11835.orig/include/SDL_revision.h	2018-01-25 14:23:54.000000000 -0800
++++ SDL-2.0.8-11835/include/SDL_revision.h	2021-02-28 10:01:14.954789790 -0800
+@@ -1,2 +1,2 @@
+-#define SDL_REVISION "hg-11835:f622a4457a25"
++#define SDL_REVISION "hg-11835:f622a4457a25-win9xhax"
+ #define SDL_REVISION_NUMBER 11835
+diff -rupN SDL-2.0.8-11835.orig/include/SDL_rwops.h SDL-2.0.8-11835/include/SDL_rwops.h
+--- SDL-2.0.8-11835.orig/include/SDL_rwops.h	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/include/SDL_rwops.h	2020-12-11 10:01:00.873453870 -0800
+@@ -106,7 +106,7 @@ typedef struct SDL_RWops
+             long offset;
+             int fd;
+         } androidio;
+-#elif defined(__WIN32__)
++#elif 0 /*defined(__WIN32__)*/
+         struct
+         {
+             SDL_bool append;
+@@ -120,7 +120,7 @@ typedef struct SDL_RWops
+         } windowsio;
+ #endif
+ 
+-#ifdef HAVE_STDIO_H
++#if 0 /*def HAVE_STDIO_H*/
+         struct
+         {
+             SDL_bool autoclose;
+@@ -153,7 +153,7 @@ typedef struct SDL_RWops
+ extern DECLSPEC SDL_RWops *SDLCALL SDL_RWFromFile(const char *file,
+                                                   const char *mode);
+ 
+-#ifdef HAVE_STDIO_H
++#if 0 /*def HAVE_STDIO_H*/
+ extern DECLSPEC SDL_RWops *SDLCALL SDL_RWFromFP(FILE * fp,
+                                                 SDL_bool autoclose);
+ #else
+diff -rupN SDL-2.0.8-11835.orig/src/core/windows/SDL_windows.c SDL-2.0.8-11835/src/core/windows/SDL_windows.c
+--- SDL-2.0.8-11835.orig/src/core/windows/SDL_windows.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/core/windows/SDL_windows.c	2020-12-11 10:19:42.109451461 -0800
+@@ -93,35 +93,9 @@ WIN_CoUninitialize(void)
+ #endif
+ }
+ 
+-#ifndef __WINRT__
+-static BOOL
+-IsWindowsVersionOrGreater(WORD wMajorVersion, WORD wMinorVersion, WORD wServicePackMajor)
+-{
+-    OSVERSIONINFOEXW osvi;
+-    DWORDLONG const dwlConditionMask = VerSetConditionMask(
+-        VerSetConditionMask(
+-        VerSetConditionMask(
+-        0, VER_MAJORVERSION, VER_GREATER_EQUAL ),
+-        VER_MINORVERSION, VER_GREATER_EQUAL ),
+-        VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL );
+-
+-    SDL_zero(osvi);
+-    osvi.dwOSVersionInfoSize = sizeof(osvi);
+-    osvi.dwMajorVersion = wMajorVersion;
+-    osvi.dwMinorVersion = wMinorVersion;
+-    osvi.wServicePackMajor = wServicePackMajor;
+-
+-    return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR, dwlConditionMask) != FALSE;
+-}
+-#endif
+-
+ BOOL WIN_IsWindowsVistaOrGreater(void)
+ {
+-#ifdef __WINRT__
+-    return TRUE;
+-#else
+-    return IsWindowsVersionOrGreater(HIBYTE(_WIN32_WINNT_VISTA), LOBYTE(_WIN32_WINNT_VISTA), 0);
+-#endif
++ return FALSE;
+ }
+ 
+ /*
+@@ -145,8 +119,9 @@ has the same problem.)
+ 
+ WASAPI doesn't need this. This is just for DirectSound/WinMM.
+ */
++
+ char *
+-WIN_LookupAudioDeviceName(const WCHAR *name, const GUID *guid)
++WIN_LookupAudioDeviceName(const TCHAR *name, const GUID *guid)
+ {
+ #if __WINRT__
+     return WIN_StringToUTF8(name);  /* No registry access on WinRT/UWP, go with what we've got. */
+@@ -154,7 +129,7 @@ WIN_LookupAudioDeviceName(const WCHAR *n
+     static const GUID nullguid = { 0 };
+     const unsigned char *ptr;
+     char keystr[128];
+-    WCHAR *strw = NULL;
++    LPTSTR strw = NULL;
+     SDL_bool rc;
+     HKEY hkey;
+     DWORD len = 0;
+@@ -171,32 +146,32 @@ WIN_LookupAudioDeviceName(const WCHAR *n
+         ptr[8], ptr[9], ptr[10], ptr[11], ptr[12], ptr[13], ptr[14], ptr[15]);
+ 
+     strw = WIN_UTF8ToString(keystr);
+-    rc = (RegOpenKeyExW(HKEY_LOCAL_MACHINE, strw, 0, KEY_QUERY_VALUE, &hkey) == ERROR_SUCCESS);
++    rc = (RegOpenKeyEx(HKEY_LOCAL_MACHINE, strw, 0, KEY_QUERY_VALUE, &hkey) == ERROR_SUCCESS);
+     SDL_free(strw);
+     if (!rc) {
+         return WIN_StringToUTF8(name);  /* oh well. */
+     }
+ 
+-    rc = (RegQueryValueExW(hkey, L"Name", NULL, NULL, NULL, &len) == ERROR_SUCCESS);
++    rc = (RegQueryValueEx(hkey, TEXT("Name"), NULL, NULL, NULL, &len) == ERROR_SUCCESS);
+     if (!rc) {
+         RegCloseKey(hkey);
+         return WIN_StringToUTF8(name);  /* oh well. */
+     }
+ 
+-    strw = (WCHAR *) SDL_malloc(len + sizeof (WCHAR));
++    strw = (LPTSTR) SDL_malloc(len + sizeof (TCHAR));
+     if (!strw) {
+         RegCloseKey(hkey);
+         return WIN_StringToUTF8(name);  /* oh well. */
+     }
+ 
+-    rc = (RegQueryValueExW(hkey, L"Name", NULL, NULL, (LPBYTE) strw, &len) == ERROR_SUCCESS);
++    rc = (RegQueryValueEx(hkey, TEXT("Name"), NULL, NULL, (LPBYTE) strw, &len) == ERROR_SUCCESS);
+     RegCloseKey(hkey);
+     if (!rc) {
+         SDL_free(strw);
+         return WIN_StringToUTF8(name);  /* oh well. */
+     }
+ 
+-    strw[len / 2] = 0;  /* make sure it's null-terminated. */
++    strw[len / sizeof(TCHAR)] = 0;  /* make sure it's null-terminated. */
+ 
+     retval = WIN_StringToUTF8(strw);
+     SDL_free(strw);
+diff -rupN SDL-2.0.8-11835.orig/src/core/windows/SDL_windows.h SDL-2.0.8-11835/src/core/windows/SDL_windows.h
+--- SDL-2.0.8-11835.orig/src/core/windows/SDL_windows.h	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/core/windows/SDL_windows.h	2020-12-10 14:55:49.061601490 -0800
+@@ -27,24 +27,28 @@
+ #if defined(__WIN32__)
+ #define WIN32_LEAN_AND_MEAN
+ #define STRICT
+-#ifndef UNICODE
+-#define UNICODE 1
+-#endif
+ #undef _WIN32_WINNT
+ #define _WIN32_WINNT  0x501   /* Need 0x410 for AlphaBlend() and 0x500 for EnumDisplayDevices(), 0x501 for raw input */
++#define SDL_DISABLE_WINDOWS_IME 1
+ #endif
+ 
+ #include <windows.h>
+ #include <basetyps.h>   /* for REFIID with broken mingw.org headers */
+ 
++#define WIN_UTF16ToUTF8(S) SDL_iconv_string("UTF-8", "UTF-16LE", (char *)(S), (SDL_wcslen(S)+1)*sizeof(WCHAR))
++#define WIN_UTF8ToUTF16(S) (WCHAR *)SDL_iconv_string("UTF-16LE", "UTF-8", (char *)(S), SDL_strlen(S)+1)
++
++/* !!! FIXME: UTF8ToString() can just be a SDL_strdup() here. */
++#define WIN_ACPToUTF8(S) SDL_iconv_string("UTF-8", "ASCII", (char *)(S), (SDL_strlen(S)+1))
++#define WIN_UTF8ToACP(S) SDL_iconv_string("ASCII", "UTF-8", (char *)(S), SDL_strlen(S)+1)
++
+ /* Routines to convert from UTF8 to native Windows text */
+ #if UNICODE
+-#define WIN_StringToUTF8(S) SDL_iconv_string("UTF-8", "UTF-16LE", (char *)(S), (SDL_wcslen(S)+1)*sizeof(WCHAR))
+-#define WIN_UTF8ToString(S) (WCHAR *)SDL_iconv_string("UTF-16LE", "UTF-8", (char *)(S), SDL_strlen(S)+1)
++#define WIN_StringToUTF8(S) WIN_UTF16ToUTF8(S)
++#define WIN_UTF8ToString(S) WIN_UTF8ToUTF16(S)
+ #else
+-/* !!! FIXME: UTF8ToString() can just be a SDL_strdup() here. */
+-#define WIN_StringToUTF8(S) SDL_iconv_string("UTF-8", "ASCII", (char *)(S), (SDL_strlen(S)+1))
+-#define WIN_UTF8ToString(S) SDL_iconv_string("ASCII", "UTF-8", (char *)(S), SDL_strlen(S)+1)
++#define WIN_StringToUTF8(S) WIN_ACPToUTF8(S)
++#define WIN_UTF8ToString(S) WIN_UTF8ToACP(S)
+ #endif
+ 
+ /* Sets an error message based on a given HRESULT */
+@@ -61,7 +65,7 @@ extern void WIN_CoUninitialize(void);
+ extern BOOL WIN_IsWindowsVistaOrGreater(void);
+ 
+ /* You need to SDL_free() the result of this call. */
+-extern char *WIN_LookupAudioDeviceName(const WCHAR *name, const GUID *guid);
++extern char *WIN_LookupAudioDeviceName(const TCHAR *name, const GUID *guid);
+ 
+ /* Checks to see if two GUID are the same. */
+ extern BOOL WIN_IsEqualGUID(const GUID * a, const GUID * b);
+diff -rupN SDL-2.0.8-11835.orig/src/core/windows/SDL_xinput.c SDL-2.0.8-11835/src/core/windows/SDL_xinput.c
+--- SDL-2.0.8-11835.orig/src/core/windows/SDL_xinput.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/core/windows/SDL_xinput.c	2020-12-10 14:55:49.061601490 -0800
+@@ -83,17 +83,17 @@ WIN_LoadXInputDLL(void)
+     }
+ 
+     version = (1 << 16) | 4;
+-    s_pXInputDLL = LoadLibrary(L"XInput1_4.dll");  /* 1.4 Ships with Windows 8. */
++    s_pXInputDLL = LoadLibrary(TEXT("XInput1_4.dll"));  /* 1.4 Ships with Windows 8. */
+     if (!s_pXInputDLL) {
+         version = (1 << 16) | 3;
+-        s_pXInputDLL = LoadLibrary(L"XInput1_3.dll");  /* 1.3 can be installed as a redistributable component. */
++        s_pXInputDLL = LoadLibrary(TEXT("XInput1_3.dll"));  /* 1.3 can be installed as a redistributable component. */
+     }
+     if (!s_pXInputDLL) {
+-        s_pXInputDLL = LoadLibrary(L"bin\\XInput1_3.dll");
++        s_pXInputDLL = LoadLibrary(TEXT("bin\\XInput1_3.dll"));
+     }
+     if (!s_pXInputDLL) {
+         /* "9.1.0" Ships with Vista and Win7, and is more limited than 1.3+ (e.g. XInputGetStateEx is not available.)  */
+-        s_pXInputDLL = LoadLibrary(L"XInput9_1_0.dll");
++        s_pXInputDLL = LoadLibrary(TEXT("XInput9_1_0.dll"));
+     }
+     if (!s_pXInputDLL) {
+         return -1;
+diff -rupN SDL-2.0.8-11835.orig/src/cpuinfo/SDL_cpuinfo.c SDL-2.0.8-11835/src/cpuinfo/SDL_cpuinfo.c
+--- SDL-2.0.8-11835.orig/src/cpuinfo/SDL_cpuinfo.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/cpuinfo/SDL_cpuinfo.c	2020-12-11 09:58:58.745454132 -0800
+@@ -725,11 +725,10 @@ SDL_GetSystemRAM(void)
+ #endif
+ #ifdef __WIN32__
+         if (SDL_SystemRAM <= 0) {
+-            MEMORYSTATUSEX stat;
++            MEMORYSTATUS stat;
+             stat.dwLength = sizeof(stat);
+-            if (GlobalMemoryStatusEx(&stat)) {
+-                SDL_SystemRAM = (int)(stat.ullTotalPhys / (1024 * 1024));
+-            }
++            GlobalMemoryStatus(&stat);
++            SDL_SystemRAM = (int)(stat.dwTotalPhys / (1024 * 1024));
+         }
+ #endif
+ #ifdef __OS2__
+diff -rupN SDL-2.0.8-11835.orig/src/dynapi/SDL_dynapi_procs.h SDL-2.0.8-11835/src/dynapi/SDL_dynapi_procs.h
+--- SDL-2.0.8-11835.orig/src/dynapi/SDL_dynapi_procs.h	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/dynapi/SDL_dynapi_procs.h	2020-12-11 10:02:11.785453718 -0800
+@@ -56,7 +56,7 @@ SDL_DYNAPI_PROC(SDL_Thread*,SDL_CreateTh
+ SDL_DYNAPI_PROC(SDL_Thread*,SDL_CreateThread,(SDL_ThreadFunction a, const char *b, void *c),(a,b,c),return)
+ #endif
+ 
+-#ifdef HAVE_STDIO_H
++#if 0 /*def HAVE_STDIO_H*/
+ SDL_DYNAPI_PROC(SDL_RWops*,SDL_RWFromFP,(FILE *a, SDL_bool b),(a,b),return)
+ #else
+ SDL_DYNAPI_PROC(SDL_RWops*,SDL_RWFromFP,(void *a, SDL_bool b),(a,b),return)
+diff -rupN SDL-2.0.8-11835.orig/src/file/SDL_rwops.c SDL-2.0.8-11835/src/file/SDL_rwops.c
+--- SDL-2.0.8-11835.orig/src/file/SDL_rwops.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/file/SDL_rwops.c	2020-12-11 09:55:33.913454572 -0800
+@@ -28,7 +28,7 @@
+ 
+ #include "../SDL_internal.h"
+ 
+-#if defined(__WIN32__)
++#if 0 /* defined(__WIN32__) */
+ #include "../core/windows/SDL_windows.h"
+ #endif
+ 
+@@ -60,7 +60,7 @@
+ #include "nacl_io/nacl_io.h"
+ #endif
+ 
+-#ifdef __WIN32__
++#if 0 /*def __WIN32__ */
+ 
+ /* Functions to read/write Win32 API file pointers */
+ 
+@@ -303,7 +303,7 @@ windows_file_close(SDL_RWops * context)
+ }
+ #endif /* __WIN32__ */
+ 
+-#ifdef HAVE_STDIO_H
++#if 0 /*def HAVE_STDIO_H*/
+ 
+ #ifdef HAVE_FOPEN64
+ #define fopen   fopen64
+@@ -516,7 +516,7 @@ SDL_RWFromFile(const char *file, const c
+         return NULL;
+     }
+ #if defined(__ANDROID__)
+-#ifdef HAVE_STDIO_H
++#if 0 /*def HAVE_STDIO_H*/
+     /* Try to open the file on the filesystem first */
+     if (*file == '/') {
+         FILE *fp = fopen(file, mode);
+@@ -556,7 +556,7 @@ SDL_RWFromFile(const char *file, const c
+     rwops->close = Android_JNI_FileClose;
+     rwops->type = SDL_RWOPS_JNIFILE;
+ 
+-#elif defined(__WIN32__)
++#elif 0 /*defined(__WIN32__)*/
+     rwops = SDL_AllocRW();
+     if (!rwops)
+         return NULL;            /* SDL_SetError already setup by SDL_AllocRW() */
+@@ -571,7 +571,7 @@ SDL_RWFromFile(const char *file, const c
+     rwops->close = windows_file_close;
+     rwops->type = SDL_RWOPS_WINFILE;
+ 
+-#elif HAVE_STDIO_H
++#elif 0 /* HAVE_STDIO_H */
+     {
+         #ifdef __APPLE__
+         FILE *fp = SDL_OpenFPFromBundleOrFallback(file, mode);
+@@ -594,7 +594,7 @@ SDL_RWFromFile(const char *file, const c
+     return rwops;
+ }
+ 
+-#ifdef HAVE_STDIO_H
++#if 0 /*def HAVE_STDIO_H*/
+ SDL_RWops *
+ SDL_RWFromFP(FILE * fp, SDL_bool autoclose)
+ {
+diff -rupN SDL-2.0.8-11835.orig/src/thread/windows/SDL_systhread.c SDL-2.0.8-11835/src/thread/windows/SDL_systhread.c
+--- SDL-2.0.8-11835.orig/src/thread/windows/SDL_systhread.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/thread/windows/SDL_systhread.c	2020-12-10 18:35:45.541573139 -0800
+@@ -176,14 +176,14 @@ SDL_SYS_SetupThread(const char *name)
+         static HMODULE kernel32 = 0;
+ 
+         if (!kernel32) {
+-            kernel32 = LoadLibraryW(L"kernel32.dll");
++            kernel32 = LoadLibrary(TEXT("kernel32.dll"));
+             if (kernel32) {
+                 pSetThreadDescription = (pfnSetThreadDescription) GetProcAddress(kernel32, "SetThreadDescription");
+             }
+         }
+ 
+         if (pSetThreadDescription != NULL) {
+-            WCHAR *strw = WIN_UTF8ToString(name);
++            WCHAR *strw = WIN_UTF8ToUTF16(name);
+             if (strw) {
+                 pSetThreadDescription(GetCurrentThread(), strw);
+                 SDL_free(strw);
+diff -rupN SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsevents.c SDL-2.0.8-11835/src/video/windows/SDL_windowsevents.c
+--- SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsevents.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/video/windows/SDL_windowsevents.c	2020-12-13 12:31:13.393063266 -0800
+@@ -515,8 +515,8 @@ WIN_WindowProc(HWND hwnd, UINT msg, WPAR
+             }
+         }
+         break;
+-
+     case WM_INPUT:
++        if(p_GetRawInputData)
+         {
+             SDL_Mouse *mouse = SDL_GetMouse();
+             HRAWINPUT hRawInput = (HRAWINPUT)lParam;
+@@ -531,7 +531,7 @@ WIN_WindowProc(HWND hwnd, UINT msg, WPAR
+                 }
+             }
+ 
+-            GetRawInputData(hRawInput, RID_INPUT, &inp, &size, sizeof(RAWINPUTHEADER));
++            p_GetRawInputData(hRawInput, RID_INPUT, &inp, &size, sizeof(RAWINPUTHEADER));
+ 
+             /* Mouse data */
+             if (inp.header.dwType == RIM_TYPEMOUSE) {
+@@ -1036,6 +1036,7 @@ WIN_PumpEvents(_THIS)
+     const Uint8 *keystate;
+     MSG msg;
+     DWORD start_ticks = GetTickCount();
++    SHORT lshift, rshift, cshift;
+ 
+     if (g_WindowsEnableMessageLoop) {
+         while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+@@ -1058,12 +1059,21 @@ WIN_PumpEvents(_THIS)
+        You won't get a KEYUP until both are released, and that keyup will only be for the second
+        key you released. Take heroic measures and check the keystate as of the last handled event,
+        and if we think a key is pressed when Windows doesn't, unstick it in SDL's state. */
+-    keystate = SDL_GetKeyboardState(NULL);
+-    if ((keystate[SDL_SCANCODE_LSHIFT] == SDL_PRESSED) && !(GetKeyState(VK_LSHIFT) & 0x8000)) {
+-        SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_LSHIFT);
+-    }
+-    if ((keystate[SDL_SCANCODE_RSHIFT] == SDL_PRESSED) && !(GetKeyState(VK_RSHIFT) & 0x8000)) {
+-        SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_RSHIFT);
++    lshift = GetKeyState(VK_LSHIFT);
++    rshift = GetKeyState(VK_RSHIFT);
++    cshift = GetKeyState(VK_SHIFT);
++
++    lshift &= cshift;
++    rshift &= cshift;
++
++    if(!(((lshift | rshift) ^ cshift) & 0x8000)) {
++        keystate = SDL_GetKeyboardState(NULL);
++        if ((keystate[SDL_SCANCODE_LSHIFT] == SDL_PRESSED) && !(lshift & 0x8000)) {
++            SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_LSHIFT);
++        }
++        if ((keystate[SDL_SCANCODE_RSHIFT] == SDL_PRESSED) && !(rshift & 0x8000)) {
++            SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_RSHIFT);
++        }
+     }
+ }
+ 
+@@ -1083,7 +1093,7 @@ struct SDL_WIN_OSVERSIONINFOW {
+ static SDL_bool
+ IsWin10FCUorNewer(void)
+ {
+-    HMODULE handle = GetModuleHandleW(L"ntdll.dll");
++    HMODULE handle = GetModuleHandle(TEXT("ntdll.dll"));
+     if (handle) {
+         typedef LONG(WINAPI* RtlGetVersionPtr)(struct SDL_WIN_OSVERSIONINFOW*);
+         RtlGetVersionPtr getVersionPtr = (RtlGetVersionPtr)GetProcAddress(handle, "RtlGetVersion");
+diff -rupN SDL-2.0.8-11835.orig/src/video/windows/SDL_windowskeyboard.c SDL-2.0.8-11835/src/video/windows/SDL_windowskeyboard.c
+--- SDL-2.0.8-11835.orig/src/video/windows/SDL_windowskeyboard.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/video/windows/SDL_windowskeyboard.c	2020-12-10 14:55:49.061601490 -0800
+@@ -762,11 +762,11 @@ static void
+ IME_SendEditingEvent(SDL_VideoData *videodata)
+ {
+     char *s = 0;
+-    WCHAR buffer[SDL_TEXTEDITINGEVENT_TEXT_SIZE];
++    TCHAR buffer[SDL_TEXTEDITINGEVENT_TEXT_SIZE];
+     const size_t size = SDL_arraysize(buffer);
+     buffer[0] = 0;
+     if (videodata->ime_readingstring[0]) {
+-        size_t len = SDL_min(SDL_wcslen(videodata->ime_composition), (size_t)videodata->ime_cursor);
++        size_t len = SDL_min(SDL_tcslen(videodata->ime_composition), (size_t)videodata->ime_cursor);
+         SDL_wcslcpy(buffer, videodata->ime_composition, len + 1);
+         SDL_wcslcat(buffer, videodata->ime_readingstring, size);
+         SDL_wcslcat(buffer, &videodata->ime_composition[len], size);
+@@ -775,22 +775,22 @@ IME_SendEditingEvent(SDL_VideoData *vide
+         SDL_wcslcpy(buffer, videodata->ime_composition, size);
+     }
+     s = WIN_StringToUTF8(buffer);
+-    SDL_SendEditingText(s, videodata->ime_cursor + (int)SDL_wcslen(videodata->ime_readingstring), 0);
++    SDL_SendEditingText(s, videodata->ime_cursor + (int)SDL_tcslen(videodata->ime_readingstring), 0);
+     SDL_free(s);
+ }
+ 
+ static void
+-IME_AddCandidate(SDL_VideoData *videodata, UINT i, LPCWSTR candidate)
++IME_AddCandidate(SDL_VideoData *videodata, UINT i, LPCTSTR candidate)
+ {
+-    LPWSTR dst = videodata->ime_candidates[i];
+-    *dst++ = (WCHAR)(TEXT('0') + ((i + videodata->ime_candlistindexbase) % 10));
++    LPTSTR dst = videodata->ime_candidates[i];
++    *dst++ = (TCHAR)(TEXT('0') + ((i + videodata->ime_candlistindexbase) % 10));
+     if (videodata->ime_candvertical)
+         *dst++ = TEXT(' ');
+ 
+     while (*candidate && (SDL_arraysize(videodata->ime_candidates[i]) > (dst - videodata->ime_candidates[i])))
+         *dst++ = *candidate++;
+ 
+-    *dst = (WCHAR)'\0';
++    *dst = (TCHAR)'\0';
+ }
+ 
+ static void
+@@ -813,7 +813,7 @@ IME_GetCandidateList(HIMC himc, SDL_Vide
+                     size_t cchars = 0;
+ 
+                     for (i = 0; i < videodata->ime_candcount; ++i) {
+-                        size_t len = SDL_wcslen((LPWSTR)((DWORD_PTR)cand_list + cand_list->dwOffset[i])) + 1;
++                        size_t len = SDL_tcslen((LPTSTR)((DWORD_PTR)cand_list + cand_list->dwOffset[i])) + 1;
+                         if (len + cchars > maxcandchar) {
+                             if (i > cand_list->dwSelection)
+                                 break;
+@@ -836,7 +836,7 @@ IME_GetCandidateList(HIMC himc, SDL_Vide
+                 }
+                 SDL_memset(&videodata->ime_candidates, 0, sizeof(videodata->ime_candidates));
+                 for (i = page_start, j = 0; (DWORD)i < cand_list->dwCount && j < (int)videodata->ime_candpgsize; i++, j++) {
+-                    LPCWSTR candidate = (LPCWSTR)((DWORD_PTR)cand_list + cand_list->dwOffset[i]);
++                    LPCTSTR candidate = (LPCTSTR)((DWORD_PTR)cand_list + cand_list->dwOffset[i]);
+                     IME_AddCandidate(videodata, j, candidate);
+                 }
+                 if (PRIMLANG() == LANG_KOREAN || (PRIMLANG() == LANG_CHT && !IME_GetId(videodata, 0)))
+@@ -1109,8 +1109,8 @@ STDMETHODIMP UIElementSink_UpdateUIEleme
+     if (SUCCEEDED(element->lpVtbl->QueryInterface(element, &IID_ITfReadingInformationUIElement, (LPVOID *)&preading))) {
+         BSTR bstr;
+         if (SUCCEEDED(preading->lpVtbl->GetString(preading, &bstr)) && bstr) {
+-            WCHAR *s = (WCHAR *)bstr;
+-            SDL_wcslcpy(videodata->ime_readingstring, s, SDL_arraysize(videodata->ime_readingstring));
++            TCHAR *s = (TCHAR *)bstr;
++            SDL_tcslcpy(videodata->ime_readingstring, s, SDL_arraysize(videodata->ime_readingstring));
+             IME_SendEditingEvent(videodata);
+             SysFreeString(bstr);
+         }
+@@ -1440,11 +1440,11 @@ IME_RenderCandidateList(SDL_VideoData *v
+     SelectObject(hdc, font);
+ 
+     for (i = 0; i < candcount; ++i) {
+-        const WCHAR *s = videodata->ime_candidates[i];
++        const TCHAR *s = videodata->ime_candidates[i];
+         if (!*s)
+             break;
+ 
+-        GetTextExtentPoint32W(hdc, s, (int)SDL_wcslen(s), &candsizes[i]);
++        GetTextExtentPoint32(hdc, s, (int)SDL_tcslen(s), &candsizes[i]);
+         maxcandsize.cx = SDL_max(maxcandsize.cx, candsizes[i].cx);
+         maxcandsize.cy = SDL_max(maxcandsize.cy, candsizes[i].cy);
+ 
+@@ -1502,7 +1502,7 @@ IME_RenderCandidateList(SDL_VideoData *v
+     SetBkMode(hdc, TRANSPARENT);
+ 
+     for (i = 0; i < candcount; ++i) {
+-        const WCHAR *s = videodata->ime_candidates[i];
++        const TCHAR *s = videodata->ime_candidates[i];
+         int left, top, right, bottom;
+         if (!*s)
+             break;
+@@ -1536,7 +1536,7 @@ IME_RenderCandidateList(SDL_VideoData *v
+         }
+ 
+         DrawRect(hdc, left, top, right, bottom, candborder);
+-        ExtTextOutW(hdc, left + candborder + candpadding, top + candborder + candpadding, 0, NULL, s, (int)SDL_wcslen(s), NULL);
++        ExtTextOut(hdc, left + candborder + candpadding, top + candborder + candpadding, 0, NULL, s, (int)SDL_tcslen(s), NULL);
+     }
+     StopDrawToBitmap(hdc, &hbm);
+ 
+diff -rupN SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsmessagebox.c SDL-2.0.8-11835/src/video/windows/SDL_windowsmessagebox.c
+--- SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsmessagebox.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/video/windows/SDL_windowsmessagebox.c	2020-12-10 14:55:49.061601490 -0800
+@@ -138,8 +138,8 @@ static SDL_bool AddDialogData(WIN_Dialog
+ 
+ static SDL_bool AddDialogString(WIN_DialogData *dialog, const char *string)
+ {
+-    WCHAR *wstring;
+-    WCHAR *p;
++    TCHAR *wstring;
++    TCHAR *p;
+     size_t count;
+     SDL_bool status;
+ 
+@@ -159,7 +159,7 @@ static SDL_bool AddDialogString(WIN_Dial
+     }
+     ++count;
+ 
+-    status = AddDialogData(dialog, wstring, count*sizeof(WCHAR));
++    status = AddDialogData(dialog, wstring, count*sizeof(TCHAR));
+     SDL_free(wstring);
+     return status;
+ }
+@@ -350,7 +350,7 @@ WIN_ShowMessageBox(const SDL_MessageBoxD
+     HFONT DialogFont;
+     SIZE Size;
+     RECT TextSize;
+-    wchar_t* wmessage;
++    TCHAR* wmessage;
+     TEXTMETRIC TM;
+ 
+     HWND ParentWindow = NULL;
+diff -rupN SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsmouse.c SDL-2.0.8-11835/src/video/windows/SDL_windowsmouse.c
+--- SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsmouse.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/video/windows/SDL_windowsmouse.c	2020-12-14 06:31:06.492924065 -0800
+@@ -29,6 +29,8 @@
+ 
+ 
+ HCURSOR SDL_cursor = NULL;
++pt_GetRawInputData p_GetRawInputData = NULL;
++pt_RegisterRawInputDevices p_RegisterRawInputDevices = NULL;
+ 
+ static int rawInputEnableCount = 0;
+ 
+@@ -57,7 +59,7 @@ ToggleRawInput(SDL_bool enabled)
+     }
+ 
+     /* (Un)register raw input for mice */
+-    if (RegisterRawInputDevices(&rawMouse, 1, sizeof(RAWINPUTDEVICE)) == FALSE) {
++    if (p_RegisterRawInputDevices(&rawMouse, 1, sizeof(RAWINPUTDEVICE)) == FALSE) {
+ 
+         /* Only return an error when registering. If we unregister and fail,
+            then it's probably that we unregistered twice. That's OK. */
+@@ -65,6 +67,7 @@ ToggleRawInput(SDL_bool enabled)
+             return SDL_Unsupported();
+         }
+     }
++
+     return 0;
+ }
+ 
+@@ -250,6 +253,10 @@ WIN_WarpMouseGlobal(int x, int y)
+ static int
+ WIN_SetRelativeMouseMode(SDL_bool enabled)
+ {
++    if (!p_RegisterRawInputDevices) {
++        return -1;
++    }
++
+     return ToggleRawInput(enabled);
+ }
+ 
+@@ -263,6 +270,10 @@ WIN_CaptureMouse(SDL_Window *window)
+         }
+     }
+ 
++    if (!p_RegisterRawInputDevices) {
++        return 0;
++    }
++
+     /* While we were thinking of SetCapture() when designing this API in SDL,
+        we didn't count on the fact that SetCapture() only tracks while the
+        left mouse button is held down! Instead, we listen for raw mouse input
+@@ -303,6 +314,16 @@ WIN_InitMouse(_THIS)
+     mouse->CaptureMouse = WIN_CaptureMouse;
+     mouse->GetGlobalMouseState = WIN_GetGlobalMouseState;
+ 
++    p_RegisterRawInputDevices = (pt_RegisterRawInputDevices)GetProcAddress(GetModuleHandle(TEXT("user32.dll")), "RegisterRawInputDevices");
++    p_GetRawInputData = (pt_GetRawInputData)GetProcAddress(GetModuleHandle(TEXT("user32.dll")), "GetRawInputData");
++
++    /*printf("Rawraw: %08x %08x\n", (unsigned)p_RegisterRawInputDevices, (unsigned)p_GetRawInputData);*/
++
++    if(!p_RegisterRawInputDevices || !p_GetRawInputData) {
++        p_RegisterRawInputDevices = NULL;
++        p_GetRawInputData = NULL;
++    }
++
+     SDL_SetDefaultCursor(WIN_CreateDefaultCursor());
+ 
+     SDL_SetDoubleClickTime(GetDoubleClickTime());
+diff -rupN SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsmouse.h SDL-2.0.8-11835/src/video/windows/SDL_windowsmouse.h
+--- SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsmouse.h	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/video/windows/SDL_windowsmouse.h	2020-12-13 12:32:18.505063126 -0800
+@@ -24,6 +24,10 @@
+ #define SDL_windowsmouse_h_
+ 
+ extern HCURSOR SDL_cursor;
++typedef UINT WINAPI (*pt_GetRawInputData)(HRAWINPUT,UINT,LPVOID,PUINT,UINT);
++typedef WINBOOL WINAPI (*pt_RegisterRawInputDevices)(PCRAWINPUTDEVICE pRawInputDevices, UINT uiNumDevices, UINT cbSize);
++extern pt_GetRawInputData p_GetRawInputData;
++extern pt_RegisterRawInputDevices p_RegisterRawInputDevices;
+ 
+ extern void WIN_InitMouse(_THIS);
+ extern void WIN_QuitMouse(_THIS);
+diff -rupN SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsvideo.c SDL-2.0.8-11835/src/video/windows/SDL_windowsvideo.c
+--- SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsvideo.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/video/windows/SDL_windowsvideo.c	2020-12-10 18:37:36.265572901 -0800
+@@ -409,7 +409,7 @@ SDL_DXGIGetOutputInfo(int displayIndex,
+         while (*adapterIndex == -1 && SUCCEEDED(IDXGIAdapter_EnumOutputs(pDXGIAdapter, nOutput, &pDXGIOutput))) {
+             DXGI_OUTPUT_DESC outputDesc;
+             if (SUCCEEDED(IDXGIOutput_GetDesc(pDXGIOutput, &outputDesc))) {
+-                char *outputName = WIN_StringToUTF8(outputDesc.DeviceName);
++                char *outputName = WIN_UTF16ToUTF8(outputDesc.DeviceName);
+                 if (SDL_strcmp(outputName, displayName) == 0) {
+                     *adapterIndex = nAdapter;
+                     *outputIndex = nOutput;
+diff -rupN SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsvideo.h SDL-2.0.8-11835/src/video/windows/SDL_windowsvideo.h
+--- SDL-2.0.8-11835.orig/src/video/windows/SDL_windowsvideo.h	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/video/windows/SDL_windowsvideo.h	2020-12-10 14:55:49.065601490 -0800
+@@ -150,12 +150,12 @@ typedef struct SDL_VideoData
+     HWND ime_hwnd_current;
+     HIMC ime_himc;
+ 
+-    WCHAR ime_composition[SDL_TEXTEDITINGEVENT_TEXT_SIZE];
+-    WCHAR ime_readingstring[16];
++    TCHAR ime_composition[SDL_TEXTEDITINGEVENT_TEXT_SIZE];
++    TCHAR ime_readingstring[16];
+     int ime_cursor;
+ 
+     SDL_bool ime_candlist;
+-    WCHAR ime_candidates[MAX_CANDLIST][MAX_CANDLENGTH];
++    TCHAR ime_candidates[MAX_CANDLIST][MAX_CANDLENGTH];
+     DWORD ime_candcount;
+     DWORD ime_candref;
+     DWORD ime_candsel;
+diff -rupN SDL-2.0.8-11835.orig/src/video/windows/SDL_windowswindow.c SDL-2.0.8-11835/src/video/windows/SDL_windowswindow.c
+--- SDL-2.0.8-11835.orig/src/video/windows/SDL_windowswindow.c	2018-01-25 14:23:53.000000000 -0800
++++ SDL-2.0.8-11835/src/video/windows/SDL_windowswindow.c	2020-12-11 10:22:39.277451080 -0800
+@@ -47,8 +47,8 @@
+ 
+ /* Fake window to help with DirectInput events. */
+ HWND SDL_HelperWindow = NULL;
+-static WCHAR *SDL_HelperWindowClassName = TEXT("SDLHelperWindowInputCatcher");
+-static WCHAR *SDL_HelperWindowName = TEXT("SDLHelperWindowInputMsgWindow");
++static TCHAR *SDL_HelperWindowClassName = TEXT("SDLHelperWindowInputCatcher");
++static TCHAR *SDL_HelperWindowName = TEXT("SDLHelperWindowInputMsgWindow");
+ static ATOM SDL_HelperWindowClass = 0;
+ 
+ /* For borderless Windows, still want the following flags:
+@@ -741,7 +741,7 @@ WIN_DestroyWindow(_THIS, SDL_Window * wi
+ 
+     if (data) {
+         ReleaseDC(data->hwnd, data->hdc);
+-        RemoveProp(data->hwnd, TEXT("SDL_WindowData"));
++        RemovePropA(data->hwnd, "SDL_WindowData");
+         if (data->created) {
+             DestroyWindow(data->hwnd);
+             if (data->parent) {
+@@ -808,7 +808,7 @@ SDL_HelperWindowCreate(void)
+     /* Create the class. */
+     SDL_zero(wce);
+     wce.lpfnWndProc = DefWindowProc;
+-    wce.lpszClassName = (LPCWSTR) SDL_HelperWindowClassName;
++    wce.lpszClassName = (LPCTSTR) SDL_HelperWindowClassName;
+     wce.hInstance = hInstance;
+ 
+     /* Register the class. */
+@@ -935,6 +935,7 @@ WIN_SetWindowHitTest(SDL_Window *window,
+ int
+ WIN_SetWindowOpacity(_THIS, SDL_Window * window, float opacity)
+ {
++#if 0
+     const SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
+     const HWND hwnd = data->hwnd;
+     const LONG style = GetWindowLong(hwnd, GWL_EXSTYLE);
+@@ -961,7 +962,7 @@ WIN_SetWindowOpacity(_THIS, SDL_Window *
+             return WIN_SetError("SetLayeredWindowAttributes()");
+         }
+     }
+-
++#endif
+     return 0;
+ }
+ 

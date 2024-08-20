@@ -1,0 +1,60 @@
+#include <config.h>
+
+#include "winver.h"
+#include "winuser.h"
+
+#define MEDNAFEN_WIN_VERSION MEDNAFEN_VERSION_NUMERIC/1048576,((MEDNAFEN_VERSION_NUMERIC / 256) % 16) + (((MEDNAFEN_VERSION_NUMERIC / 4096) % 16) * 10),(((MEDNAFEN_VERSION_NUMERIC / 16) % 16) * 10) + (MEDNAFEN_VERSION_NUMERIC % 16)
+
+VS_VERSION_INFO VERSIONINFO
+#ifdef UNICODE
+FILEVERSION MEDNAFEN_WIN_VERSION,2000+SIZEOF_VOID_P*8
+#else
+FILEVERSION MEDNAFEN_WIN_VERSION,98
+#endif
+PRODUCTVERSION MEDNAFEN_WIN_VERSION,0
+FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+FILEFLAGS 0
+#ifdef UNICODE
+FILEOS VOS_NT_WINDOWS32
+#else
+FILEOS VOS_DOS_WINDOWS32
+#endif
+FILETYPE VFT_APP
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "CompanyName", "Arachnea, Inc., Coleopteran Wing" "\0"
+   VALUE "FileDescription", "Mednafen" "\0"
+#ifdef UNICODE
+ #if SIZEOF_VOID_P == 8
+   VALUE "FileVersion", MEDNAFEN_VERSION " (64-bit Unicode build)" "\0"
+ #elif SIZEOF_VOID_P == 4
+   VALUE "FileVersion", MEDNAFEN_VERSION " (32-bit Unicode build)" "\0"
+ #else
+  #error "Bad SIZEOF_VOID_P"
+ #endif
+#else
+   VALUE "FileVersion", MEDNAFEN_VERSION " (Windows 98/Me build)" "\0"
+#endif
+   VALUE "InternalName", "Mednafen" "\0"
+   VALUE "LegalCopyright", "Copyright (C) Mednafen Team" "\0"
+   VALUE "OriginalFilename", "mednafen.exe" "\0"
+   VALUE "ProductName", "Mednafen" "\0"
+   VALUE "ProductVersion", MEDNAFEN_VERSION "\0"
+  }
+ }
+
+ BLOCK "VarFileInfo"
+ {
+#ifdef UNICODE
+  VALUE "Translation", 0x0409, 1200
+#else
+  VALUE "Translation", 0x0409, 1252
+#endif
+ }
+}
+
+MEDNAFEN_ICON ICON "win-icon.ico"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "win-manifest.xml"
