@@ -1,0 +1,33 @@
+{
+  "originHash" : "9288600f2683aa86cffe2527e32dd21c3466df26813b80810a06e0373045aca8",
+  "pins" : [
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "4c009d5c2496e7aa126e922c94dd3d6ae049efa2"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
+        "version" : "509.1.1"
+      }
+    },
+    {
+      "identity" : "swiftmacros",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ShenghaiWang/SwiftMacros.git",
+      "state" : {
+        "revision" : "fcb92029bb19594f9ae9a079e8aa5fc7acc77c10",
+        "version" : "1.4.1"
+      }
+    }
+  ],
+  "version" : 3
+}

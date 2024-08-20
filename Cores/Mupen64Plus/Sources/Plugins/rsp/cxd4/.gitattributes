@@ -1,0 +1,38 @@
+* text=auto
+
+# normal text files
+*.6 text
+AUTHORS text
+*.c text
+*.cfg text
+*.cht text
+*.conf text
+COPYING text
+*.cpp text
+*.def text
+*-license text
+*.h text
+*.html text
+*.ini text
+INSTALL text
+LICENSES text
+Makefile text
+*.py text
+README text
+RELEASE text
+*.S text
+*.sh text
+*.txt text
+*.ver text
+
+# windows specific text files
+*.sln text eol=crlf
+*.vcproj text eol=crlf
+*.vcxproj text eol=crlf
+*.vcxproj.filters text eol=crlf
+
+# binary files
+*.gz binary
+*.ttf binary
+cursor.tex binary
+font.tex binary

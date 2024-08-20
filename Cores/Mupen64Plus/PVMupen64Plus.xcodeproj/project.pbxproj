@@ -13,13 +13,15 @@
 		93BC0500298AE9F200BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC04FC298AE9D600BA5157 /* PVDebug.c */; };
 		93BC0501298AE9F600BA5157 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC04FC298AE9D600BA5157 /* PVDebug.c */; };
 		B30BF1AE2775320F00FF9E07 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B30BF1AD2775320F00FF9E07 /* libz.tbd */; };
+		B30E98FA2C6EF15700C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98F92C6EF15700C1431E /* PVSupport */; };
+		B30E9B282C71348100C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B272C71348100C1431E /* PVCoreBridge */; };
+		B30E9B2B2C71349500C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B2A2C71349500C1431E /* PVEmulatorCore */; };
 		B316B4E9219275A800693472 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
 		B316B4EA219275A800693472 /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
 		B316B4EB219275A800693472 /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
 		B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
 		B324C62F21920BDA009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
-		B324C63121920BDB009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, ); };
-		B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3055BEE20730B60001212D2 /* PVSupport.framework */; };
+		B324C63121920BDB009F4EDC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, xros, ); };
 		B3303E381DED20CF00896D96 /* PVMupen64PlusVideoRice.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFEF21C72E63300857158 /* PVMupen64PlusVideoRice.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3303E6C1DED23EE00896D96 /* example.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E5B1DED23EE00896D96 /* example.c */; };
 		B3303E6D1DED23EE00896D96 /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = B3303E5C1DED23EE00896D96 /* png.c */; };
@@ -76,12 +78,9 @@
 		B3919A31292C3CB600519575 /* CRC_OPT_NEON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B35B31CB206CA65900AEAF88 /* CRC_OPT_NEON.cpp */; };
 		B3919A32292C3CDE00519575 /* RSP_LoadMatrixNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603282038AE7B001E70F1 /* RSP_LoadMatrixNeon.cpp */; };
 		B3919A33292C3CF600519575 /* 3DMathNeon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603272038AE7B001E70F1 /* 3DMathNeon.cpp */; };
-		B395ECFA2904B49F00C9407B /* MupenGameCore+Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B395ECF92904B49F00C9407B /* MupenGameCore+Resources.swift */; };
 		B3962AEC26FBD89A00FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3962AEE26FBD8F100FAEFC0 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
-		B3963E61279E835300B00117 /* MupenGameCore+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3963E60279E835300B00117 /* MupenGameCore+Audio.swift */; };
-		B3963E64279E867100B00117 /* MupenGameCore+Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3963E63279E866B00B00117 /* MupenGameCore+Video.swift */; };
 		B39C29D127A120790078D028 /* MupenGameCore+Controls.m in Sources */ = {isa = PBXBuildFile; fileRef = B39C29D027A120780078D028 /* MupenGameCore+Controls.m */; };
 		B39C29D427A121160078D028 /* MupenGameCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B39C29D327A121150078D028 /* MupenGameCore+Controls.h */; };
 		B39C29D827A12D100078D028 /* MupenGameCore+Cheats.h in Headers */ = {isa = PBXBuildFile; fileRef = B39C29D627A12D0F0078D028 /* MupenGameCore+Cheats.h */; };
@@ -190,7 +189,7 @@
 		B3AE1DC5207311E900AD06D4 /* mempak.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AB22072FEE9001212D2 /* mempak.c */; };
 		B3AE1DC6207311E900AD06D4 /* transferpak.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AB12072FEE9001212D2 /* transferpak.c */; };
 		B3AE1DC7207312BB00AD06D4 /* screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06C1183E4AA002995A1 /* screenshot.m */; };
-		B3AE1DC8207312E000AD06D4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D8B35D712260F9D00C4C844 /* main.m */; };
+		B3AE1DC8207312E000AD06D4 /* new_vi_main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D8B35D712260F9D00C4C844 /* new_vi_main.m */; };
 		B3AE1DCA2073153A00AD06D4 /* frontend.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A222072FEE9001212D2 /* frontend.c */; };
 		B3AE1DCB207316DF00AD06D4 /* cp0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A682072FEE9001212D2 /* cp0.c */; };
 		B3AE1DCC207317BE00AD06D4 /* idec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A8B2072FEE9001212D2 /* idec.c */; };
@@ -227,6 +226,116 @@
 		B3B3B8581DECE9E100602746 /* MupenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D208F801182B00300BEAA42 /* MupenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B8641DECEA9100602746 /* PVMupen64PlusRspHLE.h in Headers */ = {isa = PBXBuildFile; fileRef = B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3B3B8A01DED04CE00602746 /* PVMupen64Plus.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C078582C74DDA2006F109B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3C078572C74DDA2006F109B /* PVSettings */; };
+		B3C078622C74EC64006F109B /* MupenGameCore+Rumble.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C0785D2C74EC64006F109B /* MupenGameCore+Rumble.swift */; };
+		B3C078632C74EC64006F109B /* MupenGameCore+Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C0785A2C74EC64006F109B /* MupenGameCore+Audio.swift */; };
+		B3C078642C74EC64006F109B /* MupenGameCore+Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C0785C2C74EC64006F109B /* MupenGameCore+Resources.swift */; };
+		B3C078652C74EC64006F109B /* MupenGameCore+Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C0785B2C74EC64006F109B /* MupenGameCore+Controls.swift */; };
+		B3C078662C74EC64006F109B /* MupenGameCore+Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C0785E2C74EC64006F109B /* MupenGameCore+Video.swift */; };
+		B3C078682C74EFA8006F109B /* MupenGameCore+Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3C078672C74EFA8006F109B /* MupenGameCore+Core.swift */; };
+		B3C0786B2C74F9FF006F109B /* MupenGameCore+Resources.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C078692C74F9FF006F109B /* MupenGameCore+Resources.h */; };
+		B3C0786C2C74F9FF006F109B /* MupenGameCore+Resources.m in Sources */ = {isa = PBXBuildFile; fileRef = B3C0786A2C74F9FF006F109B /* MupenGameCore+Resources.m */; };
+		B3C0787D2C750D33006F109B /* MupenGameCore+Saves.h in Headers */ = {isa = PBXBuildFile; fileRef = B39C29DC27A12DA20078D028 /* MupenGameCore+Saves.h */; };
+		B3C0787E2C750D33006F109B /* MupenGameCore+Resources.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C078692C74F9FF006F109B /* MupenGameCore+Resources.h */; };
+		B3C0787F2C750D33006F109B /* MupenGameCore+Cheats.h in Headers */ = {isa = PBXBuildFile; fileRef = B39C29D627A12D0F0078D028 /* MupenGameCore+Cheats.h */; };
+		B3C078802C750D33006F109B /* r4300_core.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A712072FEE9001212D2 /* r4300_core.h */; };
+		B3C078812C750D33006F109B /* MupenGameCore+Mupen.h in Headers */ = {isa = PBXBuildFile; fileRef = B39C29E227A12E690078D028 /* MupenGameCore+Mupen.h */; };
+		B3C078822C750D33006F109B /* MupenGameCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 3D208F801182B00300BEAA42 /* MupenGameCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C078832C750D33006F109B /* assem_arm.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A852072FEE9001212D2 /* assem_arm.h */; };
+		B3C078842C750D33006F109B /* MupenGameCore+Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = B39C29D327A121150078D028 /* MupenGameCore+Controls.h */; };
+		B3C078852C750D33006F109B /* PVMupen64Plus.h in Headers */ = {isa = PBXBuildFile; fileRef = B37EFF3A1C72F43400857158 /* PVMupen64Plus.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3C078862C750D33006F109B /* assem_x86.h in Headers */ = {isa = PBXBuildFile; fileRef = B3055A812072FEE9001212D2 /* assem_x86.h */; };
+		B3C078882C750D33006F109B /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93BC04FC298AE9D600BA5157 /* PVDebug.c */; };
+		B3C0788D2C750D33006F109B /* SDLStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F0801183E52F002995A1 /* SDLStubs.m */; };
+		B3C0788F2C750D33006F109B /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AD62072FEE9001212D2 /* md5.c */; };
+		B3C078902C750D33006F109B /* cart.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AA02072FEE9001212D2 /* cart.c */; };
+		B3C078912C750D33006F109B /* callbacks.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A302072FEE9001212D2 /* callbacks.c */; };
+		B3C078922C750D33006F109B /* flashram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AAA2072FEE9001212D2 /* flashram.c */; };
+		B3C078932C750D33006F109B /* pure_interp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A612072FEE9001212D2 /* pure_interp.c */; };
+		B3C078942C750D33006F109B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055ACD2072FEE9001212D2 /* main.c */; };
+		B3C078952C750D33006F109B /* cp0.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A682072FEE9001212D2 /* cp0.c */; };
+		B3C078962C750D33006F109B /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A212072FEE9001212D2 /* common.c */; };
+		B3C078972C750D33006F109B /* cached_interp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A602072FEE9001212D2 /* cached_interp.c */; };
+		B3C078982C750D33006F109B /* lirc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AD72072FEE9001212D2 /* lirc.c */; };
+		B3C078992C750D33006F109B /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AD32072FEE9001212D2 /* xxhash.c */; };
+		B3C0789B2C750D33006F109B /* af_rtc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AA32072FEE9001212D2 /* af_rtc.c */; };
+		B3C0789C2C750D33006F109B /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A5A2072FEE9001212D2 /* memory.c */; };
+		B3C0789D2C750D33006F109B /* interrupt.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A632072FEE9001212D2 /* interrupt.c */; };
+		B3C0789F2C750D33006F109B /* cic.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A502072FEE9001212D2 /* cic.c */; };
+		B3C078A02C750D33006F109B /* plugin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A112072FEE9001212D2 /* plugin.c */; };
+		B3C078A12C750D33006F109B /* device.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AAB2072FEE9001212D2 /* device.c */; };
+		B3C078A22C750D33006F109B /* rdp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A3F2072FEE9001212D2 /* rdp_core.c */; };
+		B3C078A32C750D33006F109B /* file_storage.c in Sources */ = {isa = PBXBuildFile; fileRef = B30559FE2072FEE9001212D2 /* file_storage.c */; };
+		B3C078A42C750D33006F109B /* ai_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A4A2072FEE9001212D2 /* ai_controller.c */; };
+		B3C078A52C750D33006F109B /* dummy_rsp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A132072FEE9001212D2 /* dummy_rsp.c */; };
+		B3C078A62C750D33006F109B /* si_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A472072FEE9001212D2 /* si_controller.c */; };
+		B3C078A72C750D33006F109B /* audio_plugin_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = B30559F22072FEE9001212D2 /* audio_plugin_compat.c */; };
+		B3C078A82C750D33006F109B /* vi_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A372072FEE9001212D2 /* vi_controller.c */; };
+		B3C078A92C750D33006F109B /* rom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AD42072FEE9001212D2 /* rom.c */; };
+		B3C078AA2C750D33006F109B /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AC52072FEE9001212D2 /* zip.c */; };
+		B3C078AB2C750D33006F109B /* frontend.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A222072FEE9001212D2 /* frontend.c */; };
+		B3C078AD2C750D33006F109B /* dummy_audio.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A0B2072FEE9001212D2 /* dummy_audio.c */; };
+		B3C078AE2C750D33006F109B /* config.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A2D2072FEE9001212D2 /* config.c */; };
+		B3C078AF2C750D33006F109B /* rsp_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A4E2072FEE9001212D2 /* rsp_core.c */; };
+		B3C078B02C750D33006F109B /* eeprom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AA52072FEE9001212D2 /* eeprom.c */; };
+		B3C078B12C750D33006F109B /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AC42072FEE9001212D2 /* unzip.c */; };
+		B3C078B32C750D33006F109B /* rumblepak.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AB02072FEE9001212D2 /* rumblepak.c */; };
+		B3C078B52C750D33006F109B /* input_plugin_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = B30559F42072FEE9001212D2 /* input_plugin_compat.c */; };
+		B3C078B62C750D33006F109B /* asm_defines.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A092072FEE9001212D2 /* asm_defines.c */; };
+		B3C078B72C750D33006F109B /* dynamiclib_unix.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A052072FEE9001212D2 /* dynamiclib_unix.c */; };
+		B3C078B82C750D33006F109B /* sram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A9F2072FEE9001212D2 /* sram.c */; };
+		B3C078B92C750D33006F109B /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AC62072FEE9001212D2 /* ioapi.c */; };
+		B3C078BA2C750D33006F109B /* files_macos.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A022072FEE9001212D2 /* files_macos.c */; };
+		B3C078BB2C750D33006F109B /* savestates.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055ABC2072FEE9001212D2 /* savestates.c */; };
+		B3C078BC2C750D33006F109B /* dummy_input.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A0F2072FEE9001212D2 /* dummy_input.c */; };
+		B3C078BD2C750D33006F109B /* bootrom_hle.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A572072FEE9001212D2 /* bootrom_hle.c */; };
+		B3C078BE2C750D33006F109B /* ri_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A422072FEE9001212D2 /* ri_controller.c */; };
+		B3C078BF2C750D33006F109B /* cheat.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055ACC2072FEE9001212D2 /* cheat.c */; };
+		B3C078C02C750D33006F109B /* util.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055ABB2072FEE9001212D2 /* util.c */; };
+		B3C078C12C750D33006F109B /* gb_cart.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A9C2072FEE9001212D2 /* gb_cart.c */; };
+		B3C078C32C750D33006F109B /* mbc3_rtc.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A9D2072FEE9001212D2 /* mbc3_rtc.c */; };
+		B3C078C92C750D33006F109B /* cart_rom.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AA22072FEE9001212D2 /* cart_rom.c */; };
+		B3C078CA2C750D33006F109B /* tlb.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A8A2072FEE9001212D2 /* tlb.c */; };
+		B3C078CB2C750D33006F109B /* mi_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A3A2072FEE9001212D2 /* mi_controller.c */; };
+		B3C078CC2C750D33006F109B /* workqueue.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AD52072FEE9001212D2 /* workqueue.c */; };
+		B3C078CD2C750D33006F109B /* pi_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A442072FEE9001212D2 /* pi_controller.c */; };
+		B3C078CE2C750D33006F109B /* fb.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A3C2072FEE9001212D2 /* fb.c */; };
+		B3C078CF2C750D33006F109B /* pif.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A562072FEE9001212D2 /* pif.c */; };
+		B3C078D02C750D33006F109B /* debugger.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A292072FEE9001212D2 /* debugger.c */; };
+		B3C078D12C750D33006F109B /* idec.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A8B2072FEE9001212D2 /* idec.c */; };
+		B3C078D22C750D33006F109B /* sdl_key_converter.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AD82072FEE9001212D2 /* sdl_key_converter.c */; };
+		B3C078D42C750D33006F109B /* cp1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A882072FEE9001212D2 /* cp1.c */; };
+		B3C078D52C750D33006F109B /* transferpak.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AB12072FEE9001212D2 /* transferpak.c */; };
+		B3C078D62C750D33006F109B /* clock_ctime_plus_delta.c in Sources */ = {isa = PBXBuildFile; fileRef = B30559F02072FEE9001212D2 /* clock_ctime_plus_delta.c */; };
+		B3C078D72C750D33006F109B /* n64_cic_nus_6105.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A552072FEE9001212D2 /* n64_cic_nus_6105.c */; };
+		B3C078D82C750D33006F109B /* r4300_core.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A652072FEE9001212D2 /* r4300_core.c */; };
+		B3C078D92C750D33006F109B /* game_controller.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AB52072FEE9001212D2 /* game_controller.c */; };
+		B3C078DA2C750D33006F109B /* m64282fp.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A9A2072FEE9001212D2 /* m64282fp.c */; };
+		B3C078DB2C750D33006F109B /* dummy_video.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A122072FEE9001212D2 /* dummy_video.c */; };
+		B3C078DC2C750D33006F109B /* rdram.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055A5E2072FEE9001212D2 /* rdram.c */; };
+		B3C078DD2C750D33006F109B /* mempak.c in Sources */ = {isa = PBXBuildFile; fileRef = B3055AB22072FEE9001212D2 /* mempak.c */; };
+		B3C078DF2C750D33006F109B /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C0787A2C750D33006F109B /* PVSupport */; };
+		B3C078E02C750D33006F109B /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3C0787B2C750D33006F109B /* PVSettings */; };
+		B3C078E12C750D33006F109B /* PVMupen64PlusVideoRice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37EFEF01C72E63300857158 /* PVMupen64PlusVideoRice.framework */; platformFilters = (ios, tvos, watchos, ); };
+		B3C078E22C750D33006F109B /* PVMupen64PlusRspHLE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */; };
+		B3C078E32C750D33006F109B /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3C078792C750D33006F109B /* PVEmulatorCore */; };
+		B3C078E42C750D33006F109B /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3C078772C750D33006F109B /* PVSupport */; };
+		B3C078E52C750D33006F109B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3303E811DED272E00896D96 /* libz.tbd */; };
+		B3C078E62C750D33006F109B /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3C078762C750D33006F109B /* PVLogging */; };
+		B3C078E72C750D33006F109B /* libdl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AE1DD320731F2700AD06D4 /* libdl.tbd */; };
+		B3C078E82C750D33006F109B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B3C078E92C750D33006F109B /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3C078782C750D33006F109B /* PVCoreBridge */; };
+		B3C078EA2C750D33006F109B /* PVRSPCXD4.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */; };
+		B3C078EB2C750D33006F109B /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3EA447B206E10C700E608F6 /* OpenGLES.framework */; platformFilters = (ios, tvos, watchos, xros, ); };
+		B3C078EC2C750D33006F109B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */; };
+		B3C078EE2C750D33006F109B /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
+		B3C078EF2C750D33006F109B /* RiceVideoLinux.ini in Resources */ = {isa = PBXBuildFile; fileRef = B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */; };
+		B3C078F02C750D33006F109B /* mupencheat.txt in Resources */ = {isa = PBXBuildFile; fileRef = B30559E22072FEE9001212D2 /* mupencheat.txt */; };
+		B3C078F12C750D33006F109B /* mupen64plus.ini in Resources */ = {isa = PBXBuildFile; fileRef = B30559E42072FEE9001212D2 /* mupen64plus.ini */; };
+		B3C078F22C750D33006F109B /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B39E8CB52053B53100380DCD /* Core.plist */; };
+		B3C078F32C750D33006F109B /* GLideN64.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CB2038AE78001E70F1 /* GLideN64.ini */; };
+		B3C078FA2C750E84006F109B /* screenshot.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06C1183E4AA002995A1 /* screenshot.m */; };
+		B3C078FB2C750E84006F109B /* eventloop.m in Sources */ = {isa = PBXBuildFile; fileRef = 3D00F06A1183E4AA002995A1 /* eventloop.m */; };
 		B3C3F40921A9CBAA00EFB09C /* F3DFLX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3D721A9CB9B00EFB09C /* F3DFLX2.cpp */; };
 		B3C3F40B21A9CBAA00EFB09C /* F3DEX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3C3F3D821A9CB9B00EFB09C /* F3DEX2.cpp */; };
 		B3C3F40D21A9CBAA00EFB09C /* F3DEX2ACCLAIM.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C3F3D921A9CB9B00EFB09C /* F3DEX2ACCLAIM.h */; };
@@ -290,6 +399,7 @@
 		B3EA448B206E471200E608F6 /* RSP_LoadMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB602AF2038AE7A001E70F1 /* RSP_LoadMatrix.cpp */; };
 		B3EA448D206E473300E608F6 /* CRC_OPT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603912038AE7D001E70F1 /* CRC_OPT.cpp */; };
 		B3EA448F206E473F00E608F6 /* 3DMath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB603292038AE7B001E70F1 /* 3DMath.cpp */; };
+		B3EED1FB2C7179BB00443F64 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3EED1FA2C7179BB00443F64 /* PVSupport */; };
 		B3F2058326FBCBC600A4196B /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F2058226FBCBC600A4196B /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B3FAC9B9292B522C005E8B11 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3FAC9B8292B522C005E8B11 /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
 		DF0035C0203C8F6E00F63831 /* GLideN64.custom.ini in Resources */ = {isa = PBXBuildFile; fileRef = DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */; };
@@ -593,6 +703,34 @@
 			remoteGlobalIDString = B3303E4B1DED23C600896D96;
 			remoteInfo = png;
 		};
+		B3C0786F2C750D33006F109B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3B3B85F1DECEA9100602746;
+			remoteInfo = "PVMupen64PlusRspHLE-iOS";
+		};
+		B3C078712C750D33006F109B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DFB6017F2038AD13001E70F1;
+			remoteInfo = "PVMupen64PlusVideoGlideN64-iOS";
+		};
+		B3C078732C750D33006F109B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B37EFEEF1C72E63300857158;
+			remoteInfo = "PVMupen64PlusVideoRice-iOS";
+		};
+		B3C078752C750D33006F109B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 089C1669FE841209C02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B331158B1C7309C200E9AD14;
+			remoteInfo = "PVRSPCXD4-iOS";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -632,7 +770,7 @@
 		3D208E9D1182551500BEAA42 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		3D208F801182B00300BEAA42 /* MupenGameCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MupenGameCore.h; sourceTree = "<group>"; };
 		3D208F811182B00300BEAA42 /* MupenGameCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MupenGameCore.m; sourceTree = "<group>"; };
-		3D8B35D712260F9D00C4C844 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		3D8B35D712260F9D00C4C844 /* new_vi_main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = new_vi_main.m; sourceTree = "<group>"; };
 		3DC2145D166C6D7F0014251E /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
 		3DC2145E166C6D7F0014251E /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
 		3DCABDC7166C524C002F2066 /* SDL_opengl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL_opengl.h; sourceTree = "<group>"; };
@@ -894,30 +1032,30 @@
 		B3055BEE20730B60001212D2 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30BF1AD2775320F00FF9E07 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B3303E4C1DED23C600896D96 /* libpng.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpng.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3303E551DED23EE00896D96 /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = png/png.h; sourceTree = SOURCE_ROOT; };
-		B3303E561DED23EE00896D96 /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngconf.h; path = png/pngconf.h; sourceTree = SOURCE_ROOT; };
-		B3303E571DED23EE00896D96 /* pngdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngdebug.h; path = png/pngdebug.h; sourceTree = SOURCE_ROOT; };
-		B3303E581DED23EE00896D96 /* pnginfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pnginfo.h; path = png/pnginfo.h; sourceTree = SOURCE_ROOT; };
-		B3303E591DED23EE00896D96 /* pngpriv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngpriv.h; path = png/pngpriv.h; sourceTree = SOURCE_ROOT; };
-		B3303E5A1DED23EE00896D96 /* pngstruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngstruct.h; path = png/pngstruct.h; sourceTree = SOURCE_ROOT; };
-		B3303E5B1DED23EE00896D96 /* example.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = example.c; path = png/example.c; sourceTree = SOURCE_ROOT; };
-		B3303E5C1DED23EE00896D96 /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = png.c; path = png/png.c; sourceTree = SOURCE_ROOT; };
-		B3303E5D1DED23EE00896D96 /* pngerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngerror.c; path = png/pngerror.c; sourceTree = SOURCE_ROOT; };
-		B3303E5E1DED23EE00896D96 /* pngget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngget.c; path = png/pngget.c; sourceTree = SOURCE_ROOT; };
-		B3303E5F1DED23EE00896D96 /* pngmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngmem.c; path = png/pngmem.c; sourceTree = SOURCE_ROOT; };
-		B3303E601DED23EE00896D96 /* pngpread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngpread.c; path = png/pngpread.c; sourceTree = SOURCE_ROOT; };
-		B3303E611DED23EE00896D96 /* pngread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngread.c; path = png/pngread.c; sourceTree = SOURCE_ROOT; };
-		B3303E621DED23EE00896D96 /* pngrio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrio.c; path = png/pngrio.c; sourceTree = SOURCE_ROOT; };
-		B3303E631DED23EE00896D96 /* pngrtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrtran.c; path = png/pngrtran.c; sourceTree = SOURCE_ROOT; };
-		B3303E641DED23EE00896D96 /* pngrutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrutil.c; path = png/pngrutil.c; sourceTree = SOURCE_ROOT; };
-		B3303E651DED23EE00896D96 /* pngset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngset.c; path = png/pngset.c; sourceTree = SOURCE_ROOT; };
-		B3303E661DED23EE00896D96 /* pngtest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngtest.c; path = png/pngtest.c; sourceTree = SOURCE_ROOT; };
-		B3303E671DED23EE00896D96 /* pngtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngtrans.c; path = png/pngtrans.c; sourceTree = SOURCE_ROOT; };
-		B3303E681DED23EE00896D96 /* pngwio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwio.c; path = png/pngwio.c; sourceTree = SOURCE_ROOT; };
-		B3303E691DED23EE00896D96 /* pngwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwrite.c; path = png/pngwrite.c; sourceTree = SOURCE_ROOT; };
-		B3303E6A1DED23EE00896D96 /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwtran.c; path = png/pngwtran.c; sourceTree = SOURCE_ROOT; };
-		B3303E6B1DED23EE00896D96 /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwutil.c; path = png/pngwutil.c; sourceTree = SOURCE_ROOT; };
-		B3303E7D1DED264200896D96 /* pnglibconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = pnglibconf.h; path = png/pnglibconf.h; sourceTree = SOURCE_ROOT; };
+		B3303E551DED23EE00896D96 /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = png.h; sourceTree = "<group>"; };
+		B3303E561DED23EE00896D96 /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngconf.h; sourceTree = "<group>"; };
+		B3303E571DED23EE00896D96 /* pngdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngdebug.h; sourceTree = "<group>"; };
+		B3303E581DED23EE00896D96 /* pnginfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pnginfo.h; sourceTree = "<group>"; };
+		B3303E591DED23EE00896D96 /* pngpriv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngpriv.h; sourceTree = "<group>"; };
+		B3303E5A1DED23EE00896D96 /* pngstruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pngstruct.h; sourceTree = "<group>"; };
+		B3303E5B1DED23EE00896D96 /* example.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = example.c; sourceTree = "<group>"; };
+		B3303E5C1DED23EE00896D96 /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = png.c; sourceTree = "<group>"; };
+		B3303E5D1DED23EE00896D96 /* pngerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngerror.c; sourceTree = "<group>"; };
+		B3303E5E1DED23EE00896D96 /* pngget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngget.c; sourceTree = "<group>"; };
+		B3303E5F1DED23EE00896D96 /* pngmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngmem.c; sourceTree = "<group>"; };
+		B3303E601DED23EE00896D96 /* pngpread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngpread.c; sourceTree = "<group>"; };
+		B3303E611DED23EE00896D96 /* pngread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngread.c; sourceTree = "<group>"; };
+		B3303E621DED23EE00896D96 /* pngrio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngrio.c; sourceTree = "<group>"; };
+		B3303E631DED23EE00896D96 /* pngrtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngrtran.c; sourceTree = "<group>"; };
+		B3303E641DED23EE00896D96 /* pngrutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngrutil.c; sourceTree = "<group>"; };
+		B3303E651DED23EE00896D96 /* pngset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngset.c; sourceTree = "<group>"; };
+		B3303E661DED23EE00896D96 /* pngtest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngtest.c; sourceTree = "<group>"; };
+		B3303E671DED23EE00896D96 /* pngtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngtrans.c; sourceTree = "<group>"; };
+		B3303E681DED23EE00896D96 /* pngwio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwio.c; sourceTree = "<group>"; };
+		B3303E691DED23EE00896D96 /* pngwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwrite.c; sourceTree = "<group>"; };
+		B3303E6A1DED23EE00896D96 /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwtran.c; sourceTree = "<group>"; };
+		B3303E6B1DED23EE00896D96 /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pngwutil.c; sourceTree = "<group>"; };
+		B3303E7D1DED264200896D96 /* pnglibconf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pnglibconf.h; sourceTree = "<group>"; };
 		B3303E811DED272E00896D96 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B331158C1C7309C200E9AD14 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B331158E1C7309C200E9AD14 /* PVRSPCXD4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVRSPCXD4.h; sourceTree = "<group>"; };
@@ -942,11 +1080,8 @@
 		B37EFF3C1C72F43400857158 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B3800FF5208522DC00FA03B8 /* libglidenhq.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglidenhq.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B380101320854EAA00FA03B8 /* TxDbg_ios.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TxDbg_ios.mm; sourceTree = "<group>"; };
-		B395ECF92904B49F00C9407B /* MupenGameCore+Resources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Resources.swift"; sourceTree = "<group>"; };
 		B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B3962AEB26FBD89A00FAEFC0 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
-		B3963E60279E835300B00117 /* MupenGameCore+Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Audio.swift"; sourceTree = "<group>"; };
-		B3963E63279E866B00B00117 /* MupenGameCore+Video.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Video.swift"; sourceTree = "<group>"; };
 		B39C29D027A120780078D028 /* MupenGameCore+Controls.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MupenGameCore+Controls.m"; sourceTree = "<group>"; };
 		B39C29D327A121150078D028 /* MupenGameCore+Controls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MupenGameCore+Controls.h"; sourceTree = "<group>"; };
 		B39C29D627A12D0F0078D028 /* MupenGameCore+Cheats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MupenGameCore+Cheats.h"; sourceTree = "<group>"; };
@@ -957,7 +1092,7 @@
 		B39C29E327A12E6A0078D028 /* MupenGameCore+Mupen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MupenGameCore+Mupen.m"; sourceTree = "<group>"; };
 		B39E8CB52053B53100380DCD /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3A302892073F2AA008C1955 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		B3A3028B2073F2AA008C1955 /* mupen64plus-video-rice.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mupen64plus-video-rice.vcxproj"; sourceTree = "<group>"; };
+		B3A3028B2073F2AA008C1955 /* mupen64plus-video-rice.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = file; path = "mupen64plus-video-rice.vcxproj"; sourceTree = "<group>"; };
 		B3A302912073F2AA008C1955 /* RiceVideoLinux.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = RiceVideoLinux.ini; sourceTree = "<group>"; };
 		B3A302942073F2AA008C1955 /* OGLRender.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLRender.h; sourceTree = "<group>"; };
 		B3A302952073F2AA008C1955 /* Blender.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Blender.cpp; sourceTree = "<group>"; };
@@ -1072,8 +1207,8 @@
 		B3AE1EED20733D3500AD06D4 /* su.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = su.c; sourceTree = "<group>"; };
 		B3AE1EEE20733D3500AD06D4 /* module.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = module.c; sourceTree = "<group>"; };
 		B3AE1EF120733D3500AD06D4 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		B3AE1EF320733D3500AD06D4 /* mupen64plus-rsp-cxd4.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mupen64plus-rsp-cxd4.vcxproj.filters"; sourceTree = "<group>"; };
-		B3AE1EF420733D3500AD06D4 /* mupen64plus-rsp-cxd4.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mupen64plus-rsp-cxd4.vcxproj"; sourceTree = "<group>"; };
+		B3AE1EF320733D3500AD06D4 /* mupen64plus-rsp-cxd4.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = file; path = "mupen64plus-rsp-cxd4.vcxproj.filters"; sourceTree = "<group>"; };
+		B3AE1EF420733D3500AD06D4 /* mupen64plus-rsp-cxd4.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = file; path = "mupen64plus-rsp-cxd4.vcxproj"; sourceTree = "<group>"; };
 		B3AE1EF520733D3500AD06D4 /* osal_dynamiclib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osal_dynamiclib.h; sourceTree = "<group>"; };
 		B3AE1EF620733D3500AD06D4 /* osal_dynamiclib_unix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = osal_dynamiclib_unix.c; sourceTree = "<group>"; };
 		B3AE1EF720733D3500AD06D4 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1086,15 +1221,15 @@
 		B3AE1EFE20733D3500AD06D4 /* module.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = module.h; sourceTree = "<group>"; };
 		B3AE1F0020733D3500AD06D4 /* SSE2NEON.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSE2NEON.h; sourceTree = "<group>"; };
 		B3AE1F0120733D3500AD06D4 /* su.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = su.h; sourceTree = "<group>"; };
-		B3AE1F0220733D3500AD06D4 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
+		B3AE1F0220733D3500AD06D4 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .travis.yml; sourceTree = "<group>"; };
 		B3AE1F0420733D3500AD06D4 /* INSTALL */ = {isa = PBXFileReference; lastKnownFileType = text; path = INSTALL; sourceTree = "<group>"; };
 		B3AE1F0520733D3500AD06D4 /* LICENSES */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSES; sourceTree = "<group>"; };
 		B3AE1F0820733D3500AD06D4 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		B3AE1F0A20733D3500AD06D4 /* mupen64plus-rsp-hle.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mupen64plus-rsp-hle.vcxproj"; sourceTree = "<group>"; };
+		B3AE1F0A20733D3500AD06D4 /* mupen64plus-rsp-hle.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = file; path = "mupen64plus-rsp-hle.vcxproj"; sourceTree = "<group>"; };
 		B3AE1F0B20733D3500AD06D4 /* RELEASE */ = {isa = PBXFileReference; lastKnownFileType = text; path = RELEASE; sourceTree = "<group>"; };
 		B3AE1F0C20733D3500AD06D4 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		B3AE1F0D20733D3500AD06D4 /* .gitattributes */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitattributes; sourceTree = "<group>"; };
-		B3AE1F0E20733D3500AD06D4 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
+		B3AE1F0E20733D3500AD06D4 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .travis.yml; sourceTree = "<group>"; };
 		B3AE1F1020733D3500AD06D4 /* alist_audio.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = alist_audio.c; sourceTree = "<group>"; };
 		B3AE1F1120733D3500AD06D4 /* jpeg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = jpeg.c; sourceTree = "<group>"; };
 		B3AE1F1220733D3500AD06D4 /* memory.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = memory.c; sourceTree = "<group>"; };
@@ -1125,6 +1260,17 @@
 		B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusRspHLE.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3B3B8621DECEA9100602746 /* PVMupen64PlusRspHLE.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVMupen64PlusRspHLE.h; sourceTree = "<group>"; };
 		B3B3B8631DECEA9100602746 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B3C078592C74EC64006F109B /* MupenGameCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MupenGameCore.swift; sourceTree = "<group>"; };
+		B3C0785A2C74EC64006F109B /* MupenGameCore+Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Audio.swift"; sourceTree = "<group>"; };
+		B3C0785B2C74EC64006F109B /* MupenGameCore+Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Controls.swift"; sourceTree = "<group>"; };
+		B3C0785C2C74EC64006F109B /* MupenGameCore+Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Resources.swift"; sourceTree = "<group>"; };
+		B3C0785D2C74EC64006F109B /* MupenGameCore+Rumble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Rumble.swift"; sourceTree = "<group>"; };
+		B3C0785E2C74EC64006F109B /* MupenGameCore+Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Video.swift"; sourceTree = "<group>"; };
+		B3C078672C74EFA8006F109B /* MupenGameCore+Core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MupenGameCore+Core.swift"; sourceTree = "<group>"; };
+		B3C078692C74F9FF006F109B /* MupenGameCore+Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MupenGameCore+Resources.h"; sourceTree = "<group>"; };
+		B3C0786A2C74F9FF006F109B /* MupenGameCore+Resources.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MupenGameCore+Resources.m"; sourceTree = "<group>"; };
+		B3C078F82C750D33006F109B /* PVMupen64PlusCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMupen64PlusCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C078F92C750D38006F109B /* PVMupen64PlusCore-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PVMupen64PlusCore-Info.plist"; path = "/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mupen64Plus/PVMupen64PlusCore-Info.plist"; sourceTree = "<absolute>"; };
 		B3C1031E1C72C9BA00DD066C /* SDL_opengles2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDL_opengles2.h; sourceTree = "<group>"; };
 		B3C3F3D721A9CB9B00EFB09C /* F3DFLX2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DFLX2.cpp; sourceTree = "<group>"; };
 		B3C3F3D821A9CB9B00EFB09C /* F3DEX2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = F3DEX2.cpp; sourceTree = "<group>"; };
@@ -1233,13 +1379,13 @@
 		DFB601C72038AE78001E70F1 /* GLideN64.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GLideN64.vcxproj; sourceTree = "<group>"; };
 		DFB601CA2038AE78001E70F1 /* GLideN64.custom.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = GLideN64.custom.ini; sourceTree = "<group>"; };
 		DFB601CB2038AE78001E70F1 /* GLideN64.ini */ = {isa = PBXFileReference; lastKnownFileType = text; path = GLideN64.ini; sourceTree = "<group>"; };
-		DFB601CE2038AE78001E70F1 /* gliden64_pt_BR.ts */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = gliden64_pt_BR.ts; sourceTree = "<group>"; };
-		DFB601CF2038AE78001E70F1 /* gliden64_fr.ts */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = gliden64_fr.ts; sourceTree = "<group>"; };
-		DFB601D02038AE78001E70F1 /* gliden64_es.ts */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = gliden64_es.ts; sourceTree = "<group>"; };
-		DFB601D12038AE78001E70F1 /* gliden64_it.ts */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = gliden64_it.ts; sourceTree = "<group>"; };
-		DFB601D22038AE78001E70F1 /* gliden64_de.ts */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = gliden64_de.ts; sourceTree = "<group>"; };
-		DFB601D32038AE78001E70F1 /* gliden64_ja.ts */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = gliden64_ja.ts; sourceTree = "<group>"; };
-		DFB601D42038AE78001E70F1 /* gliden64_pl.ts */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = gliden64_pl.ts; sourceTree = "<group>"; };
+		DFB601CE2038AE78001E70F1 /* gliden64_pt_BR.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; path = gliden64_pt_BR.ts; sourceTree = "<group>"; };
+		DFB601CF2038AE78001E70F1 /* gliden64_fr.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; path = gliden64_fr.ts; sourceTree = "<group>"; };
+		DFB601D02038AE78001E70F1 /* gliden64_es.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; path = gliden64_es.ts; sourceTree = "<group>"; };
+		DFB601D12038AE78001E70F1 /* gliden64_it.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; path = gliden64_it.ts; sourceTree = "<group>"; };
+		DFB601D22038AE78001E70F1 /* gliden64_de.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; path = gliden64_de.ts; sourceTree = "<group>"; };
+		DFB601D32038AE78001E70F1 /* gliden64_ja.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; path = gliden64_ja.ts; sourceTree = "<group>"; };
+		DFB601D42038AE78001E70F1 /* gliden64_pl.ts */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.typescript; path = gliden64_pl.ts; sourceTree = "<group>"; };
 		DFB601D62038AE78001E70F1 /* DepthBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DepthBuffer.h; sourceTree = "<group>"; };
 		DFB601D72038AE78001E70F1 /* Keys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Keys.h; sourceTree = "<group>"; };
 		DFB601D82038AE78001E70F1 /* RDP.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RDP.cpp; sourceTree = "<group>"; };
@@ -1650,13 +1796,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3EED1FB2C7179BB00443F64 /* PVSupport in Frameworks */,
+				B3C078582C74DDA2006F109B /* PVSettings in Frameworks */,
 				B37263C626EA1EF000E95488 /* PVMupen64PlusVideoRice.framework in Frameworks */,
 				B37263BE26EA1EF000E95488 /* PVMupen64PlusRspHLE.framework in Frameworks */,
-				B3274E8B2106C19600857F52 /* PVSupport.framework in Frameworks */,
+				B30E9B2B2C71349500C1431E /* PVEmulatorCore in Frameworks */,
+				B30E98FA2C6EF15700C1431E /* PVSupport in Frameworks */,
 				B324C62B21920BC2009F4EDC /* libz.tbd in Frameworks */,
 				B3AFCF782977A6E100A01010 /* PVLogging in Frameworks */,
 				B3AE1DD420731F2700AD06D4 /* libdl.tbd in Frameworks */,
 				B3962AED26FBD8A500FAEFC0 /* OpenGL.framework in Frameworks */,
+				B30E9B282C71348100C1431E /* PVCoreBridge in Frameworks */,
 				B37263CA26EA1EF000E95488 /* PVRSPCXD4.framework in Frameworks */,
 				B324C63121920BDB009F4EDC /* OpenGLES.framework in Frameworks */,
 				B37263C226EA1EF000E95488 /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
@@ -1680,6 +1830,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B3C078DE2C750D33006F109B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C078DF2C750D33006F109B /* PVSupport in Frameworks */,
+				B3C078E02C750D33006F109B /* PVSettings in Frameworks */,
+				B3C078E12C750D33006F109B /* PVMupen64PlusVideoRice.framework in Frameworks */,
+				B3C078E22C750D33006F109B /* PVMupen64PlusRspHLE.framework in Frameworks */,
+				B3C078E32C750D33006F109B /* PVEmulatorCore in Frameworks */,
+				B3C078E42C750D33006F109B /* PVSupport in Frameworks */,
+				B3C078E52C750D33006F109B /* libz.tbd in Frameworks */,
+				B3C078E62C750D33006F109B /* PVLogging in Frameworks */,
+				B3C078E72C750D33006F109B /* libdl.tbd in Frameworks */,
+				B3C078E82C750D33006F109B /* OpenGL.framework in Frameworks */,
+				B3C078E92C750D33006F109B /* PVCoreBridge in Frameworks */,
+				B3C078EA2C750D33006F109B /* PVRSPCXD4.framework in Frameworks */,
+				B3C078EB2C750D33006F109B /* OpenGLES.framework in Frameworks */,
+				B3C078EC2C750D33006F109B /* PVMupen64PlusVideoGlideN64.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DFB6017C2038AD13001E70F1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1697,6 +1868,7 @@
 		089C166AFE841209C02AAC07 /* Mupen64Plus */ = {
 			isa = PBXGroup;
 			children = (
+				B34170C42C71779500469519 /* Sources */,
 				B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */,
 				08FB77AFFE84173DC02AAC07 /* Classes */,
 				32C88E010371C26100C91783 /* Other Sources */,
@@ -1706,11 +1878,11 @@
 				B37EFF391C72F43400857158 /* PVMupen64Plus */,
 				B331158D1C7309C200E9AD14 /* PVRSPCXD4 */,
 				B3B3B8611DECEA9100602746 /* PVMupen64PlusRspHLE */,
-				B3303E4D1DED23C600896D96 /* libpng */,
 				DFB601812038AD13001E70F1 /* PVMupen64PlusVideoGlideN64 */,
 				B30557702072FEBC001212D2 /* PVMupen64Plus-core */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 				B3B3B8551DECE9D800602746 /* Frameworks */,
+				B3C078F92C750D38006F109B /* PVMupen64PlusCore-Info.plist */,
 			);
 			name = Mupen64Plus;
 			sourceTree = "<group>";
@@ -1729,7 +1901,6 @@
 			children = (
 				8D5B49B7048680CD000E48DA /* Info.plist */,
 				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
-				B39E8CB52053B53100380DCD /* Core.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1738,20 +1909,6 @@
 			isa = PBXGroup;
 			children = (
 				93BC04FC298AE9D600BA5157 /* PVDebug.c */,
-				3D208F801182B00300BEAA42 /* MupenGameCore.h */,
-				3D208F811182B00300BEAA42 /* MupenGameCore.m */,
-				B39C29E227A12E690078D028 /* MupenGameCore+Mupen.h */,
-				B39C29E327A12E6A0078D028 /* MupenGameCore+Mupen.m */,
-				B39C29D327A121150078D028 /* MupenGameCore+Controls.h */,
-				B39C29D027A120780078D028 /* MupenGameCore+Controls.m */,
-				B39C29D627A12D0F0078D028 /* MupenGameCore+Cheats.h */,
-				B39C29D727A12D0F0078D028 /* MupenGameCore+Cheats.m */,
-				B39C29DC27A12DA20078D028 /* MupenGameCore+Saves.h */,
-				B39C29DD27A12DA30078D028 /* MupenGameCore+Saves.m */,
-				B35E6C3B207EE3750040709A /* MupenOptions.swift */,
-				B395ECF92904B49F00C9407B /* MupenGameCore+Resources.swift */,
-				B3963E63279E866B00B00117 /* MupenGameCore+Video.swift */,
-				B3963E60279E835300B00117 /* MupenGameCore+Audio.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -1787,6 +1944,7 @@
 				B3303E4C1DED23C600896D96 /* libpng.a */,
 				DFB601802038AD13001E70F1 /* PVMupen64PlusVideoGlideN64.framework */,
 				B3800FF5208522DC00FA03B8 /* libglidenhq.a */,
+				B3C078F82C750D33006F109B /* PVMupen64PlusCore.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1794,8 +1952,6 @@
 		32C88E010371C26100C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B3CB4B23206E5B4B0074706B /* Plugins */,
-				3D2090581182D92800BEAA42 /* Compatibility */,
 				32DBCF630370AF2F00C91783 /* Mupen64Plus_Prefix.pch */,
 			);
 			name = "Other Sources";
@@ -1817,12 +1973,9 @@
 			isa = PBXGroup;
 			children = (
 				3D00F07E1183E52F002995A1 /* SDL */,
-				3D00F06A1183E4AA002995A1 /* eventloop.m */,
+				B34170C82C7178BB00469519 /* App */,
 				3D00F06B1183E4AA002995A1 /* osd.m */,
-				3D00F06C1183E4AA002995A1 /* screenshot.m */,
-				3D00F0BF1183E6FA002995A1 /* vidext.m */,
-				3D8B35D712260F9D00C4C844 /* main.m */,
-				B34601D320813330008C049C /* gliden_osd.cpp */,
+				B34170C92C7178CB00469519 /* GlideN */,
 			);
 			path = Compatibility;
 			sourceTree = "<group>";
@@ -1855,7 +2008,7 @@
 				B30559AB2072FEE9001212D2 /* tools */,
 			);
 			name = Core;
-			path = Plugins/Core;
+			path = Sources/Plugins/Core/Core;
 			sourceTree = SOURCE_ROOT;
 		};
 		B30559AB2072FEE9001212D2 /* tools */ = {
@@ -2497,6 +2650,81 @@
 			path = PVRSPCXD4;
 			sourceTree = "<group>";
 		};
+		B34170C42C71779500469519 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				B34170C62C7177D800469519 /* PVMupenGameCoreSwift */,
+				B34170C52C7177C700469519 /* PVMupenGameCore */,
+				B34170C72C71785000469519 /* libpng */,
+				B3CB4B23206E5B4B0074706B /* Plugins */,
+				3D2090581182D92800BEAA42 /* Compatibility */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		B34170C52C7177C700469519 /* PVMupenGameCore */ = {
+			isa = PBXGroup;
+			children = (
+				3D208F801182B00300BEAA42 /* MupenGameCore.h */,
+				3D208F811182B00300BEAA42 /* MupenGameCore.m */,
+				B39C29D627A12D0F0078D028 /* MupenGameCore+Cheats.h */,
+				B39C29D727A12D0F0078D028 /* MupenGameCore+Cheats.m */,
+				B39C29D327A121150078D028 /* MupenGameCore+Controls.h */,
+				B39C29D027A120780078D028 /* MupenGameCore+Controls.m */,
+				B39C29E227A12E690078D028 /* MupenGameCore+Mupen.h */,
+				B39C29E327A12E6A0078D028 /* MupenGameCore+Mupen.m */,
+				B3C078692C74F9FF006F109B /* MupenGameCore+Resources.h */,
+				B3C0786A2C74F9FF006F109B /* MupenGameCore+Resources.m */,
+				B39C29DC27A12DA20078D028 /* MupenGameCore+Saves.h */,
+				B39C29DD27A12DA30078D028 /* MupenGameCore+Saves.m */,
+			);
+			path = PVMupenGameCore;
+			sourceTree = "<group>";
+		};
+		B34170C62C7177D800469519 /* PVMupenGameCoreSwift */ = {
+			isa = PBXGroup;
+			children = (
+				B3C078592C74EC64006F109B /* MupenGameCore.swift */,
+				B3C078672C74EFA8006F109B /* MupenGameCore+Core.swift */,
+				B3C0785A2C74EC64006F109B /* MupenGameCore+Audio.swift */,
+				B3C0785B2C74EC64006F109B /* MupenGameCore+Controls.swift */,
+				B3C0785C2C74EC64006F109B /* MupenGameCore+Resources.swift */,
+				B3C0785D2C74EC64006F109B /* MupenGameCore+Rumble.swift */,
+				B3C0785E2C74EC64006F109B /* MupenGameCore+Video.swift */,
+				B35E6C3B207EE3750040709A /* MupenOptions.swift */,
+				B3B260772C71883F00E09EC0 /* Resources */,
+			);
+			path = PVMupenGameCoreSwift;
+			sourceTree = "<group>";
+		};
+		B34170C72C71785000469519 /* libpng */ = {
+			isa = PBXGroup;
+			children = (
+				B3303E4D1DED23C600896D96 /* libpng */,
+			);
+			path = libpng;
+			sourceTree = "<group>";
+		};
+		B34170C82C7178BB00469519 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B3C078FD2C751975006F109B /* include */,
+				3D00F06A1183E4AA002995A1 /* eventloop.m */,
+				3D00F06C1183E4AA002995A1 /* screenshot.m */,
+				3D00F0BF1183E6FA002995A1 /* vidext.m */,
+				3D8B35D712260F9D00C4C844 /* new_vi_main.m */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		B34170C92C7178CB00469519 /* GlideN */ = {
+			isa = PBXGroup;
+			children = (
+				B34601D320813330008C049C /* gliden_osd.cpp */,
+			);
+			path = GlideN;
+			sourceTree = "<group>";
+		};
 		B36EF43F279C5AB1005C7ED4 /* arm64 */ = {
 			isa = PBXGroup;
 			children = (
@@ -2863,6 +3091,14 @@
 			path = rsp;
 			sourceTree = "<group>";
 		};
+		B3B260772C71883F00E09EC0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B39E8CB52053B53100380DCD /* Core.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		B3B3B8551DECE9D800602746 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -2888,6 +3124,13 @@
 				B3B3B8631DECEA9100602746 /* Info.plist */,
 			);
 			path = PVMupen64PlusRspHLE;
+			sourceTree = "<group>";
+		};
+		B3C078FD2C751975006F109B /* include */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = include;
 			sourceTree = "<group>";
 		};
 		B3CB4B23206E5B4B0074706B /* Plugins */ = {
@@ -3801,6 +4044,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B39C29DE27A12DA30078D028 /* MupenGameCore+Saves.h in Headers */,
+				B3C0786B2C74F9FF006F109B /* MupenGameCore+Resources.h in Headers */,
 				B39C29D827A12D100078D028 /* MupenGameCore+Cheats.h in Headers */,
 				B36EF42F279C5284005C7ED4 /* r4300_core.h in Headers */,
 				B39C29E427A12E6A0078D028 /* MupenGameCore+Mupen.h in Headers */,
@@ -3818,6 +4062,23 @@
 			files = (
 				B3B3B8641DECEA9100602746 /* PVMupen64PlusRspHLE.h in Headers */,
 				B3C83E23279619400020824C /* ucodes.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C0787C2C750D33006F109B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C0787D2C750D33006F109B /* MupenGameCore+Saves.h in Headers */,
+				B3C0787E2C750D33006F109B /* MupenGameCore+Resources.h in Headers */,
+				B3C0787F2C750D33006F109B /* MupenGameCore+Cheats.h in Headers */,
+				B3C078802C750D33006F109B /* r4300_core.h in Headers */,
+				B3C078812C750D33006F109B /* MupenGameCore+Mupen.h in Headers */,
+				B3C078822C750D33006F109B /* MupenGameCore.h in Headers */,
+				B3C078832C750D33006F109B /* assem_arm.h in Headers */,
+				B3C078842C750D33006F109B /* MupenGameCore+Controls.h in Headers */,
+				B3C078852C750D33006F109B /* PVMupen64Plus.h in Headers */,
+				B3C078862C750D33006F109B /* assem_x86.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4112,6 +4373,11 @@
 			name = PVMupen64Plus;
 			packageProductDependencies = (
 				B3AFCF772977A6E100A01010 /* PVLogging */,
+				B30E98F92C6EF15700C1431E /* PVSupport */,
+				B30E9B272C71348100C1431E /* PVCoreBridge */,
+				B30E9B2A2C71349500C1431E /* PVEmulatorCore */,
+				B3EED1FA2C7179BB00443F64 /* PVSupport */,
+				B3C078572C74DDA2006F109B /* PVSettings */,
 			);
 			productName = PVMupen64PlusDynamic;
 			productReference = B37EFF381C72F43300857158 /* PVMupen64Plus.framework */;
@@ -4151,6 +4417,36 @@
 			name = PVMupen64PlusRspHLE;
 			productName = PVMupen64PlusRspHLE;
 			productReference = B3B3B8601DECEA9100602746 /* PVMupen64PlusRspHLE.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B3C0786D2C750D33006F109B /* PVMupen64PlusCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3C078F42C750D33006F109B /* Build configuration list for PBXNativeTarget "PVMupen64PlusCore" */;
+			buildPhases = (
+				B3C0787C2C750D33006F109B /* Headers */,
+				B3C078872C750D33006F109B /* Sources */,
+				B3C078DE2C750D33006F109B /* Frameworks */,
+				B3C078ED2C750D33006F109B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B3C0786E2C750D33006F109B /* PBXTargetDependency */,
+				B3C078702C750D33006F109B /* PBXTargetDependency */,
+				B3C078722C750D33006F109B /* PBXTargetDependency */,
+				B3C078742C750D33006F109B /* PBXTargetDependency */,
+			);
+			name = PVMupen64PlusCore;
+			packageProductDependencies = (
+				B3C078762C750D33006F109B /* PVLogging */,
+				B3C078772C750D33006F109B /* PVSupport */,
+				B3C078782C750D33006F109B /* PVCoreBridge */,
+				B3C078792C750D33006F109B /* PVEmulatorCore */,
+				B3C0787A2C750D33006F109B /* PVSupport */,
+				B3C0787B2C750D33006F109B /* PVSettings */,
+			);
+			productName = PVMupen64PlusDynamic;
+			productReference = B3C078F82C750D33006F109B /* PVMupen64PlusCore.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		DFB6017F2038AD13001E70F1 /* PVMupen64PlusVideoGlideN64 */ = {
@@ -4219,10 +4515,17 @@
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* Mupen64Plus */;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E9B262C71348100C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B30E9B292C71349500C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3EED1F92C7179BB00443F64 /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B3C078562C74DDA2006F109B /* XCLocalSwiftPackageReference "../../PVSettings" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				B37EFF371C72F43300857158 /* PVMupen64Plus */,
+				B3C0786D2C750D33006F109B /* PVMupen64PlusCore */,
 				B37EFEEF1C72E63300857158 /* PVMupen64PlusVideoRice */,
 				B3B3B85F1DECEA9100602746 /* PVMupen64PlusRspHLE */,
 				B331158B1C7309C200E9AD14 /* PVRSPCXD4 */,
@@ -4266,6 +4569,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C078ED2C750D33006F109B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C078EE2C750D33006F109B /* GLideN64.custom.ini in Resources */,
+				B3C078EF2C750D33006F109B /* RiceVideoLinux.ini in Resources */,
+				B3C078F02C750D33006F109B /* mupencheat.txt in Resources */,
+				B3C078F12C750D33006F109B /* mupen64plus.ini in Resources */,
+				B3C078F22C750D33006F109B /* Core.plist in Resources */,
+				B3C078F32C750D33006F109B /* GLideN64.ini in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4372,10 +4688,9 @@
 			files = (
 				93BC04FD298AE9D600BA5157 /* PVDebug.c in Sources */,
 				B3AE1DC7207312BB00AD06D4 /* screenshot.m in Sources */,
-				B3963E61279E835300B00117 /* MupenGameCore+Audio.swift in Sources */,
 				B3AE1DC1207311E900AD06D4 /* vidext.m in Sources */,
 				B3AE1D8B207311E900AD06D4 /* eventloop.m in Sources */,
-				B3AE1DC8207312E000AD06D4 /* main.m in Sources */,
+				B3AE1DC8207312E000AD06D4 /* new_vi_main.m in Sources */,
 				B3AE1DA6207311E900AD06D4 /* SDLStubs.m in Sources */,
 				B37EFF861C72F47000857158 /* MupenGameCore.m in Sources */,
 				B3AE1D96207311E900AD06D4 /* md5.c in Sources */,
@@ -4389,6 +4704,7 @@
 				B3AE1DCD207317D500AD06D4 /* cached_interp.c in Sources */,
 				B3AE1D90207311E900AD06D4 /* lirc.c in Sources */,
 				B3AE1D86207311E900AD06D4 /* xxhash.c in Sources */,
+				B3C0786C2C74F9FF006F109B /* MupenGameCore+Resources.m in Sources */,
 				B3AE1DA2207311E900AD06D4 /* af_rtc.c in Sources */,
 				B3AE1D93207311E900AD06D4 /* memory.c in Sources */,
 				B3AE1D9A207311E900AD06D4 /* interrupt.c in Sources */,
@@ -4422,14 +4738,19 @@
 				B3AE1DD720732E5200AD06D4 /* ioapi.c in Sources */,
 				B3AE1D94207311E900AD06D4 /* files_macos.c in Sources */,
 				B3AE1D83207311E900AD06D4 /* savestates.c in Sources */,
-				B3963E64279E867100B00117 /* MupenGameCore+Video.swift in Sources */,
 				B3AE1DAB207311E900AD06D4 /* dummy_input.c in Sources */,
 				B3AE1D81207311E900AD06D4 /* bootrom_hle.c in Sources */,
 				B3AE1DBF207311E900AD06D4 /* ri_controller.c in Sources */,
 				B3AE1D88207311E900AD06D4 /* cheat.c in Sources */,
 				B3AE1DAF207311E900AD06D4 /* util.c in Sources */,
 				B3AE1D87207311E900AD06D4 /* gb_cart.c in Sources */,
+				B3C078682C74EFA8006F109B /* MupenGameCore+Core.swift in Sources */,
 				B3AE1DBA207311E900AD06D4 /* mbc3_rtc.c in Sources */,
+				B3C078622C74EC64006F109B /* MupenGameCore+Rumble.swift in Sources */,
+				B3C078632C74EC64006F109B /* MupenGameCore+Audio.swift in Sources */,
+				B3C078642C74EC64006F109B /* MupenGameCore+Resources.swift in Sources */,
+				B3C078652C74EC64006F109B /* MupenGameCore+Controls.swift in Sources */,
+				B3C078662C74EC64006F109B /* MupenGameCore+Video.swift in Sources */,
 				B3AE1DB6207311E900AD06D4 /* cart_rom.c in Sources */,
 				B3AE1D95207311E900AD06D4 /* tlb.c in Sources */,
 				B3AE1DAC207311E900AD06D4 /* mi_controller.c in Sources */,
@@ -4448,7 +4769,6 @@
 				B3AE1DC3207311E900AD06D4 /* r4300_core.c in Sources */,
 				B3AE1D97207311E900AD06D4 /* game_controller.c in Sources */,
 				B3AE1D85207311E900AD06D4 /* m64282fp.c in Sources */,
-				B395ECFA2904B49F00C9407B /* MupenGameCore+Resources.swift in Sources */,
 				B3AE1D8C207311E900AD06D4 /* dummy_video.c in Sources */,
 				B3AE1DB4207311E900AD06D4 /* rdram.c in Sources */,
 				B3AE1DC5207311E900AD06D4 /* mempak.c in Sources */,
@@ -4498,6 +4818,84 @@
 				B3AE1F4F20733D6000AD06D4 /* osal_dynamiclib_unix.c in Sources */,
 				B3AE1F5020733D6000AD06D4 /* plugin.c in Sources */,
 				B3AE1F5120733D6000AD06D4 /* re2.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3C078872C750D33006F109B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3C078882C750D33006F109B /* PVDebug.c in Sources */,
+				B3C0788D2C750D33006F109B /* SDLStubs.m in Sources */,
+				B3C0788F2C750D33006F109B /* md5.c in Sources */,
+				B3C078902C750D33006F109B /* cart.c in Sources */,
+				B3C078912C750D33006F109B /* callbacks.c in Sources */,
+				B3C078922C750D33006F109B /* flashram.c in Sources */,
+				B3C078FA2C750E84006F109B /* screenshot.m in Sources */,
+				B3C078FB2C750E84006F109B /* eventloop.m in Sources */,
+				B3C078932C750D33006F109B /* pure_interp.c in Sources */,
+				B3C078942C750D33006F109B /* main.c in Sources */,
+				B3C078952C750D33006F109B /* cp0.c in Sources */,
+				B3C078962C750D33006F109B /* common.c in Sources */,
+				B3C078972C750D33006F109B /* cached_interp.c in Sources */,
+				B3C078982C750D33006F109B /* lirc.c in Sources */,
+				B3C078992C750D33006F109B /* xxhash.c in Sources */,
+				B3C0789B2C750D33006F109B /* af_rtc.c in Sources */,
+				B3C0789C2C750D33006F109B /* memory.c in Sources */,
+				B3C0789D2C750D33006F109B /* interrupt.c in Sources */,
+				B3C0789F2C750D33006F109B /* cic.c in Sources */,
+				B3C078A02C750D33006F109B /* plugin.c in Sources */,
+				B3C078A12C750D33006F109B /* device.c in Sources */,
+				B3C078A22C750D33006F109B /* rdp_core.c in Sources */,
+				B3C078A32C750D33006F109B /* file_storage.c in Sources */,
+				B3C078A42C750D33006F109B /* ai_controller.c in Sources */,
+				B3C078A52C750D33006F109B /* dummy_rsp.c in Sources */,
+				B3C078A62C750D33006F109B /* si_controller.c in Sources */,
+				B3C078A72C750D33006F109B /* audio_plugin_compat.c in Sources */,
+				B3C078A82C750D33006F109B /* vi_controller.c in Sources */,
+				B3C078A92C750D33006F109B /* rom.c in Sources */,
+				B3C078AA2C750D33006F109B /* zip.c in Sources */,
+				B3C078AB2C750D33006F109B /* frontend.c in Sources */,
+				B3C078AD2C750D33006F109B /* dummy_audio.c in Sources */,
+				B3C078AE2C750D33006F109B /* config.c in Sources */,
+				B3C078AF2C750D33006F109B /* rsp_core.c in Sources */,
+				B3C078B02C750D33006F109B /* eeprom.c in Sources */,
+				B3C078B12C750D33006F109B /* unzip.c in Sources */,
+				B3C078B32C750D33006F109B /* rumblepak.c in Sources */,
+				B3C078B52C750D33006F109B /* input_plugin_compat.c in Sources */,
+				B3C078B62C750D33006F109B /* asm_defines.c in Sources */,
+				B3C078B72C750D33006F109B /* dynamiclib_unix.c in Sources */,
+				B3C078B82C750D33006F109B /* sram.c in Sources */,
+				B3C078B92C750D33006F109B /* ioapi.c in Sources */,
+				B3C078BA2C750D33006F109B /* files_macos.c in Sources */,
+				B3C078BB2C750D33006F109B /* savestates.c in Sources */,
+				B3C078BC2C750D33006F109B /* dummy_input.c in Sources */,
+				B3C078BD2C750D33006F109B /* bootrom_hle.c in Sources */,
+				B3C078BE2C750D33006F109B /* ri_controller.c in Sources */,
+				B3C078BF2C750D33006F109B /* cheat.c in Sources */,
+				B3C078C02C750D33006F109B /* util.c in Sources */,
+				B3C078C12C750D33006F109B /* gb_cart.c in Sources */,
+				B3C078C32C750D33006F109B /* mbc3_rtc.c in Sources */,
+				B3C078C92C750D33006F109B /* cart_rom.c in Sources */,
+				B3C078CA2C750D33006F109B /* tlb.c in Sources */,
+				B3C078CB2C750D33006F109B /* mi_controller.c in Sources */,
+				B3C078CC2C750D33006F109B /* workqueue.c in Sources */,
+				B3C078CD2C750D33006F109B /* pi_controller.c in Sources */,
+				B3C078CE2C750D33006F109B /* fb.c in Sources */,
+				B3C078CF2C750D33006F109B /* pif.c in Sources */,
+				B3C078D02C750D33006F109B /* debugger.c in Sources */,
+				B3C078D12C750D33006F109B /* idec.c in Sources */,
+				B3C078D22C750D33006F109B /* sdl_key_converter.c in Sources */,
+				B3C078D42C750D33006F109B /* cp1.c in Sources */,
+				B3C078D52C750D33006F109B /* transferpak.c in Sources */,
+				B3C078D62C750D33006F109B /* clock_ctime_plus_delta.c in Sources */,
+				B3C078D72C750D33006F109B /* n64_cic_nus_6105.c in Sources */,
+				B3C078D82C750D33006F109B /* r4300_core.c in Sources */,
+				B3C078D92C750D33006F109B /* game_controller.c in Sources */,
+				B3C078DA2C750D33006F109B /* m64282fp.c in Sources */,
+				B3C078DB2C750D33006F109B /* dummy_video.c in Sources */,
+				B3C078DC2C750D33006F109B /* rdram.c in Sources */,
+				B3C078DD2C750D33006F109B /* mempak.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4656,6 +5054,31 @@
 			target = B3303E4B1DED23C600896D96 /* png */;
 			targetProxy = B3AF701921916E0F000FA7F9 /* PBXContainerItemProxy */;
 		};
+		B3C0786E2C750D33006F109B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3B3B85F1DECEA9100602746 /* PVMupen64PlusRspHLE */;
+			targetProxy = B3C0786F2C750D33006F109B /* PBXContainerItemProxy */;
+		};
+		B3C078702C750D33006F109B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DFB6017F2038AD13001E70F1 /* PVMupen64PlusVideoGlideN64 */;
+			targetProxy = B3C078712C750D33006F109B /* PBXContainerItemProxy */;
+		};
+		B3C078722C750D33006F109B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			platformFilters = (
+				ios,
+				tvos,
+				watchos,
+			);
+			target = B37EFEEF1C72E63300857158 /* PVMupen64PlusVideoRice */;
+			targetProxy = B3C078732C750D33006F109B /* PBXContainerItemProxy */;
+		};
+		B3C078742C750D33006F109B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B331158B1C7309C200E9AD14 /* PVRSPCXD4 */;
+			targetProxy = B3C078752C750D33006F109B /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -4717,14 +5140,7 @@
 					"@loader_path/Frameworks",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-fPIC",
-					"-D__unix__",
-				);
+				OTHER_CFLAGS = "";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fvisibility-inlines-hidden",
@@ -4733,7 +5149,6 @@
 				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos appletvsimulator appletvos macosx";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
@@ -4783,14 +5198,7 @@
 					"@loader_path/Frameworks",
 				);
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-fPIC",
-					"-D__unix__",
-				);
+				OTHER_CFLAGS = "";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fvisibility-inlines-hidden",
@@ -4800,7 +5208,6 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
@@ -4850,14 +5257,7 @@
 					"@loader_path/Frameworks",
 				);
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-fno-strict-aliasing",
-					"-fvisibility=hidden",
-					"-DGCC",
-					"-pthread",
-					"-fPIC",
-					"-D__unix__",
-				);
+				OTHER_CFLAGS = "";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fvisibility-inlines-hidden",
@@ -4867,7 +5267,6 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGLES;
 			};
@@ -4911,13 +5310,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"\"$(SRCROOT)/Plugins/Core/src\"",
-					"\"$(SRCROOT)/Plugins/Core/src/asm_defines\"",
+					"\"$(SRCROOT)/Sources/Compatibility/SDL\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/src\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/src/asm_defines\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4999,12 +5398,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Plugins/Core/src\"",
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"\"$(SRCROOT)/png\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/src\"",
+					"\"$(SRCROOT)/Sources/Compatibility/SDL\"",
+					"\"$(SRCROOT)/Sources/libpng/png\"",
 				);
 				INFOPLIST_FILE = "PVMupen64PlusVideoRice-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5013,7 +5413,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/png\"",
+					"\"$(SRCROOT)/Sources/libpng/png\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
@@ -5089,6 +5489,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = PVMupen64PlusRspHLE/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5141,7 +5542,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Core/src/api\"";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/Plugins/Core/Core/src/api\"";
 				INFOPLIST_FILE = PVRSPCXD4/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -5226,20 +5627,20 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusVideoGlideN64/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -5289,7 +5690,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/png\"",
+					"\"$(SRCROOT)/Sources/libpng/png\"",
 				);
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -5351,21 +5752,21 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNHQ/inc\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
+					"\"$(SRCROOT)Sources//Plugins/Video/gliden64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
 				);
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -5404,7 +5805,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/png\"",
+					"\"$(SRCROOT)/Sources/libpng/png\"",
 				);
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -5458,7 +5859,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/png\"",
+					"\"$(SRCROOT)/Sources/libpng/png\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
@@ -5526,7 +5927,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Core/src/api\"";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/Plugins/Core/Core/src/api\"";
 				INFOPLIST_FILE = PVRSPCXD4/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -5589,7 +5990,7 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Plugins/Core/src/api\"";
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/Plugins/Core/Core/src/api\"";
 				INFOPLIST_FILE = PVRSPCXD4/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -5662,12 +6063,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Plugins/Core/src\"",
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"\"$(SRCROOT)/png\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/src\"",
+					"\"$(SRCROOT)/Sources/Compatibility/SDL\"",
+					"\"$(SRCROOT)/Sources/libpng/png\"",
 				);
 				INFOPLIST_FILE = "PVMupen64PlusVideoRice-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5676,7 +6078,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/png\"",
+					"\"$(SRCROOT)/Sources/libpng/png\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_CFLAGS = (
@@ -5740,12 +6142,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Plugins/Core/src\"",
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"\"$(SRCROOT)/png\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/src\"",
+					"\"$(SRCROOT)/Sources/Compatibility/SDL\"",
+					"\"$(SRCROOT)/Sources/libpng/png\"",
 				);
 				INFOPLIST_FILE = "PVMupen64PlusVideoRice-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5754,7 +6157,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/png\"",
+					"\"$(SRCROOT)/Sources/libpng/png\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = (
@@ -5832,13 +6235,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"\"$(SRCROOT)/Plugins/Core/src\"",
-					"\"$(SRCROOT)/Plugins/Core/src/asm_defines\"",
+					"\"$(SRCROOT)/Sources/Compatibility/SDL\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/src\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/src/asm_defines\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5915,13 +6318,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Compatibility/SDL\"",
-					"\"$(SRCROOT)/Plugins/Core/src\"",
-					"\"$(SRCROOT)/Plugins/Core/src/asm_defines\"",
+					"\"$(SRCROOT)/Sources/Compatibility/SDL\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/src\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/src/asm_defines\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusDynamic/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -5996,21 +6399,21 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNHQ/inc\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
+					"\"$(SRCROOT)Sources//Plugins/Video/gliden64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
 				);
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -6052,21 +6455,21 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNHQ/inc\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
+					"\"$(SRCROOT)Sources//Plugins/Video/gliden64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
@@ -6123,6 +6526,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = PVMupen64PlusRspHLE/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6181,6 +6585,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				INFOPLIST_FILE = PVMupen64PlusRspHLE/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -6200,6 +6605,274 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
+		};
+		B3C078F52C750D33006F109B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3962AEA26FBD16000FAEFC0 /* Config.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = NO;
+				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/Compatibility/SDL\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/Core/src\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/Core/src/asm_defines\"",
+				);
+				INFOPLIST_FILE = "PVMupen64PlusCore-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DM64P_PARALLEL=1",
+					"-DIN_OPENEMU=1",
+					"-DM64P_CORE_PROTOTYPES=1",
+					"-DPIC=1",
+					"-DUSE_GLES=1",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plus";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				USER_HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Plugins/Core/src\"",
+					"\"$(SRCROOT)/Compatibility/SDL\"",
+				);
+				USE_HEADERMAP = NO;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		B3C078F62C750D33006F109B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
+				GCC_NO_COMMON_BLOCKS = NO;
+				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/Compatibility/SDL\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/Core/src\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/Core/src/asm_defines\"",
+				);
+				INFOPLIST_FILE = "PVMupen64PlusCore-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DM64P_PARALLEL=1",
+					"-DIN_OPENEMU=1",
+					"-DNO_ASM=1",
+					"-DM64P_CORE_PROTOTYPES=1",
+					"-DNDEBUG=1",
+					"-DPIC=1",
+					"-flto",
+					"-fvisibility=hidden",
+					"-ffast-math",
+					"-fno-strict-aliasing",
+					"-fomit-frame-pointer",
+					"-DUSE_GLES=1",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plus";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				USER_HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Plugins/Core/src\"",
+					"\"$(SRCROOT)/Compatibility/SDL\"",
+				);
+				USE_HEADERMAP = NO;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B3C078F72C750D33006F109B /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
+				GCC_NO_COMMON_BLOCKS = NO;
+				GCC_PREFIX_HEADER = Mupen64Plus_Prefix.pch;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Sources/Compatibility/SDL\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/Core/src\"",
+					"\"$(SRCROOT)/Sources/Plugins/Core/Core/src/asm_defines\"",
+				);
+				INFOPLIST_FILE = "PVMupen64PlusCore-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DM64P_PARALLEL=1",
+					"-DIN_OPENEMU=1",
+					"-DNO_ASM=1",
+					"-DM64P_CORE_PROTOTYPES=1",
+					"-DNDEBUG=1",
+					"-DPIC=1",
+					"-flto",
+					"-fvisibility=hidden",
+					"-ffast-math",
+					"-fno-strict-aliasing",
+					"-fomit-frame-pointer",
+					"-DUSE_GLES=1",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMupen64plus";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = YES;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
+				USER_HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/Plugins/Core/src\"",
+					"\"$(SRCROOT)/Compatibility/SDL\"",
+				);
+				USE_HEADERMAP = NO;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Archive;
 		};
 		DFB601852038AD13001E70F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -6262,20 +6935,20 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusVideoGlideN64/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -6352,20 +7025,20 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				HEADER_SEARCH_PATHS = (
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/BufferCopy\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/common\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/DepthBufferRender\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNHQ\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/GLideNUI\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Graphics\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/inc\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/mupenplus\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/Neon\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/osal\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/uCodes\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/windows\"",
-					"\"$(SRCROOT)/Plugins/Video/gliden64/src/xxHash\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/BufferCopy\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/common\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/DepthBufferRender\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNHQ\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/GLideNUI\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Graphics\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/inc\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/mupenplus\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/Neon\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/osal\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/uCodes\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/windows\"",
+					"\"$(SRCROOT)/Sources/Plugins/Video/gliden64/src/xxHash\"",
 				);
 				INFOPLIST_FILE = PVMupen64PlusVideoGlideN64/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -6465,6 +7138,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B3C078F42C750D33006F109B /* Build configuration list for PBXNativeTarget "PVMupen64PlusCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3C078F52C750D33006F109B /* Debug */,
+				B3C078F62C750D33006F109B /* Release */,
+				B3C078F72C750D33006F109B /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		DFB601872038AD13001E70F1 /* Build configuration list for PBXNativeTarget "PVMupen64PlusVideoGlideN64" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -6477,10 +7160,73 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30E9B262C71348100C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B30E9B292C71349500C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B3C078562C74DDA2006F109B /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
+		B3EED1F92C7179BB00443F64 /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B30E98F92C6EF15700C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9B272C71348100C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B30E9B2A2C71349500C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
 		B3AFCF772977A6E100A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B3C078572C74DDA2006F109B /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		B3C078762C750D33006F109B /* PVLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLogging;
+		};
+		B3C078772C750D33006F109B /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B3C078782C750D33006F109B /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B3C078792C750D33006F109B /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B3C0787A2C750D33006F109B /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B3C0787B2C750D33006F109B /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		B3EED1FA2C7179BB00443F64 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
