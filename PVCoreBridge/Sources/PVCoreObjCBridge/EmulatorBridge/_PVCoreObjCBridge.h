@@ -10,8 +10,12 @@
 #import <Foundation/Foundation.h>
 #import <GameController/GameController.h>
 #import <MetalKit/MTKView.h>
+@import PVCoreBridge;
+#import <PVObjCUtils/PVObjCUtils.h>
 #else
 @import Foundation;
+@import PVCoreBridge;
+@import PVObjCUtils;
 #if !TARGET_OS_WATCH
 @import GameController;
 @import MetalKit.MTKView;
@@ -19,24 +23,12 @@
 #endif
 
 #if TARGET_OS_OSX
+#ifdef __cplusplus
 #import <OpenGL/OpenGL.h>
+#else
+@import OpenGL;
 #endif
-
-@import PVCoreBridge;
-//#include "PVCoreBridge-Swift.h"
-
-//#import <PVCoreBridge/PVCoreBridge-Swift.h>
-//#include "PVCoreBridge-Swift.h"
-@import PVObjCUtils;
-
-//@protocol EmulatorCoreSavesDataSource;
-//@protocol EmulatorCoreAudioDataSource;
-//@protocol EmulatorCoreControllerDataSource;
-//@protocol EmulatorCoreVideoDelegate;
-//@protocol EmulatorCoreRumbleDataSource;
-//@protocol EmulatorCoreRunLoop;
-//typedef int GameSpeed;
-//typedef int GLESVersion;
+#endif
 
 #pragma mark -
 
