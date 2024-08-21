@@ -605,11 +605,13 @@ public extension RomDatabase {
         reloadBIOSCache()
     }
     func reloadBIOSCache() {
-        var files:[String:[String]]=[:]
-        getSystemCache().values.forEach { system in
-            files = addFileSystemBIOSCache(system, files:files)
+        Task.detached(priority: .medium) { [self] in
+            var files:[String:[String]]=[:]
+            self.getSystemCache().values.forEach { system in
+                files = addFileSystemBIOSCache(system, files:files)
+            }
+            RomDatabase.biosCache = files
         }
-        RomDatabase.biosCache = files
     }
     func addFileSystemBIOSCache(_ system:PVSystem, files:[String:[String]]) -> [String:[String]] {
         var files = files
@@ -731,16 +733,19 @@ public extension RomDatabase {
         }
     }
     func reloadFileSystemROMCache() {
-        NSLog("RomDatabase: reloadFileSystemROMCache")
-        var files:[URL:PVSystem]=[:]
-        getSystemCache().values.forEach { system in
-            files = addFileSystemROMCache(system, files:files)
+        Task {
+            NSLog("RomDatabase: reloadFileSystemROMCache")
+            var files:[URL:PVSystem]=[:]
+            await getSystemCache().values.asyncForEach { system in
+                files = await addFileSystemROMCache(system, files:files)
+            }
+            RomDatabase.fileSystemROMCache = files
         }
-        RomDatabase.fileSystemROMCache = files
     }
-    func addFileSystemROMCache(_ system:PVSystem, files:[URL:PVSystem]) -> [URL:PVSystem] {
+    
+    func addFileSystemROMCache(_ system:PVSystem, files:[URL:PVSystem]) async -> [URL:PVSystem] {
         var files = files
-        let systemDir = system.romsDirectory
+        let systemDir = await system.romsDirectory
         if !FileManager.default.fileExists(atPath: systemDir.path) {
             do {
                 try FileManager.default.createDirectory(atPath: systemDir.path, withIntermediateDirectories: true, attributes: nil)
@@ -760,11 +765,15 @@ public extension RomDatabase {
             }
         return files
     }
+    
     func addFileSystemROMCache(_ system:PVSystem) {
-        if let files = RomDatabase.fileSystemROMCache {
-            RomDatabase.fileSystemROMCache = addFileSystemROMCache(system, files:files)
+        Task {
+            if let files = RomDatabase.fileSystemROMCache {
+                RomDatabase.fileSystemROMCache = await addFileSystemROMCache(system, files:files)
+            }
         }
     }
+    
     func getFileSystemROMCache() -> [URL:PVSystem] {
         if RomDatabase.fileSystemROMCache == nil {
             self.reloadFileSystemROMCache()
