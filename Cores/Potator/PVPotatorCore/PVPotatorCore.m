@@ -17,8 +17,11 @@
 #import <Foundation/Foundation.h>
 @import PVEmulatorCore;
 @import PVLoggingObjC;
+
+#if SWIFT_MODULE
 @import libpotator;
 @import PVPotatorSwift;
+#endif
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4

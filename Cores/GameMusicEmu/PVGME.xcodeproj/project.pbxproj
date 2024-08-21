@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B30E98B92C6EEF7C00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98B82C6EEF7C00C1431E /* PVSupport */; };
+		B30E98BC2C6EEF8800C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98BB2C6EEF8800C1431E /* PVLibRetro */; };
+		B30E99E92C6F054A00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99E82C6F054A00C1431E /* PVCoreBridge */; };
 		B3135B9B26E4CAD40047F338 /* PVGMECore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVGMECore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVGMECore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVGMECore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135BA126E4CC620047F338 /* PVGME.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVGME.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -19,7 +22,6 @@
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B380C2712894F63C007B76FD /* PVGMECore+Saves.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVGMECore+Saves.m */; };
 		B381A27A292637CD00305322 /* encoding_utf.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C12B2894D28700CF98C7 /* encoding_utf.c */; };
-		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3AFCF8C2977A77B00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF8B2977A77B00A01010 /* PVLogging */; };
 		B3C2CCAC2894D78E00DE3B94 /* player.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1972894D28800CF98C7 /* player.c */; };
 		B3C2CCAD2894D78E00DE3B94 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C1902894D28700CF98C7 /* libretro.c */; };
@@ -100,7 +102,6 @@
 		B3C2CD572894D8AE00DE3B94 /* Nsf_Emu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3E6C0DB2894D28600CF98C7 /* Nsf_Emu.cpp */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3D3E7522894DC890016EB85 /* libgme-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libgme-libretro.a */; };
 		B3D3E7552894DC890016EB85 /* libgme.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libgme.a */; };
 		B3EBB2032872B65700EAEB37 /* PVGMECore+Video.m in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVGMECore+Video.m */; };
@@ -410,18 +411,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30E98B92C6EEF7C00C1431E /* PVSupport in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
+				B30E99E92C6F054A00C1431E /* PVCoreBridge in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
+				B30E98BC2C6EEF8800C1431E /* PVLibRetro in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B3D3E7552894DC890016EB85 /* libgme.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3D3E7522894DC890016EB85 /* libgme-libretro.a in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
 				B3AFCF8C2977A77B00A01010 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -994,6 +996,9 @@
 			name = PVGME;
 			packageProductDependencies = (
 				B3AFCF8B2977A77B00A01010 /* PVLogging */,
+				B30E98B82C6EEF7C00C1431E /* PVSupport */,
+				B30E98BB2C6EEF8800C1431E /* PVLibRetro */,
+				B30E99E82C6F054A00C1431E /* PVCoreBridge */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVGME.framework */;
@@ -1040,6 +1045,11 @@
 			);
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E98B72C6EEF7C00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E98BA2C6EEF8800C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */,
+				B30E99E72C6F054A00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1652,7 +1662,34 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30E98B72C6EEF7C00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E98BA2C6EEF8800C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLibRetro;
+		};
+		B30E99E72C6F054A00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B30E98B82C6EEF7C00C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E98BB2C6EEF8800C1431E /* PVLibRetro */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLibRetro;
+		};
+		B30E99E82C6F054A00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
 		B3AFCF8B2977A77B00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

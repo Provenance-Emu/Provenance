@@ -8,22 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		B301797F207C909E0051B93D /* libpotator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libpotator.a */; };
+		B30E98A72C6EEF0900C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98A62C6EEF0900C1431E /* PVSupport */; };
+		B30E98AA2C6EEF1600C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98A92C6EEF1600C1431E /* PVLibRetro */; };
+		B30E99DD2C6F048300C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99DC2C6F048300C1431E /* PVCoreBridge */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
-		B37022C82872553E00B3F6DA /* PVPotatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVPotatorCore.mm */; };
+		B37022C82872553E00B3F6DA /* PVPotatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVPotatorCore.m */; };
 		B37022C92872554300B3F6DA /* PVPotatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVPotatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVPotator.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVPotator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libpotator-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libpotator-libretro.a */; };
-		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3AFCF862977A73500A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF852977A73500A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3FF641F2873EBCC00829C14 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0FE2872965F00EAEB37 /* libretro.c */; };
 		B3FF64212873EBEB00829C14 /* gpu.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1132872965F00EAEB37 /* gpu.c */; };
 		B3FF64222873EBEB00829C14 /* memorymap.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA1122872965F00EAEB37 /* memorymap.c */; };
@@ -80,11 +81,11 @@
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B37022BD287253B300B3F6DA /* PVPotator-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVPotator-Prefix.pch"; sourceTree = "<group>"; };
 		B37022BF287253B300B3F6DA /* Core.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
-		B37022C0287253B300B3F6DA /* PVPotator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPotator.h; sourceTree = "<group>"; };
+		B37022C0287253B300B3F6DA /* PVPotator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PVPotator.h; path = ../PVPotatorCore/include/PVPotator.h; sourceTree = "<group>"; };
 		B37022C1287253B300B3F6DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B37022C3287253B300B3F6DA /* PVPotator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPotator.h; sourceTree = "<group>"; };
 		B37022C5287253B300B3F6DA /* PVPotatorCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPotatorCore.h; sourceTree = "<group>"; };
-		B37022C6287253B300B3F6DA /* PVPotatorCore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PVPotatorCore.mm; sourceTree = "<group>"; };
+		B37022C6287253B300B3F6DA /* PVPotatorCore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PVPotatorCore.m; sourceTree = "<group>"; };
 		B39769132859E3A300558958 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B39769172859E3AD00558958 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/CoreFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B39769182859E3AD00558958 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -148,18 +149,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30E98A72C6EEF0900C1431E /* PVSupport in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
+				B30E99DD2C6F048300C1431E /* PVCoreBridge in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
+				B30E98AA2C6EEF1600C1431E /* PVLibRetro in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libpotator.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39768F82859E23200558958 /* libpotator-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
 				B3AFCF862977A73500A01010 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -181,7 +183,7 @@
 			isa = PBXGroup;
 			children = (
 				B37022C5287253B300B3F6DA /* PVPotatorCore.h */,
-				B37022C6287253B300B3F6DA /* PVPotatorCore.mm */,
+				B37022C6287253B300B3F6DA /* PVPotatorCore.m */,
 			);
 			path = PVPotatorCore;
 			sourceTree = "<group>";
@@ -412,6 +414,9 @@
 			name = PVPotator;
 			packageProductDependencies = (
 				B3AFCF852977A73500A01010 /* PVLogging */,
+				B30E98A62C6EEF0900C1431E /* PVSupport */,
+				B30E98A92C6EEF1600C1431E /* PVLibRetro */,
+				B30E99DC2C6F048300C1431E /* PVCoreBridge */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVPotator.framework */;
@@ -458,6 +463,11 @@
 			);
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E98A52C6EEF0900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E98A82C6EEF1600C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */,
+				B30E99DB2C6F047C00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -507,7 +517,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37022C82872553E00B3F6DA /* PVPotatorCore.mm in Sources */,
+				B37022C82872553E00B3F6DA /* PVPotatorCore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1038,7 +1048,35 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30E98A52C6EEF0900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E98A82C6EEF1600C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLibRetro;
+		};
+		B30E99DB2C6F047C00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B30E98A62C6EEF0900C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E98A92C6EEF1600C1431E /* PVLibRetro */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLibRetro;
+		};
+		B30E99DC2C6F048300C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B30E99DB2C6F047C00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */;
+			productName = PVCoreBridge;
+		};
 		B3AFCF852977A73500A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

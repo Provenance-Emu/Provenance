@@ -34,8 +34,10 @@
 		934D87542A777AB300C3107A /* libzlibDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F22A777A3700C3107A /* libzlibDuckstation.a */; };
 		934D87552A777AB300C3107A /* libzstdDuckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 934D86F42A777A3700C3107A /* libzstdDuckstation.a */; };
 		939AAF6D2A791EC7007709E5 /* libduckstation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D8A54026BE55780096A354 /* libduckstation.a */; };
-		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (Weak, ); }; };
-		B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C63F21920EB9009F4EDC /* PVSupport.framework */; };
+		B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30A2009278FC9FF009E08C9 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (Weak, ); }; };
+		B30E99052C6EF1A900C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99042C6EF1A900C1431E /* PVSupport */; };
+		B30E9B162C6FD0F200C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B152C6FD0F200C1431E /* PVEmulatorCore */; };
+		B30E9B192C6FD0FE00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B182C6FD0FE00C1431E /* PVCoreBridge */; };
 		B34C2BF4296F9B24002146BB /* OpenGLHostDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */; };
 		B34C2C13296FBEDA002146BB /* duckstation_null.c in Sources */ = {isa = PBXBuildFile; fileRef = B34C2C12296FBEDA002146BB /* duckstation_null.c */; };
 		B34C2C14296FBFBD002146BB /* PlayStationGameHacks.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */; };
@@ -45,7 +47,7 @@
 		B373CD98296F99B6005D110B /* PVDuckStation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */; };
 		B373CD99296F99B6005D110B /* PVDuckStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */; };
 		B392F761296F6B2B008BAEF1 /* EAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = B392F75F296F6B2B008BAEF1 /* EAGL.h */; };
-		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilter = ios; settings = {ATTRIBUTES = (Weak, ); }; };
+		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilters = (ios, tvos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924526DEFFD8003CB9D4 /* GLKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2924C26DEFFE8003CB9D4 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924826DEFFE7003CB9D4 /* MetalKit.framework */; };
 		B3C2924E26DEFFE8003CB9D4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924A26DEFFE8003CB9D4 /* Metal.framework */; };
@@ -539,9 +541,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				939AAF6D2A791EC7007709E5 /* libduckstation.a in Frameworks */,
-				B324C64021920EB9009F4EDC /* PVSupport.framework in Frameworks */,
 				B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */,
+				B30E99052C6EF1A900C1431E /* PVSupport in Frameworks */,
 				B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */,
+				B30E9B192C6FD0FE00C1431E /* PVCoreBridge in Frameworks */,
+				B30E9B162C6FD0F200C1431E /* PVEmulatorCore in Frameworks */,
 				B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */,
 				B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */,
 				B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */,
@@ -916,6 +920,11 @@
 			);
 			mainGroup = 02695356143169EA003A07D4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E99032C6EF1A900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E9B142C6FD0F200C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B30E9B172C6FD0FE00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = 02695362143169EB003A07D4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -1956,6 +1965,36 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E99032C6EF1A900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E9B142C6FD0F200C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B30E9B172C6FD0FE00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E99042C6EF1A900C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9B152C6FD0F200C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B30E9B182C6FD0FE00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 02695358143169EA003A07D4 /* Project object */;
 }

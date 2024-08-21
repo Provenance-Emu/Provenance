@@ -15,7 +15,7 @@
 //#import "PVMuCore+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4

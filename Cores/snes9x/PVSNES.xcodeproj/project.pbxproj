@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -34,7 +34,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		B3133A072BBCBAB200ECE169 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3133A062BBCBAB200ECE169 /* PVSupport.framework */; };
+		B30E99272C6EF29B00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99262C6EF29B00C1431E /* PVSupport */; };
+		B30E9AD82C6FB24900C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AD72C6FB24900C1431E /* PVCoreBridge */; };
+		B30E9ADB2C6FB25400C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9ADA2C6FB25400C1431E /* PVEmulatorCore */; };
 		B3547B632058591100CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B622058591000CFF7D8 /* Core.plist */; };
 		B365107E21782E95008FDB7B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B365107D21782E95008FDB7B /* libz.tbd */; };
 		B3AFCF7C2977A6F800A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF7B2977A6F800A01010 /* PVLogging */; };
@@ -279,11 +281,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3133A072BBCBAB200ECE169 /* PVSupport.framework in Frameworks */,
+				B30E99272C6EF29B00C1431E /* PVSupport in Frameworks */,
 				B3AFCF7C2977A6F800A01010 /* PVLogging in Frameworks */,
+				B30E9AD82C6FB24900C1431E /* PVCoreBridge in Frameworks */,
 				B365107E21782E95008FDB7B /* libz.tbd in Frameworks */,
 				B3C9D54E1DEA843E0068D057 /* Foundation.framework in Frameworks */,
 				B3C9D54B1DEA84220068D057 /* CoreGraphics.framework in Frameworks */,
+				B30E9ADB2C6FB25400C1431E /* PVEmulatorCore in Frameworks */,
 				B3C9D54A1DEA841A0068D057 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -591,6 +595,9 @@
 			name = PVSNES;
 			packageProductDependencies = (
 				B3AFCF7B2977A6F800A01010 /* PVLogging */,
+				B30E99262C6EF29B00C1431E /* PVSupport */,
+				B30E9AD72C6FB24900C1431E /* PVCoreBridge */,
+				B30E9ADA2C6FB25400C1431E /* PVEmulatorCore */,
 			);
 			productName = PVSNES;
 			productReference = B3C9D5321DEA83DE0068D057 /* PVSNES.framework */;
@@ -625,6 +632,11 @@
 				Base,
 			);
 			mainGroup = 1ACEA8DB17F75F350031B1C9;
+			packageReferences = (
+				B30E99252C6EF29B00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E9AD62C6FB24900C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B30E9AD92C6FB25400C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+			);
 			productRefGroup = 1ACEA8E517F75F350031B1C9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1262,7 +1274,34 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30E99252C6EF29B00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E9AD62C6FB24900C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B30E9AD92C6FB25400C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B30E99262C6EF29B00C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9AD72C6FB24900C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B30E9ADA2C6FB25400C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
 		B3AFCF7B2977A6F800A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B30E98A12C6EEED600C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98A02C6EEED600C1431E /* PVLibRetro */; };
+		B30E98A42C6EEEE200C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98A32C6EEEE200C1431E /* PVSupport */; };
+		B30E99DA2C6F046A00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99D92C6F046A00C1431E /* PVCoreBridge */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
@@ -18,10 +21,8 @@
 		B37022C92872554300B3F6DA /* PVYabauseCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVYabauseCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVYabause.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVYabause.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3FF63CA2873E37000829C14 /* error.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9FB22872965000EAEB37 /* error.c */; };
 		B3FF63CB2873E37000829C14 /* cs1.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EB9BB42872964D00EAEB37 /* cs1.c */; };
 		B3FF63CC2873E37000829C14 /* m68kd.c in Sources */ = {isa = PBXBuildFile; fileRef = B3EBA0BA2872965100EAEB37 /* m68kd.c */; };
@@ -1469,16 +1470,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				B341206F297601A200F5F351 /* libyabause.a in Frameworks */,
+				B30E98A12C6EEED600C1431E /* PVLibRetro in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B30E99DA2C6F046A00C1431E /* PVCoreBridge in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
+				B30E98A42C6EEEE200C1431E /* PVSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4647,6 +4649,11 @@
 			);
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E989F2C6EEED600C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */,
+				B30E98A22C6EEEE200C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E99D82C6F046A00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -5258,6 +5265,36 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E989F2C6EEED600C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLibRetro;
+		};
+		B30E98A22C6EEEE200C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E99D82C6F046A00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E98A02C6EEED600C1431E /* PVLibRetro */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLibRetro;
+		};
+		B30E98A32C6EEEE200C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E99D92C6F046A00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

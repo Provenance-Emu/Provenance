@@ -8,6 +8,7 @@
 
 #import "PVPCSXRearmedCore.h"
 #include <stdatomic.h>
+
 //#import "PVPCSXRearmedCore+Controls.h"
 //#import "PVPCSXRearmedCore+Audio.h"
 //#import "PVPCSXRearmedCore+Video.h"
@@ -15,7 +16,7 @@
 //#import "PVPCSXRearmedCore+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+#import <PVSupport/PVSupport-Swift.h>
 
 #define SAMPLERATE 44100
 #define SIZESOUNDBUFFER 44100 / 60 * 4

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B301797F207C909E0051B93D /* libmu.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libmu.a */; };
+		B30E987A2C6EED9400C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98792C6EED9400C1431E /* PVLibRetro */; };
+		B30E99D72C6F045A00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99D62C6F045A00C1431E /* PVCoreBridge */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B3231BF3289666CE003CC116 /* w86l488.c in Sources */ = {isa = PBXBuildFile; fileRef = B30682C32895F86E003E465F /* w86l488.c */; };
 		B3231BF4289666CE003CC116 /* sdCard.c in Sources */ = {isa = PBXBuildFile; fileRef = B30683012895F86E003E465F /* sdCard.c */; };
@@ -62,10 +64,9 @@
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVMu.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVMu.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libmu-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libmu-libretro.a */; };
-		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
+		B3CF064F2C6EC16C009E8903 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3CF064E2C6EC16C009E8903 /* PVSupport */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -505,6 +506,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3CF064F2C6EC16C009E8903 /* PVSupport in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
@@ -513,10 +515,10 @@
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39768F82859E23200558958 /* libmu-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
+				B30E99D72C6F045A00C1431E /* PVCoreBridge in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
+				B30E987A2C6EED9400C1431E /* PVLibRetro in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1598,6 +1600,11 @@
 			);
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B3CF064D2C6EC16C009E8903 /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E98782C6EED9400C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */,
+				B30E99D52C6F045A00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1904,6 +1911,8 @@
 					"$(inherited)",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+					"\"$(SRCROOT)/Mu/libretroBuildSystem/fixIncludes\"",
+					"\"$(SRCROOT)/Mu/include\"",
 				);
 				PRODUCT_NAME = "mu-libretro";
 				SKIP_INSTALL = YES;
@@ -1926,6 +1935,8 @@
 					"$(inherited)",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+					"\"$(SRCROOT)/Mu/libretroBuildSystem/fixIncludes\"",
+					"\"$(SRCROOT)/Mu/include\"",
 				);
 				PRODUCT_NAME = "mu-libretro";
 				SKIP_INSTALL = YES;
@@ -1948,6 +1959,8 @@
 					"$(inherited)",
 					"\"$(TOOLCHAIN_DIR)/usr/include\"",
 					"\"$(SRCROOT)/libretro-minivmac/libretro/include\"",
+					"\"$(SRCROOT)/Mu/libretroBuildSystem/fixIncludes\"",
+					"\"$(SRCROOT)/Mu/include\"",
 				);
 				PRODUCT_NAME = "mu-libretro";
 				SKIP_INSTALL = YES;
@@ -2024,7 +2037,11 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = "-DTARGET_NO_NIXPROF";
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DTARGET_NO_NIXPROF",
+				);
+				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				SDKROOT = iphoneos;
 				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -2242,6 +2259,36 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E98782C6EED9400C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLibRetro;
+		};
+		B30E99D52C6F045A00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B3CF064D2C6EC16C009E8903 /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E98792C6EED9400C1431E /* PVLibRetro */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLibRetro;
+		};
+		B30E99D62C6F045A00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B3CF064E2C6EC16C009E8903 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,7 +16,6 @@
 		932931A5297EC81700464B9D /* FastmemUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 932931A3297EC81600464B9D /* FastmemUtil.m */; };
 		932931A6297EC81700464B9D /* FastmemUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = 932931A4297EC81600464B9D /* FastmemUtil.h */; };
 		932931BE297ED02900464B9D /* Config in Resources */ = {isa = PBXBuildFile; fileRef = 932931BD297ED02900464B9D /* Config */; };
-		9333C82729895CEF0042CD99 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9333C82629895CEF0042CD99 /* PVSupport.framework */; };
 		933CC5E42951BF680070CF1D /* libpngDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5E12951BB8A0070CF1D /* libpngDolphin.a */; };
 		933CC5FF2951FB9F0070CF1D /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 933CC5FE2951FB9F0070CF1D /* GLKit.framework */; platformFilters = (ios, tvos, watchos, ); };
 		933CC601295202A40070CF1D /* DolphinVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933CC600295202A40070CF1D /* DolphinVulkanViewController.swift */; };
@@ -33,6 +32,10 @@
 		939AAF6C2A791EA8007709E5 /* libdolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libdolphin.a */; };
 		93C33A952952192200CC86C5 /* libdolphin-coreDolphin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFACB2949E94400CC8234 /* libdolphin-coreDolphin.a */; };
 		93CB27D0297CE5DF006A940B /* VulkanLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93CB27CF297CE5DF006A940B /* VulkanLoader.cpp */; };
+		B30E98FF2C6EF18400C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E98FE2C6EF18400C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B30E99022C6EF18E00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99012C6EF18E00C1431E /* PVSupport */; };
+		B30E9B1C2C6FD20400C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B1B2C6FD20400C1431E /* PVCoreBridge */; };
+		B30E9B1F2C6FD20E00C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B1E2C6FD20E00C1431E /* PVEmulatorCore */; };
 		B3135B9B26E4CAD40047F338 /* PVDolphinCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVDolphinCore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVDolphinCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVDolphinCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135B9D26E4CC330047F338 /* PVDolphinCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVDolphinCore+Audio.h */; };
@@ -84,7 +87,7 @@
 		B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB502949F72800CC8234 /* UIKit.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, ); };
 		B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB522949F73C00CC8234 /* MetalKit.framework */; };
 		B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3AAFB532949F73C00CC8234 /* Metal.framework */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, maccatalyst, tvos, watchos, xros, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
@@ -850,6 +853,7 @@
 		93F7814A297EBBB9001F6241 /* CodeSignatureUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodeSignatureUtils.h; sourceTree = "<group>"; };
 		93F7814B297EBBB9001F6241 /* LocalizerUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalizerUtils.m; sourceTree = "<group>"; };
 		B30178D3207C901D0051B93D /* libdolphin.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdolphin.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30E98FE2C6EF18400C1431E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		B316BAD426E5C66D0077FE46 /* gameini-ratings-from-wiki.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "gameini-ratings-from-wiki.sh"; sourceTree = "<group>"; };
 		B316BAD526E5C66D0077FE46 /* check-includes.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "check-includes.py"; sourceTree = "<group>"; };
 		B316BAD626E5C66D0077FE46 /* CleanFiles.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = CleanFiles.py; sourceTree = "<group>"; };
@@ -15548,17 +15552,20 @@
 				93599B702955FD530049DAC8 /* QuartzCore.framework in Frameworks */,
 				B3AAFB332949F26900CC8234 /* CoreGraphics.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
+				B30E9B1F2C6FD20E00C1431E /* PVEmulatorCore in Frameworks */,
 				932931A2297EC31900464B9D /* SystemConfiguration.framework in Frameworks */,
-				9333C82729895CEF0042CD99 /* PVSupport.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
 				B3AAFB542949F73D00CC8234 /* MetalKit.framework in Frameworks */,
+				B30E99022C6EF18E00C1431E /* PVSupport in Frameworks */,
 				B3AAFB392949F2DD00CC8234 /* GameController.framework in Frameworks */,
 				B34A8EF7295848360000D110 /* libz.tbd in Frameworks */,
 				B3AAFB372949F2D500CC8234 /* CoreHaptics.framework in Frameworks */,
 				B34A8EF6295848010000D110 /* libbz2.tbd in Frameworks */,
+				B30E98FF2C6EF18400C1431E /* OpenGL.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B3AAFB512949F72800CC8234 /* UIKit.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
+				B30E9B1C2C6FD20400C1431E /* PVCoreBridge in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B3AAFB552949F73D00CC8234 /* Metal.framework in Frameworks */,
@@ -39241,6 +39248,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B30E98FE2C6EF18400C1431E /* OpenGL.framework */,
 				934FA1B92A7905880019C951 /* libdolphin.a */,
 				9333C82629895CEF0042CD99 /* PVSupport.framework */,
 				932931A1297EC31800464B9D /* SystemConfiguration.framework */,
@@ -39370,6 +39378,9 @@
 			);
 			name = PVDolphin;
 			packageProductDependencies = (
+				B30E99012C6EF18E00C1431E /* PVSupport */,
+				B30E9B1B2C6FD20400C1431E /* PVCoreBridge */,
+				B30E9B1E2C6FD20E00C1431E /* PVEmulatorCore */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVDolphin.framework */;
@@ -39415,6 +39426,11 @@
 				nl,
 			);
 			mainGroup = B3C7620620783162009950E4;
+			packageReferences = (
+				B30E99002C6EF18E00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E9B1A2C6FD20400C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B30E9B1D2C6FD20E00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -40836,6 +40852,36 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E99002C6EF18E00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E9B1A2C6FD20400C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B30E9B1D2C6FD20E00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E99012C6EF18E00C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9B1B2C6FD20400C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B30E9B1E2C6FD20E00C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

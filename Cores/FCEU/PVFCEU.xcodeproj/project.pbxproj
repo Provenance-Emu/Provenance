@@ -49,6 +49,9 @@
 		B30C097B27C0ABC4009F25D0 /* guid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3E827C09C5B0012118D /* guid.cpp */; };
 		B30C097C27C0ABC4009F25D0 /* general.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3D627C09C5B0012118D /* general.cpp */; };
 		B30C098827C0ADD1009F25D0 /* ppu.h in Headers */ = {isa = PBXBuildFile; fileRef = B3BCB43827C09C5B0012118D /* ppu.h */; };
+		B30E990E2C6EF1D600C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E990D2C6EF1D600C1431E /* PVSupport */; };
+		B30E9B072C6FBCDE00C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B062C6FBCDE00C1431E /* PVEmulatorCore */; };
+		B30E9B0A2C6FBCEA00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9B092C6FBCEA00C1431E /* PVCoreBridge */; };
 		B3341F5427C1B18C00E001C6 /* fceux_netplay_server.m in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5327C1B18C00E001C6 /* fceux_netplay_server.m */; };
 		B3341F5527C1B18C00E001C6 /* fceux_netplay_server.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = B3341F5227C1B18C00E001C6 /* fceux_netplay_server.h */; };
 		B3341F6D27C1B1E600E001C6 /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5B27C1B1CC00E001C6 /* md5.cpp */; };
@@ -60,7 +63,6 @@
 		B3341F9327C1B39A00E001C6 /* throttle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F6A27C1B1CD00E001C6 /* throttle.cpp */; };
 		B3341F9427C1B39A00E001C6 /* server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F6C27C1B1CD00E001C6 /* server.cpp */; };
 		B3341F9527C1B39A00E001C6 /* md5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3341F5B27C1B1CC00E001C6 /* md5.cpp */; };
-		B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B34AB5592106D57B00C45F09 /* PVSupport.framework */; };
 		B3547B4B205857B900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B4A205857B900CFF7D8 /* Core.plist */; };
 		B391F2D427C1695700730B53 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B391F2D227C1695700730B53 /* CoreFoundation.framework */; };
 		B391F2D527C1695700730B53 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B391F2D327C1695700730B53 /* Foundation.framework */; };
@@ -1894,8 +1896,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30E9B0A2C6FBCEA00C1431E /* PVCoreBridge in Frameworks */,
+				B30E990E2C6EF1D600C1431E /* PVSupport in Frameworks */,
+				B30E9B072C6FBCDE00C1431E /* PVEmulatorCore in Frameworks */,
 				B3AFCF822977A71C00A01010 /* PVLogging in Frameworks */,
-				B34AB55A2106D57B00C45F09 /* PVSupport.framework in Frameworks */,
 				B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */,
 				B3341F7E27C1B2CF00E001C6 /* libfceux-netplay-server.a in Frameworks */,
 				B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */,
@@ -3669,6 +3673,9 @@
 			name = PVFCEU;
 			packageProductDependencies = (
 				B3AFCF812977A71C00A01010 /* PVLogging */,
+				B30E990D2C6EF1D600C1431E /* PVSupport */,
+				B30E9B062C6FBCDE00C1431E /* PVEmulatorCore */,
+				B30E9B092C6FBCEA00C1431E /* PVCoreBridge */,
 			);
 			productName = PVNES;
 			productReference = B3A9F4361DE877B4008450F5 /* PVFCEU.framework */;
@@ -3744,6 +3751,11 @@
 			);
 			mainGroup = 1A3A74DF1ABF11AC002274A3;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E990C2C6EF1D600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E9B052C6FBCDE00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B30E9B082C6FBCEA00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = 1A3A74E91ABF11AC002274A3 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -5169,7 +5181,34 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30E990C2C6EF1D600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E9B052C6FBCDE00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B30E9B082C6FBCEA00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B30E990D2C6EF1D600C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9B062C6FBCDE00C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B30E9B092C6FBCEA00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
 		B3AFCF812977A71C00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

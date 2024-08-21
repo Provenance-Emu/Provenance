@@ -3,11 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B324C64321921519009F4EDC /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64221921519009F4EDC /* PVSupport.framework */; };
+		B30E9AE42C6FB28E00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AE32C6FB28E00C1431E /* PVCoreBridge */; };
+		B30E9AE72C6FB29800C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AE62C6FB29800C1431E /* PVEmulatorCore */; };
+		B30E9AEA2C6FB2A600C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AE92C6FB2A600C1431E /* PVSupport */; };
 		B324C64921921577009F4EDC /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B324C64821921577009F4EDC /* libz.tbd */; };
 		B3411B50276B2FC000D85327 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3411B4F276B2FC000D85327 /* Foundation.framework */; };
 		B3547B5A205858B700CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B59205858B600CFF7D8 /* Core.plist */; };
@@ -147,10 +149,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30E9AEA2C6FB2A600C1431E /* PVSupport in Frameworks */,
+				B30E9AE72C6FB29800C1431E /* PVEmulatorCore in Frameworks */,
+				B30E9AE42C6FB28E00C1431E /* PVCoreBridge in Frameworks */,
 				B3411B50276B2FC000D85327 /* Foundation.framework in Frameworks */,
 				B324C64921921577009F4EDC /* libz.tbd in Frameworks */,
 				B3CA5B4A26E9E42400687B27 /* libprosystem.a in Frameworks */,
-				B324C64321921519009F4EDC /* PVSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,6 +413,11 @@
 				Base,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* VisualBoyAdvance */;
+			packageReferences = (
+				B30E9AE22C6FB28E00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B30E9AE52C6FB29800C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B30E9AE82C6FB2A600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+			);
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -677,7 +686,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -735,7 +744,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -787,7 +796,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_FILE = PVProSystem/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -948,6 +957,36 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E9AE22C6FB28E00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+		B30E9AE52C6FB29800C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B30E9AE82C6FB2A600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E9AE32C6FB28E00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+		B30E9AE62C6FB29800C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B30E9AE92C6FB2A600C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 089C1669FE841209C02AAC07 /* Project object */;
 }

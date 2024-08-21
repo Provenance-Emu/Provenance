@@ -170,6 +170,10 @@
 		B301797D207C908F0051B93D /* zip_open.c in Sources */ = {isa = PBXBuildFile; fileRef = B339428220783CBC008DBAB4 /* zip_open.c */; };
 		B301797E207C908F0051B93D /* driver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B339414220783CBB008DBAB4 /* driver.cpp */; };
 		B301797F207C909E0051B93D /* libreicast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libreicast.a */; };
+		B30E99212C6EF28000C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E99202C6EF28000C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B30E99242C6EF28900C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99232C6EF28900C1431E /* PVSupport */; };
+		B30E9ADE2C6FB26900C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9ADD2C6FB26900C1431E /* PVEmulatorCore */; };
+		B30E9AE12C6FB27900C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AE02C6FB27900C1431E /* PVCoreBridge */; };
 		B316B4E721926FE500693472 /* emu.cfg in Resources */ = {isa = PBXBuildFile; fileRef = B316B4E621926FE500693472 /* emu.cfg */; };
 		B33350262078619C0036A448 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3C7622720783510009950E4 /* Core.plist */; };
 		B333502720786BD90036A448 /* Shader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = B339438820783CC0008DBAB4 /* Shader.vsh */; };
@@ -195,9 +199,8 @@
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
 		B3C7621520783162009950E4 /* PVReicast.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C7621320783162009950E4 /* PVReicast.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, xros, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3C76225207833DE009950E4 /* PVReicastCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVReicastCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3C76226207833DE009950E4 /* PVReicastCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVReicastCore.mm */; };
 /* End PBXBuildFile section */
@@ -226,6 +229,7 @@
 
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libreicast.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libreicast.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30E99202C6EF28000C1431E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		B316B4E621926FE500693472 /* emu.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = emu.cfg; sourceTree = "<group>"; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B339412120783CBB008DBAB4 /* rec_x64.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = rec_x64.cpp; sourceTree = "<group>"; };
@@ -1230,14 +1234,17 @@
 			files = (
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
+				B30E9ADE2C6FB26900C1431E /* PVEmulatorCore in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
+				B30E99212C6EF28000C1431E /* OpenGL.framework in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B301797F207C909E0051B93D /* libreicast.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
+				B30E9AE12C6FB27900C1431E /* PVCoreBridge in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
+				B30E99242C6EF28900C1431E /* PVSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3581,6 +3588,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B30E99202C6EF28000C1431E /* OpenGL.framework */,
 				B35E6BF1207CD2670040709A /* AudioToolbox.framework */,
 				B35E6BEF207CD2610040709A /* AudioUnit.framework */,
 				B324C31B2191964F009F4EDC /* AVFoundation.framework */,
@@ -3695,6 +3703,11 @@
 			);
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E99222C6EF28900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E9ADC2C6FB26900C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B30E9ADF2C6FB27900C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -4391,6 +4404,36 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E99222C6EF28900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E9ADC2C6FB26900C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B30E9ADF2C6FB27900C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E99232C6EF28900C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E9ADD2C6FB26900C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B30E9AE02C6FB27900C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B30E98D22C6EF04D00C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E98D12C6EF04D00C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
+		B30E98D52C6EF05600C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98D42C6EF05600C1431E /* PVSupport */; };
+		B30E98D82C6EF05F00C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98D72C6EF05F00C1431E /* PVLibRetro */; };
+		B30E99B62C6EFAC900C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99B52C6EFAC900C1431E /* PVEmulatorCore */; };
+		B30E99B92C6EFAED00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99B82C6EFAED00C1431E /* PVCoreBridge */; };
 		B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3135BAA26E4CDC50047F338 /* QuartzCore.framework */; };
 		B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468820783F41008DBAB4 /* libpthread.tbd */; };
 		B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B339468A20783F48008DBAB4 /* libz.tbd */; };
@@ -20,7 +25,6 @@
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVblueMSX.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVblueMSX.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libblueMSX-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libblueMSX-libretro.a */; };
-		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3C47F2F2970FF7F0040C177 /* Machine.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108402896659E00FA401F /* Machine.c */; };
 		B3C47F302970FF7F0040C177 /* SG1000.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108412896659E00FA401F /* SG1000.c */; };
 		B3C47F312970FF7F0040C177 /* Coleco.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108422896659E00FA401F /* Coleco.c */; };
@@ -277,9 +281,8 @@
 		B3C480402971040B0040C177 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108D12896659E00FA401F /* ioapi.c */; };
 		B3C480412971040B0040C177 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = B35108CD2896659E00FA401F /* zip.c */; };
 		B3C48042297104540040C177 /* MediaDb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B351095F2896659F00FA401F /* MediaDb.cpp */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (ios, tvos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 		B3EBB1FD2872B1A000EAEB37 /* libblueMSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B30178D3207C901D0051B93D /* libblueMSX.a */; };
 /* End PBXBuildFile section */
 
@@ -316,6 +319,7 @@
 
 /* Begin PBXFileReference section */
 		B30178D3207C901D0051B93D /* libblueMSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libblueMSX.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30E98D12C6EF04D00C1431E /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B3135BAA26E4CDC50047F338 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/Library/Frameworks/QuartzCore.framework; sourceTree = DEVELOPER_DIR; };
 		B324C31B2191964F009F4EDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
 		B3344BC32859E088006E6B3A /* libblueMSX-libretro.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libblueMSX-libretro.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1299,18 +1303,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30E98D52C6EF05600C1431E /* PVSupport in Frameworks */,
+				B30E98D22C6EF04D00C1431E /* OpenGL.framework in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
 				B35E6BF5207CD2740040709A /* CoreAudioKit.framework in Frameworks */,
+				B30E98D82C6EF05F00C1431E /* PVLibRetro in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
+				B30E99B92C6EFAED00C1431E /* PVCoreBridge in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
+				B30E99B62C6EFAC900C1431E /* PVEmulatorCore in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39768F82859E23200558958 /* libblueMSX-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4214,6 +4221,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B30E98D12C6EF04D00C1431E /* OpenGL.framework */,
 				B3C48039297103160040C177 /* libz.tbd */,
 				B3A41BEF286E76490054E9A5 /* PVLibRetro.framework */,
 				B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */,
@@ -4346,6 +4354,12 @@
 			);
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E98D32C6EF05600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E98D62C6EF05F00C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */,
+				B30E99B42C6EFAC900C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B30E99B72C6EFAED00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -5213,6 +5227,44 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E98D32C6EF05600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E98D62C6EF05F00C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLibRetro;
+		};
+		B30E99B42C6EFAC900C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B30E99B72C6EFAED00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E98D42C6EF05600C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E98D72C6EF05F00C1431E /* PVLibRetro */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLibRetro;
+		};
+		B30E99B52C6EFAC900C1431E /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B30E99B82C6EFAED00C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

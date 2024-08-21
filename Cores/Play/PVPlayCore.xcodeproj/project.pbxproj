@@ -51,6 +51,7 @@
 		939B194A29490A840024133A /* CGSH_MTLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 939B194929490A820024133A /* CGSH_MTLViewController.swift */; };
 		93C68BEF298ADF5E0008E5A3 /* PVDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 93C68BEE298ADF5D0008E5A3 /* PVDebug.c */; };
 		93F5FBF42945D1B600493D4F /* PVPlayCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5FBF32945D1B600493D4F /* PVPlayCore.swift */; };
+		B30E991A2C6EF24000C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99192C6EF24000C1431E /* PVSupport */; };
 		B3135B9B26E4CAD40047F338 /* PVPlayCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3C76224207833DE009950E4 /* PVPlayCore.mm */; };
 		B3135B9C26E4CC290047F338 /* PVPlayCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3C76223207833DE009950E4 /* PVPlayCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3135B9D26E4CC330047F338 /* PVPlayCore+Audio.h in Headers */ = {isa = PBXBuildFile; fileRef = B3447EB1218BC69700557ACE /* PVPlayCore+Audio.h */; };
@@ -100,8 +101,7 @@
 		B3ABAF122BCCF93900D77B8C /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEF82BCCF87F00D77B8C /* libz.a */; };
 		B3ABAF132BCCF93900D77B8C /* libzstd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3ABAEEC2BCCF87F00D77B8C /* libzstd.a */; };
 		B3AFCF602977A69F00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF5F2977A69F00A01010 /* PVLogging */; };
-		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
+		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, xros, ); };
 		B3EB8B10293F653D00BCCBAE /* PVPlayCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVPlayCore+Controls.mm */; };
 /* End PBXBuildFile section */
 
@@ -1766,9 +1766,9 @@
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
 				B3A6209529478A9B00ED28E3 /* MetalKit.framework in Frameworks */,
 				B37CE7DC293F2A8B0010B746 /* OpenGL.framework in Frameworks */,
+				B30E991A2C6EF24000C1431E /* PVSupport in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3A6209129478A7600ED28E3 /* Metal.framework in Frameworks */,
 				B3AFCF602977A69F00A01010 /* PVLogging in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
@@ -4135,6 +4135,7 @@
 			name = PVPlay;
 			packageProductDependencies = (
 				B3AFCF5F2977A69F00A01010 /* PVLogging */,
+				B30E99192C6EF24000C1431E /* PVSupport */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVPlay.framework */;
@@ -4174,6 +4175,9 @@
 			);
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E99182C6EF24000C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -4963,7 +4967,18 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30E99182C6EF24000C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B30E99192C6EF24000C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
 		B3AFCF5F2977A69F00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;

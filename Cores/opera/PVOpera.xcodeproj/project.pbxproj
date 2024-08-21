@@ -35,7 +35,9 @@
 /* Begin PBXBuildFile section */
 		93F6EC6A298ACB1A00397536 /* PVDebug.m in Sources */ = {isa = PBXBuildFile; fileRef = 93F6EC69298ACB1A00397536 /* PVDebug.m */; };
 		B30135942BC77A8B00708809 /* PVOpera.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C3287253B300B3F6DA /* PVOpera.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B35D8A842B58E1F500F37E8B /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D8A832B58E1F500F37E8B /* PVSupport.framework */; };
+		B30E98AD2C6EEF2900C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98AC2C6EEF2900C1431E /* PVSupport */; };
+		B30E99312C6EF32600C1431E /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99302C6EF32600C1431E /* PVObjCUtils */; };
+		B30E99E02C6F049700C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99DF2C6F049700C1431E /* PVCoreBridge */; };
 		B35D8A862B58E20E00F37E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D8A852B58E20E00F37E8B /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
@@ -1129,7 +1131,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B35D8A842B58E1F500F37E8B /* PVSupport.framework in Frameworks */,
+				B30E99E02C6F049700C1431E /* PVCoreBridge in Frameworks */,
+				B30E98AD2C6EEF2900C1431E /* PVSupport in Frameworks */,
+				B30E99312C6EF32600C1431E /* PVObjCUtils in Frameworks */,
 				B35D8A862B58E20E00F37E8B /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3535,6 +3539,9 @@
 			);
 			name = PVOpera;
 			packageProductDependencies = (
+				B30E98AC2C6EEF2900C1431E /* PVSupport */,
+				B30E99302C6EF32600C1431E /* PVObjCUtils */,
+				B30E99DF2C6F049700C1431E /* PVCoreBridge */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVOpera.framework */;
@@ -3580,6 +3587,11 @@
 			);
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E98AB2C6EEF2900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E992F2C6EF32600C1431E /* XCLocalSwiftPackageReference "../../PVObjCUtils" */,
+				B30E99DE2C6F049700C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -3977,6 +3989,36 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		B30E98AB2C6EEF2900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E992F2C6EF32600C1431E /* XCLocalSwiftPackageReference "../../PVObjCUtils" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVObjCUtils;
+		};
+		B30E99DE2C6F049700C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B30E98AC2C6EEF2900C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E99302C6EF32600C1431E /* PVObjCUtils */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVObjCUtils;
+		};
+		B30E99DF2C6F049700C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B3C7620720783162009950E4 /* Project object */;
 }

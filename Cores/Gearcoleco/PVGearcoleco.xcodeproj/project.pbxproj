@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B30E988C2C6EEE3A00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E988B2C6EEE3A00C1431E /* PVSupport */; };
+		B30E988F2C6EEE4500C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E988E2C6EEE4500C1431E /* PVLibRetro */; };
+		B30E99EC2C6F056300C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99EB2C6F056300C1431E /* PVCoreBridge */; };
 		B30F13FD289672B6004D40BF /* ColecoVisionIOPorts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30F13D82896727B004D40BF /* ColecoVisionIOPorts.cpp */; };
 		B30F13FE289672B6004D40BF /* Memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30F13C32896727B004D40BF /* Memory.cpp */; };
 		B30F13FF289672B6004D40BF /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B30F13C62896727B004D40BF /* Input.cpp */; };
@@ -35,11 +38,9 @@
 		B37022CB2872556600B3F6DA /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 		B37022CD2872558F00B3F6DA /* PVGearcoleco.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C0287253B300B3F6DA /* PVGearcoleco.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B39768F82859E23200558958 /* libGearcoleco-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libGearcoleco-libretro.a */; };
-		B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A41BEC286E76330054E9A5 /* PVLibRetro.framework */; };
 		B3AFCF8A2977A76900A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF892977A76900A01010 /* PVLogging */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilter = ios; };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
-		B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7622120783297009950E4 /* PVSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -408,18 +409,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30E988C2C6EEE3A00C1431E /* PVSupport in Frameworks */,
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
+				B30E99EC2C6F056300C1431E /* PVCoreBridge in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3135BAB26E4CDC50047F338 /* QuartzCore.framework in Frameworks */,
+				B30E988F2C6EEE4500C1431E /* PVLibRetro in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B30F141F289673D6004D40BF /* libGearcoleco.a in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39768F82859E23200558958 /* libGearcoleco-libretro.a in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
-				B3C7622220783297009950E4 /* PVSupport.framework in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
-				B3A41BED286E76330054E9A5 /* PVLibRetro.framework in Frameworks */,
 				B3AFCF8A2977A76900A01010 /* PVLogging in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1158,6 +1160,9 @@
 			name = PVGearcoleco;
 			packageProductDependencies = (
 				B3AFCF892977A76900A01010 /* PVLogging */,
+				B30E988B2C6EEE3A00C1431E /* PVSupport */,
+				B30E988E2C6EEE4500C1431E /* PVLibRetro */,
+				B30E99EB2C6F056300C1431E /* PVCoreBridge */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVGearcoleco.framework */;
@@ -1204,6 +1209,11 @@
 			);
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B30E988A2C6EEE3A00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
+				B30E988D2C6EEE4500C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */,
+				B30E99EA2C6F056300C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1743,7 +1753,34 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		B30E988A2C6EEE3A00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSupport;
+		};
+		B30E988D2C6EEE4500C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVLibRetro;
+		};
+		B30E99EA2C6F056300C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreBridge;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		B30E988B2C6EEE3A00C1431E /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSupport;
+		};
+		B30E988E2C6EEE4500C1431E /* PVLibRetro */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVLibRetro;
+		};
+		B30E99EB2C6F056300C1431E /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreBridge;
+		};
 		B3AFCF892977A76900A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
