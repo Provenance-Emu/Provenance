@@ -7,6 +7,8 @@
 
 import PVSettings
 
+#if canImport(UIKit)
+
 public extension iCadeControllerSetting {
     nonisolated
     func createController() -> PViCadeController? {
@@ -27,3 +29,5 @@ public extension iCadeControllerSetting {
     }
 
 }
+
+#endif
