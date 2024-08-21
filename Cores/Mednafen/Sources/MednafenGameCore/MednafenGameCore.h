@@ -25,9 +25,21 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-
 @import Foundation;
+@import PVEmulatorCore;
+
+#import <MednafenGameCore/MednafenGameCore-Swift.h>
+
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wall"
+//#pragma clang diagnostic ignored "-Wextra"
+//#include <mednafen/mednafen.h>
+//#include <mednafen/settings-driver.h>
+//#include <mednafen/state-driver.h>
+//#include <mednafen/mednafen-driver.h>
+//#include <mednafen/MemoryStream.h>
+//#pragma clang diagnostic pop
+
 //@import PVCoreBridge;
 
 //#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
@@ -73,8 +85,8 @@ static int SSMap[] = { 4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 15, 3, 11 };
 // SMS, GG and MD unused as of now. Mednafen support is not maintained
 static const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 //
-//__attribute__((visibility("default")))
-//@interface MednafenGameCore : PVEmulatorCore
+__attribute__((visibility("default")))
+@interface MednafenGameCore (ObjC) //: PVEmulatorCore
 //
 //@property (nonatomic) BOOL isStartPressed;
 //@property (nonatomic) BOOL isSelectPressed;
@@ -115,7 +127,7 @@ static const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 //-(void)changeDisplayMode;
 //-(const void *)getGame;
 //
-//@end
+@end
 //
 //@interface MednafenGameCore (Cheats)
 //- (NSArray<NSString*> *)getCheatCodeTypes;

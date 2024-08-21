@@ -25,17 +25,11 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wall"
-#pragma clang diagnostic ignored "-Wextra"
-#include <mednafen/mednafen.h>
-#include <mednafen/settings-driver.h>
-#include <mednafen/state-driver.h>
-#include <mednafen/mednafen-driver.h>
-#include <mednafen/MemoryStream.h>
-#pragma clang diagnostic pop
 
 #import "MednafenGameCore.h"
+
+#import <MednafenGameCore/MednafenGameCore-Swift.h>
+@import MednafenGameCoreC;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
 #import <OpenGLES/gltypes.h>
@@ -55,9 +49,9 @@
 @import PVLoggingObjC;
 @import PVObjCUtils;
 
-#import <mednafen/mempatcher.h>
-#import <PVMednafen/PVMednafen-Swift.h>
-#import <PVMednafenGameCoreC/PVMednafenGameCoreC.h>
+//#import <mednafen/mempatcher.h>
+//#import <PVMednafen/PVMednafen-Swift.h>
+//#import <PVMednafenGameCoreC/PVMednafenGameCoreC.h>
 
 #define GET_CURRENT_OR_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 

@@ -34,6 +34,7 @@
 		11AFB33124881CBB000A3922 /* MThreading_POSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB2F824880D19000A3922 /* MThreading_POSIX.cpp */; };
 		11AFB33424882054000A3922 /* idct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB33324882053000A3922 /* idct.cpp */; };
 		11AFB339248820AF000A3922 /* crc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AFB3382488209B000A3922 /* crc.cpp */; };
+		B302129C2C760CD200A05740 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
 		B30E98F72C6EF13E00C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98F62C6EF13E00C1431E /* PVSupport */; };
 		B30E9AC92C6FADCA00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AC82C6FADCA00C1431E /* PVCoreBridge */; };
 		B30E9ACC2C6FADDA00C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9ACB2C6FADDA00C1431E /* PVEmulatorCore */; };
@@ -68,7 +69,7 @@
 		B333506C207AFD8B0036A448 /* eeprom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8720736EE90097D86F /* eeprom.cpp */; };
 		B333506D207AFD8B0036A448 /* gfx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8820736EE90097D86F /* gfx.cpp */; };
 		B333506E207AFD8B0036A448 /* interrupt.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE5C20736EE90097D86F /* interrupt.cpp */; };
-		B333506F207AFD8B0036A448 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8920736EE90097D86F /* main.cpp */; };
+		B333506F207AFD8B0036A448 /* wswan_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8920736EE90097D86F /* wswan_main.cpp */; };
 		B3335070207AFD8B0036A448 /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE5720736EE90097D86F /* memory.cpp */; };
 		B3335071207AFD8B0036A448 /* rtc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE6420736EE90097D86F /* rtc.cpp */; };
 		B3335072207AFD8B0036A448 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE6720736EE90097D86F /* sound.cpp */; };
@@ -462,7 +463,6 @@
 		B33355EE207B27B60036A448 /* trionan.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD020736EE80097D86F /* trionan.c */; };
 		B33355EF207B27B60036A448 /* triostr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD520736EE80097D86F /* triostr.c */; };
 		B33355F0207B28570036A448 /* libtrio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355E4207B278E0036A448 /* libtrio.a */; };
-		B33355F1207B2A650036A448 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
 		B340E5E71E0889FB00AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E61E0889FB00AD0E8B /* libz.tbd */; };
 		B340E5EB1E088A1100AD0E8B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5EA1E088A1100AD0E8B /* libiconv.tbd */; };
 		B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F01E088A3A00AD0E8B /* Foundation.framework */; };
@@ -471,9 +471,6 @@
 		B396AE632C719E3B00DF1EBD /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = B396AE622C719E3B00DF1EBD /* PVObjCUtils */; };
 		B396AE662C719E4600DF1EBD /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B396AE652C719E4600DF1EBD /* PVSettings */; };
 		B396AE692C719E5A00DF1EBD /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B396AE682C719E5A00DF1EBD /* PVPlists */; };
-		B396AE6B2C71A65200DF1EBD /* MednafenGameCore+MultiTap.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396AE6A2C71A65200DF1EBD /* MednafenGameCore+MultiTap.swift */; };
-		B396AE6E2C71A83200DF1EBD /* MednafenGameCore+MultiDisc.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396AE6D2C71A83200DF1EBD /* MednafenGameCore+MultiDisc.swift */; };
-		B396AE722C71A9AE00DF1EBD /* MednafenGameCore+Cheats.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396AE712C71A9AE00DF1EBD /* MednafenGameCore+Cheats.swift */; };
 		B3AAB425207379230097D86F /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
 		B3AFCF7A2977A6EA00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF792977A6EA00A01010 /* PVLogging */; };
@@ -509,7 +506,7 @@
 		B3C0793E2C754658006F109B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C0793D2C754658006F109B /* Foundation.framework */; };
 		B3C0793F2C75477A006F109B /* MednafenGameCoreC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* MednafenGameCoreC.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); };
 		B3C079402C75477A006F109B /* MednafenGameCoreC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* MednafenGameCoreC.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B3F885E42C759C3600C49F8D /* PVMednafenGameCoreCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F885E12C759C2C00C49F8D /* PVMednafenGameCoreCTests.swift */; };
+		B3F885E42C759C3600C49F8D /* MednafenGameCoreCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F885E12C759C2C00C49F8D /* MednafenGameCoreCTests.swift */; };
 		B3FBDF01207FF13400E661D1 /* interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8F20736EE90097D86F /* interface.cpp */; };
 		B3FBDF02207FF19800E661D1 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9820736EE90097D86F /* generic.cpp */; };
 		B3FBDF03207FF19800E661D1 /* smemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9920736EE90097D86F /* smemory.cpp */; };
@@ -2146,7 +2143,7 @@
 		B3AAAE7A20736EE90097D86F /* v30mz-private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "v30mz-private.h"; sourceTree = "<group>"; };
 		B3AAAE8720736EE90097D86F /* eeprom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = eeprom.cpp; sourceTree = "<group>"; };
 		B3AAAE8820736EE90097D86F /* gfx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = gfx.cpp; sourceTree = "<group>"; };
-		B3AAAE8920736EE90097D86F /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		B3AAAE8920736EE90097D86F /* wswan_main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = wswan_main.cpp; sourceTree = "<group>"; };
 		B3AAAE8A20736EE90097D86F /* wswan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wswan.h; sourceTree = "<group>"; };
 		B3AAAE8C20736EE90097D86F /* VERSION.BSNES */ = {isa = PBXFileReference; lastKnownFileType = text; path = VERSION.BSNES; sourceTree = "<group>"; };
 		B3AAAE8E20736EE90097D86F /* Makefile.am.inc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.pascal; path = Makefile.am.inc; sourceTree = "<group>"; };
@@ -3029,7 +3026,7 @@
 		B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiDisc.m; sourceTree = "<group>"; };
 		B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiTap.m; sourceTree = "<group>"; };
 		B3F885DF2C759C2C00C49F8D /* MednafenGameCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MednafenGameCoreTests.swift; sourceTree = "<group>"; };
-		B3F885E12C759C2C00C49F8D /* PVMednafenGameCoreCTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVMednafenGameCoreCTests.swift; sourceTree = "<group>"; };
+		B3F885E12C759C2C00C49F8D /* MednafenGameCoreCTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MednafenGameCoreCTests.swift; sourceTree = "<group>"; };
 		B3FBDEF8207FF0E300E661D1 /* libsnes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnes.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnes_faust.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C66D560A2626B12100CDECE9 /* Makefile.am.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = Makefile.am.inc; sourceTree = "<group>"; };
@@ -3049,15 +3046,9 @@
 		B3C079162C75461A006F109B /* Exceptions for "MednafenGameCoreC" folder in "MednafenGameCoreC" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				MednafenGameCoreC.m,
+				MednafenGameCoreC.mm,
 			);
 			publicHeaders = (
-				"include/mednafen/mednafen-driver.h",
-				include/mednafen/mednafen.h,
-				include/mednafen/MemoryStream.h,
-				include/mednafen/mempatcher.h,
-				"include/mednafen/settings-driver.h",
-				"include/mednafen/state-driver.h",
 				include/MednafenGameCoreC/MednafenGameCoreC.h,
 			);
 			target = B3C079042C75461A006F109B /* MednafenGameCoreC */;
@@ -4855,7 +4846,7 @@
 				B3AAAE8720736EE90097D86F /* eeprom.cpp */,
 				B3AAAE8820736EE90097D86F /* gfx.cpp */,
 				B3AAAE5C20736EE90097D86F /* interrupt.cpp */,
-				B3AAAE8920736EE90097D86F /* main.cpp */,
+				B3AAAE8920736EE90097D86F /* wswan_main.cpp */,
 				B3AAAE5720736EE90097D86F /* memory.cpp */,
 				B3AAAE6420736EE90097D86F /* rtc.cpp */,
 				B3AAAE6720736EE90097D86F /* sound.cpp */,
@@ -6569,19 +6560,19 @@
 			path = MednafenGameCoreTests;
 			sourceTree = "<group>";
 		};
-		B3F885E22C759C2C00C49F8D /* PVMednafenGameCoreCTests */ = {
+		B3F885E22C759C2C00C49F8D /* MednafenGameCoreCTests */ = {
 			isa = PBXGroup;
 			children = (
-				B3F885E12C759C2C00C49F8D /* PVMednafenGameCoreCTests.swift */,
+				B3F885E12C759C2C00C49F8D /* MednafenGameCoreCTests.swift */,
 			);
-			path = PVMednafenGameCoreCTests;
+			path = MednafenGameCoreCTests;
 			sourceTree = "<group>";
 		};
 		B3F885E32C759C2C00C49F8D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				B3F885E02C759C2C00C49F8D /* MednafenGameCoreTests */,
-				B3F885E22C759C2C00C49F8D /* PVMednafenGameCoreCTests */,
+				B3F885E22C759C2C00C49F8D /* MednafenGameCoreCTests */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -7467,7 +7458,7 @@
 				B3335070207AFD8B0036A448 /* memory.cpp in Sources */,
 				B3335072207AFD8B0036A448 /* sound.cpp in Sources */,
 				B333506C207AFD8B0036A448 /* eeprom.cpp in Sources */,
-				B333506F207AFD8B0036A448 /* main.cpp in Sources */,
+				B333506F207AFD8B0036A448 /* wswan_main.cpp in Sources */,
 				B3335073207AFD8B0036A448 /* tcache.cpp in Sources */,
 				B333506E207AFD8B0036A448 /* interrupt.cpp in Sources */,
 				B3335071207AFD8B0036A448 /* rtc.cpp in Sources */,
@@ -8026,14 +8017,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B33355F1207B2A650036A448 /* MednafenGameCore.swift in Sources */,
 				B3AAB425207379230097D86F /* stubs.mm in Sources */,
 				B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */,
-				B396AE6E2C71A83200DF1EBD /* MednafenGameCore+MultiDisc.swift in Sources */,
-				B396AE722C71A9AE00DF1EBD /* MednafenGameCore+Cheats.swift in Sources */,
+				B302129C2C760CD200A05740 /* MednafenGameCore.swift in Sources */,
 				C66D56112626B12100CDECE9 /* Time_POSIX.cpp in Sources */,
 				B333559D207B1DC50036A448 /* thread.cpp in Sources */,
-				B396AE6B2C71A65200DF1EBD /* MednafenGameCore+MultiTap.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8056,7 +8044,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3F885E42C759C3600C49F8D /* PVMednafenGameCoreCTests.swift in Sources */,
+				B3F885E42C759C3600C49F8D /* MednafenGameCoreCTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8452,10 +8440,6 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Sources/mednafen/src\"",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -8473,13 +8457,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
-					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
-					"\"$(SRCROOT)/Sources/mednafen/include\"",
-					"\"$(SRCROOT)/Sources/MednafenGameCore/include\"",
-				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8491,8 +8468,8 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Debug;
@@ -8530,10 +8507,6 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Sources/mednafen/src\"",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -8551,13 +8524,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
-					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
-					"\"$(SRCROOT)/Sources/mednafen/include\"",
-					"\"$(SRCROOT)/Sources/MednafenGameCore/include\"",
-				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8570,8 +8536,8 @@
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Release;
@@ -8609,10 +8575,6 @@
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Sources/mednafen/src\"",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -8630,13 +8592,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
-					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
-					"\"$(SRCROOT)/Sources/mednafen/include\"",
-					"\"$(SRCROOT)/Sources/MednafenGameCore/include\"",
-				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8649,8 +8604,8 @@
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
-				SYMROOT = "${SRCROOT}/build";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 			};
 			name = Archive;
@@ -8659,14 +8614,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -8683,7 +8642,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = Sources/MednafenGameCore/Resources/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -8694,7 +8654,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.27.1;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c++ objective-c swift";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++ c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
@@ -8711,7 +8671,6 @@
 				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/MednafenGameCore/include\"";
 				USE_HEADERMAP = YES;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -9262,9 +9221,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEFINES_MODULE = YES;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gn++14";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -10532,10 +10495,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				ENABLE_MODULE_VERIFIER = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gn++14";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -10558,9 +10525,13 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEFINES_MODULE = YES;
+				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gn++14";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -10793,14 +10764,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -10819,7 +10794,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = Sources/MednafenGameCore/Resources/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -10830,9 +10806,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.27.1;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c++ objective-c swift";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++ c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
-				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.MednafenGameCore";
 				PRODUCT_NAME = MednafenGameCore;
@@ -10848,7 +10824,6 @@
 				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/MednafenGameCore/include\"";
 				USE_HEADERMAP = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -10861,14 +10836,18 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -10885,7 +10864,8 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = Sources/MednafenGameCore/Resources/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -10896,7 +10876,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.27.1;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c++ objective-c swift";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++ c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
@@ -10913,7 +10893,6 @@
 				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/MednafenGameCore/include\"";
 				USE_HEADERMAP = YES;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -11016,7 +10995,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -11032,22 +11011,21 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
-					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -11059,8 +11037,8 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
 				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++ c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu17 gnu++14 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.MednafenGameCoreC";
@@ -11072,7 +11050,9 @@
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,7";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				XROS_DEPLOYMENT_TARGET = 2.0;
@@ -11088,7 +11068,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -11105,21 +11085,20 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
-					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -11131,8 +11110,8 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
 				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++ c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu17 gnu++14 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.MednafenGameCoreC";
@@ -11142,7 +11121,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
+				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,7";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				XROS_DEPLOYMENT_TARGET = 2.0;
@@ -11158,7 +11139,7 @@
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -11175,21 +11156,20 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
-					"\"$(SRCROOT)/PVMednafen\"",
-					"\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
@@ -11201,8 +11181,8 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 15.1;
 				MARKETING_VERSION = 1.0;
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++ c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu17 gnu++14 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.MednafenGameCoreC";
@@ -11212,7 +11192,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_VERSION = 5.0;
+				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,7";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 				XROS_DEPLOYMENT_TARGET = 2.0;

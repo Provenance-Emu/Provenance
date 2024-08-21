@@ -3,7 +3,7 @@ import PVSupport
 import PVEmulatorCore
 import PVLogging
 import PVLoggingObjC
-import PVMednafenGameCoreC
+import MednafenGameCoreC
 
 //@objc public protocol MednafenGameCoreCheatSyntax: NSObjectProtocol {
 //    @objc func getCheatCodeTypes() -> [String]
@@ -28,7 +28,7 @@ import PVMednafenGameCoreC
             throw MednafenCheatError.cheatsNotSupportedOnCurrentPlatform
         }
         
-        ILOG("Applying Cheat Code \(code) \(type)")
+        ILOG("Applying Cheat Code \(code) \(type)")     
         
         let game = getGame().assumingMemoryBound(to: Mednafen.MDFNGI.self)
         let multipleCodes = code.components(separatedBy: "+")

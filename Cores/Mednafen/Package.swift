@@ -3,8 +3,51 @@
 
 import PackageDescription
 
+let GCC_PREPROCESSOR_DEFINITIONS: [CSetting] =
+    "HAVE_LROUND HAVE_MKDIR HAVE_PTHREAD_COND_TIMEDWAIT_RELATIVE_NP HAVE_STDINT_H HAVE_STDLIB_H HAVE_SYS_PARAM_H HAVE_UNISTD_H LSB_FIRST MPC_FIXED_POINT PSS_STYLE=1 SIZEOF_CHAR=1 SIZEOF_DOUBLE=8 SIZEOF_INT=4 SIZEOF_LONG=8 SIZEOF_LONG_LONG=8 SIZEOF_OFF_T=8 SIZEOF_PTRDIFF_T=8 SIZEOF_SHORT=2 SIZEOF_SIZE_T=8 SIZEOF_VOID_P=8 STDC_HEADERS WANT_FANCY_SCALERS=1 WANT_GB_EMU WANT_GBA_EMU WANT_LYNX_EMU WANT_NES_EMU WANT_NGP_EMU WANT_PCE_EMU WANT_PCE_FAST_EMU WANT_PCFX_EMU WANT_PSX_EMU WANT_SNES_EMU WANT_SNES_FAUST_EMU WANT_SS_EMU WANT_STEREO_SOUND WANT_VB_EMU WANT_WSWAN_EMU __LIBRETRO__ __STDC_LIMIT_MACROS=1 ICONV_CONST"
+    .split(separator: " ")
+    .map {
+        let split = $0.split(separator: "=")
+        if split.count == 2 {
+            return CSetting.define(String(split[0]), to: String(split[1]))
+        } else {
+            return CSetting.define(String($0))
+        }
+    }
+
+// -funroll-loops -fPIC -Wall -Wno-sign-compare -Wno-unused-variable -Wno-unused-function -Wno-uninitialized -Wno-strict-aliasing -Wno-aggressive-loop-optimizations -fno-fast-math -fomit-frame-pointer -fsigned-char -Wshadow -Wempty-body -Wignored-qualifiers -Wvla -Wvariadic-macros -Wdisabled-optimization -fmodules -fcxx-modules -DMEDNAFEN_VERSION=\"1.27.1\" -DPACKAGE=\"mednafen\" -DICONV_CONST=
+let OTHER_CFLAGS: [CSetting] = [
+    .unsafeFlags(
+        "-funroll-loops -fPIC -Wall -Wno-sign-compare -Wno-unused-variable -Wno-unused-function -Wno-uninitialized -Wno-strict-aliasing -Wno-aggressive-loop-optimizations -fno-fast-math -fomit-frame-pointer -fsigned-char -Wshadow -Wempty-body -Wignored-qualifiers -Wvla -Wvariadic-macros -Wdisabled-optimization -fmodules -fcxx-modules".split(separator: " ").map(String.init)
+    )
+]
+
+let CSETTINGS: [CSetting] = [
+    .define("MEDNAFEN_VERSION_NUMERIC", to: "0x00102701"),
+    .define("MEDNAFEN_VERSION", to: "1.27.1"),
+    .define("PACKAGE", to: "mednafen"),
+    .define("INLINE", to: "inline"),
+    
+    .define("HAVE_CONFIG_H", to: "1"),
+
+    .define("DEBUG", to: "1", .when(configuration: .debug)),
+    .define("NDEBUG", to: "1", .when(configuration: .release)),
+//    .headerSearchPath("./"),
+//    .headerSearchPath("../"),
+//    .headerSearchPath("../include"),
+//    .headerSearchPath("../../include"),
+] + GCC_PREPROCESSOR_DEFINITIONS + OTHER_CFLAGS
+
 let package = Package(
     name: "MednafenGameCore",
+    platforms: [
+        .iOS(.v17),
+        .tvOS("15.4"),
+        .watchOS(.v9),
+        .macOS(.v11),
+        .macCatalyst(.v17),
+        .visionOS(.v1)
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -35,14 +78,18 @@ let package = Package(
         .target(
             name: "MednafenGameCore",
             dependencies: [
+                "MednafenGameCoreC",
                 "MednafenGameCoreSwift",
+                "PVAudio",
                 "PVCoreBridge",
                 "PVEmulatorCore",
                 "PVLogging",
-                "PVMednafenGameCoreC",
+                "PVPlists",
+                "PVSettings",
                 "PVSupport"
             ],
-            path: "Sources/MednafenGameCore"
+            path: "Sources/MednafenGameCore",
+            cSettings: CSETTINGS
         ),
         
         // MARK: MednafenGameCoreSwift
@@ -50,14 +97,18 @@ let package = Package(
             .target(
                 name: "MednafenGameCoreSwift",
                 dependencies: [
-                    "PVMednafenGameCoreC",
+                    "MednafenGameCoreC",
+                    "PVAudio",
                     "PVCoreBridge",
                     "PVEmulatorCore",
                     "PVLogging",
-                    "PVMednafenGameCoreC",
+                    "PVPlists",
+                    "PVSettings",
                     "PVSupport"
                 ],
-                path: "Sources/MednafenGameCoreSwift"
+                path: "Sources/MednafenGameCoreSwift",
+                cSettings: CSETTINGS,
+                swiftSettings: [.interoperabilityMode(.Cxx)]
             ),
         
         // MARK: PVMednafenGameCoreC
@@ -72,7 +123,7 @@ let package = Package(
                     "nes",
                     "mednafen"
                 ],
-                publicHeadersPath: "."
+                cSettings: CSETTINGS
             ),
       
         // MARK: psx
@@ -107,7 +158,7 @@ let package = Package(
                     "spu.cpp",
                     "timer.cpp"
                 ],
-                publicHeadersPath: "."
+                cSettings: CSETTINGS
             ),
         
         // MARK: wonderswan
@@ -120,14 +171,17 @@ let package = Package(
                     "eeprom.cpp",
                     "gfx.cpp",
                     "interrupt.cpp",
-                    "main.cpp",
                     "memory.cpp",
                     "rtc.cpp",
                     "sound.cpp",
                     "tcache.cpp",
-                    "v30mz.cpp"
+                    "v30mz.cpp",
+                    "wswan_main.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: [
+                    .headerSearchPath("../include"),
+                ] + CSETTINGS
             ),
         
         // MARK: virtualboy
@@ -142,7 +196,8 @@ let package = Package(
                     "vip.cpp",
                     "vsu.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
 
         // MARK: nes
@@ -222,7 +277,6 @@ let package = Package(
                     "boards/95.cpp",
                     "boards/96.cpp",
                     "boards/97.cpp",
-                    "boards/98.cpp",
                     "boards/99.cpp",
                     "boards/codemasters.cpp",
                     "boards/colordreams.cpp",
@@ -278,7 +332,7 @@ let package = Package(
                     "vsuni.cpp",
                     "x6502.cpp"
                 ],
-                publicHeadersPath: "."
+                cSettings: CSETTINGS
             ),
 
         // MARK: gb
@@ -294,7 +348,8 @@ let package = Package(
                     "sound.cpp",
                     "z80.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: gba
@@ -322,7 +377,8 @@ let package = Package(
                     "sram.cpp",
                     "thumb.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
 
         // MARK: lynx
@@ -340,7 +396,8 @@ let package = Package(
                     "susie.cpp",
                     "system.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: neogeopocket
@@ -376,7 +433,8 @@ let package = Package(
                     "rtc.cpp",
                     "sound.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: pce
@@ -385,21 +443,24 @@ let package = Package(
                 name: "pce",
                 path: "Sources/mednafen/mednafen/src/pce",
                 sources: [
+                    "input/gamepad.cpp",
+                    "input/mouse.cpp",
+                    "input/tsushinkb.cpp",
                     "dis6280.cpp",
                     "hes.cpp",
                     "huc.cpp",
                     "huc6280.cpp",
                     "input.cpp",
-                    "input/gamepad.cpp",
-                    "input/mouse.cpp",
-                    "tsushinkb.cpp",
                     "mcgenjin.cpp",
                     "pce.cpp",
                     "pcecd.cpp",
                     "tsushin.cpp",
                     "vce.cpp"
                 ],
-                publicHeadersPath: "."
+                resources: [
+                    .copy("notes/")
+                ],
+                cSettings: CSETTINGS
             ),
         
         // MARK: pcefast
@@ -418,7 +479,8 @@ let package = Package(
                     "psg.cpp",
                     "vdc.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: segamastersystem
@@ -438,7 +500,8 @@ let package = Package(
                     "tms.cpp",
                     "vdp.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: pcfx
@@ -459,7 +522,11 @@ let package = Package(
                     "rainbow.cpp",
                     "soundbox.cpp",
                     "timer.cpp"
-                ]
+                ],
+                resources: [
+                    .copy("notes/")
+                ],
+                cSettings: CSETTINGS
             ),
         
         // MARK: megadrive
@@ -499,7 +566,8 @@ let package = Package(
                     "system.cpp",
                     "vdp.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: hwaudio
@@ -516,7 +584,8 @@ let package = Package(
                     "ym2413/emu2413.cpp",
                     "ym2612/Ym2612_Emu.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: hwvideo
@@ -526,9 +595,9 @@ let package = Package(
                 path: "Sources/mednafen/mednafen/src/hw_video",
                 sources: [
                     "huc6270/vdc.cpp",
-                    "convert.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: hwcpu
@@ -542,7 +611,8 @@ let package = Package(
                     "z80-fuse/z80.cpp",
                     "z80-fuse/z80_ops.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: hwcpu-m68k
@@ -553,7 +623,8 @@ let package = Package(
                 sources: [
                     "m68k.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: hwmisc
@@ -565,7 +636,8 @@ let package = Package(
                     "testsexp.cpp",
                     "hw_misc/arcade_card/arcade_card.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: cdrom
@@ -589,7 +661,8 @@ let package = Package(
                     "recover-raw.cpp",
                     "scsicd.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: sound
@@ -607,8 +680,23 @@ let package = Package(
                     "WAVRecord.cpp",
                     "okiadpcm.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
+        
+        // MARK: sexyal
+
+//            .target(
+//                name: "sexyal",
+//                path: "Sources/mednafen/mednafen/src/sexyal",
+//                sources: [
+//                    "drivers/dummy.cpp",
+//                    "drivers/sdl.cpp",
+//                    "convert.cpp",
+//                    "sexyal.cpp"
+//                ],
+//                publicHeadersPath: "."
+//            ),
         
         // MARK: video
 
@@ -617,6 +705,7 @@ let package = Package(
                 path: "Sources/mednafen/mednafen/src/video",
                 sources: [
                     "Deinterlacer.cpp",
+                    "convert.cpp",
                     "font-data.cpp",
                     "png.cpp",
                     "primitives.cpp",
@@ -626,7 +715,8 @@ let package = Package(
                     "text.cpp",
                     "video.cpp"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: mednafen
@@ -650,7 +740,7 @@ let package = Package(
                     "trio",
                     "video"
                 ],
-                path: "Sources/mednafen/mednafen/src",
+                path: "Sources/mednafen/",
                 sources: [
                     "time/Time_POSIX.cpp", // This was in the main framework target prior
                     
@@ -698,16 +788,17 @@ let package = Package(
                     "player.cpp",
                     "resampler/resample.c",
                     "settings.cpp",
-                    "sound/DSPUtility.cpp",
-                    "sound/SwiftResampler.cpp",
+//                    "sound/DSPUtility.cpp",
+//                    "sound/SwiftResampler.cpp",
                     "state.cpp",
                     "state_rewind.cpp",
                     "string/escape.cpp",
                     "string/string.cpp",
                     "video/Deinterlacer_Blend.cpp",
                     "video/Deinterlacer_Simple.cpp"
-                ],
-                publicHeadersPath: "."
+                ].map { "mednafen/src/\($0)" },
+                publicHeadersPath: "./include/mednafen",
+                cSettings: CSETTINGS
             ),
         
         // MARK: mpcdec
@@ -725,7 +816,8 @@ let package = Package(
                     "streaminfo.c",
                     "synth_filter.c"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: quicklz
@@ -736,7 +828,8 @@ let package = Package(
                 sources: [
                     "quicklz.c"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: Tremor
@@ -761,7 +854,8 @@ let package = Package(
                     "vorbisfile.c",
                     "window.c"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: CSETTINGS
             ),
         
         // MARK: Trio
@@ -774,7 +868,10 @@ let package = Package(
                     "trionan.c",
                     "triostr.c"
                 ],
-                publicHeadersPath: "."
+                publicHeadersPath: ".",
+                cSettings: [
+                    .headerSearchPath("../")
+                ] + CSETTINGS
             ),
         
         // MARK: SNES
@@ -903,7 +1000,8 @@ let package = Package(
                     "src/system/system.cpp",
                     "src/system/video/video.cpp"
                 ],
-                publicHeadersPath: "./"
+                publicHeadersPath: "./",
+                cSettings: CSETTINGS
             ),
         
         // MARK: SNES Faust
@@ -932,7 +1030,8 @@ let package = Package(
                     "ppu_st.cpp",
                     "snes.cpp"
                 ],
-                publicHeadersPath: "./"
+                publicHeadersPath: "./",
+                cSettings: CSETTINGS
             ),
         
             // MARK: Saturn
@@ -975,7 +1074,8 @@ let package = Package(
                     "vdp2.cpp",
                     "vdp2_render.cpp"
                 ],
-                publicHeadersPath: "./"
+                publicHeadersPath: "./",
+                cSettings: CSETTINGS
             ),
         
         // MARK: - Tests
@@ -994,8 +1094,8 @@ let package = Package(
             dependencies: ["MednafenGameCoreC"]
         )
     ],
-    swiftLanguageVersions: [.v5, .v6],
-    cLanguageStandard: .c11,
-    cxxLanguageStandard: .cxx14
+    swiftLanguageModes: [.v5, .v6],
+    cLanguageStandard: .gnu99,
+    cxxLanguageStandard: .gnucxx14
     
 )
