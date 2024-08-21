@@ -4,611 +4,781 @@
 import PackageDescription
 
 let package = Package(
-    name: "Mednafen",
+    name: "MednafenGameCore",
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "Mednafen",
-            targets: ["Mednafen"]),
+            name: "MednafenGameCore",
+            targets: ["MednafenGameCore", "MednafenGameCoreSwift", "MednafenGameCoreC"]),
+        .library(
+            name: "MednafenGameCore-Dynamic",
+            type: .dynamic,
+            targets: ["MednafenGameCore", "MednafenGameCoreSwift", "MednafenGameCoreC"]),
+        .library(
+            name: "MednafenGameCore-Static",
+            type: .static,
+            targets: ["MednafenGameCore", "MednafenGameCoreSwift", "MednafenGameCoreC"])
+    ],
+    dependencies: [
+        .package(path: "../../PVAudio"),
+        .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVEmulatorCore"),
+        .package(path: "../../PVLogging"),
+        .package(path: "../../PVPlists"),
+        .package(path: "../../PVSettings"),
+        .package(path: "../../PVSupport"),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "Mednafen"),
         
-        /*
-         
-         PVMednafen files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/MednafenGameCore/MednafenGameCore.mm
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/MednafenGameCore/stubs.mm
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/MednafenGameCore/thread.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/MednafenGameCoreSwift/MednafenGameCore+Cheats.swift
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/MednafenGameCoreSwift/MednafenGameCore+MultiDisc.swift
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/MednafenGameCoreSwift/MednafenGameCore+MultiTap.swift
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/MednafenGameCoreSwift/MednafenGameCore.swift
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/time/Time_POSIX.cpp
-         
-         .target(name: MednafenGameCore),
-         
-         psx files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/cdc.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/cpu.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/dis.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/dma.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/frontio.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/gpu.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/gpu_line.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/gpu_polygon.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/gpu_sprite.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/gte.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/input/dualanalog.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/input/dualshock.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/input/gamepad.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/input/guncon.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/input/justifier.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/input/memcard.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/input/mouse.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/input/multitap.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/input/negcon.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/irq.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/mdec.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/psx.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/sio.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/spu.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/psx/timer.cpp
-         
-         .target(name: psx),
-         
-         
-         wonderswan files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/wswan/comm.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/wswan/eeprom.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/wswan/gfx.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/wswan/interrupt.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/wswan/main.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/wswan/memory.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/wswan/rtc.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/wswan/sound.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/wswan/tcache.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/wswan/v30mz.cpp
-         
-         .target(name: wonderswan),
-         
-         virtualboy files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/vb/input.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/vb/timer.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/vb/vb.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/vb/vip.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/vb/vsu.cpp
-         
-         .target(name: virtualboy),
-         
-         nes files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/107.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/112.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/113.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/114.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/117.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/140.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/15.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/151.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/152.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/156.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/16.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/163.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/18.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/180.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/182.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/184.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/185.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/187.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/189.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/190.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/193.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/208.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/21.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/22.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/222.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/228.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/23.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/232.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/234.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/240.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/241.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/242.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/244.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/246.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/248.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/25.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/30.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/32.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/33.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/34.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/38.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/40.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/41.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/42.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/46.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/51.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/65.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/67.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/68.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/70.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/72.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/73.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/75.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/76.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/77.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/78.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/8.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/80.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/82.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/8237.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/86.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/87.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/88.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/89.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/90.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/92.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/93.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/94.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/95.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/96.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/97.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/99.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/codemasters.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/colordreams.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/deirom.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/emu2413.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/ffe.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/fme7.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/h2288.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/malee.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/maxicart.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/mmc1.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/mmc2and4.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/mmc3.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/mmc5.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/n106.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/nina06.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/novel.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/sachen.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/simple.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/super24.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/supervision.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/tengen.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/vrc6.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/boards/vrc7.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/cart.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/dis6502.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/fds-sound.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/fds.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/ines.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/arkanoid.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/bbattler2.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/cursor.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/fkb.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/ftrainer.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/hypershot.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/mahjong.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/oekakids.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/partytap.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/powerpad.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/shadow.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/suborkb.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/toprider.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/input/zapper.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/nes.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/nsf.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/nsfe.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/ntsc/nes_ntsc.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/ppu/palette.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/ppu/ppu.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/sound.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/unif.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/vsuni.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/nes/x6502.cpp
-         
-         .target(name: nes),
-         
-         gb files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gb/gb.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gb/gbGlobals.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gb/gfx.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gb/memory.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gb/sound.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gb/z80.cpp
-         
-         .target(name: gb),
-         
-         
-         gba files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/GBA.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/GBAinline.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/Gfx.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/Globals.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/Mode0.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/Mode1.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/Mode2.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/Mode3.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/Mode4.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/Mode5.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/RTC.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/Sound.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/arm.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/bios.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/eeprom.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/flash.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/sram.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/gba/thumb.cpp
-         
-         .target(name: gba),
-         
-         lynx files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/lynx/c65c02.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/lynx/cart.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/lynx/memmap.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/lynx/mikie.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/lynx/ram.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/lynx/rom.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/lynx/susie.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/lynx/system.cpp
-         
-         .target(name: lynx),
-         
-         neogeopocket files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/T6W28_Apu.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_disassemble.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_disassemble_dst.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_disassemble_extra.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_disassemble_reg.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_disassemble_src.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_interpret.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_interpret_dst.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_interpret_reg.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_interpret_single.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_interpret_src.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/TLCS-900h/TLCS900h_registers.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/Z80_interface.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/bios.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/biosHLE.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/dma.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/flash.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/gfx.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/gfx_scanline_colour.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/gfx_scanline_mono.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/interrupt.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/mem.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/neopop.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/rom.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/rtc.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ngp/sound.cpp
-         
-         .target(name: neogeopocket),
-         
-         
-         pce files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/dis6280.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/hes.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/huc.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/huc6280.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/input.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/input/gamepad.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/input/mouse.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/input/tsushinkb.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/mcgenjin.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/pce.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/pcecd.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/tsushin.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce/vce.cpp
-         
-         .target(name: pce),
-         
-         
-         pcefast files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce_fast/hes.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce_fast/huc.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce_fast/huc6280.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce_fast/input.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce_fast/pce.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce_fast/pcecd.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce_fast/pcecd_drive.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce_fast/psg.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pce_fast/vdc.cpp
-         
-         .target(name: pcefast),
-         
-         
-         segamastersystem files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sms/cart.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sms/memz80.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sms/pio.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sms/render.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sms/romdb.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sms/sms.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sms/sound.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sms/system.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sms/tms.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sms/vdp.cpp
-         
-         .target(name: segamastersystem),
-         
-         
-         pcfx files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/fxscsi.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/huc6273.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/idct.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/input.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/input/gamepad.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/input/mouse.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/interrupt.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/king.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/pcfx.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/rainbow.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/soundbox.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/pcfx/timer.cpp
-         
-         .target(name: pcfx),
-         
-         
-         megadrive files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/cart.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/map_eeprom.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/map_ff.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/map_realtec.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/map_rmx3.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/map_rom.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/map_sbb.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/map_sram.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/map_ssf2.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/map_svp.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cart/map_yase.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cd/cd.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cd/cdc_cdd.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cd/interrupt.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cd/pcm.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/cd/timer.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/genesis.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/genio.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/header.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/input/4way.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/input/gamepad.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/input/megamouse.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/input/multitap.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/mem68k.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/membnk.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/memvdp.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/memz80.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/sound.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/system.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/md/vdp.cpp
-         
-         .target(name: megadrive),
-         
-         hwaudio files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_sound/gb_apu/Gb_Apu.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_sound/gb_apu/Gb_Apu_State.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_sound/gb_apu/Gb_Oscs.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_sound/pce_psg/pce_psg.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_sound/sms_apu/Sms_Apu.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_sound/ym2413/emu2413.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_sound/ym2612/Ym2612_Emu.cpp
-         
-         
-         .target(name: hwaudio),
-         
-         hwvideo files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_video/huc6270/vdc.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/convert.cpp
-         
-         
-         .target(name: hwvideo),
-         
-         hwcpu files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_cpu/v810/v810_cpu.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_cpu/v810/v810_fp_ops.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_cpu/z80-fuse/z80.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_cpu/z80-fuse/z80_ops.cpp
-         
-         .target(name: hwcpu),
-         
-         hwcpu-m68k files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_cpu/m68k/m68k.cpp
-         
-         .target(name: hwcpu-m68k),
-         
-         hwmisc files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hw_misc/arcade_card/arcade_card.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/testsexp.cpp
-         
-         .target(name: hwmisc),
-         
-         
-         cdrom files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDAFReader.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDAFReader_MPC.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDAFReader_PCM.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDAFReader_Vorbis.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDAccess.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDAccess_CCD.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDAccess_Image.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDUtility.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/crc32.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/galois.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/l-ec.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/lec.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/recover-raw.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/scsicd.cpp
-         
-         .target(name: cdrom),
-         
-         
-         sound files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sound/Blip_Buffer.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sound/DSPUtility.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sound/Fir_Resampler.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sound/OwlResampler.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sound/Stereo_Buffer.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sound/SwiftResampler.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sound/WAVRecord.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sound/okiadpcm.cpp
-         
-         .target(name: sound),
-         
-         
-         video files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/Deinterlacer.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/font-data.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/png.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/primitives.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/resize.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/surface.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/tblur.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/text.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/video.cpp
-         
-         
-         .target(name: video),
-         
-         mednafen files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/ExtMemStream.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/FileStream.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/IPSPatcher.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/MTStreamReader.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/MemoryStream.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/NativeVFS.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/PSFLoader.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/SNSFLoader.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/SPCReader.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/Stream.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/VirtualFS.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdplay/cdplay.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDInterface.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDInterface_MT.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cdrom/CDInterface_ST.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cheat_formats/gb.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cheat_formats/psx.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cheat_formats/snes.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/compress/GZFileStream.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/compress/ZIPReader.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/compress/ZLInflateFilter.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/cputest/cputest.c
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/debug.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/demo/demo.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/endian.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/error.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/file.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/general.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/git.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hash/crc.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hash/md5.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hash/sha1.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/hash/sha256.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mednafen.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/memory.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mempatcher.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/movie.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mthreading/MThreading_POSIX.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/net/Net.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/net/Net_POSIX.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/netplay.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/player.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/resampler/resample.c
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/settings.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sound/DSPUtility.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/sound/SwiftResampler.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/state.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/state_rewind.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/string/escape.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/string/string.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/Deinterlacer_Blend.cpp
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/video/Deinterlacer_Simple.cpp
-         
-         .target(name: mednafen),
-         
-         
-         mpcdec files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mpcdec/crc32.c
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mpcdec/huffman.c
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mpcdec/mpc_bits_reader.c
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mpcdec/mpc_decoder.c
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mpcdec/mpc_demux.c
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mpcdec/requant.c
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mpcdec/streaminfo.c
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/mpcdec/synth_filter.c
-         
-         .target(name: mpcdec),
-         
-         
-         quicklz files:
-         
-         /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Mednafen/Sources/mednafen/mednafen/src/quicklz/quicklz.c
-         
-         .target(name: quicklz),
-         
-         */
+        // MARK: MednafenGameCore
+
         .target(
-            name: "tremor",
-            path: "Sources/mednafen/mednafen/src/tremor",
-            sources: [
-                "bitwise.c",
-                "block.c",
-                "codebook.c",
-                "floor0.c",
-                "floor1.c",
-                "framing.c",
-                "info.c",
-                "mapping0.c",
-                "mdct.c",
-                "registry.c",
-                "res012.c",
-                "sharedbook.c",
-                "synthesis.c",
-                "vorbisfile.c",
-                "window.c"
+            name: "MednafenGameCore",
+            dependencies: [
+                "MednafenGameCoreSwift",
+                "PVCoreBridge",
+                "PVEmulatorCore",
+                "PVLogging",
+                "PVMednafenGameCoreC",
+                "PVSupport"
             ],
-            publicHeadersPath: "."
+            path: "Sources/MednafenGameCore"
         ),
         
+        // MARK: MednafenGameCoreSwift
         
-        .target(
-            name: "trio",
-            path: "Sources/mednafen/mednafen/src/trio",
-            sources: [
-                "trio.c",
-                "trionan.c",
-                "triostr.c"
-            ],
-            publicHeadersPath: "."
-        ),
+            .target(
+                name: "MednafenGameCoreSwift",
+                dependencies: [
+                    "PVMednafenGameCoreC",
+                    "PVCoreBridge",
+                    "PVEmulatorCore",
+                    "PVLogging",
+                    "PVMednafenGameCoreC",
+                    "PVSupport"
+                ],
+                path: "Sources/MednafenGameCoreSwift"
+            ),
         
+        // MARK: PVMednafenGameCoreC
+
+            .target(
+                name: "MednafenGameCoreC",
+                dependencies: [
+                    "saturn",
+                    "psx",
+                    "wonderswan",
+                    "virtualboy",
+                    "nes",
+                    "mednafen"
+                ],
+                publicHeadersPath: "."
+            ),
+      
+        // MARK: psx
+
+            .target(
+                name: "psx",
+                path: "Sources/mednafen/mednafen/src/psx",
+                sources: [
+                    "cdc.cpp",
+                    "cpu.cpp",
+                    "dis.cpp",
+                    "dma.cpp",
+                    "frontio.cpp",
+                    "gpu.cpp",
+                    "gpu_line.cpp",
+                    "gpu_polygon.cpp",
+                    "gpu_sprite.cpp",
+                    "gte.cpp",
+                    "input/dualanalog.cpp",
+                    "input/dualshock.cpp",
+                    "input/gamepad.cpp",
+                    "input/guncon.cpp",
+                    "input/justifier.cpp",
+                    "input/memcard.cpp",
+                    "input/mouse.cpp",
+                    "input/multitap.cpp",
+                    "input/negcon.cpp",
+                    "irq.cpp",
+                    "mdec.cpp",
+                    "psx.cpp",
+                    "sio.cpp",
+                    "spu.cpp",
+                    "timer.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
         
+        // MARK: wonderswan
+        
+            .target(
+                name: "wonderswan",
+                path: "Sources/mednafen/mednafen/src/wswan",
+                sources: [
+                    "comm.cpp",
+                    "eeprom.cpp",
+                    "gfx.cpp",
+                    "interrupt.cpp",
+                    "main.cpp",
+                    "memory.cpp",
+                    "rtc.cpp",
+                    "sound.cpp",
+                    "tcache.cpp",
+                    "v30mz.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: virtualboy
+
+            .target(
+                name: "virtualboy",
+                path: "Sources/mednafen/mednafen/src/vb",
+                sources: [
+                    "input.cpp",
+                    "timer.cpp",
+                    "vb.cpp",
+                    "vip.cpp",
+                    "vsu.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+
+        // MARK: nes
+        
+            .target(
+                name: "nes",
+                path: "Sources/mednafen/mednafen/src/nes",
+                sources: [
+                    "boards/107.cpp",
+                    "boards/112.cpp",
+                    "boards/113.cpp",
+                    "boards/114.cpp",
+                    "boards/117.cpp",
+                    "boards/140.cpp",
+                    "boards/15.cpp",
+                    "boards/151.cpp",
+                    "boards/152.cpp",
+                    "boards/156.cpp",
+                    "boards/16.cpp",
+                    "boards/163.cpp",
+                    "boards/18.cpp",
+                    "boards/180.cpp",
+                    "boards/182.cpp",
+                    "boards/184.cpp",
+                    "boards/185.cpp",
+                    "boards/187.cpp",
+                    "boards/189.cpp",
+                    "boards/190.cpp",
+                    "boards/193.cpp",
+                    "boards/208.cpp",
+                    "boards/21.cpp",
+                    "boards/22.cpp",
+                    "boards/222.cpp",
+                    "boards/228.cpp",
+                    "boards/23.cpp",
+                    "boards/232.cpp",
+                    "boards/234.cpp",
+                    "boards/240.cpp",
+                    "boards/241.cpp",
+                    "boards/242.cpp",
+                    "boards/244.cpp",
+                    "boards/246.cpp",
+                    "boards/248.cpp",
+                    "boards/25.cpp",
+                    "boards/30.cpp",
+                    "boards/32.cpp",
+                    "boards/33.cpp",
+                    "boards/34.cpp",
+                    "boards/38.cpp",
+                    "boards/40.cpp",
+                    "boards/41.cpp",
+                    "boards/42.cpp",
+                    "boards/46.cpp",
+                    "boards/51.cpp",
+                    "boards/65.cpp",
+                    "boards/67.cpp",
+                    "boards/68.cpp",
+                    "boards/70.cpp",
+                    "boards/72.cpp",
+                    "boards/73.cpp",
+                    "boards/75.cpp",
+                    "boards/76.cpp",
+                    "boards/77.cpp",
+                    "boards/78.cpp",
+                    "boards/8.cpp",
+                    "boards/80.cpp",
+                    "boards/82.cpp",
+                    "boards/8237.cpp",
+                    "boards/86.cpp",
+                    "boards/87.cpp",
+                    "boards/88.cpp",
+                    "boards/89.cpp",
+                    "boards/90.cpp",
+                    "boards/92.cpp",
+                    "boards/93.cpp",
+                    "boards/94.cpp",
+                    "boards/95.cpp",
+                    "boards/96.cpp",
+                    "boards/97.cpp",
+                    "boards/98.cpp",
+                    "boards/99.cpp",
+                    "boards/codemasters.cpp",
+                    "boards/colordreams.cpp",
+                    "boards/deirom.cpp",
+                    "boards/emu2413.cpp",
+                    "boards/ffe.cpp",
+                    "boards/fme7.cpp",
+                    "boards/h2288.cpp",
+                    "boards/malee.cpp",
+                    "boards/maxicart.cpp",
+                    "boards/mmc1.cpp",
+                    "boards/mmc2and4.cpp",
+                    "boards/mmc3.cpp",
+                    "boards/mmc5.cpp",
+                    "boards/n106.cpp",
+                    "boards/nina06.cpp",
+                    "boards/novel.cpp",
+                    "boards/sachen.cpp",
+                    "boards/simple.cpp",
+                    "boards/super24.cpp",
+                    "boards/supervision.cpp",
+                    "boards/tengen.cpp",
+                    "boards/vrc6.cpp",
+                    "boards/vrc7.cpp",
+                    "cart.cpp",
+                    "dis6502.cpp",
+                    "fds-sound.cpp",
+                    "fds.cpp",
+                    "ines.cpp",
+                    "input.cpp",
+                    "input/arkanoid.cpp",
+                    "input/bbattler2.cpp",
+                    "input/cursor.cpp",
+                    "input/fkb.cpp",
+                    "input/ftrainer.cpp",
+                    "input/hypershot.cpp",
+                    "input/mahjong.cpp",
+                    "input/oekakids.cpp",
+                    "input/partytap.cpp",
+                    "input/powerpad.cpp",
+                    "input/shadow.cpp",
+                    "input/suborkb.cpp",
+                    "input/toprider.cpp",
+                    "input/zapper.cpp",
+                    "nes.cpp",
+                    "nsf.cpp",
+                    "nsfe.cpp",
+                    "ntsc/nes_ntsc.cpp",
+                    "ppu/palette.cpp",
+                    "ppu/ppu.cpp",
+                    "sound.cpp",
+                    "unif.cpp",
+                    "vsuni.cpp",
+                    "x6502.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+
+        // MARK: gb
+        
+            .target(
+                name: "gb",
+                path: "Sources/mednafen/mednafen/src/gb",
+                sources: [
+                    "gb.cpp",
+                    "gbGlobals.cpp",
+                    "gfx.cpp",
+                    "memory.cpp",
+                    "sound.cpp",
+                    "z80.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: gba
+
+            .target(
+                name: "gba",
+                path: "Sources/mednafen/mednafen/src/gba",
+                sources: [
+                    "GBA.cpp",
+                    "GBAinline.cpp",
+                    "Gfx.cpp",
+                    "Globals.cpp",
+                    "Mode0.cpp",
+                    "Mode1.cpp",
+                    "Mode2.cpp",
+                    "Mode3.cpp",
+                    "Mode4.cpp",
+                    "Mode5.cpp",
+                    "RTC.cpp",
+                    "Sound.cpp",
+                    "arm.cpp",
+                    "bios.cpp",
+                    "eeprom.cpp",
+                    "flash.cpp",
+                    "sram.cpp",
+                    "thumb.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+
+        // MARK: lynx
+        
+            .target(
+                name: "lynx",
+                path: "Sources/mednafen/mednafen/src/lynx",
+                sources: [
+                    "c65c02.cpp",
+                    "cart.cpp",
+                    "memmap.cpp",
+                    "mikie.cpp",
+                    "ram.cpp",
+                    "rom.cpp",
+                    "susie.cpp",
+                    "system.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: neogeopocket
+
+            .target(
+                name: "neogeopocket",
+                path: "Sources/mednafen/mednafen/src/ngp",
+                sources: [
+                    "T6W28_Apu.cpp",
+                    "TLCS-900h/TLCS900h_disassemble.cpp",
+                    "TLCS-900h/TLCS900h_disassemble_dst.cpp",
+                    "TLCS-900h/TLCS900h_disassemble_extra.cpp",
+                    "TLCS-900h/TLCS900h_disassemble_reg.cpp",
+                    "TLCS-900h/TLCS900h_disassemble_src.cpp",
+                    "TLCS-900h/TLCS900h_interpret.cpp",
+                    "TLCS-900h/TLCS900h_interpret_dst.cpp",
+                    "TLCS-900h/TLCS900h_interpret_reg.cpp",
+                    "TLCS-900h/TLCS900h_interpret_single.cpp",
+                    "TLCS-900h/TLCS900h_interpret_src.cpp",
+                    "TLCS-900h/TLCS900h_registers.cpp",
+                    "Z80_interface.cpp",
+                    "bios.cpp",
+                    "biosHLE.cpp",
+                    "dma.cpp",
+                    "flash.cpp",
+                    "gfx.cpp",
+                    "gfx_scanline_colour.cpp",
+                    "gfx_scanline_mono.cpp",
+                    "interrupt.cpp",
+                    "mem.cpp",
+                    "neopop.cpp",
+                    "rom.cpp",
+                    "rtc.cpp",
+                    "sound.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: pce
+        
+            .target(
+                name: "pce",
+                path: "Sources/mednafen/mednafen/src/pce",
+                sources: [
+                    "dis6280.cpp",
+                    "hes.cpp",
+                    "huc.cpp",
+                    "huc6280.cpp",
+                    "input.cpp",
+                    "input/gamepad.cpp",
+                    "input/mouse.cpp",
+                    "tsushinkb.cpp",
+                    "mcgenjin.cpp",
+                    "pce.cpp",
+                    "pcecd.cpp",
+                    "tsushin.cpp",
+                    "vce.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: pcefast
+
+            .target(
+                name: "pcefast",
+                path: "Sources/mednafen/mednafen/src/pce_fast",
+                sources: [
+                    "hes.cpp",
+                    "huc.cpp",
+                    "huc6280.cpp",
+                    "input.cpp",
+                    "pce.cpp",
+                    "pcecd.cpp",
+                    "pcecd_drive.cpp",
+                    "psg.cpp",
+                    "vdc.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: segamastersystem
+
+            .target(
+                name: "segamastersystem",
+                path: "Sources/mednafen/mednafen/src/sms",
+                sources: [
+                    "cart.cpp",
+                    "memz80.cpp",
+                    "pio.cpp",
+                    "render.cpp",
+                    "romdb.cpp",
+                    "sms.cpp",
+                    "sound.cpp",
+                    "system.cpp",
+                    "tms.cpp",
+                    "vdp.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: pcfx
+
+            .target(
+                name: "pcfx",
+                path: "Sources/mednafen/mednafen/src/pcfx",
+                sources: [
+                    "fxscsi.cpp",
+                    "huc6273.cpp",
+                    "idct.cpp",
+                    "input.cpp",
+                    "input/gamepad.cpp",
+                    "input/mouse.cpp",
+                    "interrupt.cpp",
+                    "king.cpp",
+                    "pcfx.cpp",
+                    "rainbow.cpp",
+                    "soundbox.cpp",
+                    "timer.cpp"
+                ]
+            ),
+        
+        // MARK: megadrive
+
+            .target(
+                name: "megadrive",
+                path: "Sources/mednafen/mednafen/src/md",
+                sources: [
+                    "cart/cart.cpp",
+                    "cart/map_eeprom.cpp",
+                    "cart/map_ff.cpp",
+                    "cart/map_realtec.cpp",
+                    "cart/map_rmx3.cpp",
+                    "cart/map_rom.cpp",
+                    "cart/map_sbb.cpp",
+                    "cart/map_sram.cpp",
+                    "cart/map_ssf2.cpp",
+                    "cart/map_svp.cpp",
+                    "cart/map_yase.cpp",
+                    "cd/cd.cpp",
+                    "cd/cdc_cdd.cpp",
+                    "cd/interrupt.cpp",
+                    "cd/pcm.cpp",
+                    "cd/timer.cpp",
+                    "genesis.cpp",
+                    "genio.cpp",
+                    "header.cpp",
+                    "input/4way.cpp",
+                    "input/gamepad.cpp",
+                    "input/megamouse.cpp",
+                    "input/multitap.cpp",
+                    "mem68k.cpp",
+                    "membnk.cpp",
+                    "memvdp.cpp",
+                    "memz80.cpp",
+                    "sound.cpp",
+                    "system.cpp",
+                    "vdp.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: hwaudio
+
+            .target(
+                name: "hwaudio",
+                path: "Sources/mednafen/mednafen/src/hw_sound",
+                sources: [
+                    "gb_apu/Gb_Apu.cpp",
+                    "gb_apu/Gb_Apu_State.cpp",
+                    "gb_apu/Gb_Oscs.cpp",
+                    "pce_psg/pce_psg.cpp",
+                    "sms_apu/Sms_Apu.cpp",
+                    "ym2413/emu2413.cpp",
+                    "ym2612/Ym2612_Emu.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: hwvideo
+
+            .target(
+                name: "hwvideo",
+                path: "Sources/mednafen/mednafen/src/hw_video",
+                sources: [
+                    "huc6270/vdc.cpp",
+                    "convert.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: hwcpu
+
+            .target(
+                name: "hwcpu",
+                path: "Sources/mednafen/mednafen/src/hw_cpu",
+                sources: [
+                    "v810/v810_cpu.cpp",
+                    "v810/v810_fp_ops.cpp",
+                    "z80-fuse/z80.cpp",
+                    "z80-fuse/z80_ops.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: hwcpu-m68k
+
+            .target(
+                name: "hwcpu-m68k",
+                path: "Sources/mednafen/mednafen/src/hw_cpu/m68k",
+                sources: [
+                    "m68k.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: hwmisc
+
+            .target(
+                name: "hwmisc",
+                path: "Sources/mednafen/mednafen/src/",
+                sources: [
+                    "testsexp.cpp",
+                    "hw_misc/arcade_card/arcade_card.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: cdrom
+        
+            .target(
+                name: "cdrom",
+                path: "Sources/mednafen/mednafen/src/cdrom",
+                sources: [
+                    "CDAFReader.cpp",
+                    "CDAFReader_MPC.cpp",
+                    "CDAFReader_PCM.cpp",
+                    "CDAFReader_Vorbis.cpp",
+                    "CDAccess.cpp",
+                    "CDAccess_CCD.cpp",
+                    "CDAccess_Image.cpp",
+                    "CDUtility.cpp",
+                    "crc32.cpp",
+                    "galois.cpp",
+                    "l-ec.cpp",
+                    "lec.cpp",
+                    "recover-raw.cpp",
+                    "scsicd.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: sound
+
+            .target(
+                name: "sound",
+                path: "Sources/mednafen/mednafen/src/sound",
+                sources: [
+                    "Blip_Buffer.cpp",
+                    "DSPUtility.cpp",
+                    "Fir_Resampler.cpp",
+                    "OwlResampler.cpp",
+                    "Stereo_Buffer.cpp",
+                    "SwiftResampler.cpp",
+                    "WAVRecord.cpp",
+                    "okiadpcm.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: video
+
+            .target(
+                name: "video",
+                path: "Sources/mednafen/mednafen/src/video",
+                sources: [
+                    "Deinterlacer.cpp",
+                    "font-data.cpp",
+                    "png.cpp",
+                    "primitives.cpp",
+                    "resize.cpp",
+                    "surface.cpp",
+                    "tblur.cpp",
+                    "text.cpp",
+                    "video.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: mednafen
+
+            .target(
+                name: "mednafen",
+                dependencies: [
+                    "cdrom",
+                    "hwaudio",
+                    "hwcpu",
+                    "hwcpu-m68k",
+                    "hwmisc",
+                    "hwvideo",
+                    "pcefast",
+                    "pcfx",
+                    "segamastersystem",
+                    "megadrive",
+                    "snes",
+                    "sound",
+                    "tremor",
+                    "trio",
+                    "video"
+                ],
+                path: "Sources/mednafen/mednafen/src",
+                sources: [
+                    "time/Time_POSIX.cpp", // This was in the main framework target prior
+                    
+                    "ExtMemStream.cpp",
+                    "FileStream.cpp",
+                    "IPSPatcher.cpp",
+                    "MTStreamReader.cpp",
+                    "MemoryStream.cpp",
+                    "NativeVFS.cpp",
+                    "PSFLoader.cpp",
+                    "SNSFLoader.cpp",
+                    "SPCReader.cpp",
+                    "Stream.cpp",
+                    "VirtualFS.cpp",
+                    "cdplay/cdplay.cpp",
+                    "cdrom/CDInterface.cpp",
+                    "cdrom/CDInterface_MT.cpp",
+                    "cdrom/CDInterface_ST.cpp",
+                    "cheat_formats/gb.cpp",
+                    "cheat_formats/psx.cpp",
+                    "cheat_formats/snes.cpp",
+                    "compress/GZFileStream.cpp",
+                    "compress/ZIPReader.cpp",
+                    "compress/ZLInflateFilter.cpp",
+                    "cputest/cputest.c",
+                    "debug.cpp",
+                    "demo/demo.cpp",
+                    "endian.cpp",
+                    "error.cpp",
+                    "file.cpp",
+                    "general.cpp",
+                    "git.cpp",
+                    "hash/crc.cpp",
+                    "hash/md5.cpp",
+                    "hash/sha1.cpp",
+                    "hash/sha256.cpp",
+                    "mednafen.cpp",
+                    "memory.cpp",
+                    "mempatcher.cpp",
+                    "movie.cpp",
+                    "mthreading/MThreading_POSIX.cpp",
+                    "net/Net.cpp",
+                    "net/Net_POSIX.cpp",
+                    "netplay.cpp",
+                    "player.cpp",
+                    "resampler/resample.c",
+                    "settings.cpp",
+                    "sound/DSPUtility.cpp",
+                    "sound/SwiftResampler.cpp",
+                    "state.cpp",
+                    "state_rewind.cpp",
+                    "string/escape.cpp",
+                    "string/string.cpp",
+                    "video/Deinterlacer_Blend.cpp",
+                    "video/Deinterlacer_Simple.cpp"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: mpcdec
+
+            .target(
+                name: "mpcdec",
+                path: "Sources/mednafen/mednafen/src/mpcdec",
+                sources: [
+                    "crc32.c",
+                    "huffman.c",
+                    "mpc_bits_reader.c",
+                    "mpc_decoder.c",
+                    "mpc_demux.c",
+                    "requant.c",
+                    "streaminfo.c",
+                    "synth_filter.c"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: quicklz
+
+            .target(
+                name: "quicklz",
+                path: "Sources/mednafen/mednafen/src/quicklz/",
+                sources: [
+                    "quicklz.c"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: Tremor
+
+            .target(
+                name: "tremor",
+                path: "Sources/mednafen/mednafen/src/tremor",
+                sources: [
+                    "bitwise.c",
+                    "block.c",
+                    "codebook.c",
+                    "floor0.c",
+                    "floor1.c",
+                    "framing.c",
+                    "info.c",
+                    "mapping0.c",
+                    "mdct.c",
+                    "registry.c",
+                    "res012.c",
+                    "sharedbook.c",
+                    "synthesis.c",
+                    "vorbisfile.c",
+                    "window.c"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: Trio
+
+            .target(
+                name: "trio",
+                path: "Sources/mednafen/mednafen/src/trio",
+                sources: [
+                    "trio.c",
+                    "trionan.c",
+                    "triostr.c"
+                ],
+                publicHeadersPath: "."
+            ),
+        
+        // MARK: SNES
+
             .target(
                 name: "snes",
                 path: "Sources/mednafen/mednafen/src/snes",
@@ -736,6 +906,8 @@ let package = Package(
                 publicHeadersPath: "./"
             ),
         
+        // MARK: SNES Faust
+
             .target(
                 name: "snes_faust",
                 path: "Sources/mednafen/mednafen/src/snes_faust",
@@ -762,6 +934,8 @@ let package = Package(
                 ],
                 publicHeadersPath: "./"
             ),
+        
+            // MARK: Saturn
         
             .target(
                 name: "saturn",
@@ -804,11 +978,24 @@ let package = Package(
                 publicHeadersPath: "./"
             ),
         
-        // MARK: Tests
+        // MARK: - Tests
         
-            .testTarget(
-                name: "MednafenTests",
-                dependencies: ["Mednafen"]
-            ),
-    ]
+        // MARK: MednafenTests
+
+        .testTarget(
+            name: "MednafenGameCoreTests",
+            dependencies: ["MednafenGameCore"]
+        ),
+    
+        // MARK: PVMednafenGameCoreCTests
+
+        .testTarget(
+            name: "MednafenGameCoreCTests",
+            dependencies: ["MednafenGameCoreC"]
+        )
+    ],
+    swiftLanguageVersions: [.v5, .v6],
+    cLanguageStandard: .c11,
+    cxxLanguageStandard: .cxx14
+    
 )

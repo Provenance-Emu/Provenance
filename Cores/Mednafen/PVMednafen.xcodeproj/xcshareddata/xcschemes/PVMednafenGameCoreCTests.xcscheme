@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C079042C75461A006F109B"
-               BuildableName = "PVMednafenGameCoreC.framework"
-               BlueprintName = "PVMednafenGameCoreC"
+               BuildableName = "MednafenGameCoreC.framework"
+               BlueprintName = "MednafenGameCoreC"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -36,8 +36,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C0790D2C75461A006F109B"
-               BuildableName = "PVMednafenGameCoreCTests.xctest"
-               BlueprintName = "PVMednafenGameCoreCTests"
+               BuildableName = "MednafenGameCoreCTests.xctest"
+               BlueprintName = "MednafenGameCoreCTests"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -64,8 +64,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C079042C75461A006F109B"
-            BuildableName = "PVMednafenGameCoreC.framework"
-            BlueprintName = "PVMednafenGameCoreC"
+            BuildableName = "MednafenGameCoreC.framework"
+            BlueprintName = "MednafenGameCoreC"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

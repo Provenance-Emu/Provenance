@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B340E4611E08887600AD0E8B"
                BuildableName = "PVMednafen.framework"
-               BlueprintName = "PVMednafen"
+               BlueprintName = "MednafenGameCore"
                ReferencedContainer = "container:PVMednafen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -59,7 +59,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B340E4611E08887600AD0E8B"
             BuildableName = "PVMednafen.framework"
-            BlueprintName = "PVMednafen"
+            BlueprintName = "MednafenGameCore"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -75,7 +75,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B340E4611E08887600AD0E8B"
             BuildableName = "PVMednafen.framework"
-            BlueprintName = "PVMednafen"
+            BlueprintName = "MednafenGameCore"
             ReferencedContainer = "container:PVMednafen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

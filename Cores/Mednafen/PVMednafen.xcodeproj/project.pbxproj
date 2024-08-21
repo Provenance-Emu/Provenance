@@ -463,11 +463,9 @@
 		B33355EF207B27B60036A448 /* triostr.c in Sources */ = {isa = PBXBuildFile; fileRef = B3AAABD520736EE80097D86F /* triostr.c */; };
 		B33355F0207B28570036A448 /* libtrio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355E4207B278E0036A448 /* libtrio.a */; };
 		B33355F1207B2A650036A448 /* MednafenGameCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */; };
-		B340E4661E08887700AD0E8B /* PVMednafen.hpp in Headers */ = {isa = PBXBuildFile; fileRef = B340E4641E08887700AD0E8B /* PVMednafen.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		B340E5E71E0889FB00AD0E8B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5E61E0889FB00AD0E8B /* libz.tbd */; };
 		B340E5EB1E088A1100AD0E8B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5EA1E088A1100AD0E8B /* libiconv.tbd */; };
 		B340E5F11E088A3A00AD0E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B340E5F01E088A3A00AD0E8B /* Foundation.framework */; };
-		B3547B60205858EF00CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B5F205858EF00CFF7D8 /* Core.plist */; };
 		B393F252277C0C1C0097F71C /* m68k.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAADEB20736EE90097D86F /* m68k.cpp */; };
 		B393F261277C109C0097F71C /* libhwcpu-m68k.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B393F251277C0BF70097F71C /* libhwcpu-m68k.a */; };
 		B396AE632C719E3B00DF1EBD /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = B396AE622C719E3B00DF1EBD /* PVObjCUtils */; };
@@ -479,7 +477,7 @@
 		B3AAB425207379230097D86F /* stubs.mm in Sources */ = {isa = PBXBuildFile; fileRef = 94454E3B17852E61006C057B /* stubs.mm */; };
 		B3AAB43D2073820C0097D86F /* MednafenGameCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 824088350FFDDCF400F0FE7D /* MednafenGameCore.mm */; };
 		B3AFCF7A2977A6EA00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF792977A6EA00A01010 /* PVLogging */; };
-		B3C0790F2C75461A006F109B /* PVMednafenGameCoreC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */; };
+		B3C0790F2C75461A006F109B /* MednafenGameCoreC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* MednafenGameCoreC.framework */; };
 		B3C0791F2C75463B006F109B /* libmpcdec.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33355A2207B1E930036A448 /* libmpcdec.a */; };
 		B3C079202C75463B006F109B /* libhwvideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B33352B4207B06620036A448 /* libhwvideo.a */; };
 		B3C079212C75463B006F109B /* libsaturn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C6E1B66E25AAC123007C3CF1 /* libsaturn.a */; };
@@ -509,8 +507,9 @@
 		B3C0793A2C754646006F109B /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079392C754646006F109B /* libiconv.tbd */; };
 		B3C0793C2C754651006F109B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C0793B2C754651006F109B /* libz.tbd */; };
 		B3C0793E2C754658006F109B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C0793D2C754658006F109B /* Foundation.framework */; };
-		B3C0793F2C75477A006F109B /* PVMednafenGameCoreC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); };
-		B3C079402C75477A006F109B /* PVMednafenGameCoreC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3C0793F2C75477A006F109B /* MednafenGameCoreC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* MednafenGameCoreC.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); };
+		B3C079402C75477A006F109B /* MednafenGameCoreC.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3C079052C75461A006F109B /* MednafenGameCoreC.framework */; platformFilters = (ios, maccatalyst, macos, xros, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B3F885E42C759C3600C49F8D /* PVMednafenGameCoreCTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F885E12C759C2C00C49F8D /* PVMednafenGameCoreCTests.swift */; };
 		B3FBDF01207FF13400E661D1 /* interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE8F20736EE90097D86F /* interface.cpp */; };
 		B3FBDF02207FF19800E661D1 /* generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9820736EE90097D86F /* generic.cpp */; };
 		B3FBDF03207FF19800E661D1 /* smemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3AAAE9920736EE90097D86F /* smemory.cpp */; };
@@ -1144,7 +1143,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B3C079402C75477A006F109B /* PVMednafenGameCoreC.framework in Embed Frameworks */,
+				B3C079402C75477A006F109B /* MednafenGameCoreC.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1245,7 +1244,6 @@
 		8CB3E09D17F1DFFF0090372A /* trionan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trionan.h; sourceTree = "<group>"; };
 		8CB3E09E17F1DFFF0090372A /* triop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = triop.h; sourceTree = "<group>"; };
 		8CB3E09F17F1DFFF0090372A /* triostr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = triostr.h; sourceTree = "<group>"; };
-		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		93891C9D294F671C009EB211 /* MednafenGameCore+Cheats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MednafenGameCore+Cheats.mm"; sourceTree = "<group>"; };
 		94454E3617852E44006C057B /* thread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = thread.cpp; sourceTree = "<group>"; };
 		94454E3717852E44006C057B /* thread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = thread.h; sourceTree = "<group>"; };
@@ -1276,9 +1274,7 @@
 		B33355B8207B20420036A448 /* libquicklz.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libquicklz.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33355C7207B20BE0036A448 /* libtremor.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtremor.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B33355E4207B278E0036A448 /* libtrio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libtrio.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B340E4621E08887600AD0E8B /* PVMednafen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMednafen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B340E4641E08887700AD0E8B /* PVMednafen.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = PVMednafen.hpp; sourceTree = "<group>"; };
-		B340E4651E08887700AD0E8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B340E4621E08887600AD0E8B /* MednafenGameCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MednafenGameCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B340E5E61E0889FB00AD0E8B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.1.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B340E5E81E088A0100AD0E8B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
 		B340E5EA1E088A1100AD0E8B /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.1.sdk/usr/lib/libiconv.tbd; sourceTree = DEVELOPER_DIR; };
@@ -1287,8 +1283,6 @@
 		B340E5F01E088A3A00AD0E8B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		B340E5F21E088A4000AD0E8B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B340E5F41E088A4500AD0E8B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS10.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		B34CB0EC2274BA81009134B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B3547B5F205858EF00CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B393F251277C0BF70097F71C /* libhwcpu-m68k.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libhwcpu-m68k.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B396AE6A2C71A65200DF1EBD /* MednafenGameCore+MultiTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MednafenGameCore+MultiTap.swift"; sourceTree = "<group>"; };
 		B396AE6D2C71A83200DF1EBD /* MednafenGameCore+MultiDisc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MednafenGameCore+MultiDisc.swift"; sourceTree = "<group>"; };
@@ -2968,8 +2962,8 @@
 		B3AAB3CA20736EEC0097D86F /* git.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = git.cpp; sourceTree = "<group>"; };
 		B3B5BF9B293F13F1006BFC55 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		B3B8C3BE290E15EB002B839A /* MednafenGameCore+Controls.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "MednafenGameCore+Controls.mm"; sourceTree = "<group>"; };
-		B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVMednafenGameCoreC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3C0790E2C75461A006F109B /* PVMednafenGameCoreCTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PVMednafenGameCoreCTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C079052C75461A006F109B /* MednafenGameCoreC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MednafenGameCoreC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3C0790E2C75461A006F109B /* MednafenGameCoreCTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MednafenGameCoreCTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C079392C754646006F109B /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
 		B3C0793B2C754651006F109B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3C0793D2C754658006F109B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -3034,6 +3028,8 @@
 		B3C079812C754846006F109B /* triostr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = triostr.h; sourceTree = "<group>"; };
 		B3CF44B72039B64A005BEB14 /* MednafenMultiDisc.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiDisc.m; sourceTree = "<group>"; };
 		B3CF44BA2039B6D0005BEB14 /* MednafenMultiTap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MednafenMultiTap.m; sourceTree = "<group>"; };
+		B3F885DF2C759C2C00C49F8D /* MednafenGameCoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MednafenGameCoreTests.swift; sourceTree = "<group>"; };
+		B3F885E12C759C2C00C49F8D /* PVMednafenGameCoreCTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVMednafenGameCoreCTests.swift; sourceTree = "<group>"; };
 		B3FBDEF8207FF0E300E661D1 /* libsnes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnes.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libsnes_faust.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C66D560A2626B12100CDECE9 /* Makefile.am.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = Makefile.am.inc; sourceTree = "<group>"; };
@@ -3050,10 +3046,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B3C079162C75461A006F109B /* Exceptions for "PVMednafenGameCoreC" folder in "PVMednafenGameCoreC" target */ = {
+		B3C079162C75461A006F109B /* Exceptions for "MednafenGameCoreC" folder in "MednafenGameCoreC" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				PVMednafenGameCoreC.m,
+				MednafenGameCoreC.m,
 			);
 			publicHeaders = (
 				"include/mednafen/mednafen-driver.h",
@@ -3062,24 +3058,19 @@
 				include/mednafen/mempatcher.h,
 				"include/mednafen/settings-driver.h",
 				"include/mednafen/state-driver.h",
-				include/PVMednafenGameCoreC/PVMednafenGameCoreC.h,
+				include/MednafenGameCoreC/MednafenGameCoreC.h,
 			);
-			target = B3C079042C75461A006F109B /* PVMednafenGameCoreC */;
+			target = B3C079042C75461A006F109B /* MednafenGameCoreC */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B3C079062C75461A006F109B /* PVMednafenGameCoreC */ = {
+		B3C079062C75461A006F109B /* MednafenGameCoreC */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B3C079162C75461A006F109B /* Exceptions for "PVMednafenGameCoreC" folder in "PVMednafenGameCoreC" target */,
+				B3C079162C75461A006F109B /* Exceptions for "MednafenGameCoreC" folder in "MednafenGameCoreC" target */,
 			);
-			path = PVMednafenGameCoreC;
-			sourceTree = "<group>";
-		};
-		B3C079122C75461A006F109B /* PVMednafenGameCoreCTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PVMednafenGameCoreCTests;
+			path = MednafenGameCoreC;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -3296,7 +3287,7 @@
 				B30E9ACC2C6FADDA00C1431E /* PVEmulatorCore in Frameworks */,
 				B396AE692C719E5A00DF1EBD /* PVPlists in Frameworks */,
 				B33350AE207B00080036A448 /* libnes.a in Frameworks */,
-				B3C0793F2C75477A006F109B /* PVMednafenGameCoreC.framework in Frameworks */,
+				B3C0793F2C75477A006F109B /* MednafenGameCoreC.framework in Frameworks */,
 				B333509C207AFF3F0036A448 /* libvirtualboy.a in Frameworks */,
 				B3335075207AFD9C0036A448 /* libwonderswan.a in Frameworks */,
 				B333504F207AFBFC0036A448 /* libpsx.a in Frameworks */,
@@ -3352,7 +3343,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3C0790F2C75461A006F109B /* PVMednafenGameCoreC.framework in Frameworks */,
+				B3C0790F2C75461A006F109B /* MednafenGameCoreC.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3383,34 +3374,14 @@
 		089C166AFE841209C02AAC07 /* Mednafen */ = {
 			isa = PBXGroup;
 			children = (
+				B3F885E32C759C2C00C49F8D /* Tests */,
 				B396AE5E2C71989500DF1EBD /* Sources */,
 				B3B5BF9B293F13F1006BFC55 /* Config.xcconfig */,
 				11AFB33D248828D5000A3922 /* UPDATING.md */,
-				08FB77AFFE84173DC02AAC07 /* Classes */,
-				32C88E010371C26100C91783 /* Other Sources */,
-				089C167CFE841241C02AAC07 /* Resources */,
-				B340E4631E08887700AD0E8B /* PVMednafen */,
-				B3C079122C75461A006F109B /* PVMednafenGameCoreCTests */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 				B340E5E51E0889FB00AD0E8B /* Frameworks */,
 			);
 			name = Mednafen;
-			sourceTree = "<group>";
-		};
-		089C167CFE841241C02AAC07 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				8D5B49B7048680CD000E48DA /* Info.plist */,
-				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-		};
-		08FB77AFFE84173DC02AAC07 /* Classes */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Classes;
 			sourceTree = "<group>";
 		};
 		11AFB2FB24880D1E000A3922 /* mthreading */ = {
@@ -3449,7 +3420,7 @@
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B340E4621E08887600AD0E8B /* PVMednafen.framework */,
+				B340E4621E08887600AD0E8B /* MednafenGameCore.framework */,
 				B333502D207AFBA30036A448 /* libpsx.a */,
 				B3335062207AFD3D0036A448 /* libwonderswan.a */,
 				B3335092207AFF2B0036A448 /* libvirtualboy.a */,
@@ -3479,17 +3450,10 @@
 				B3FBDF9F207FF5D800E661D1 /* libsnes_faust.a */,
 				C6E1B66E25AAC123007C3CF1 /* libsaturn.a */,
 				B393F251277C0BF70097F71C /* libhwcpu-m68k.a */,
-				B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */,
-				B3C0790E2C75461A006F109B /* PVMednafenGameCoreCTests.xctest */,
+				B3C079052C75461A006F109B /* MednafenGameCoreC.framework */,
+				B3C0790E2C75461A006F109B /* MednafenGameCoreCTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		32C88E010371C26100C91783 /* Other Sources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Other Sources";
 			sourceTree = "<group>";
 		};
 		8CB3E08917F1DFFF0090372A /* include */ = {
@@ -3516,16 +3480,6 @@
 				8CB3E09F17F1DFFF0090372A /* triostr.h */,
 			);
 			path = trio;
-			sourceTree = "<group>";
-		};
-		B340E4631E08887700AD0E8B /* PVMednafen */ = {
-			isa = PBXGroup;
-			children = (
-				B3547B5F205858EF00CFF7D8 /* Core.plist */,
-				B340E4641E08887700AD0E8B /* PVMednafen.hpp */,
-				B340E4651E08887700AD0E8B /* Info.plist */,
-			);
-			path = PVMednafen;
 			sourceTree = "<group>";
 		};
 		B340E5E51E0889FB00AD0E8B /* Frameworks */ = {
@@ -3566,7 +3520,7 @@
 				B396AE602C7198DC00DF1EBD /* mednafen */,
 				B396AE5F2C7198A800DF1EBD /* MednafenGameCoreSwift */,
 				B396AE5D2C71989500DF1EBD /* MednafenGameCore */,
-				B3C079062C75461A006F109B /* PVMednafenGameCoreC */,
+				B3C079062C75461A006F109B /* MednafenGameCoreC */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -6607,6 +6561,31 @@
 			path = trio_external;
 			sourceTree = "<group>";
 		};
+		B3F885E02C759C2C00C49F8D /* MednafenGameCoreTests */ = {
+			isa = PBXGroup;
+			children = (
+				B3F885DF2C759C2C00C49F8D /* MednafenGameCoreTests.swift */,
+			);
+			path = MednafenGameCoreTests;
+			sourceTree = "<group>";
+		};
+		B3F885E22C759C2C00C49F8D /* PVMednafenGameCoreCTests */ = {
+			isa = PBXGroup;
+			children = (
+				B3F885E12C759C2C00C49F8D /* PVMednafenGameCoreCTests.swift */,
+			);
+			path = PVMednafenGameCoreCTests;
+			sourceTree = "<group>";
+		};
+		B3F885E32C759C2C00C49F8D /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				B3F885E02C759C2C00C49F8D /* MednafenGameCoreTests */,
+				B3F885E22C759C2C00C49F8D /* PVMednafenGameCoreCTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
 		C66D56092626B12100CDECE9 /* time */ = {
 			isa = PBXGroup;
 			children = (
@@ -6624,7 +6603,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B340E4661E08887700AD0E8B /* PVMednafen.hpp in Headers */,
 				B3223CDD1E09E0CA007BB244 /* MednafenGameCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7065,9 +7043,9 @@
 			productReference = B33355E4207B278E0036A448 /* libtrio.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B340E4611E08887600AD0E8B /* PVMednafen */ = {
+		B340E4611E08887600AD0E8B /* MednafenGameCore */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B340E4671E08887700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen" */;
+			buildConfigurationList = B340E4671E08887700AD0E8B /* Build configuration list for PBXNativeTarget "MednafenGameCore" */;
 			buildPhases = (
 				B340E45F1E08887600AD0E8B /* Headers */,
 				B340E45D1E08887600AD0E8B /* Sources */,
@@ -7108,7 +7086,7 @@
 				C6E1B69725AAC5A3007C3CF1 /* PBXTargetDependency */,
 				B3C079422C75477A006F109B /* PBXTargetDependency */,
 			);
-			name = PVMednafen;
+			name = MednafenGameCore;
 			packageProductDependencies = (
 				B3AFCF792977A6EA00A01010 /* PVLogging */,
 				B30E98F62C6EF13E00C1431E /* PVSupport */,
@@ -7119,7 +7097,7 @@
 				B396AE682C719E5A00DF1EBD /* PVPlists */,
 			);
 			productName = PVMednafen;
-			productReference = B340E4621E08887600AD0E8B /* PVMednafen.framework */;
+			productReference = B340E4621E08887600AD0E8B /* MednafenGameCore.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		B393F245277C0BF70097F71C /* hwcpu-m68k */ = {
@@ -7139,9 +7117,9 @@
 			productReference = B393F251277C0BF70097F71C /* libhwcpu-m68k.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		B3C079042C75461A006F109B /* PVMednafenGameCoreC */ = {
+		B3C079042C75461A006F109B /* MednafenGameCoreC */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C079172C75461A006F109B /* Build configuration list for PBXNativeTarget "PVMednafenGameCoreC" */;
+			buildConfigurationList = B3C079172C75461A006F109B /* Build configuration list for PBXNativeTarget "MednafenGameCoreC" */;
 			buildPhases = (
 				B3C079002C75461A006F109B /* Headers */,
 				B3C079012C75461A006F109B /* Sources */,
@@ -7153,18 +7131,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				B3C079062C75461A006F109B /* PVMednafenGameCoreC */,
+				B3C079062C75461A006F109B /* MednafenGameCoreC */,
 			);
-			name = PVMednafenGameCoreC;
+			name = MednafenGameCoreC;
 			packageProductDependencies = (
 			);
 			productName = PVMednafenGameCoreC;
-			productReference = B3C079052C75461A006F109B /* PVMednafenGameCoreC.framework */;
+			productReference = B3C079052C75461A006F109B /* MednafenGameCoreC.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		B3C0790D2C75461A006F109B /* PVMednafenGameCoreCTests */ = {
+		B3C0790D2C75461A006F109B /* MednafenGameCoreCTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B3C0791B2C75461A006F109B /* Build configuration list for PBXNativeTarget "PVMednafenGameCoreCTests" */;
+			buildConfigurationList = B3C0791B2C75461A006F109B /* Build configuration list for PBXNativeTarget "MednafenGameCoreCTests" */;
 			buildPhases = (
 				B3C0790A2C75461A006F109B /* Sources */,
 				B3C0790B2C75461A006F109B /* Frameworks */,
@@ -7175,14 +7153,11 @@
 			dependencies = (
 				B3C079112C75461A006F109B /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				B3C079122C75461A006F109B /* PVMednafenGameCoreCTests */,
-			);
-			name = PVMednafenGameCoreCTests;
+			name = MednafenGameCoreCTests;
 			packageProductDependencies = (
 			);
 			productName = PVMednafenGameCoreCTests;
-			productReference = B3C0790E2C75461A006F109B /* PVMednafenGameCoreCTests.xctest */;
+			productReference = B3C0790E2C75461A006F109B /* MednafenGameCoreCTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		B3FBDEF7207FF0E300E661D1 /* snes */ = {
@@ -7389,9 +7364,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B340E4611E08887600AD0E8B /* PVMednafen */,
-				B3C079042C75461A006F109B /* PVMednafenGameCoreC */,
-				B3C0790D2C75461A006F109B /* PVMednafenGameCoreCTests */,
+				B340E4611E08887600AD0E8B /* MednafenGameCore */,
+				B3C079042C75461A006F109B /* MednafenGameCoreC */,
+				B3C0790D2C75461A006F109B /* MednafenGameCoreCTests */,
 				B333502C207AFBA30036A448 /* psx */,
 				B3335061207AFD3D0036A448 /* wonderswan */,
 				B3335091207AFF2B0036A448 /* virtualboy */,
@@ -7430,7 +7405,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3547B60205858EF00CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8082,6 +8056,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3F885E42C759C3600C49F8D /* PVMednafenGameCoreCTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8417,7 +8392,7 @@
 		};
 		B3C079112C75461A006F109B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B3C079042C75461A006F109B /* PVMednafenGameCoreC */;
+			target = B3C079042C75461A006F109B /* MednafenGameCoreC */;
 			targetProxy = B3C079102C75461A006F109B /* PBXContainerItemProxy */;
 		};
 		B3C079422C75477A006F109B /* PBXTargetDependency */ = {
@@ -8428,7 +8403,7 @@
 				macos,
 				xros,
 			);
-			target = B3C079042C75461A006F109B /* PVMednafenGameCoreC */;
+			target = B3C079042C75461A006F109B /* MednafenGameCoreC */;
 			targetProxy = B3C079412C75477A006F109B /* PBXContainerItemProxy */;
 		};
 		C6E1B69125AAC1D5007C3CF1 /* PBXTargetDependency */ = {
@@ -8442,17 +8417,6 @@
 			targetProxy = C6E1B69625AAC5A3007C3CF1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		089C167DFE841241C02AAC07 /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B34CB0EC2274BA81009134B4 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB913F08733D840010E9CD /* Debug */ = {
@@ -8514,7 +8478,7 @@
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
 					"\"$(SRCROOT)/Sources/mednafen/include\"",
-					"\"$(SRCROOT)/PVMednafen\"",
+					"\"$(SRCROOT)/Sources/MednafenGameCore/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -8592,7 +8556,7 @@
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
 					"\"$(SRCROOT)/Sources/mednafen/include\"",
-					"\"$(SRCROOT)/PVMednafen\"",
+					"\"$(SRCROOT)/Sources/MednafenGameCore/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -8671,7 +8635,7 @@
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
 					"\"$(SRCROOT)/Sources/mednafen/include\"",
-					"\"$(SRCROOT)/PVMednafen\"",
+					"\"$(SRCROOT)/Sources/MednafenGameCore/include\"",
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LIBRARY_SEARCH_PATHS = (
@@ -8719,7 +8683,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVMednafen/Info.plist;
+				INFOPLIST_FILE = Sources/MednafenGameCore/Resources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -8734,8 +8698,8 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafen";
-				PRODUCT_NAME = PVMednafen;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.MednafenGameCore";
+				PRODUCT_NAME = MednafenGameCore;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -8747,7 +8711,7 @@
 				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/MednafenGameCore/include\"";
 				USE_HEADERMAP = YES;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -10855,7 +10819,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVMednafen/Info.plist;
+				INFOPLIST_FILE = Sources/MednafenGameCore/Resources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -10870,8 +10834,8 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafen";
-				PRODUCT_NAME = PVMednafen;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.MednafenGameCore";
+				PRODUCT_NAME = MednafenGameCore;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -10884,7 +10848,7 @@
 				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/MednafenGameCore/include\"";
 				USE_HEADERMAP = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -10921,7 +10885,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVMednafen/Info.plist;
+				INFOPLIST_FILE = Sources/MednafenGameCore/Resources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
@@ -10936,8 +10900,8 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu99 gnu++14";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafen";
-				PRODUCT_NAME = PVMednafen;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.MednafenGameCore";
+				PRODUCT_NAME = MednafenGameCore;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -10949,7 +10913,7 @@
 				TAPI_LANGUAGE = "objective-c++";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
-				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/PVMednafen\"";
+				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/Sources/MednafenGameCore/include\"";
 				USE_HEADERMAP = YES;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -11079,6 +11043,7 @@
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
 					"\"$(SRCROOT)/PVMednafen\"",
+					"\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -11098,7 +11063,7 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafenGameCoreC";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.MednafenGameCoreC";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -11150,6 +11115,7 @@
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
 					"\"$(SRCROOT)/PVMednafen\"",
+					"\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -11169,7 +11135,7 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafenGameCoreC";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.MednafenGameCoreC";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -11219,6 +11185,7 @@
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/include\"",
 					"\"$(SRCROOT)/Sources/mednafen/mednafen/intl\"",
 					"\"$(SRCROOT)/PVMednafen\"",
+					"\"$(SRCROOT)/Sources/MednafenGameCoreC/include\"",
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance EMU. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -11238,7 +11205,7 @@
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVMednafenGameCoreC";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.MednafenGameCoreC";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -11843,7 +11810,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B340E4671E08887700AD0E8B /* Build configuration list for PBXNativeTarget "PVMednafen" */ = {
+		B340E4671E08887700AD0E8B /* Build configuration list for PBXNativeTarget "MednafenGameCore" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B340E4681E08887700AD0E8B /* Debug */,
@@ -11863,7 +11830,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C079172C75461A006F109B /* Build configuration list for PBXNativeTarget "PVMednafenGameCoreC" */ = {
+		B3C079172C75461A006F109B /* Build configuration list for PBXNativeTarget "MednafenGameCoreC" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C079182C75461A006F109B /* Debug */,
@@ -11873,7 +11840,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B3C0791B2C75461A006F109B /* Build configuration list for PBXNativeTarget "PVMednafenGameCoreCTests" */ = {
+		B3C0791B2C75461A006F109B /* Build configuration list for PBXNativeTarget "MednafenGameCoreCTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B3C0791C2C75461A006F109B /* Debug */,
