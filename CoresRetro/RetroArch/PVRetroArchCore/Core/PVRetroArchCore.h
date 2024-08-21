@@ -1,8 +1,12 @@
-#import <Foundation/Foundation.h>
-@import PVSupport;
+@import Foundation;
 
-#import <PVLogging/PVLogging.h>
-#import <PVSupport/PVEmulatorCore.h>
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+@import PVLogging;
+
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
+
+#import <PVEmulatorCore/PVEmulatorCore.h>
 #import <PVSupport/PVSupport-Swift.h>
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
