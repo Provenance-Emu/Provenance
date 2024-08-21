@@ -3,6 +3,7 @@ import PVSupport
 import PVEmulatorCore
 import PVLogging
 import PVLoggingObjC
+import PVMednafenGameCoreC
 
 //@objc public protocol MednafenGameCoreCheatSyntax: NSObjectProtocol {
 //    @objc func getCheatCodeTypes() -> [String]
