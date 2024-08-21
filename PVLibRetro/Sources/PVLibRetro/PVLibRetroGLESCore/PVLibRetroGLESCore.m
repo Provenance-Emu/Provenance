@@ -7,14 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PVLibRetro/PVLibRetroGLESCore.h>
+#import "PVLibRetroGLESCore.h"
 
 #include "dynamic.h"
 #include "video_driver.h"
 
 @import PVSupport;
+//@import PVLibRetroSwift;
+@import libretro;
+
 #include "core.h"
 #include "runloop.h"
+
 @import PVLoggingObjC;
 @import PVCoreBridge;
 @import PVObjCUtils;

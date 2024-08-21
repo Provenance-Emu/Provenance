@@ -2966,7 +2966,8 @@ struct retro_disk_control_ext_callback
    retro_get_image_label_t get_image_label;     /* Optional - may be NULL */
 };
 
-enum retro_pixel_format
+__attribute__((swift_wrapper(enum)))
+typedef enum retro_pixel_format
 {
    /* 0RGB1555, native endian.
     * 0 bit must be set to 0.
@@ -2988,7 +2989,7 @@ enum retro_pixel_format
 
    /* Ensure sizeof() == sizeof(int). */
    RETRO_PIXEL_FORMAT_UNKNOWN  = INT_MAX
-};
+} retro_pixel_format;
 
 struct retro_message
 {

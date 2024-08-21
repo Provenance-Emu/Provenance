@@ -212,9 +212,9 @@ static void compute_audio_buffer_statistics(void)
          high_water_count++;
    }
 
-   VLOG(@"Average audio buffer saturation: %.2f %%, standard deviation (percentage points): %.2f %%.\n",
+   VLOG("Average audio buffer saturation: %.2f %%, standard deviation (percentage points): %.2f %%.\n",
          avg_filled * 100.0, deviation * 100.0);
-   VLOG(@"Amount of time spent close to underrun: %.2f %%. Close to blocking: %.2f %%.\n",
+   VLOG("Amount of time spent close to underrun: %.2f %%. Close to blocking: %.2f %%.\n",
          (100.0 * low_water_count) / (samples - 1),
          (100.0 * high_water_count) / (samples - 1));
 }
@@ -350,7 +350,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
 #ifdef HAVE_THREADS
    if (audio_cb_inited)
    {
-      VLOG(@"Starting threaded audio driver ...\n");
+      VLOG("Starting threaded audio driver ...\n");
       if (!audio_init_thread(
                &current_audio,
                &audio_driver_context_audio_data,
@@ -358,7 +358,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
                settings->audio.out_rate, settings->audio.latency,
                current_audio))
       {
-         ELOG(@"Cannot open threaded audio driver ... Exiting ...\n");
+         ELOG("Cannot open threaded audio driver ... Exiting ...\n");
          retroarch_fail(1, "audio_driver_init_internal()");
       }
    }
@@ -373,7 +373,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
 
    if (!audio_driver_context_audio_data)
    {
-      ELOG(@"Failed to initialize audio driver. Will continue without audio.\n");
+      ELOG("Failed to initialize audio driver. Will continue without audio.\n");
       audio_driver_unset_active();
    }
 
@@ -391,7 +391,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
    if (audio_driver_data.audio_rate.input <= 0.0f)
    {
       /* Should never happen. */
-      WLOG(@"Input rate is invalid (%.3f Hz). Using output rate (%u Hz).\n",
+      WLOG("Input rate is invalid (%.3f Hz). Using output rate (%u Hz).\n",
             audio_driver_data.audio_rate.input, settings->audio.out_rate);
       audio_driver_data.audio_rate.input = settings->audio.out_rate;
    }
@@ -402,7 +402,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
 
    if (!audio_driver_init_resampler())
    {
-      ELOG(@"Failed to initialize resampler \"%s\".\n",
+      ELOG("Failed to initialize resampler \"%s\".\n",
             settings->audio.resampler);
       audio_driver_unset_active();
    }
@@ -442,7 +442,7 @@ static bool audio_driver_init_internal(bool audio_cb_inited)
          audio_driver_data.audio_rate.control = true;
       }
       else
-         WLOG(@"Audio rate control was desired, but driver does not support needed features.\n");
+         WLOG("Audio rate control was desired, but driver does not support needed features.\n");
    }
 
    command_event(CMD_EVENT_DSP_FILTER_INIT, NULL);
@@ -731,7 +731,7 @@ void audio_driver_monitor_adjust_system_rates(void)
    if (timing_skew <= settings->audio.max_timing_skew)
       audio_driver_data.audio_rate.input *= (settings->video.refresh_rate / info->fps);
 
-   VLOG(@"Set audio input rate to: %.2f Hz.\n",
+   VLOG("Set audio input rate to: %.2f Hz.\n",
          audio_driver_data.audio_rate.input);
 }
 
@@ -772,12 +772,12 @@ bool audio_driver_find_driver(void)
    else
    {
       unsigned d;
-      ELOG(@"Couldn't find any audio driver named \"%s\"\n",
+      ELOG("Couldn't find any audio driver named \"%s\"\n",
             settings->audio.driver);
       RARCH_LOG_OUTPUT("Available audio drivers are:\n");
       for (d = 0; audio_driver_find_handle(d); d++)
          RARCH_LOG_OUTPUT("\t%s\n", audio_driver_find_ident(d));
-      WLOG(@"Going to default to first audio driver...\n");
+      WLOG("Going to default to first audio driver...\n");
 
       current_audio = (const audio_driver_t*)audio_driver_find_handle(0);
 

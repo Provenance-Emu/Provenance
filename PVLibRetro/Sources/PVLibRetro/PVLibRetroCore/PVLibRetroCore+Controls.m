@@ -10,6 +10,8 @@
 #import <PVLibRetro/PVLibRetro.h>
 
 @import PVSupport;
+@import Defaults;
+@import PVSettings;
 
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H
@@ -159,7 +161,7 @@
     {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
-        if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
+        if (PVSettingsWrapper.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
         { switch (buttonID) {
             case PVSega32XButtonUp:
                 return [[[gamepad leftThumbstick] up] value] > 0.1;

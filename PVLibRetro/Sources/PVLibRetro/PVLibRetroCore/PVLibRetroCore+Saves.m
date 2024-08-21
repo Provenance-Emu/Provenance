@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PVLibRetro/PVLibretro.h>
+#import "../include/PVLibRetro/PVLibRetro.h"
 @import PVSupport;
 @import PVCoreBridge;
 

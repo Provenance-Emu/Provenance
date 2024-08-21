@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PVLibRetro/PVLibretro.h>
+#import "PVLibRetroCore.h"
 
 @import PVSupport;
+@import libretro;
 
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H

@@ -23,6 +23,7 @@
 
 #include "core_type.h"
 
+#warning "Fix RetroArch logging"
 // TODO: Fix logging
 #define RARCH_LOG(...)
 #define RARCH_LOG_OUTPUT(...)

@@ -12,6 +12,7 @@
 @import PVSupport;
 @import PVLoggingObjC;
 @import PVAudio;
+@import PVSettings;
 
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H
@@ -2414,24 +2415,24 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     return GL_RGBA;
 }
 
-- (GLenum)pixelType {
-    // GL_UNSIGNED_SHORT_5_6_5
-    // GL_UNSIGNED_BYTE
-    return GL_UNSIGNED_SHORT;
-}
+//- (GLenum)pixelType {
+//    // GL_UNSIGNED_SHORT_5_6_5
+//    // GL_UNSIGNED_BYTE
+//    return GL_UNSIGNED_SHORT;
+//}
 
 # pragma mark - Audio
 
-- (double)audioSampleRate {
-    static struct retro_system_av_info av_info;
-    core->retro_get_system_av_info(&av_info);
-    double sample_rate = av_info.timing.sample_rate;
-    return sample_rate ?: 44100;
-}
+//- (double)audioSampleRate {
+//    static struct retro_system_av_info av_info;
+//    core->retro_get_system_av_info(&av_info);
+//    double sample_rate = av_info.timing.sample_rate;
+//    return sample_rate ?: 44100;
+//}
 
-- (NSUInteger)channelCount {
-    return 2;
-}
+//- (NSUInteger)channelCount {
+//    return 2;
+//}
 
 @end
 
@@ -2549,7 +2550,7 @@ static int16_t RETRO_CALLCONV input_state_callback(unsigned port, unsigned devic
     {
         GCExtendedGamepad *gamepad = [controller extendedGamepad];
         GCControllerDirectionPad *dpad = [gamepad dpad];
-        if (PVSettingsModel.shared.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
+        if (PVSettingsWrapper.use8BitdoM30) // Maps the Sega Controls to the 8BitDo M30 if enabled in Settings / Controller
         { switch (buttonID) {
             case PVSega32XButtonUp:
                 return [[[gamepad leftThumbstick] up] value] > 0.1;

@@ -6,9 +6,11 @@
 //
 
 import Foundation
+@_exported import PVEmulatorCore
+@_exported import PVCoreBridge
 
 @objc
 @objcMembers
-open class PVLibRetroGLESCore : PVLibRetroCore {
+open class PVLibRetroGLESCore : PVLibRetroCore, @unchecked Sendable {
 
 }
