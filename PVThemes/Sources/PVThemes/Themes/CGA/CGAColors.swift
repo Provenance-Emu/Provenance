@@ -9,7 +9,9 @@
 // TODO: Move this to a moudle, use a macro to generate colors
 
 import Foundation
+#if canImport(UIKit)
 import UIKit.UIColor
+#endif
 import HexColors
 
 public enum CGAThemes: CaseIterable {

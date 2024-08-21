@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#endif
 import HexColors
 
 public enum ProvenanceThemes: CaseIterable {

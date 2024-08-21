@@ -7,7 +7,9 @@
 
 import Foundation
 
+#if canImport(UIKit)
 import UIKit.UIColor
+#endif
 
 public protocol UXThemePalette: Codable, Equatable, Hashable, Sendable  {
     var name: String { get }

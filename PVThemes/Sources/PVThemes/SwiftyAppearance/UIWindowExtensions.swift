@@ -6,7 +6,9 @@
 //  Copyright © 2017 address.wtf. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
 public extension NSNotification.Name {
     static let SwiftyAppearanceWillRefreshWindow = NSNotification.Name(rawValue: "SwiftyAppearanceWillRefreshWindowNotification")

@@ -6,7 +6,9 @@
 //  Copyright © 2018 James Addyman. All rights reserved.
 //
 
+#if canImport(UIKit)
 @_exported import UIKit.UIColor
+#endif
 
 public extension UIColor {
     @objc convenience init(rgb: UInt32) {

@@ -6,7 +6,9 @@
 //  Copyright © 2016 address.wtf. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// Nested appearance scope for specified trait collection and container types
 ///

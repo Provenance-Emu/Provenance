@@ -8,7 +8,9 @@
 
 import Foundation
 import SwiftMacros
-@_exported import UIKit
+#if canImport(UIKit)
+import UIKit
+#endif
 
 //@Singleton
 @Observable

@@ -6,7 +6,9 @@
 //  Copyright © 2017 address.wtf. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 
 public extension UITraitCollection {
     /// Umbrella emun wrapping all possible traits

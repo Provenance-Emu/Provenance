@@ -6,7 +6,9 @@
 //  Copyright © 2016 address.wtf. All rights reserved.
 //
 
+#if canImport(UIKit)
 import UIKit
+#endif
 import SwiftMacros
 
 internal struct AppearanceScope: Sendable {

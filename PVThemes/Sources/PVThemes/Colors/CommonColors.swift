@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if canImport(UIKit)
 import UIKit.UIColor
+#endif
 import HexColors
 
 public extension UIColor {
