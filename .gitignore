@@ -121,3 +121,4 @@ Cores/DuckStation/lib/
 /Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/Debug
 /Cores/PPSSPP/lib/Release-appletvos
 Cores/PPSSPP/lib/
+build
