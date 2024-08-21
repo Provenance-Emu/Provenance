@@ -47,9 +47,6 @@
          location = "group:Cores/Play/PVPlayCore.xcodeproj">
       </FileRef>
       <FileRef
-         location = "group:Cores/PokeMini/PVPokeMini.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/PPSSPP/PVPPSSPP.xcodeproj">
       </FileRef>
       <FileRef
