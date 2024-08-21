@@ -9,9 +9,8 @@ import Foundation
 import PVCoreBridge
 import PVLogging
 
-@objc
-extension PVEmulatorCore: EmulatorCoreRunLoop {
-    public var framerateMultiplier: Float {
+@objc extension PVEmulatorCore: EmulatorCoreRunLoop {
+    @objc open var framerateMultiplier: Float {
         switch gameSpeed {
         case .slow: return 0.2
         case .normal: return 1.0
@@ -19,7 +18,7 @@ extension PVEmulatorCore: EmulatorCoreRunLoop {
         }
     }
 
-    public func setPauseEmulation(_ flag: Bool) {
+    @objc open func setPauseEmulation(_ flag: Bool) {
         if flag {
             stopHaptic()
             isRunning = false
@@ -29,22 +28,19 @@ extension PVEmulatorCore: EmulatorCoreRunLoop {
         }
     }
 
-    @objc
-    public var isEmulationPaused: Bool { return !isRunning }
+    @objc open var isEmulationPaused: Bool { return !isRunning }
 
-    public var isSpeedModified: Bool { return gameSpeed != .normal }
+    @objc open var isSpeedModified: Bool { return gameSpeed != .normal }
 
 
-    @objc
-    public func stopEmulation() {
+    @objc open func stopEmulation() {
         if let objcBridge = self as? ObjCCoreBridge {
             objcBridge.stopEmulation()
         }
         self.stopEmulation(withMessage: nil)
     }
 
-    @objc
-    public func stopEmulation(withMessage message: String? = nil) {
+    @objc open func stopEmulation(withMessage message: String? = nil) {
         stopHaptic()
         shouldStop = true
         isRunning = false
@@ -59,8 +55,8 @@ extension PVEmulatorCore: EmulatorCoreRunLoop {
     }
 
 
-    @objc
-    public func startEmulation() {screenRect
+    @objc open func startEmulation() {
+//        screenRect
         guard type(of: self) != PVEmulatorCore.self else {
             ELOG("startEmulation Not implimented")
             return
@@ -95,8 +91,7 @@ extension PVEmulatorCore: EmulatorCoreRunLoop {
         }
     }
 
-    @objc
-    public func resetEmulation() {
+    @objc open func resetEmulation() {
         if let objcBridge = self as? ObjCCoreBridge {
             objcBridge.resetEmulation()
         } else {
@@ -105,8 +100,7 @@ extension PVEmulatorCore: EmulatorCoreRunLoop {
     }
 
 //    @MainActor
-    @objc
-    public func emulationLoopThread() {
+    @objc open func emulationLoopThread() {
 
     }
 }

@@ -13,10 +13,9 @@ import PVAudio
 
 #warning("Finish me before app store release vc viu on Twitter would like it.")
 
-@objc
-extension PVEmulatorCore: EmulatorCoreRumbleDataSource {
-    public var supportsRumble: Bool { return false }
-    public func rumble(player: Int) {
+@objc extension PVEmulatorCore: EmulatorCoreRumbleDataSource {
+    open var supportsRumble: Bool { return false }
+    open func rumble(player: Int) {
         
     }
 
