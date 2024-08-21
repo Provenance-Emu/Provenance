@@ -113,15 +113,16 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
 
     public override var title: String? {
         set {
-            let label = stack.arrangedSubviews[0] as! UILabel
-            label.text = newValue
-            label.font = .boldSystemFont(ofSize: font.pointSize * _fontTitleF)
-            label.numberOfLines = 0
-            label.textAlignment = .center
-            label.preferredMaxLayoutWidth = maxTextWidth
+            if let label = stack.arrangedSubviews.first(where: {$0 is UILabel}) as? UILabel {
+                label.text = newValue
+                label.font = .boldSystemFont(ofSize: font.pointSize * _fontTitleF)
+                label.numberOfLines = 0
+                label.textAlignment = .center
+                label.preferredMaxLayoutWidth = maxTextWidth
+            }
         }
         get {
-            return (stack.arrangedSubviews[0] as? UILabel)?.text
+            return (stack.arrangedSubviews.first(where: {$0 is UILabel}) as? UILabel)?.text
         }
     }
 

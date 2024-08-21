@@ -407,11 +407,47 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         initNotificationObservers()
         Task.detached { [weak self] in
             guard let self = self else { return }
-            await createEmulator()
+            do {
+                await try createEmulator()
+//            } catch is CreateEmulatorError {
+//                let customError = error as! CreateEmulatorError
+//
+//                presentingViewController?.presentError(customError.localizedDescription, source: self.view)
+            } catch {
+                let neError = error as NSError
+
+//                presentingViewController?.presentError(error.localizedDescription, source: self.view)
+
+                Task { @MainActor in
+                    let alert = UIAlertController(title: neError.localizedDescription,
+                                                  message: neError.localizedRecoverySuggestion,
+                                                  preferredStyle: .alert)
+                    
+                    alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
+                    alert.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
+                    alert.addAction(UIAlertAction(title: "OK",
+                                                  style: .default,
+                                                  handler: { (_: UIAlertAction) -> Void in
+                        self.dismiss(animated: true, completion: nil)
+                    }))
+                    let code = neError.code
+                    if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
+                        alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: { (_: UIAlertAction) -> Void in
+                            if let url = URL(string: "https://bitly.com/provdiscs") {
+                                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                            }
+                        }))
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
+                        self?.present(alert, animated: true) { () -> Void in }
+                    })
+                }
+                return
+            }
         }
     }
-
-    private func createEmulator() async {
+    
+    private func createEmulator() async throws {
         await initCore()
 
         // Load now. Moved here becauase Mednafen needed to know what kind of game it's working with in order
@@ -424,47 +460,27 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
 
         #warning("should throw if nil?")
         guard let romPath = romPathMaybe else {
-            presentingViewController?.presentError("Game has a nil rom path.", source: self.view)
-            return
+            throw CreateEmulatorError.gameHasNilRomPath
         }
 
         // Extract Zip before loading the ROM
         await handleArchives(atPath: romPathMaybe)
 
         guard let romPath = romPathMaybe else {
-            presentingViewController?.presentError("Game has a nil rom path.", source: self.view)
-            return
+            throw CreateEmulatorError.gameHasNilRomPath
         }
 
-        //        guard FileManager.default.fileExists(atPath: romPath.absoluteString) else {
-        //            ELOG("File doesn't exist at path \(romPath.absoluteString)")
-        //            presentingViewController?.presentError("File doesn't exist at path \(romPath.absoluteString)")
-        //            return
-        //        }
+        guard FileManager.default.fileExists(atPath: romPath.absoluteString) else {
+            ELOG("File doesn't exist at path \(romPath.absoluteString)")
+            
+            // Copy path to Pasteboard
+            UIPasteboard.general.string = romPath.absoluteString
+            
+            throw CreateEmulatorError.fileDoesNotExist(path: romPath.absoluteString)
+        }
+        
         ILOG("Loading ROM: \(romPath.path)")
-        do {
-            try (core as? ObjCCoreBridge)?.loadFile(atPath: romPath.path)
-        } catch {
-            let alert = UIAlertController(title: error.localizedDescription, message: (error as NSError).localizedRecoverySuggestion, preferredStyle: .alert)
-            alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
-            alert.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_: UIAlertAction) -> Void in
-                self.dismiss(animated: true, completion: nil)
-            }))
-            let code = (error as NSError).code
-            if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
-                alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: { (_: UIAlertAction) -> Void in
-                    if let url = URL(string: "https://bitly.com/provdiscs") {
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    }
-                }))
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
-                self?.present(alert, animated: true) { () -> Void in }
-            })
-
-            return
-        }
+        try (core as? ObjCCoreBridge)?.loadFile(atPath: romPath.path)
 
         if UIScreen.screens.count > 1 && !core.skipLayout {
             secondaryScreen = UIScreen.screens[1]

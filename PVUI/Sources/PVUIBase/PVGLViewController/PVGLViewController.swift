@@ -38,6 +38,10 @@ internal let VERTEX_DIR = SHADER_DIR + "/Vertex"
 internal let BLITTER_DIR = SHADER_DIR + "/Blitters"
 internal let FILTER_DIR = SHADER_DIR + "/Filters"
 
+public enum PVGLViewError: Error {
+    case glError(GLuint)
+}
+
 #if USE_METAL
 extension PVGLViewController: MTKViewDelegate {
     
@@ -281,16 +285,21 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
         setupTexture()
         
 #if !USE_METAL
-        var error: Error?
-        defaultVertexShader = compileShaderResource("\(VERTEX_DIR)/default_vertex", ofType: GLenum(GL_VERTEX_SHADER), error: &error)
         
-        if let error = error {
-            ELOG("Error compiling default vertex shader: \(error.localizedDescription)")
+        do {
+            try defaultVertexShader = compileShaderResource("\(VERTEX_DIR)/default_vertex", ofType: GLenum(GL_VERTEX_SHADER))
+            
+            if defaultVertexShader != GL_NO_ERROR {
+                throw PVGLViewError.glError(defaultVertexShader)
+            }
+            
+            try setupBlitShader()
+            try setupCRTShader()
+        } catch {
+            #warning("TOOD: Show error messag here")
+            // Prettty sure i had a category for this
+//            showError(error)
         }
-        assert(defaultVertexShader != GL_NO_ERROR, "Default vertex shader compilation failed")
-        
-        setupBlitShader()
-        setupCRTShader()
 #endif
         
         alternateThreadFramebufferBack = 0
@@ -458,18 +467,103 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
     
 #if USE_OPENGLES || USE_OPENGL
     /// Compiles a shader from a resource file
-    func compileShaderResource(_ shaderName: String, ofType shaderType: GLenum, error: inout Error?) -> GLuint {
-        // load and compile shader code...
-#warning("Finish me")
-        fatalError("Finish me")
-        return 0
+    func compileShaderResource(_ shaderResourceName: String, ofType shaderType: GLenum) throws -> GLuint {
+        // TODO: check shaderType == GL_VERTEX_SHADER
+        let fileName = shaderResourceName.appendingFormat(".glsl")
+
+        let docsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!.appendingPathComponent(fileName).path
+        let fm = FileManager.default
+        
+        let bundleShaderPath = Bundle.main.path(forResource: shaderResourceName, ofType: "glsl")
+        
+        var shaderPath: String
+        
+#if !os(tvOS)
+        if !fm.fileExists(atPath: docsPath) {
+            try createShadersDirs()
+            try fm.copyItem(atPath: bundleShaderPath!, toPath: docsPath)
+        }
+        
+        if fm.fileExists(atPath: docsPath) {
+            shaderPath = docsPath
+        } else {
+            shaderPath = bundleShaderPath!
+        }
+#else
+        shaderPath = bundleShaderPath!
+#endif // !os(tvOS)
+        
+        guard !shaderPath.isEmpty else {
+            throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "shaderPath is null"])
+        }
+        
+        guard let shaderSource = try? String(contentsOfFile: shaderPath, encoding: .ascii) else {
+            print("Nil shaderSource: \(shaderPath)")
+            throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "shaderSource is null"])
+        }
+        
+        guard let shaderSourceCString = shaderSource.cString(using: .ascii) else {
+            print("Nil shaderSourceCString")
+            throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "shaderSourceCString is null"])
+        }
+        
+        let shader = glCreateShader(shaderType)
+        guard shader != 0 else {
+            print("Nil shader")
+            throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "shader is null"])
+        }
+        
+        var shaderSourceCStringPointer = UnsafePointer<GLchar>?(shaderSourceCString)
+        glShaderSource(shader, 1, &shaderSourceCStringPointer, nil)
+        glCompileShader(shader)
+        
+        var compiled: GLint = 0
+        glGetShaderiv(shader, GLenum(GL_COMPILE_STATUS), &compiled)
+        if compiled == 0 {
+            var infoLogLength: GLint = 0
+            glGetShaderiv(shader, GLenum(GL_INFO_LOG_LENGTH), &infoLogLength)
+            if infoLogLength > 1 {
+                let infoLog = UnsafeMutablePointer<GLchar>.allocate(capacity: Int(infoLogLength))
+                glGetShaderInfoLog(shader, infoLogLength, nil, infoLog)
+                let log = String(cString: infoLog)
+                print("Error compiling shader: \(log)")
+                infoLog.deallocate()
+                throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "Error compiling shader", NSLocalizedFailureReasonErrorKey: log])
+            }
+            
+            glDeleteShader(shader)
+            return 0
+        }
+        
+        return shader
     }
     
+#if !os(tvOS)
+    func createShadersDirs() throws {
+        // TODO: This is a hack, dir should come from arg
+        let fm = FileManager.default
+        let docsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        
+        let directories = [VERTEX_DIR, BLITTER_DIR, FILTER_DIR]
+        
+        for dir in directories {
+            do {
+                try fm.createDirectory(at: docsPath.appendingPathComponent(dir), withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                ELOG("Error creating directory: \(error.localizedDescription)")
+                throw error
+            }
+        }
+    }
+#endif
+    
+    
     /// Links a vertex and fragment shader into a shader program
-    func linkVertexShader(_ vertexShader: GLuint, withFragmentShader fragmentShader: GLuint) -> GLuint {
+    func linkVertexShader(_ vertexShader: GLuint, withFragmentShader fragmentShader: GLuint) throws -> GLuint {
         let shaderProgram = glCreateProgram()
+        
         guard shaderProgram != 0 else {
-            return 0
+            throw NSError(domain: "org.provenance.core", code: -1, userInfo: [NSLocalizedDescriptionKey: "shaderProgram is null"])
         }
         
         glAttachShader(shaderProgram, vertexShader)
@@ -501,25 +595,32 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
     }
     
     /// Sets up the blit shader for rendering
-    func setupBlitShader() {
-        var error: Error?
-        blitFragmentShader = compileShaderResource("\(BLITTER_DIR)/blit_fragment", ofType: GLenum(GL_FRAGMENT_SHADER), error: &error)
-        assert(blitFragmentShader != GL_NO_ERROR, "Error compiling blit fragment shader: \(error?.localizedDescription ?? "")")
+    func setupBlitShader() throws {
+        blitFragmentShader = try compileShaderResource("\(BLITTER_DIR)/blit_fragment", ofType: GLenum(GL_FRAGMENT_SHADER))
         
-        blitShaderProgram = linkVertexShader(defaultVertexShader, withFragmentShader: blitFragmentShader)
+        if blitFragmentShader != GL_NO_ERROR {
+            throw PVGLViewError.glError(blitFragmentShader)
+        }
+        
+        blitShaderProgram = try linkVertexShader(defaultVertexShader, withFragmentShader: blitFragmentShader)
         assert(blitShaderProgram != GL_NO_ERROR, "Error linking blit shader program")
         
         blitUniform_EmulatedImage = glGetUniformLocation(blitShaderProgram, "EmulatedImage")
     }
     
     /// Sets up the CRT shader for rendering
-    func setupCRTShader() {
-        var error: Error?
-        crtFragmentShader = compileShaderResource("\(FILTER_DIR)/crt_fragment", ofType: GLenum(GL_FRAGMENT_SHADER), error: &error)
-        assert(crtFragmentShader != GL_NO_ERROR, "Error compiling CRT fragment shader: \(error?.localizedDescription ?? "")")
+    func setupCRTShader() throws {
+        crtFragmentShader = try compileShaderResource("\(FILTER_DIR)/crt_fragment", ofType: GLenum(GL_FRAGMENT_SHADER))
         
-        crtShaderProgram = linkVertexShader(defaultVertexShader, withFragmentShader: crtFragmentShader)
-        assert(crtShaderProgram != GL_NO_ERROR, "Error linking CRT shader program")
+        if crtShaderProgram != GL_NO_ERROR {
+            throw PVGLViewError.glError(crtShaderProgram)
+        }
+        
+        crtShaderProgram = try linkVertexShader(defaultVertexShader, withFragmentShader: crtFragmentShader)
+        
+        if crtShaderProgram != GL_NO_ERROR {
+            throw PVGLViewError.glError(crtShaderProgram)
+        }
         
         crtUniform_DisplayRect = glGetUniformLocation(crtShaderProgram, "DisplayRect")
         crtUniform_EmulatedImage = glGetUniformLocation(crtShaderProgram, "EmulatedImage")
