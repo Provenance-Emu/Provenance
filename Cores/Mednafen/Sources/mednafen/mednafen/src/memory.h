@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* memory.h:
-**  Copyright (C) 2010-2016 Mednafen Team
+**  Copyright (C) 2010-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -92,7 +92,7 @@ static INLINE void MDFN_FastArraySet(uint16* dst, const uint16 value, size_t cou
   MDFN_ennsb<uint16, true>(ai, value);
 }
 
-static INLINE void MDFN_FastArraySet(uint8* dst, const uint16 value, size_t count)
+static INLINE void MDFN_FastArraySet(uint8* dst, const uint8 value, size_t count)
 {
  if(0 == ((uintptr_t)dst & (sizeof(uint16) - 1)))
  {

@@ -261,6 +261,34 @@ int Stream::get_line(std::string &str)
  return(str.length() ? 256 : -1);
 }
 
+uint64 Stream::get_string_append(std::string* str, uint64 count, bool error_on_eos)
+{
+ const size_t str_ini_size = str->size();
+
+ if(count > (SIZE_MAX - str_ini_size))
+  throw std::length_error("Stream::read_append()");
+
+ str->resize(str_ini_size + count);
+ //
+ //
+ uint64 ret;
+
+ try
+ {
+  ret = read(&(*str)[str_ini_size], count, error_on_eos);
+ }
+ catch(...)
+ {
+  str->resize(str_ini_size);
+  throw;
+ }
+
+ if(ret < count)
+  str->resize(str_ini_size + ret);
+
+ return ret;
+}
+
 /*
 StreamPosFilter::StreamPosFilter(std::shared_ptr<Stream> s_) : s(s_), pos(0)
 {

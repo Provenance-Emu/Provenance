@@ -259,6 +259,7 @@ static unsigned run_count_mod;
 static unsigned clock_multiplier;
 static int32 cycle_counter;
 
+/*
 static INLINE uint32 ReadReg(unsigned o)
 {
  return Regs[RegsRMap[o & 0x7F]];
@@ -268,10 +269,11 @@ static INLINE void WriteReg(unsigned o, uint32 v)
 {
  Regs[RegsWMap[o & 0x7F]] = v & RegsWMask[o];
 }
+*/
 
 static void LoadCache(unsigned EffP)
 {
- SNES_DBG("[CX4] LoadCache %u: ProgROM_Base=0x%06x, P=0x%04x\n", (unsigned)(Cache_Active - Cache), ProgROM_Base, EffP);
+ SNES_DBG(SNES_DBG_CART, "[CX4] LoadCache %u: ProgROM_Base=0x%06x, P=0x%04x\n", (unsigned)(Cache_Active - Cache), ProgROM_Base, EffP);
 
  for(unsigned i = 0; i < 256; i++)
  {
@@ -303,13 +305,13 @@ static void CheckCache(const unsigned EffP)
 
  if(Cache_Active->Locked)
  {
-  SNES_DBG("[CX4] Wanted to load to cache page %u, but it's locked!\n", (unsigned)(Cache_Active - Cache));
+  SNES_DBG(SNES_DBG_CART, "[CX4] Wanted to load to cache page %u, but it's locked!\n", (unsigned)(Cache_Active - Cache));
   Cache_Active = &Cache[!(Cache_Active - &Cache[0])];
  }
 
  if(Cache_Active->Locked)
  {
-  SNES_DBG("[CX4] Unable to load cache, both pages locked!\n");
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] Unable to load cache, both pages locked!\n");
   Status &= ~0x40;
   if(!(Status & 0x100))
    cycle_counter = std::min<int32>(cycle_counter, 0);
@@ -407,7 +409,7 @@ static INLINE void Instr_WRRAM(uint32 instr)
  const size_t index = ((opcode & 0x4) ? (DPR + (instr & 0xFF)) : Accum) & 0xFFF;
 
  if(!(opcode & 0x4) && (instr & 0xFF))
-  SNES_DBG("[CX4] WRRAM with non-zero lower instruction byte: 0x%04x\n", instr);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] WRRAM with non-zero lower instruction byte: 0x%04x\n", instr);
 
  if(index < sizeof(DataRAM))
   DataRAM[index] = RAMB >> shift;
@@ -421,7 +423,7 @@ static INLINE void Instr_RDRAM(uint32 instr)
  const size_t index = ((opcode & 0x4) ? (DPR + (instr & 0xFF)) : Accum) & 0xFFF;
 
  if(!(opcode & 0x4) && (instr & 0xFF))
-  SNES_DBG("[CX4] RDRAM with non-zero lower instruction byte: 0x%04x\n", instr);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] RDRAM with non-zero lower instruction byte: 0x%04x\n", instr);
 
  if(index < sizeof(DataRAM))
   RAMB = (RAMB & ~(0xFF << shift)) | (DataRAM[index] << shift);
@@ -433,7 +435,7 @@ static INLINE void Instr_RDROM(uint32 instr)
  const size_t index = (opcode & 0x4) ? (instr & 0x3FF) : (Accum & 0x3FF);
 
  if(!(opcode & 0x4) && (instr & 0xFF))
-  SNES_DBG("[CX4] RDROM with non-zero lower instruction byte: 0x%04x\n", instr);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] RDROM with non-zero lower instruction byte: 0x%04x\n", instr);
 
  ROMB = DataROM[index];
 }
@@ -464,12 +466,12 @@ static INLINE void Instr_BitOps(uint32 instr)
  if(subop & 0x4)
  {
   if(ss != 0)
-   SNES_DBG("[CX4] Shift instruction with SS!=0: 0x%04x\n", instr);
+   SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] Shift instruction with SS!=0: 0x%04x\n", instr);
 
   arg &= 0x1F;
 
   if(arg >= 24)
-   SNES_DBG("[CX4] Instr 0x%04x, large shift=%u\n", instr, arg);
+   SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] Instr 0x%04x, large shift=%u\n", instr, arg);
 
   if(arg > 24)
    arg = 0;
@@ -577,7 +579,7 @@ static NO_INLINE void Update(uint32 master_timestamp)
 
     if(MDFN_UNLIKELY(!(DMASource & 0x8000)))
     {
-     SNES_DBG("[CX4] Unhandled DMA source address: 0x%06x\n", DMASource);
+     SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] Unhandled DMA source address: 0x%06x\n", DMASource);
      Status &= ~0x100;
      break;
     }
@@ -588,7 +590,7 @@ static NO_INLINE void Update(uint32 master_timestamp)
 
      if(MDFN_UNLIKELY((offs & 0x8000) || offs < 0x6000 || offs >= 0x7C00 || (bank & 0x40)))
      {
-      SNES_DBG("[CX4] Unhandled DMA dest address: 0x%06x\n", DMADest);
+      SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] Unhandled DMA dest address: 0x%06x\n", DMADest);
       Status &= ~0x100;
       break;
      }
@@ -629,7 +631,7 @@ static NO_INLINE void Update(uint32 master_timestamp)
   switch(instr >> 8)
   {
    default:
-	SNES_DBG("[CX4] Unknown instruction: 0x%04x\n", instr);
+	SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] Unknown instruction: 0x%04x\n", instr);
 	break;
 
    //
@@ -807,7 +809,7 @@ static NO_INLINE void Update(uint32 master_timestamp)
     }
     else if(r == 0x2F)
     {
-     SNES_DBG("[CX4] Unhandled instruction: 0x%04x\n", instr);
+     SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] Unhandled instruction: 0x%04x\n", instr);
     }
     else
      MBR = Regs[RegsRMap[r]];
@@ -1060,7 +1062,7 @@ static NO_INLINE void Update(uint32 master_timestamp)
 
     if(r == 0x2E || r == 0x2F)
     {
-     SNES_DBG("[CX4] Unhandled instruction: 0x%04x\n", instr);
+     SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] Unhandled instruction: 0x%04x\n", instr);
     }
 
     Regs[RegsWMap[r]] = Regs[RegsIndex_MBR] & RegsWMask[r];
@@ -1140,7 +1142,7 @@ static DEFREAD(MainCPU_ReadRAM)
  //
  if(MDFN_UNLIKELY((Status & 0x41) == 0x40))
  {
-  SNES_DBG("[CX4] MainCPU read from data RAM while CX4 busy: 0x%06x\n", A);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] MainCPU read from data RAM while CX4 busy: 0x%06x\n", A);
   return 0xFF;
  }
  else
@@ -1154,7 +1156,7 @@ static DEFWRITE(MainCPU_WriteRAM)
  //
  //printf("MainCPU_WriteRAM: %03x %02x\n", A & 0xFFF, V);
  if(MDFN_UNLIKELY((Status & 0x41) == 0x40))
-  SNES_DBG("[CX4] MainCPU write to data RAM while CX4 busy: 0x%06x 0x%02x\n", A, V);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] MainCPU write to data RAM while CX4 busy: 0x%06x 0x%02x\n", A, V);
  else
   DataRAM[A & 0xFFF] = V;
 }
@@ -1166,7 +1168,7 @@ static DEFREAD(MainCPU_ReadGPR)
  //
  if(MDFN_UNLIKELY((Status & 0x41) == 0x40))
  {
-  SNES_DBG("[CX4] MainCPU read from GPR while CX4 busy: 0x%06x\n", A);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] MainCPU read from GPR while CX4 busy: 0x%06x\n", A);
   return 0xFF;
  }
  else
@@ -1185,7 +1187,7 @@ static DEFWRITE(MainCPU_WriteGPR)
  //
  if(MDFN_UNLIKELY((Status & 0x41) == 0x40))
  {
-  SNES_DBG("[CX4] MainCPU write to GPR while CX4 busy: 0x%06x 0x%02x\n", A, V);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[CX4] MainCPU write to GPR while CX4 busy: 0x%06x 0x%02x\n", A, V);
  }
  else
  {
@@ -1285,7 +1287,7 @@ static DEFWRITE(MainCPU_WriteIP)
  CPUM.timestamp += MEMCYC_SLOW;
  Update(CPUM.timestamp);
  //
- SNES_DBG("[CX4] Command 0x%04x:0x%02x\n", P, V);
+ SNES_DBG(SNES_DBG_CART, "[CX4] Command 0x%04x:0x%02x\n", P, V);
  NextIP = IP = V;
  NextInstr = 0;
  Status |= 0x40;

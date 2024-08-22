@@ -19,7 +19,9 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#pragma GCC optimize ("no-unroll-loops,no-peel-loops")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize ("no-unroll-loops,no-peel-loops")
+#endif
 
 #ifndef PSXDEV_GTE_TESTING
 #include "psx.h"
@@ -1442,7 +1444,7 @@ int32 GTE_Instruction(uint32 instr)
  {
   default: 
 #ifndef PSXDEV_GTE_TESTING
-	   PSX_WARNING("[GTE] Unknown instruction code: 0x%02x", code);
+	   PSX_DBG(PSX_DBG_WARNING | PSX_DBG_GTE, "[GTE] Unknown instruction code: 0x%02x\n", code);
 #endif
 	   break;
 

@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* ss.cpp - Saturn Core Emulation and Support Functions
-**  Copyright (C) 2015-2020 Mednafen Team
+**  Copyright (C) 2015-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -35,8 +35,6 @@
 
 #include <trio/trio.h>
 
-#include <zlib.h>
-
 #if defined(HAVE_SSE2_INTRINSICS)
  #include <xmmintrin.h>
  #include <emmintrin.h>
@@ -48,6 +46,7 @@ using namespace Mednafen;
 #include "sound.h"
 #include "scsp.h"	// For debug.inc
 #include "smpc.h"
+#include "stvio.h"
 #include "cdb.h"
 #include "vdp1.h"
 #include "vdp2.h"
@@ -57,6 +56,12 @@ using namespace Mednafen;
 
 namespace MDFN_IEN_SS
 {
+
+enum
+{
+ MIDI_IO_NONE = 0,
+ MIDI_IO_STDOUT
+};
 
 static sscpu_timestamp_t MidSync(const sscpu_timestamp_t timestamp);
 
@@ -88,6 +93,10 @@ void SS_DBGTI(uint32 which, const char* format, ...)
  trio_printf(" @Line=0x%03x, HPos=0x%03x, memts=%d\n", VDP2::PeekLine(), VDP2::PeekHPos(), SH7095_mem_timestamp);
 }
 #endif
+static std::vector<CDInterface*> DBGCDInterfaces;
+//
+//
+//
 uint32 ss_horrible_hacks;
 
 static bool NeedEmuICache;
@@ -97,6 +106,8 @@ static void SaveBackupRAM(void);
 static void LoadBackupRAM(void);
 static void SaveCartNV(void);
 static void LoadCartNV(void);
+static void SaveSTVEEPROM(void);
+static void LoadSTVEEPROM(void);
 static void SaveRTC(void);
 static void LoadRTC(void);
 
@@ -115,6 +126,7 @@ static uint16 BIOSROM[524288 / sizeof(uint16)];
 static uint16 WorkRAML[1024 * 1024 / sizeof(uint16)];
 static uint16 WorkRAMH[1024 * 1024 / sizeof(uint16)];	// Effectively 32-bit in reality, but 16-bit here because of CPU interpreter design(regarding fastmap).
 static uint8 BackupRAM[32768];
+static uint8 BackupRAM_StateHelper[32768];
 static bool BackupRAM_Dirty;
 static int64 BackupRAM_SaveDelay;
 static int64 CartNV_SaveDelay;
@@ -179,23 +191,36 @@ static INLINE void BusRW_DB_CS0(const uint32 A, uint32& DB, const bool BurstHax,
  //
  if(A >= 0x00200000 && A <= 0x003FFFFF)
  {
-  if(A & 0x100000)
+  if(!SH2DMAHax)
+   SH7095_mem_timestamp += 7;
+  else
+   *SH2DMAHax += 7;
+
+  //
+  // VA0 and VA1 don't map DRAM in the upper 1MiB of the 2MiB region, and return 0xFFFF(~0) on reads.
+  // VA2 mirrors DRAM into the upper 1MiB for both reads and writes, which incidentally breaks "Myst" in the generator room due to
+  //	it trying to load a file that's too large to fit, wrapping around and corrupting essential data in the process.
+  // VA3+ behavior is untested.
+  //
+  // VA0/VA1 behavior is emulated here.
+  //
+  if(MDFN_UNLIKELY(A & 0x100000))
   {
    if(IsWrite)
-    SS_DBG(SS_DBG_WARNING, "[RAM] %zu-byte write of 0x%08x to mirrored address 0x%08x\n", sizeof(T), DB >> (((A & 1) ^ (2 - sizeof(T))) << 3), A);
+    SS_DBG(SS_DBG_WARNING, "[RAM] %zu-byte write of 0x%08x to revision-dependent address 0x%08x\n", sizeof(T), DB >> (((A & 1) ^ (2 - sizeof(T))) << 3), A);
    else
-    SS_DBG(SS_DBG_WARNING, "[RAM] %zu-byte read from mirrored address 0x%08x\n", sizeof(T), A);
+   {
+    SS_DBG(SS_DBG_WARNING, "[RAM] %zu-byte read from revision-dependent address 0x%08x\n", sizeof(T), A);
+    DB = DB | 0xFFFF;
+   }
+
+   return;
   }
 
   if(IsWrite)
    ne16_wbo_be<T>(WorkRAML, A & 0xFFFFF, DB >> (((A & 1) ^ (2 - sizeof(T))) << 3));
   else
    DB = (DB & 0xFFFF0000) | ne16_rbo_be<uint16>(WorkRAML, A & 0xFFFFE);
-
-  if(!SH2DMAHax)
-   SH7095_mem_timestamp += 7;
-  else
-   *SH2DMAHax += 7;
 
   return;
  }
@@ -254,8 +279,13 @@ static INLINE void BusRW_DB_CS0(const uint32 A, uint32& DB, const bool BurstHax,
   {
    if(sizeof(T) != 1 || (A & 1))
    {
-    BackupRAM[(A >> 1) & 0x7FFF] = DB;
-    BackupRAM_Dirty = true;
+    uint8* const brp = &BackupRAM[(A >> 1) & 0x7FFF];
+
+    if(*brp != (uint8)DB)
+    {
+     *brp = (uint8)DB;
+     BackupRAM_Dirty = true;
+    }
    }
   }
   else
@@ -287,6 +317,24 @@ static INLINE void BusRW_DB_CS0(const uint32 A, uint32& DB, const bool BurstHax,
   return;
  }
 
+ //
+ // FIXME: Run ST-V hardware test for correct region size and other characteristics.
+ //
+ //if(A >= 0x00400000 && A <= 0x0047FFFF && ActiveCartType == CART_STV)
+ if(A >= 0x00400000 && A <= 0x0040007F && ActiveCartType == CART_STV)
+ {
+  const uint32 IOGA_A = (A & 0x7F) >> 1;
+
+  if(IsWrite)
+  {
+   if(sizeof(T) == 2 || (A & 1))
+    STVIO_WriteIOGA(SH7095_mem_timestamp, IOGA_A, DB);
+  }
+  else
+   DB = ((DB & 0xFFFF0000) | 0xFF00 | STVIO_ReadIOGA(SH7095_mem_timestamp, IOGA_A));
+
+  return;
+ }
  //
  //
  //
@@ -469,6 +517,7 @@ static MDFN_COLD void InitEvents(void)
 
  events[SS_EVENT_SCU_DMA].event_handler = SCU_UpdateDMA;
  events[SS_EVENT_SCU_DSP].event_handler = SCU_UpdateDSP;
+ /*events[SS_EVENT_SCU_INT].event_handler = SCU_UpdateInt;*/
 
  events[SS_EVENT_SMPC].event_handler = SMPC_Update;
 
@@ -482,7 +531,9 @@ static MDFN_COLD void InitEvents(void)
  events[SS_EVENT_CART].event_handler = CART_GetEventHandler();
 
  events[SS_EVENT_MIDSYNC].event_handler = MidSync;
- events[SS_EVENT_MIDSYNC].event_time = SS_EVENT_DISABLED_TS;
+ //
+ //
+ SS_SetEventNT(&events[SS_EVENT_MIDSYNC], SS_EVENT_DISABLED_TS);
 }
 
 static void RebaseTS(const sscpu_timestamp_t timestamp)
@@ -560,6 +611,17 @@ void SS_SetEventNT(event_list_entry* e, const sscpu_timestamp_t next_timestamp)
 // Called from debug.cpp too.
 void ForceEventUpdates(const sscpu_timestamp_t timestamp)
 {
+#ifdef MDFN_ENABLE_DEV_BUILD
+ for(unsigned i = SS_EVENT__SYNFIRST + 1; i < SS_EVENT__SYNLAST; i++)
+ {
+  if(events[i].event_time > events[i].next->event_time)
+  {
+   printf("%u=%u, %u=%u\n", i, events[i].event_time, (unsigned)(events[i].next - events), events[i].next->event_time);
+   abort();
+  }
+ }
+#endif
+
  for(unsigned c = 0; c < 2; c++)
   CPU[c].ForceInternalEventUpdates();
 
@@ -628,8 +690,10 @@ void SS_RequestMLExit(void)
  next_event_ts = 0;
 }
 
-#pragma GCC push_options
-#pragma GCC optimize("O2,no-unroll-loops,no-peel-loops,no-crossjumping")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC push_options
+ #pragma GCC optimize("O2,no-unroll-loops,no-peel-loops,no-crossjumping")
+#endif
 template<bool EmulateICache, bool DebugMode>
 static INLINE int32 RunLoop_INLINE(EmulateSpecStruct* espec)
 {
@@ -702,7 +766,9 @@ static NO_INLINE MDFN_COLD int32 RunLoop_Debug(EmulateSpecStruct* espec)
  return RunLoop_INLINE<EmulateICache, true>(espec);
 }
 
-#pragma GCC pop_options
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC pop_options
+#endif
 
 // Must not be called within an event or read/write handler.
 void SS_Reset(bool powering_up)
@@ -723,6 +789,9 @@ void SS_Reset(bool powering_up)
 
  SCU_Reset(powering_up);
  CPU[0].Reset(powering_up);
+
+ if(ActiveCartType == CART_STV)
+  STVIO_Reset(powering_up);	// Must call before SMPC_Reset();
 
  SMPC_Reset(powering_up);
 
@@ -747,11 +816,16 @@ static INLINE void UpdateSMPCInput(const sscpu_timestamp_t timestamp)
 
  UpdateInputLastBigTS += (int64)elapsed_time * (MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1));
 
+ if(ActiveCartType == CART_STV)
+  STVIO_UpdateInput(elapsed_time);
+
  SMPC_UpdateInput(elapsed_time);
 }
 
 static sscpu_timestamp_t MidSync(const sscpu_timestamp_t timestamp)
 {
+ //printf("MidSync request(allowed=%d) @%d line=%d\n", AllowMidSync, timestamp, VDP2::PeekLine());
+
  if(AllowMidSync)
  {
   //
@@ -874,7 +948,9 @@ static void Emulate(EmulateSpecStruct* espec_arg)
  }
 
  if(CART_GetClearNVDirty())
+ {
   CartNV_SaveDelay = (int64)3 * (MDFNGameInfo->MasterClock / MDFN_MASTERCLOCK_FIXED(1));	// 3 second delay
+ }
  else if(CartNV_SaveDelay > 0)
  {
   CartNV_SaveDelay -= espec->MasterCycles;
@@ -894,6 +970,15 @@ static void Emulate(EmulateSpecStruct* espec_arg)
  }
 }
 
+static void OutputMIDI(uint8 v)
+{
+ if(v != 0x1B)
+ {
+  fputc(v, stdout);
+  fflush(stdout);
+ }
+}
+
 //
 //
 //
@@ -908,6 +993,7 @@ static MDFN_COLD void Cleanup(void)
  SOUND_Kill();
  CDB_Kill();
 
+ DBGCDInterfaces.clear();
  cdifs = NULL;
 }
 
@@ -952,7 +1038,7 @@ static INLINE void CalcGameID(uint8* id_out16, uint8* fd_id_out16, char* sgid, c
 
   for(unsigned i = 0; i < 512; i++)
   {
-   if(c->ReadSectors(&buf[0], i, 1) >= 0x1)
+   if(c->ReadSectors(buf.get(), i, 1) >= 0x1)
    {
     if(i == 0)
     {
@@ -977,7 +1063,7 @@ static INLINE void CalcGameID(uint8* id_out16, uint8* fd_id_out16, char* sgid, c
      MDFN_trim(sgarea);
     }
 
-    mctx.update(&buf[0], 2048);
+    mctx.update(buf.get(), 2048);
    }
   }
 
@@ -999,52 +1085,73 @@ static const struct
  const char c;
  const char* str;	// Community-defined region string that may appear in filename.
  unsigned region;
+ const char* secstr;
 } region_strings[] =
 {
  // Listed in order of preference for multi-region games.
- { 'U', "USA", SMPC_AREA_NA },
- { 'J', "Japan", SMPC_AREA_JP },
- { 'K', "Korea", SMPC_AREA_KR },
+ { 'U', "USA", SMPC_AREA_NA,		"For USA and CANADA." },
+ { 'J', "Japan", SMPC_AREA_JP,		"For JAPAN." },
+ { 'K', "Korea", SMPC_AREA_KR,		"For KOREA." },
 
- { 'E', "Europe", SMPC_AREA_EU_PAL },
- { 'E', "Germany", SMPC_AREA_EU_PAL },
- { 'E', "France", SMPC_AREA_EU_PAL },
- { 'E', "Spain", SMPC_AREA_EU_PAL },
+ { 'E', "Europe", SMPC_AREA_EU_PAL,	"For EUROPE." },
+ { 'E', "Germany", SMPC_AREA_EU_PAL,	"For EUROPE." },
+ { 'E', "France", SMPC_AREA_EU_PAL,	"For EUROPE." },
+ { 'E', "Spain", SMPC_AREA_EU_PAL,	"For EUROPE." },
 
- { 'B', "Brazil", SMPC_AREA_CSA_NTSC },
+ { 'B', "Brazil", SMPC_AREA_CSA_NTSC,	"For BRAZIL." },
 
- { 'T', nullptr, SMPC_AREA_ASIA_NTSC },
- { 'A', nullptr, SMPC_AREA_ASIA_PAL },
- { 'L', nullptr, SMPC_AREA_CSA_PAL },
+ { 'T', nullptr, SMPC_AREA_ASIA_NTSC,	"For TAIWAN and PHILIPINES." },
+ { 'A', nullptr, SMPC_AREA_ASIA_PAL,	"For ASIA PAL area." },
+ { 'L', nullptr, SMPC_AREA_CSA_PAL,	"For LATIN AMERICA." },
 };
 
-static INLINE bool DetectRegion(unsigned* const region)
+static INLINE uint64 GetPossibleRegions(const uint8* buf)
 {
- std::unique_ptr<uint8[]> buf(new uint8[2048 * 16]);
- uint64 possible_regions = 0;
+ uint64 cret = 0;
+ uint64 sret = 0;
 
- for(auto& c : *cdifs)
+ for(unsigned i = 0; i < 16; i++)
  {
-  if(c->ReadSectors(&buf[0], 0, 16) != 0x1)
-   continue;
-
-  if(!IsSaturnDisc(&buf[0]))
-   continue;
-
-  for(unsigned i = 0; i < 16; i++)
+  for(auto const& rs : region_strings)
   {
-   for(auto const& rs : region_strings)
+   if(rs.c == buf[0x40 + i])
    {
-    if(rs.c == buf[0x40 + i])
-    {
-     possible_regions |= (uint64)1 << rs.region;
-     break;
-    }
+    cret |= (uint64)1 << rs.region;
+    break;
    }
   }
-  break;
  }
 
+ for(unsigned i = 0; i < 8; i++)
+ {
+  const uint8* const p = buf + 0xE00 + (i << 5);
+
+  for(auto const& rs : region_strings)
+  {
+   uint8 td[32];
+
+   memset(td, 0x20, sizeof(td));
+   MDFN_en32msb(td + 0, 0xA00E0009);
+   memcpy(td + 4, rs.secstr, std::min<size_t>(sizeof(td) - 4, strlen(rs.secstr)));
+
+   //printf("[%.28s] [%.28s]\n", p + 4, td + 4);
+
+   if(!memcmp(p, td, 32))
+   {
+    sret |= (uint64)1 << rs.region;
+    break;
+   }
+  }
+ }
+
+ //printf("%016llx %016llx\n", (unsigned long long)cret, (unsigned long long)sret);
+
+ return cret & sret;
+}
+
+// *region must remain unmodified when returning false
+static INLINE bool GetRegion(unsigned* const region, const uint64 possible_regions)
+{
  for(auto const& rs : region_strings)
  {
   if(possible_regions & ((uint64)1 << rs.region))
@@ -1055,6 +1162,26 @@ static INLINE bool DetectRegion(unsigned* const region)
  }
 
  return false;
+}
+
+static INLINE bool DetectRegion(unsigned* const region)
+{
+ std::unique_ptr<uint8[]> buf(new uint8[2048 * 16]);
+ uint64 possible_regions = 0;
+
+ for(auto& c : *cdifs)
+ {
+  if(c->ReadSectors(buf.get(), 0, 16) != 0x1)
+   continue;
+
+  if(!IsSaturnDisc(buf.get()))
+   continue;
+
+  possible_regions = GetPossibleRegions(buf.get());
+  break;
+ }
+
+ return GetRegion(region, possible_regions);
 }
 #if 0
 static MDFN_COLD bool DetectRegionByFN(const std::string& fn, unsigned* const region)
@@ -1124,18 +1251,26 @@ static MDFN_COLD bool DetectRegionByFN(const std::string& fn, unsigned* const re
  return false;
 }
 #endif
-static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned horrible_hacks, const unsigned cart_type, const unsigned smpc_area, Stream* dbg_cart_rom_stream)
+static void MDFN_COLD InitCommon(unsigned cpucache_emumode, unsigned horrible_hacks, const unsigned cart_type, const unsigned smpc_area, Stream* boot_cart_rom_stream, GameFile* gf, const STVGameInfo* sgi = nullptr)
 {
  const char* cart_rom_path_sname = nullptr;
 
-#ifdef MDFN_ENABLE_DEV_BUILD
- ss_dbg_mask = SS_DBG_ERROR;
+ //
+ // Handle debug overrides for CPU cache emulation mode and horrible hacks.
+ //
  {
-  std::vector<uint64> dms = MDFN_GetSettingMultiUI("ss.dbg_mask");
+  unsigned ov_cpucache_emumode = MDFN_GetSettingUI("ss.dbg_cem");
+  unsigned ov_horrible_hacks = MDFN_GetSettingMultiM("ss.dbg_hh");
 
-  for(uint64 dmse : dms)
-   ss_dbg_mask |= dmse;
+  if(ov_cpucache_emumode != CPUCACHE_EMUMODE__COUNT)
+   cpucache_emumode = ov_cpucache_emumode;
+
+  if(ov_horrible_hacks != (unsigned)-1)
+   horrible_hacks = ov_horrible_hacks;
  }
+
+#ifdef MDFN_ENABLE_DEV_BUILD
+ ss_dbg_mask = MDFN_GetSettingMultiM("ss.dbg_mask") | SS_DBG_ERROR;
 
  static const uint32 addrs[] =
  {
@@ -1190,6 +1325,7 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
   } CartNames[] =
   {
    { CART_NONE, _("None"), nullptr },
+
    { CART_BACKUP_MEM, _("Backup Memory"), nullptr },
    { CART_EXTRAM_1M, _("1MiB Extended RAM"), nullptr },
    { CART_EXTRAM_4M, _("4MiB Extended RAM"), nullptr },
@@ -1198,7 +1334,9 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
    { CART_AR4MP, _("Action Replay 4M Plus"), "ss.cart.satar4mp_path" },
    { CART_CS1RAM_16M, _("16MiB CS1 RAM"), nullptr },
    { CART_NLMODEM, _("Netlink Modem"), nullptr },
-   { CART_MDFN_DEBUG, _("Mednafen Debug"), nullptr }, 
+   { CART_BOOTROM, _("Bootable ROM"), nullptr }, 
+
+   { CART_STV, _("ST-V"), nullptr },
   };
   const char* cn = _("Unknown");
 
@@ -1228,9 +1366,16 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
  //
  // Initialize backup memory.
  // 
- memset(BackupRAM, 0x00, sizeof(BackupRAM));
- for(unsigned i = 0; i < 0x40; i++)
-  BackupRAM[i] = BRAM_Init_Data[i & 0x0F];
+ if(cart_type == CART_STV)
+ {
+  memset(BackupRAM, 0x00, sizeof(BackupRAM));
+ }
+ else
+ {
+  memset(BackupRAM, 0x00, sizeof(BackupRAM));
+  for(unsigned i = 0; i < 0x40; i++)
+   BackupRAM[i] = BRAM_Init_Data[i & 0x0F];
+ }
 
  // Call InitFastMemMap() before functions like SOUND_Init()
  InitFastMemMap();
@@ -1250,13 +1395,13 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
    cart_rom_stream.reset(new FileStream(cart_rom_path, FileStream::MODE_READ));
   }
 
-  CART_Init(cart_type, cart_rom_stream ? cart_rom_stream.get() : dbg_cart_rom_stream);
+  CART_Init(cart_type, cart_rom_stream ? cart_rom_stream.get() : boot_cart_rom_stream, gf, sgi);
   ActiveCartType = cart_type;
  }
  //
  //
  //
- const bool PAL = (smpc_area & SMPC_AREA__PAL_MASK);
+ const bool PAL = (smpc_area & SMPC_AREA__PAL_MASK) && (cart_type != CART_STV);
  const int32 MasterClock = PAL ? 1734687500 : 1746818182;	// NTSC: 1746818181.8181818181, PAL: 1734687500-ish
  const char* biospath_sname;
  int sls = MDFN_GetSettingI(PAL ? "ss.slstartp" : "ss.slstart");
@@ -1272,17 +1417,29 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
  if(sls > sle)
   std::swap(sls, sle);
 
- if(smpc_area == SMPC_AREA_JP || smpc_area == SMPC_AREA_ASIA_NTSC)
-  biospath_sname = "ss.bios_jp";
+ if(cart_type == CART_STV)
+ {
+  if(smpc_area == SMPC_AREA_JP || smpc_area == SMPC_AREA_ASIA_NTSC)
+   biospath_sname = "ss.bios_stv_jp";
+  else if(smpc_area == SMPC_AREA_EU_PAL)
+   biospath_sname = "ss.bios_stv_eu";
+  else
+   biospath_sname = "ss.bios_stv_na";
+ }
  else
-  biospath_sname = "ss.bios_na_eu";
+ {
+  if(smpc_area == SMPC_AREA_JP || smpc_area == SMPC_AREA_ASIA_NTSC)
+   biospath_sname = "ss.bios_jp";
+  else
+   biospath_sname = "ss.bios_na_eu";
+ }
 
  {
   const std::string biospath = MDFN_MakeFName(MDFNMKF_FIRMWARE, 0, MDFN_GetSettingS(biospath_sname));
   FileStream BIOSFile(biospath, FileStream::MODE_READ);
 
   if(BIOSFile.size() != 524288)
-   throw MDFN_Error(0, _("BIOS file \"%s\" is of an incorrect size."), biospath.c_str());
+   throw MDFN_Error(0, _("BIOS file \"%s\" is of an incorrect size."), MDFN_strhumesc(biospath).c_str());
 
   BIOSFile.read(BIOSROM, 512 * 1024);
   BIOS_SHA256 = sha256(BIOSROM, 512 * 1024);
@@ -1294,13 +1451,14 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
     const char* fn;
     sha256_digest hash;
     const uint32 areas;
+    bool stv;
    } BIOSDB[] =
    {
-    { "sega1003.bin",  "cc1e1b7f88f1c6e6fc35994bae2c2292e06fdae258c79eb26a1f1391e72914a8"_sha256, (1U << SMPC_AREA_JP) | (1U << SMPC_AREA_ASIA_NTSC),  },
-    { "sega_100.bin",  "ae4058627bb5db9be6d8d83c6be95a4aa981acc8a89042e517e73317886c8bc2"_sha256, (1U << SMPC_AREA_JP) | (1U << SMPC_AREA_ASIA_NTSC),  },
-    { "sega_101.bin",  "dcfef4b99605f872b6c3b6d05c045385cdea3d1b702906a0ed930df7bcb7deac"_sha256, (1U << SMPC_AREA_JP) | (1U << SMPC_AREA_ASIA_NTSC),  },
-    { "sega_100a.bin", "87293093fad802fcff31fcab427a16caff1acbc5184899b8383b360fd58efb73"_sha256, (~0U) & ~((1U << SMPC_AREA_JP) | (1U << SMPC_AREA_ASIA_NTSC)) },
-    { "mpr-17933.bin", "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f"_sha256, (~0U) & ~((1U << SMPC_AREA_JP) | (1U << SMPC_AREA_ASIA_NTSC)) },
+    { "sega1003.bin",  "cc1e1b7f88f1c6e6fc35994bae2c2292e06fdae258c79eb26a1f1391e72914a8"_sha256, (1U << SMPC_AREA_JP) | (1U << SMPC_AREA_ASIA_NTSC),		false },
+    { "sega_100.bin",  "ae4058627bb5db9be6d8d83c6be95a4aa981acc8a89042e517e73317886c8bc2"_sha256, (1U << SMPC_AREA_JP) | (1U << SMPC_AREA_ASIA_NTSC),		false },
+    { "sega_101.bin",  "dcfef4b99605f872b6c3b6d05c045385cdea3d1b702906a0ed930df7bcb7deac"_sha256, (1U << SMPC_AREA_JP) | (1U << SMPC_AREA_ASIA_NTSC),		false },
+    { "sega_100a.bin", "87293093fad802fcff31fcab427a16caff1acbc5184899b8383b360fd58efb73"_sha256, (~0U) & ~((1U << SMPC_AREA_JP) | (1U << SMPC_AREA_ASIA_NTSC)),false },
+    { "mpr-17933.bin", "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f"_sha256, (~0U) & ~((1U << SMPC_AREA_JP) | (1U << SMPC_AREA_ASIA_NTSC)),false },
    };
    std::string fnbase, fnext;
    std::string fn;
@@ -1312,29 +1470,62 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
    for(auto const& dbe : BIOSDB)
    {
     if(fn == dbe.fn && BIOS_SHA256 != dbe.hash)
-     throw MDFN_Error(0, _("The BIOS ROM data loaded from \"%s\" does not match what is expected by its filename(possibly due to erroneous file renaming by the user)."), biospath.c_str());
+     throw MDFN_Error(0, _("The BIOS ROM data loaded from \"%s\" does not match what is expected by its filename(possibly due to erroneous file renaming by the user)."), MDFN_strhumesc(biospath).c_str());
    }
 
    for(auto const& dbe : BIOSDB)
    {
     if(BIOS_SHA256 == dbe.hash && !(dbe.areas & (1U << smpc_area)))
-     throw MDFN_Error(0, _("The BIOS loaded from \"%s\" is the wrong BIOS for the region being emulated(possibly due to changing setting \"%s\" to point to the wrong file)."), biospath.c_str(), biospath_sname);
+     throw MDFN_Error(0, _("The BIOS loaded from \"%s\" is the wrong BIOS for the region being emulated(possibly due to changing setting \"%s\" to point to the wrong file)."), MDFN_strhumesc(biospath).c_str(), biospath_sname);
+   }
+
+   for(auto const& dbe : BIOSDB)
+   {
+    if(BIOS_SHA256 == dbe.hash && (cart_type == CART_STV) != dbe.stv)
+    {
+     if(dbe.stv)
+      throw MDFN_Error(0, _("The BIOS loaded from \"%s\" is an ST-V BIOS, but a Saturn BIOS is required for this game."), MDFN_strhumesc(biospath).c_str());
+     else
+      throw MDFN_Error(0, _("The BIOS loaded from \"%s\" is a Saturn BIOS, but an ST-V BIOS is required for this game."), MDFN_strhumesc(biospath).c_str()); 
+    }
    }
   }
   //
   //
-  for(unsigned i = 0; i < 262144; i++)
-   BIOSROM[i] = MDFN_de16msb(&BIOSROM[i]);
+  if(cart_type == CART_STV)
+  {
+   for(unsigned i = 0; i < 262144; i++)
+    BIOSROM[i] = MDFN_de16lsb(&BIOSROM[i]);
+  }
+  else
+  {
+   for(unsigned i = 0; i < 262144; i++)
+    BIOSROM[i] = MDFN_de16msb(&BIOSROM[i]);
+  }
  }
 
  MDFNGameInfo->MasterClock = MDFN_MASTERCLOCK_FIXED(MasterClock);
 
  SCU_Init();
- SMPC_Init(smpc_area, MasterClock);
+ SMPC_Init(smpc_area, MasterClock, cart_type == CART_STV);
+
+ if(cart_type == CART_STV)
+  STVIO_Init(sgi);
+
  VDP1::Init();
  VDP2::Init(PAL, vdp2_affinity);
  CDB_Init();
- SOUND_Init();
+ SOUND_Init(cart_type == CART_STV);
+
+ {
+  const unsigned midi_io = MDFN_GetSettingUI("ss.midi");
+  void (*ofnp)(uint8) = nullptr;
+
+  if(midi_io == MIDI_IO_STDOUT)
+   ofnp = OutputMIDI;
+
+  SOUND_SetMIDIOutput(ofnp);
+ }
 
  InitEvents();
  UpdateInputLastBigTS = 0;
@@ -1358,16 +1549,28 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
  }
 
  MDFN_printf("\n");
- for(unsigned sp = 0; sp < 2; sp++)
+
+ if(cart_type == CART_STV)
  {
-  char buf[64];
-  bool sv;
+  for(unsigned sp = 0; sp < 2; sp++)
+   SMPC_SetMultitap(sp, false);
 
-  trio_snprintf(buf, sizeof(buf), "ss.input.sport%u.multitap", sp + 1);
-  sv = MDFN_GetSettingB(buf);
-  SMPC_SetMultitap(sp, sv);
+  for(unsigned sp = 0; sp < 2; sp++)
+   SMPC_SetInput(sp, "extern", (uint8*)STVIO_GetSMPCDevice(sp));
+ }
+ else
+ {
+  for(unsigned sp = 0; sp < 2; sp++)
+  {
+   char buf[64];
+   bool sv;
 
-  MDFN_printf(_("Multitap on Saturn Port %u: %s\n"), sp + 1, sv ? _("Enabled") : _("Disabled"));
+   trio_snprintf(buf, sizeof(buf), "ss.input.sport%u.multitap", sp + 1);
+   sv = MDFN_GetSettingB(buf);
+   SMPC_SetMultitap(sp, sv);
+
+   MDFN_printf(_("Multitap on Saturn Port %u: %s\n"), sp + 1, sv ? _("Enabled") : _("Disabled"));
+  }
  }
 
  for(unsigned vp = 0; vp < 12; vp++)
@@ -1378,11 +1581,17 @@ static void MDFN_COLD InitCommon(const unsigned cpucache_emumode, const unsigned
   trio_snprintf(buf, sizeof(buf), "ss.input.port%u.gun_chairs", vp + 1);
   sv = MDFN_GetSettingUI(buf);
   SMPC_SetCrosshairsColor(vp, sv);  
+
+  if(cart_type == CART_STV)
+   STVIO_SetCrosshairsColor(vp, sv);
  }
 
  //
  //
  //
+ if(cart_type == CART_STV)
+  try { LoadSTVEEPROM();} catch(MDFN_Error& e) { if(e.GetErrno() != ENOENT) throw; }
+
  try { LoadRTC();       } catch(MDFN_Error& e) { if(e.GetErrno() != ENOENT) throw; }
  try { LoadBackupRAM(); } catch(MDFN_Error& e) { if(e.GetErrno() != ENOENT) throw; }
  try { LoadCartNV();    } catch(MDFN_Error& e) { if(e.GetErrno() != ENOENT) throw; }
@@ -1411,113 +1620,106 @@ static MDFN_COLD bool TestMagic(GameFile* gf)
  if(gf->ext == "ss")
   return true;
 
+ {
+  const std::string fname = gf->fbase + (gf->ext.size() ? "." : "") + gf->ext;
+
+  if(DB_LookupSTV(fname, gf->stream))
+   return true;
+ }
+
  return false;
+}
+
+static MDFN_COLD void LoadDBGCD(const std::string& path)
+{
+ RMD_Drive dr;
+ RMD_DriveDefaults drdef;
+
+ dr.Name = std::string("Virtual CD Drive");
+ dr.PossibleStates.push_back(RMD_State({"Tray Open", false, false, true}));
+ dr.PossibleStates.push_back(RMD_State({"Tray Closed (Empty)", false, false, false}));
+ dr.PossibleStates.push_back(RMD_State({"Tray Closed", true, true, false}));
+ dr.CompatibleMedia.push_back(0);
+ dr.MediaMtoPDelay = 2000;
+
+ drdef.State = 2; // Tray Closed
+ drdef.Media = 0;
+ drdef.Orientation = 0;
+
+ MDFNGameInfo->RMD->Drives.push_back(dr);
+ MDFNGameInfo->RMD->DrivesDefaults.push_back(drdef);
+ MDFNGameInfo->RMD->MediaTypes.push_back(RMD_MediaType({"CD"}));
+ MDFNGameInfo->RMD->Media.push_back(RMD_Media({"Test CD", 0}));
+
+ DBGCDInterfaces.clear();
+ DBGCDInterfaces.push_back(CDInterface::Open(&NVFS, path, false, MDFN_GetSettingUI("affinity.cd")));
+ cdifs = &DBGCDInterfaces;
 }
 
 static MDFN_COLD void Load(GameFile* gf)
 {
-#if 0
- // cat regiondb.inc | sort | uniq --all-repeated=separate -w 102 
- {
-  FileStream rdbfp("/tmp/regiondb.inc", FileStream::MODE_WRITE);
-  Stream* s = fp->stream();
-  std::string linebuf;
-  static std::vector<CDInterface*> CDInterfaces;
-
-  cdifs = &CDInterfaces;
-
-  while(s->get_line(linebuf) >= 0)
-  {
-   static uint8 sbuf[2048 * 16];
-   CDInterface* iface = CDInterface::Open(linebuf, false);
-   int m = iface->ReadSectors(sbuf, 0, 16);
-   std::string fb;
-
-   assert(m == 0x1); 
-   assert(IsSaturnDisc(&sbuf[0]) == true);
-   //
-   uint8 dummytmp[16] = { 0 };
-   uint8 tmp[16] = { 0 };
-   const char* regstr;
-   unsigned region = ~0U;
-
-   NVFS.get_file_path_components(linebuf, nullptr, &fb);
-
-   if(!DetectRegionByFN(fb, &region))
-    abort();
-
-   switch(region)
-   {
-    default: abort(); break;
-    case SMPC_AREA_NA: regstr = "SMPC_AREA_NA"; break;
-    case SMPC_AREA_JP: regstr = "SMPC_AREA_JP"; break;
-    case SMPC_AREA_EU_PAL: regstr = "SMPC_AREA_EU_PAL"; break;
-    case SMPC_AREA_KR: regstr = "SMPC_AREA_KR"; break;
-    case SMPC_AREA_CSA_NTSC: regstr = "SMPC_AREA_CSA_NTSC"; break;
-   }
-
-   CDInterfaces.clear();
-   CDInterfaces.push_back(iface);
-
-   CalcGameID(dummytmp, tmp);
-
-   unsigned tmpreg;
-   if(!DetectRegion(&tmpreg) || tmpreg != region)
-   {
-    rdbfp.print_format("{ { ");
-    for(unsigned i = 0; i < 16; i++)
-     rdbfp.print_format("0x%02x, ", tmp[i]);
-    rdbfp.print_format("}, %s }, // %s\n", regstr, fb.c_str());
-   }
-
-   delete iface;
-  }
- }
-
- return;
-#endif
+ const std::string dbg_cdpath = MDFN_GetSettingS("ss.dbg_exe_cdpath");
+ //
+ const bool region_autodetect = MDFN_GetSettingB("ss.region_autodetect");
+ const unsigned region_default = MDFN_GetSettingUI("ss.region_default");
+ unsigned region = region_default;
 
  cdifs = NULL;
 
  try
  {
-  if(MDFN_GetSettingS("ss.dbg_exe_cdpath") != "")
+  const STVGameInfo* sgi = DB_LookupSTV(gf->fbase + (gf->ext.size() ? "." : "") + gf->ext, gf->stream);
+
+  if(sgi)
   {
-   RMD_Drive dr;
-   RMD_DriveDefaults drdef;
+   if(region_autodetect)
+    region = sgi->area;
 
-   dr.Name = std::string("Virtual CD Drive");
-   dr.PossibleStates.push_back(RMD_State({"Tray Open", false, false, true}));
-   dr.PossibleStates.push_back(RMD_State({"Tray Closed (Empty)", false, false, false}));
-   dr.PossibleStates.push_back(RMD_State({"Tray Closed", true, true, false}));
-   dr.CompatibleMedia.push_back(0);
-   dr.MediaMtoPDelay = 2000;
+   MDFNGameInfo->name = sgi->name;
 
-   drdef.State = 2; // Tray Closed
-   drdef.Media = 0;
-   drdef.Orientation = 0;
+   InitCommon(CPUCACHE_EMUMODE_FULL, HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, CART_STV, region, nullptr, gf, sgi);
 
-   MDFNGameInfo->RMD->Drives.push_back(dr);
-   MDFNGameInfo->RMD->DrivesDefaults.push_back(drdef);
-   MDFNGameInfo->RMD->MediaTypes.push_back(RMD_MediaType({"CD"}));
-   MDFNGameInfo->RMD->Media.push_back(RMD_Media({"Test CD", 0}));
+   if(sgi->rotate)
+    MDFNGameInfo->rotated = MDFN_ROTATE90;
 
-   static std::vector<CDInterface*> CDInterfaces;
-   CDInterfaces.clear();
-   CDInterfaces.push_back(CDInterface::Open(&NVFS, MDFN_GetSettingS("ss.dbg_exe_cdpath"), false, MDFN_GetSettingUI("affinity.cd")));
-   cdifs = &CDInterfaces;
+   MDFNGameInfo->GameType = GMT_ARCADE;
+
+   if(sgi->control == STV_CONTROL_HAMMER)
+   {
+    MDFNGameInfo->DesiredInput.push_back("gun");
+   }
+   else
+   {
+    for(unsigned i = 0; i < 2; i++)
+     MDFNGameInfo->DesiredInput.push_back("gamepad");
+   }
   }
-  //
-  //
-  uint32 horrible_hacks = 0;
+  else if(gf->ext == "ss")
   {
-   std::vector<uint64> dhhs = MDFN_GetSettingMultiUI("ss.dbg_exe_hh");
+   std::unique_ptr<uint8[]> buf(new uint8[2048 * 16]);
 
-   for(uint64 dhhse : dhhs)
-    horrible_hacks |= dhhse;
+   memset(buf.get(), 0, 2048 * 16);
+   gf->stream->read(buf.get(), 2048 * 16, false);
+   gf->stream->rewind();
+
+   if(IsSaturnDisc(buf.get()))
+   {
+    if(region_autodetect)
+    {
+     const uint64 possible_regions = GetPossibleRegions(buf.get());
+
+     GetRegion(&region, possible_regions);
+    }
+   }
+
+   if(dbg_cdpath.size())
+    LoadDBGCD(dbg_cdpath);
+   //
+   //
+   InitCommon(CPUCACHE_EMUMODE_FULL, HORRIBLEHACK_VDP1RWDRAWSLOWDOWN, CART_BOOTROM, region, gf->stream, nullptr);
   }
-
-  InitCommon(MDFN_GetSettingUI("ss.dbg_exe_cem"), horrible_hacks, CART_MDFN_DEBUG, MDFN_GetSettingUI("ss.region_default"), gf->stream);
+  else
+   throw MDFN_Error(0, _("File unrecognized by \"%s\" module."), MDFNGameInfo->shortname);
  }
  catch(...)
  {
@@ -1530,10 +1732,10 @@ static MDFN_COLD bool TestMagicCD(std::vector<CDInterface*> *CDInterfaces)
 {
  std::unique_ptr<uint8[]> buf(new uint8[2048 * 16]);
 
- if((*CDInterfaces)[0]->ReadSectors(&buf[0], 0, 16) != 0x1)
+ if((*CDInterfaces)[0]->ReadSectors(buf.get(), 0, 16) != 0x1)
   return false;
 
- return IsSaturnDisc(&buf[0]);
+ return IsSaturnDisc(buf.get());
 }
 
 static MDFN_COLD void DiscSanityChecks(void)
@@ -1644,7 +1846,7 @@ static MDFN_COLD void LoadCD(std::vector<CDInterface*>* CDInterfaces)
 
    // TODO: auth ID calc
 
-  InitCommon(cpucache_emumode, horrible_hacks, cart_type, region, nullptr);
+  InitCommon(cpucache_emumode, horrible_hacks, cart_type, region, nullptr, nullptr);
  }
  catch(...)
  {
@@ -1664,6 +1866,10 @@ static MDFN_COLD void CloseGame(void)
 
  try { SaveBackupRAM(); } catch(std::exception& e) { MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what()); }
  try { SaveCartNV();    } catch(std::exception& e) { MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what()); }
+
+ if(ActiveCartType == CART_STV)
+  try { SaveSTVEEPROM();} catch(std::exception& e) { MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what()); }
+
  try { SaveRTC();	} catch(std::exception& e) { MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what()); }
 
  Cleanup();
@@ -1758,6 +1964,22 @@ static MDFN_COLD void SaveCartNV(void)
  }
 }
 
+static MDFN_COLD void SaveSTVEEPROM(void)
+{
+ FileStream sds(MDFN_MakeFName(MDFNMKF_SAV, 0, "seep"), FileStream::MODE_WRITE_INPLACE);
+
+ STVIO_SaveNV(&sds);
+
+ sds.close();
+}
+
+static MDFN_COLD void LoadSTVEEPROM(void)
+{
+ FileStream sds(MDFN_MakeFName(MDFNMKF_SAV, 0, "seep"), FileStream::MODE_READ);
+
+ STVIO_LoadNV(&sds);
+}
+
 static MDFN_COLD void SaveRTC(void)
 {
  FileStream sds(MDFN_MakeFName(MDFNMKF_SAV, 0, "smpc"), FileStream::MODE_WRITE_INPLACE);
@@ -1812,6 +2034,14 @@ INLINE bool EventsPacker::Restore(const unsigned state_version)
   {
    et = SS_EVENT_DISABLED_TS;
   }
+
+/*
+  if(state_version < 0x00102800 && i == SS_EVENT_SCU_INT)
+  {
+   eo = i;
+   et = SS_EVENT_DISABLED_TS;
+  }
+*/
 
   if(eo < eventcopy_first || eo >= eventcopy_bound)
    return false;
@@ -1910,6 +2140,8 @@ static MDFN_COLD void StateAction(StateMem* sm, const unsigned load, const bool 
  EventsPacker ep;
  ep.Save();
 
+ /* static_assert(sizeof(ep.event_order) == 12 && (SS_EVENT_SCU_INT - (SS_EVENT__SYNFIRST + 1)) == 11, "baaah"); */
+
  SFORMAT StateRegs[] = 
  {
   // cur_clock_div
@@ -1918,6 +2150,12 @@ static MDFN_COLD void StateAction(StateMem* sm, const unsigned load, const bool 
   SFVAR(next_event_ts),
   SFVARN(ep.event_times, "event_times"),
   SFVARN(ep.event_order, "event_order"),
+/*
+  SFPTR32N(ep.event_times, 11, "event_times"),
+  SFPTR8N(ep.event_order, 11, "event_order"),
+  SFVARN(ep.event_times[11], "event_times[11]"),
+  SFVARN(ep.event_order[11], "event_order[11]"),
+*/
 
   SFVAR(SH7095_mem_timestamp),
   SFVAR(SH7095_BusLock),
@@ -1935,6 +2173,10 @@ static MDFN_COLD void StateAction(StateMem* sm, const unsigned load, const bool 
  CPU[0].StateAction(sm, load, data_only, "SH2-M");
  CPU[1].StateAction(sm, load, data_only, "SH2-S");
  SCU_StateAction(sm, load, data_only);
+
+ if(ActiveCartType == CART_STV)
+  STVIO_StateAction(sm, load, data_only);	// Must call before SMPC_StateAction()
+
  SMPC_StateAction(sm, load, data_only);
 
  CDB_StateAction(sm, load, data_only);
@@ -1943,22 +2185,49 @@ static MDFN_COLD void StateAction(StateMem* sm, const unsigned load, const bool 
 
  SOUND_StateAction(sm, load, data_only);
  CART_StateAction(sm, load, data_only);
+
+
+ if(load)
+  memcpy(BackupRAM_StateHelper, BackupRAM, sizeof(BackupRAM));
+ //
  //
  MDFNSS_StateAction(sm, load, data_only, StateRegs, "MAIN");
 
  if(load)
  {
-  BackupRAM_Dirty = true;
+  if(memcmp(BackupRAM_StateHelper, BackupRAM, sizeof(BackupRAM)))
+   BackupRAM_Dirty = true;
 
   if(!ep.Restore(load))
   {
-   printf("Bad state events data.");
+   printf("Bad state events data.\n");
    InitEvents();
   }
 
   CPU[0].PostStateLoad(load, RecordedNeedEmuICache, NeedEmuICache);
   CPU[1].PostStateLoad(load, RecordedNeedEmuICache, NeedEmuICache);
  }
+}
+
+static void TransformInput(void)
+{
+ if(ActiveCartType == CART_STV)
+  STVIO_TransformInput();
+
+ SMPC_TransformInput();
+}
+
+static MDFN_COLD void SetInput(unsigned port, const char* type, uint8* ptr)
+{
+ if(ActiveCartType == CART_STV)
+ {
+  STVIO_SetInput(port, type, ptr);
+
+  if(port < 12)
+   return;
+ }
+
+ SMPC_SetInput(port, type, ptr);
 }
 
 static MDFN_COLD void SetMedia(uint32 drive_idx, uint32 state_idx, uint32 media_idx, uint32 orientation_idx)
@@ -1979,19 +2248,43 @@ static void DoSimpleCommand(int cmd)
 {
  switch(cmd)
  {
+  case MDFN_MSC_RESET:
+	// MDFN_MSC_RESET is not handled here for regular SS; special reset button handling in smpc.cpp.
+	if(ActiveCartType != CART_STV)
+	 break;
+	// Fall-through for ST-V
   case MDFN_MSC_POWER:
 	if(DBG_InSlaveStep())
 	 MDFN_Notify(MDFN_NOTICE_ERROR, _("Slave step mode is incompatible with hard resets."));
 	else
 	 SS_Reset(true);
 	break;
-  // MDFN_MSC_RESET is not handled here; special reset button handling in smpc.cpp.
+
+  case MDFN_MSC_INSERT_COIN:
+	if(ActiveCartType == CART_STV)
+	 STVIO_InsertCoin();
+	break;
  }
 }
 
 static const FileExtensionSpecStruct KnownExtensions[] =
 {
- { ".ss", 0, gettext_noop("Sega Saturn Debug Cart ROM") },
+ { ".ss", 0, gettext_noop("Sega Saturn Bootable Cart ROM") },
+
+ { ".13", -90, gettext_noop("ST-V ROM") },
+ { ".ic13", -91, gettext_noop("ST-V ROM") },
+ { ".ic13_2", -92, gettext_noop("ST-V ROM") },
+ { "ic13.bin", -93, gettext_noop("ST-V ROM") },
+ { ".ic35", -94, gettext_noop("ST-V ROM") },
+
+ { ".7", -95, gettext_noop("ST-V ROM") },
+
+ { "ic11", -96, gettext_noop("ST-V ROM") },
+
+ { "th-ic7_2.stv", -97, gettext_noop("ST-V ROM") },
+ { "350-mpa1.u19", -97, gettext_noop("ST-V ROM") },
+ { "ic22", -98, gettext_noop("ST-V ROM") },
+ { "ic22.bin", -99, gettext_noop("ST-V ROM") },
 
  { NULL, 0, NULL }
 };
@@ -2055,6 +2348,17 @@ static const MDFNSetting_EnumList CartAD_List[] =
  { NULL, 0 },
 };
 
+static const MDFNSetting_EnumList MIDI_IO_List[] =
+{
+ { "none", MIDI_IO_NONE, gettext_noop("None/Disconnected") },
+
+ { "stdout", MIDI_IO_STDOUT, gettext_noop("Standard Output"), gettext_noop("Intended for debug text; escape characters(0x1B) will be filtered from the output.") },
+
+ // TODO: external program; will require more MidSync()'ing for proper timing.
+
+ { NULL, 0 }
+};
+
 #ifdef MDFN_ENABLE_DEV_BUILD
 static const MDFNSetting_EnumList DBGMask_List[] =
 {
@@ -2096,6 +2400,7 @@ static const MDFNSetting_EnumList DBGMask_List[] =
 
  { "scsp",	SS_DBG_SCSP,		gettext_noop("SCSP")			},
  { "scsp_regw", SS_DBG_SCSP_REGW,	gettext_noop("SCSP register writes")	},
+ { "scsp_mobuf",SS_DBG_SCSP_MOBUF,	gettext_noop("SCSP MOBUF writes")	},
 
  { "bios",	SS_DBG_BIOS,		gettext_noop("BIOS")			},
 
@@ -2108,6 +2413,8 @@ static const MDFNSetting_EnumList CEM_List[] =
  { "data_cb",	CPUCACHE_EMUMODE_DATA_CB,	gettext_noop("Data only, with high-level bypass") },
  { "data",	CPUCACHE_EMUMODE_DATA, 		gettext_noop("Data only") },
  { "full",	CPUCACHE_EMUMODE_FULL,		gettext_noop("Full") },
+
+ { "auto",	CPUCACHE_EMUMODE__COUNT,	gettext_noop("Auto") },
 
  { NULL, 0 },
 };
@@ -2122,6 +2429,9 @@ static const MDFNSetting_EnumList HH_List[] =
  { "vdp1vram5000fix",	HORRIBLEHACK_VDP1VRAM5000FIX,	gettext_noop("vdp1vram5000fix")	},
  { "vdp1rwdrawslowdown",HORRIBLEHACK_VDP1RWDRAWSLOWDOWN,gettext_noop("vdp1rwdrawslowdown") },
  { "vdp1instant",	HORRIBLEHACK_VDP1INSTANT,	gettext_noop("vdp1instant") },
+ /*{ "scuintdelay",	HORRIBLEHACK_SCUINTDELAY,	gettext_noop("scuintdelay") },*/
+
+ { "auto",	-1,	gettext_noop("Auto") },
 
  { NULL, 0 },
 };
@@ -2131,8 +2441,12 @@ static const MDFNSetting SSSettings[] =
  { "ss.bios_jp", MDFNSF_EMU_STATE | MDFNSF_CAT_PATH, gettext_noop("Path to the Japan ROM BIOS"), NULL, MDFNST_STRING, "sega_101.bin" },
  { "ss.bios_na_eu", MDFNSF_EMU_STATE | MDFNSF_CAT_PATH, gettext_noop("Path to the North America and Europe ROM BIOS"), NULL, MDFNST_STRING, "mpr-17933.bin" },
 
+ { "ss.bios_stv_jp", MDFNSF_EMU_STATE | MDFNSF_CAT_PATH, gettext_noop("Path to the Japan ST-V ROM BIOS"), NULL, MDFNST_STRING, "epr-20091.ic8" },
+ { "ss.bios_stv_na", MDFNSF_EMU_STATE | MDFNSF_CAT_PATH, gettext_noop("Path to the North America ST-V ROM BIOS"), NULL, MDFNST_STRING, "epr-17952a.ic8" },
+ { "ss.bios_stv_eu", MDFNSF_EMU_STATE | MDFNSF_CAT_PATH, gettext_noop("Path to the Europe ST-V ROM BIOS"), NULL, MDFNST_STRING, "epr-17954a.ic8" },
+
  { "ss.scsp.resamp_quality", MDFNSF_NOFLAGS, gettext_noop("SCSP output resampler quality."),
-	gettext_noop("0 is lowest quality and CPU usage, 10 is highest quality and CPU usage.  The resampler that this setting refers to is used for converting from 44.1KHz to the sampling rate of the host audio device Mednafen is using.  Changing Mednafen's output rate, via the \"sound.rate\" setting, to \"44100\" may bypass the resampler, which can decrease CPU usage by Mednafen, and can increase or decrease audio quality, depending on various operating system and hardware factors."), MDFNST_UINT, "4", "0", "10" },
+	gettext_noop("0 is lowest quality and CPU usage, 10 is highest quality and CPU usage.  The resampler that this setting refers to is used for converting from 44.1KHz to the sampling rate of the host audio device Mednafen is using.  Changing Mednafen's output rate, via the \"\5sound.rate\" setting, to \"44100\" may bypass the resampler, which can decrease CPU usage by Mednafen, and can increase or decrease audio quality, depending on various operating system and hardware factors."), MDFNST_UINT, "4", "0", "10" },
 
  { "ss.region_autodetect", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Attempt to auto-detect region of game."), NULL, MDFNST_BOOL, "1" },
  { "ss.region_default", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Default region to use."), gettext_noop("Used if region autodetection fails or is disabled."), MDFNST_ENUM, "jp", NULL, NULL, NULL, NULL, Region_List },
@@ -2158,12 +2472,14 @@ static const MDFNSetting SSSettings[] =
  { "ss.smpc.autortc.lang", MDFNSF_NOFLAGS, gettext_noop("BIOS language."), gettext_noop("Also affects language used in some games(e.g. the European release of \"Panzer Dragoon\")."), MDFNST_ENUM, "english", NULL, NULL, NULL, NULL, RTCLang_List },
 
  { "ss.cart", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Expansion cart."), NULL, MDFNST_ENUM, "auto", NULL, NULL, NULL, NULL, Cart_List },
- { "ss.cart.auto_default", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Default expansion cart when autodetection fails."), gettext_noop("Expansion cart to emulate when \"ss.cart\" is set to \"auto\", but the game wasn't found in the internal database for carts."), MDFNST_ENUM, "backup", NULL, NULL, NULL, NULL, CartAD_List },
+ { "ss.cart.auto_default", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Default expansion cart when autodetection fails."), gettext_noop("Expansion cart to emulate when \"\5ss.cart\" is set to \"auto\", but the game wasn't found in the internal database for carts."), MDFNST_ENUM, "backup", NULL, NULL, NULL, NULL, CartAD_List },
 
  { "ss.cart.kof95_path", MDFNSF_EMU_STATE | MDFNSF_CAT_PATH, gettext_noop("Path to KoF 95 ROM image."), NULL, MDFNST_STRING, "mpr-18811-mx.ic1" },
  { "ss.cart.ultraman_path", MDFNSF_EMU_STATE | MDFNSF_CAT_PATH, gettext_noop("Path to Ultraman ROM image."), NULL, MDFNST_STRING, "mpr-19367-mx.ic1" },
  { "ss.cart.satar4mp_path", MDFNSF_EMU_STATE | MDFNSF_CAT_PATH | MDFNSF_SUPPRESS_DOC | MDFNSF_NONPERSISTENT, gettext_noop("Path to Action Replay 4M Plus firmware image."), NULL, MDFNST_STRING, "satar4mp.bin" },
 // { "ss.cart.modem_port", MDFNSF_NOFLAGS, gettext_noop("TCP/IP port to use for modem emulation."), gettext_noop("A value of \"0\" disables network access."), MDFNST_UINT, "4920", "0", "65535" },
+
+ { "ss.midi", MDFNSF_EMU_STATE, gettext_noop("MIDI I/O connection."), NULL, MDFNST_ENUM, "none", NULL, NULL, NULL, NULL, MIDI_IO_List },
  
  { "ss.bios_sanity", MDFNSF_NOFLAGS, gettext_noop("Enable BIOS ROM image sanity checks."), NULL, MDFNST_BOOL, "1" },
 
@@ -2188,8 +2504,9 @@ static const MDFNSetting SSSettings[] =
 #endif
 
  { "ss.dbg_exe_cdpath", MDFNSF_SUPPRESS_DOC | MDFNSF_CAT_PATH, gettext_noop("CD image to use with bootable cart ROM image loading."), NULL, MDFNST_STRING, "" },
- { "ss.dbg_exe_cem", MDFNSF_SUPPRESS_DOC | MDFNSF_NONPERSISTENT, gettext_noop("Cache emulation mode to use with bootable cart ROM image loading."), NULL, MDFNST_ENUM, "data", NULL, NULL, NULL, NULL, CEM_List },
- { "ss.dbg_exe_hh", MDFNSF_SUPPRESS_DOC | MDFNSF_NONPERSISTENT, gettext_noop("Horrible hacks to use with bootable cart ROM image loading."), NULL, MDFNST_MULTI_ENUM, "none", NULL, NULL, NULL, NULL, HH_List },
+
+ { "ss.dbg_cem", MDFNSF_SUPPRESS_DOC | MDFNSF_NONPERSISTENT, gettext_noop("Cache emulation mode debug override."), NULL, MDFNST_ENUM, "auto", NULL, NULL, NULL, NULL, CEM_List },
+ { "ss.dbg_hh", MDFNSF_SUPPRESS_DOC | MDFNSF_NONPERSISTENT, gettext_noop("Horrible hacks debug override."), NULL, MDFNST_MULTI_ENUM, "auto", NULL, NULL, NULL, NULL, HH_List },
 
  { NULL },
 };
@@ -2244,8 +2561,8 @@ MDFN_HIDE extern const MDFNGI EmulatedSS =
  false,
  StateAction,
  Emulate,
- SMPC_TransformInput,
- SMPC_SetInput,
+ TransformInput,
+ SetInput,
  SetMedia,
  DoSimpleCommand,
  NULL,

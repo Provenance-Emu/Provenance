@@ -52,7 +52,6 @@ class CDAFReader_MPC final : public CDAFReader
 
  uint32 MPCBufferIn;
  uint32 MPCBufferOffs;
- Stream *fw;
 };
 
 static mpc_int32_t impc_read(mpc_reader *p_reader, void *ptr, mpc_int32_t size)
@@ -117,7 +116,7 @@ static mpc_bool_t impc_canseek(mpc_reader *p_reader)
  return MPC_TRUE;
 }
 
-CDAFReader_MPC::CDAFReader_MPC(Stream *fp) : fw(fp)
+CDAFReader_MPC::CDAFReader_MPC(Stream *fp)
 {
 	demux = NULL;
 	memset(&si, 0, sizeof(si));

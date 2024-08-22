@@ -2,7 +2,7 @@
 /* Mednafen Sony PS1 Emulation Module                                         */
 /******************************************************************************/
 /* gamepad.cpp:
-**  Copyright (C) 2011-2016 Mednafen Team
+**  Copyright (C) 2011-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -294,5 +294,24 @@ IDIISG Device_Dancepad_IDII =
  IDIIS_Button("square", "□ (lower right)", 9, NULL),
 };
 
+IDIISG Device_PopnMusic_IDII =
+{
+ IDIIS_Button("select", "SELECT", 0),
+ IDIIS_Padding<1>(),
+ IDIIS_Padding<1>(),
+ IDIIS_Button("start", "START", 1),
+ IDIIS_Button("upper_3", "Right yellow", 5),
+ IDIIS_Padding<3, true>(),
+
+ IDIIS_Button("lower_4", "Right white", 10),
+ IDIIS_Button("lower_3", "Right green", 9),
+ IDIIS_Button("lower_2", "Red", 8),
+ IDIIS_Button("lower_1", "Left green", 7),
+
+ IDIIS_Button("lower_0", "Left white", 6),
+ IDIIS_Button("upper_0", "Left yellow", 2),
+ IDIIS_Button("upper_1", "Left blue", 3),
+ IDIIS_Button("upper_2", "Right blue", 4),
+};
 
 }

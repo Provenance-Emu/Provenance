@@ -22,6 +22,7 @@
 #ifndef __MDFN_SS_CART_H
 #define __MDFN_SS_CART_H
 
+#include <mednafen/mednafen.h>
 #include <mednafen/state.h>
 
 namespace MDFN_IEN_SS
@@ -93,10 +94,13 @@ enum
 
  CART_NLMODEM	 = 0x600,
 
- CART_MDFN_DEBUG = 0xF00
+ CART_STV	 = 0xE00,
+
+ CART_BOOTROM	 = 0xF00
 };
 
-void CART_Init(const int cart_type, Stream* rom_stream) MDFN_COLD;
+struct STVGameInfo;
+void CART_Init(const int cart_type, Stream* rom_stream, GameFile* gf, const STVGameInfo* sgi) MDFN_COLD;
 static INLINE ss_event_handler CART_GetEventHandler(void) { MDFN_HIDE extern CartInfo Cart; return Cart.EventHandler; }
 static INLINE void CART_AdjustTS(const int32 delta) { MDFN_HIDE extern CartInfo Cart; Cart.AdjustTS(delta); }
 static INLINE void CART_SetCPUClock(const int32 master_clock, const int32 cpu_divider) { MDFN_HIDE extern CartInfo Cart; Cart.SetCPUClock(master_clock, cpu_divider); }

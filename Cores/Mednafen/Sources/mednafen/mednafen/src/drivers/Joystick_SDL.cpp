@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* Joystick_SDL.cpp:
-**  Copyright (C) 2012-2018 Mednafen Team
+**  Copyright (C) 2012-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -36,14 +36,21 @@ class Joystick_SDL : public Joystick
 
  void UpdateInternal(void);
 
- virtual unsigned HatToButtonCompat(unsigned hat);
+ virtual void SetRumble(uint8 weak_intensity, uint8 strong_intensity) override;
+
+ virtual unsigned HatToButtonCompat(unsigned hat) override;
 
  private:
- SDL_Joystick *sdl_joy;
+ SDL_Joystick* sdl_joy;
  unsigned sdl_num_axes;
  unsigned sdl_num_hats;
  unsigned sdl_num_balls;
  unsigned sdl_num_buttons;
+ //
+ SDL_Haptic* sdl_haptic;
+
+ SDL_HapticEffect effect;
+ int effect_id;
 };
 
 unsigned Joystick_SDL::HatToButtonCompat(unsigned hat)
@@ -51,7 +58,7 @@ unsigned Joystick_SDL::HatToButtonCompat(unsigned hat)
  return(sdl_num_buttons + (hat * 4));
 }
 
-Joystick_SDL::Joystick_SDL(unsigned index) : sdl_joy(NULL)
+Joystick_SDL::Joystick_SDL(unsigned index) : sdl_joy(NULL), sdl_haptic(NULL), effect_id(-1)
 {
  sdl_joy = SDL_JoystickOpen(index);
  if(sdl_joy == NULL)
@@ -95,9 +102,39 @@ Joystick_SDL::Joystick_SDL(unsigned index) : sdl_joy(NULL)
   axis_state.resize(num_axes);
   rel_axis_state.resize(num_rel_axes);
   button_state.resize(num_buttons);
+  //
+  //
+#if 0
+  if(SDL_JoystickIsHaptic(sdl_joy) > 0)
+  {
+   if(!(sdl_haptic = SDL_HapticOpenFromJoystick(sdl_joy)))
+    throw MDFN_Error(0, _("SDL_HapticOpenFromJoystick() failed: %s"), SDL_GetError());
+
+   memset(&effect, 0, sizeof(effect));
+
+   effect.type = SDL_HAPTIC_LEFTRIGHT;
+   effect.leftright.small_magnitude = 0;
+   effect.leftright.large_magnitude = 0;
+   effect.leftright.length = 3000;
+
+   if(SDL_HapticEffectSupported(sdl_haptic, &effect) > 0)
+   {
+    if((effect_id = SDL_HapticNewEffect(sdl_haptic, &effect)) == -1)
+     throw MDFN_Error(0, _("SDL_HapticNewEffect() failed: %s"), SDL_GetError());
+   }
+   else
+   {
+    SDL_HapticClose(sdl_haptic);
+    sdl_haptic = NULL;
+   }
+  }
+#endif
  }
  catch(...)
  {
+  if(sdl_haptic)
+   SDL_HapticClose(sdl_haptic);
+
   if(sdl_joy)
    SDL_JoystickClose(sdl_joy);
 
@@ -107,11 +144,29 @@ Joystick_SDL::Joystick_SDL(unsigned index) : sdl_joy(NULL)
 
 Joystick_SDL::~Joystick_SDL()
 {
+ if(sdl_haptic)
+ {
+  SDL_HapticClose(sdl_haptic);
+  sdl_haptic = NULL;
+ }
+
  if(sdl_joy)
  {
   SDL_JoystickClose(sdl_joy);
   sdl_joy = NULL;
  }
+}
+
+void Joystick_SDL::SetRumble(uint8 weak_intensity, uint8 strong_intensity)
+{
+ if(!sdl_haptic || effect_id == -1)
+  return;
+ //
+ effect.leftright.small_magnitude = weak_intensity * (65535 / 255) / 2;
+ effect.leftright.large_magnitude = strong_intensity * (65535 / 255) / 2;
+
+ SDL_HapticUpdateEffect(sdl_haptic, effect_id, &effect);
+ SDL_HapticRunEffect(sdl_haptic, effect_id, 1);
 }
 
 void Joystick_SDL::UpdateInternal(void)
@@ -168,6 +223,7 @@ class JoystickDriver_SDL : public JoystickDriver
 JoystickDriver_SDL::JoystickDriver_SDL()
 {
  SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+ SDL_InitSubSystem(SDL_INIT_HAPTIC);
 
  for(int n = 0; n < SDL_NumJoysticks(); n++)
  {
@@ -190,6 +246,7 @@ JoystickDriver_SDL::~JoystickDriver_SDL()
   delete joys[n];
  }
 
+ SDL_QuitSubSystem(SDL_INIT_HAPTIC);
  SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 

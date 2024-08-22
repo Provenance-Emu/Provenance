@@ -1,11 +1,11 @@
-1.27.1
+1.32.1
 apple2
-Apple II/II+
+Apple II/II+/IIe/Enhanced IIe
 250
 192
 1
 apple2.pal
-RGB mode 16-color(or 32-color for TFR) palette.  The presence of a custom palette will automatically enable RGB video mode if an RGB mode is not already selected via the "apple2.video.mode" setting.  If the palette has 32 color entries, the text fringe reduction variant of an RGB mode is enabled.
+RGB mode 16-color(or 32-color for TFR) palette.  The presence of a custom palette will automatically enable RGB video mode if an RGB mode is not already selected via the "apple2.video.mode" setting.  If the palette has 32 color entries, the text fringe reduction variant of an RGB mode is enabled.
 16 32 
 0
 nes
@@ -130,7 +130,7 @@ Sega Saturn
 4
 region
 Region
-This database is used in conjunction with a game's internal header and the \"ss.region_default\" setting to automatically select the region of Saturn to emulate when the \"ss.region_autodetect\" setting is set to \"1\", the default.
+This database is used in conjunction with a game\'s internal header and the \"\005ss.region_default\" setting to automatically select the region of Saturn to emulate when the \"\005ss.region_autodetect\" setting is set to \"1\", the default.
 12
 Preview Sega Saturn Vol. 1 (Europe)
 10 8f e1 af 55 5a 95 42 04 85 7e 98 8c 53 6a 31
@@ -142,7 +142,7 @@ ed 4c 0b 87 35 37 86 76 a0 f6 32 c6 a4 c3 99 88
 1
 Europe
 
-Race Drivin' (Japan)
+Race Drivin\' (Japan)
 15 fc 3a 82 16 a9 85 a5 a8 ad 30 af 9a ff 03 a9
 1
 Japan
@@ -194,8 +194,8 @@ Europe
 
 cart
 Cart
-This database is used to automatically select the type of cart to emulate when the \"ss.cart\" setting is set to \"auto\", the default.  If a game is not found in the database when auto selection is enabled, then the cart used is specified by the \"ss.cart.auto_default\" setting, default \"backup\"(a backup memory cart).
-51
+This database is used to automatically select the type of cart to emulate when the \"\005ss.cart\" setting is set to \"auto\", the default.  If a game is not found in the database when auto selection is enabled, then the cart used is specified by the \"\005ss.cart.auto_default\" setting, default \"backup\"(a backup memory cart).
+52
 Daytona USA CCE Net Link Edition
 MK-81218
 0
@@ -231,7 +231,7 @@ GS-7106
 0
 None
 Reserved for future modem support.
-Dragon's Dream (Japan)
+Dragon\'s Dream (Japan)
 GS-7114
 0
 None
@@ -261,12 +261,12 @@ T-31301G
 0
 None
 Reserved for future modem support.
-King of Fighters '95, The (Europe)
+King of Fighters \'95, The (Europe)
 MK-81088
 0
 King of Fighters 95 ROM
 Game requirement.
-King of Fighters '95, The (Japan)
+King of Fighters \'95, The (Japan)
 T-3101G
 0
 King of Fighters 95 ROM
@@ -291,7 +291,7 @@ T-1217G
 0
 1MiB Extended RAM
 
-Fighter's History Dynamite (Japan)
+Fighter\'s History Dynamite (Japan)
 GS-9107
 0
 1MiB Extended RAM
@@ -336,6 +336,11 @@ T-3105G
 0
 1MiB Extended RAM
 Game requirement.
+Real Bout Garou Densetsu Demo (Japan)
+T-99901G\nREAL BOUT
+0
+1MiB Extended RAM
+Game requirement.
 Real Bout Garou Densetsu Special (Japan)
 T-3119G
 0
@@ -366,12 +371,12 @@ T-16510G
 0
 1MiB Extended RAM
 
-The King of Fighters '96 (Japan)
+The King of Fighters \'96 (Japan)
 T-3108G
 0
 1MiB Extended RAM
 Game requirement.
-The King of Fighters '97 (Japan)
+The King of Fighters \'97 (Japan)
 T-3121G
 0
 1MiB Extended RAM
@@ -420,12 +425,12 @@ Heart of Darkness (Prototype)
 4a f9 ff 30 ea 54 fe 3a 79 a7 68 69 ae de 55 bb
 1
 16MiB A-bus CS1 RAM
-Game requirement(though it's probable the original dev cart was only around 6 to 8MiB).
+Game requirement(though it\'s probable the original dev cart was only around 6 to 8MiB).
 Heart of Darkness (Prototype)
 f1 71 c3 e4 69 d5 99 93 94 09 05 fc 29 d3 8a 59
 1
 16MiB A-bus CS1 RAM
-Game requirement(though it's probable the original dev cart was only around 6 to 8MiB).
+Game requirement(though it\'s probable the original dev cart was only around 6 to 8MiB).
 Dezaemon 2 (Japan)
 T-16804G
 0
@@ -453,8 +458,8 @@ Backup Memory
 Allows saving replay data.
 cachemode
 Cache Mode
-This database is used to automatically select cache emulation mode, to fix various logic and timing issues in games.  The default cache mode is data-only(with no high-level bypass).\n\nThe cache mode \"Data-only, with high-level bypass\" is a hack of sorts, to work around cache coherency bugs in games.  These bugs are typically masked on a real Saturn due to the effects of instruction fetches on the cache, but become a problem when only data caching is emulated.\n\nFull cache emulation is not enabled globally primarily due to the large increase in host CPU usage.
-92
+This database is used to automatically select cache emulation mode, to fix various logic and timing issues in games.  The default cache mode is data-only(with no high-level bypass).\n\nThe cache mode \"Data-only, with high-level bypass\" is a hack of sorts, to work around cache coherency bugs in games.  These bugs are typically masked on a real Saturn due to the effects of instruction fetches on the cache, but become a problem when only data caching is emulated.\n\nFull cache emulation is not enabled globally primarily due to the large increase in host CPU usage.\n\nFor ST-V games, this database is not used, and instead full cache emulation is always enabled.
+104
 Area 51 (USA)
 T-9705H
 0
@@ -470,6 +475,11 @@ MK-81036
 0
 Data only, with high-level bypass
 Fixes game hang that occurred when some FMVs were played.
+Creature Shock - Special Edition (USA)
+T-01304H
+0
+Data only, with high-level bypass
+Fixes game crash when trying to start a level.
 DeJig - Lassen Art Collection (Japan)
 T-30304G
 0
@@ -520,11 +530,21 @@ GS-9173
 0
 Data only, with high-level bypass
 Fixes game crash on lightgun calibration screen.
+Kanzen Chuukei Pro Yakyuu Greatest Nine (Japan)
+GS-9017
+0
+Data only, with high-level bypass
+Fixes game hang.
 Linkle Liver Story (Japan)
 GS-9055
 0
 Data only, with high-level bypass
 Fixes game crash when going to the world map.
+Magic Carpet (Europe)
+T-5006H
+0
+Data only, with high-level bypass
+Fixes game hang.
 Mahjong Doukyuusei Special (Japan)
 T-25302G1
 0
@@ -535,6 +555,11 @@ T-25302G2
 0
 Data only, with high-level bypass
 Fixes missing background layer on disc 2.
+Manx TT SuperBike (Europe)
+MK-81210
+0
+Data only, with high-level bypass
+Fixes game crash during optional intro movie.
 Mujintou Monogatari R - Futari no Love Love Island (Japan)
 T-28901G
 0
@@ -545,6 +570,11 @@ T-14415G
 0
 Data only, with high-level bypass
 Fixes missing graphics on the title screen, main menu, and elsewhere.
+Saturn Super Vol. 2 (Japan)
+610602002
+0
+Data only, with high-level bypass
+Fixes flickering title screen in the \"Golden Axe - The Duel\" demo.
 Sega Saturn Choice Cuts (USA)
 81600
 0
@@ -705,6 +735,16 @@ T-16103H
 0
 Full
 Fixes game hang.
+Gal Jan (Japan)
+T-29101G
+0
+Full
+Fixes game hang after game ends.
+Gambler Jiko Chuushinha - Tokyo Mahjongland
+T-4504G
+0
+Full
+Fixes flickering octopus screen.
 GeGeGe no Kitarou (Japan)
 T-13310G
 0
@@ -795,6 +835,26 @@ T-25416H50
 0
 Full
 Fixes game hang.
+Real Bout Garou Densetsu Demo (Japan)
+T-99901G\nREAL BOUT
+0
+Full
+
+Real Bout Garou Densetsu (Japan)
+T-3105G
+0
+Full
+Fixes game hang.
+Revolution X - Music Is the Weapon (Europe)
+T-8107H-50
+0
+Full
+Fixes game hang.
+Revolution X - Music Is the Weapon (Germany)
+T-8107H-18
+0
+Full
+Fixes game hang.
 Senken Kigyouden (Japan)
 T-37401G
 0
@@ -805,17 +865,22 @@ T-37401H
 0
 Full
 Fixes dialogue text truncation.
-Slam 'n Jam 96 (Japan)
+Senkutsu Katsuryu Taisen - Chaos Seed (Japan)
+T-30902G
+0
+Full
+Fixes inability to skip intro FMV.
+Slam \'n Jam 96 (Japan)
 T-159056
 0
 Full
 Fixes minor FMV glitches.
-Slam 'n Jam 96 (USA)
+Slam \'n Jam 96 (USA)
 T-159028H
 0
 Full
 Fixes minor FMV glitches.
-Slam 'n Jam 96 (Europe)
+Slam \'n Jam 96 (Europe)
 T-15902H50
 0
 Full
@@ -917,7 +982,7 @@ Full
 Fixes FMV ending too soon.
 horriblehacks
 Horrible Hacks
-This database is used to automatically enable various horrible hacks to fix issues in certain games.\n\nNote that slowing down VDP1 command execution due to SH-2 reads/writes isn't a horrible hack per-se, but it's activated on a per-game basis to avoid the likelihood of breaking some games due to overall Saturn emulation timing inaccuracies.
+This database is used to automatically enable various horrible hacks to fix issues in certain games.\n\nNote that slowing down VDP1 command execution due to SH-2 reads/writes isn\'t a horrible hack per-se, but it\'s activated on a per-game basis to avoid the likelihood of breaking some games due to overall Saturn emulation timing inaccuracies.\n\nFor ST-V games, this database is not used, and instead VDP1 command slowdown on SH-2 reads/writes is always enabled.
 31
 Fighters Megamix (Japan)
 GS-9126
@@ -949,12 +1014,12 @@ T-8150H
 0
 SH-2 reads/writes from/to VDP1 slow down command execution. 
 Fixes texture glitches.
-Arcade's Greatest Hits (USA)
+Arcade\'s Greatest Hits (USA)
 T-9703H
 0
 SH-2 reads/writes from/to VDP1 slow down command execution. 
 Fixes flickering credits text.
-Arcade's Greatest Hits - Atari Collection 1 (USA)
+Arcade\'s Greatest Hits - Atari Collection 1 (USA)
 T-9706H
 0
 SH-2 reads/writes from/to VDP1 slow down command execution. 
@@ -989,7 +1054,7 @@ T-8138H
 0
 SH-2 reads/writes from/to VDP1 slow down command execution. 
 Reduces graphical glitches.
-Herc's Adventures (USA)
+Herc\'s Adventures (USA)
 T-23001H
 0
 SH-2 reads/writes from/to VDP1 slow down command execution. 
@@ -1112,6 +1177,12 @@ Sega Game Gear
 gg.pal
 GG 12-bit BGR
 4096 
+0
+sasplay
+Sega Arcade SCSP Sound Player
+480
+300
+0
 0
 cdplay
 CD-DA Player

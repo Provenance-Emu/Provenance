@@ -135,7 +135,7 @@ void CPU_Misc::RunDMA(void)
  if(DMAEnable == 0)
  {
 #ifdef SNES_DBG_ENABLE
-  SNES_DBG("DMA done: %u, scanline=%u\n", CPUM.timestamp, PPU_GetRegister(PPU_GSREG_SCANLINE, nullptr, 0));
+  SNES_DBG(SNES_DBG_DMA, "[DMA] DMA done: %u, scanline=%u\n", CPUM.timestamp, PPU_GetRegister(PPU_GSREG_SCANLINE, nullptr, 0));
 #endif
   DMA_UnhaltCPU();
  }
@@ -194,7 +194,7 @@ void DMA_InitHDMA(void)
     DMACH[ch].DoTransfer = true;
    }
 
-   SNES_DBG("[DMA] HDMA %u Init: Control=0x%02x, LineCounter=0x%02x, TableAddr=0x%04x, IndirAddr=0x%04x --- ABank=0x%02x, IndirBank=0x%02x\n", ch, DMACH[ch].Control, DMACH[ch].LineCounter, DMACH[ch].TableAddr, DMACH[ch].IndirAddr, DMACH[ch].ABusBank, DMACH[ch].IndirBank);
+   SNES_DBG(SNES_DBG_DMA, "[DMA] HDMA %u Init: Control=0x%02x, LineCounter=0x%02x, TableAddr=0x%04x, IndirAddr=0x%04x --- ABank=0x%02x, IndirBank=0x%02x\n", ch, DMACH[ch].Control, DMACH[ch].LineCounter, DMACH[ch].TableAddr, DMACH[ch].IndirAddr, DMACH[ch].ABusBank, DMACH[ch].IndirBank);
   }
  }
  CPUM.InDMABusAccess = false;
@@ -313,12 +313,12 @@ static DEFWRITE(Write_420B)
 
 #ifdef SNES_DBG_ENABLE
  if(V)
-  fprintf(stderr, "DMA: %02x --- %u, scanline=%u\n", V, CPUM.timestamp, PPU_GetRegister(PPU_GSREG_SCANLINE, nullptr, 0));
+  SNES_DBG(SNES_DBG_DMA, "[DMA] DMA: %02x --- %u, scanline=%u\n", V, CPUM.timestamp, PPU_GetRegister(PPU_GSREG_SCANLINE, nullptr, 0));
  for(unsigned i = 0; i < 8; i++)
  {
   if(V & (1 << i))
   {
-   fprintf(stderr, " %d: Control=0x%02x, BBusAddr=0x%02x, ABusAddr=0x%04x, ABusBank=0x%02x, Count=0x%02x\n", i, DMACH[i].Control, DMACH[i].BBusAddr, DMACH[i].ABusAddr, DMACH[i].ABusBank, DMACH[i].Count);
+   SNES_DBG(SNES_DBG_DMA, "[DMA]   %d: Control=0x%02x, BBusAddr=0x%02x, ABusAddr=0x%04x, ABusBank=0x%02x, Count=0x%02x\n", i, DMACH[i].Control, DMACH[i].BBusAddr, DMACH[i].ABusAddr, DMACH[i].ABusBank, DMACH[i].Count);
   }
  }
 #endif
@@ -334,7 +334,7 @@ static DEFWRITE(Write_420C)
 
  HDMAEnable = V;
 
- SNES_DBG("[DMA] HDMAEnable: %02x --- scanline=%u\n", V, PPU_GetRegister(PPU_GSREG_SCANLINE, nullptr, 0));
+ SNES_DBG(SNES_DBG_DMA, "[DMA] HDMAEnable: %02x --- scanline=%u\n", V, PPU_GetRegister(PPU_GSREG_SCANLINE, nullptr, 0));
 }
 
 //
@@ -343,7 +343,7 @@ DEFWRITE(DMA_Write_43x0)
 {
  CPUM.timestamp += MEMCYC_FAST;
 
- SNES_DBG("[DMA] CH %u Control Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u Control Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].Control = V;
 }
@@ -366,7 +366,7 @@ static DEFWRITE(Write_43x1)
  CPUM.timestamp += MEMCYC_FAST;
 
  //fprintf(stderr, "*** Write BBusAddr, =0x%02x --- scanline=%u\n", V, scanline);
- SNES_DBG("[DMA] CH %u BBusAddr Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u BBusAddr Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].BBusAddr = V;
 }
@@ -388,7 +388,7 @@ DEFWRITE(DMA_Write_43x2)
 {
  CPUM.timestamp += MEMCYC_FAST;
 
- SNES_DBG("[DMA] CH %u ABusAddrL Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u ABusAddrL Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].ABusAddr &= 0xFF00;
  DMACH[(A >> 4) & 0x7].ABusAddr |= V << 0;
@@ -411,7 +411,7 @@ DEFWRITE(DMA_Write_43x3)
 {
  CPUM.timestamp += MEMCYC_FAST;
 
- SNES_DBG("[DMA] CH %u ABusAddrH Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u ABusAddrH Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].ABusAddr &= 0x00FF;
  DMACH[(A >> 4) & 0x7].ABusAddr |= V << 8;
@@ -434,7 +434,7 @@ DEFWRITE(DMA_Write_43x4)
 {
  CPUM.timestamp += MEMCYC_FAST;
 
- SNES_DBG("[DMA] CH %u ABusBank Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u ABusBank Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].ABusBank = V;
 }
@@ -456,7 +456,7 @@ DEFWRITE(DMA_Write_43x5)
 {
  CPUM.timestamp += MEMCYC_FAST;
 
- SNES_DBG("[DMA] CH %u IndirAddrL Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u IndirAddrL Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].IndirAddr &= 0xFF00;
  DMACH[(A >> 4) & 0x7].IndirAddr |= V << 0;
@@ -479,7 +479,7 @@ DEFWRITE(DMA_Write_43x6)
 {
  CPUM.timestamp += MEMCYC_FAST;
 
- SNES_DBG("[DMA] CH %u IndirAddrH Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u IndirAddrH Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].IndirAddr &= 0x00FF;
  DMACH[(A >> 4) & 0x7].IndirAddr |= V << 8;
@@ -502,7 +502,7 @@ static DEFWRITE(Write_43x7)
 {
  CPUM.timestamp += MEMCYC_FAST;
 
- SNES_DBG("[DMA] CH %u IndirBank Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u IndirBank Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].IndirBank = V;
 }
@@ -524,7 +524,7 @@ static DEFWRITE(Write_43x8)
 {
  CPUM.timestamp += MEMCYC_FAST;
 
- SNES_DBG("[DMA] CH %u TableAddrL Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u TableAddrL Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].TableAddr &= 0xFF00;
  DMACH[(A >> 4) & 0x7].TableAddr |= V << 0;
@@ -547,7 +547,7 @@ static DEFWRITE(Write_43x9)
 {
  CPUM.timestamp += MEMCYC_FAST;
 
- SNES_DBG("[DMA] CH %u TableAddrH Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u TableAddrH Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].TableAddr &= 0x00FF;
  DMACH[(A >> 4) & 0x7].TableAddr |= V << 8;
@@ -570,7 +570,7 @@ static DEFWRITE(Write_43xA)
 {
  CPUM.timestamp += MEMCYC_FAST;
 
- SNES_DBG("[DMA] CH %u LineCounter Write, 0x%02x\n", (A >> 4) & 0x7, V);
+ SNES_DBG(SNES_DBG_DMA, "[DMA] CH %u LineCounter Write, 0x%02x\n", (A >> 4) & 0x7, V);
 
  DMACH[(A >> 4) & 0x7].LineCounter = V;
 }

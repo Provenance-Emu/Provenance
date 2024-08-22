@@ -28,21 +28,28 @@ void OpenGL_Blitter::ReadPixels(MDFN_Surface *surface, const MDFN_Rect *rect)
  p_glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitchinpix);
  p_glReadPixels(rect->x, gl_screen_h - rect->h - rect->y, rect->w, rect->h, OSDPixelFormat, OSDPixelType, surface->pixels);
 
- for(int y = 0; y < surface->h / 2; y++)
+ for(int32 y = 0; y < surface->h / 2; y++)
  {
-  uint32 tmp_buffer[surface->w];
+  enum : size_t { tmp_buffer_count = 1024 };
+  uint32 tmp_buffer[tmp_buffer_count];
 
-  memcpy(tmp_buffer, &surface->pixels[y * surface->pitchinpix], surface->pitchinpix * sizeof(uint32));
-  memcpy(&surface->pixels[y * surface->pitchinpix], &surface->pixels[(surface->h - 1 - y) * surface->pitchinpix], surface->pitchinpix * sizeof(uint32));
-  memcpy(&surface->pixels[(surface->h - 1 - y) * surface->pitchinpix], tmp_buffer, surface->pitchinpix * sizeof(uint32));
+  for(int32 x = 0; x < surface->w; )
+  {
+   const uint32 tw = std::min<int32>(surface->w - x, tmp_buffer_count);
+
+   memcpy(tmp_buffer, &surface->pixels[y * surface->pitchinpix + x], tw * sizeof(uint32));
+   memcpy(&surface->pixels[y * surface->pitchinpix + x], &surface->pixels[(surface->h - 1 - y) * surface->pitchinpix + x], tw * sizeof(uint32));
+   memcpy(&surface->pixels[(surface->h - 1 - y) * surface->pitchinpix + x], tmp_buffer, tw * sizeof(uint32));
+
+   x += tw;
+  }
  }
 }
 
-
 void OpenGL_Blitter::BlitOSD(const MDFN_Surface *surface, const MDFN_Rect *rect, const MDFN_Rect *dest_rect, const bool source_alpha)
 {
- unsigned int tmpwidth;
- unsigned int tmpheight;
+ unsigned tmpwidth;
+ unsigned tmpheight;
 
  if(SupportNPOT)
  {
@@ -67,13 +74,13 @@ void OpenGL_Blitter::BlitOSD(const MDFN_Surface *surface, const MDFN_Rect *rect,
     neo_rect.x = rect->x + xseg;
     neo_rect.w = rect->w - xseg;
 
-    if(neo_rect.w > MaxTextureSize)
+    if((uint32)neo_rect.w > MaxTextureSize)
      neo_rect.w = MaxTextureSize;
 
     neo_rect.y = rect->y + yseg;
     neo_rect.h = rect->h - yseg;
 
-    if(neo_rect.h > MaxTextureSize)
+    if((uint32)neo_rect.h > MaxTextureSize)
      neo_rect.h = MaxTextureSize;
 
     neo_dest_rect.x = dest_rect->x + xseg * dest_rect->w / rect->w;
@@ -86,6 +93,13 @@ void OpenGL_Blitter::BlitOSD(const MDFN_Surface *surface, const MDFN_Rect *rect,
  }
  else
  {
+  const void* src_pixels;
+
+  if(surface->format.opp == 2)
+   src_pixels = surface->pix<uint16>() + rect->x + rect->y * surface->pitchinpix;
+  else
+   src_pixels = surface->pix<uint32>() + rect->x + rect->y * surface->pitchinpix;
+
   // Don't move the source_alpha stuff out of this else { }, otherwise it will break the recursion necessary to work around maximum texture size limits.
   if(source_alpha)
   {
@@ -94,10 +108,11 @@ void OpenGL_Blitter::BlitOSD(const MDFN_Surface *surface, const MDFN_Rect *rect,
   }
 
   p_glBindTexture(GL_TEXTURE_2D, textures[3]);
+  p_glPixelStorei(GL_UNPACK_ALIGNMENT, surface->format.opp);
   p_glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitchinpix);
 
   p_glTexImage2D(GL_TEXTURE_2D, 0, OSDInternalFormat, tmpwidth, tmpheight, 0, OSDPixelFormat, OSDPixelType, NULL);
-  p_glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rect->w, rect->h, OSDPixelFormat, OSDPixelType, surface->pixels + rect->x + rect->y * surface->pitchinpix);
+  p_glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, rect->w, rect->h, OSDPixelFormat, OSDPixelType, src_pixels);
 
   p_glBegin(GL_QUADS);
 
@@ -310,8 +325,8 @@ void OpenGL_Blitter::Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_
  int dest_coords[4][2];
  unsigned int tmpwidth;
  unsigned int tmpheight;
- void* src_pixies;
  const bool ShaderIlace = (InterlaceField >= 0) && shader && shader->ShaderNeedsProperIlace();
+ const void* src_pixies;
 
  if(shader)
  {
@@ -326,7 +341,6 @@ void OpenGL_Blitter::Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_
   printf("[BUG] OpenGL blitting nothing? --- %d:%d %d:%d %d:%d\n", tex_src_rect.w, tex_src_rect.h, dest_rect->w, dest_rect->h, original_src_rect->w, original_src_rect->h);
   return;
  }
-
 
  if(src_surface->pixels16)
   src_pixies = src_surface->pixels16 + tex_src_rect.x + (tex_src_rect.y + (InterlaceField & ShaderIlace)) * src_surface->pitchinpix;
@@ -369,7 +383,7 @@ void OpenGL_Blitter::Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_
   }
  
   // If the dimensions of our image stored in the texture have changed...
-  if(tex_src_rect.w != last_w || tex_src_rect.h != last_h)
+  if((uint32)tex_src_rect.w != last_w || (uint32)tex_src_rect.h != last_h)
    ImageSizeChange = TRUE;
 
   // Only clean up if we're using pixel shaders and/or bilinear interpolation
@@ -377,10 +391,10 @@ void OpenGL_Blitter::Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_
   {
    uint32 neo_dbs = DummyBlackSize;
 
-   if(tex_src_rect.w != tmpwidth && neo_dbs < tex_src_rect.h)
+   if((uint32)tex_src_rect.w != tmpwidth && neo_dbs < (uint32)tex_src_rect.h)
     neo_dbs = tex_src_rect.h;
 
-   if(tex_src_rect.h != tmpheight && neo_dbs < tex_src_rect.w)
+   if((uint32)tex_src_rect.h != tmpheight && neo_dbs < (uint32)tex_src_rect.w)
     neo_dbs = tex_src_rect.w;
 
    if(neo_dbs != DummyBlackSize)
@@ -408,13 +422,13 @@ void OpenGL_Blitter::Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_
 
    if(DummyBlack) // If memory allocation failed for some reason, don't clean the texture. :(
    {
-    if(tex_src_rect.w < tmpwidth)
+    if((uint32)tex_src_rect.w < tmpwidth)
     {
      //puts("X");
      p_glPixelStorei(GL_UNPACK_ROW_LENGTH, 1);
      p_glTexSubImage2D(GL_TEXTURE_2D, 0, tex_src_rect.w, 0, 1, tex_src_rect.h, GL_RGBA, GL_UNSIGNED_BYTE, DummyBlack);
     }
-    if(tex_src_rect.h < tmpheight)
+    if((uint32)tex_src_rect.h < tmpheight)
     {
      //puts("Y");
      p_glPixelStorei(GL_UNPACK_ROW_LENGTH, tex_src_rect.w);
@@ -433,6 +447,7 @@ void OpenGL_Blitter::Blit(const MDFN_Surface *src_surface, const MDFN_Rect *src_
  if(shader)
   shader->ShaderBegin(gl_screen_w, gl_screen_h, src_rect, dest_rect, tmpwidth, tmpheight, round((double)tmpwidth * original_src_rect->w / tex_src_rect.w), round((double)tmpheight * (original_src_rect->h >> ShaderIlace) / tex_src_rect.h), rotated);
 
+ p_glPixelStorei(GL_UNPACK_ALIGNMENT, src_surface->format.opp);
  p_glPixelStorei(GL_UNPACK_ROW_LENGTH, src_surface->pitchinpix << ShaderIlace);
 
  p_glTexSubImage2D(GL_TEXTURE_2D, 0, tex_src_rect.x, tex_src_rect.y, tex_src_rect.w, tex_src_rect.h, PixelFormat, PixelType, src_pixies);
@@ -567,17 +582,6 @@ static bool CheckExtension(const char *extensions, const char *testval)
  return(FALSE);
 }
 
-static bool CheckAlternateFormat(const uint32 version_h)
-{
- if(version_h >= 0x0102)        // >= 1.2
- {
-  #if defined(__amd64__) || defined(__x86_64__) || defined(_M_AMD64) || defined(__386__) || defined(__i386__) || defined(__i386) || defined(_M_IX86) || defined(_M_I386)
-  return(true);
-  #endif
- }
- return(false);
-}
-
 #define XTSC(e) case e: return #e;
 static const char* GLEToString(GLenum e)
 {
@@ -586,13 +590,18 @@ static const char* GLEToString(GLenum e)
   default:
 	return _("UNKNOWN");
 
+  XTSC(GL_NONE)
+
   XTSC(GL_RGB)
   XTSC(GL_RGBA)
   XTSC(GL_BGR)
   XTSC(GL_BGRA)
+  XTSC(GL_RGBA4)
   XTSC(GL_RGB4)
   XTSC(GL_RGB5)
+  XTSC(GL_RGB5_A1)
   XTSC(GL_RGB8)
+  XTSC(GL_RGBA8)
   XTSC(GL_RGB565)
 
   XTSC(GL_BYTE)
@@ -614,6 +623,116 @@ static const char* GLEToString(GLenum e)
  }
 }
 
+static bool MednafenToGLFormat(const unsigned gl_version_h, const MDFN_PixelFormat& mpf, GLenum* gl_internal_format = nullptr, GLenum* gl_pixel_format = nullptr, GLenum* gl_pixel_type = nullptr)
+{
+ GLenum internal_format, pixel_format, pixel_type;
+ bool ret = true;
+
+ if(gl_version_h < 0x0102)
+ {
+  if(( MDFN_IS_BIGENDIAN && mpf.tag == MDFN_PixelFormat::RGBA32_8888) ||
+     (!MDFN_IS_BIGENDIAN && mpf.tag == MDFN_PixelFormat::ABGR32_8888))
+  {
+   internal_format = GL_RGBA;
+   pixel_format = GL_RGBA;
+   pixel_type = GL_UNSIGNED_BYTE;
+  }
+  else
+  {
+   ret = false;
+   internal_format = GL_NONE;
+   pixel_format = GL_NONE;
+   pixel_type = GL_NONE;
+  }
+ }
+ else switch(mpf.tag)
+ {
+  case MDFN_PixelFormat::RGBA32_8888:
+	internal_format = GL_RGBA;
+	pixel_format = GL_RGBA;
+	pixel_type = GL_UNSIGNED_INT_8_8_8_8;
+	break;
+
+  case MDFN_PixelFormat::ABGR32_8888:
+	internal_format = GL_RGBA;
+	pixel_format = GL_RGBA;
+	pixel_type = GL_UNSIGNED_INT_8_8_8_8_REV;
+	break;
+  //
+  //
+  case MDFN_PixelFormat::BGRA32_8888:
+	internal_format = GL_RGBA;
+	pixel_format = GL_BGRA;
+	pixel_type = GL_UNSIGNED_INT_8_8_8_8;
+	break;
+
+  case MDFN_PixelFormat::ARGB32_8888:
+	internal_format = GL_RGBA;
+	pixel_format = GL_BGRA;
+	pixel_type = GL_UNSIGNED_INT_8_8_8_8_REV;
+	break;
+  //
+  //
+  case MDFN_PixelFormat::RGB16_565:
+	internal_format = GL_RGB;
+	pixel_format = GL_RGB;
+	pixel_type = GL_UNSIGNED_SHORT_5_6_5;
+	break;
+
+  case MDFN_PixelFormat::IRGB16_1555:
+	internal_format = GL_RGB5;
+	pixel_format = GL_BGRA;
+	pixel_type = GL_UNSIGNED_SHORT_1_5_5_5_REV;
+	break;
+
+  case MDFN_PixelFormat::RGBI16_5551:
+	internal_format = GL_RGB5;
+	pixel_format = GL_RGBA;
+	pixel_type = GL_UNSIGNED_SHORT_5_5_5_1;
+	break;
+
+/*
+ // TODO for OSD?:
+ case MDFN_PixelFormat::ARGB16_1555:
+	internal_format = GL_RGB5_A1;
+	pixel_format = GL_BGRA;
+	pixel_type = GL_UNSIGNED_SHORT_1_5_5_5_REV;
+	break;
+
+  case MDFN_PixelFormat::RGBA16_5551:
+	internal_format = GL_RGB5_A1;
+	pixel_format = GL_RGBA;
+	pixel_type = GL_UNSIGNED_SHORT_5_5_5_1;
+	break;
+*/
+
+  case MDFN_PixelFormat::ARGB16_4444:
+	internal_format = GL_RGBA4;
+	pixel_format = GL_BGRA;
+	pixel_type = GL_UNSIGNED_SHORT_4_4_4_4_REV;
+	break;
+  //
+  //
+  default:
+	ret = false;
+	internal_format = GL_NONE;
+	pixel_format = GL_NONE;
+	pixel_type = GL_NONE;
+	break;
+ }
+
+ if(gl_internal_format)
+  *gl_internal_format = internal_format;
+
+ if(gl_pixel_format)
+  *gl_pixel_format = pixel_format;
+
+ if(gl_pixel_type)
+  *gl_pixel_type = pixel_type;
+
+ return ret;
+}
+
 /* Rectangle, left, right(not inclusive), top, bottom(not inclusive). */
 OpenGL_Blitter::OpenGL_Blitter(int scanlines, ShaderType pixshader, const ShaderParams& shader_params, MDFN_PixelFormat* game_pf, MDFN_PixelFormat* osd_pf, uint32 preferred_format)
 {
@@ -628,8 +747,6 @@ OpenGL_Blitter::OpenGL_Blitter(int scanlines, ShaderType pixshader, const Shader
  MaxTextureSize = 0;
  SupportNPOT = false;
  SupportARBSync = false;
- PixelFormat = 0;
- PixelType = 0;
 
  for(unsigned i = 0; i < 4; i++)
   textures[i] = 0;
@@ -826,13 +943,20 @@ OpenGL_Blitter::OpenGL_Blitter(int scanlines, ShaderType pixshader, const Shader
  p_glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
  p_glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
  p_glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
-
-
+ //
+ //
+ //
  p_glBindTexture(GL_TEXTURE_2D, textures[0]);
-     
+
+ // Fallback for OpenGL < 1.2 where GL_CLAMP_TO_BORDER isn't available.
+ p_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+ p_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
  p_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
  p_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
+ //
+ //
+ //
  p_glBindTexture(GL_TEXTURE_2D, textures[2]);
 
  p_glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
@@ -906,60 +1030,46 @@ OpenGL_Blitter::OpenGL_Blitter(int scanlines, ShaderType pixshader, const Shader
 
  MDFN_indent(-1);
 
- if(!CheckAlternateFormat(version_h))
- {
-  #ifdef LSB_FIRST
-  *osd_pf = MDFN_PixelFormat::ABGR32_8888;
-  #else
-  *osd_pf = MDFN_PixelFormat::RGBA32_8888;
-  #endif
-  OSDInternalFormat = GL_RGBA;
-  OSDPixelFormat = GL_RGBA;
-  OSDPixelType = GL_UNSIGNED_BYTE;
- }
+#if 0
+ #warning "TESTING"
+ version_h = 0x0101;
+#endif
+
+#if defined(__amd64__) || defined(__x86_64__) || defined(_M_AMD64) || defined(__386__) || defined(__i386__) || defined(__i386) || defined(_M_IX86) || defined(_M_I386)
+ if(version_h >= 0x0102)
+  *osd_pf = /*MDFN_IS_BIGENDIAN ? MDFN_PixelFormat::BGRA32_8888 :*/ MDFN_PixelFormat::ARGB32_8888;
  else
- {
-  *osd_pf = MDFN_PixelFormat::ARGB32_8888;
-  OSDInternalFormat = GL_RGBA;
-  OSDPixelFormat = GL_BGRA;
-  OSDPixelType = GL_UNSIGNED_INT_8_8_8_8_REV;
- }
+#endif
+  *osd_pf = MDFN_IS_BIGENDIAN ? MDFN_PixelFormat::RGBA32_8888 : MDFN_PixelFormat::ABGR32_8888;
 
  *game_pf = *osd_pf;
- InternalFormat = OSDInternalFormat;
- PixelFormat = OSDPixelFormat;
- PixelType = OSDPixelType;
 
- if(version_h >= 0x0102 && preferred_format != EVFSUPPORT_NONE)
+ if(version_h >= 0x0102)
  {
   if(preferred_format & EVFSUPPORT_RGB565)
-  {
    *game_pf = MDFN_PixelFormat::RGB16_565;
-
-   if(0)
-    InternalFormat = GL_RGB565;
-   else
-    InternalFormat = GL_RGB;
-
-   PixelFormat = GL_RGB;
-   PixelType = GL_UNSIGNED_SHORT_5_6_5;
-  }
   else if(preferred_format & EVFSUPPORT_RGB555)
-  {
-   *game_pf = MDFN_PixelFormat::IRGB16_1555;
+   *game_pf = MDFN_PixelFormat::RGBI16_5551;
 
-   InternalFormat = GL_RGB5;
-   PixelFormat = GL_BGRA;
-   PixelType = GL_UNSIGNED_SHORT_1_5_5_5_REV;
-  }
+#if 0
+  #warning "TESTING"
+  *osd_pf = MDFN_PixelFormat::ARGB16_4444;
+#endif
  }
 
- if(InternalFormat == OSDInternalFormat && PixelFormat == OSDPixelFormat && PixelType == OSDPixelType)
-  MDFN_printf(_("Using %s - %s, %s for texture source data.\n"), GLEToString(OSDInternalFormat), GLEToString(OSDPixelFormat), GLEToString(OSDPixelType));
- else
  {
-  MDFN_printf(_("Using %s - %s, %s for OSD texture source data.\n"), GLEToString(OSDInternalFormat), GLEToString(OSDPixelFormat), GLEToString(OSDPixelType));
-  MDFN_printf(_("Using %s - %s, %s for emulated video texture source data.\n"), GLEToString(InternalFormat), GLEToString(PixelFormat), GLEToString(PixelType));
+  const bool osd_format_ok = MednafenToGLFormat(version_h, *osd_pf, &OSDInternalFormat, &OSDPixelFormat, &OSDPixelType);
+  const bool game_format_ok = MednafenToGLFormat(version_h, *game_pf, &InternalFormat, &PixelFormat, &PixelType);
+
+  if(*osd_pf == *game_pf)
+   MDFN_printf(_("Using %s - %s, %s for texture source data.\n"), GLEToString(OSDInternalFormat), GLEToString(OSDPixelFormat), GLEToString(OSDPixelType));
+  else
+  {
+   MDFN_printf(_("Using %s - %s, %s for OSD texture source data.\n"), GLEToString(OSDInternalFormat), GLEToString(OSDPixelFormat), GLEToString(OSDPixelType));
+   MDFN_printf(_("Using %s - %s, %s for emulated video texture source data.\n"), GLEToString(InternalFormat), GLEToString(PixelFormat), GLEToString(PixelType));
+  }
+
+  assert(osd_format_ok && game_format_ok);
  }
  //
  //

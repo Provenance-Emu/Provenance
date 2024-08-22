@@ -442,13 +442,13 @@ static const MDFNSetting NESSettings[] =
   { "nes.nofs", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Disable four-score emulation."), NULL, MDFNST_BOOL, "0" },
 
   { "nes.no8lim", MDFNSF_NOFLAGS, gettext_noop("Remove 8-sprites-per-scanline hardware limit."), 
-	gettext_noop("WARNING: Enabling this option will cause graphical glitches in some games, including \"Solstice\"."), MDFNST_BOOL, "0", NULL, NULL, NULL, NESPPU_SettingChanged },
+	gettext_noop("Caution: Enabling this option will cause graphical glitches in some games, including \"Solstice\"."), MDFNST_BOOL, "0", NULL, NULL, NULL, NESPPU_SettingChanged },
 
   { "nes.soundq", MDFNSF_NOFLAGS, gettext_noop("Sound quality."), gettext_noop("Higher values correspond to better SNR and better preservation of higher frequencies(\"brightness\"), at the cost of increased computational complexity and a negligible(<0.5ms) increase in latency."), MDFNST_INT, "0", "-2", "3" },
   { "nes.sound_rate_error", MDFNSF_NOFLAGS, gettext_noop("Output rate tolerance."), gettext_noop("Lower values correspond to better matching of the output rate of the resampler to the actual desired output rate, at the expense of increased RAM usage and poorer CPU cache utilization.  DO NOT INCREASE THIS VALUE, OR SOUND WILL LIKELY BE OFF-KEY AND THE WRONG TEMPO, AMONG OTHER PROBLEMS."), MDFNST_FLOAT, "0.00004", "0.0000001", "0.01" },
   { "nes.n106bs", MDFNSF_NOFLAGS, gettext_noop("Enable less-accurate, but better sounding, Namco 106(mapper 19) sound emulation."), NULL, MDFNST_BOOL, "0" },
   { "nes.fnscan", MDFNSF_EMU_STATE, gettext_noop("Scan filename for (U),(J),(E),etc. strings to en/dis-able PAL emulation."), 
-	gettext_noop("Warning: This option may break NES network play when enabled IF the players are using ROM images with different filenames."), MDFNST_BOOL, "1" },
+	gettext_noop("Caution: Enabling this option may break NES network play if the players are using ROM images with different filenames."), MDFNST_BOOL, "1" },
 
   { "nes.pal", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Enable PAL(50Hz) NES emulation."), NULL, MDFNST_BOOL, "0" },
   { "nes.gg", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Enable Game Genie emulation."), NULL, MDFNST_BOOL, "0" },
@@ -461,7 +461,7 @@ static const MDFNSetting NESSettings[] =
 
   { "nes.correct_aspect", MDFNSF_CAT_VIDEO, gettext_noop("Correct the aspect ratio."), NULL, MDFNST_BOOL, "0" },
   { "nes.ntscblitter", MDFNSF_NOFLAGS, gettext_noop("Enable NTSC color generation and blitter."), 
-	gettext_noop("NOTE: If your refresh rate isn't very close to 60.1Hz(+-0.1), you will need to set the nes.ntsc.mergefields setting to \"1\" to avoid excessive flickering."), MDFNST_BOOL, "0" },
+	gettext_noop("NOTE: If your refresh rate isn't very close to 60.1Hz(+-0.1), you will need to set the \"\5nes.ntsc.mergefields\" setting to \"1\" to avoid excessive flickering."), MDFNST_BOOL, "0" },
 
 
   { "nes.ntsc.preset", MDFNSF_NOFLAGS, gettext_noop("Video quality/type preset."), NULL, MDFNST_ENUM, "none", NULL, NULL, NULL, NULL, NTSCPresetList },

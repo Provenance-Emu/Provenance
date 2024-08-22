@@ -1572,6 +1572,12 @@ void VDC_Power(void)
  for(int chip = 0; chip < VDC_TotalChips; chip++)
   memset(&vdc_chips[chip], 0, sizeof(vdc_t));
  VDC_Reset();
+
+ for(unsigned i = 0; i < 0x200; i++)
+ {
+  vce.color_table[i] = ((i ^ (i >> 3)) & 1) ? 0x000 : 0x1FF;
+  FixPCache(i);
+ }
 }
 
 void VDC_Init(const bool sgx)

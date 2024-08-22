@@ -48,6 +48,34 @@ VirtualFS::~VirtualFS()
 
 }
 
+std::string VirtualFS::get_human_mode(uint32 mode)
+{
+ const char* t;
+
+ switch(mode)
+ {
+  default:
+	t = _("for (unknown)");
+	break;
+
+  case MODE_READ:
+	t = _("for reading");
+	break;
+
+  case MODE_READ_WRITE:
+	t = _("for reading and writing");
+	break;
+
+  case MODE_WRITE_SAFE:
+  case MODE_WRITE_INPLACE:
+  case MODE_WRITE:
+	t = _("for writing");
+	break;
+ }
+
+ return std::string(t);
+}
+
 void VirtualFS::get_file_path_components(const std::string &file_path, std::string* dir_path_out, std::string* file_base_out, std::string *file_ext_out)
 {
  const size_t final_ds = file_path.find_last_of(allowed_path_separators); // in file_path
@@ -92,6 +120,23 @@ void VirtualFS::get_file_path_components(const std::string &file_path, std::stri
   *file_ext_out = file_ext;
 }
 
+/*
+std::string VirtualFS::get_canonical_ext(const std::string& file_path)
+{
+ std::string ret;
+
+ get_file_path_components(file_path, nullptr, nullptr, &ret);
+
+ MDFN_strazlower(&ret);
+ //
+ //
+ if(ret.size() > 0 && ret[0] == '.')
+  return ret.substr(1);
+  
+ return ret;
+}
+*/
+
 void VirtualFS::check_firop_safe(const std::string& path)
 {
 
@@ -105,6 +150,11 @@ bool VirtualFS::is_path_separator(const char c)
 bool VirtualFS::is_absolute_path(const std::string& path)
 {
  return true;
+}
+
+bool VirtualFS::is_driverel_path(const std::string& path)
+{
+ return false;
 }
 
 std::string VirtualFS::eval_fip(const std::string& dir_path, const std::string& rel_path, bool skip_safety_check)
@@ -138,7 +188,9 @@ void VirtualFS::create_missing_dirs(const std::string& file_path)
    {
     if(prev_was_psep)
     {
-     std::string tmp = file_path.substr(0, i + 1);
+     std::string tmp = file_path.substr(0, i + 1) + preferred_path_separator;
+
+     //printf("mkdir_pre: %s\n", tmp.c_str());
 
      if(finfo(tmp, nullptr, false))
       break;
@@ -166,8 +218,8 @@ void VirtualFS::create_missing_dirs(const std::string& file_path)
     {
      std::string tmp = file_path.substr(0, i);
 
-     mkdir(tmp, false);
-     //puts(tmp.c_str());
+     //printf("mkdir: %s\n", tmp.c_str());
+     this->mkdir(tmp, false);
     }
     prev_was_psep = true;
    }

@@ -15,6 +15,7 @@ House of the Dead (Japan)
 Linkle Liver Story (Japan)
 Mahjong Doukyuusei Special (Japan)
 Mr. Bones - Intro FMV
+Mujintou Monogatari R: Futari no Love Love Island
 Ronde (Japan)
 Sega Saturn Choice Cuts (USA) - Broken FMV playback(except intro FMV).
 Segakore Sega Bible Mogitate SegaSaturn - Zero Divide demo, especially.
@@ -31,6 +32,7 @@ Virtual Mahjong (Japan)
 Virtual Volleyball (Japan)
 WipEout (Japan/Europe/USA)
 World Series Baseball (USA/Japan)
+Zero Divide
 
 
 -------------------------------------------------------------------------------
@@ -132,37 +134,9 @@ Panzer Dragoon Saga
 
 
 -------------------------------------------------------------------------------
-Rely on quirks relating to command execution during CDB Initialize sw reset
+Rely on CD block quirks and nuances
 -------------------------------------------------------------------------------
-Tenchi Muyou! Ryououki Gokuraku - FMV.
-
-
--------------------------------------------------------------------------------
-Rely on quirks relating to command execution during CDB Reset Selector
--------------------------------------------------------------------------------
-Independence Day (USA) - Startup hang; 'Get CD Device Connection' command
-
-
--------------------------------------------------------------------------------
-Rely on CDB seeks taking long enough
--------------------------------------------------------------------------------
-Batman Forever - Intro graphics; may also be a general timing issue.
-Jung Rhythm - When trying to retry a failed stage.
-
-
--------------------------------------------------------------------------------
-Rely on aggravatingly nuanced behavior of CDB Play and Seek commands
--------------------------------------------------------------------------------
-Astal
-BIOS CD-DA Player
-Steam-Heart's
-
-
--------------------------------------------------------------------------------
-Rely on CDB index 2+ seek functionality(probably more than listed)
--------------------------------------------------------------------------------
-NBA Action
-Taito Chase H.Q.
+(Refer to top of cdb.cpp source code file)
 
 
 -------------------------------------------------------------------------------
@@ -182,6 +156,15 @@ Primal Rage
 
 
 -------------------------------------------------------------------------------
+Misc games with finicky SMPC usage
+-------------------------------------------------------------------------------
+Discworld
+Langrisser III
+Primal Rage
+QuoVadis
+
+
+-------------------------------------------------------------------------------
 Rely on rarely-used SCSP features
 -------------------------------------------------------------------------------
 Daytona USA - 18-bit DAC enable
@@ -191,15 +174,39 @@ Sega Ages: OutRun - Enables short waveform mode for the engine sound effect
 
 
 -------------------------------------------------------------------------------
+Rely on 68K address errors and/or freezing on unmapped memory access
+-------------------------------------------------------------------------------
+Lunar - Crashes 68K on game startup; improper handling can cause DSP register
+	corruption which can cause audio to go screwy during boss battles.
+
+Time Bokan - Just before arena boss near end of first stage.
+
+
+-------------------------------------------------------------------------------
+Enable VDP2 RBG1 layer
+-------------------------------------------------------------------------------
+Arcade Gears Vol. 4: ImageFight and XMultiply
+
+Gale Racer
+
+Houkago Ren'ai Club: Koi no Etude - Illegally enables RBG1 without also
+	enabling RBG0.
+
+Scorcher
+
+Sonic 3D Blast - Special stage.
+
+Street Racer
+
+
+-------------------------------------------------------------------------------
 Misc
 -------------------------------------------------------------------------------
-Magical Drop III - Missing intro graphics.  No idea.
-
-Tennis Arena - During startup(at least), doesn't like it when CDB is in Busy
-	state for a while, sometimes...seek timing window thing maybe.
-
-Time Bokan - Freezes just before arena boss near end of first stage.  Maybe
-	seek times too fast, maybe DMA'ing into SCSP RAM too fast, who knows.
+Radiant Silvergun - Relies on RBG0 per-dot coefficient data being forced to
+	zero when reading is attempted out of a VRAM bank not configured for 
+	coefficient reading via RDBS.  If not handled correctly, then
+	interrupting the AKA-O boss battle and starting a new game will
+	result in temporary graphics glitches.
 
 Whizz - Seems to not boot properly if seek timing puts some operations
 	within certain time windows(so not just too fast seeking...),

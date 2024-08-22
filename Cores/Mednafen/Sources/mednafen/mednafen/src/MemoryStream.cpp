@@ -73,12 +73,33 @@ MemoryStream::MemoryStream(Stream *stream, uint64 size_limit) : data_buffer(NULL
 {
  try
  {
-  if((position = stream->tell()) != 0)
-   stream->seek(0, SEEK_SET);
+  MemoryStream* msdc = dynamic_cast<MemoryStream*>(stream);
 
-  void* tp;
-  data_buffer_size = data_buffer_alloced = stream->alloc_and_read(&tp, size_limit);
-  data_buffer = (uint8*)tp;
+  if(msdc)
+  {
+   if(msdc->data_buffer_size > size_limit)
+    throw MDFN_Error(0, _("Size limit of %llu bytes would be exceeded."), (unsigned long long)size_limit);
+   //
+   //*this = std::move(*msdc);
+   data_buffer_size = msdc->data_buffer_size;
+   data_buffer_alloced = msdc->data_buffer_alloced;
+   data_buffer = msdc->data_buffer;
+   position = msdc->position;
+   //
+   msdc->data_buffer = nullptr;
+   msdc->data_buffer_alloced = 0;
+   msdc->data_buffer_size = 0;
+   msdc->position = 0;
+  }
+  else
+  {
+   if((position = stream->tell()) != 0)
+    stream->seek(0, SEEK_SET);
+
+   void* tp;
+   data_buffer_size = data_buffer_alloced = stream->alloc_and_read(&tp, size_limit);
+   data_buffer = (uint8*)tp;
+  }
   stream->close();
  }
  catch(...)

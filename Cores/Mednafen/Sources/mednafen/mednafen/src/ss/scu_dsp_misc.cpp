@@ -22,7 +22,9 @@
 #include "ss.h"
 #include "scu.h"
 
-#pragma GCC optimize("Os")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize("Os")
+#endif
 
 namespace MDFN_IEN_SS
 {

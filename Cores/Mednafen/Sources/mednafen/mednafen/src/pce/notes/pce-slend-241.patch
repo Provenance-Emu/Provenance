@@ -1,0 +1,26 @@
+diff --git a/src/pce/pce.cpp b/src/pce/pce.cpp
+index 405497e..ca24a5b 100644
+--- a/src/pce/pce.cpp
++++ b/src/pce/pce.cpp
+@@ -1082,7 +1082,7 @@ static const MDFNSetting PCESettings[] =
+   { "pce.input.multitap", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Enable multitap(TurboTap) emulation."), NULL, MDFNST_BOOL, "1" },
+ 
+   { "pce.slstart", MDFNSF_NOFLAGS, gettext_noop("First rendered scanline."), NULL, MDFNST_UINT, "4", "0", "239" },
+-  { "pce.slend", MDFNSF_NOFLAGS, gettext_noop("Last rendered scanline."), NULL, MDFNST_UINT, "235", "0", "239" },
++  { "pce.slend", MDFNSF_NOFLAGS, gettext_noop("Last rendered scanline."), NULL, MDFNST_UINT, "235", "0", "241" },
+ 
+   { "pce.h_overscan", MDFNSF_NOFLAGS, gettext_noop("Show horizontal overscan area."), NULL, MDFNST_BOOL, "0" },
+ 
+diff --git a/src/pce/vce.cpp b/src/pce/vce.cpp
+index 3e67570..6b24d78 100644
+--- a/src/pce/vce.cpp
++++ b/src/pce/vce.cpp
+@@ -467,7 +467,7 @@ INLINE void VCE::SyncSub(int32 clocks)
+     if(scanline == 14 + 240)
+      FrameDone = true;
+ 
+-    if((scanline == 14 + 240) || (scanline == 123))
++    if((scanline == 14 + 242) || (scanline == 125))
+     {
+      HuCPU.Exit();
+     }

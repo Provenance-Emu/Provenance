@@ -165,7 +165,7 @@ void Player_Draw(MDFN_Surface* surface, MDFN_Rect* dr, int CurrentSong, int16* s
  const unsigned fontid = MDFN_FONT_9x18_18x18;
  const uint32 text_color = surface->MakeColor(0xE8, 0xE8, 0xE8);
  const uint32 text_shadow_color = surface->MakeColor(0x00, 0x18, 0x10);
- //const uint32 bg_color = surface->MakeColor(0x20, 0x00, 0x08);
+ const uint32 bg_color = surface->MakeColor(0x20, 0x00, 0x08);
 
  dr->x = 0;
  dr->y = 0;
@@ -175,7 +175,7 @@ void Player_Draw(MDFN_Surface* surface, MDFN_Rect* dr, int CurrentSong, int16* s
  //
  // Draw the background color
  //
- surface->Fill(0x20, 0x00, 0x08, 0);	// FIXME: Fill() changes
+ surface->Fill(bg_color);
 
  DrawWaveform(surface, *dr, MDFNGameInfo->soundchan, soundbuf, framecount);
 

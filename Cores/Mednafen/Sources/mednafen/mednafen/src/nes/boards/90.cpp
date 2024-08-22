@@ -294,8 +294,13 @@ static void M90Power(CartInfo *info)
 
 static int StateAction(StateMem *sm, int load, int data_only)
 {
- SFORMAT StateRegs[]={
+ SFORMAT StateRegs[] =
+ {
+        SFVAR(IRQMode),
+        SFVAR(IRQPre),
+        SFVAR(IRQPreSize),
         SFVARN(IRQCount, "IRQC"),
+        SFVAR(IRQXOR),
         SFVARN(IRQa, "IRQa"),
         SFPTR8N(mul, 2, "MUL"),
         SFVARN(regie, "REGI"),
@@ -308,8 +313,9 @@ static int StateAction(StateMem *sm, int load, int data_only)
         SFVARN(names[2], "NMS2"),
         SFVARN(names[3], "NMS3"),
         SFVARN(tekker, "TEKR"),
+
         SFEND
-};
+ };
 
  int ret = MDFNSS_StateAction(sm, load, data_only, StateRegs, "MAPR");
  if(load)

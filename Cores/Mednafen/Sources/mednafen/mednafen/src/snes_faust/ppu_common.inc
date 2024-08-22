@@ -1,3 +1,25 @@
+/******************************************************************************/
+/* Mednafen Fast SNES Emulation Module                                        */
+/******************************************************************************/
+/* ppu_common.inc:
+**  Copyright (C) 2015-2022 Mednafen Team
+**
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the GNU General Public License
+** as published by the Free Software Foundation; either version 2
+** of the License, or (at your option) any later version.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software Foundation, Inc.,
+** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
+
 static uint32 PPU_UpdateLineIRQ(uint32 timestamp) MDFN_HOT;
 static uint32 PPU_Update(uint32 timestamp) MDFN_HOT;
 
@@ -13,8 +35,8 @@ static DEFWRITE(Write_ScreenMode)
 static DEFWRITE(Write_2100)
 {
  CPUM.timestamp += MEMCYC_FAST;
-
- if((INIDisp ^ V) & 0x80 & ~V)
+ //
+ if((INIDisp ^ V) & OAM_AllowFBReset & ~V)
   OAM_Addr = (OAMADDL | ((OAMADDH & 0x1) << 8)) << 1;
 
  INIDisp = V;
@@ -254,10 +276,19 @@ static DEFWRITE(Write_2118)
 {
  CPUM.timestamp += MEMCYC_FAST;
  //
- // TODO: Block all VRAM writes during active display, not just those from HDMA(just doing the latter
- // for now in case small timing errors might break legitimate write attempts).
- if(MDFN_UNLIKELY(InHDMA != 0x80000000U && !(INIDisp & 0x80)))
+ if(MDFN_UNLIKELY(!AllowVRAMAccess && !(INIDisp & 0x80)))
+ {
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_PPU | SNES_DBG_PPU_BVA, "[PPU] Blocked %s write to VRAM 0x%05x 0x%02x at scanline %u.\n", (InHDMA == 0x80000000U) ? "CPU" : "HDMA", (GetVAddr() << 1) | 0, V, scanline);
+
+  if(!VMAIN_IncMode)
+  {
+   VRAM_Addr += VMAIN_AddrInc;
+   //
+   PPU_MTRENDER::MTIF_Read(0x39);
+  }
+
   return;
+ }
  //
  //
  const unsigned va = GetVAddr();
@@ -278,10 +309,19 @@ static DEFWRITE(Write_2119)
 {
  CPUM.timestamp += MEMCYC_FAST;
  //
- // TODO: Block all VRAM writes during active display, not just those from HDMA(just doing the latter
- // for now in case small timing errors might break legitimate write attempts).
- if(MDFN_UNLIKELY(InHDMA != 0x80000000U && !(INIDisp & 0x80)))
+ if(MDFN_UNLIKELY(!AllowVRAMAccess && !(INIDisp & 0x80)))
+ {
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_PPU | SNES_DBG_PPU_BVA, "[PPU] Blocked %s write to VRAM 0x%05x 0x%02x at scanline %u.\n", (InHDMA == 0x80000000U) ? "CPU" : "HDMA", (GetVAddr() << 1) | 1, V, scanline);
+
+  if(VMAIN_IncMode)
+  {
+   VRAM_Addr += VMAIN_AddrInc;
+   //
+   PPU_MTRENDER::MTIF_Read(0x3A);
+  }
+
   return;
+ }
  //
  //
  const unsigned va = GetVAddr();
@@ -671,7 +711,7 @@ static DEFWRITE(Write_NMITIMEEN)	// $4200
 {
  CPUM.timestamp += MEMCYC_FAST;
  //
- SNES_DBG("[SNES] Write NMITIMEEN: 0x%02x --- scanline=%u, %u\n", V, scanline, (CPUM.timestamp - LineStartTS) >> 2);
+ SNES_DBG(SNES_DBG_PPU, "[SNES] Write NMITIMEEN: 0x%02x --- scanline=%u, %u\n", V, scanline, (CPUM.timestamp - LineStartTS) >> 2);
 
  if(NMITIMEEN != V)
  {
@@ -704,7 +744,7 @@ static DEFWRITE(Write_HTIME)	// $4207 and $4208
 
  if(HTime != Old_HTime)
  {
-  SNES_DBG("[SNES] HTIME Changed: new=0x%04x(old=0x%04x) --- scanline=%u, LineCounter=%u, LinePhase=%u -- %u\n", HTime, Old_HTime, scanline, LineCounter, LinePhase, (CPUM.timestamp - LineStartTS) >> 2);
+  SNES_DBG(SNES_DBG_PPU, "[SNES] HTIME Changed: new=0x%04x(old=0x%04x) --- scanline=%u, LineCounter=%u, LinePhase=%u -- %u\n", HTime, Old_HTime, scanline, LineCounter, LinePhase, (CPUM.timestamp - LineStartTS) >> 2);
 
   SNES_SetEventNT(SNES_EVENT_PPU_LINEIRQ, PPU_UpdateLineIRQ((InHDMA != 0x80000000U) ? InHDMA : CPUM.timestamp));
  }
@@ -723,7 +763,7 @@ static DEFWRITE(Write_VTIME)	// $4209 and $420A
 
  if(VTime != Old_VTime)
  {
-  SNES_DBG("[SNES] VTIME Changed: new=0x%04x(old=0x%04x) --- HTIME=0x%04x, scanline=%u, LineCounter=%u, LinePhase=%u -- %u\n", VTime, Old_VTime, HTime, scanline, LineCounter, LinePhase, (CPUM.timestamp - LineStartTS) >> 2);
+  SNES_DBG(SNES_DBG_PPU, "[SNES] VTIME Changed: new=0x%04x(old=0x%04x) --- HTIME=0x%04x, scanline=%u, LineCounter=%u, LinePhase=%u -- %u\n", VTime, Old_VTime, HTime, scanline, LineCounter, LinePhase, (CPUM.timestamp - LineStartTS) >> 2);
 
   SNES_SetEventNT(SNES_EVENT_PPU_LINEIRQ, PPU_UpdateLineIRQ((InHDMA != 0x80000000U) ? InHDMA : CPUM.timestamp));
  }
@@ -790,7 +830,7 @@ static DEFREAD(Read_4213)
 
  CPUM.timestamp += MEMCYC_FAST;
  //
- SNES_DBG("[PPU] Read 4213\n");
+ SNES_DBG(SNES_DBG_WARNING | SNES_DBG_PPU, "[PPU] Read 4213\n");
 
  return 0;
 }
@@ -874,7 +914,7 @@ static uint32 PPU_UpdateLineIRQ(uint32 timestamp)
 
  if(NewIRQThing && !IRQThing && !IRQFlag)
  {
-  SNES_DBG("[SNES] IRQ: %d, %u\n", scanline, (timestamp - LineStartTS) >> 2);
+  SNES_DBG(SNES_DBG_PPU, "[SNES] IRQ: %d, %u\n", scanline, (timestamp - LineStartTS) >> 2);
   IRQFlag = 0x80;
   CPU_SetIRQ(IRQFlag);
  }
@@ -910,7 +950,7 @@ static uint32 PPU_Update(uint32 timestamp)
 {
  if(timestamp < lastts)
  {
-  SNES_DBG("[PPU] timestamp goof: timestamp=%u, lastts=%u\n", timestamp, lastts);
+  SNES_DBG(SNES_DBG_ERROR | SNES_DBG_PPU, "[PPU] timestamp goof: timestamp=%u, lastts=%u\n", timestamp, lastts);
   assert(timestamp >= lastts);
  }
 
@@ -943,6 +983,12 @@ static uint32 PPU_Update(uint32 timestamp)
 
    //
    //
+   if(OAM_AllowFBReset)
+   {
+    OAM_AllowFBReset = 0;
+
+    PPU_MTRENDER::MTIF_EndOAMAddrReset();
+   }
 
    if(scanline == 0)	// VBlank end
    {
@@ -981,6 +1027,7 @@ static uint32 PPU_Update(uint32 timestamp)
    else if(!VBlank && scanline >= ((ScreenMode & 0x04) ? 0xF0 : 0xE1))
    {
     VBlank = true;
+    AllowVRAMAccess = true;
 
     PPU_MTRENDER::MTIF_EnterVBlank(PAL, SkipFrame);
     //
@@ -1002,7 +1049,7 @@ static uint32 PPU_Update(uint32 timestamp)
     HVBJOY |= 0x80;
     NMIFlag = 0x80;
 
-    SNES_DBG("NMI: %u %u\n", scanline, timestamp);
+    SNES_DBG(SNES_DBG_PPU, "[PPU] NMI: %u %u\n", scanline, timestamp);
 
     CPU_SetNMI(NMIFlag & NMITIMEEN & 0x80);
 
@@ -1016,6 +1063,10 @@ static uint32 PPU_Update(uint32 timestamp)
     //
     if(!(INIDisp & 0x80))
      OAM_Addr = (OAMADDL | ((OAMADDH & 0x1) << 8)) << 1;
+
+    // TODO: Check exact timing and semantics(any number of times, once, once only if in force blank at start of
+    // vblank):
+    OAM_AllowFBReset = 0x80;
    }
    //
    LineCounter += RenderLineDelay;
@@ -1047,6 +1098,7 @@ static uint32 PPU_Update(uint32 timestamp)
   }
   else if(LinePhase == 3)	// HBlank begin
   {
+   AllowVRAMAccess &= VBlank;
    //
    //
    HVBJOY |= 0x40;
@@ -1083,7 +1135,8 @@ void PPU_ResetTS(void)
 
 void PPU_Init(const bool IsPAL, const bool IsPALPPUBit, const bool WantFrameBeginVBlank, const uint64 affinity)
 {
- //MDFN_printf("%zu %u\n", sizeof(PPU), (unsigned)((unsigned char*)&PPU.VRAM - (unsigned char*)&PPU));
+ //MDFN_printf("%zu cgram=%u oam=%u vram=%u\n", sizeof(PPU), (unsigned)((unsigned char*)&PPU.CGRAM - (unsigned char*)&PPU), (unsigned)((unsigned char*)&PPU.OAM - (unsigned char*)&PPU), (unsigned)((unsigned char*)&PPU.VRAM - (unsigned char*)&PPU));
+ //exit(0);
  //
  //
  //
@@ -1289,6 +1342,7 @@ static INLINE void Common_Reset(bool powering_up)
  //
 
  VBlank = false;
+ AllowVRAMAccess = false;
 
  if(powering_up)
   memset(VRAM, 0x00, sizeof(VRAM));
@@ -1480,6 +1534,8 @@ static INLINE void Common_StateAction(StateMem* sm, const unsigned load, const b
   //
   //
   SFCONDVAR(!load || load >= 0x001023C1, InterlaceOnSample),
+  SFCONDVAR(!load || load >= 0x00103200, OAM_AllowFBReset),
+  SFCONDVAR(!load || load >= 0x00103200, AllowVRAMAccess),
   //
   //
   SFEND
@@ -1494,6 +1550,12 @@ static INLINE void Common_StateAction(StateMem* sm, const unsigned load, const b
   OAM_Addr &= 0x3FF;
   VMAIN_AddrTransMaskA &= 0x7FFF;
   VMAIN_AddrTransMaskC &= 0x7FFF;
+
+  if(load < 0x00103200)
+  {
+   OAM_AllowFBReset = 0x80;
+   AllowVRAMAccess = VBlank;
+  }
  }
 }
 
@@ -1599,10 +1661,18 @@ uint32 PPU_GetRegister(const unsigned id, char* const special, const uint32 spec
 	break;
 
   case PPU_GSREG_TM:
-	ret = WMMainEnable;
+	ret = MSEnable;
 	break;
 
   case PPU_GSREG_TS:
+	ret = SSEnable;
+	break;
+
+  case PPU_GSREG_TMW:
+	ret = WMMainEnable;
+	break;
+
+  case PPU_GSREG_TSW:
 	ret = WMSubEnable;
 	break;
 
@@ -1612,6 +1682,27 @@ uint32 PPU_GetRegister(const unsigned id, char* const special, const uint32 spec
 
   case PPU_GSREG_CGADSUB:
 	ret = CGADSUB;
+	break;
+
+  case PPU_GSREG_BG1SC:
+  case PPU_GSREG_BG2SC:
+  case PPU_GSREG_BG3SC:
+  case PPU_GSREG_BG4SC:
+	{
+	 const unsigned w = id - PPU_GSREG_BG1SC;
+
+	 assert(w < 4);
+
+	 ret = BGSC[w];
+	}
+	break;
+
+  case PPU_GSREG_BG12NBA:
+	ret = BGNBA[0];
+	break;
+
+  case PPU_GSREG_BG34NBA:
+	ret = BGNBA[1];
 	break;
 
   case PPU_GSREG_BG1HOFS:

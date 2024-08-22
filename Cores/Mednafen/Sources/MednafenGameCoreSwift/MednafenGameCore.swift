@@ -232,7 +232,7 @@ extension MednafenGameCore: GameWithCheat {
 }
 
 extension MednafenGameCore: CoreOptional {
-    public static var options: [CoreOption] = {
+    public static var options: [CoreOption] {
         var options = [CoreOption]()
         
         let globalGroup:CoreOption = .group(.init(title: "Core",
@@ -373,87 +373,87 @@ extension MednafenGameCore: CoreOptional {
         options.append(vbGroup)
 
         return options
-    }()
+    }
     
     // MARK: Global - Video
-    static var video_blit_timesync: CoreOption = {
+    static var video_blit_timesync: CoreOption {
         .bool(.init(
             title: "Enable time synchronization(waiting) for frame blitting",
             description: "Disable to reduce latency, at the cost of potentially increased video \"juddering\", with the maximum reduction in latency being about 1 video frame's time. Will work best with emulated systems that are not very computationally expensive to emulate, combined with running on a relatively fast CPU.",
             requiresRestart: true),
               defaultValue: true)
-    }()
+    }
     
-    static var video_fs: CoreOption = {
+    static var video_fs: CoreOption {
         .bool(.init(
             title: "Fullscreen",
             description: "Enable fullscreen mode. May effect performance and scaling.",
             requiresRestart: true),
                                          defaultValue: false)
-    }()
+    }
     
-    static var video_openglOption: CoreOption = {
+    static var video_openglOption: CoreOption {
         .bool(.init(
             title: "Use OpenGL",
             description: "Experimental OpenGL mode.",
             requiresRestart: true),
                                          defaultValue: false)
-    }()
+    }
     
     // MARK: Global - CD
     // cd.image_memcach
-    static var cd_image_memcache: CoreOption = {
+    static var cd_image_memcache: CoreOption {
         .bool(.init(
             title: "Cache CD in memory",
             description: "Reads the entire CD image(s) into memory at startup(which will cause a small delay). Can help obviate emulation hiccups due to emulated CD access. May cause more harm than good on low memory systems.",
             requiresRestart: true), defaultValue: false)
-    }()
+    }
 
     // MARK: PCE
-    static var pceFastOption: CoreOption = {
+    static var pceFastOption: CoreOption {
 		.bool(.init(
             title: "PCE Fast",
             description: "Use a faster but possibly buggy PCEngine version.",
             requiresRestart: true),
                                          defaultValue: false)
-    }()
+    }
 
     // MARK: SNES
-    static var snesFastOption: CoreOption = {
+    static var snesFastOption: CoreOption {
 		.bool(.init(
             title: "SNES Fast",
             description: "Use faster but maybe more buggy SNES core (default)",
             requiresRestart: true), defaultValue: true)
-    }()
+    }
     
-    static var snesFastSpexOption: CoreOption = {
+    static var snesFastSpexOption: CoreOption {
         .bool(.init(
             title: "1-frame speculative execution",
             description: "Hack to reduce input->output video latency by 1 frame. Enabling will increase CPU usage, and may cause video glitches(such as \"jerkiness\") in some oddball games, but most commercially-released games should be fine.",
             requiresRestart: true), defaultValue: false)
-    }()
+    }
     
     // MARK: PSX
-    static var psx_h_overscan: CoreOption = {
+    static var psx_h_overscan: CoreOption {
         .bool(.init(
             title: "Overscan",
             description: "Show horizontal overscan area.",
             requiresRestart: true), defaultValue: true)
-    }()
+    }
 
-    static var psx_temporal_blur: CoreOption = {
+    static var psx_temporal_blur: CoreOption {
         .bool(.init(
             title: "Temporal Blur",
             description: "Enable video temporal blur(50/50 previous/current frame by default).",
             requiresRestart: true), defaultValue: false)
-    }()
+    }
 
-    static var psx_temporal_blur_color: CoreOption = {
+    static var psx_temporal_blur_color: CoreOption {
         .bool(.init(
             title: "Temporal Color",
             description: "Accumulate color data rather than discarding it. Also requires Temporal Blur.",
             requiresRestart: true), defaultValue: false)
-    }()
+    }
 
             /*
              Enable specified special video scaler.
@@ -491,7 +491,7 @@ extension MednafenGameCore: CoreOptional {
 
              nny4x - Nearest-neighbor 4x, y axis only
              */
-    static var psx_video_scaler: CoreOption = {
+    static var psx_video_scaler: CoreOption {
         .enumeration(.init(title: "Enable specified special video scaler",
                            description: " The destination rectangle is NOT altered by this setting, so if you have xscale and yscale set to \"2\", and try to use a 3x scaling filter like hq3x, the image is not going to look that great. The nearest-neighbor scalers are intended for use with bilinear interpolation enabled, at high resolutions(such as 1280x1024; nn2x(or nny2x) + bilinear interpolation + fullscreen stretching at this resolution looks quite nice).",
                            requiresRestart: true),
@@ -514,7 +514,7 @@ extension MednafenGameCore: CoreOptional {
                         .init(title: "nny4x", description: "Nearest-neighbor 2x, y axis only", value: 15),
                      ],
                      defaultValue: 0)
-    }()
+    }
             /*
              0 - Disabled
 
@@ -530,7 +530,7 @@ extension MednafenGameCore: CoreOptional {
              aspect_mult2 - Aspect Preserve + Integer Multiple-of-2 Scale
              Full-screen stretch, same as "aspect_int", but rounds down to the nearest multiple of 2.
              */
-    static var psx_stretch: CoreOption = {
+    static var psx_stretch: CoreOption {
         .enumeration(.init(title: "Stretch to fill screen",
                            description: "",
                            requiresRestart: true),
@@ -542,19 +542,19 @@ extension MednafenGameCore: CoreOptional {
                         .init(title: "cs1ram16", description: "Aspect Preserve + Integer Multiple-of-2 Scale Full-screen stretch, same as \"aspect_int\", but rounds down to the nearest multiple of 2.", value: 4),
                      ],
                      defaultValue: 0)
-    }()
+    }
 
     // MARK: SS
-    static var ss_h_overscan: CoreOption = {
+    static var ss_h_overscan: CoreOption {
         .bool(.init(
             title: "Overscan",
             description: "Show horizontal overscan area.",
             requiresRestart: true), defaultValue: true)
-    }()
+    }
     
     // ss.cart.auto_default
     // none, backup*, extram1, extram4, cs1ram16
-    static var ss_cart_autodefault: CoreOption = {
+    static var ss_cart_autodefault: CoreOption {
         .enumeration(.init(title: "Default cart",
                            description: "Default expansion cart when autodetection fails.",
                            requiresRestart: true),
@@ -566,10 +566,10 @@ extension MednafenGameCore: CoreOptional {
                         .init(title: "cs1ram16", description: "16MiB RAM mapped in A-bus CS1", value: 4),
                      ],
                      defaultValue: 1)
-    }()
+    }
 
     // ss.region_default
-    static var ss_region_default: CoreOption = {
+    static var ss_region_default: CoreOption {
         .enumeration(.init(title: "Default region",
                            description: "Used if region autodetection fails.",
                            requiresRestart: true),
@@ -584,22 +584,22 @@ extension MednafenGameCore: CoreOptional {
                         .init(title: "la", description: "Latin Ameica", value: 7),
                      ],
                      defaultValue: 0)
-    }()
+    }
     
     // MARK: VB
-    static var vb_instant_display_hack: CoreOption = {
+    static var vb_instant_display_hack: CoreOption {
         .bool(.init(
             title: "Display latency reduction hack",
             description: "Reduces latency in games by displaying the framebuffer 20ms earlier. This hack has some potential of causing graphical glitches, so it is disabled by default.",
             requiresRestart: true), defaultValue: false)
-    }()
+    }
     
-    static var vb_sidebyside: CoreOption = {
+    static var vb_sidebyside: CoreOption {
         .bool(.init(
             title: "Side by side mode",
             description: "The left-eye image is displayed on the left, and the right-eye image is displayed on the right.",
             requiresRestart: true), defaultValue: false)
-    }()
+    }
 }
 
 @objc public extension MednafenGameCore {

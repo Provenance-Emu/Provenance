@@ -349,7 +349,7 @@ const IDIISG IODevice_JPKeyboard_IDII =
  /* 0x4B */ IDIIS_Button("l", "L", -1),
  /* 0x4C */ IDIIS_Button("semicolon", "Semicolon ;", -1),
  /* 0x4D */ IDIIS_Button("p", "P", -1),
- /* 0x4E */ IDIIS_Button("Minus", "Minus -", -1),
+ /* 0x4E */ IDIIS_Button("minus", "Minus -", -1),
  /* 0x4F */ IDIIS_Padding<1>(),
 
  /* 0x50 */ IDIIS_Padding<1>(),

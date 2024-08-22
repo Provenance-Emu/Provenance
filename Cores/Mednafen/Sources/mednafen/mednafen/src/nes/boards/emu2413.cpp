@@ -138,7 +138,7 @@ static void makeAdjustTable (OPLL * opll)
 
   opll->AR_ADJUST_TABLE[0] = (1 << EG_BITS);
   for (i = 1; i < 128; i++)
-    opll->AR_ADJUST_TABLE[i] = (e_uint16) ((double) (1 << EG_BITS) - 1 - (1 << EG_BITS) * log ((float)i) / log ((float)128));
+    opll->AR_ADJUST_TABLE[i] = (e_uint16) ((double) (1 << EG_BITS) - 1 - (1 << EG_BITS) * log (i) / log (128));
 }
 
 

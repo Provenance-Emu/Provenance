@@ -74,6 +74,15 @@ void FPS_Init(const unsigned fps_pos, const unsigned fps_scale, const unsigned f
  FPSSurface = new MDFN_Surface(NULL, FPSRect.w, FPSRect.h, FPSRect.w, MDFN_PixelFormat::ABGR32_8888);
 }
 
+void FPS_Kill(void)
+{
+ if(FPSSurface)
+ {
+  delete FPSSurface;
+  FPSSurface = NULL;
+ }
+}
+
 void FPS_IncVirtual(int64 vcycles)
 {
  //inc_vcycles = vcycles;

@@ -53,12 +53,10 @@ bool SPCReader::TestMagic(Stream* fp)
 static std::string GrabString(Stream* fp, size_t len)
 {
  std::string ret;
- size_t null_pos;
 
- ret.resize(len);
- fp->read(&ret[0], len);
-
- null_pos = ret.find('\0');	// ANDDYYYYYYYYY
+ fp->get_string(&ret, len);
+ //
+ const size_t null_pos = ret.find('\0');	// ANDDYYYYYYYYY
  if(null_pos != std::string::npos)
   ret.resize(null_pos);
 

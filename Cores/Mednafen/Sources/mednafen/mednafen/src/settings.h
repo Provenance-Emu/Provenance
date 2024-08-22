@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* settings.h:
-**  Copyright (C) 2005-2016 Mednafen Team
+**  Copyright (C) 2005-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -27,33 +27,58 @@
 namespace Mednafen
 {
 
-bool MDFN_LoadSettings(const std::string& path, bool override = false);
-void MDFN_MergeSettings(const MDFNSetting *);
-void MDFN_MergeSettings(const std::vector<MDFNSetting> &);
-void MDFN_FinalizeSettings(void);
-void MDFN_SaveSettings(const std::string& path);
+class SettingsManager
+{
+ public:
 
-void MDFN_ClearAllOverrideSettings(void);
-void MDFN_KillSettings(void);	// Free any resources acquired.
+ SettingsManager() MDFN_COLD;
+ ~SettingsManager() MDFN_COLD;
 
-// This should assert() or something if the setting isn't found, since it would
-// be a totally tubular error!
-uint64 MDFN_GetSettingUI(const char *name);
-int64 MDFN_GetSettingI(const char *name);
-double MDFN_GetSettingF(const char *name);
-bool MDFN_GetSettingB(const char *name);
-std::string MDFN_GetSettingS(const char *name);
+ void Add(const MDFNSetting&);
+ void Merge(const MDFNSetting *);
 
-std::vector<uint64> MDFN_GetSettingMultiUI(const char *name);
-std::vector<int64> MDFN_GetSettingMultiI(const char *name);
+ void Finalize(void);
 
-static INLINE uint64 MDFN_GetSettingUI(const std::string& name) { return MDFN_GetSettingUI(name.c_str()); }
-static INLINE int64 MDFN_GetSettingI(const std::string& name) { return MDFN_GetSettingI(name.c_str()); }
-static INLINE double MDFN_GetSettingF(const std::string& name) { return MDFN_GetSettingF(name.c_str()); }
-static INLINE bool MDFN_GetSettingB(const std::string& name) { return MDFN_GetSettingB(name.c_str()); }
-static INLINE std::string MDFN_GetSettingS(const std::string& name) { return MDFN_GetSettingS(name.c_str()); }
-static INLINE std::vector<uint64> MDFN_GetSettingMultiUI(const std::string& name) { return MDFN_GetSettingMultiUI(name.c_str()); }
-static INLINE std::vector<int64> MDFN_GetSettingMultiI(const std::string& name) { return MDFN_GetSettingMultiI(name.c_str()); }
+ bool Load(const std::string& path, unsigned override = 0);
+ void Save(const std::string& path);
+ void SaveCompact(Stream* s);
+
+ void ClearOverridesAbove(unsigned clear_above = 0);
+
+ void Kill();	// Free any resources acquired.
+
+ uint64 GetUI(const char *name);
+ int64 GetI(const char *name);
+ double GetF(const char *name);
+ bool GetB(const char *name);
+ std::string GetS(const char *name);
+
+ std::vector<uint64> GetMultiUI(const char *name);
+ std::vector<int64> GetMultiI(const char *name);
+ uint64 GetMultiM(const char *name);
+
+ bool Set(const char *name, const char *value, unsigned override = 0);
+ bool SetB(const char *name, bool value);
+ bool SetUI(const char *name, uint64 value);
+ bool SetI(const char *name, int64 value);
+
+ void DumpDef(const char *path) MDFN_COLD;
+
+ const std::vector<MDFNCS>* GetSettings(void);
+ std::string GetDefault(const char* name);
+
+ private:
+ void ParseSettingLine(char* ls, const char* lb, size_t* valid_count, size_t* unknown_count, unsigned override);
+ //void ValidateSetting(const char *value, const MDFNSetting *setting)
+ MDFNCS *FindSetting(const char* name, bool dont_freak_out_on_fail = false);
+ INLINE void MergeSettingSub(const MDFNSetting& setting);
+
+ std::vector<MDFNCS> CurrentSettings;
+
+ bool SettingsFinalized = false;
+
+ std::vector<char*> UnknownSettings;
+};
 
 }
 #endif

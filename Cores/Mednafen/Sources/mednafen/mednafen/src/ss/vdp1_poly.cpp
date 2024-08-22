@@ -78,9 +78,10 @@ static int32 PolygonResumeBase(const uint16* cmd_data)
  const bool SPD_Opaque = (((mode >> 3) & 0x7) < 0x6) ? ((int32)(TexFetchTab[(mode >> 3) & 0x1F](0xFFFFFFFF)) >= 0) : true;
  auto* const fnptr = LineFuncTab[(bool)(FBCR & FBCR_DIE)][(TVMR & TVMR_8BPP) ? ((TVMR & TVMR_ROTATE) ? 2 : 1) : 0][((mode >> 6) & 0x1E) | SPD_Opaque /*(mode >> 6) & 0x1F*/][(mode & 0x8000) ? 8 : (mode & 0x7)];
  //
+ // Don't merge e0 and e1 into a single array, keeping them separate is a workaround for gcc bug #113255
  //
- //
- EdgeStepper e[2] = { PrimData.e[0], PrimData.e[1] };
+ EdgeStepper e0 = PrimData.e[0];
+ EdgeStepper e1 = PrimData.e[1];
  int32 iter = PrimData.iter;
  int32 ret = 0;
  //
@@ -97,8 +98,8 @@ static int32 PolygonResumeBase(const uint16* cmd_data)
   {
    //printf("x=0x%03x y=0x%03x x_error=0x%04x y_error=0x%04x --- x_error_inc=0x%04x, x_error_adj=0x%04x --- y_error_inc=0x%04x, y_error_adj=0x%04x\n", e[0].x & 0x7FF, e[0].y & 0x7FF, (uint32)e[0].x_error >> (32 - 13), (uint32)e[0].y_error >> (32 - 13), (uint32)e[0].x_error_inc >> (32 - 13), (uint32)e[0].x_error_adj >> (32 - 13), (uint32)e[0].y_error_inc >> (32 - 13), (uint32)e[0].y_error_adj >> (32 - 13));
 
-   e[0].GetVertex<gourauden>(&LineData.p[0]);
-   e[1].GetVertex<gourauden>(&LineData.p[1]);
+   e0.GetVertex<gourauden>(&LineData.p[0]);
+   e1.GetVertex<gourauden>(&LineData.p[1]);
 
 #if 0
    printf("(Edge0: x=%u y=%u, d_error=0x%04x x_error=0x%04x y_error=0x%04x) ", LineData.p[0].x, LineData.p[0].y, (e[0].d_error + e[0].d_error_inc) >> (32 - 13), (e[0].x_error + e[0].x_error_inc) >> (32 - 13), (e[0].y_error + e[0].y_error_inc) >> (32 - 13));
@@ -116,14 +117,14 @@ static int32 PolygonResumeBase(const uint16* cmd_data)
      break;
    }
 
-   e[0].Step<gourauden>();
-   e[1].Step<gourauden>();
+   e0.Step<gourauden>();
+   e1.Step<gourauden>();
   } while(MDFN_LIKELY(--iter >= 0 && ret < VDP1_SuspendResumeThreshold));
  }
  //
  //
- PrimData.e[0] = e[0];
- PrimData.e[1] = e[1];
+ PrimData.e[0] = e0;
+ PrimData.e[1] = e1;
  PrimData.iter = iter;
 
  return ret;

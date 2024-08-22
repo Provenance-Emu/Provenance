@@ -15,6 +15,7 @@
 /include/minilzo/
 /include/stamp-h1
 /include/trio/
+/include/zstd/
 /intl/Makefile
 /po/Makefile
 /po/Makefile.in

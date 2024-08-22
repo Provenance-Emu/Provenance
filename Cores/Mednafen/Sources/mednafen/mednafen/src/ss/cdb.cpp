@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* cdb.cpp - CD Block Emulation
-**  Copyright (C) 2016-2020 Mednafen Team
+**  Copyright (C) 2016-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -28,7 +28,8 @@
 		Seek delay must be high enough, or glitchy batmobile.
 
 	BIOS CD-DA Player
-		Play and Seek command nuances.
+		Play and Seek command nuances; test versions for both Japan
+		and North America.
 
 	Break Point
 		Aborts out to BIOS CD player screen if CDB ever reports
@@ -43,6 +44,9 @@
 		buffers being full, and the CDB fails to quickly go into BUSY
 		state(due to seek start) immediately after a Reset Selector
 		command frees up buffers.
+
+	Gremlin Interactive Demo Disc
+		Needs commands during disc authentication to be rejected.
 
 	Hop Step Idol
 		Similar issue to Break Point, but fails more spectacularly.
@@ -85,6 +89,20 @@
 
 	World Cup France '98
 		Same issues as Dragon Force II
+
+
+********************************************************************************
+ Other interesting games:
+
+	Assault Suit Leynos 2
+		Reportedly has unique CD handling code; also uses Change Directory
+		command fairly frequently.
+
+	Sega Ages: After Burner 2
+	Sega Ages: Fantasy Zone
+	Sega Ages: OutRun
+	Sega Ages: Space Harrier
+		Use Put Sector Data command.
 */
 
 // TODO: Respect auth type with COMMAND_AUTH_DEVICE.
@@ -103,8 +121,6 @@
 // TODO: Look into weird issue where WAIT status for Change Dir might be set to 1 slightly after CMOK IRQ is triggered...
 
 // TODO: Test state reset on Init with SW reset.
-
-// TODO: Scan command.
 
 // TODO: assert()s
 
@@ -130,6 +146,8 @@ namespace MDFN_IEN_SS
 {
 
 static void CheckBufPauseResume(void);
+static void StartSeek(const uint32 cmd_target, const uint32 cur_play_end = 0x800000, const uint32 cur_play_repeat = 0, const uint32 play_end_irq_type = 0, const bool no_pickup_change = false);
+static void ClearPendingSec(void);
 
 enum
 {
@@ -600,6 +618,9 @@ static uint32 PlayEndIRQType;
 static uint32 PlayCmdStartPos, PlayCmdEndPos;
 static uint8 PlayCmdRepCnt;
 
+static int8 ScanMode;
+static uint8 ScanCounter;
+
 enum : int { CDDABuf_PrefillCount = 4 };
 enum : int { CDDABuf_MaxCount = 4 + 588 + 4 };
 static uint16 CDDABuf[CDDABuf_MaxCount][2];
@@ -897,6 +918,9 @@ static struct FileInfoS
 } FileInfo[256];
 static_assert(sizeof(FileInfoS) == 12 && sizeof(FileInfo) == 12 * 256, "FileInfo wrong size!");
 static bool FileInfoValid;
+static uint8 FileInfoValidCount;	// 0 ... 254
+static uint32 FileInfoOffs;		// 2 ... whatever
+static bool FileInfoMore;
 
 enum
 {
@@ -908,42 +932,63 @@ enum
  FATTR_XA_DIR = 0x80
 };
 
-
 static FileInfoS RootDirInfo;
 static bool RootDirInfoValid;
 
 static struct
 {
+ uint32 Phase;
  bool Active;
  bool DoAuth;
  bool Abort;
+ //
+ //
  uint8 pnum;
 
- uint32 CurDirFAD;
+ uint32 fioffs;
+ uint32 fiaoffs;
 
- uint8 FileInfoValidCount;	// 0 ... 254
- uint32 FileInfoOffs;		// 2 ... whatever
- uint32 FileInfoOnDiscCount;	// 0 ... infinities
-
- uint32 Phase;
-
- uint8 pbuf[2048];
+ uint8 pbuf[2048];	// Sector buffer.
  uint32 pbuf_offs;
  uint32 pbuf_read_i;
 
- uint32 total_counter;
- uint32 total_max;
+ uint32 total_counter;	// Byte counter
+ uint32 total_max;	// Byte size
 
- uint8 record[256];
+ uint8 record[256];	// Temporary buffer.
  uint32 record_counter;
-
- uint32 finfo_offs;
 } FLS;
+
+static int FLS_CheckSanity(void)
+{
+ if(FLS.pnum >= 0x18)
+  return -__LINE__;
+
+ if(FLS.pbuf_offs >= sizeof(FLS.pbuf))
+  return -__LINE__;
+
+ // overflows related to FLS.record_counter, FLS.pbuf_read_i, and FLS.record[0] are prevented by masks in the emulation code.
+
+ return true;
+}
+
+static INLINE void FLS_DevBuildAssertSanity(void)
+{
+#ifdef MDFN_ENABLE_DEV_BUILD
+ int s = FLS_CheckSanity();
+
+ if(s != 1)
+ {
+  fprintf(stderr, "FLS_CheckSanity() failed: %d\n", s);
+  abort();
+ }
+#endif
+}
 
 
 enum : int { FLSPhaseBias = __COUNTER__ + 1 };
 
-#define FLS_PROLOGUE	 switch(FLS.Phase + FLSPhaseBias) { for(;;) { default: case __COUNTER__: ;
+#define FLS_PROLOGUE	 switch(FLS.Phase + FLSPhaseBias) { for(;;) {
 #define FLS_EPILOGUE  }	} FLSGetOut:;
 
 #define FLS_YIELD	   {							\
@@ -972,7 +1017,7 @@ enum : int { FLSPhaseBias = __COUNTER__ + 1 };
 	   CheckBufPauseResume();						\
 	  }								
 
-#define FLS_READ(buffer, count)						\
+#define FLS_READ(buffer, boffs, bmask, count)		\
 	for(FLS.pbuf_read_i = 0; FLS.pbuf_read_i < (count); FLS.pbuf_read_i++)	\
 	{								\
 	 if(FLS.pbuf_offs == 0)						\
@@ -980,7 +1025,7 @@ enum : int { FLSPhaseBias = __COUNTER__ + 1 };
           FLS_WAIT_GRAB_BUF;						\
 	 }								\
 	 if((buffer) != NULL)						\
-	  (buffer)[FLS.pbuf_read_i] = FLS.pbuf[FLS.pbuf_offs];		\
+	  (buffer)[((boffs) + FLS.pbuf_read_i) & (bmask)] = FLS.pbuf[FLS.pbuf_offs];	\
 	 FLS.pbuf_offs = (FLS.pbuf_offs + 1) % 2048;			\
 	 FLS.total_counter++;						\
 	}
@@ -1015,12 +1060,12 @@ static void ReadRecord(FileInfoS* fi, const uint8* rr)
  //printf("Meow: fad=%08x size=%08x attr=%02x us=%02x gs=%02x fnum=%02x %s\n", fi->fad(), fi->size(), fi->attr, fi->unit_size, fi->gap_size, fi->fnum, &FLS.record[33]);
 }
 
-static void ClearPendingSec(void);
-
 static bool FLS_Run(void)
 {
  bool ret = false;
  //printf("%d, %d\n", Partitions[FLS.pnum].Count, FreeBufferCount);
+
+ FLS_DevBuildAssertSanity();
 
  if(FLS.Abort)
  {
@@ -1034,75 +1079,156 @@ static bool FLS_Run(void)
 
  //
  FLS_PROLOGUE;
- //
- if(FLS.Active)
  {
+  default: FLS_WAIT_UNTIL_COND(FLS.Active);
+
   if(FLS.DoAuth)
   {
-   RootDirInfoValid = false;
-   AuthDiscType = 0x04; // FIXME: //0x02;
+   SetCDDeviceConn(FLS.pnum);
+   Filter_SetTrueConn(FLS.pnum, FLS.pnum);
+   Filter_SetFalseConn(FLS.pnum, 0xFF);
+   Filter_SetRange(FLS.pnum, 0, 0);
+   Filters[FLS.pnum].Mode = 0;
+   //
+   AuthDiscType = 0xFF;
+   StartSeek(0x800000 | 0x96, 0);
+   //
+   //
+   static const char ssid[16] = { 'S', 'E', 'G', 'A', ' ', 'S', 'E', 'G', 'A', 'S', 'A', 'T', 'U', 'R', 'N', ' ' };
 
-   for(;;)
+   FLS_WAIT_GRAB_BUF;
+   AuthDiscType = 0x00;
+
+   if(!memcmp(FLS.pbuf, ssid, 16))
    {
-    static const char stdid[5] = { 'C', 'D', '0', '0', '1' };
-    FLS_WAIT_GRAB_BUF;
-
-    if(memcmp(FLS.pbuf + 1, stdid, 5) || FLS.pbuf[0] == 0xFF)
-     break;
-    else if(FLS.pbuf[0] == 0x01)	// PVD
-    {
-     //printf("MEOW MEOW:");
-     //for(unsigned i = 0; i < 64; i++)
-     // printf("%02x ", FLS.pbuf[156 + i]);
-     //printf("\n");
-
-     ReadRecord(&RootDirInfo, &FLS.pbuf[156]);
-     RootDirInfoValid = true;
-     break;
-    }
+    // TODO: Simulate seek delay.
+    //StartSeek(0x800000 | 333000);
+    //FLS_WAIT_GRAB_BUF;
+    //FLS_WAIT_GRAB_BUF;
+    //
+    AuthDiscType = 0x04;
    }
+   else
+    AuthDiscType = 0x02;
+
    SetCDDeviceConn(0xFF);
+   StartSeek(0x800000 | 0x96);
   }
   else
   {
-   FileInfoValid = false;
-   //
-   //
-   FLS.total_counter = 0;
-   FLS.pbuf_offs = 0;
-   FLS.FileInfoValidCount = 0;
-   FLS.record_counter = 0;
-   FLS.finfo_offs = 0;
+   SetCDDeviceConn(FLS.pnum);
+   Filter_SetTrueConn(FLS.pnum, FLS.pnum);
+   Filter_SetFalseConn(FLS.pnum, 0xFF);
 
-   //printf("Start\n");
-   while(FLS.total_counter < FLS.total_max)
+   //printf("Hrm: %d\n", RootDirInfoValid);
+   if(!RootDirInfoValid)
    {
-    memset(FLS.record, 0, sizeof(FLS.record));
+    Filter_SetRange(FLS.pnum, 0, 0);
+    Filters[FLS.pnum].Mode = 0;
 
-    FLS_READ(&FLS.record[0], 1);
-    if(!FLS.record[0])
-     continue;
-    FLS_READ(&FLS.record[1], (unsigned)(FLS.record[0] - 1));
+    StartSeek(0x800000 | 0xA6, 0);
 
-    if(FLS.finfo_offs < 256)
+    for(;;)
     {
-     if(FLS.record_counter < 2 || FLS.record_counter >= FLS.FileInfoOffs)
+     static const char stdid[5] = { 'C', 'D', '0', '0', '1' };
+     FLS_WAIT_GRAB_BUF;
+
+     if(memcmp(FLS.pbuf + 1, stdid, 5) || FLS.pbuf[0] == 0xFF)
+      break;
+     else if(FLS.pbuf[0] == 0x01)	// PVD
      {
-      ReadRecord(&FileInfo[FLS.finfo_offs], FLS.record);
+      //printf("MEOW MEOW:");
+      //for(unsigned i = 0; i < 64; i++)
+      // printf("%02x ", FLS.pbuf[156 + i]);
+      //printf("\n");
 
-      FLS.finfo_offs++;
+      //printf("hrm2\n");
+      ReadRecord(&RootDirInfo, &FLS.pbuf[156]);
+      RootDirInfoValid = true;
+      break;
+     }
+    }
+   }
+   //
+   //
+   //
+   if(RootDirInfoValid)
+   {
+    {
+     const FileInfoS* fi;
 
-      if(FLS.record_counter >= 2)
-       FLS.FileInfoValidCount++;
+     if(FLS.fiaoffs >= 256)
+      fi = &RootDirInfo;
+     else
+      fi = &FileInfo[FLS.fiaoffs];
+
+     Partition_Clear(FLS.pnum);
+
+     Filter_SetRange(FLS.pnum, fi->fad(), (fi->size() + 2047) >> 11);	// TODO: maybe remove + 2047, actual Saturn drive seems buggy...
+     Filters[FLS.pnum].Mode = FilterS::MODE_SEL_FADR;
+     Filters[FLS.pnum].File = fi->fnum;
+
+     Filters[FLS.pnum].Channel = 0;
+     Filters[FLS.pnum].SubMode = 0;
+     Filters[FLS.pnum].SubModeMask = 0;
+     Filters[FLS.pnum].CInfo = 0;
+     Filters[FLS.pnum].CInfoMask = 0;
+
+     FLS.total_max = fi->size();
+
+     //printf("YAYAYA: %08x\n", fi->fad());
+     StartSeek(0x800000 | fi->fad(), 0);
+    }
+    //
+    //
+    //
+    FLS.total_counter = 0;
+    FLS.pbuf_offs = 0;
+    FLS.record_counter = 0;
+
+    FileInfoValid = false;
+
+    //printf("Start\n");
+    while(FLS.total_counter < FLS.total_max)
+    {
+     memset(FLS.record, 0, sizeof(FLS.record));
+
+     FLS_READ(FLS.record, 0, 0xFF, 1);
+     if(!FLS.record[0])
+      continue;
+     FLS_READ(FLS.record, 1, 0xFF, (unsigned)(FLS.record[0] - 1));
+
+     if(FLS.record_counter < 2)
+      ReadRecord(&FileInfo[FLS.record_counter & 0xFF], FLS.record);
+     else if(FLS.record_counter >= FLS.fioffs)
+     {
+      if(FLS.record_counter == FLS.fioffs)
+      {
+       FileInfoOffs = FLS.record_counter;
+       FileInfoValidCount = 0;
+       FileInfoMore = false;
+      }
+      else if(FileInfoValidCount == 0xFE)
+      {
+       FileInfoMore = true;
+       break;
+      }
+
+      ReadRecord(&FileInfo[(2 + FileInfoValidCount) & 0xFF], FLS.record);
+      FileInfoValidCount++;
      }
      FLS.record_counter++;
     }
-   }
 
-   FLS.FileInfoOnDiscCount = FLS.record_counter;
-   //
-   //
-   FileInfoValid = true;
+    if(FLS.record_counter <= 2)
+    {
+     FileInfoOffs = 0;
+     FileInfoValidCount = 0;
+     FileInfoMore = false;
+    }
+
+    FileInfoValid = true;
+   }
   }
 
   Partition_Clear(FLS.pnum);	// Place before Abort:;
@@ -1122,14 +1248,83 @@ static bool FLS_Run(void)
   //
   //
   //
-
   ret = true;
  }
- FLS_YIELD;
- //
  FLS_EPILOGUE;
 
+ FLS_DevBuildAssertSanity();
+
  return ret;
+}
+
+static int DT_CheckSanity(void)
+{
+ if(DT.FNum >= 0x18)
+  return -__LINE__;
+
+ if(DT.FIFO_WP >= (sizeof(DT.FIFO) / sizeof(DT.FIFO[0])))
+  return -__LINE__;
+
+ if(DT.FIFO_RP >= (sizeof(DT.FIFO) / sizeof(DT.FIFO[0])))
+  return -__LINE__;
+
+ if(DT.Active && DT.InBufCounter > 0)
+ {
+  if(DT.BufCount >= (NumBuffers + 1))
+   return -__LINE__;
+
+  if(DT.CurBufIndex >= NumBuffers)
+   return -__LINE__;
+  //
+  if(DT.Writing)
+  {
+   for(unsigned i = 0; i < DT.BufCount; i++)
+   {
+    if(DT.BufList[i] >= NumBuffers)
+     return -__LINE__;
+   }
+  }
+  //
+  const uint8 t = DT.BufList[DT.CurBufIndex];
+  uint32 mbs = 0;
+
+  if(t < NumBuffers)
+   mbs = sizeof(Buffers->Data);
+  else if(t == 0xF0)
+   mbs = sizeof(FileInfo);
+  else if(t == 0xFD)
+   mbs = sizeof(SubCodeRWBuf);
+  else if(t == 0xFE)
+   mbs = sizeof(SubCodeQBuf);
+  else if(t == 0xFF)
+   mbs = sizeof(TOC_Buffer);
+  else
+   return -__LINE__;
+
+  if(DT.InBufOffs >= (mbs / 2))
+   return -__LINE__;
+
+  if(DT.InBufCounter > (mbs / 2))
+   return -__LINE__;
+
+  if(((uint64)DT.InBufOffs + DT.InBufCounter) > (mbs / 2))
+   return -__LINE__;
+ }
+
+ return true;
+}
+
+static INLINE void DT_DevBuildAssertSanity(void)
+{
+#ifdef MDFN_ENABLE_DEV_BUILD
+ int s = DT_CheckSanity();
+
+ if(s != 1)
+ {
+  fprintf(stderr, "DT_CheckSanity() failed: %d\n", s);
+  abort();
+ }
+#endif
 }
 
 //
@@ -1277,6 +1472,7 @@ static void SWReset(void)
  //
  memset(&FLS, 0, sizeof(FLS));
  FileInfoValid = false;
+ RootDirInfoValid = false;
  FLS.Phase = 0;
 }
 
@@ -1405,6 +1601,9 @@ void CDB_Reset(bool powering_up)
   PlayCmdStartPos = 0;
   PlayCmdEndPos = 0;
   PlayCmdRepCnt = 0;
+
+  ScanMode = -1;
+  ScanCounter = 0;
 
   memset(CDDABuf, 0x00, sizeof(CDDABuf));
   CDDABuf_RP = 0;
@@ -1751,13 +1950,27 @@ static void SeekStart2(int delay_sub = 0)
  CurPosInfo.repcount = PlayRepeatCounter & 0xF;
  DrivePhase = DRIVEPHASE_SEEK_START3;
 
- Cur_CDIF->HintReadSector(CurPosInfo.fad);
+ Cur_CDIF->HintReadSector(CurPosInfo.fad - 150);
 
  DriveCounter = (int64)(256000 - delay_sub) << 32;
  SeekIndexPhase = 0;
 }
 
-static void StartSeek(const uint32 cmd_target, const bool no_pickup_change = false)
+static void ForceCompletePendingSeekStartup(void)
+{
+ // Don't interrupt an earlier seek's startup.
+ // TODO: Test to see if we should emulate it differently(e.g. giving an error, or delaying
+ //       command execution).
+ if(DrivePhase == DRIVEPHASE_SEEK_START1)
+ {
+  SeekStart1();
+  SeekStart2();
+ }
+ else if(DrivePhase == DRIVEPHASE_SEEK_START2)
+  SeekStart2();
+}
+
+static void StartSeek(const uint32 cmd_target, const uint32 cur_play_end, const uint32 cur_play_repeat, const uint32 play_end_irq_type, const bool no_pickup_change)
 {
  if(!Cur_CDIF)
  {
@@ -1765,21 +1978,66 @@ static void StartSeek(const uint32 cmd_target, const bool no_pickup_change = fal
   return;
  }
 
- CurPlayStart = cmd_target;
+ ForceCompletePendingSeekStartup();
+ //
+ //
+ //
+ PlayRepeatCounter = 0;
 
+ if(!no_pickup_change)
+  ClearPendingSec();
+ //
+ //
+ CurPlayStart = cmd_target;
+ CurPlayEnd = cur_play_end;
+ CurPlayRepeat = cur_play_repeat;
+ PlayEndIRQType = play_end_irq_type;
+ //
+ //
  if(no_pickup_change)
  {
-  if(DrivePhase == DRIVEPHASE_PLAY)
+  if(DrivePhase == DRIVEPHASE_PLAY && ScanMode < 0)
   {
    // Maybe stop scanning?  or before the if(no_pickup_change)...
    return;
   }
  }
 
+ ScanMode = -1;
+
  CurPosInfo.status = STATUS_BUSY;
  DrivePhase = no_pickup_change ? DRIVEPHASE_SEEK_START2 : DRIVEPHASE_SEEK_START1;
  PeriodicIdleCounter = PeriodicIdleCounter_Reload;
  DriveCounter = (int64)SeekCPIUpdateDelay << 32;
+}
+
+static void StartScan(bool mode)
+{
+ if(!Cur_CDIF)
+ {
+  SS_DBG(SS_DBG_WARNING | SS_DBG_CDB, "[CDB] [BUG] StartScan() called when no disc present or tray open.\n");
+  return;
+ }
+
+ ForceCompletePendingSeekStartup();
+ //
+ //
+ //
+ ClearPendingSec();
+ PlaySectorProcessed = false;
+
+ ScanMode = mode;
+ ScanCounter = 0;
+
+ CurPosInfo.status = STATUS_BUSY;
+ CurPlayRepeat = 0;
+ PeriodicIdleCounter = PeriodicIdleCounter_Reload;
+
+ if(DrivePhase != DRIVEPHASE_PLAY)
+ {
+  DrivePhase = DRIVEPHASE_SEEK_START2;
+  DriveCounter = (int64)SeekCPIUpdateDelay << 32;
+ }
 }
 
 static bool CheckEndMet(void)
@@ -1839,6 +2097,29 @@ static void CheckBufPauseResume(void)
  }
 }
 
+template<unsigned sample_shift = 0>
+static INLINE void BufferCDDA(const uint8* inbuf)
+{
+ if(!CDDABuf_Count)
+ {
+  for(int i = 0; i < CDDABuf_PrefillCount; i++)
+  {
+   CDDABuf[CDDABuf_WP][0] = 0;
+   CDDABuf[CDDABuf_WP][1] = 0;
+   CDDABuf_WP = (CDDABuf_WP + 1) % CDDABuf_MaxCount;
+   CDDABuf_Count++;
+  }
+ }
+
+ for(int i = 0; i < 588 && CDDABuf_Count < CDDABuf_MaxCount; i++)
+ {
+  CDDABuf[CDDABuf_WP][0] = (int16)MDFN_de16lsb(&inbuf[i * 4 + 0]) >> sample_shift;
+  CDDABuf[CDDABuf_WP][1] = (int16)MDFN_de16lsb(&inbuf[i * 4 + 2]) >> sample_shift;
+  CDDABuf_WP = (CDDABuf_WP + 1) % CDDABuf_MaxCount;
+  CDDABuf_Count++;
+ }
+}
+
 static void Drive_Run(int64 clocks)
 {
   DriveCounter -= clocks;
@@ -1892,11 +2173,6 @@ static void Drive_Run(int64 clocks)
 	//
 	//
 	//
-	ClearPendingSec();
-	//
-	PlayEndIRQType = 0;
-	CurPlayEnd = 0x800000;
-	CurPlayRepeat = 0;
 	//
         StartSeek(0x800096);
 	break;
@@ -2017,7 +2293,22 @@ static void Drive_Run(int64 clocks)
     case DRIVEPHASE_PLAY:
 	if(SecPreBuf_In > 0)
 	{
-	 if(SubQBuf_Safe[0] & 0x40)
+	 if(ScanMode >= 0)
+	 {
+	  if(!(SubQBuf_Safe[0] & 0x40))
+	   BufferCDDA<2>(SecPreBuf);
+
+	  CurPosInfo.is_cdrom = false;
+	  SecPreBuf_In = false;
+	 }
+	 else if(!(SubQBuf_Safe[0] & 0x40))
+	 {
+	  BufferCDDA(SecPreBuf);
+
+	  CurPosInfo.is_cdrom = false;
+	  SecPreBuf_In = false;
+	 }
+	 else
 	 {
 	  CurPosInfo.is_cdrom = true;
 
@@ -2025,46 +2316,45 @@ static void Drive_Run(int64 clocks)
 
 	  if(FreeBufferCount > 0)
           {
-	   const uint8 bfi = Buffer_Allocate(false);
+	   if(AuthDiscType)
+	   {
+	    const uint8 bfi = Buffer_Allocate(false);
 
-	   memcpy(Buffers[bfi].Data, SecPreBuf, 2352);
+	    memcpy(Buffers[bfi].Data, SecPreBuf, 2352);
 
+	    LastBufDest = FilterBuf(CDDevConn, bfi);
+	   }
+	   //
 	   SecPreBuf_In = false;
-           LastBufDest = FilterBuf(CDDevConn, bfi);
 	   TriggerIRQ(HIRQ_CSCT);
 	   if(FreeBufferCount == 0)
 	    TriggerIRQ(HIRQ_BFUL);
           }
 	 }
-	 else
-	 {
-	  CurPosInfo.is_cdrom = false;
-	  if(!CDDABuf_Count)
-	  {
-	   for(int i = 0; i < CDDABuf_PrefillCount; i++)
-	   {
-	    CDDABuf[CDDABuf_WP][0] = 0;
-	    CDDABuf[CDDABuf_WP][1] = 0;
-	    CDDABuf_WP = (CDDABuf_WP + 1) % CDDABuf_MaxCount;
-	    CDDABuf_Count++;
-	   }
-	  }
-
-	  for(int i = 0; i < 588 && CDDABuf_Count < CDDABuf_MaxCount; i++)
-	  {
-	   CDDABuf[CDDABuf_WP][0] = MDFN_de16lsb(&SecPreBuf[i * 4 + 0]);
-	   CDDABuf[CDDABuf_WP][1] = MDFN_de16lsb(&SecPreBuf[i * 4 + 2]);
-	   CDDABuf_WP = (CDDABuf_WP + 1) % CDDABuf_MaxCount;
-	   CDDABuf_Count++;
-	  }
-
-	  SecPreBuf_In = false;
-	 }
 
 	 if(!SecPreBuf_In)
 	 {
 	  PlaySectorProcessed = true;
-	  CurSector++;
+
+	  if(ScanMode >= 0)
+	  {
+	   ScanCounter += (SubQBuf_Safe[0] & 0x40) ? 1 : 2;
+	   if(ScanCounter >= 6)
+           {
+	    ScanCounter = 0;
+
+	    if(!ScanMode)
+	     CurSector += 102 + (((uint64)1773936 * CurSector + ((uint64)1 << 31)) >> 32);
+	    else
+	     CurSector -= std::min<uint32>(CurSector, 104 + (((uint64)2180000 * CurSector + ((uint64)1 << 31)) >> 32));
+
+	    Cur_CDIF->HintReadSector(CurSector - 150);
+           }
+           else
+	    CurSector++;
+	  }
+	  else
+	   CurSector++;
 	 }
 	} // end if(SecPreBuf_In > 0)
 	// Fallthrough:
@@ -2182,7 +2472,7 @@ static void Drive_Run(int64 clocks)
 
      if(PlaySectorProcessed)
      {
-      CurPosInfo.status = STATUS_PLAY;
+      CurPosInfo.status = (ScanMode >= 0) ? STATUS_SCAN : STATUS_PLAY;
       PlaySectorProcessed = false;
      }
     }
@@ -2193,7 +2483,17 @@ static void Drive_Run(int64 clocks)
    PeriodicIdleCounter = PeriodicIdleCounter_Reload;
 
    if(ResultsRead)
-    MakeReport(false, STATUS_PERIODIC);
+   {
+    if(FLS.Active && FLS.DoAuth)
+    {
+     Results[0] = 0x00FF | (STATUS_PERIODIC << 8);
+     Results[1] = 0xFFFF;
+     Results[2] = 0xFFFF;
+     Results[3] = 0xFFFF;
+    }
+    else
+     MakeReport(false, STATUS_PERIODIC);
+   }
 
    // FIXME: Other ADR types, and correct handling when in STANDBY/STOPPED state?
    SubCodeQBuf[0] = CurPosInfo.ctrl_adr;
@@ -2278,7 +2578,9 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       CMD_YIELD;
      }
     }
-
+    //
+    DT_DevBuildAssertSanity();
+    //
     for(unsigned i = 0; i < 4; i++)
      CTR.CD[i] = CData[i];
 
@@ -2293,10 +2595,15 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
     //
     CMD_EAT_CLOCKS(84); //90);
 
+    if(FLS.Active && FLS.DoAuth)
+    {
+     SS_DBG(SS_DBG_WARNING | SS_DBG_CDB, "[CDB] Command 0x%02x rejected due to in-progress disc authentication.\n", CTR.Command);
+     BasicResults(0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF);
+    }
     //
     //
     //
-    if(CTR.Command == COMMAND_GET_CDSTATUS) //	= 0x00,
+    else if(CTR.Command == COMMAND_GET_CDSTATUS) //	= 0x00,
     {
      CDStatusResults();
     }
@@ -2460,7 +2767,7 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
         }
        }
 
-       if(DT.BufList[0] != 0xFE && DT.BufList[0] != 0xFD)	// FIXME: Cleanup(use enums for special buffer ids) - Also check for TOC and FINFO
+       if(DT.BufList[0] < NumBuffers)	// Only trigger EHST HIRQ after transferring partition/sector buffer data.
        {
         CMD_EAT_CLOCKS(130);
         TriggerIRQ(HIRQ_EHST);
@@ -2496,26 +2803,15 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
      {
       PlayCmdStartPos = cmd_psp;
       PlayCmdEndPos = cmd_pep;
-      //
 
+      if(!(pm & 0x70))
+       PlayCmdRepCnt = pm & 0x0F;
+      //
       CurPosInfo.status = STATUS_BUSY;	// Happens even if (PlayMode & 0x80)...
       CDStatusResults();
       //
       //
-      if(!(pm & 0x80))
-       ClearPendingSec();
-      //
-      PlayEndIRQType = HIRQ_PEND;
-      CurPlayEnd = PlayCmdEndPos;
-
-      if(!(pm & 0x70))
-       PlayCmdRepCnt = pm & 0x0F;
-
-      CurPlayRepeat = PlayCmdRepCnt;
-
-      PlayRepeatCounter = 0;
-      //
-      StartSeek(PlayCmdStartPos, (bool)(pm & 0x80));
+      StartSeek(PlayCmdStartPos, PlayCmdEndPos, PlayCmdRepCnt, HIRQ_PEND, (bool)(pm & 0x80));
      }
     }
     //
@@ -2548,7 +2844,6 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
      {
       if(DrivePhase == DRIVEPHASE_STOPPED)	// TODO: Test
       {
-       ClearPendingSec();
        StartSeek(0x800096);
       }
 
@@ -2559,40 +2854,26 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
      }
      else
      {
-      ClearPendingSec();
-      //
-      CurPlayEnd = 0x800000;
-      CurPlayRepeat = 0;
-      //
       StartSeek(cmd_sp);
      }
     }
-/*
     //
     //
     //
     else if(CTR.Command == COMMAND_SCAN) //		= 0x12,
     {
-	//CurPosInfo.is_cdrom = false;
- Forward scan data track(on Saturn CD):
-	4-5 sequential position updates, then jumps like:
-	  17f-> 1e1 (62)
-	  96d-> 9d0 (63)
-	  fd8->103b (63)
-	 202c->2093 (67)
-	 2fa1->300a (69)
-	 3fdf->404a (6b)
-	 4fa3->5011 (6e)
-         5fad->601c (6f)
-	 6f96->7007 (71)
-	 7fcd->8040 (73)
-	 8fd7->904e (77)
-	 9faf->a028 (79)
-	 afcd->b047 (7a)
+     uint8 dir = CTR.CD[0] & 0xFF;
 
-	97.79888435299837 + 0.0005527097174003169x
+     if(dir >= 0x02)
+      CDStatusResults(true);
+     else
+     {
+      CurPosInfo.status = STATUS_BUSY;
+      CDStatusResults();
+
+      StartScan(dir);
+     }
     }
-*/
     //
     //
     //
@@ -2667,47 +2948,18 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       //
       //
       //
-      bool is_audio_cd;
-      uint32 data_track_fad;
-
-      is_audio_cd = true;
-
       // TODO: Check DrivePhase == DRIVEPHASE_STARTUP
-      for(int32 track = toc.first_track; track <= toc.last_track; track++)
+      if(!(toc.tracks[1].control & SUBQ_CTRLF_DATA))	// Audio CD(CD block must not like PCE/PC-FX ;))
       {
-       if(toc.tracks[track].control & SUBQ_CTRLF_DATA)
-       {
-        data_track_fad = 150 + toc.tracks[track].lba;
-        is_audio_cd = false;
-        break;
-       }
-      }
-
-      if(is_audio_cd)
-      {
-       AuthDiscType = 0x01; //0x04;
+       AuthDiscType = 0x01;
        CMD_EAT_CLOCKS(200);
        TriggerIRQ(HIRQ_EFLS);
       }
       else
       {
-       SetCDDeviceConn(fnum);
-       Filter_SetTrueConn(fnum, fnum);
-       Filter_SetFalseConn(fnum, 0xFF);
-       Filter_SetRange(fnum, 0, 0);
-       Filters[fnum].Mode = 0;
-      
        FLS.pnum = fnum;
        FLS.DoAuth = true;
        FLS.Active = true;
-
-       ClearPendingSec();
-       //
-       CurPlayEnd = 0;
-       CurPlayRepeat = 0;
-       PlayRepeatCounter = 0;
-       //
-       StartSeek(0x800000 | (data_track_fad + 16));
       }
      }
     }
@@ -3435,23 +3687,18 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
 
      fnum = (CTR.CD[2] >> 8);
      fileid = ((CTR.CD[2] & 0xFF) << 16) | CTR.CD[3];
-     fiaoffs = (fileid < 2) ? fileid : (2 + fileid - FLS.FileInfoOffs);
+     fiaoffs = (fileid < 2) ? fileid : (2 + fileid - FileInfoOffs);
 
      reject = false;
 
      if(fnum >= 0x18)
       reject = true;
 
-     if(fileid == 0xFFFFFF)
-     {
-      if(!RootDirInfoValid)
-       reject = true;
-     }
-     else
+     if(fileid != 0xFFFFFF)
      {
       if(!FileInfoValid)
        reject = true;
-      else if(fileid >= 2 && (fileid < FLS.FileInfoOffs || fileid >= (FLS.FileInfoOffs + FLS.FileInfoValidCount)))
+      else if(fileid >= 2 && (fileid < FileInfoOffs || fileid >= (FileInfoOffs + FileInfoValidCount)))
        reject = true;
       else if(!(FileInfo[fiaoffs].attr & 0x2))	// FIXME: test XA directory flag too?
        reject = true;
@@ -3461,7 +3708,7 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       CDStatusResults(false, STATUS_WAIT);
      else if(reject)
       CDStatusResults(true);
-     else if(fileid == 0)	// NOP, kind of apparently(test after READ_DIR with a largeish file start id)...
+     else if(fileid == 0)	// NOP, kind of(even when FileInfoOffs > 2, interestingly)
      {
       CDStatusResults();
       CMD_EAT_CLOCKS(400);
@@ -3471,43 +3718,12 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
      {
       CDStatusResults();
       //
-      // Check (attr & 2) first?  and & 0x80 for XA?
       //
-      const FileInfoS* fi;
-
-      if(fileid == 0xFFFFFF)
-       fi = &RootDirInfo;
-      else
-       fi = &FileInfo[fiaoffs];
-
-      Partition_Clear(fnum);
-
-      SetCDDeviceConn(fnum);
-      Filter_SetTrueConn(fnum, fnum);
-      Filter_SetFalseConn(fnum, 0xFF);
-      Filter_SetRange(fnum, fi->fad(), (fi->size() + 2047) >> 11);	// TODO: maybe remove + 2047, actual Saturn drive seems buggy...
-      Filters[fnum].Mode = FilterS::MODE_SEL_FADR;
-      Filters[fnum].File = fi->fnum;
-
-      Filters[fnum].Channel = 0;
-      Filters[fnum].SubMode = 0;
-      Filters[fnum].SubModeMask = 0;
-      Filters[fnum].CInfo = 0;
-      Filters[fnum].CInfoMask = 0;
-      
+      FLS.fioffs = 2;
+      FLS.fiaoffs = (fileid == 0xFFFFFF) ? 0xFFFFFF : fiaoffs;
       FLS.pnum = fnum;
-      FLS.total_max = fi->size();
-      FLS.FileInfoOffs = 2;
       FLS.DoAuth = false;
       FLS.Active = true;
-
-      ClearPendingSec();
-      //
-      CurPlayEnd = 0;
-      CurPlayRepeat = 0;
-      PlayRepeatCounter = 0;
-      //
-      StartSeek(0x800000 | fi->fad());
      }
     }
     //
@@ -3521,40 +3737,49 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
      fnum = (CTR.CD[2] >> 8);
      start_fileid = ((CTR.CD[2] & 0xFF) << 16) | CTR.CD[3];
 
+     if(start_fileid < 2)
+      start_fileid = 2;
+
      if(FLS.Active)
       CDStatusResults(false, STATUS_WAIT);
      else if(fnum >= 0x18 || !FileInfoValid)
       CDStatusResults(true);
+     // TODO: else if(start_fileid > FileInfoOffs && !FileInfoMore)
      else
      {
       CDStatusResults();
       //
+      //
+      //
+      FLS.fioffs = start_fileid;
+      FLS.fiaoffs = 0;
+      FLS.pnum = fnum;
+
+#if 0
+      if(FLS.fioffs > FileInfoOffs && !FileInfoMore)
+      {
+       {
+        const uint32 bo = (FLS.fioffs - FileInfoOffs);
+
+        if(bo < FileInfoValidCount)
+        {
+	 FileInfoOffs = FLS.fioffs;
+         FileInfoValidCount -= bo;
+         memmove(&FileInfo[2], &FileInfo[2 + bo], FileInfoValidCount * sizeof(FileInfoS));
+        }
+       }
+       CMD_EAT_CLOCKS(400);
+       TriggerIRQ(HIRQ_EFLS);
+      }
+      else
+#endif
+      {
+       FLS.DoAuth = false;
+       FLS.Active = true;
+      }
+      //
       // Check (attr & 2) first?  and & 0x80 for XA?
       //
-      const FileInfoS* fi = &FileInfo[0];
-
-      if(start_fileid < FLS.FileInfoOffs || start_fileid >= (FLS.FileInfoOffs + FLS.FileInfoValidCount))
-       start_fileid = 2;
-
-      SetCDDeviceConn(fnum);
-      Filter_SetTrueConn(fnum, fnum);
-      Filter_SetFalseConn(fnum, 0xFF);
-      Filter_SetRange(fnum, fi->fad(), (fi->size() + 2047) >> 11);
-      Filters[fnum].Mode = FilterS::MODE_SEL_FADR;
-      
-      FLS.pnum = fnum;
-      FLS.total_max = fi->size();
-      FLS.FileInfoOffs = start_fileid;
-      FLS.DoAuth = false;
-      FLS.Active = true;
-
-      ClearPendingSec();
-      //
-      CurPlayEnd = 0;
-      CurPlayRepeat = 0;
-      PlayRepeatCounter = 0;
-      //
-      StartSeek(0x800000 | fi->fad());
      }
     }
     //
@@ -3568,12 +3793,10 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       CDStatusResults(true);
      else
      {
-      // FIXME: Not sure about the [0].fad == [1].fad root dir thing...  Might instead be 0x01 to note that the number of files in the directory 
-      // can be held without using Read Directory?
       BasicResults((MakeBaseStatus() << 8),
-		FLS.FileInfoValidCount, 
-		((FileInfo[0].fad() == FileInfo[1].fad()) << 8) | (FLS.FileInfoOffs >> 16),
-		FLS.FileInfoOffs);
+		FileInfoValidCount,
+		(!FileInfoMore << 8) | (FileInfoOffs >> 16),
+		FileInfoOffs);
      }
     }
     //
@@ -3581,57 +3804,59 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
     //
     else if(CTR.Command == COMMAND_GET_FINFO) //	= 0x73,
     {
+     uint32 fileid;
+     bool reject;
+
+     fileid = ((CTR.CD[2] & 0xFF) << 16) | CTR.CD[3];
+
+     reject = false;
+     reject |= !FileInfoValid;
+     reject |= (fileid != 0xFFFFFF && (fileid >= 2 && (fileid < FileInfoOffs || fileid >= (FileInfoOffs + FileInfoValidCount))));
+     reject |= (fileid == 0xFFFFFF && !FileInfoValidCount);
+
      if(FLS.Active || DT.Active)
       CDStatusResults(false, STATUS_WAIT);
-     else if(!FileInfoValid)
+     else if(reject)
       CDStatusResults(true);
      else
      {
-      uint32 fileid;
+      DT.CurBufIndex = 0;
+      DT.BufCount = 1;
 
-      fileid = ((CTR.CD[2] & 0xFF) << 16) | CTR.CD[3];
-
-      if(fileid != 0xFFFFFF && (fileid >= 2 && (fileid < FLS.FileInfoOffs || fileid >= (FLS.FileInfoOffs + FLS.FileInfoValidCount))))
-       CDStatusResults(true);
+      if(fileid == 0xFFFFFF)
+      {
+       DT.InBufOffs = 6 * 2;
+       DT.InBufCounter = 6 * FileInfoValidCount;
+      }
       else
       {
-       {
-	const uint32 fiaoffs = (fileid < 2) ? fileid : (2 + fileid - FLS.FileInfoOffs);
+       const uint32 fiaoffs = (fileid < 2) ? fileid : (2 + fileid - FileInfoOffs);
 
-        DT.CurBufIndex = 0;
-        DT.BufCount = 1;
-
-        if(fileid == 0xFFFFFF)
-        {
-         DT.InBufOffs = 6 * 2;
-         DT.InBufCounter = 6 * FLS.FileInfoValidCount;
-        }
-        else
-        {
-         DT.InBufOffs = 6 * fiaoffs;
-         DT.InBufCounter = 6;
-        }
-
-        DT.TotalCounter = 0;
-
-        DT.FIFO_RP = 0;
-        DT.FIFO_WP = 0;
-        DT.FIFO_In = 0;
-
-        DT.BufList[0] = 0xF0;
-      
-        DT.Writing = false;
-        DT.NeedBufFree = false;
-        DT.Active = true;
-
-        BasicResults(MakeBaseStatus(false, STATUS_DTREQ) << 8, DT.InBufCounter, 0, 0);
-       }
-       //
-       //
-       //
-       CMD_EAT_CLOCKS(128);
-       TriggerIRQ(HIRQ_DRDY);
+       DT.InBufOffs = 6 * fiaoffs;
+       DT.InBufCounter = 6;
       }
+
+      DT.TotalCounter = 0;
+
+      DT.FIFO_RP = 0;
+      DT.FIFO_WP = 0;
+      DT.FIFO_In = 0;
+
+      DT.BufList[0] = 0xF0;
+      
+      DT.Writing = false;
+      DT.NeedBufFree = false;
+      DT.Active = true;
+
+      BasicResults(MakeBaseStatus(false, STATUS_DTREQ) << 8, DT.InBufCounter, 0, 0);
+      //
+      //
+      //
+      // TODO(also need some changes in CDB_Read()): for(unsigned i = 0; i < 5; i++)
+      //  DT_ReadIntoFIFO();
+
+      CMD_EAT_CLOCKS(128);
+      TriggerIRQ(HIRQ_DRDY);
      }
     }
     //
@@ -3649,7 +3874,7 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
 
      if(FLS.Active)
       CDStatusResults(false, STATUS_WAIT);
-     else if(fnum >= 0x18 || !FileInfoValid || (fileid >= 2 && (fileid < FLS.FileInfoOffs || fileid >= (FLS.FileInfoOffs + FLS.FileInfoValidCount))))
+     else if(fnum >= 0x18 || !FileInfoValid || (fileid >= 2 && (fileid < FileInfoOffs || fileid >= (FileInfoOffs + FileInfoValidCount))))
       CDStatusResults(true);
      else
      {
@@ -3658,12 +3883,10 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       Partition_Clear(fnum);
 
       //printf("DT Meow READ: 0x%08x 0x%08x --- offs=0x%08x\n", FileInfo[fileid].fad(), FileInfo[fileid].size(), offset);
-      const uint32 fiaoffs = (fileid < 2) ? fileid : (2 + fileid - FLS.FileInfoOffs);
+      const uint32 fiaoffs = (fileid < 2) ? fileid : (2 + fileid - FileInfoOffs);
       uint32 start_fad = (FileInfo[fiaoffs].fad() + offset) & 0xFFFFFF;
       uint32 sec_count = ((FileInfo[fiaoffs].size() + 2047) >> 11) - offset;	// FIXME: Check offset versus ifile size.
 
-      ClearPendingSec();
-      //
       SetCDDeviceConn(fnum);
       Filter_SetTrueConn(fnum, fnum);
       Filter_SetFalseConn(fnum, 0xFF);
@@ -3678,12 +3901,7 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
       Filters[fnum].CInfo = 0;
       Filters[fnum].CInfoMask = 0;
       //
-      PlayEndIRQType = HIRQ_EFLS;
-      CurPlayEnd = 0x800000 | ((start_fad + sec_count) & 0x7FFFFF);
-      CurPlayRepeat = 0;
-      PlayRepeatCounter = 0;
-      //
-      StartSeek(start_fad | 0x800000);
+      StartSeek(0x800000 | start_fad, 0x800000 | ((start_fad + sec_count) & 0x7FFFFF), 0, HIRQ_EFLS);
      }
     }
     //
@@ -3800,6 +4018,9 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
     CurPlayRepeat = 0;	// TODO: . . .
     PlayRepeatCounter = 0;
 
+    ScanMode = -1;
+    ScanCounter = 0;
+
     DriveCounter = (int64)1000 << 32;
     DrivePhase = DRIVEPHASE_EJECTED_WAITING;
 
@@ -3822,9 +4043,6 @@ sscpu_timestamp_t CDB_Update(sscpu_timestamp_t timestamp)
     CDDABuf_RP = 0;
     CDDABuf_Count = 0;
 
-    //
-    //
-    RootDirInfoValid = false;
     //
     //
     SWReset();
@@ -3899,6 +4117,8 @@ uint16 CDB_Read(uint32 offset)
 	 ret = DT.FIFO[DT.FIFO_RP];
 	 DT.FIFO_RP = (DT.FIFO_RP + 1) % (sizeof(DT.FIFO) / sizeof(DT.FIFO[0]));
 	 DT.FIFO_In -= (bool)DT.FIFO_In;
+	 //
+	 DT_DevBuildAssertSanity();
 	}
 	break;
 
@@ -3963,6 +4183,8 @@ void CDB_Write_DBM(uint32 offset, uint16 DB, uint16 mask)
 	   }
 	  }
 	 }
+	 //
+	 DT_DevBuildAssertSanity();
 	}
 	break;
 
@@ -4119,6 +4341,9 @@ void CDB_StateAction(StateMem* sm, const unsigned load, const bool data_only)
   SFVAR(PlayCmdEndPos),
   SFVAR(PlayCmdRepCnt),
 
+  SFVAR(ScanMode),
+  SFVAR(ScanCounter),
+
   SFVARN(CDDABuf, "&CDDABuf[0][0]"),
   SFVAR(CDDABuf_RP),
   SFVAR(CDDABuf_WP),
@@ -4156,6 +4381,9 @@ void CDB_StateAction(StateMem* sm, const unsigned load, const bool data_only)
 
   SFFIS(*FileInfo, 256),
   SFVAR(FileInfoValid),
+  SFVARN(FileInfoValidCount, "FLS.FileInfoValidCount"),
+  SFVARN(FileInfoOffs, "FLS.FileInfoOffs"),
+  SFVAR(FileInfoMore),
 
   SFFIS(RootDirInfo, 1),
   SFVAR(RootDirInfoValid),
@@ -4164,27 +4392,17 @@ void CDB_StateAction(StateMem* sm, const unsigned load, const bool data_only)
   SFVAR(FLS.Active),
   SFVAR(FLS.DoAuth),
   SFVAR(FLS.Abort),
-  SFVAR(FLS.pnum),
-
-  SFVAR(FLS.CurDirFAD),
-
-  SFVAR(FLS.FileInfoValidCount),
-  SFVAR(FLS.FileInfoOffs),
-  SFVAR(FLS.FileInfoOnDiscCount),
-
   SFVAR(FLS.Phase),
-
+  SFVAR(FLS.pnum),
+  SFVAR(FLS.fioffs),
+  SFVAR(FLS.fiaoffs),
   SFVAR(FLS.pbuf),
   SFVAR(FLS.pbuf_offs),
   SFVAR(FLS.pbuf_read_i),
-
   SFVAR(FLS.total_counter),
   SFVAR(FLS.total_max),
-
   SFVAR(FLS.record),
   SFVAR(FLS.record_counter),
-
-  SFVAR(FLS.finfo_offs),
 
   SFEND
  };
@@ -4208,6 +4426,45 @@ void CDB_StateAction(StateMem* sm, const unsigned load, const bool data_only)
     PauseCounter = -1;
    }
   }
+
+  if(load < 0x00102800)
+  {
+   ScanMode = -1;
+   ScanCounter = 0;
+   //
+   if(!AuthDiscType)
+    AuthDiscType = 0x04;
+
+   if(FLS.Active)
+   {
+    FLS.Phase = 0;
+
+    FLS.fioffs = FileInfoOffs;
+    FLS.fiaoffs = 0xFFFFFF;
+
+    // Very flawed, may not work.
+    if(RootDirInfoValid)
+    {
+     const uint32 fad = Filters[FLS.pnum % 0x18].FAD;
+
+     if(RootDirInfo.fad() != fad)
+     {
+      for(unsigned i = 0; i < 256; i++)
+      {
+       if(FileInfo[i].fad() == fad)
+       {
+        FLS.fiaoffs = i;
+        break;
+       }
+      }
+     }
+    }
+   }
+  }
+
+  //printf("%d %d\n", FLS.Active, FLS.Phase);
+  if(!FLS.Active)
+   FLS.Phase = 0;
   //
   //
   //
@@ -4247,19 +4504,25 @@ void CDB_StateAction(StateMem* sm, const unsigned load, const bool data_only)
   //
   //
   //
+  if(DT_CheckSanity() != 1)
+  {
+   printf("DT_CheckSanity() failed.\n");
 
+   memset(&DT, 0, sizeof(DT));
+   DT.Active = false;
+  }
 
-  DT.FNum %= 0x18;
+  if(FLS_CheckSanity() != 1)
+  {
+   printf("FLS_CheckSanity() failed.\n");
 
-  DT.FIFO_WP %= sizeof(DT.FIFO) / sizeof(DT.FIFO[0]);
-  DT.FIFO_RP %= sizeof(DT.FIFO) / sizeof(DT.FIFO[0]);
-
+   memset(&FLS, 0, sizeof(FLS));
+   FLS.Active = false;
+  }
+  //
+  //
   CDDABuf_RP %= CDDABuf_MaxCount;
   CDDABuf_WP %= CDDABuf_MaxCount;
-
-  FLS.pbuf_offs %= 2048;
-  //FLS.pbuf_read_i
-  FLS.finfo_offs %= 256 + 1;
  }
 }
 

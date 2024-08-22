@@ -97,7 +97,7 @@ void EEPROM_LoadFile(const std::string& path)
   size = fp.size();
 
   if(size != 512 && size != 0x2000)
-   throw MDFN_Error(0, _("EEPROM file \"%s\" is an invalid size."), path.c_str());
+   throw MDFN_Error(0, _("EEPROM file \"%s\" is an invalid size."), MDFN_strhumesc(path).c_str());
 
   fp.read(eepromData, size);
 

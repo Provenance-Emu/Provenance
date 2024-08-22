@@ -19,7 +19,9 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#pragma GCC optimize ("unroll-loops")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize ("unroll-loops")
+#endif
 
 #include "psx.h"
 #include "mdec.h"
@@ -650,7 +652,7 @@ MDFN_FASTCALL void DMA_Write(const pscpu_timestamp_t timestamp, uint32 A, uint32
      	     RecalcIRQOut();
 	     break;
 
-   default: PSX_WARNING("[DMA] Unknown write: %08x %08x", A, V);
+   default: PSX_DBG(PSX_DBG_WARNING | PSX_DBG_DMA, "[DMA] Unknown write: %08x %08x\n", A, V);
 	    break;
   }
   return;
@@ -684,7 +686,7 @@ MDFN_FASTCALL void DMA_Write(const pscpu_timestamp_t timestamp, uint32 A, uint32
 	     RunChannel(timestamp, 1, ch);
 	     DMACH[ch].ClockCounter = 0;
 #endif
-	     PSX_WARNING("[DMA] Forced stop for channel %d -- scanline=%d", ch, GPU_GetScanlineNum());
+	     PSX_DBG(PSX_DBG_WARNING | PSX_DBG_DMA, "[DMA] Forced stop for channel %d -- scanline=%d\n", ch, GPU_GetScanlineNum());
 	     //MDFN_DispMessage("[DMA] Forced stop for channel %d", ch);
 	    }
 
@@ -729,7 +731,7 @@ MDFN_FASTCALL uint32 DMA_Read(const pscpu_timestamp_t timestamp, uint32 A)
  {
   switch(A & 0xC)
   {
-   default: PSX_WARNING("[DMA] Unknown read: %08x", A);
+   default: PSX_DBG(PSX_DBG_WARNING | PSX_DBG_DMA, "[DMA] Unknown read: %08x\n", A);
 	    break;
 
    case 0x0: ret = DMAControl;

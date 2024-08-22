@@ -1,3 +1,24 @@
+/******************************************************************************/
+/* Mednafen Fast SNES Emulation Module                                        */
+/******************************************************************************/
+/* ppu_mtrender.h:
+**  Copyright (C) 2015-2022 Mednafen Team
+**
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the GNU General Public License
+** as published by the Free Software Foundation; either version 2
+** of the License, or (at your option) any later version.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software Foundation, Inc.,
+** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
 #include <atomic>
 #include <mednafen/MThreading.h>
 
@@ -28,8 +49,12 @@ struct PPU_S
  uint16 BGHOFS[4];
  uint16 BGVOFS[4];
 
- uint16 VRAM_Addr;
+ bool CGRAM_Toggle;
+ uint8 CGRAM_Buffer;
+ uint8 CGRAM_Addr;
+
  bool VMAIN_IncMode;
+ uint16 VRAM_Addr;
  unsigned VMAIN_AddrInc;
  unsigned VMAIN_AddrTransMaskA;
  unsigned VMAIN_AddrTransShiftB;
@@ -42,10 +67,12 @@ struct PPU_S
  int16 M7HOFS;
  int16 M7VOFS;
 
- bool CGRAM_Toggle;
- uint8 CGRAM_Buffer;
- uint8 CGRAM_Addr;
- uint16 CGRAM[256];
+ uint8 OBSEL;
+ uint8 OAMADDL;
+ uint32 OAM_Addr;
+ uint8 OAMADDH;
+ uint8 OAM_Buffer;
+ uint8 OAM_AllowFBReset;
 
  uint8 MSEnable;
  uint8 SSEnable;
@@ -61,11 +88,7 @@ struct PPU_S
  uint8 CGADSUB;
  uint16 FixedColor;
 
- uint8 OBSEL;
- uint8 OAMADDL;
- uint8 OAMADDH;
- uint8 OAM_Buffer;
- uint32 OAM_Addr;
+ uint16 CGRAM[256];
  uint8 OAM[512];
  uint8 OAMHI[32];
 
@@ -158,6 +181,7 @@ MDFN_HIDE extern struct PPU_S PPU;
  GLBVAR(CGWSEL)
  GLBVAR(CGADSUB)
  GLBVAR(FixedColor)
+ GLBVAR(OAM_AllowFBReset)
  GLBVAR(OBSEL)
  GLBVAR(OAMADDL)
  GLBVAR(OAMADDH)
@@ -182,7 +206,8 @@ enum
  COMMAND_RENDER_LINE,
  COMMAND_RESET_LINE_TARGET,
  COMMAND_ENTER_VBLANK,
- COMMAND_FETCH_SPRITE_DATA
+ COMMAND_FETCH_SPRITE_DATA,
+ COMMAND_END_OAM_ADDR_RESET
 };
 
 struct WQ_Entry
@@ -250,7 +275,7 @@ static MDFN_HOT void WWQ(uint8 Command, uint8 Arg8 = 0)
 */
  if(MDFN_UNLIKELY(nwp == ITC.ReadPos))
  {
-  SNES_DBG("[PPUMT] fifo full\n");
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_PPU, "[PPUMT] fifo full\n");
   // FIXME, more efficient solution
   Wakeup(true);
  }
@@ -262,6 +287,11 @@ static INLINE void MTIF_ResetLineTarget(bool PAL, bool ilaceon, bool field)
 {
  //printf("Reset line target\n");
  WWQ(COMMAND_RESET_LINE_TARGET, PAL | (ilaceon << 1) | (field << 2));
+}
+
+static INLINE void MTIF_EndOAMAddrReset(void)
+{
+ WWQ(COMMAND_END_OAM_ADDR_RESET);
 }
 
 static INLINE void MTIF_EnterVBlank(bool PAL, const bool skip)

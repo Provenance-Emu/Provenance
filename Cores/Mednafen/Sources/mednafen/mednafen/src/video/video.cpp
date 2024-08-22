@@ -69,6 +69,7 @@ void MDFN_RunVideoBenchmarks(void)
   MDFN_PixelFormat::BGRA32_8888,
 
   MDFN_PixelFormat::IRGB16_1555,
+  MDFN_PixelFormat::RGBI16_5551,
   MDFN_PixelFormat::RGB16_565,
 
   MDFN_PixelFormat::ARGB16_4444

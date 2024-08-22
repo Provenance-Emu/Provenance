@@ -391,7 +391,7 @@ struct tm LocalTime(const int64 ept)
   int64 start_ept;
   int bias;
   bool is_dst;
- } tzperiods[6];
+ } tzperiods[8];
 
  for(int ydi = 0; ydi < 4; ydi++)
  {

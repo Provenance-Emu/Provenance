@@ -8,5 +8,5 @@ mednafen_SOURCES	+=	sound/WAVRecord.cpp
 mednafen_SOURCES	+=	sound/okiadpcm.cpp
 
 mednafen_SOURCES	+=	sound/DSPUtility.cpp
-mednafen_SOURCES	+=	sound/SwiftResampler.cpp sound/OwlResampler.cpp
+mednafen_SOURCES	+=	sound/SwiftResampler.cpp sound/OwlResampler.cpp sound/CassowaryResampler.cpp
 

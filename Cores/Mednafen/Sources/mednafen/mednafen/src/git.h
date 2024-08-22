@@ -19,7 +19,8 @@ namespace Mednafen
 
 struct FileExtensionSpecStruct
 {
- const char *extension; // Example ".nes"
+ const char *extension; // Example ".nes" for case-insensitive extension matching,
+			// or "whatever.ext"(no leading .) for case-insensitive filename matching.
 
  /*
   Priorities used in heuristics to determine which file to load from a multi-file archive:
@@ -33,7 +34,7 @@ struct FileExtensionSpecStruct
    -50 = ccd
    -60 = cue
    -70 = toc (not guaranteed to be cdrdao format, so prefer ccd or cue)
-   -80 = bin (lower than everything due to be overused)
+   -1000 = bin (lower than everything due to being overused)
  */
  int priority;
 
@@ -68,7 +69,8 @@ typedef enum
 
 enum InputDeviceInputType : uint8
 {
- IDIT_PADDING = 0,	// n-bit, zero
+ IDIT_PADDING0 = 0,	// n-bit, zero
+ IDIT_PADDING1,		// n-bit, one bits
 
  IDIT_BUTTON,		// 1-bit
  IDIT_BUTTON_CAN_RAPID, // 1-bit
@@ -201,10 +203,10 @@ static INLINE constexpr InputDeviceInputInfoStruct IDIIS_ResetButton(void)
  return { nullptr, nullptr, -1, IDIT_RESET_BUTTON, 0, 0, 0 };
 }
 
-template<unsigned nbits = 1>
+template<unsigned nbits = 1, bool value = false>
 static INLINE constexpr InputDeviceInputInfoStruct IDIIS_Padding(void)
 {
- return { nullptr, nullptr, -1, IDIT_PADDING, 0, nbits, 0 };
+ return { nullptr, nullptr, -1, value ? IDIT_PADDING1 : IDIT_PADDING0, 0, nbits, 0 };
 }
 
 static INLINE /*constexpr*/ InputDeviceInputInfoStruct IDIIS_Axis(const char* sname_pfx, const char* name_pfx, const char* sname_neg, const char* name_neg, const char* sname_pos, const char* name_pos, int16 co, bool co_invert = false, bool sqlr = false)
@@ -268,7 +270,8 @@ struct InputDeviceInfoStruct
 
  enum
  {
-  FLAG_KEYBOARD = (1U << 0)
+  FLAG_KEYBOARD = (1U << 0),
+  FLAG_UNIQUE   = (1U << 1)
  };
 };
 
@@ -278,6 +281,12 @@ struct InputPortInfoStruct
  const char *FullName;
  const std::vector<InputDeviceInfoStruct> &DeviceInfo;
  const char *DefaultDevice;	// Default device for this port.
+
+ unsigned Flags;
+ enum
+ {
+  FLAG_NO_USER_SELECT = (1U << 0),
+ };
 };
 
 struct MemoryPatch;
@@ -349,9 +358,9 @@ enum
 
 struct EmulateSpecStruct
 {
-	// Pitch(32-bit) must be equal to width and >= the "fb_width" specified in the MDFNGI struct for the emulated system.
-	// Height must be >= to the "fb_height" specified in the MDFNGI struct for the emulated system.
-	// The framebuffer pointed to by surface->pixels is written to by the system emulation code.
+	// The surface pixel data is the framebuffer written to by the system emulation code, and must be aligned to at least what malloc() guarantees.
+	// Pitch must either be == MDFNGI::fb_width, or a value > MDFNGI::fb_width that preserves the pixel data alignment requirement for successive rows.
+	// Height must be >= MDFNGI::fb_height
 	MDFN_Surface* surface = nullptr;
 
 	// Will be set to true if the video pixel format has changed since the last call to Emulate(), false otherwise.
@@ -521,6 +530,7 @@ struct GameFile
 {
  VirtualFS* const vfs;
  const std::string dir;	// path = vfs->eval_fip(dir, whatever);
+ const std::string orig_fname;
  Stream* const stream;
 
  const std::string ext;		// Lowercase.
@@ -612,7 +622,7 @@ struct MDFNGI
  bool (*TestMagic)(GameFile* gf);
 
  //
- // (*CDInterfaces).size() is guaranteed to be >= 1.
+ // CDInterfaces->size() is guaranteed to be >= 1 for TestMagicCD(), but may be == 0 for LoadCD().
  void (*LoadCD)(std::vector<CDInterface*> *CDInterfaces);
  bool (*TestMagicCD)(std::vector<CDInterface*> *CDInterfaces);
 
@@ -656,7 +666,7 @@ struct MDFNGI
  void (*DoSimpleCommand)(int cmd);
 
  // Called when netplay starts, or the controllers controlled by local players changes during
- // an existing netplay session.  Called with ~(uint64)0 when netplay ends.
+ // an existing netplay session.  Called with (uint64)-1 when netplay ends.
  // (For future use in implementing portable console netplay)
  void (*NPControlNotif)(uint64 c);
 

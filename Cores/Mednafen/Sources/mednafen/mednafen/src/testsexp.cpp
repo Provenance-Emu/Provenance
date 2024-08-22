@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* testsexp.cpp - Expensive tests
-**  Copyright (C) 2014-2020 Mednafen Team
+**  Copyright (C) 2014-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -20,11 +20,14 @@
 */
 
 #include <mednafen/mednafen.h>
+#include <mednafen/settings.h>
 #include <mednafen/Time.h>
 #include <mednafen/FileStream.h>
 #include <mednafen/MemoryStream.h>
+#include <mednafen/ExtMemStream.h>
 #include <mednafen/MTStreamReader.h>
 #include <mednafen/compress/GZFileStream.h>
+#include <mednafen/compress/ZLInflateFilter.h>
 #include <mednafen/MThreading.h>
 #include <mednafen/sound/SwiftResampler.h>
 #include <mednafen/sound/OwlResampler.h>
@@ -172,6 +175,7 @@ void MDFNI_RunOwlResamplerTest(void)
  }
 }
 
+#if 0
 static void TestMTStreamReader(void)
 {
  for(uint32 pzb = 0; pzb < 256; pzb = (pzb * 3) + 1)
@@ -237,6 +241,7 @@ static void TestMTStreamReader(void)
   }
  }
 }
+#endif
 
 static void Stream64Test(const char* path)
 {
@@ -313,6 +318,12 @@ static void Stream64Test(const char* path)
    tmp = fp.get_LE<uint32>(); 
    assert(tmp == 0xBEBAFECA);  
    assert(fp.tell() == (uint64)8192 * 1024 * 1024 + 4);
+  }
+
+  {
+   VirtualFS::FileInfo fi;
+
+   assert(NVFS.finfo(path, &fi, false) && fi.size == ((uint64)8192 * 1024 * 1024 + 4) && fi.is_regular && !fi.is_directory);
   }
  }
  catch(std::exception& e)
@@ -583,6 +594,70 @@ static void StreamBufTest(const char* path)
  }
 }
 
+static void NVFSTest(const std::string& path)
+{
+ try
+ {
+  int64 stus, etus;
+  int64 omt;
+  std::unique_ptr<Stream> s;
+  std::string bpath;
+  std::string longpath;
+  std::string lobpath;
+  VirtualFS::FileInfo fi;
+  char tmp[64] = { 0 };
+
+  MDFN_snhex_u64(tmp, sizeof(tmp), Time::EpochTime());
+  bpath = path + MDFN_PSS + tmp;
+  longpath = bpath + MDFN_PSS + "this" + MDFN_PSS + "is" + MDFN_PSS + "a" + MDFN_PSS + "path";
+  lobpath = longpath + MDFN_PSS + "lobster.exe";
+
+  stus = (Time::EpochTime() - 2) * 1000 * 1000;
+  NVFS.create_missing_dirs(lobpath);
+  assert(!NVFS.finfo(lobpath, nullptr, false));
+
+  s.reset(NVFS.open(lobpath, VirtualFS::MODE_READ, false, false));
+  assert(!s);
+
+  s.reset(NVFS.open(lobpath, VirtualFS::MODE_WRITE));
+  s->write(tmp, sizeof(tmp));
+  s.reset(nullptr);
+  etus = (Time::EpochTime() + 2) * 1000 * 1000;
+
+  assert(NVFS.finfo(lobpath, &fi, true) && fi.is_regular && !fi.is_directory && fi.mtime_us >= stus && fi.mtime_us <= etus);
+  omt = fi.mtime_us;
+  assert(NVFS.finfo(longpath, &fi, true) && !fi.is_regular && fi.is_directory && fi.mtime_us >= stus && fi.mtime_us <= etus);
+  Time::SleepMS(4500);
+
+  assert(NVFS.finfo(lobpath, &fi, true) && fi.is_regular && !fi.is_directory && fi.mtime_us == omt && fi.mtime_us >= stus && fi.mtime_us <= etus);
+  s.reset(NVFS.open(lobpath, VirtualFS::MODE_READ_WRITE));
+  s->write(tmp, sizeof(tmp));
+  s.reset(nullptr);
+  etus = (Time::EpochTime() + 2) * 1000 * 1000;
+  assert(NVFS.finfo(lobpath, &fi, true) && fi.is_regular && !fi.is_directory && fi.mtime_us > omt && fi.mtime_us >= stus && fi.mtime_us <= etus);
+
+#ifdef WIN32
+  {
+   static const char* tvp[] = { "C:\\", "C:\\.", "C:/", "C:/." };
+
+   for(auto const& e : tvp)
+   {
+    NVFS.create_missing_dirs(e);
+    assert(NVFS.finfo(e, &fi, true) && !fi.is_regular && fi.is_directory);
+   }
+  }
+#endif
+ }
+ catch(std::exception& e)
+ {
+  printf("%s\n", e.what());
+  abort();
+ }
+
+ printf("NVFSTest done.\n");
+}
+
+
 static void NO_INLINE NO_CLONE ExceptionTestSub(int v, int n, int* y)
 {
  if(n)
@@ -837,6 +912,7 @@ static void TestSurface(void)
   MDFN_PixelFormat::RGBA32_8888,
   MDFN_PixelFormat::BGRA32_8888,
   MDFN_PixelFormat::IRGB16_1555,
+  MDFN_PixelFormat::RGBI16_5551,
   MDFN_PixelFormat::RGB16_565,
   MDFN_PixelFormat::ARGB16_4444
  };
@@ -953,16 +1029,373 @@ static void TestSurface(void)
  }
 }
 
+static void Testsnhex(void)
+{
+ static const char* expected[5] =
+ {
+  "9F",
+  "c0fe",
+  "BEEFD00D",
+  "0123456789abcdef",
+  "0123456789ABCDEF"
+ };
+ char tmp[5][22];
+
+ for(size_t l = 0; l <= sizeof(tmp[0]); l++)
+ {
+  memset(tmp, 0x3A, sizeof(tmp));
+
+  MDFN_snhex_u8 (tmp[0], l, 0x9F, true);
+  MDFN_snhex_u16(tmp[1], l, 0xC0FE, false);
+  MDFN_snhex_u32(tmp[2], l, 0xBEEFD00D, true);
+  MDFN_snhex_u64(tmp[3], l, 0x0123456789ABCDEFULL, false);
+  MDFN_snhex_u64(tmp[4], l, 0x0123456789ABCDEFULL, true);
+
+  for(unsigned i = 0; i < 5; i++)
+  {
+   if(l > 0)
+   {
+    assert(!strncmp(tmp[i], expected[i], l - 1));
+    assert(tmp[i][std::min<size_t>(strlen(expected[i]), l - 1)] == 0);
+   }
+
+   for(size_t j = l; j < sizeof(tmp[0]); j++)
+   {
+    assert(tmp[i][j] == 0x3A);
+   }
+  }
+ }
+}
+
+static void TestSettings(const std::string& path)
+{
+ static const MDFNSetting_EnumList qisfcoqs_list[] =
+ {
+  { "trout", 9, "Definitely not weasel" },
+  { "wease1", -7, "Not weasel" },
+  { "weasel.", -13, "Also not weasel" },
+  { "weasel", 7, "Weasel" },
+
+  { NULL, 0 }
+ };
+
+ static const MDFNSetting_EnumList qisfcoqscoqs_list[] =
+ {
+  { "pineapple", 13, "Pineapple", "Why" },
+  { "cowcow", 9, "Cowcow", "Double the patties" },
+  { "cow", 1, "Cow", "Mooooooooooooooo" },
+  { "crow", 11, "Crow", "Crow steals your blingbling" },
+  { "goat", 3, "Goat", "Goat smells...goaty" },
+  { "alpaca", 2, "Alpaca", "Advanced form of sheep from the future" },
+
+  { NULL, 0 }
+ };
+
+ static const MDFNSetting setting_defs[] =
+ {
+  { "avzi", 	MDFNSF_NOFLAGS, "0", "A", MDFNST_INT, "-1", "-0x8000000000000000", "0x7FFFFFFFFFFFFFFF" },
+  { "avziyefz", MDFNSF_NOFLAGS, "1", "B", MDFNST_UINT, "0", "0x0000000000000000", "0xFFFFFFFFFFFFFFFF" },
+  { "kdcw", 	MDFNSF_NOFLAGS, "2", "C", MDFNST_BOOL, "1" },
+  { "ngeb", 	MDFNSF_NOFLAGS, "3", "D", MDFNST_FLOAT, "0.00001525878906250000000000000000", "0", "0.00001525902189314365386962890625" },
+  { "qisf", 	MDFNSF_NOFLAGS, "4", "E", MDFNST_STRING, " space cat meows "},
+  { "qisfcoqs", MDFNSF_NOFLAGS,	"5", "F", MDFNST_ENUM, "weasel", NULL, NULL, NULL, NULL, qisfcoqs_list },
+  { "qisfcoqscoqs", MDFNSF_NOFLAGS, "6", "8", MDFNST_MULTI_ENUM, "cow,goat,alpaca,goat,cowcow,crow", NULL, NULL, NULL, NULL, qisfcoqscoqs_list },
+  { "qisfcoqscoqscoqs", MDFNSF_NOFLAGS, "6", "8", MDFNST_MULTI_ENUM, "crow", NULL, NULL, NULL, NULL, qisfcoqscoqs_list },
+
+  { "z", MDFNSF_NOFLAGS, "Z", "Z", MDFNST_STRING, " " },
+
+  { NULL }
+ };
+
+ SettingsManager s;
+
+ s.Merge(setting_defs);
+ s.Finalize();
+
+ assert(s.GetI("avzi") == -1);
+ assert(s.GetI("avziyefz") == 0);
+ assert(s.GetB("avziyefz") == false);
+ assert(s.GetB("kdcw") == 1);
+ assert(s.GetF("ngeb") == 0.00001525878906250000000000000000);
+ assert(s.GetS("qisf") == " space cat meows ");
+ assert(s.GetI("qisfcoqs") == 7);
+ assert(s.GetMultiUI("qisfcoqscoqs") == std::vector<uint64>({ 1, 3, 2, 3, 9, 11 }));
+ assert(s.GetMultiUI("qisfcoqscoqscoqs") == std::vector<uint64>({ 11 }));
+ assert(s.GetS("z") == " ");
+ //
+ //
+ {
+  FileStream cfgs(path, FileStream::MODE_WRITE);
+
+  cfgs.put_string("avzi -9223372036854775808\n");
+  cfgs.put_string("avziyefz 0xFFFFFFFFFFFFFFFF\n");
+  cfgs.put_string("kdcw 0\n");
+  cfgs.put_string("ngeb 0.0000000000000000000000000000000000000000000000000000000000000000000000000000000000\n");
+  cfgs.put_string("qisfcoqscoqs cowcow,goat,cow\n");
+  cfgs.put_string("qisfcoqscoqscoqs pineapple\n");
+  cfgs.put_string("qisfcoqs weasel.\n");
+  cfgs.put_string("qisf   \twater\tdog\twoofs  \n");
+  cfgs.put_string("z   "); // No \n
+  cfgs.close();
+ }
+
+ s.Load(path);
+
+ assert(s.GetI("avzi") == (int64)((uint64)1 << 63));
+ assert(s.GetUI("avziyefz") == (uint64)-1);
+ assert(s.GetI("avziyefz") == 0x7FFFFFFFFFFFFFFFULL);
+ assert(s.GetB("kdcw") == false);
+ assert(s.GetF("ngeb") == 0);
+ assert(s.GetS("qisf") == "  \twater\tdog\twoofs  ");
+ assert(s.GetI("qisfcoqs") == -13);
+ assert(s.GetMultiUI("qisfcoqscoqs") == std::vector<uint64>({ 9, 3, 1 }));
+ assert(s.GetMultiUI("qisfcoqscoqscoqs") == std::vector<uint64>({ 13 }));
+ assert(s.GetS("z") == "  ");
+ //
+ //
+ TestRandInit();
+ for(unsigned t = 0; t < 2; t++)
+ {
+  FileStream cfgs(path, FileStream::MODE_WRITE);
+
+  for(uint32 i = 4096 * 1024 - 9; i; i--)
+  {
+   static const char m[8] = { '\n', '\r', '\r', ' ', '\f', '\t', '\v', 0 };
+   cfgs.put_char(m[TestRand() & 0x7]);
+  }
+  cfgs.write((t ? "\r\n\0\0qisf " : "\0qisf no\r"), 9);
+  cfgs.close();
+  //
+  s.Load(path);
+  assert(s.GetS("qisf") == (t ? "" : "no"));
+ }
+ //
+ {
+  std::unique_ptr<FileStream> cfgs(new FileStream(path, FileStream::MODE_WRITE));
+
+  cfgs->put_string("qisf jinkies\n");
+  cfgs->close();
+  cfgs.reset(nullptr);
+
+  assert(s.GetS("qisf") == "");
+  s.Load(path, 1);
+  assert(s.GetS("qisf") == "jinkies");
+
+  cfgs.reset(new FileStream(path, FileStream::MODE_WRITE));
+  cfgs->put_string("qisf cheese\n");
+  cfgs->close();
+  cfgs.reset(nullptr);
+
+  s.Load(path, 2);
+  assert(s.GetS("qisf") == "cheese");
+  s.ClearOverridesAbove(1);
+  assert(s.GetS("qisf") == "jinkies");
+  s.ClearOverridesAbove(0);
+  assert(s.GetS("qisf") == "");
+
+  cfgs.reset(new FileStream(path, FileStream::MODE_WRITE));
+  cfgs->put_string("qisf puppies\n");
+  cfgs->close();
+  cfgs.reset(nullptr);
+
+  s.Load(path, 3);
+  assert(s.GetS("qisf") == "puppies");
+  s.ClearOverridesAbove(3);
+  assert(s.GetS("qisf") == "puppies");
+  s.ClearOverridesAbove(0);
+  assert(s.GetS("qisf") == "");
+
+  s.Load(path, 2);
+  assert(s.GetS("qisf") == "puppies");
+  s.Set("qisf", "kiwi");
+  assert(s.GetS("qisf") == "kiwi");
+  s.Set("qisf", "avocado", 3);
+  assert(s.GetS("qisf") == "avocado");
+  s.ClearOverridesAbove(0);
+  assert(s.GetS("qisf") == "kiwi");
+ }
+}
+
+static void TestZLInflate(void)
+{
+ TestRandInit();
+
+ for(uint64 test_size = 0; test_size < (1024 * 1024); test_size += (test_size >> 7) + 17)
+ {
+  MemoryStream ms(test_size, true);
+  MemoryStream cms(compressBound(test_size), true);
+
+  //printf("%llu\n", test_size);
+
+  for(uint64 i = 0; i < test_size; i++)
+  {
+   const uint32 r = TestRand();
+   ms.map()[i] = (r & 0xF) ? (i & 0x1F) : r >> 24;
+  }
+
+  {
+   uLongf dlen = cms.map_size();
+   int res = compress(cms.map(), &dlen, ms.map(), ms.map_size());
+   assert(res == Z_OK);
+   cms.truncate(dlen);
+  }
+
+  for(unsigned tws = 0; tws < 2; tws++)
+  {
+   ZLInflateFilter zli(&cms, "", ZLInflateFilter::FORMAT::ZLIB, cms.size(), tws ? test_size : (uint64)-1);
+   std::unique_ptr<uint8[]> tmp(new uint8[65536]);
+   uint64 i = 0;
+   while(zli.read(tmp.get(), 1, false))
+   {
+    assert(tmp[0] == ms.map()[i]);
+    i++;
+   }
+   assert(i == test_size);
+   //
+   //
+   i = 0;
+   zli.rewind();
+   uint64 rc;
+   while((rc = zli.read(tmp.get(), 1 + (TestRand() & 0xFFFF), false)))
+   {
+    for(uint64 j = 0; j < rc; j++)
+    {
+     assert(tmp[j] == ms.map()[i]);
+     i++;
+    }
+   }
+   assert(i == test_size);
+   //
+   //
+   cms.rewind();
+  }
+ }
+ printf("ZLInflateFilter test done.\n");
+}
+
+static void TestMemoryStream(void)
+{
+ const uint64 tamask = (Stream::ATTRIBUTE_READABLE | Stream::ATTRIBUTE_WRITEABLE | Stream::ATTRIBUTE_SEEKABLE | Stream::ATTRIBUTE_SLOW_SEEK | Stream::ATTRIBUTE_SLOW_SIZE | Stream::ATTRIBUTE_INMEM_FAST);
+ const uint64 tambe = (Stream::ATTRIBUTE_READABLE | Stream::ATTRIBUTE_SEEKABLE | Stream::ATTRIBUTE_INMEM_FAST);
+ std::unique_ptr<MemoryStream> ms0(new MemoryStream(12345, true));
+ uint8* p = ms0->map();
+ uint8 dummy = 0;
+
+ assert((ms0->attributes() & tamask) == (tambe | Stream::ATTRIBUTE_WRITEABLE));
+ assert(ms0->map_size() == 12345);
+ assert(ms0->map_size() == ms0->size());
+ assert(ms0->tell() == 0);
+ for(unsigned i = 0; i < 12345; i++)
+  ms0->map()[i] = i ^ (i / 257);
+
+ ms0->seek(12344, SEEK_SET);
+ //
+ MemoryStream ms1(ms0.release(), 12345);
+
+ assert((uintptr_t)ms1.map() == (uintptr_t)p);
+ assert((ms1.attributes() & tamask) == (tambe | Stream::ATTRIBUTE_WRITEABLE));
+ assert(ms1.size() == 12345);
+ assert(ms1.map_size() == ms1.size());
+ assert(ms1.tell() == 12344);
+ ms1.rewind();
+
+ for(unsigned i = 0; i < 12345; i++)
+ {
+  const uint8 expected = i ^ (i / 257);
+
+  assert(ms1.get_u8() == expected);
+  assert(ms1.map()[i] == expected);
+ }
+ assert(ms1.read(&dummy, sizeof(dummy), false) == 0);
+ //
+ uint8 td[7] = { 0xDE, 0xED, 0xBE, 0xEE, 0xEF, 0xF1, 0xAC };
+ std::unique_ptr<ExtMemStream> ems0(new ExtMemStream(td, sizeof(td)));
+
+ assert((ems0->attributes() & tamask) == (tambe | Stream::ATTRIBUTE_WRITEABLE));
+ assert(ems0->size() == sizeof(td));
+ assert(ems0->map_size() == ems0->size());
+ assert(ems0->tell() == 0);
+ assert((uintptr_t)ems0->map() == (uintptr_t)td);
+
+ for(size_t i = 0; i < sizeof(td); i++)
+ {
+  assert(ems0->get_u8() == td[i]);
+  assert(ems0->map()[i] == td[i]);
+ }
+ assert(ems0->read(&dummy, sizeof(dummy), false) == 0);
+ //
+ MemoryStream ms2(ems0.release(), 777);
+
+ assert(ms2.size() == sizeof(td));
+ assert(ms2.map_size() == ms2.size());
+ assert(ms2.tell() == sizeof(td));
+ assert((uintptr_t)ms2.map() != (uintptr_t)td);
+ ms2.rewind();
+ for(size_t i = 0; i < sizeof(td); i++)
+ {
+  assert(ms2.get_u8() == td[i]);
+  assert(ms2.map()[i] == td[i]);
+ }
+ assert(ms2.read(&dummy, sizeof(dummy), false) == 0);
+ //
+ const uint8 td2[1] = { 0x55 };
+ ExtMemStream ems1(td2, sizeof(td2));
+
+ assert((ems1.attributes() & tamask) == tambe);
+ assert(ems1.size() == sizeof(td2));
+ assert(ems1.map_size() == ems1.size());
+ assert(ems1.tell() == 0);
+ assert((uintptr_t)ems1.map() == (uintptr_t)td2);
+
+ for(size_t i = 0; i < sizeof(td2); i++)
+ {
+  assert(ems1.get_u8() == td2[i]);
+  assert(ems1.map()[i] == td2[i]);
+ }
+ assert(ems1.read(&dummy, sizeof(dummy), false) == 0);
+ //
+ //
+ printf("MemoryStream test done.\n");
+}
+
+static void TestStreamMisc(void)
+{
+ const uint8 td[5] = { 'J', 'E', 'L', 'L', 'O' };
+ ExtMemStream ems(td, sizeof(td));
+ std::string tmp;
+
+ tmp = "Consume";
+ ems.get_string_append(&tmp, 8, false);
+ assert(tmp == "ConsumeJELLO");
+
+ ems.rewind();
+ tmp = "SECRET";
+ ems.seek(1, SEEK_SET);
+ ems.get_string_append(&tmp, 1, false);
+ ems.rewind();
+ ems.get_string_append(&tmp, 5, false);
+ assert(tmp == "SECRETEJELLO");
+}
+
 void MDFNI_RunExpensiveTests(const char* dirpath)
 {
  TestRandInit();
  //
  TestSurface();
  //
+ TestMemoryStream();
+ //
+ TestStreamMisc();
  //TestMTStreamReader();
 
+ Testsnhex();
+
+ TestSettings(std::string(dirpath) + MDFN_PSS + "cfgtest.cfg");
+
+ NVFSTest(dirpath);
+
  {
-  const std::string path = std::string(dirpath) + PSS + "streamtest.bin";
+  const std::string path = std::string(dirpath) + MDFN_PSS + "streamtest.bin";
 
   #if defined(WIN32) && !defined(UNICODE)
   if(!(GetVersion() & 0x80000000))
@@ -973,6 +1406,9 @@ void MDFNI_RunExpensiveTests(const char* dirpath)
 
   StreamBufTest(path.c_str());
  }
+
+ TestZLInflate();
+
  //
  //ThreadTest();
  //

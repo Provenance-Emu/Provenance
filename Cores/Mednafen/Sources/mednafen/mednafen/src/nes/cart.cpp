@@ -580,7 +580,7 @@ void Genie_Init(void)
    {
     { ".nes", 0, "iNES Format ROM Image" },
    };
-   MDFNFILE fp(&NVFS, fn.c_str(), KnownExtensions, _("Game Genie ROM Image"));
+   MDFNFILE fp(&NVFS, fn, KnownExtensions, _("Game Genie ROM Image"));
 
    fp.read(GENIEROM, 16);
 

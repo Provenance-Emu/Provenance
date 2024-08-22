@@ -482,7 +482,7 @@ SwiftResampler::SwiftResampler(double input_rate, double output_rate, double rat
     SortBuf[i] = { i, (int16)ci };
    }
 #if 1
-   std::sort(&SortBuf[0], &SortBuf[NumCoeffs], [](const std::pair<unsigned, int>& a, const std::pair<unsigned, int>& b) { return abs(a.second) > abs(b.second); });
+   std::sort(SortBuf.get(), SortBuf.get() + NumCoeffs, [](const std::pair<unsigned, int>& a, const std::pair<unsigned, int>& b) { return abs(a.second) > abs(b.second); });
 
    sum_error = std::min<double>(1 << NumFractBits, sum_d) - sum_i;
    for(double threshold = 0.50 + 1.0 / 16; sum_error; threshold += 1.0 / 16)

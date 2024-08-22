@@ -214,43 +214,60 @@ int LogDebugger_Event(const SDL_Event *event)
 	{
 	 default: break;
 
-         case SDLK_MINUS: Debugger_GT_ModOpacity(-8);
-                          break;
-         case SDLK_EQUALS: Debugger_GT_ModOpacity(8);
-                           break;
+	 case SDLK_MINUS:
+		Debugger_GT_ModOpacity(-8);
+		break;
 
+	 case SDLK_EQUALS:
+		Debugger_GT_ModOpacity(8);
+		break;
 
-	 case SDLK_HOME: WhichLog->LogScroll = 0; 
-			 break;
+	 case SDLK_HOME:
+		WhichLog->LogScroll = 0; 
+		break;
 
-	 case SDLK_END: ChangePos(1 << 30); 
-			break;
+	 case SDLK_END:
+		ChangePos(1 << 30); 
+		break;
 
 	 case SDLK_LEFT:
 	 case SDLK_COMMA: 
-			 LogGroupSelect(-1); 
-			 break;
+		LogGroupSelect(-1); 
+		break;
 
 	 case SDLK_RIGHT:
-	 case SDLK_PERIOD: LogGroupSelect(1);
-			   break;
+	 case SDLK_PERIOD:
+		LogGroupSelect(1);
+		break;
 
-	 case SDLK_UP: ChangePos(-1); 
-		       break;
+	 case SDLK_UP:
+		if(event->key.keysym.mod & KMOD_CTRL)
+		 Debugger_GT_ModOpacity(8);
+		else
+		 ChangePos(-1); 
+		break;
 
-	 case SDLK_DOWN: ChangePos(1); 
-			 break;
+	 case SDLK_DOWN:
+		if(event->key.keysym.mod & KMOD_CTRL)
+		 Debugger_GT_ModOpacity(-8);
+		else
+		 ChangePos(1); 
+		break;
 
-	 case SDLK_PAGEUP: ChangePos(-32); 
-			   break;
+	 case SDLK_PAGEUP:
+		ChangePos(-32); 
+		break;
 
-	 case SDLK_PAGEDOWN: ChangePos(32); 
-			     break;
+	 case SDLK_PAGEDOWN:
+		ChangePos(32); 
+		break;
 
-	 case SDLK_t:LoggingActive = !LoggingActive;
-		     if(CurGame->Debugger->SetLogFunc)
-			CurGame->Debugger->SetLogFunc(LoggingActive ? TheLogger : NULL);
-		     break;
+	 case SDLK_t:
+		LoggingActive = !LoggingActive;
+
+		if(CurGame->Debugger->SetLogFunc)
+		 CurGame->Debugger->SetLogFunc(LoggingActive ? TheLogger : NULL);
+		break;
 	}
 	break;
 

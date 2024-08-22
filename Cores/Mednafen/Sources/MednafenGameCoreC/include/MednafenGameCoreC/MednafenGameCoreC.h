@@ -610,4 +610,7 @@ class MDFN_Surface
  void Init(void *const p_pixels, const uint32 p_width, const uint32 p_height, const uint32 p_pitchinpix, const MDFN_PixelFormat &nf, const bool alloc_init_pixels);
 };
 } // End namespace Mednafen
+
+#include <mednafen/git.h>
+
 #endif

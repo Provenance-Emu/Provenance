@@ -19,7 +19,9 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#pragma GCC optimize ("unroll-loops")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize ("unroll-loops")
+#endif
 
 /*
  MDEC_READ_FIFO(tfr) vs InCounter vs MDEC_DMACanRead() is a bit fragile right now.  Actually, the entire horrible state machine monstrosity is fragile.
@@ -756,7 +758,7 @@ MDFN_FASTCALL void MDEC_DMAWrite(uint32 V)
  }
  else
  {
-  PSX_DBG(PSX_DBG_WARNING, "[MDEC] DMA write when input FIFO is full!!\n");
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_MDEC, "[MDEC] DMA write when input FIFO is full!!\n");
  }
 }
 
@@ -788,7 +790,7 @@ MDFN_FASTCALL uint32 MDEC_DMARead(uint32* offs)
  }
  else
  {
-  PSX_DBG(PSX_DBG_WARNING, "[MDEC] DMA read when output FIFO is empty!\n");
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_MDEC, "[MDEC] DMA read when output FIFO is empty!\n");
  }
 
  return(V);
@@ -847,7 +849,7 @@ MDFN_FASTCALL void MDEC_Write(const pscpu_timestamp_t timestamp, uint32 A, uint3
   }
   else
   {
-   PSX_DBG(PSX_DBG_WARNING, "MDEC manual write FIFO overflow?!\n");
+   PSX_DBG(PSX_DBG_WARNING | PSX_DBG_MDEC, "[MDEC] manual write FIFO overflow?!\n");
   }
  }
 }

@@ -273,8 +273,6 @@ static void RedoCPUHook(void)
 
 void VBDBG_FlushBreakPoints(int type)
 {
- std::vector<VB_BPOINT>::iterator bpit;
-
  if(type == BPOINT_READ)
   BreakPointsRead.clear();
  else if(type == BPOINT_WRITE)
@@ -613,8 +611,7 @@ bool VBDBG_Init(void)
 
      newt.name = std::string(tmpname);
      newt.long_name = std::string(tmpinfo);
-     newt.TotalBits = 5;
-     newt.NP2Size = 0;
+     newt.size = 32;
 
      newt.IsWave = true;
      newt.WaveFormat = ASPACE_WFMT_UNSIGNED;

@@ -2,7 +2,7 @@
 /* Mednafen Sony PS1 Emulation Module                                         */
 /******************************************************************************/
 /* spu.cpp:
-**  Copyright (C) 2011-2016 Mednafen Team
+**  Copyright (C) 2011-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -19,7 +19,9 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#pragma GCC optimize ("unroll-loops")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize ("unroll-loops")
+#endif
 
 /* TODO:
 	Note to self: Emulating the SPU at more timing accuracy than sample, and emulating the whole SPU RAM write port FIFO thing and hypothetical periodic FIFO commit to
@@ -401,7 +403,7 @@ void PS_SPU::RunDecoder(SPU_Voice *voice)
     {
      if((voice->LoopAddr ^ voice->CurAddr) & ~0x7)
      {
-      PSX_DBG(PSX_DBG_FLOOD, "[SPU] Ignore: LoopAddr=0x%08x, SampLA=0x%08x\n", voice->LoopAddr, voice->CurAddr);
+      PSX_DBG(PSX_DBG_SPU, "[SPU] Ignore: LoopAddr=0x%08x, SampLA=0x%08x\n", voice->LoopAddr, voice->CurAddr);
      }
     }
    }
@@ -425,7 +427,7 @@ void PS_SPU::RunDecoder(SPU_Voice *voice)
 
    if(MDFN_UNLIKELY(shift > 12))
    {
-    //PSX_DBG(PSX_DBG_FLOOD, "[SPU] Buggy/Illegal ADPCM block shift value on voice %u: %u\n", (unsigned)(voice - Voices), shift);
+    //PSX_DBG(PSX_DBG_SPU, "[SPU] Buggy/Illegal ADPCM block shift value on voice %u: %u\n", (unsigned)(voice - Voices), shift);
 
     shift = 8;
     CV &= 0x8888;
@@ -683,7 +685,7 @@ int32 PS_SPU::UpdateFromCDC(int32 clocks)
 
    voice->PreLRSample = 0;
 
-   //PSX_WARNING("[SPU] Voice %d CurPhase=%08x, pitch=%04x, CurAddr=%08x", voice_num, voice->CurPhase, voice->Pitch, voice->CurAddr);
+   //PSX_DBG(PSX_DBG_WARNING | PSX_DBG_SPU, "[SPU] Voice %d CurPhase=%08x, pitch=%04x, CurAddr=%08x\n", voice_num, voice->CurPhase, voice->Pitch, voice->CurAddr);
 
    if(voice->DecodePlayDelay)
    {
@@ -791,12 +793,12 @@ int32 PS_SPU::UpdateFromCDC(int32 clocks)
      if(voice->DecodePlayDelay < 3)
      {
       if(voice->DecodePlayDelay)
-       PSX_DBG(PSX_DBG_WARNING, "[SPU] Voice %u off maybe should be ignored, but isn't due to current emulation code limitations; dpd=%u\n", voice_num, voice->DecodePlayDelay);
+       PSX_DBG(PSX_DBG_WARNING | PSX_DBG_SPU, "[SPU] Voice %u off maybe should be ignored, but isn't due to current emulation code limitations; dpd=%u\n", voice_num, voice->DecodePlayDelay);
 
       ReleaseEnvelope(voice);
      }
      else
-      PSX_DBG(PSX_DBG_WARNING, "[SPU] Voice %u off ignored.\n", voice_num);
+      PSX_DBG(PSX_DBG_WARNING | PSX_DBG_SPU, "[SPU] Voice %u off ignored.\n", voice_num);
     }
    }
 
@@ -943,7 +945,7 @@ uint32 PS_SPU::ReadDMA(void)
 void PS_SPU::Write(pscpu_timestamp_t timestamp, uint32 A, uint16 V)
 {
  //if((A & 0x3FF) < 0x180)
- // PSX_WARNING("[SPU] Write: %08x %04x", A, V);
+ // PSX_DBG(PSX_DBG_SPU, "[SPU] Write: %08x %04x\n", A, V);
 
  A &= 0x3FF;
 
@@ -996,7 +998,7 @@ void PS_SPU::Write(pscpu_timestamp_t timestamp, uint32 A, uint16 V)
 
 	      if(voice->DecodePlayDelay || (VoiceOn & (1U << (voice - Voices))))
 	      {
-	       PSX_WARNING("[SPU] Loop address for voice %u written during voice on delay.", (unsigned)(voice - Voices));
+	       PSX_DBG(PSX_DBG_WARNING | PSX_DBG_SPU, "[SPU] Loop address for voice %u written during voice on delay.\n", (unsigned)(voice - Voices));
 	      }
 	      //if((voice - Voices) == 22)
 	      //{
@@ -1071,7 +1073,7 @@ void PS_SPU::Write(pscpu_timestamp_t timestamp, uint32 A, uint16 V)
 
    case 0x22: ReverbWA = (V << 2) & 0x3FFFF;
 	      ReverbCur = ReverbWA;
-	      //PSX_WARNING("[SPU] Reverb WA set: 0x%04x", V);
+	      //PSX_DBG(PSX_DBG_SPU, "[SPU] Reverb WA set: 0x%04x\n", V);
 	      break;
 
    case 0x24: IRQAddr = (V << 2) & 0x3FFFF;
@@ -1103,7 +1105,7 @@ void PS_SPU::Write(pscpu_timestamp_t timestamp, uint32 A, uint16 V)
 	      CheckIRQAddr(RWAddr);
 	      break;
 
-   case 0x2C: PSX_WARNING("[SPU] Global reg 0x2c set: 0x%04x", V);
+   case 0x2C: PSX_DBG(PSX_DBG_WARNING | PSX_DBG_SPU, "[SPU] Global reg 0x2c set: 0x%04x\n", V);
 	      break;
 
    case 0x30: CDVol[0] = (int16)V;
@@ -1131,7 +1133,7 @@ uint16 PS_SPU::Read(pscpu_timestamp_t timestamp, uint32 A)
 {
  A &= 0x3FF;
 
- PSX_DBGINFO("[SPU] Read: %08x", A);
+ //PSX_DBGINFO("[SPU] Read: %08x", A);
 
  if(A >= 0x200)
  {
@@ -1167,10 +1169,10 @@ uint16 PS_SPU::Read(pscpu_timestamp_t timestamp, uint32 A)
    case 0x1C: return(BlockEnd);
    case 0x1E: return(BlockEnd >> 16);
 
-   case 0x26: //PSX_WARNING("[SPU] RWADDR Read");
+   case 0x26: //PSX_DBG(PSX_DBG_WARNING | PSX_DBG_SPU, "[SPU] RWADDR Read\n");
 	      break;
 
-   case 0x28: PSX_WARNING("[SPU] SPURAM Read port(?) Read");
+   case 0x28: PSX_DBG(PSX_DBG_WARNING | PSX_DBG_SPU, "[SPU] SPURAM Read port(?) Read\n");
 
 	      {
 	       uint16 ret = ReadSPURAM(RWAddr);
@@ -1186,7 +1188,7 @@ uint16 PS_SPU::Read(pscpu_timestamp_t timestamp, uint32 A)
 
 /* FIXME: What is this used for? */
    case 0x3C:
-	//PSX_WARNING("[SPU] Read Unknown: %08x", A);
+	//PSX_DBG(PSX_DBG_WARNING | PSX_DBG_SPU, "[SPU] Read Unknown: %08x\n", A);
 	return(0);
 
    case 0x38:

@@ -28,7 +28,7 @@ INLINE void Core65816::IO(void)
 
 INLINE void Core65816::Instr_STP(void)
 {
- SNES_DBG("[CPU] STP\n");
+ SNES_DBG(SNES_DBG_CPU, "[CPU] STP\n");
  cpum->halted |= CPU_Misc::HALTED_STP;
 
  if(cpum->timestamp < cpum->next_event_ts)

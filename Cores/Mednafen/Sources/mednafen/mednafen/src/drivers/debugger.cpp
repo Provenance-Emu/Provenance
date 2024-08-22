@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* debugger.cpp:
-**  Copyright (C) 2006-2017 Mednafen Team
+**  Copyright (C) 2006-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -524,172 +524,173 @@ class DebuggerPrompt : public HappyPrompt
 	}
 	private:
 
-	void TheEnd(const std::string &pstring)
-	{
-                  char *tmp_c_str = strdup(pstring.c_str());
-
-                  if(InPrompt == DisGoto)
-                  {
-		   unsigned long long tmpaddr;
-
-                   if(trio_sscanf(tmp_c_str, "%llx", &tmpaddr) == 1)
-		   {
-		    DisAddr = tmpaddr;
-                    DisAddr &= ((1ULL << CurGame->Debugger->LogAddrBits) - 1);
-	            DisAddr &= ~(CurGame->Debugger->InstructionAlignment - 1);
-		    DisCOffs = 0xFFFFFFFF;
-		   }
-                  }
-                  else if(InPrompt == ReadBPS)
-                  {
-                   ReadBreakpoints = std::string(tmp_c_str);
-                   UpdateBreakpoints(ReadBreakpoints, BPOINT_READ);
-                  }
-                  else if(InPrompt == WriteBPS)
-                  {
-                   WriteBreakpoints = std::string(tmp_c_str);
-                   UpdateBreakpoints(WriteBreakpoints, BPOINT_WRITE);
-                  }
-                  else if(InPrompt == IOReadBPS)
-                  {
-                   IOReadBreakpoints = std::string(tmp_c_str);
-                   UpdateBreakpoints(IOReadBreakpoints, BPOINT_IO_READ);
-                  }
-                  else if(InPrompt == IOWriteBPS)
-                  {
-                   IOWriteBreakpoints = std::string(tmp_c_str);
-                   UpdateBreakpoints(IOWriteBreakpoints, BPOINT_IO_WRITE);
-                  }
-                  else if(InPrompt == AuxReadBPS)
-                  {
-                   AuxReadBreakpoints = std::string(tmp_c_str);
-                   UpdateBreakpoints(AuxReadBreakpoints, BPOINT_AUX_READ);
-                  }
-                  else if(InPrompt == AuxWriteBPS)
-                  {
-                   AuxWriteBreakpoints = std::string(tmp_c_str);
-                   UpdateBreakpoints(AuxWriteBreakpoints, BPOINT_AUX_WRITE);
-                  }
-                  else if(InPrompt == OpBPS)
-                  {
-                   OpBreakpoints = std::string(tmp_c_str);
-                   UpdateBreakpoints(OpBreakpoints, BPOINT_OP);
-                  }
-		  else if(InPrompt == TraceLogPrompt)
-		  {
-		   if(pstring != TraceLogSpec || !TraceLog)
-		   {
-		    TraceLogSpec = pstring;
-
-		    if(TraceLog)
-		    {
-		     TraceLog.reset(nullptr);
-		     UpdateCoreHooks();
-		    }
-
-		    unsigned int endpc;
-		    char tmpfn[256];
-		    int num = trio_sscanf(tmp_c_str, "%255s %x", tmpfn, &endpc);
-		    if(num >= 1)
-		    {
-		     try
-		     {
-		      TraceLog.reset(new FileStream(tmpfn, FileStream::MODE_WRITE_INPLACE));
-
-		      TraceLog->seek(0, SEEK_END);
-		      if(TraceLog->tell() != 0)
-		       TraceLog->print_format("\n\n\n");
-
-		      TraceLog->print_format("Tracing began: %s\n", Time::StrTime().c_str());
-		      TraceLog->print_format("[ADDRESS]: [INSTRUCTION]   [REGISTERS(before instruction exec)]");
-
-		      if(num == 1)
-		       TraceLogEnd = -1;
-		      else
-		       TraceLogEnd = endpc;
-
-		      TraceLogRTO = 0;
-		      UpdateCoreHooks();
-		     }
-		     catch(std::exception& e)
-		     {
-		      TraceLog.reset(nullptr);
-
-		      MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what());
-		     }
-		    }
-		   }
-		  }
-                  else if(InPrompt == ForceInt)
-                  {
-                   CurGame->Debugger->IRQ(atoi(tmp_c_str));
-                  }
-                  else if(InPrompt == PokeMe || InPrompt == PokeMeHL)
-                  {
-		   const bool hl = (InPrompt == PokeMeHL);
-                   uint32 A = 0, V = 0, S = 1;
-                   bool logical = true;
-                   char *meow_str = tmp_c_str;
-		   int ssf_ret;
-
-                   if(meow_str[0] == '*')
-                   {
-                    meow_str++;
-                    logical = false;
-                   }
-
-                   if(logical)
-                    ssf_ret = trio_sscanf(tmp_c_str, "%x %x %d", &A, &V, &S);
-                   else
-                   {
-                    char sa[64];
-
-                    ssf_ret = trio_sscanf(tmp_c_str, "%63s %x %d", sa, &V, &S);
-
-                    A = ParsePhysAddr(sa);
-                   }
-
-                   if(ssf_ret >= 2) // Allow size to be omitted, implicit as '1'
-                   {
-                    A &= ((1ULL << CurGame->Debugger->LogAddrBits) - 1);
-
-                    if(S < 1) S = 1;
-                    if(S > 4) S = 4;
-
-		    MemPoke(A, V, S, hl, logical);
-                   }
-                  }
-                  else if(InPrompt == EditRegs)
-                  {
-                   unsigned long long RegValue = 0;
-
-                   trio_sscanf(tmp_c_str, "%llx", &RegValue);
-
-		   if(CurRegGroupIP->SetRegister)
-                    CurRegGroupIP->SetRegister(CurRegIP->id, RegValue);
-		   else
-		    puts("Null SetRegister!");
-                  }
-                  else if(InPrompt == WatchGoto)
-                  {
-                   if(WatchLogical)
-                   {
-                    trio_sscanf(tmp_c_str, "%x", &WatchAddr);
-                    WatchAddr &= (((uint64)1 << CurGame->Debugger->LogAddrBits) - 1);
-		    WatchAddr &= ~0xF;
-                   }
-                   else
-                   {
-                    trio_sscanf(tmp_c_str, "%x", &WatchAddrPhys);
-                    WatchAddrPhys &= (((uint64)1 << CurGame->Debugger->PhysAddrBits) - 1);
-                    WatchAddrPhys &= ~0xF;
-                   }
-                  }
-                  free(tmp_c_str);
-                  InPrompt = None;
-
-	}
+	void TheEnd(const std::string &pstring);
 };
+
+void DebuggerPrompt::TheEnd(const std::string& pstring)
+{
+ const char* const tmp_c_str = pstring.c_str();
+
+ if(InPrompt == DisGoto)
+ {
+  unsigned long long tmpaddr;
+
+  if(trio_sscanf(tmp_c_str, "%llx", &tmpaddr) == 1)
+  {
+   DisAddr = tmpaddr;
+   DisAddr &= ((1ULL << CurGame->Debugger->LogAddrBits) - 1);
+   DisAddr &= ~(CurGame->Debugger->InstructionAlignment - 1);
+   DisCOffs = 0xFFFFFFFF;
+  }
+ }
+ else if(InPrompt == ReadBPS)
+ {
+  ReadBreakpoints = std::string(tmp_c_str);
+  UpdateBreakpoints(ReadBreakpoints, BPOINT_READ);
+ }
+ else if(InPrompt == WriteBPS)
+ {
+  WriteBreakpoints = std::string(tmp_c_str);
+  UpdateBreakpoints(WriteBreakpoints, BPOINT_WRITE);
+ }
+ else if(InPrompt == IOReadBPS)
+ {
+  IOReadBreakpoints = std::string(tmp_c_str);
+  UpdateBreakpoints(IOReadBreakpoints, BPOINT_IO_READ);
+ }
+ else if(InPrompt == IOWriteBPS)
+ {
+  IOWriteBreakpoints = std::string(tmp_c_str);
+  UpdateBreakpoints(IOWriteBreakpoints, BPOINT_IO_WRITE);
+ }
+ else if(InPrompt == AuxReadBPS)
+ {
+  AuxReadBreakpoints = std::string(tmp_c_str);
+  UpdateBreakpoints(AuxReadBreakpoints, BPOINT_AUX_READ);
+ }
+ else if(InPrompt == AuxWriteBPS)
+ {
+  AuxWriteBreakpoints = std::string(tmp_c_str);
+  UpdateBreakpoints(AuxWriteBreakpoints, BPOINT_AUX_WRITE);
+ }
+ else if(InPrompt == OpBPS)
+ {
+  OpBreakpoints = std::string(tmp_c_str);
+  UpdateBreakpoints(OpBreakpoints, BPOINT_OP);
+ }
+ else if(InPrompt == TraceLogPrompt)
+ {
+  if(pstring != TraceLogSpec || !TraceLog)
+  {
+   TraceLogSpec = pstring;
+
+   if(TraceLog)
+   {
+    TraceLog.reset(nullptr);
+    UpdateCoreHooks();
+   }
+
+   unsigned int endpc;
+   char tmpfn[256];
+   int num = trio_sscanf(tmp_c_str, "%255s %x", tmpfn, &endpc);
+   if(num >= 1)
+   {
+    try
+    {
+     TraceLog.reset(new FileStream(tmpfn, FileStream::MODE_WRITE_INPLACE));
+
+     TraceLog->seek(0, SEEK_END);
+     if(TraceLog->tell() != 0)
+      TraceLog->print_format("\n\n\n");
+
+     TraceLog->print_format("Tracing began: %s\n", Time::StrTime().c_str());
+     TraceLog->print_format("[ADDRESS]: [INSTRUCTION]   [REGISTERS(before instruction exec)]");
+
+     if(num == 1)
+      TraceLogEnd = -1;
+     else
+      TraceLogEnd = endpc;
+
+     TraceLogRTO = 0;
+     UpdateCoreHooks();
+    }
+    catch(std::exception& e)
+    {
+     TraceLog.reset(nullptr);
+
+     MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what());
+    }
+   }
+  }
+ }
+ else if(InPrompt == ForceInt)
+ {
+  CurGame->Debugger->IRQ(atoi(tmp_c_str));
+ }
+ else if(InPrompt == PokeMe || InPrompt == PokeMeHL)
+ {
+  const bool hl = (InPrompt == PokeMeHL);
+  uint32 A = 0, V = 0, S = 1;
+  bool logical = true;
+  const char* meow_str = tmp_c_str;
+  int ssf_ret;
+
+  if(meow_str[0] == '*')
+  {
+   meow_str++;
+   logical = false;
+  }
+
+  if(logical)
+   ssf_ret = trio_sscanf(tmp_c_str, "%x %x %d", &A, &V, &S);
+  else
+  {
+   char sa[64];
+
+   ssf_ret = trio_sscanf(tmp_c_str, "%63s %x %d", sa, &V, &S);
+
+   A = ParsePhysAddr(sa);
+  }
+
+  if(ssf_ret >= 2) // Allow size to be omitted, implicit as '1'
+  {
+   A &= ((1ULL << CurGame->Debugger->LogAddrBits) - 1);
+
+   if(S < 1) S = 1;
+   if(S > 4) S = 4;
+
+   MemPoke(A, V, S, hl, logical);
+  }
+ }
+ else if(InPrompt == EditRegs)
+ {
+  unsigned long long tmp = 0;
+
+  if(trio_sscanf(tmp_c_str, "%llx", &tmp) == 1)
+  {
+   if(CurRegGroupIP->SetRegister)
+    CurRegGroupIP->SetRegister(CurRegIP->id, tmp);
+   else
+    puts("Null SetRegister!");
+  }
+ }
+ else if(InPrompt == WatchGoto)
+ {
+  unsigned tmp = 0;
+
+  if(trio_sscanf(tmp_c_str, "%x", &tmp) == 1)
+  {
+   tmp &= ~0xF;
+
+   if(WatchLogical)
+    WatchAddr = tmp & (((uint64)1 << CurGame->Debugger->LogAddrBits) - 1);
+   else
+    WatchAddrPhys = tmp & (((uint64)1 << CurGame->Debugger->PhysAddrBits) - 1);
+  }
+ }
+ InPrompt = None;
+}
+
 
 struct DisasmEntry
 {
@@ -1335,9 +1336,17 @@ static void CPUCallback(uint32 PC, bool bpoint)
   NeedStep = 0;
  }
 
- while(InSteppingMode && GameThreadRun)
+ while(InSteppingMode)
  {
-  DebuggerFudge();
+  if(!DebuggerFudge())
+  {
+   NeedStep = 0;
+   NeedRun = 0;
+   InSteppingMode = 0;
+   break;
+  }
+  //
+  //
   if(NeedStep == 2)
   {
    NeedStep--;
@@ -1426,11 +1435,16 @@ void Debugger_GT_Event(const SDL_Event *event)
  		  memdbg->SetActive(FALSE);
 		  LogDebugger_SetActive(FALSE);
 		  break;
-     case SDLK_2: WhichMode = 1;
-		  GfxDebugger_SetActive(TRUE); 
-		  memdbg->SetActive(FALSE);
-		  LogDebugger_SetActive(FALSE);
+
+     case SDLK_2: if(CurGame->Debugger->SetGraphicsDecode)
+		  {
+		   WhichMode = 1;
+		   GfxDebugger_SetActive(TRUE);
+		   memdbg->SetActive(FALSE);
+		   LogDebugger_SetActive(FALSE);
+		  }
 		  break;
+
      case SDLK_3: if(CurGame->Debugger->AddressSpaces->size())
 		  {
 		   WhichMode = 2;
@@ -1439,6 +1453,7 @@ void Debugger_GT_Event(const SDL_Event *event)
 		   LogDebugger_SetActive(FALSE);
 		  }
 		  break;
+
      case SDLK_4: if(CurGame->Debugger->SetLogFunc)
 		  {
 		   WhichMode = 3;
@@ -1509,10 +1524,14 @@ void Debugger_GT_Event(const SDL_Event *event)
         else switch(event->key.keysym.sym)
         {
 	 default: break;
-	 case SDLK_MINUS: Debugger_GT_ModOpacity(-8);
-        	          break;
-	 case SDLK_EQUALS: Debugger_GT_ModOpacity(8);
-	                   break;
+
+	 case SDLK_MINUS:
+		Debugger_GT_ModOpacity(-8);
+		break;
+
+	 case SDLK_EQUALS:
+		Debugger_GT_ModOpacity(8);
+		break;
 
 /*
 	 case SDLK_DELETE:
@@ -1631,48 +1650,58 @@ void Debugger_GT_Event(const SDL_Event *event)
 		break;
 
         case SDLK_UP:
-	  if(InRegs)
-	  {
-		if(RegsPosY)
-		 RegsPosY--;
-	  }
-	  else
-	  {
-           if(event->key.keysym.mod & KMOD_SHIFT)
-	   {
-	    if(WatchLogical)
-             WatchAddr = (WatchAddr - 0x10) & ((1ULL << CurGame->Debugger->LogAddrBits) - 1);
-	    else
-	     WatchAddrPhys = (WatchAddrPhys - 0x10) & (((uint64)1 << CurGame->Debugger->PhysAddrBits) - 1);
-	   }
-           else
-	   {
-            NeedDisAddrChange = -1;
-	   }
-	  }
-          break;
+		if(event->key.keysym.mod & KMOD_CTRL)
+		 Debugger_GT_ModOpacity(8);
+		else
+		{
+		 if(InRegs)
+		 {
+		  if(RegsPosY)
+		   RegsPosY--;
+		 }
+		 else
+		 {
+		  if(event->key.keysym.mod & KMOD_SHIFT)
+		  {
+		   if(WatchLogical)
+		    WatchAddr = (WatchAddr - 0x10) & ((1ULL << CurGame->Debugger->LogAddrBits) - 1);
+		   else
+		    WatchAddrPhys = (WatchAddrPhys - 0x10) & (((uint64)1 << CurGame->Debugger->PhysAddrBits) - 1);
+		  }
+		  else
+		  {
+		   NeedDisAddrChange = -1;
+		  }
+		 }
+		}
+		break;
 
          case SDLK_DOWN:
-	  if(InRegs)
-	  {
-                if(RegsPosY < (RegsColsCounts[RegsPosX] - 1))
-		 RegsPosY++;
-	  }
-	  else
-	  {
-           if(event->key.keysym.mod & KMOD_SHIFT)
-	   {
-	    if(WatchLogical)
-             WatchAddr = (WatchAddr + 0x10) & ((1ULL << CurGame->Debugger->LogAddrBits) - 1);
-	    else
-	     WatchAddrPhys = (WatchAddrPhys + 0x10) & (((uint64)1 << CurGame->Debugger->PhysAddrBits) - 1);
-	   }
-           else
-	   {
-	    NeedDisAddrChange = 1;
-	   }
-	  }
-          break;
+		if(event->key.keysym.mod & KMOD_CTRL)
+		 Debugger_GT_ModOpacity(-8);
+		else
+		{
+		 if(InRegs)
+		 {
+		  if(RegsPosY < (RegsColsCounts[RegsPosX] - 1))
+		   RegsPosY++;
+		 }
+		 else
+		 {
+		  if(event->key.keysym.mod & KMOD_SHIFT)
+		  {
+		   if(WatchLogical)
+		    WatchAddr = (WatchAddr + 0x10) & ((1ULL << CurGame->Debugger->LogAddrBits) - 1);
+		   else
+		    WatchAddrPhys = (WatchAddrPhys + 0x10) & (((uint64)1 << CurGame->Debugger->PhysAddrBits) - 1);
+		  }
+		  else
+		  {
+		   NeedDisAddrChange = 1;
+		  }
+		 }
+		}
+		break;
 
 	 case SDLK_t:
 		if(CurGame->Debugger->ToggleSyntax)

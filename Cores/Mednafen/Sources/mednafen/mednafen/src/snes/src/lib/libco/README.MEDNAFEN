@@ -1,1 +1,1 @@
-Modified to not use mprotect() and similar, instead using __attribute__((section(".text")))
+libco from https://github.com/higan-emu/libco fba00e5d3404e1bcfe1007ee2e3bfc3b3bb888af

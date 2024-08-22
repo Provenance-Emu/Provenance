@@ -13,22 +13,26 @@ CROSS32_PATH="$CROSS_BASE/win32"
 CROSS64_PATH="$CROSS_BASE/win64"
 CROSS9X_PATH="$CROSS_BASE/win9x"
 
-PKGNAME_BINUTILS="binutils-2.28"
-PKGNAME_MINGWW64="mingw-w64-v5.0.3"
+PKGNAME_BINUTILS="binutils-2.28.1"
+PKGNAME_MINGWW64="mingw-w64-v5.0.5"
 PKGNAME_GCC="gcc-4.9.4"
 PKGNAME_LIBICONV="libiconv-1.15"
-PKGNAME_FLAC="flac-1.3.2"
-PKGNAME_ZLIB="zlib-1.2.8"
-PKGNAME_SDL2="SDL-2.0.8-11835"
+PKGNAME_FLAC="flac-1.3.4"
+PKGNAME_ZLIB="zlib-1.2.13"
+PKGNAME_SDL2="SDL2-2.28.5"
 #
 #
 #
 #
 export PATH="$CROSS32_PATH/bin:$CROSS64_PATH/bin:$PATH"
 
+SDL2_32_VENDOR="mednafen-x86-000"
+SDL2_64_VENDOR="mednafen-x86_64-000"
+SDL2_DISABLE_DYNAPI_FLAGS="-DSDL_dynapi_h_= -DSDL_DYNAMIC_API=0"
+
 mkdir -p "$CROSS_BUILD" && cd "$CROSS_BUILD" && \
 rm --one-file-system -rf "buffaloam" && mkdir buffaloam && cd buffaloam && \
-tar -jxf "$CROSS_SOURCES/$PKGNAME_BINUTILS.tar.bz2" && \
+tar -Jxf "$CROSS_SOURCES/$PKGNAME_BINUTILS.tar.xz" && \
 tar -jxf "$CROSS_SOURCES/$PKGNAME_MINGWW64.tar.bz2" && \
 tar -jxf "$CROSS_SOURCES/$PKGNAME_GCC.tar.bz2" && \
 tar -zxf "$CROSS_SOURCES/$PKGNAME_LIBICONV.tar.gz" && \
@@ -41,12 +45,15 @@ rm --one-file-system -rf "buffalo32" && mkdir buffalo32 && cd buffalo32 && \
 tar -zxf "$CROSS_SOURCES/$PKGNAME_ZLIB.tar.gz" && \
 tar -zxf "$CROSS_SOURCES/$PKGNAME_SDL2.tar.gz" && \
 patch -p0 < "$CROSS_SOURCES/$PKGNAME_ZLIB-mingw-w64.patch" && \
+patch -p0 < "$CROSS_SOURCES/$PKGNAME_SDL2-win2000.patch" && \
+patch -p0 < "$CROSS_SOURCES/$PKGNAME_SDL2-altgr-grab.patch" && \
 cd .. && \
 
 rm --one-file-system -rf "buffalo64" && mkdir buffalo64 && cd buffalo64 && \
 tar -zxf "$CROSS_SOURCES/$PKGNAME_ZLIB.tar.gz" && \
 tar -zxf "$CROSS_SOURCES/$PKGNAME_SDL2.tar.gz" && \
 patch -p0 < "$CROSS_SOURCES/$PKGNAME_ZLIB-mingw-w64.patch" && \
+patch -p0 < "$CROSS_SOURCES/$PKGNAME_SDL2-altgr-grab.patch" && \
 cd .. && \
 #
 #
@@ -121,12 +128,12 @@ make -j4 && make install && \
 cd .. && \
 
 #
-# SDL 2.0
+# SDL 2.x
 #
 cd "$PKGNAME_SDL2" && \
-CPPFLAGS="-I$CROSS32_PATH/include" LDFLAGS="-L$CROSS32_PATH/lib" \
+CPPFLAGS="-I$CROSS32_PATH/include $SDL2_DISABLE_DYNAPI_FLAGS" LDFLAGS="-L$CROSS32_PATH/lib" \
 	CFLAGS="-O2 -mstackrealign -fomit-frame-pointer -g -march=i686 -mtune=pentium3 -fno-exceptions -fno-asynchronous-unwind-tables" \
-	./configure --prefix="$CROSS32_PATH" --host=i686-w64-mingw32 --disable-pthreads --enable-shared --disable-static --disable-joystick --disable-haptic --disable-filesystem --disable-file --disable-libsamplerate && \
+	./configure --prefix="$CROSS32_PATH" --host=i686-w64-mingw32 --disable-pthreads --enable-shared --disable-static --disable-joystick --disable-haptic --disable-hidapi --disable-sensor --disable-render --disable-filesystem --disable-file --disable-libsamplerate --enable-vendor-info="$SDL2_32_VENDOR" && \
 make -j4 && make install && \
 cd .. && \
 
@@ -216,12 +223,12 @@ make -j4 && make install && \
 cd .. && \
 
 #
-# SDL 2.0
+# SDL 2.x
 #
 cd "$PKGNAME_SDL2" && \
-CPPFLAGS="-I$CROSS64_PATH/include" LDFLAGS="-L$CROSS64_PATH/lib" \
+CPPFLAGS="-I$CROSS64_PATH/include $SDL2_DISABLE_DYNAPI_FLAGS" LDFLAGS="-L$CROSS64_PATH/lib" \
 	CFLAGS="-O2 -mstackrealign -fomit-frame-pointer -g -fno-exceptions -fno-asynchronous-unwind-tables" \
-	./configure --prefix="$CROSS64_PATH" --host=x86_64-w64-mingw32 --disable-pthreads --enable-shared --disable-static --disable-joystick --disable-haptic --disable-filesystem --disable-file --disable-libsamplerate && \
+	./configure --prefix="$CROSS64_PATH" --host=x86_64-w64-mingw32 --disable-pthreads --enable-shared --disable-static --disable-joystick --disable-haptic --disable-hidapi --disable-sensor --disable-render --disable-filesystem --disable-file --disable-libsamplerate --enable-vendor-info="$SDL2_64_VENDOR" && \
 make -j4 && make install && \
 cd .. && \
 

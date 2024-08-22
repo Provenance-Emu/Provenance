@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* surface.h:
-**  Copyright (C) 2009-2020 Mednafen Team
+**  Copyright (C) 2009-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -111,17 +111,17 @@ class MDFN_PixelFormat
  //constexpr MDFN_PixelFormat(MDFN_PixelFormat&&) = default;
  //MDFN_PixelFormat& operator=(MDFN_PixelFormat&) = default;
 
- bool operator==(const uint64& t)
+ bool operator==(const uint64& t) const
  {
   return tag == t;
  }
 
- bool operator==(const MDFN_PixelFormat& a)
+ bool operator==(const MDFN_PixelFormat& a) const
  {
   return tag == a.tag;
  }
 
- bool operator!=(const MDFN_PixelFormat& a)
+ bool operator!=(const MDFN_PixelFormat& a) const
  {
   return !(*this == a);
  }
@@ -260,12 +260,13 @@ class MDFN_PixelFormat
   RGBA32_8888 = MDFN_PixelFormat_MakeTag(MDFN_COLORSPACE_RGB, 4, /**/ 24, 16,  8,  0, /**/ 8, 8, 8, 8),
   BGRA32_8888 = MDFN_PixelFormat_MakeTag(MDFN_COLORSPACE_RGB, 4, /**/  8, 16, 24,  0, /**/ 8, 8, 8, 8),
   //
-  // These two RGB16 formats are the only 16-bit formats fully supported by core Mednafen code,
+  // These three RGB16 formats are the only 16-bit formats fully supported by core Mednafen code,
   // and most emulation modules(also see MDFNGI::ExtraVideoFormatSupport)
   //
   // Alpha shift/precision weirdness for internal emulation module use.
   //
   IRGB16_1555 = MDFN_PixelFormat_MakeTag(MDFN_COLORSPACE_RGB, 2, /**/  10,  5,  0, 16, /**/ 5, 5, 5, 8),
+  RGBI16_5551 = MDFN_PixelFormat_MakeTag(MDFN_COLORSPACE_RGB, 2, /**/  11,  6,  1, 16, /**/ 5, 5, 5, 8),
    RGB16_565  = MDFN_PixelFormat_MakeTag(MDFN_COLORSPACE_RGB, 2, /**/  11,  5,  0, 16, /**/ 5, 6, 5, 8),
   //
   // Following formats are not supported by emulation modules, and only partially supported by core
@@ -339,8 +340,11 @@ class MDFN_Surface
  MDFN_PixelFormat format;
 
  void Fill(uint8 r, uint8 g, uint8 b, uint8 a);
- //void FillOutside(
+ void Fill(uint32 color);
+
  void SetFormat(const MDFN_PixelFormat &new_format, bool convert);
+
+ MDFN_Surface* DupeCompactConvert(const MDFN_PixelFormat& new_format);
 
  // Creates a 32-bit value for the surface corresponding to the R/G/B/A color passed.
  INLINE uint32 MakeColor(uint8 r, uint8 g, uint8 b, uint8 a = 0) const

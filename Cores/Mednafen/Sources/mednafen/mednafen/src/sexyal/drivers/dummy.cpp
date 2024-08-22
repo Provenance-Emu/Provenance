@@ -122,12 +122,16 @@ static int Clear(SexyAL_device *device)
 
 static int RawClose(SexyAL_device *device)
 {
- Dummy_Driver_t *dstate = (Dummy_Driver_t *)device->private_data;
-
- if(dstate)
+ if(device)
  {
-  free(dstate);
-  device->private_data = NULL;
+  Dummy_Driver_t *dstate = (Dummy_Driver_t *)device->private_data;
+
+  if(dstate)
+  {
+   free(dstate);
+   device->private_data = NULL;
+  }
+  free(device);
  }
 
  return(1);

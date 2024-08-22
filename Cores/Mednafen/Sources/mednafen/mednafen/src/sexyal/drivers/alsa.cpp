@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* alsa.cpp - ALSA Sound Driver
-**  Copyright (C) 2006-2017 Mednafen Team
+**  Copyright (C) 2006-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -29,6 +29,8 @@
 
 namespace Mednafen
 {
+
+#define ALSA_MAX_CHANNEL_COUNT 8
 
 struct SexyAL_ALSA
 {
@@ -137,7 +139,9 @@ static int RawWrite(SexyAL_device *device, const void *data, uint32 len)
     snore = snd_pcm_writei(ads->alsa_pcm, data, len / SAMPFORMAT_BYTES(device->format.sampformat) / device->format.channels);
    else
    {
-    void *foodata[device->format.channels];
+    void* foodata[ALSA_MAX_CHANNEL_COUNT];
+
+    assert(device->format.channels <= ALSA_MAX_CHANNEL_COUNT);
 
     for(unsigned ch = 0; ch < device->format.channels; ch++)
      foodata[ch] = (uint8*)data + ch * (len / device->format.channels);
@@ -286,8 +290,8 @@ SexyAL_device *SexyALI_ALSA_Open(const char *id, SexyAL_format *format, SexyAL_b
  snd_pcm_t *alsa_pcm = NULL;
  snd_pcm_hw_params_t *hw_params = NULL;
  snd_pcm_sw_params_t *sw_params = NULL;
- int desired_pt;		// Desired period time, in MICROseconds.
- int desired_buffertime;	// Desired buffer time, in milliseconds
+ uint32 desired_pt;		// Desired period time, in MICROseconds.
+ uint32 desired_buffertime;	// Desired buffer time, in milliseconds
  //bool heavy_sync = false;
  snd_pcm_format_t sampformat;
 
@@ -387,7 +391,7 @@ SexyAL_device *SexyALI_ALSA_Open(const char *id, SexyAL_format *format, SexyAL_b
   unsigned int maxchan;
   unsigned int minchan;
 
-  maxchan = 8;
+  maxchan = ALSA_MAX_CHANNEL_COUNT;
   ALSA_TRY(snd_pcm_hw_params_set_channels_max(alsa_pcm, hw_params, &maxchan));
 
   if(format->channels > 1 && maxchan > 1)
@@ -398,7 +402,7 @@ SexyAL_device *SexyALI_ALSA_Open(const char *id, SexyAL_format *format, SexyAL_b
 
   ALSA_TRY(snd_pcm_hw_params_set_channels_near(alsa_pcm, hw_params, &rchan));
 
-  assert(rchan <= 8 && rchan > 0);
+  assert(rchan <= ALSA_MAX_CHANNEL_COUNT);
   format->channels = rchan;
  }
 
@@ -469,6 +473,13 @@ SexyAL_device *SexyALI_ALSA_Open(const char *id, SexyAL_format *format, SexyAL_b
 
  device = (SexyAL_device *)calloc(1, sizeof(SexyAL_device));
  ads = (SexyAL_ALSA *)calloc(1, sizeof(SexyAL_ALSA));
+
+ if(!device || !ads)
+ {
+  printf("Memory allocation failed.\n");
+  ALSA_INIT_CLEANUP
+  return NULL;
+ }
 
  ads->alsa_pcm = alsa_pcm;
  ads->period_size = period_size;

@@ -362,6 +362,7 @@ static INLINE void FDSDoSound(void)
  }
 }
 
+#if 0
 #define NZEROS 2
 #define NPOLES 2
 #define GAIN   5.172298875e+03
@@ -380,6 +381,7 @@ static INLINE double filterloop(double input)
                      + ( -0.9610604561 * yv[0]) + (  1.9602871056 * yv[1]);
         return(yv[2]);
 }
+#endif
 
 static void RenderSoundHQ(void)
 {

@@ -56,100 +56,13 @@ namespace MDFN_IEN_SNES_FAUST
 namespace PPU_ST
 {
 
-struct PPU_S
+#include "ppu_base.inc"
+
+static struct PPU_S final : PPU_BASE_S
 {
- uint32 lastts;
-
- uint32 LineStartTS;
- uint32 HLatch;
- uint32 VLatch;
- uint32 HLatchReadShift;
- uint32 VLatchReadShift;
-
- //
- // Cheaty registers and state:
- uint32 InHDMA;
- uint16 HTime;
- uint16 VTime;
- bool IRQThing;
-
- uint8 NMITIMEEN;
-
- uint8 HVBJOY;
- uint8 NMIFlag;	// 0x00 or 0x80
- uint8 IRQFlag;	// 0x00 or 0x80
- uint8 JPReadCounter;
- //
- //
- bool PAL;
- bool FrameBeginVBlank;
- bool VBlank;
- bool InterlaceOnSample;
- uint32 LinePhase;
- uint32 LineCounter;
- uint32 LinesPerFrame;
- uint32 LineTarget;
- uint32 scanline;
- //
- //
- //
- //
- uint8 BusLatch[2];
- uint8 Status[2];	// $3E and $3F.
-
- uint8 ScreenMode;	// $33
- uint8 INIDisp;
- uint8 BGMode;
- uint8 Mosaic;
- uint8 MosaicYOffset;
-
- uint8 BGSC[4];
-
- uint8 BGNBA[2];
-
- uint8 BGOFSPrev;
- uint16 BGHOFS[4];
- uint16 BGVOFS[4];
-
- uint16 VRAM_Addr;
- uint16 VRAM_ReadBuffer;
- bool VMAIN_IncMode;
- unsigned VMAIN_AddrInc;
- unsigned VMAIN_AddrTransMaskA;
- unsigned VMAIN_AddrTransShiftB;
- unsigned VMAIN_AddrTransMaskC;
-
- uint8 M7Prev;
- uint8 M7SEL;
- int16 M7Matrix[4];
- int16 M7Center[2];
- int16 M7HOFS;
- int16 M7VOFS;
-
- bool CGRAM_Toggle;
- uint8 CGRAM_Buffer;
- uint8 CGRAM_Addr;
- uint16 CGRAM[256];
-
- uint8 MSEnable;
- uint8 SSEnable;
-
- uint8 WMSettings[3];
- uint8 WMMainEnable;
- uint8 WMSubEnable;
- uint16 WMLogic;
- uint8 WindowPos[2][2];
  unsigned WindowPieces[5];	// Derived data, calculated at start of rendering for a scanline.
 
- uint8 CGWSEL;
- uint8 CGADSUB;
- uint16 FixedColor;
-
- uint8 OBSEL;
- uint8 OAMADDL;
- uint8 OAMADDH;
- uint8 OAM_Buffer;
- uint32 OAM_Addr;
+ uint16 CGRAM[256];
  uint8 OAM[512];
  uint8 OAMHI[32];
 
@@ -201,9 +114,7 @@ struct PPU_S
  EmulateSpecStruct* es;
  unsigned HFilter;
  unsigned SLDRY, SLDRH;
-};
-
-static PPU_S PPU;
+} PPU;
 
 #define GLBVAR(x) static auto& x = PPU.x;
  GLBVAR(lastts)
@@ -252,6 +163,7 @@ static PPU_S PPU;
  GLBVAR(VMAIN_AddrTransMaskA)
  GLBVAR(VMAIN_AddrTransShiftB)
  GLBVAR(VMAIN_AddrTransMaskC)
+ GLBVAR(AllowVRAMAccess)
  GLBVAR(M7Prev)
  GLBVAR(M7SEL)
  GLBVAR(M7Matrix)
@@ -274,6 +186,7 @@ static PPU_S PPU;
  GLBVAR(CGADSUB)
  GLBVAR(FixedColor)
  GLBVAR(OBSEL)
+ GLBVAR(OAM_AllowFBReset)
  GLBVAR(OAMADDL)
  GLBVAR(OAMADDH)
  GLBVAR(OAM_Buffer)
@@ -304,6 +217,7 @@ namespace PPU_MTRENDER
  static INLINE void MTIF_StartFrame(EmulateSpecStruct* espec, const unsigned hfilter) { RenderCommon_StartFrame(espec, HFilter); }
 
  static INLINE void MTIF_EnterVBlank(bool PAL, bool skip) { if(!skip) { RenderZero(PAL ? 239 : 232); } }
+ static INLINE void MTIF_EndOAMAddrReset(void) { }
  static INLINE void MTIF_ResetLineTarget(bool PAL, bool ilaceon, bool field) { RenderCommon_ResetLineTarget(PAL, ilaceon, field); }
 
  static INLINE void MTIF_RenderLine(uint32 l) { RenderCommon_RenderLine(); }
@@ -373,8 +287,49 @@ void PPU_SetRegister(const unsigned id, const uint32 value)
   //
   //
   //
+  case PPU_GSREG_TM:
+	MSEnable = value & 0xFF;
+	break;
+
+  case PPU_GSREG_TS:
+	SSEnable = value & 0xFF;
+	break;
+
+  case PPU_GSREG_TMW:
+	WMMainEnable = value & 0xFF;
+	break;
+
+  case PPU_GSREG_TSW:
+	WMSubEnable = value & 0xFF;
+	break;
+
+  case PPU_GSREG_CGWSEL:
+	CGWSEL = value & 0xFF;
+	break;
+
   case PPU_GSREG_CGADSUB:
 	CGADSUB = value & 0xFF;
+	break;
+
+  case PPU_GSREG_BG1SC:
+  case PPU_GSREG_BG2SC:
+  case PPU_GSREG_BG3SC:
+  case PPU_GSREG_BG4SC:
+	{
+	 const unsigned w = id - PPU_GSREG_BG1SC;
+
+	 assert(w < 4);
+
+	 BGSC[w] = value & 0xFF;
+	}
+	break;
+
+  case PPU_GSREG_BG12NBA:
+	BGNBA[0] = value & 0xFF;
+	break;
+
+  case PPU_GSREG_BG34NBA:
+	BGNBA[1] = value & 0xFF;
 	break;
 
   case PPU_GSREG_BG1HOFS:

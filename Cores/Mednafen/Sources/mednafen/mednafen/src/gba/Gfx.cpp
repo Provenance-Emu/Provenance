@@ -411,12 +411,12 @@ void gfxDrawRotScreen16Bit(uint16 control,
   int sizeX = 240;
   int sizeY = 160;
   
-  int startX = (x_l) | ((x_h & 0x07FF)<<16);
-  if(x_h & 0x0800)
-    startX |= 0xF8000000;
-  int startY = (y_l) | ((y_h & 0x07FF)<<16);
-  if(y_h & 0x0800)
-    startY |= 0xF8000000;
+  //int startX = (x_l) | ((x_h & 0x07FF)<<16);
+  //if(x_h & 0x0800)
+  //  startX |= 0xF8000000;
+  //int startY = (y_l) | ((y_h & 0x07FF)<<16);
+  //if(y_h & 0x0800)
+  //  startY |= 0xF8000000;
 
   int dx = pa & 0x7FFF;
   if(pa & 0x8000)
@@ -1004,9 +1004,9 @@ void gfxDrawSprites(void)
               if(a1 & 0x1000)
                 xxx = sizeX - 1;
                   
-                if(a0 & 0x1000) {
-                  t -= (t % mosaicY);
-                }
+              if(a0 & 0x1000) {
+                t -= (t % mosaicY);
+              }
 
               int address = 0x10000 + ((((c + (t>>3) * inc)<<5)
                 + ((t & 7)<<2) + ((xxx>>3)<<5) + ((xxx & 7) >> 1))&0x7FFF);

@@ -14,8 +14,8 @@ if WANT_SSFPLAY_EMU
 noinst_LIBRARIES	+=	libssfplay.a
 endif
 
-libss_a_SOURCES 	= 	db.cpp cdb.cpp sound.cpp
-libss_a_SOURCES		+=	cart.cpp cart/backup.cpp cart/cs1ram.cpp cart/debug.cpp cart/extram.cpp cart/rom.cpp cart/ar4mp.cpp
+libss_a_SOURCES 	= 	db.cpp stvio.cpp ak93c45.cpp cdb.cpp sound.cpp
+libss_a_SOURCES		+=	cart.cpp cart/backup.cpp cart/cs1ram.cpp cart/bootrom.cpp cart/extram.cpp cart/rom.cpp cart/ar4mp.cpp cart/stv.cpp
 libss_a_SOURCES		+=	ss.cpp scu_dsp_gen.cpp scu_dsp_mvi.cpp scu_dsp_jmp.cpp scu_dsp_misc.cpp
 libss_a_SOURCES		+=	vdp1.cpp vdp1_line.cpp vdp1_sprite.cpp vdp1_poly.cpp
 libss_a_SOURCES		+=	vdp2.cpp vdp2_render.cpp

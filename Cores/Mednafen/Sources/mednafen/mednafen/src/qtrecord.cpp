@@ -244,8 +244,10 @@ QTRecord::QTRecord(const std::string& path, const VideoSpec &spec) : qtfile(path
 
  if(VideoCodec == VCODEC_PNG)
   RawVideoBuffer.resize((1 + QTVideoWidth * 3) * QTVideoHeight);
+ else if(VideoCodec == VCODEC_CSCD)
+  RawVideoBuffer.resize(((QTVideoWidth * 3 + 3) &~ 3) * QTVideoHeight);
  else
-  RawVideoBuffer.resize(QTVideoWidth * QTVideoHeight * 3);
+  RawVideoBuffer.resize(QTVideoWidth * 3 * QTVideoHeight);
 
  if(VideoCodec == VCODEC_CSCD)
  {
@@ -353,7 +355,7 @@ void QTRecord::WriteFrame(const MDFN_Surface *surface, const MDFN_Rect &DisplayR
     break;
 
    if(VideoCodec == VCODEC_CSCD)
-    dest_line = &RawVideoBuffer[(QTVideoHeight - 1 - dest_y) * QTVideoWidth * 3];
+    dest_line = &RawVideoBuffer[(QTVideoHeight - 1 - dest_y) * ((QTVideoWidth * 3 + 3) &~ 3)];
    else if(VideoCodec == VCODEC_PNG)
     dest_line = &RawVideoBuffer[dest_y * (QTVideoWidth * 3 + 1)];
    else
@@ -394,7 +396,7 @@ void QTRecord::WriteFrame(const MDFN_Surface *surface, const MDFN_Rect &DisplayR
      break;
 
     if(VideoCodec == VCODEC_CSCD)
-     memcpy(&RawVideoBuffer[(QTVideoHeight - 1 - (dest_y + sub_y)) * QTVideoWidth * 3], dest_line, QTVideoWidth * 3);
+     memcpy(&RawVideoBuffer[(QTVideoHeight - 1 - (dest_y + sub_y)) * ((QTVideoWidth * 3 + 3) &~ 3)], dest_line, QTVideoWidth * 3);
     else if(VideoCodec == VCODEC_PNG)
      memcpy(&RawVideoBuffer[(dest_y + sub_y) * (QTVideoWidth * 3 + 1)], dest_line - 1, QTVideoWidth * 3 + 1);
     else

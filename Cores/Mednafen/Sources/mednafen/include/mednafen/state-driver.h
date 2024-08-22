@@ -1,1 +1,0 @@
-../../mednafen/src/state-driver.h

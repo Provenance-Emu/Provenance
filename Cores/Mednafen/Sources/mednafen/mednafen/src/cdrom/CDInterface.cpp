@@ -229,13 +229,21 @@ Stream *CDInterface::MakeStream(int32 lba, uint32 sector_count)
 
 CDInterface* CDInterface::Open(VirtualFS* vfs, const std::string& path, bool image_memcache, const uint64 affinity)
 {
+ //
+ // Don't allow a custom VirtualFS implementation unless CD image memory caching is enabled, due to thread
+ // safety and vfs object persistence/lifetime issues.
+ //
+ // TODO: Maybe add is_nonpersistent() and is_mtsafe() sort of functions to VirtualFS instead?
+ // TODO: More general error message when 'vfs' isn't an object of a class derived from ArchiveReader.
+ //
+ if(vfs != &NVFS && !image_memcache)
+  throw MDFN_Error(0, _("CD image memory caching must be enabled to allow loading a CD image from an archive."));
+ //
+ //
+ //
  std::unique_ptr<CDAccess> cda(CDAccess_Open(vfs, path, image_memcache));
 
- //
- // Don't use multithreaded reader if we're using a custom VirtualFS implementation, to avoid
- // thread safety nightmares.
- //
- if(image_memcache || (vfs != &NVFS))
+ if(image_memcache)
   return new CDInterface_ST(std::move(cda));
  else
   return new CDInterface_MT(std::move(cda), affinity);

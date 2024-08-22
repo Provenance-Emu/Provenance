@@ -14,7 +14,9 @@ struct WMInputBehavior
  bool Cursor;
  bool MouseAbs;
  bool MouseRel;
- bool Grab;
+
+ bool Grab_Keyboard;
+ bool Grab_Mouse;
 };
 
 //
@@ -30,7 +32,7 @@ void Video_ShowNotice(MDFN_NoticeType t, char* s);
 void BlitOSD(MDFN_Surface *src, const MDFN_Rect *src_rect, const MDFN_Rect *dest_rect, int source_alpha = 1);
 
 //
-void Video_MakeSettings(std::vector <MDFNSetting> &settings);
+void Video_MakeSettings(void);
 
 void Video_Init(void) MDFN_COLD;
 

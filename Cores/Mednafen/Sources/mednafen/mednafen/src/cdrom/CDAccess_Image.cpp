@@ -231,7 +231,7 @@ void CDAccess_Image::ParseTOCFileLineInfo(VirtualFS* vfs, CDRFILE_TRACK_INFO *tr
   }
   catch(std::exception& e)
   {
-   throw MDFN_Error(0, _("Error handling audio track file \"%s\": %s"), vfs->eval_fip(base_dir, filename).c_str(), e.what());
+   throw MDFN_Error(0, _("Error handling audio track file %s: %s"), vfs->get_human_path(vfs->eval_fip(base_dir, filename)).c_str(), e.what());
   }
  }
 
@@ -321,7 +321,7 @@ std::string MDFN_toupper(const std::string &str)
 
 void CDAccess_Image::LoadSBI(VirtualFS* vfs, const std::string& sbi_path)
 {
- MDFN_printf(_("Loading SBI file \"%s\"...\n"), sbi_path.c_str());
+ MDFN_printf(_("Loading SBI file %s...\n"), vfs->get_human_path(sbi_path).c_str());
  {
   MDFN_AutoIndent aind(1);
 
@@ -381,10 +381,10 @@ void CDAccess_Image::LoadSBI(VirtualFS* vfs, const std::string& sbi_path)
 static void StringToMSF(const char* str, unsigned* m, unsigned* s, unsigned* f)
 {
  if(trio_sscanf(str, "%u:%u:%u", m, s, f) != 3)
-  throw MDFN_Error(0, _("M:S:F time \"%s\" is malformed."), str);
+  throw MDFN_Error(0, _("M:S:F time \"%s\" is malformed."), MDFN_strhumesc(str).c_str());
 
  if(*m > 99 || *s > 59 || *f > 74)
-  throw MDFN_Error(0, _("M:S:F time \"%s\" contains component(s) out of range."), str);
+  throw MDFN_Error(0, _("M:S:F time \"%s\" contains component(s) out of range."), MDFN_strhumesc(str).c_str());
 }
 
 void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool image_memcache)
@@ -494,7 +494,7 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
 
      if(format_lookup == _DI_FORMAT_COUNT)
      {
-      throw(MDFN_Error(0, _("Invalid track format: %s"), args[0].c_str()));
+      throw(MDFN_Error(0, _("Invalid track format: %s"), MDFN_strhumesc(args[0]).c_str()));
      }
 
      if(TmpTrack.DIFormat == DI_FORMAT_AUDIO)
@@ -511,15 +511,15 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
     } // end to TRACK
     else if(cmdbuf == "SILENCE")
     {
-     //throw MDFN_Error(0, _("Unsupported directive: %s"), cmdbuf.c_str());
+     //throw MDFN_Error(0, _("Unsupported directive: %s"), MDFN_strhumesc(cmdbuf).c_str());
     }
     else if(cmdbuf == "ZERO")
     {
-     //throw MDFN_Error(0, _("Unsupported directive: %s"), cmdbuf.c_str());
+     //throw MDFN_Error(0, _("Unsupported directive: %s"), MDFN_strhumesc(cmdbuf).c_str());
     }
     else if(cmdbuf == "FIFO")
     {
-     throw MDFN_Error(0, _("Unsupported directive: %s"), cmdbuf.c_str());
+     throw MDFN_Error(0, _("Unsupported directive: %s"), MDFN_strhumesc(cmdbuf).c_str());
     }
     else if(cmdbuf == "FILE" || cmdbuf == "AUDIOFILE")
     {
@@ -559,13 +559,13 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
     else if(cmdbuf == "INDEX")
     {
      // FIXME
-     throw MDFN_Error(0, _("Unsupported directive: %s"), cmdbuf.c_str());
+     throw MDFN_Error(0, _("Unsupported directive: %s"), MDFN_strhumesc(cmdbuf).c_str());
     }
     else if(cmdbuf == "PREGAP")
     {
      if(active_track < 0)
      {
-      throw(MDFN_Error(0, _("Command %s is outside of a TRACK definition!\n"), cmdbuf.c_str()));
+      throw(MDFN_Error(0, _("Command %s is outside of a TRACK definition!\n"), MDFN_strhumesc(cmdbuf).c_str()));
      }
 
      unsigned int m,s,f;
@@ -578,7 +578,7 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
     {
      if(active_track < 0)
      {
-      throw(MDFN_Error(0, _("Command %s is outside of a TRACK definition!\n"), cmdbuf.c_str()));
+      throw(MDFN_Error(0, _("Command %s is outside of a TRACK definition!\n"), MDFN_strhumesc(cmdbuf).c_str()));
      }
 
      unsigned int m,s,f;
@@ -609,7 +609,7 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
      }
      else
      {
-      throw MDFN_Error(0, _("Unsupported argument to \"NO\" directive: %s"), args[0].c_str());
+      throw MDFN_Error(0, _("Unsupported argument to \"NO\" directive: %s"), MDFN_strhumesc(args[0]).c_str());
      }
     }
     else if(cmdbuf == "COPY")
@@ -629,7 +629,7 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
      disc_type = DISC_TYPE_CD_XA;
     else
     {
-     //throw MDFN_Error(0, _("Unsupported directive: %s"), cmdbuf.c_str());
+     //throw MDFN_Error(0, _("Unsupported directive: %s"), MDFN_strhumesc(cmdbuf).c_str());
     }
     // TODO: CATALOG
 
@@ -671,12 +671,12 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
       }
       catch(std::exception& e)
       {
-       throw MDFN_Error(0, _("Error handling audio track file \"%s\": %s"), efn.c_str(), e.what());
+       throw MDFN_Error(0, _("Error handling audio track file %s: %s"), vfs->get_human_path(efn).c_str(), e.what());
       }
      }
      else
      {
-      throw MDFN_Error(0, _("Unsupported track format: %s\n"), args[1].c_str());
+      throw MDFN_Error(0, _("Unsupported track format: %s\n"), MDFN_strhumesc(args[1]).c_str());
      }
     }
     else if(cmdbuf == "TRACK")
@@ -719,7 +719,7 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
 
      if(format_lookup == _DI_FORMAT_COUNT)
      {
-      throw(MDFN_Error(0, _("Invalid track format: %s\n"), args[1].c_str()));
+      throw(MDFN_Error(0, _("Invalid track format: %s\n"), MDFN_strhumesc(args[1]).c_str()));
      }
     }
     else if(cmdbuf == "INDEX")
@@ -734,7 +734,7 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
       if(trio_sscanf(args[0].c_str(), "%u", &wi) == 1 && wi < 100)
        TmpTrack.index[wi] = (m * 60 + s) * 75 + f;
       else
-       throw MDFN_Error(0, _("Malformed \"INDEX\" directive: %s\n"), cmdbuf.c_str());
+       throw MDFN_Error(0, _("Malformed \"INDEX\" directive: %s\n"), MDFN_strhumesc(cmdbuf).c_str());
      }
     }
     else if(cmdbuf == "PREGAP")
@@ -787,18 +787,18 @@ void CDAccess_Image::ImageOpen(VirtualFS* vfs, const std::string& path, bool ima
       }
       else
       {
-       throw MDFN_Error(0, _("Unknown CUE sheet \"FLAGS\" directive flag \"%s\".\n"), args[i].c_str());
+       throw MDFN_Error(0, _("Unknown CUE sheet \"FLAGS\" directive flag \"%s\".\n"), MDFN_strhumesc(args[i]).c_str());
       }
      }
     }
     else if(cmdbuf == "CDTEXTFILE" || cmdbuf == "CATALOG" || cmdbuf == "ISRC" ||
 	    cmdbuf == "TITLE" || cmdbuf == "PERFORMER" || cmdbuf == "SONGWRITER")
     {
-     MDFN_printf(_("Unsupported CUE sheet directive: \"%s\".\n"), cmdbuf.c_str());	// FIXME, generic logger passed by pointer to constructor
+     MDFN_printf(_("Unsupported CUE sheet directive: \"%s\".\n"), MDFN_strhumesc(cmdbuf).c_str());	// FIXME, generic logger passed by pointer to constructor
     }
     else
     {
-     throw MDFN_Error(0, _("Unknown CUE sheet directive \"%s\".\n"), cmdbuf.c_str());
+     throw MDFN_Error(0, _("Unknown CUE sheet directive \"%s\".\n"), MDFN_strhumesc(cmdbuf).c_str());
     }
    } // end of CUE sheet handling
  } // end of fgets() loop

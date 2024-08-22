@@ -133,6 +133,33 @@ struct CPU_Misc
   return ret;
  }
 
+ // See also: SA1CPU_OpReadIO() in sa1.cpp
+ INLINE uint8 CPU_ReadOp(uint32 A)
+ {
+  const size_t i = RWIndex[A >> 9];
+  uint8 ret = ReadFuncs[i](A);
+
+  mdr = ret;
+
+  return ret;
+ }
+
+ INLINE uint8 CPU_ReadVec(uint32 A)
+ {
+  uint8 ret = *(uint8*)(ROMPtr[0] + (A & 0x7FFF) + ((A >> 1) & 0xF8000));
+  const size_t index = A & 0xF;
+
+  timestamp += 2;
+
+  ret = (ret & SA1VectorMask[index]) | SA1VectorSpace[index];
+
+  mdr = ret;
+
+  //printf("Vec: 0x%06x 0x%02x --- VM=0x%02x, VS=0x%02x\n", A, ret, SA1VectorMask[index], SA1VectorSpace[index]);
+
+  return ret;
+ }
+
  INLINE void CPU_Write(uint32 A, uint8 V)
  {
   const size_t i = RWIndex[A >> 9];

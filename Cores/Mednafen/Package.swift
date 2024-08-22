@@ -23,11 +23,11 @@ let OTHER_CFLAGS: [CSetting] = [
 ]
 
 let CSETTINGS: [CSetting] = [
-    .define("MEDNAFEN_VERSION_NUMERIC", to: "0x00102701"),
-    .define("MEDNAFEN_VERSION", to: "1.27.1"),
+    .define("MEDNAFEN_VERSION_NUMERIC", to: "0x00103201"),
+    .define("MEDNAFEN_VERSION", to: "1.32.1"),
     .define("PACKAGE", to: "mednafen"),
     .define("INLINE", to: "inline"),
-    
+    .define("MDFN_PSS_STYLE", to: "1"),
     .define("HAVE_CONFIG_H", to: "1"),
 
     .define("DEBUG", to: "1", .when(configuration: .debug)),
@@ -35,7 +35,8 @@ let CSETTINGS: [CSetting] = [
 //    .headerSearchPath("./"),
 //    .headerSearchPath("../"),
 //    .headerSearchPath("../include"),
-//    .headerSearchPath("../../include"),
+    .headerSearchPath("../../include"),
+    .headerSearchPath("../../include_mednafen")
 ] + GCC_PREPROCESSOR_DEFINITIONS + OTHER_CFLAGS
 
 let package = Package(
@@ -89,7 +90,10 @@ let package = Package(
                 "PVSupport"
             ],
             path: "Sources/MednafenGameCore",
-            cSettings: CSETTINGS
+            cSettings: [
+                .headerSearchPath("../mednafen/mednafen/include_mednafen"),
+                .headerSearchPath("../mednafen/mednafen/include"),
+            ] + CSETTINGS
         ),
         
         // MARK: MednafenGameCoreSwift
@@ -116,21 +120,114 @@ let package = Package(
             .target(
                 name: "MednafenGameCoreC",
                 dependencies: [
-                    "saturn",
-                    "psx",
-                    "wonderswan",
-                    "virtualboy",
-                    "nes",
-                    "mednafen"
+//                    "mednafen",
+//                    "megadrive",
+//                    "nes",
+//                    "pce",
+//                    "pcefast",
+//                    "pcfx",
+//                    "psx",
+//                    "saturn",
+//                    "segamastersystem",
+//                    "snes",
+//                    "snes_faust",
+//                    "virtualboy",
+//                    "wonderswan"
                 ],
-                cSettings: CSETTINGS
+                cSettings: [
+                    .headerSearchPath("../mednafen/mednafen/include_mednafen"),
+                    .headerSearchPath("../mednafen/mednafen/include"),
+                ] + CSETTINGS
             ),
+        
+        // MARK: mednafen
+
+            .target(
+                name: "mednafen",
+                dependencies: [
+                    "cdrom",
+                    "hwaudio",
+                    "hwcpu",
+                    "hwcpu-m68k",
+                    "hwmisc",
+                    "hwvideo",
+                    "mpcdec",
+                    "quicklz",
+                    "sound",
+                    "tremor",
+                    "trio",
+                    "video"
+                ],
+                path: "Sources/mednafen/",
+                sources: [
+                    "time/Time_POSIX.cpp", // This was in the main framework target prior
+                    
+                    "ExtMemStream.cpp",
+                    "FileStream.cpp",
+                    "IPSPatcher.cpp",
+                    "MTStreamReader.cpp",
+                    "MemoryStream.cpp",
+                    "NativeVFS.cpp",
+                    "PSFLoader.cpp",
+                    "SNSFLoader.cpp",
+                    "SPCReader.cpp",
+                    "Stream.cpp",
+                    "VirtualFS.cpp",
+                    "cdplay/cdplay.cpp",
+                    "cdrom/CDInterface.cpp",
+                    "cdrom/CDInterface_MT.cpp",
+                    "cdrom/CDInterface_ST.cpp",
+                    "cheat_formats/gb.cpp",
+                    "cheat_formats/psx.cpp",
+                    "cheat_formats/snes.cpp",
+                    "compress/GZFileStream.cpp",
+                    "compress/ZIPReader.cpp",
+                    "compress/ZLInflateFilter.cpp",
+                    "cputest/cputest.c",
+                    "debug.cpp",
+                    "demo/demo.cpp",
+                    "endian.cpp",
+                    "error.cpp",
+                    "file.cpp",
+                    "general.cpp",
+                    "git.cpp",
+                    "hash/crc.cpp",
+                    "hash/md5.cpp",
+                    "hash/sha1.cpp",
+                    "hash/sha256.cpp",
+                    "mednafen.cpp",
+                    "memory.cpp",
+                    "mempatcher.cpp",
+                    "movie.cpp",
+                    "mthreading/MThreading_POSIX.cpp",
+                    "net/Net.cpp",
+                    "net/Net_POSIX.cpp",
+                    "netplay.cpp",
+                    "player.cpp",
+                    "resampler/resample.c",
+                    "settings.cpp",
+//                    "sound/DSPUtility.cpp",
+//                    "sound/SwiftResampler.cpp",
+                    "state.cpp",
+                    "state_rewind.cpp",
+                    "string/escape.cpp",
+                    "string/string.cpp",
+                    "video/Deinterlacer_Blend.cpp",
+                    "video/Deinterlacer_Simple.cpp"
+                ].map { "mednafen/src/\($0)" },
+                publicHeadersPath: "./mednafen/include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./mednafen/include_mednafen"),
+                    .headerSearchPath("./mednafen/include")
+                ] + CSETTINGS
+            ),
+        
       
         // MARK: psx
 
             .target(
                 name: "psx",
-                path: "Sources/mednafen/mednafen/src/psx",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "cdc.cpp",
                     "cpu.cpp",
@@ -157,15 +254,23 @@ let package = Package(
                     "sio.cpp",
                     "spu.cpp",
                     "timer.cpp"
+                ].map { "src/psx/\($0)" },
+                resources: [
+                    .copy("src/psx/notes/")
                 ],
-                cSettings: CSETTINGS
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: wonderswan
         
             .target(
                 name: "wonderswan",
-                path: "Sources/mednafen/mednafen/src/wswan",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "comm.cpp",
                     "eeprom.cpp",
@@ -177,10 +282,11 @@ let package = Package(
                     "tcache.cpp",
                     "v30mz.cpp",
                     "wswan_main.cpp"
-                ],
-                publicHeadersPath: ".",
+                ].map { "src/wswan/\($0)" },
+                publicHeadersPath: "include_mednafen/",
                 cSettings: [
-                    .headerSearchPath("../include"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./include_mednafen"),
                 ] + CSETTINGS
             ),
         
@@ -188,23 +294,26 @@ let package = Package(
 
             .target(
                 name: "virtualboy",
-                path: "Sources/mednafen/mednafen/src/vb",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "input.cpp",
                     "timer.cpp",
                     "vb.cpp",
                     "vip.cpp",
                     "vsu.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/vb/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./include_mednafen"),
+                ] + CSETTINGS
             ),
 
         // MARK: nes
         
             .target(
                 name: "nes",
-                path: "Sources/mednafen/mednafen/src/nes",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "boards/107.cpp",
                     "boards/112.cpp",
@@ -331,15 +440,20 @@ let package = Package(
                     "unif.cpp",
                     "vsuni.cpp",
                     "x6502.cpp"
-                ],
-                cSettings: CSETTINGS
+                ].map { "src/nes/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
 
         // MARK: gb
         
             .target(
                 name: "gb",
-                path: "Sources/mednafen/mednafen/src/gb",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "gb.cpp",
                     "gbGlobals.cpp",
@@ -347,16 +461,20 @@ let package = Package(
                     "memory.cpp",
                     "sound.cpp",
                     "z80.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/gb/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: gba
 
             .target(
                 name: "gba",
-                path: "Sources/mednafen/mednafen/src/gba",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "GBA.cpp",
                     "GBAinline.cpp",
@@ -376,16 +494,20 @@ let package = Package(
                     "flash.cpp",
                     "sram.cpp",
                     "thumb.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/gba/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
 
         // MARK: lynx
         
             .target(
                 name: "lynx",
-                path: "Sources/mednafen/mednafen/src/lynx",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "c65c02.cpp",
                     "cart.cpp",
@@ -395,16 +517,20 @@ let package = Package(
                     "rom.cpp",
                     "susie.cpp",
                     "system.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/lynx/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: neogeopocket
 
             .target(
                 name: "neogeopocket",
-                path: "Sources/mednafen/mednafen/src/ngp",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "T6W28_Apu.cpp",
                     "TLCS-900h/TLCS900h_disassemble.cpp",
@@ -432,16 +558,20 @@ let package = Package(
                     "rom.cpp",
                     "rtc.cpp",
                     "sound.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/ngp/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: pce
         
             .target(
                 name: "pce",
-                path: "Sources/mednafen/mednafen/src/pce",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "input/gamepad.cpp",
                     "input/mouse.cpp",
@@ -456,18 +586,23 @@ let package = Package(
                     "pcecd.cpp",
                     "tsushin.cpp",
                     "vce.cpp"
-                ],
+                ].map { "src/pce/\($0)" },
                 resources: [
-                    .copy("notes/")
+                    .copy("src/pce/notes/")
                 ],
-                cSettings: CSETTINGS
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: pcefast
 
             .target(
                 name: "pcefast",
-                path: "Sources/mednafen/mednafen/src/pce_fast",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "hes.cpp",
                     "huc.cpp",
@@ -478,16 +613,20 @@ let package = Package(
                     "pcecd_drive.cpp",
                     "psg.cpp",
                     "vdc.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/pce_fast/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: segamastersystem
 
             .target(
                 name: "segamastersystem",
-                path: "Sources/mednafen/mednafen/src/sms",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "cart.cpp",
                     "memz80.cpp",
@@ -499,16 +638,20 @@ let package = Package(
                     "system.cpp",
                     "tms.cpp",
                     "vdp.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/sms/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: pcfx
 
             .target(
                 name: "pcfx",
-                path: "Sources/mednafen/mednafen/src/pcfx",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "fxscsi.cpp",
                     "huc6273.cpp",
@@ -522,18 +665,23 @@ let package = Package(
                     "rainbow.cpp",
                     "soundbox.cpp",
                     "timer.cpp"
-                ],
+                ].map { "src/pcfx/\($0)" },
                 resources: [
-                    .copy("notes/")
+                    .copy("src/pcfx/notes/")
                 ],
-                cSettings: CSETTINGS
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: megadrive
 
             .target(
                 name: "megadrive",
-                path: "Sources/mednafen/mednafen/src/md",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "cart/cart.cpp",
                     "cart/map_eeprom.cpp",
@@ -565,16 +713,20 @@ let package = Package(
                     "sound.cpp",
                     "system.cpp",
                     "vdp.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/md/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: hwaudio
 
             .target(
                 name: "hwaudio",
-                path: "Sources/mednafen/mednafen/src/hw_sound",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "gb_apu/Gb_Apu.cpp",
                     "gb_apu/Gb_Apu_State.cpp",
@@ -583,68 +735,88 @@ let package = Package(
                     "sms_apu/Sms_Apu.cpp",
                     "ym2413/emu2413.cpp",
                     "ym2612/Ym2612_Emu.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/hw_sound/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: hwvideo
 
             .target(
                 name: "hwvideo",
-                path: "Sources/mednafen/mednafen/src/hw_video",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "huc6270/vdc.cpp",
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/hw_video/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: hwcpu
 
             .target(
                 name: "hwcpu",
-                path: "Sources/mednafen/mednafen/src/hw_cpu",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "v810/v810_cpu.cpp",
                     "v810/v810_fp_ops.cpp",
                     "z80-fuse/z80.cpp",
                     "z80-fuse/z80_ops.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/hw_cpu/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: hwcpu-m68k
 
             .target(
                 name: "hwcpu-m68k",
-                path: "Sources/mednafen/mednafen/src/hw_cpu/m68k",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "m68k.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/hw_cpu/m68k/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: hwmisc
 
             .target(
                 name: "hwmisc",
-                path: "Sources/mednafen/mednafen/src/",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "testsexp.cpp",
                     "hw_misc/arcade_card/arcade_card.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: cdrom
         
             .target(
                 name: "cdrom",
-                path: "Sources/mednafen/mednafen/src/cdrom",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "CDAFReader.cpp",
                     "CDAFReader_MPC.cpp",
@@ -660,16 +832,20 @@ let package = Package(
                     "lec.cpp",
                     "recover-raw.cpp",
                     "scsicd.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/cdrom/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: sound
 
             .target(
                 name: "sound",
-                path: "Sources/mednafen/mednafen/src/sound",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "Blip_Buffer.cpp",
                     "DSPUtility.cpp",
@@ -679,30 +855,39 @@ let package = Package(
                     "SwiftResampler.cpp",
                     "WAVRecord.cpp",
                     "okiadpcm.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/sound/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: sexyal
 
-//            .target(
-//                name: "sexyal",
-//                path: "Sources/mednafen/mednafen/src/sexyal",
-//                sources: [
-//                    "drivers/dummy.cpp",
-//                    "drivers/sdl.cpp",
-//                    "convert.cpp",
-//                    "sexyal.cpp"
-//                ],
-//                publicHeadersPath: "."
-//            ),
+            .target(
+                name: "sexyal",
+                path: "Sources/mednafen/mednafen/",
+                sources: [
+                    "drivers/dummy.cpp",
+                    "drivers/sdl.cpp",
+                    "convert.cpp",
+                    "sexyal.cpp"
+                ].map { "src/sexyal/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
+            ),
         
         // MARK: video
 
             .target(
                 name: "video",
-                path: "Sources/mednafen/mednafen/src/video",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "Deinterlacer.cpp",
                     "convert.cpp",
@@ -714,98 +899,64 @@ let package = Package(
                     "tblur.cpp",
                     "text.cpp",
                     "video.cpp"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/video/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
-        // MARK: mednafen
+        // MARK: AppleII
 
             .target(
-                name: "mednafen",
-                dependencies: [
-                    "cdrom",
-                    "hwaudio",
-                    "hwcpu",
-                    "hwcpu-m68k",
-                    "hwmisc",
-                    "hwvideo",
-                    "pcefast",
-                    "pcfx",
-                    "segamastersystem",
-                    "megadrive",
-                    "snes",
-                    "sound",
-                    "tremor",
-                    "trio",
-                    "video"
-                ],
-                path: "Sources/mednafen/",
+                name: "apple2",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
-                    "time/Time_POSIX.cpp", // This was in the main framework target prior
-                    
-                    "ExtMemStream.cpp",
-                    "FileStream.cpp",
-                    "IPSPatcher.cpp",
-                    "MTStreamReader.cpp",
-                    "MemoryStream.cpp",
-                    "NativeVFS.cpp",
-                    "PSFLoader.cpp",
-                    "SNSFLoader.cpp",
-                    "SPCReader.cpp",
-                    "Stream.cpp",
-                    "VirtualFS.cpp",
-                    "cdplay/cdplay.cpp",
-                    "cdrom/CDInterface.cpp",
-                    "cdrom/CDInterface_MT.cpp",
-                    "cdrom/CDInterface_ST.cpp",
-                    "cheat_formats/gb.cpp",
-                    "cheat_formats/psx.cpp",
-                    "cheat_formats/snes.cpp",
-                    "compress/GZFileStream.cpp",
-                    "compress/ZIPReader.cpp",
-                    "compress/ZLInflateFilter.cpp",
-                    "cputest/cputest.c",
-                    "debug.cpp",
-                    "demo/demo.cpp",
-                    "endian.cpp",
-                    "error.cpp",
-                    "file.cpp",
-                    "general.cpp",
-                    "git.cpp",
-                    "hash/crc.cpp",
-                    "hash/md5.cpp",
-                    "hash/sha1.cpp",
-                    "hash/sha256.cpp",
-                    "mednafen.cpp",
-                    "memory.cpp",
-                    "mempatcher.cpp",
-                    "movie.cpp",
-                    "mthreading/MThreading_POSIX.cpp",
-                    "net/Net.cpp",
-                    "net/Net_POSIX.cpp",
-                    "netplay.cpp",
-                    "player.cpp",
-                    "resampler/resample.c",
-                    "settings.cpp",
-//                    "sound/DSPUtility.cpp",
-//                    "sound/SwiftResampler.cpp",
-                    "state.cpp",
-                    "state_rewind.cpp",
-                    "string/escape.cpp",
-                    "string/string.cpp",
-                    "video/Deinterlacer_Blend.cpp",
-                    "video/Deinterlacer_Simple.cpp"
-                ].map { "mednafen/src/\($0)" },
-                publicHeadersPath: "./include/mednafen",
-                cSettings: CSETTINGS
+                    "apple2.cpp",
+                    "disk2.cpp",
+                    "gameio.cpp",
+                    "hdd.cpp",
+                    "kbio.cpp",
+                    "sound.cpp",
+                    "video.cpp"
+                ].map { "src/apple2/\($0)" },
+//                resources: [
+//                    .copy("src/apple2/notes/")
+//                ],
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
+            ),
+        
+        // MARK: SASPlay
+
+            .target(
+                name: "sasplay",
+                path: "Sources/mednafen/mednafen/",
+                sources: [
+                    "sasplay.cpp"
+                ].map { "src/sasplay/\($0)" },
+//                resources: [
+//                    .copy("src/apple2/notes/")
+//                ],
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: mpcdec
 
             .target(
                 name: "mpcdec",
-                path: "Sources/mednafen/mednafen/src/mpcdec",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "crc32.c",
                     "huffman.c",
@@ -815,21 +966,29 @@ let package = Package(
                     "requant.c",
                     "streaminfo.c",
                     "synth_filter.c"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/mpcdec/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: quicklz
 
             .target(
                 name: "quicklz",
-                path: "Sources/mednafen/mednafen/src/quicklz/",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "quicklz.c"
-                ],
-                publicHeadersPath: ".",
-                cSettings: CSETTINGS
+                ].map { "src/quicklz/\($0)" },
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./")
+                ] + CSETTINGS
             ),
         
         // MARK: Tremor
@@ -870,145 +1029,151 @@ let package = Package(
                 ],
                 publicHeadersPath: ".",
                 cSettings: [
-                    .headerSearchPath("../")
+                    .headerSearchPath("../"),
+                    .headerSearchPath("../../include")
                 ] + CSETTINGS
             ),
         
         // MARK: SNES
-
-            .target(
-                name: "snes",
-                path: "Sources/mednafen/mednafen/src/snes",
-                sources:[
-                    "interface.cpp",
-                    "src/cartridge/cartridge.cpp",
-                    "src/cartridge/gameboyheader.cpp",
-                    "src/cartridge/header.cpp",
-                    "src/cartridge/serialization.cpp",
-                    "src/cheat/cheat.cpp",
-                    "src/chip/bsx/bsx.cpp",
-                    "src/chip/bsx/bsx_base.cpp",
-                    "src/chip/bsx/bsx_cart.cpp",
-                    "src/chip/bsx/bsx_flash.cpp",
-                    "src/chip/cx4/cx4.cpp",
-                    "src/chip/cx4/data.cpp",
-                    "src/chip/cx4/functions.cpp",
-                    "src/chip/cx4/oam.cpp",
-                    "src/chip/cx4/opcodes.cpp",
-                    "src/chip/cx4/serialization.cpp",
-                    "src/chip/dsp1/dsp1.cpp",
-                    "src/chip/dsp1/dsp1emu.cpp",
-                    "src/chip/dsp1/serialization.cpp",
-                    "src/chip/dsp2/dsp2.cpp",
-                    "src/chip/dsp2/opcodes.cpp",
-                    "src/chip/dsp2/serialization.cpp",
-                    "src/chip/dsp3/dsp3.cpp",
-                    "src/chip/dsp3/dsp3emu.c",
-                    "src/chip/dsp4/dsp4.cpp",
-                    "src/chip/dsp4/dsp4emu.c",
-                    "src/chip/obc1/obc1.cpp",
-                    "src/chip/obc1/serialization.cpp",
-                    "src/chip/sa1/bus/bus.cpp",
-                    "src/chip/sa1/dma/dma.cpp",
-                    "src/chip/sa1/memory/memory.cpp",
-                    "src/chip/sa1/mmio/mmio.cpp",
-                    "src/chip/sa1/sa1.cpp",
-                    "src/chip/sa1/serialization.cpp",
-                    "src/chip/sdd1/sdd1.cpp",
-                    "src/chip/sdd1/sdd1emu.cpp",
-                    "src/chip/sdd1/serialization.cpp",
-                    "src/chip/spc7110/decomp.cpp",
-                    "src/chip/spc7110/serialization.cpp",
-                    "src/chip/spc7110/spc7110.cpp",
-                    "src/chip/srtc/serialization.cpp",
-                    "src/chip/srtc/srtc.cpp",
-                    "src/chip/st010/serialization.cpp",
-                    "src/chip/st010/st010.cpp",
-                    "src/chip/st010/st010_op.cpp",
-                    "src/chip/superfx/bus/bus.cpp",
-                    "src/chip/superfx/core/core.cpp",
-                    "src/chip/superfx/core/opcode_table.cpp",
-                    "src/chip/superfx/core/opcodes.cpp",
-                    "src/chip/superfx/disasm/disasm.cpp",
-                    "src/chip/superfx/memory/memory.cpp",
-                    "src/chip/superfx/mmio/mmio.cpp",
-                    "src/chip/superfx/serialization.cpp",
-                    "src/chip/superfx/superfx.cpp",
-                    "src/chip/superfx/timing/timing.cpp",
-                    "src/cpu/core/algorithms.cpp",
-                    "src/cpu/core/core.cpp",
-                    "src/cpu/core/opcode_misc.cpp",
-                    "src/cpu/core/opcode_pc.cpp",
-                    "src/cpu/core/opcode_read.cpp",
-                    "src/cpu/core/opcode_rmw.cpp",
-                    "src/cpu/core/opcode_write.cpp",
-                    "src/cpu/core/serialization.cpp",
-                    "src/cpu/core/table.cpp",
-                    "src/cpu/cpu.cpp",
-                    "src/cpu/scpu/dma/dma.cpp",
-                    "src/cpu/scpu/memory/memory.cpp",
-                    "src/cpu/scpu/mmio/mmio.cpp",
-                    "src/cpu/scpu/scpu.cpp",
-                    "src/cpu/scpu/serialization.cpp",
-                    "src/cpu/scpu/timing/event.cpp",
-                    "src/cpu/scpu/timing/irq.cpp",
-                    "src/cpu/scpu/timing/joypad.cpp",
-                    "src/cpu/scpu/timing/timing.cpp",
-                    "src/lib/libco/arm.c",
-                    "src/lib/libco/libco.c",
-                    "src/lib/libco/sjlj.c",
-                    "src/memory/memory.cpp",
-                    "src/memory/smemory/generic.cpp",
-                    "src/memory/smemory/serialization.cpp",
-                    "src/memory/smemory/smemory.cpp",
-                    "src/memory/smemory/system.cpp",
-                    "src/ppu/memory/memory.cpp",
-                    "src/ppu/mmio/mmio.cpp",
-                    "src/ppu/ppu.cpp",
-                    "src/ppu/render/addsub.cpp",
-                    "src/ppu/render/bg.cpp",
-                    "src/ppu/render/cache.cpp",
-                    "src/ppu/render/line.cpp",
-                    "src/ppu/render/mode7.cpp",
-                    "src/ppu/render/oam.cpp",
-                    "src/ppu/render/render.cpp",
-                    "src/ppu/render/windows.cpp",
-                    "src/ppu/serialization.cpp",
-                    "src/sdsp/brr.cpp",
-                    "src/sdsp/counter.cpp",
-                    "src/sdsp/echo.cpp",
-                    "src/sdsp/envelope.cpp",
-                    "src/sdsp/gaussian.cpp",
-                    "src/sdsp/misc.cpp",
-                    "src/sdsp/sdsp.cpp",
-                    "src/sdsp/serialization.cpp",
-                    "src/sdsp/voice.cpp",
-                    "src/smp/core/algorithms.cpp",
-                    "src/smp/core/opcode_misc.cpp",
-                    "src/smp/core/opcode_mov.cpp",
-                    "src/smp/core/opcode_pc.cpp",
-                    "src/smp/core/opcode_read.cpp",
-                    "src/smp/core/opcode_rmw.cpp",
-                    "src/smp/core/serialization.cpp",
-                    "src/smp/core/table.cpp",
-                    "src/smp/smp.cpp",
-                    "src/system/audio/audio.cpp",
-                    "src/system/config/config.cpp",
-                    "src/system/input/input.cpp",
-                    "src/system/scheduler/scheduler.cpp",
-                    "src/system/serialization.cpp",
-                    "src/system/system.cpp",
-                    "src/system/video/video.cpp"
-                ],
-                publicHeadersPath: "./",
-                cSettings: CSETTINGS
-            ),
+//
+//            .target(
+//                name: "snes",
+//                path: "Sources/mednafen/mednafen/",
+//                sources:[
+//                    "interface.cpp",
+//                    "src/cartridge/cartridge.cpp",
+//                    "src/cartridge/gameboyheader.cpp",
+//                    "src/cartridge/header.cpp",
+//                    "src/cartridge/serialization.cpp",
+//                    "src/cheat/cheat.cpp",
+//                    "src/chip/bsx/bsx.cpp",
+//                    "src/chip/bsx/bsx_base.cpp",
+//                    "src/chip/bsx/bsx_cart.cpp",
+//                    "src/chip/bsx/bsx_flash.cpp",
+//                    "src/chip/cx4/cx4.cpp",
+//                    "src/chip/cx4/data.cpp",
+//                    "src/chip/cx4/functions.cpp",
+//                    "src/chip/cx4/oam.cpp",
+//                    "src/chip/cx4/opcodes.cpp",
+//                    "src/chip/cx4/serialization.cpp",
+//                    "src/chip/dsp1/dsp1.cpp",
+//                    "src/chip/dsp1/dsp1emu.cpp",
+//                    "src/chip/dsp1/serialization.cpp",
+//                    "src/chip/dsp2/dsp2.cpp",
+//                    "src/chip/dsp2/opcodes.cpp",
+//                    "src/chip/dsp2/serialization.cpp",
+//                    "src/chip/dsp3/dsp3.cpp",
+//                    "src/chip/dsp3/dsp3emu.c",
+//                    "src/chip/dsp4/dsp4.cpp",
+//                    "src/chip/dsp4/dsp4emu.c",
+//                    "src/chip/obc1/obc1.cpp",
+//                    "src/chip/obc1/serialization.cpp",
+//                    "src/chip/sa1/bus/bus.cpp",
+//                    "src/chip/sa1/dma/dma.cpp",
+//                    "src/chip/sa1/memory/memory.cpp",
+//                    "src/chip/sa1/mmio/mmio.cpp",
+//                    "src/chip/sa1/sa1.cpp",
+//                    "src/chip/sa1/serialization.cpp",
+//                    "src/chip/sdd1/sdd1.cpp",
+//                    "src/chip/sdd1/sdd1emu.cpp",
+//                    "src/chip/sdd1/serialization.cpp",
+//                    "src/chip/spc7110/decomp.cpp",
+//                    "src/chip/spc7110/serialization.cpp",
+//                    "src/chip/spc7110/spc7110.cpp",
+//                    "src/chip/srtc/serialization.cpp",
+//                    "src/chip/srtc/srtc.cpp",
+//                    "src/chip/st010/serialization.cpp",
+//                    "src/chip/st010/st010.cpp",
+//                    "src/chip/st010/st010_op.cpp",
+//                    "src/chip/superfx/bus/bus.cpp",
+//                    "src/chip/superfx/core/core.cpp",
+//                    "src/chip/superfx/core/opcode_table.cpp",
+//                    "src/chip/superfx/core/opcodes.cpp",
+//                    "src/chip/superfx/disasm/disasm.cpp",
+//                    "src/chip/superfx/memory/memory.cpp",
+//                    "src/chip/superfx/mmio/mmio.cpp",
+//                    "src/chip/superfx/serialization.cpp",
+//                    "src/chip/superfx/superfx.cpp",
+//                    "src/chip/superfx/timing/timing.cpp",
+//                    "src/cpu/core/algorithms.cpp",
+//                    "src/cpu/core/core.cpp",
+//                    "src/cpu/core/opcode_misc.cpp",
+//                    "src/cpu/core/opcode_pc.cpp",
+//                    "src/cpu/core/opcode_read.cpp",
+//                    "src/cpu/core/opcode_rmw.cpp",
+//                    "src/cpu/core/opcode_write.cpp",
+//                    "src/cpu/core/serialization.cpp",
+//                    "src/cpu/core/table.cpp",
+//                    "src/cpu/cpu.cpp",
+//                    "src/cpu/scpu/dma/dma.cpp",
+//                    "src/cpu/scpu/memory/memory.cpp",
+//                    "src/cpu/scpu/mmio/mmio.cpp",
+//                    "src/cpu/scpu/scpu.cpp",
+//                    "src/cpu/scpu/serialization.cpp",
+//                    "src/cpu/scpu/timing/event.cpp",
+//                    "src/cpu/scpu/timing/irq.cpp",
+//                    "src/cpu/scpu/timing/joypad.cpp",
+//                    "src/cpu/scpu/timing/timing.cpp",
+//                    "src/lib/libco/arm.c",
+//                    "src/lib/libco/libco.c",
+//                    "src/lib/libco/sjlj.c",
+//                    "src/memory/memory.cpp",
+//                    "src/memory/smemory/generic.cpp",
+//                    "src/memory/smemory/serialization.cpp",
+//                    "src/memory/smemory/smemory.cpp",
+//                    "src/memory/smemory/system.cpp",
+//                    "src/ppu/memory/memory.cpp",
+//                    "src/ppu/mmio/mmio.cpp",
+//                    "src/ppu/ppu.cpp",
+//                    "src/ppu/render/addsub.cpp",
+//                    "src/ppu/render/bg.cpp",
+//                    "src/ppu/render/cache.cpp",
+//                    "src/ppu/render/line.cpp",
+//                    "src/ppu/render/mode7.cpp",
+//                    "src/ppu/render/oam.cpp",
+//                    "src/ppu/render/render.cpp",
+//                    "src/ppu/render/windows.cpp",
+//                    "src/ppu/serialization.cpp",
+//                    "src/sdsp/brr.cpp",
+//                    "src/sdsp/counter.cpp",
+//                    "src/sdsp/echo.cpp",
+//                    "src/sdsp/envelope.cpp",
+//                    "src/sdsp/gaussian.cpp",
+//                    "src/sdsp/misc.cpp",
+//                    "src/sdsp/sdsp.cpp",
+//                    "src/sdsp/serialization.cpp",
+//                    "src/sdsp/voice.cpp",
+//                    "src/smp/core/algorithms.cpp",
+//                    "src/smp/core/opcode_misc.cpp",
+//                    "src/smp/core/opcode_mov.cpp",
+//                    "src/smp/core/opcode_pc.cpp",
+//                    "src/smp/core/opcode_read.cpp",
+//                    "src/smp/core/opcode_rmw.cpp",
+//                    "src/smp/core/serialization.cpp",
+//                    "src/smp/core/table.cpp",
+//                    "src/smp/smp.cpp",
+//                    "src/system/audio/audio.cpp",
+//                    "src/system/config/config.cpp",
+//                    "src/system/input/input.cpp",
+//                    "src/system/scheduler/scheduler.cpp",
+//                    "src/system/serialization.cpp",
+//                    "src/system/system.cpp",
+//                    "src/system/video/video.cpp"
+//                ].map{ "src/snes/\($0)"},
+//                publicHeadersPath: "include_mednafen/",
+//                cSettings: [
+//                    .headerSearchPath("./include_mednafen"),
+//                    .headerSearchPath("./include"),
+//                    .headerSearchPath("./src/snes/"),
+//                    .headerSearchPath("./src/snes/lib")
+//                ] + CSETTINGS
+//            ),
         
         // MARK: SNES Faust
 
             .target(
                 name: "snes_faust",
-                path: "Sources/mednafen/mednafen/src/snes_faust",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "apu.cpp",
                     "cart.cpp",
@@ -1029,24 +1194,32 @@ let package = Package(
                     "ppu_mtrender.cpp",
                     "ppu_st.cpp",
                     "snes.cpp"
+                ].map{"src/snes_faust/\($0)"},
+                resources: [
+                    .copy("src/snes_faust/notes/")
                 ],
-                publicHeadersPath: "./",
-                cSettings: CSETTINGS
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./src/snes_faust/")
+                ] + CSETTINGS
             ),
         
             // MARK: Saturn
         
             .target(
                 name: "saturn",
-                path: "Sources/mednafen/mednafen/src/ss",
+                path: "Sources/mednafen/mednafen/",
                 sources: [
                     "cart.cpp",
                     "cart/ar4mp.cpp",
                     "cart/backup.cpp",
+                    "cart/bootrom.cpp",
                     "cart/cs1ram.cpp",
-                    "cart/debug.cpp",
                     "cart/extram.cpp",
                     "cart/rom.cpp",
+                    "cart/stv.cpp",
                     "cdb.cpp",
                     "db.cpp",
                     "input/3dpad.cpp",
@@ -1073,9 +1246,16 @@ let package = Package(
                     "vdp1_sprite.cpp",
                     "vdp2.cpp",
                     "vdp2_render.cpp"
+                ].map { "src/ss/\($0)" },
+                resources: [
+                    .copy("src/ss/notes/")
                 ],
-                publicHeadersPath: "./",
-                cSettings: CSETTINGS
+                publicHeadersPath: "include_mednafen/",
+                cSettings: [
+                    .headerSearchPath("./include_mednafen"),
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./src/ss")
+                ] + CSETTINGS
             ),
         
         // MARK: - Tests

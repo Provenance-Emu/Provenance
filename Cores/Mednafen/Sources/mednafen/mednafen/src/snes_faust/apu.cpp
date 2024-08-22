@@ -330,7 +330,13 @@ INLINE void SPC700::IPL_HLE(void)
    if(PC == 0xFFCA)
     goto SkipMemInit;
 
-   assert(PC == 0xFFC1 || PC == 0xFFC3);
+#ifdef SNES_DBG_ENABLE
+   if(PC != 0xFFC1 && PC != 0xFFC3)
+   {
+    SNES_DBG(SNES_DBG_ERROR | SNES_DBG_SPC700, "[SPC700] Unhandled IPL entry point 0x%04X\n", PC);
+    assert(0);
+   }
+#endif
 
    PSW = 0x00;
    SP = 0xEF;

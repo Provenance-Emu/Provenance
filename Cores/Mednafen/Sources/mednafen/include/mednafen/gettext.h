@@ -1,1 +1,0 @@
-../../mednafen/src/gettext.h

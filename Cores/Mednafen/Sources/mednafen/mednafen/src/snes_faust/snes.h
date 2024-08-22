@@ -22,7 +22,9 @@
 #ifndef __MDFN_SNES_FAUST_SNES_H
 #define __MDFN_SNES_FAUST_SNES_H
 
-#pragma GCC optimize ("unroll-loops")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize ("unroll-loops")
+#endif
 
 #include <mednafen/mednafen.h>
 
@@ -38,12 +40,44 @@ using namespace Mednafen;
 #define MEMCYC_SLOW   8
 #define MEMCYC_XSLOW 12
 
+namespace MDFN_IEN_SNES_FAUST
+{
+
+enum
+{
+ SNES_DBG_ERROR      = (1U << 0),
+ SNES_DBG_WARNING    = (1U << 1),
+ //
+ //
+ //SNES_DBG_UNK_READ   = (1U << 2),
+ //SNES_DBG_UNK_WRITE  = (1U << 3),
+ SNES_DBG_WRAM_UIR   = (1U << 4),	// Uninitialized read from WRAM(main 128KiB).
+ //
+ //
+ SNES_DBG_CPU        = (1U << 16),
+ SNES_DBG_DMA        = (1U << 17),
+
+ SNES_DBG_PPU        = (1U << 18),
+ SNES_DBG_PPU_BVA    = (1U << 19),	// Blocked VRAM accesses
+
+ SNES_DBG_SPC700     = (1U << 24),
+ SNES_DBG_DSP        = (1U << 25),
+
+ SNES_DBG_MSU1       = (1U << 26),
+
+ SNES_DBG_CART       = (1U << 27),
+};
+
 #if defined(WANT_DEBUGGER) && defined(MDFN_ENABLE_DEV_BUILD)
  #define SNES_DBG_ENABLE 1
- #define SNES_DBG(s, ...) printf(s, ## __VA_ARGS__)
+ void SNES_DBG(uint32 which, const char* format, ...);
+ MDFN_HIDE extern uint32 snes_dbg_mask;
 #else
- static INLINE void SNES_DBG(const char* format, ...) { }
+ static INLINE void SNES_DBG(uint32 which, const char* format, ...) { }
+ enum : uint32 { snes_dbg_mask = 0 };
 #endif
+
+}
 
 #include "cpu.h"
 #include "debug.h"

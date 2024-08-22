@@ -69,6 +69,7 @@ namespace MDFN_IEN_SS
 
   SS_DBG_SCSP 	   = (1U << 26),
   SS_DBG_SCSP_REGW = (1U << 27),
+  SS_DBG_SCSP_MOBUF= (1U << 28),
  };
 #ifdef MDFN_ENABLE_DEV_BUILD
  MDFN_HIDE extern uint32 ss_dbg_mask;
@@ -84,6 +85,7 @@ namespace MDFN_IEN_SS
   HORRIBLEHACK_VDP1VRAM5000FIX	 = (1U << 2),
   HORRIBLEHACK_VDP1RWDRAWSLOWDOWN= (1U << 3),
   HORRIBLEHACK_VDP1INSTANT	 = (1U << 4),
+  /*HORRIBLEHACK_SCUINTDELAY	 = (1U << 5),*/
  };
  MDFN_HIDE extern uint32 ss_horrible_hacks;
 #endif
@@ -145,6 +147,10 @@ namespace MDFN_IEN_SS
   SS_EVENT_CART,
 
   SS_EVENT_MIDSYNC,
+  //
+  //
+  //
+  /* SS_EVENT_SCU_INT, */
 
   SS_EVENT__SYNLAST,
   SS_EVENT__COUNT,

@@ -1163,6 +1163,48 @@ uint32 GetRegister(const unsigned id, char* const special, const uint32 special_
   case GSREG_SCRCTL:
 	ret = RawRegs[0x9A >> 1] & 0x3F3F;
 	break;
+  //
+  //
+  case GSREG_RPMD:
+	ret = RawRegs[0xB0 >> 1] & 0x0003;
+	break;
+
+  case GSREG_RPRCTL:
+	ret = RawRegs[0xB2 >> 1] & 0x0707;
+	break;
+
+  case GSREG_KTCTL:
+	ret = RawRegs[0xB4 >> 1] & 0x1F1F;
+	break;
+
+  case GSREG_KTAOF:
+	ret = RawRegs[0xB6 >> 1] & 0x0707;
+	break;
+
+  case GSREG_OVPNRA:
+	ret = RawRegs[0xB8 >> 1];
+	break;
+
+  case GSREG_OVPNRB:
+	ret = RawRegs[0xBA >> 1];
+	break;
+
+  case GSREG_RPTA:
+	ret = ((RawRegs[0xBC >> 1] & 0x0007) << 16) | (RawRegs[0xBE >> 1] );
+	break;
+  //
+  //
+  case GSREG_PRINA:
+	ret = RawRegs[0xF8 >> 1] & 0x0707;
+	break;
+
+  case GSREG_PRINB:
+	ret = RawRegs[0xFA >> 1] & 0x0707;
+	break;
+
+  case GSREG_PRIR:
+	ret = RawRegs[0xFC >> 1] & 0x0007;
+	break;
  }
 
  return ret;
@@ -1286,6 +1328,55 @@ void SetRegister(const unsigned id, const uint32 value)
 
   case GSREG_SCRCTL:
 	rr = 0x9A >> 1;
+	break;
+  //
+  //
+  case GSREG_RPMD:
+	rr = 0xB0 >> 1;
+	break;
+
+  case GSREG_RPRCTL:
+	RPRCTL[0] = (value >> 0) & 0x7;
+	RPRCTL[1] = (value >> 8) & 0x7;
+
+	rr = 0xB2 >> 1;
+	break;
+
+  case GSREG_KTCTL:
+	rr = 0xB4 >> 1;
+	break;
+
+  case GSREG_KTAOF:
+	KTAOF[0] = (value >> 0) & 0x7;
+	KTAOF[1] = (value >> 8) & 0x7;
+
+	rr = 0xB6 >> 1;
+	break;
+
+  case GSREG_OVPNRA:
+	rr = 0xB8 >> 1;
+	break;
+
+  case GSREG_OVPNRB:
+	rr = 0xBA >> 1;
+	break;
+
+  //case GSREG_RPTA:
+  //	RPTA
+  //	ret = (RawRegs[0xBC >> 1] & 0x0007) | (RawRegs[0xBE >> 1] );
+  //	break;
+  //
+  //
+  case GSREG_PRINA:
+	rr = 0xF8 >> 1;
+	break;
+
+  case GSREG_PRINB:
+	rr = 0xFA >> 1;
+	break;
+
+  case GSREG_PRIR:
+	rr = 0xFC >> 1;
 	break;
  }
 
@@ -1422,6 +1513,20 @@ void StateAction(StateMem* sm, const unsigned load, const bool data_only)
     Window[d].YIn = false;
    }
   }
+  //
+  //
+  InterlaceMode &= 0x3;
+  VRes &= 0x3;
+  HRes &= 0x7;
+
+  CRAM_Mode &= 0x3;
+  InterlaceMode &= 0x3;
+
+  HCounter &= 0x1FF;
+  VCounter &= 0x1FF;
+
+  HPhase %= HPHASE__COUNT;
+  VPhase %= VPHASE__COUNT;
  }
 
  VDP2REND_StateAction(sm, load, data_only, RawRegs, CRAM, VRAM);

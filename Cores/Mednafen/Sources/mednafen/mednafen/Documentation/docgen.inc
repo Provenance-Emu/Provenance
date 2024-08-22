@@ -145,7 +145,17 @@ function ReadSettings()
   }
 
   $setting['enum_list'] = $enum_list;
+  //
+  //
+  $alias_count = (int)fgets($fp);
+  $alias_list = array();
 
+  while($alias_count--)
+   array_push($alias_list, trim(fgets($fp)));
+
+  $setting['aliases'] = $alias_list;
+  //
+  //
   if($setting['name'] != "")
    $settings_g[$setting['name']] = $setting;
   //array_push($settings_g, $setting);
@@ -289,6 +299,69 @@ function spis($haystack, $needle)
  return(1);
 }
 
+function ProcessDesc($desc, $mod = "")
+{
+ global $mednafen_version, $curmod, $cursection, $ps_string, $toc_string, $section_string, $settings_g, $mod_list;
+
+ $nde = "";
+ $sname = "";
+ $in_sname = false;
+
+ for($i = 0; $i < strlen($desc); $i++)
+ {
+  $c = $desc[$i];
+
+  if($in_sname)
+  {
+   if($c == "\"")
+   {
+    if($curmod == "" && $mod != "")
+    {
+     $nde .= "<a href=\"" . $mod . ".html#" . htmlspecialchars($sname) . "\">" . htmlspecialchars($sname) . "</a>";
+    }
+    else if($curmod == "" || !strncmp($sname, $curmod . '.', strlen($curmod) + 1))
+    {
+     $nde .= "<a href=\"#" . htmlspecialchars($sname) . "\">" . htmlspecialchars($sname) . "</a>";
+    }
+    else if(!strncmp($sname, "<system>", strlen("<system>")))
+    {
+     $sname = $curmod . substr($sname, strlen("<system>"));
+     $nde .= "<a href=\"#" . htmlspecialchars($sname) . "\">" . htmlspecialchars($sname) . "</a>";
+    }
+    else
+     $nde .= "<a href=\"mednafen.html#" . htmlspecialchars($sname) . "\">" . htmlspecialchars($sname) . "</a>";
+    //
+    $nde .= $c;
+    $in_sname = false;
+   }
+   else
+    $sname .= $c;
+  }
+  else if($c == "\x05")
+  {
+   $in_sname = true;
+   $sname = "";
+  }
+  else if($c == "<")
+   $nde .= "&lt;";
+  else if($c == ">")
+   $nde .= "&gt;";
+  else if($c == "&")
+   $nde .= "&amp;";
+  else if($c == "\n")
+   $nde .= "<br>\n";
+  else
+   $nde .= $c;
+ }
+
+ $de_search = array("fname_format.txt", "Caution:", "WARNING:" );
+ $de_replace = array('<a href="fname_format.txt">fname_format.txt</a>', '<font color="yellow"><b>Caution:</b></font>', '<font color="red"><b>WARNING:</b></font>');
+
+ $nde = str_replace($de_search, $de_replace, $nde);
+
+ return $nde;
+}
+
 function PrintCustomPalettes()
 {
  global $mednafen_version, $curmod, $cursection, $ps_string, $toc_string, $section_string, $settings_g, $mod_list;
@@ -304,6 +377,7 @@ function PrintCustomPalettes()
  echo('<th>Global Filename:</th>');
  echo('<th>Description:</th>');
  echo('</tr>');
+ echo("\n");
 
  $mls = $mod_list;
  asort($mls);
@@ -324,7 +398,7 @@ function PrintCustomPalettes()
    echo('<td>' . htmlspecialchars($cpdef['gfn']) . '</td>');
    echo('<td>');
 
-   echo(htmlspecialchars($cpdef['description']) . '<br><br>');
+   echo(ProcessDesc($cpdef['description'], $mod) . '<br><br>');
 
    for($i = 0; $i < sizeof($cpdef['valid_entry_count']); $i++)
    {
@@ -336,6 +410,7 @@ function PrintCustomPalettes()
    echo('</td>');
    // valid_entry_count
    echo('</tr>');
+   echo("\n");
    $cpicounter++;
   }
  }
@@ -361,7 +436,7 @@ function PrintInternalDatabases()
   {
    BeginSection($db['fullname'], "Section_internal_databases_" . $db['shortname']);
 
-   echo(str_replace("\n", "<br>", htmlspecialchars($db['description'])));
+   echo(ProcessDesc($db['description']));
 
    echo('<p></p><table border><tr class="TableHeader">');
    echo('<th>Game:</th>');
@@ -397,10 +472,6 @@ function PrintSettings($section_name = "Settings Reference")
 {
  global $mednafen_version, $curmod, $cursection, $ps_string, $toc_string, $section_string, $settings_g, $mod_list;
 
- $de_search = array("\n",	 "fname_format.txt" );
- $de_replace = array("<br>\n", '<a href="fname_format.txt">fname_format.txt</a>' );
-
-
  $magic_settings = array();
  $magic_settings_temp = array();
  $magic_moo = array();
@@ -418,6 +489,7 @@ function PrintSettings($section_name = "Settings Reference")
  $value_types['MDFNST_FLOAT'] = "real";
  $value_types['MDFNST_STRING'] = "string";
  $value_types['MDFNST_ENUM'] = "enum";
+ $value_types['MDFNST_MULTI_ENUM'] = "multi-enum";
 
 for($display_ct = 0; $display_ct < 2; $display_ct++)
 {
@@ -432,8 +504,6 @@ for($display_ct = 0; $display_ct < 2; $display_ct++)
  foreach($settings as $setting)
  {
   $name = $setting['name'];
-  $description = $setting['description'];
-  $description_extra = str_replace($de_search, $de_replace, $setting['description_extra']);
   $type = $setting['type'];
   $flags = $setting['flags'];
 
@@ -449,7 +519,7 @@ for($display_ct = 0; $display_ct < 2; $display_ct++)
     {
      $new_setting = $setting;
 
-     $new_name = "&lt;system&gt;." . substr($setting['name'], strlen($mod) + 1);
+     $new_name = "<system>." . substr($setting['name'], strlen($mod) + 1);
      $new_setting['name'] = $new_name;
 
      if(isset($magic_settings_temp[$new_name]))
@@ -507,6 +577,12 @@ for($display_ct = 0; $display_ct < 2; $display_ct++)
    }
    $magiccowpower .= "</ul>";
   }
+  //
+  //
+  //
+  $name = htmlspecialchars($name, ENT_NOQUOTES);
+  $description = ProcessDesc($setting['description']);
+  $description_extra = ProcessDesc($setting['description_extra']);
 
   printf("<tr class=\"%s\"><td class=\"ColA\">%s%s%s%s</td><td class=\"ColB\">%s</td><td class=\"ColC\">", 
 	($row_ff ? "RowB" : "RowA"), (spis($flags, "MDFNSF_EMU_STATE") ? "<b>" : ""), $name,
@@ -525,6 +601,7 @@ for($display_ct = 0; $display_ct < 2; $display_ct++)
    case 'MDFNST_BOOL': printf("0<br>1");
                      break;
 
+   case 'MDFNST_MULTI_ENUM':
    case 'MDFNST_ENUM':
                     {
                      $enum_list = $setting['enum_list'];
@@ -541,6 +618,7 @@ for($display_ct = 0; $display_ct < 2; $display_ct++)
                      }
                     }
                     break;
+
    case 'MDFNST_STRING': printf("&nbsp;");
                        break;
   }
@@ -550,12 +628,15 @@ for($display_ct = 0; $display_ct < 2; $display_ct++)
   printf("</td><td class=\"ColD\">%s</td><td class=\"ColE\"><a name=\"%s\">%s</a>", $default_value,
                                         $name, $description);
 
+  foreach($setting['aliases'] as $alias)
+   printf("<a name=\"%s\"></a>", $alias);
+
   if($description_extra != "")
   {
    printf("<p>%s</p>", $description_extra);
   }
 
-  if($type == 'MDFNST_ENUM')
+  if($type == 'MDFNST_ENUM' || $type == 'MDFNST_MULTI_ENUM')
   {
    printf("<ul>");
 
@@ -567,7 +648,7 @@ for($display_ct = 0; $display_ct < 2; $display_ct++)
      continue;
 
     echo($pending_br);
-    printf("<li><b>%s</b> - %s<br>%s</li>", $ele['string'], $ele['description'], str_replace($de_search, $de_replace, $ele['description_extra']));
+    printf("<li><b>%s</b> - %s<br>%s</li>", $ele['string'], ProcessDesc($ele['description']), ProcessDesc($ele['description_extra']));
 
     $pending_br = '<br>';
    }

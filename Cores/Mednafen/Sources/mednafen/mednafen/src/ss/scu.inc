@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* scu.inc - SCU Emulation
-**  Copyright (C) 2015-2020 Mednafen Team
+**  Copyright (C) 2015-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -195,7 +195,7 @@ static bool RSEL;
 
 static uint8 ILevel, IVec;
 
-static INLINE void RecalcMasterIntOut(void)
+static INLINE bool CheckDoMasterInt(void)
 {
  if(ILevel == 0)
  {
@@ -237,10 +237,12 @@ static INLINE void RecalcMasterIntOut(void)
    IVec = ovec;
    IPending &= ~(1U << bpos);
    SS_DBGTI(SS_DBG_SCU_INT, "[SCU] Interrupt %d/%s(level=0x%02x, vector=0x%02x) --- IPending=0x%04x", bpos, IntNames[bpos], ILevel, IVec, IPending);
+
+   return true;
   }
  }
 
- CPU[0].SetIRL(ILevel);
+ return false;
 }
 
 static int32 Timer0_Counter;
@@ -277,9 +279,8 @@ static uint8 SCU_MSH2VectorFetch(void)
   MDFNMP_ApplyPeriodicCheats();
 
  IMask = 0xBFFF;
-
  ILevel = 0;
- RecalcMasterIntOut();
+ CPU[0].SetIRL(ILevel);
 
  return ret;
 }
@@ -301,7 +302,10 @@ static INLINE void ABusIRQCheck(void)
  ABusIProhibit |= IAsserted & ~0xFFFF;
 
  if(tt)
-  RecalcMasterIntOut();
+ {
+  if(CheckDoMasterInt())
+   CPU[0].SetIRL(ILevel);
+ }
 }
 
 static INLINE void SetInt(unsigned which, bool active)
@@ -322,7 +326,8 @@ static INLINE void SetInt(unsigned which, bool active)
 
    IPending |= 1U << which;
    CheckDMASFByInt(which);
-   RecalcMasterIntOut();
+   if(CheckDoMasterInt())
+    CPU[0].SetIRL(ILevel);
   }
  }
 }
@@ -427,6 +432,18 @@ static void SCU_AdjustTS(const int32 delta)
  BBus_SH2_WriteFinishTS = std::max<sscpu_timestamp_t>(-1000000, BBus_SH2_WriteFinishTS + delta);
 }
 
+/*
+static sscpu_timestamp_t SCU_UpdateInt(sscpu_timestamp_t timestamp)
+{
+ if(timestamp < events[SS_EVENT_SCU_INT].event_time)
+  return events[SS_EVENT_SCU_INT].event_time;
+
+ CPU[0].SetIRL(ILevel);
+
+ return SS_EVENT_DISABLED_TS;
+}
+*/
+
 //
 // TODO: Test to see if the entire data bus or only parts are asserted for uint8 and uint16 reads
 //
@@ -488,13 +505,21 @@ static INLINE void SCU_RegRW_DB(uint32 A, uint32* DB)
    case 0xA0:
 	SS_DBGTI(SS_DBG_SCU_INT, "[SCU] Write to IMS: 0x%04x --- ILevel=0x%02x, vector=0x%02x IPending=0x%04x", *DB, ILevel, IVec, IPending);
 	IMask = (IMask &~ mask) | (*DB & mask & 0xBFFF);
-	RecalcMasterIntOut();
+
+	if(CheckDoMasterInt())
+	{
+/*
+	 if(MDFN_UNLIKELY(ss_horrible_hacks & HORRIBLEHACK_SCUINTDELAY))
+	  SS_SetEventNT(&events[SS_EVENT_SCU_INT], SH7095_mem_timestamp + 8);
+	 else
+*/
+	  CPU[0].SetIRL(ILevel);
+	}
 	break;
 
    case 0xA4:
 	SS_DBGTI(SS_DBG_SCU_INT, "[SCU] Write to IST: 0x%04x --- ILevel=0x%02x, vector=0x%02x IPending=0x%04x", *DB, ILevel, IVec, IPending);
 	IPending &= *DB | ~mask;
-	RecalcMasterIntOut();
 	break;
 
    case 0xA8:
@@ -2076,8 +2101,9 @@ void SCU_Reset(bool powering_up)
  RecalcDMAHalt();
 
  DSP_Reset(powering_up);
-
- RecalcMasterIntOut();
+ //
+ //
+ CPU[0].SetIRL(ILevel);
 }
 
 static MDFN_COLD void SCU_StateAction(StateMem* sm, const unsigned load, const bool data_only)
@@ -2291,7 +2317,8 @@ static MDFN_COLD void SCU_StateAction(StateMem* sm, const unsigned load, const b
 
    d.ReadAdd &= 0x1;
    d.WriteAdd &= 0x7;
-   
+
+   d.WriteBus %= 3;
    //
    //
    {
@@ -2319,6 +2346,12 @@ static MDFN_COLD void SCU_StateAction(StateMem* sm, const unsigned load, const b
    else
     printf("bad tablereadfunc: %02x\n", DMALevel_TableReadFunc[level]);
   }
+  //
+  //
+  Timer0_Counter &= 0x1FF;
+  Timer0_Compare &= 0x3FF;
+  Timer1_Counter &= 0x1FF;
+  Timer1_Reload &= 0x1FF;
  }
 }
 
@@ -2553,6 +2586,7 @@ void SCU_SetRegister(const unsigned id, const uint32 value)
  SCU_SetHBVB(0, HB_FromVDP2, VB_FromVDP2);
 #endif
 
- RecalcMasterIntOut();
+ if(CheckDoMasterInt())
+  CPU[0].SetIRL(ILevel);
 }
 

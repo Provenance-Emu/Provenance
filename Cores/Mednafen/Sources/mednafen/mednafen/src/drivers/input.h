@@ -26,6 +26,16 @@ struct ButtConfig
  std::array<uint8, 16> DeviceID;
 };
 
+enum
+{
+ INPUTGRAB_STRAT_AUTO = 0,
+ INPUTGRAB_STRAT_KB_AUTO,
+ INPUTGRAB_STRAT_MOUSE_AUTO,
+ INPUTGRAB_STRAT_FULL,
+};
+
+void Input_SetFocus(bool have);
+
 void Input_Event(const SDL_Event* event);
 
 void Input_GameLoaded(MDFNGI* gi) MDFN_COLD;
@@ -33,7 +43,7 @@ void Input_GameClosed(void) MDFN_COLD;
 
 void Input_Update(bool VirtualDevicesOnly = false, bool UpdateRapidFire = true);
 
-void Input_MakeSettings(std::vector <MDFNSetting> &settings);
+void Input_MakeSettings(void);
 
 void Input_NetplayLPMChanged(void);
 

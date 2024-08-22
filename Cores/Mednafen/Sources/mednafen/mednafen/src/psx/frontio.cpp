@@ -2,7 +2,7 @@
 /* Mednafen Sony PS1 Emulation Module                                         */
 /******************************************************************************/
 /* frontio.cpp:
-**  Copyright (C) 2011-2017 Mednafen Team
+**  Copyright (C) 2011-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -444,7 +444,7 @@ void FrontIO::Write(pscpu_timestamp_t timestamp, uint32 A, uint32 V)
 
   case 0xa:
 	if(ClockDivider > 0 && ((V & 0x2000) != (Control & 0x2000)) && ((Control & 0x2) == (V & 0x2))  )
-	 PSX_DBG(PSX_DBG_WARNING, "FIO device selection changed during comm %04x->%04x\n", Control, V);
+	 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_FIO, "[FIO] device selection changed during comm %04x->%04x\n", Control, V);
 
 	//printf("Control: %d, %04x\n", timestamp, V);
 	Control = V & 0x3F2F;
@@ -635,8 +635,10 @@ pscpu_timestamp_t FrontIO::Update(pscpu_timestamp_t timestamp)
      }
     }
 
-    rxd = Ports[0]->Clock(txd, dsr_pulse_delay[0]) & Ports[1]->Clock(txd, dsr_pulse_delay[1]) &
-	  MCPorts[0]->Clock(txd, dsr_pulse_delay[2]) & MCPorts[1]->Clock(txd, dsr_pulse_delay[3]);
+    rxd  = Ports[0]->Clock(txd, dsr_pulse_delay[0]);
+    rxd &= Ports[1]->Clock(txd, dsr_pulse_delay[1]);
+    rxd &= MCPorts[0]->Clock(txd, dsr_pulse_delay[2]);
+    rxd &= MCPorts[1]->Clock(txd, dsr_pulse_delay[3]);
 
     if(ReceiveInProgress)
     {
@@ -781,7 +783,7 @@ void FrontIO::SetInput(unsigned int port, const char *type, uint8 *ptr)
 {
  InputDevice* nd = PossibleNone.get();
 
- if(!strcmp(type, "gamepad") || !strcmp(type, "dancepad"))
+ if(!strcmp(type, "gamepad") || !strcmp(type, "dancepad") || !strcmp(type, "popnmusic"))
   nd = PossibleDevices[port].Gamepad.get();
  else if(!strcmp(type, "dualanalog"))
   nd = PossibleDevices[port].DualAnalog.get();
@@ -800,6 +802,8 @@ void FrontIO::SetInput(unsigned int port, const char *type, uint8 *ptr)
  else if(strcmp(type, "none"))
   abort();
 
+ DeviceData[port] = ptr;
+
  if(Devices[port] != nd)
  {
   if(port < 2)
@@ -810,7 +814,6 @@ void FrontIO::SetInput(unsigned int port, const char *type, uint8 *ptr)
   Devices[port]->Power();
   Devices[port]->SetAMCT(amct_enabled, amct_compare);
   Devices[port]->SetCrosshairsColor(chair_colors[port]);
-  DeviceData[port] = ptr;
 
   MapDevicesToPorts();
  }
@@ -855,7 +858,7 @@ void FrontIO::LoadMemcard(unsigned int which, const std::string& path)
    tmpbuf.resize(PossibleDevices[which].Memcard->GetNVSize());
 
    if(mf.size() != tmpbuf.size())
-    throw(MDFN_Error(0, _("Memory card file \"%s\" is an incorrect size(%d bytes).  The correct size is %d bytes."), path.c_str(), (int)mf.size(), (int)tmpbuf.size()));
+    throw(MDFN_Error(0, _("Memory card file \"%s\" is an incorrect size(%d bytes).  The correct size is %d bytes."), MDFN_strhumesc(path).c_str(), (int)mf.size(), (int)tmpbuf.size()));
 
    mf.read(&tmpbuf[0], tmpbuf.size());
 
@@ -1065,6 +1068,12 @@ static const std::vector<InputDeviceInfoStruct> InputDeviceInfoPSXPort =
   Device_Dancepad_IDII,
  },
 
+ {
+  "popnmusic",
+  "Pop'n Music",
+  "Konami's Pop'n Music controller.",
+  Device_PopnMusic_IDII,
+ },
 };
 
 const std::vector<InputPortInfoStruct> FIO_PortInfo =

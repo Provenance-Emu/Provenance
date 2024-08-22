@@ -275,15 +275,46 @@ void MDFN_Surface::SetFormat(const MDFN_PixelFormat &nf, bool convert)
  }
 
  format = nf;
-	if(new_pixels != nullptr) {
-		free(new_pixels);
-	}
+}
+
+MDFN_Surface* MDFN_Surface::DupeCompactConvert(const MDFN_PixelFormat& new_format)
+{
+ std::unique_ptr<MDFN_Surface> ret(new MDFN_Surface(nullptr, w, h, w, new_format, false));
+ MDFN_PixelFormatConverter fconv(format, new_format, palette);
+ size_t old_pitchinbytes = pitchinpix * format.opp;
+ size_t new_pitchinbytes = ret->pitchinpix * new_format.opp;
+ void* old_pixels = nullptr;
+ void* new_pixels = nullptr;
+
+ switch(format.opp)
+ {
+  case 1: old_pixels = pix<uint8>(); break;
+  case 2: old_pixels = pix<uint16>(); break;
+  case 4: old_pixels = pix<uint32>(); break;
+ }
+
+ switch(new_format.opp)
+ {
+  case 1: new_pixels = ret->pix<uint8>(); break;
+  case 2: new_pixels = ret->pix<uint16>(); break;
+  case 4: new_pixels = ret->pix<uint32>(); break;
+ }
+
+ for(int32 y = 0; y < h; y++)
+  fconv.Convert((uint8*)old_pixels + y * old_pitchinbytes, (uint8*)new_pixels + y * new_pitchinbytes, w);
+
+ return ret.release();
 }
 
 void MDFN_Surface::Fill(uint8 r, uint8 g, uint8 b, uint8 a)
 {
  uint32 color = MakeColor(r, g, b, a);
 
+ Fill(color);
+}
+
+void MDFN_Surface::Fill(uint32 color)
+{
  if(format.opp == 1)
  {
   assert(pixels8);

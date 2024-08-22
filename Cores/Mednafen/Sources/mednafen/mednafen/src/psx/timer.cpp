@@ -19,7 +19,9 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#pragma GCC optimize ("unroll-loops")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize ("unroll-loops")
+#endif
 
 #include "psx.h"
 #include "timer.h"
@@ -166,7 +168,7 @@ static MDFN_FASTCALL bool TimerMatch(unsigned i)
    const uint16 lateness = (Timers[i].Mode & 0x008) ? Timers[i].Counter : (Timers[i].Counter - Timers[i].Target);
 
    if(lateness > ((i == 1 && (Timers[i].Mode & 0x100)) ? 0 : 3))
-    PSX_DBG(PSX_DBG_WARNING, "[TIMER] Timer %d match IRQ trigger late: %u\n", i, lateness);
+    PSX_DBG(PSX_DBG_WARNING | PSX_DBG_TIMER, "[TIMER] Timer %d match IRQ trigger late: %u\n", i, lateness);
   }
 #endif
 
@@ -192,7 +194,7 @@ static MDFN_FASTCALL bool TimerOverflow(unsigned i)
 
 #if 1
   if(Timers[i].Counter > ((i == 1 && (Timers[i].Mode & 0x100)) ? 0 : 3))
-   PSX_DBG(PSX_DBG_WARNING, "[TIMER] Timer %d overflow IRQ trigger late: %u\n", i, Timers[i].Counter);
+   PSX_DBG(PSX_DBG_WARNING | PSX_DBG_TIMER, "[TIMER] Timer %d overflow IRQ trigger late: %u\n", i, Timers[i].Counter);
 #endif
 
   Timers[i].IRQDone = true;
@@ -379,7 +381,7 @@ MDFN_FASTCALL void TIMER_Write(const pscpu_timestamp_t timestamp, uint32 A, uint
 
  V <<= (A & 3) * 8;
 
- PSX_DBGINFO("[TIMER] Write: %08x %04x\n", A, V);
+ //PSX_DBGINFO("[TIMER] Write: %08x %04x\n", A, V);
 
  if(which >= 3)
   return;
@@ -417,7 +419,7 @@ MDFN_FASTCALL uint16 TIMER_Read(const pscpu_timestamp_t timestamp, uint32 A)
 
  if(which >= 3)
  {
-  PSX_WARNING("[TIMER] Open Bus Read: 0x%08x", A);
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_TIMER, "[TIMER] Open Bus Read: 0x%08x\n", A);
 
   return(ret >> ((A & 3) * 8));
  }
@@ -438,7 +440,7 @@ MDFN_FASTCALL uint16 TIMER_Read(const pscpu_timestamp_t timestamp, uint32 A)
   case 0x8: ret = Timers[which].Target;
 	    break;
 
-  case 0xC: PSX_WARNING("[TIMER] Open Bus Read: 0x%08x", A);
+  case 0xC: PSX_DBG(PSX_DBG_WARNING | PSX_DBG_TIMER, "[TIMER] Open Bus Read: 0x%08x\n", A);
 	    break;
  }
 

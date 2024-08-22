@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* PSFLoader.cpp:
-**  Copyright (C) 2011-2018 Mednafen Team
+**  Copyright (C) 2011-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -80,6 +80,10 @@ void PSFTags::LoadTags(Stream* fp)
  char *spos;
  //const char *detected_charset = DetectCharset(data_in, size);
 
+ if(size > 65535) // Don't increase to more than a couple megabytes.
+  throw MDFN_Error(0, _("PSF tag data's size of %llu bytes exceeds sanity limit of %u bytes"), (unsigned long long)size, 65535);
+ //
+ //
  tags_heap.resize(size + 1);
  tags_heap[size] = 0;
 
@@ -190,22 +194,20 @@ int64 PSFTags::GetTagI(const char *name)
  it = tags.find(name);
  if(it != tags.end())
  {
-  long long ret = 0;
-  std::string &tmp = tags[name];
+  int64 ret;
+  unsigned error;
 
-  trio_sscanf(tmp.c_str(), "%lld", &ret);
+  ret = MDFN_s64fromstr(tags[name].c_str(), 10, &error);
 
-  return(ret);
+  return ret;
  }
- return(0);	// INT64_MIN
+
+ return 0;	// INT64_MIN
 }
 
 bool PSFTags::TagExists(const char *name)
 {
- if(tags.find(name) != tags.end())
-  return(true);
-
- return(false);
+ return tags.find(name) != tags.end();
 }
 
 
@@ -216,9 +218,9 @@ std::string PSFTags::GetTag(const char *name)
  it = tags.find(name);
 
  if(it != tags.end())
-  return(it->second);
+  return it->second;
 
- return("");
+ return "";
 }
 
 void PSFTags::EraseTag(const char *name)
@@ -251,15 +253,15 @@ bool PSFLoader::TestMagic(uint8 version, Stream* fp)
  fp->rewind();
 
  if(rc != sizeof(buf))
-  return(false);
+  return false;
 
  if(memcmp(buf, "PSF", 3))
-  return(false);
+  return false;
 
  if(buf[3] != version)
-  return(false);
+  return false;
 
- return(true);
+ return true;
 }
 
 PSFTags PSFLoader::LoadInternal(uint8 version, uint32 max_exe_size, VirtualFS* vfs, const std::string& dir_path, Stream *fp, uint32 level, bool force_ignore_pcsp)
@@ -348,12 +350,12 @@ PSFTags PSFLoader::LoadInternal(uint8 version, uint32 max_exe_size, VirtualFS* v
   }
  }
 
- return(tags);
+ return tags;
 }
 
 PSFTags PSFLoader::Load(uint8 version, uint32 max_exe_size, VirtualFS* vfs, const std::string& dir_path, Stream *fp)
 {
- return(LoadInternal(version, max_exe_size, vfs, dir_path, fp, 0, false));
+ return LoadInternal(version, max_exe_size, vfs, dir_path, fp, 0, false);
 }
 
 void PSFLoader::HandleReserved(Stream* fp, uint32 len)

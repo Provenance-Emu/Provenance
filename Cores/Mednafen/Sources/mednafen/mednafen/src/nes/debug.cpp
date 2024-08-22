@@ -341,8 +341,6 @@ static void AddBreakPoint(int type, unsigned int A1, unsigned int A2, bool logic
 
 static void FlushBreakPoints(int type)
 {
- std::vector<NES_BPOINT>::iterator bpit;
-
  if(type == BPOINT_READ)
   BreakPointsRead.clear();
  else if(type == BPOINT_WRITE)

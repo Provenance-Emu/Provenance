@@ -1,8 +1,8 @@
 /******************************************************************************/
-/* Mednafen Apple II Emulation Module                                         */
+/* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* Core6502.h:
-**  Copyright (C) 2018 Mednafen Team
+**  Copyright (C) 2018-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -27,7 +27,10 @@ struct Core6502
 
  void Power(void);
 
+ template<bool cmos = false>
  void RESETStep(void);
+
+ template<bool cmos = false>
  void Step(void);
 
  void StateAction(StateMem* sm, const unsigned load, const bool data_only, const char* sname);
@@ -37,6 +40,8 @@ struct Core6502
  uint8 MemRead(uint16, bool junk = false);
  uint8 OpRead(uint16, bool junk = false);	// Can be used for certain optimizations, otherwise map it to MemRead()
  void MemWrite(uint16, uint8);
+
+ bool NeedMidExit(void);
 
  bool GetIRQ(void);
  bool GetNMI(void);
@@ -76,7 +81,14 @@ struct Core6502
  uint8 Y;
 
  unsigned IFN;
- bool NMITaken;
+ bool NMIPending;
+ bool NMIPrev;
+
+ //
+ //
+ uint32 resume_point;
+ uint16 resume_ea, resume_eai;
+ uint8 resume_v;
  private:
 
  void UpdateIFN(void);
@@ -93,9 +105,11 @@ struct Core6502
  void Op_DEC(uint8&);
  void Op_ROL(uint8&);
  void Op_ROR(uint8&);
+ void Op_TRB(uint8&); // 65C02
+ void Op_TSB(uint8&); // 65C02
 
- void Op_ADC(uint8);
- void Op_SBC(uint8);
+ template<bool cmos> void Op_ADC(uint8);
+ template<bool cmos> void Op_SBC(uint8);
 
  void Op_CMPx(uint8, uint8);
  void Op_CMP(uint8);
@@ -103,6 +117,7 @@ struct Core6502
  void Op_CPY(uint8);
 
  void Op_BIT(uint8);
+ void Op_BIT_IMM(uint8); // 65C02
 
  void Op_AND(uint8);
  void Op_EOR(uint8);
@@ -115,57 +130,7 @@ struct Core6502
  uint8 Op_STA(void);
  uint8 Op_STX(void);
  uint8 Op_STY(void);
-
- uint16 GetEA_AB(void);
- template<bool UncondEC> uint16 GetEA_ABi(uint8 index);
- uint8 GetEA_ZP(void);
- uint8 GetEA_ZPi(uint8 index);
- uint16 GetEA_IDIRX(void);
- template<bool UncondEC> uint16 GetEA_IDIRY(void);
-
- template<bool index_y> void Instr_RMW_ABi(void (Core6502::*op)(uint8&));
- void Instr_RMW_A(void (Core6502::*op)(uint8&));
- void Instr_RMW_ZP(void (Core6502::*op)(uint8&));
- void Instr_RMW_ZPX(void (Core6502::*op)(uint8&));
- void Instr_RMW_AB(void (Core6502::*op)(uint8&));
- void Instr_RMW_ABX(void (Core6502::*op)(uint8&));
- void Instr_RMW_ABY(void (Core6502::*op)(uint8&));
- void Instr_RMW_IDIRX(void (Core6502::*op)(uint8&));
- void Instr_RMW_IDIRY(void (Core6502::*op)(uint8&));
-
- template<bool index_y> void Instr_LD_ZPi(void (Core6502::*op)(uint8));
- template<bool index_y> void Instr_LD_ABi(void (Core6502::*op)(uint8));
- void Instr_LD_IMM(void (Core6502::*op)(uint8));
- void Instr_LD_ZP(void (Core6502::*op)(uint8));
- void Instr_LD_ZPX(void (Core6502::*op)(uint8));
- void Instr_LD_ZPY(void (Core6502::*op)(uint8));
- void Instr_LD_AB(void (Core6502::*op)(uint8));
- void Instr_LD_ABX(void (Core6502::*op)(uint8));
- void Instr_LD_ABY(void (Core6502::*op)(uint8));
- void Instr_LD_IDIRX(void (Core6502::*op)(uint8));
- void Instr_LD_IDIRY(void (Core6502::*op)(uint8));
-
- template<bool index_y> void Instr_ST_ZPi(uint8 (Core6502::*op)(void));
- template<bool index_y> void Instr_ST_ABi(uint8 (Core6502::*op)(void));
- void Instr_ST_ZP(uint8 (Core6502::*op)(void));
- void Instr_ST_ZPX(uint8 (Core6502::*op)(void));
- void Instr_ST_ZPY(uint8 (Core6502::*op)(void));
- void Instr_ST_AB(uint8 (Core6502::*op)(void));
- void Instr_ST_ABX(uint8 (Core6502::*op)(void));
- void Instr_ST_ABY(uint8 (Core6502::*op)(void));
- void Instr_ST_IDIRX(uint8 (Core6502::*op)(void));
- void Instr_ST_IDIRY(uint8 (Core6502::*op)(void));
-
- void Instr_DEX(void);
- void Instr_DEY(void);
- void Instr_INX(void);
- void Instr_INY(void);
-
- void Instr_TAY(void);
- void Instr_TAX(void);
- void Instr_TXA(void);
- void Instr_TYA(void);
- void Instr_TXS(void);
+ uint8 Op_STZ(void); // 65C02
 
  void Op_NOP(uint8 v);
  void Op_NOP(void);
@@ -181,8 +146,6 @@ struct Core6502
  void Op_TXA(void);
  void Op_TSX(void);
  void Op_TXS(void);
-
- void Instr_IMP(void (Core6502::*op)(void));
 
  // Undocumented:
  void Op_AAC(uint8 v);
@@ -203,28 +166,10 @@ struct Core6502
 
  uint8 Op_AAX(void);
  //
- void Instr_ST_H_ILL_ABX(uint8 (Core6502::*op)(uint8));
- void Instr_ST_H_ILL_ABY(uint8 (Core6502::*op)(uint8));
- void Instr_ST_H_ILL_IDIRY(uint8 (Core6502::*op)(uint8));
  uint8 Op_AXA(uint8);
  uint8 Op_SXA(uint8);
  uint8 Op_SYA(uint8);
  uint8 Op_XAS(uint8);
  // End undocumented
-
- void Instr_PHA(void);
- void Instr_PHP(void);
- void Instr_PLA(void);
- void Instr_PLP(void);
-
- void Instr_BRK(void);
- void Instr_JMP_ABS(void);
- void Instr_JMP_IDIR(void);
- void Instr_JSR(void);
-
- void Instr_Bxx(bool cond);
-
- void Instr_RTI(void);
- void Instr_RTS(void);
 };
 

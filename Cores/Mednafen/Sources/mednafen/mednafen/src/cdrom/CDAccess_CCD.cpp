@@ -70,7 +70,7 @@ static T CCD_ReadInt(CCD_Section &s, const std::string &propname, const bool hav
 
  if(!vp[0] || ep[0])
  {
-  throw MDFN_Error(0, _("Property %s: Malformed integer: %s"), propname.c_str(), v.c_str());
+  throw MDFN_Error(0, _("Property %s: Malformed integer: %s"), propname.c_str(), MDFN_strhumesc(v).c_str());
  }
 
  //if(ret < minv || ret > maxv)
@@ -150,7 +150,7 @@ void CDAccess_CCD::Load(VirtualFS* vfs, const std::string& path, bool image_memc
   if(linebuf[0] == '[')
   {
    if(linebuf.length() < 3 || linebuf[linebuf.length() - 1] != ']')
-    throw MDFN_Error(0, _("Malformed section specifier: %s"), linebuf.c_str());
+    throw MDFN_Error(0, _("Malformed section specifier: %s"), MDFN_strhumesc(linebuf).c_str());
 
    cur_section_name = linebuf.substr(1, linebuf.length() - 2);
    MDFN_strazupper(&cur_section_name);
@@ -162,7 +162,7 @@ void CDAccess_CCD::Load(VirtualFS* vfs, const std::string& path, bool image_memc
    std::string k, v;
 
    if(feqpos == std::string::npos || feqpos != leqpos)
-    throw MDFN_Error(0, _("Malformed value pair specifier: %s"), linebuf.c_str());
+    throw MDFN_Error(0, _("Malformed value pair specifier: %s"), MDFN_strhumesc(linebuf).c_str());
 
    k = linebuf.substr(0, feqpos);
    v = linebuf.substr(feqpos + 1);
@@ -292,7 +292,7 @@ void CDAccess_CCD::Load(VirtualFS* vfs, const std::string& path, bool image_memc
 //
 void CDAccess_CCD::CheckSubQSanity(void)
 {
- size_t checksum_pass_counter = 0;
+ //size_t checksum_pass_counter = 0;
  int prev_lba = INT_MAX;
  uint8 prev_track = 0;
 
@@ -368,7 +368,7 @@ void CDAccess_CCD::CheckSubQSanity(void)
 
      prev_track = track;
     }
-    checksum_pass_counter++;
+    //checksum_pass_counter++;
    }
   }
  }

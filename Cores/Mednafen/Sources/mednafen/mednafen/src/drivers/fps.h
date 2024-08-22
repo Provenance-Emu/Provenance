@@ -10,6 +10,7 @@ enum
 };
 
 void FPS_Init(const unsigned fps_pos, const unsigned fps_scale, const unsigned fps_font, const uint32 fps_tcolor, const uint32 fps_bgcolor) MDFN_COLD;	// GT
+void FPS_Kill(void) MDFN_COLD;
 void FPS_IncVirtual(int64 vcycles);	// GT
 void FPS_IncDrawn(void);	// GT
 void FPS_IncBlitted(void);	// GT

@@ -162,12 +162,12 @@ static void InitDecomp(const uint32 addr)
  //
  uint32 prevsel;
 
- SNES_DBG("[SDD1] Decompression start; addr=0x%06x\n", addr);
+ SNES_DBG(SNES_DBG_CART, "[SDD1] Decompression start; addr=0x%06x\n", addr);
  //assert(Decomp.input_addr >= 0xC00000);
 
  Decomp.depth = GetInputBits(2);
  prevsel = GetInputBits(2);
- SNES_DBG("[SDD1]  depth=%u, prevsel=%u\n", Decomp.depth, prevsel);
+ SNES_DBG(SNES_DBG_CART, "[SDD1]  depth=%u, prevsel=%u\n", Decomp.depth, prevsel);
  //
  switch(Decomp.depth)
  {
@@ -377,10 +377,13 @@ static DEFWRITE(MainCPU_WriteIO)
  CPUM.timestamp += (cyc >= 0) ? cyc : CPUM.MemSelectCycles;
  //
  //
- SNES_DBG("[SDD1] IO write 0x%06x 0x%02x\n", A, V);
+ SNES_DBG(SNES_DBG_CART, "[SDD1] IO write 0x%06x 0x%02x\n", A, V);
 
  switch(w)
  {
+  default:
+	break;
+
   case 0x0:
 	DMAEnable[0] = V;
 	break;
@@ -428,10 +431,13 @@ static DEFREAD(MainCPU_ReadIO)
  //
  uint8 ret = 0;
 
- SNES_DBG("[SDD1] IO read 0x%06x\n", A);
+ SNES_DBG(SNES_DBG_CART, "[SDD1] IO read 0x%06x\n", A);
 
  switch(w)
  {
+  default:
+	break;
+
   case 0x0:
 	ret = DMAEnable[0];
 	break;

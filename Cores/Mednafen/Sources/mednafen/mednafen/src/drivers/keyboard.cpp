@@ -152,7 +152,7 @@ void Event(const SDL_Event* event)
 	}
 
 	{
-	 //printf("Down: %3u %08x %04x\n", event->key.keysym.scancode, event->key.keysym.sym, event->key.keysym.mod);
+	 //printf("Down: %3u(%s) %08x %04x\n", event->key.keysym.scancode, SDL_GetScancodeName(event->key.keysym.scancode), event->key.keysym.sym, event->key.keysym.mod);
 	 size_t s = event->key.keysym.scancode;
 
 	 if(s < MKK_COUNT)

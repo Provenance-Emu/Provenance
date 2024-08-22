@@ -49,7 +49,7 @@ uint32 SIO_Read(pscpu_timestamp_t timestamp, uint32 A)
  switch(A & 0xE)
  {
   default:
-	PSX_WARNING("[SIO] Unknown read: 0x%08x -- %d\n", A, timestamp);
+	PSX_DBG(PSX_DBG_WARNING | PSX_DBG_SIO, "[SIO] Unknown read: 0x%08x -- %d\n", A, timestamp);
 	break;
 
   case 0x0:
@@ -84,7 +84,7 @@ void SIO_Write(pscpu_timestamp_t timestamp, uint32 A, uint32 V)
  switch(A & 0xE)
  {
   default:
-	PSX_WARNING("[SIO] Unknown write: 0x%08x 0x%08x -- %d\n", A, V, timestamp);
+	PSX_DBG(PSX_DBG_WARNING | PSX_DBG_SIO, "[SIO] Unknown write: 0x%08x 0x%08x -- %d\n", A, V, timestamp);
 	break;
 
   case 0x0:

@@ -1,8 +1,8 @@
 /******************************************************************************/
 /* Mednafen Fast SNES Emulation Module                                        */
 /******************************************************************************/
-/* ppu_common.inc:
-**  Copyright (C) 2015-2019 Mednafen Team
+/* ppu_render_common.inc:
+**  Copyright (C) 2015-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -263,7 +263,7 @@ static INLINE void DrawSprites(void)
 }
 
 
-static struct
+static struct linebuf_t
 {
  uint32 OutputLUT[384];
  union
@@ -280,12 +280,10 @@ static struct
  };
 } linebuf;
 
-#ifndef _MSC_VER
-static_assert(linebuf.main == linebuf.bg[0], "linebuf structure malformed.");
-static_assert(linebuf.main == linebuf.bghr[0], "linebuf structure malformed.");
-static_assert(linebuf.sub == linebuf.bg[2], "linebuf structure malformed.");
-static_assert(linebuf.sub == linebuf.bghr[1], "linebuf structure malformed.");
-#endif
+static_assert(offsetof(linebuf_t, main) == offsetof(linebuf_t, bg[0]), "linebuf structure malformed.");
+static_assert(offsetof(linebuf_t, main) == offsetof(linebuf_t, bghr[0]), "linebuf structure malformed.");
+static_assert(offsetof(linebuf_t, sub) == offsetof(linebuf_t, bg[2]), "linebuf structure malformed.");
+static_assert(offsetof(linebuf_t, sub) == offsetof(linebuf_t, bghr[1]), "linebuf structure malformed.");
 
 template<bool size16, bool mode4 = false>
 static MDFN_HOT MDFN_FASTCALL void GetOPTStrip(const unsigned n)
@@ -705,8 +703,10 @@ static MDFN_HOT MDFN_FASTCALL void DrawMODE7(unsigned line_y, uint16 prio_or, ui
 
 
 // Y mosaic is handled in DrawBG
-#pragma GCC push_options
-#pragma GCC optimize("no-unroll-loops,no-peel-loops,no-crossjumping")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC push_options
+ #pragma GCC optimize("no-unroll-loops,no-peel-loops,no-crossjumping")
+#endif
 template<bool hires = false>
 static MDFN_HOT MDFN_FASTCALL NO_INLINE void DoXMosaic(unsigned layernum, uint32* MDFN_RESTRICT buf)
 {
@@ -749,7 +749,9 @@ static MDFN_HOT MDFN_FASTCALL NO_INLINE void DoXMosaic(unsigned layernum, uint32
   case 0xF: for(unsigned x = 0; x < 256; x += 0x10) { uint32 b = buf[x]; buf[x + 1] = b; buf[x + 2] = b; buf[x + 3] = b; buf[x + 4] = b; buf[x + 5] = b; buf[x + 6] = b; buf[x + 7] = b; buf[x + 8] = b; buf[x + 9] = b; buf[x + 10] = b; buf[x + 11] = b; buf[x + 12] = b; buf[x + 13] = b; buf[x + 14] = b; buf[x + 15] = b;} break;
  }
 }
-#pragma GCC pop_options
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC pop_options
+#endif
 
 static INLINE void CalcWindowPieces(void)
 {
@@ -834,13 +836,13 @@ static MDFN_HOT MDFN_FASTCALL void DoWindow(unsigned layernum, uint32* MDFN_REST
 
   if(!masker[0])
   {
-   SNES_DBG("[PPU] Color Window Masker 0 == 0?!\n");
+   SNES_DBG(SNES_DBG_ERROR | SNES_DBG_PPU, "[PPU] Color Window Masker 0 == 0?!\n");
    //masker[0] = ~0U;
   }
 
   if(!masker[1])
   {
-   SNES_DBG("[PPU] Color Window Masker 1 == 0?!\n");
+   SNES_DBG(SNES_DBG_ERROR | SNES_DBG_PPU, "[PPU] Color Window Masker 1 == 0?!\n");
    //masker[1] = ~0U;
   }
  }
@@ -848,12 +850,12 @@ static MDFN_HOT MDFN_FASTCALL void DoWindow(unsigned layernum, uint32* MDFN_REST
  {
   if(WMMainEnable & (1U << layernum))
   {
-   masker[1] &= ~0x00FF;
+   masker[1] &= 0xFFFFFF02;
   }
 
   if(WMSubEnable & (1U << layernum))
   {
-   masker[1] &= ~0xFF00;
+   masker[1] &= 0xFFFF00FF;
   }
 
   if(!((WMMainEnable | WMSubEnable) & (1U << layernum)))
@@ -1016,6 +1018,53 @@ static INLINE uint32 ConvertRGB555(uint32 tmp)
  return linebuf.OutputLUT[(uint8)tmp] | (linebuf.OutputLUT + 256)[(tmp >> 8) & 0x7F];
 }
 
+
+template<unsigned cmath_mode, bool hires_cmath_add_subscreen, typename T>
+static INLINE void MixHires(T* MDFN_RESTRICT main_target, T* MDFN_RESTRICT sub_target, uint32 main, uint32 sub, uint32 prev_sub)
+{
+ unsigned main_color = main >> 16;
+ unsigned sub_color = sub >> 16;
+
+ if(main & 1)
+ {
+  if(hires_cmath_add_subscreen) //CGWSEL & 0x2)
+  {
+   unsigned prev_sub_color = prev_sub >> 16;
+
+   if(sub & 0x8)	// Is subscreen backdrop?  Then no half-math when (CGWSEL & 0x2)
+   {
+    main_color = CMath<false, (bool)(cmath_mode & 2)>(main_color, FixedColor);
+    sub_color  = CMath<false, (bool)(cmath_mode & 2)>(sub_color,  FixedColor);
+   }
+   else
+   {
+    if((cmath_mode & 1) && (main & 2))	// If half math enabled, and main wasn't clipped to 0 by color window, then half math.
+    {
+     sub_color  = CMath<true,  (bool)(cmath_mode & 2)>(sub_color,  main_color);
+     main_color = CMath<true,  (bool)(cmath_mode & 2)>(main_color, prev_sub_color);
+    }
+    else
+    {
+     sub_color  = CMath<false, (bool)(cmath_mode & 2)>(sub_color,  main_color);
+     main_color = CMath<false, (bool)(cmath_mode & 2)>(main_color, prev_sub_color);
+    }
+   }
+  }
+  else
+  {
+   main_color = CMath<(bool)(cmath_mode & 1), (bool)(cmath_mode & 2)>(main_color, FixedColor);
+   sub_color  = CMath<(bool)(cmath_mode & 1), (bool)(cmath_mode & 2)>(sub_color,  FixedColor);
+  }
+ }
+ else if(!(main & 0x2))
+  sub_color = 0; //rand();
+
+ *main_target = ConvertRGB555(main_color);
+ *sub_target = ConvertRGB555(sub_color);
+}
+
+
+
 template<bool any_hires, unsigned cmath_mode, bool hires_cmath_add_subscreen = false, typename T>
 static MDFN_HOT MDFN_FASTCALL NO_INLINE void MixMainSubSubSubMarine(T* MDFN_RESTRICT target)
 {
@@ -1024,48 +1073,15 @@ static MDFN_HOT MDFN_FASTCALL NO_INLINE void MixMainSubSubSubMarine(T* MDFN_REST
 
  if(any_hires)
  {
-  // FIXME: hires color math.
-  for(unsigned i = 0; i < 256; i++)
+  for(unsigned i = 0; i < 255; i++)
+   MixHires<cmath_mode, hires_cmath_add_subscreen>(target + (i << 1) + 1, target + (i << 1) + 2, linebuf.main[i], linebuf.sub[i + 1], linebuf.sub[i]);
+
+  // TODO/FIXME: Color math on first subscreen pixel based on last main screen pixel of previous line?
   {
-   uint32 main = linebuf.main[i];
-   uint32 sub = linebuf.sub[i];
-   unsigned main_color = main >> 16;
-   unsigned sub_color = sub >> 16;
+   const unsigned i = 255;
+   const unsigned ip1 = (uint8)(i + 1);
 
-   if(main & 1)
-   {
-    if(hires_cmath_add_subscreen) //CGWSEL & 0x2)
-    {
-     if(sub & 0x8)	// Is subscreen backdrop?  Then no half-math when (CGWSEL & 0x2)
-     {
-      main_color = CMath<false, (bool)(cmath_mode & 2)>(main_color, FixedColor);
-      sub_color  = CMath<false, (bool)(cmath_mode & 2)>(sub_color,  FixedColor);
-     }
-     else
-     {
-      if((cmath_mode & 1) && (main & 2))	// If half math enabled, and main wasn't clipped to 0 by color window, then half math.
-      {
-       main_color = CMath<true,  (bool)(cmath_mode & 2)>(main_color, sub_color);
-       sub_color  = CMath<true,  (bool)(cmath_mode & 2)>(sub_color,  main_color);
-      }
-      else
-      {
-       main_color = CMath<false, (bool)(cmath_mode & 2)>(main_color, sub_color);
-       sub_color  = CMath<false, (bool)(cmath_mode & 2)>(sub_color,  main_color);
-      }
-     }
-    }
-    else
-    {
-     main_color = CMath<(bool)(cmath_mode & 1), (bool)(cmath_mode & 2)>(main_color, FixedColor);
-     sub_color  = CMath<(bool)(cmath_mode & 1), (bool)(cmath_mode & 2)>(sub_color,  FixedColor);
-    }
-   }
-   else if(!(main & 0x2))
-    sub_color = 0; //rand();
-
-   target[(i << 1) + 0] = ConvertRGB555(sub_color);
-   target[(i << 1) + 1] = ConvertRGB555(main_color);
+   MixHires<cmath_mode, hires_cmath_add_subscreen>(target + (i << 1) + 1, target + (ip1 << 1), linebuf.main[i], linebuf.sub[ip1], linebuf.sub[i]);
   }
  }
  else
@@ -1093,7 +1109,7 @@ static MDFN_HOT MDFN_FASTCALL NO_INLINE void MixMainSubSubSubMarine(T* MDFN_REST
  }
 }
 
-template<bool any_hires, bool rgb565, typename T>
+template<bool any_hires, uint64 rgb16_format, typename T>
 static INLINE void ApplyBrightness(T* MDFN_RESTRICT target, uint32 bright)
 {
   if(sizeof(T) == 2)
@@ -1102,13 +1118,34 @@ static INLINE void ApplyBrightness(T* MDFN_RESTRICT target, uint32 bright)
    // Note: Losing the lower green bit before multiplication in RGB565 mode is intentional.
    //
    const uint32 brightmul = (bright * 64 * 2 + 15) / (15 * 2);
+   const bool rgb565 = (rgb16_format == MDFN_PixelFormat::RGB16_565);
+   uint16 sc_rmask, sc_gmask, sc_bmask;
+
+   if(rgb16_format == MDFN_PixelFormat::RGB16_565)
+   {
+    sc_rmask = 0xF800;
+    sc_gmask = 0x07E0;
+    sc_bmask = 0x001F;
+   }
+   else if(rgb16_format == MDFN_PixelFormat::IRGB16_1555)
+   {
+    sc_rmask = 0x7C00;
+    sc_gmask = 0x03E0;
+    sc_bmask = 0x001F;
+   }
+   else //if(rgb16_format == MDFN_PixelFormat::RGBI16_5551)
+   {
+    sc_rmask = 0xF800;
+    sc_gmask = 0x07C0;
+    sc_bmask = 0x003E;
+   }
 
    #ifdef HAVE_SSE2_INTRINSICS
    {
-    __m128i rmask = _mm_set1_epi16(rgb565 ? 0xF800 : 0x7C00);
-    __m128i gmask = _mm_set1_epi16(rgb565 ? 0x07E0 : 0x03E0);
-    __m128i bmask = _mm_set1_epi16(0x001F);
     __m128i mul = _mm_set1_epi16(brightmul);
+    __m128i rmask = _mm_set1_epi16(sc_rmask);
+    __m128i gmask = _mm_set1_epi16(sc_gmask);
+    __m128i bmask = _mm_set1_epi16(sc_bmask);
 
     for(unsigned i = 0; MDFN_LIKELY(i < (256 << any_hires)); i += 8)
     {
@@ -1140,9 +1177,9 @@ static INLINE void ApplyBrightness(T* MDFN_RESTRICT target, uint32 bright)
    }
    #elif defined(HAVE_MMX_INTRINSICS)
    {
-    __m64 rmask = _mm_set1_pi16(rgb565 ? 0xF800 : 0x7C00);
-    __m64 gmask = _mm_set1_pi16(rgb565 ? 0x07E0 : 0x03E0);
-    __m64 bmask = _mm_set1_pi16(0x001F);
+    __m64 rmask = _mm_set1_pi16(sc_rmask);
+    __m64 gmask = _mm_set1_pi16(sc_gmask);
+    __m64 bmask = _mm_set1_pi16(sc_bmask);
     __m64 mul = _mm_set1_pi16(brightmul);
 
     for(unsigned i = 0; MDFN_LIKELY(i < (256 << any_hires)); i += 4)
@@ -1179,9 +1216,9 @@ static INLINE void ApplyBrightness(T* MDFN_RESTRICT target, uint32 bright)
    }
    #elif defined(HAVE_NEON_INTRINSICS)
    {
-    register uint16x8_t rmask = vmovq_n_u16(rgb565 ? 0xF800 : 0x7C00);
-    register uint16x8_t gmask = vmovq_n_u16(rgb565 ? 0x07E0 : 0x03E0);
-    register uint16x8_t bmask = vmovq_n_u16(0x001F);
+    register uint16x8_t rmask = vmovq_n_u16(sc_rmask);
+    register uint16x8_t gmask = vmovq_n_u16(sc_gmask);
+    register uint16x8_t bmask = vmovq_n_u16(sc_bmask);
     register uint16x8_t mul = vmovq_n_u16(brightmul);
 
   //#pragma GCC unroll 0
@@ -1215,18 +1252,22 @@ static INLINE void ApplyBrightness(T* MDFN_RESTRICT target, uint32 bright)
    }
    #else
    {
+    const uint32 sc32_rmask = (sc_rmask << 16) | sc_rmask;
+    const uint32 sc32_gmask = (sc_gmask << 16) | sc_gmask;
+    const uint32 sc32_bmask = (sc_bmask << 16) | sc_bmask;
+
     for(unsigned i = 0; MDFN_LIKELY(i < (256 << any_hires)); i += 2)
     {
      uint32 pix = MDFN_densb<uint32, true>(&target[i]);
 
      if(rgb565)
-      pix = ((((pix & 0x001F001F) * brightmul) >> 6) & 0x001F001F) +
-	    ((((pix & 0xF800F800) >> 6) * brightmul) & 0xF800F800) +
-	    ((((pix & 0x07C007C0) >> 6) * brightmul) & 0x07E007E0);
+      pix = ((((pix & sc32_bmask) * brightmul) >> 6) & sc32_bmask) +
+	    ((((pix & sc32_rmask) >> 6) * brightmul) & sc32_rmask) +
+	    ((((pix & 0x07C007C0) >> 6) * brightmul) & sc32_gmask);
      else
-      pix = ((((pix & 0x001F001F) * brightmul) >> 6) & 0x001F001F) +
-	    ((((pix & 0x7C007C00) >> 6) * brightmul) & 0x7C007C00) +
-	    (((((pix & 0x03E003E0) >> 5) * brightmul) >> 1) & 0x03E003E0);
+      pix = ((((pix & sc32_bmask) * brightmul) >> 6) & sc32_bmask) +
+	    ((((pix & sc32_rmask) >> 6) * brightmul) & sc32_rmask) +
+	    (((((pix & sc32_gmask) >> 5) * brightmul) >> 1) & sc32_gmask);
 
      MDFN_ennsb<uint32, true>(&target[i], pix);
     }
@@ -1246,7 +1287,7 @@ static INLINE void ApplyBrightness(T* MDFN_RESTRICT target, uint32 bright)
   }
 }
 
-template<bool any_hires, bool rgb565, typename T>
+template<bool any_hires, uint64 rgb16_format, typename T>
 static INLINE void MixMainSub(T* MDFN_RESTRICT target)
 {
  if(any_hires && MDFN_UNLIKELY(CGWSEL & 0x2))
@@ -1271,7 +1312,7 @@ static INLINE void MixMainSub(T* MDFN_RESTRICT target)
  }
 
  if((INIDisp & 0xF) != 0xF)
-  ApplyBrightness<any_hires, rgb565>(target, INIDisp & 0xF);
+  ApplyBrightness<any_hires, rgb16_format>(target, INIDisp & 0xF);
 }
 
 #ifdef ARCH_X86
@@ -1517,17 +1558,25 @@ static INLINE void DrawBGAndMixToMS(void)
   }
  }
  else
-  SNES_DBG("[PPU] BGMODE: %02x\n", BGMode);
+  SNES_DBG(SNES_DBG_ERROR | SNES_DBG_PPU, "[PPU] BGMODE: %02x\n", BGMode);
 }
 
-template<bool rgb565, typename T>
+template<uint64 rgb16_format, typename T>
 static INLINE uint32 Blend32(uint32 a, uint32 b)
 {
  if(sizeof(T) == 2)
  {
-  const uint32 mask = (1U << 0) | (1U << 5) | (1U << (rgb565 ? 11 : 10));
+  uint32 mask;
+
+  if(rgb16_format == MDFN_PixelFormat::RGB16_565)
+   mask = (1U << 0) | (1U << 5) | (1U << 11);
+  else if(rgb16_format == MDFN_PixelFormat::IRGB16_1555)
+   mask = (1U << 0) | (1U << 5) | (1U << 10);
+  else
+   mask = (1U << 0) | (1U << 1) | (1U << 6) | (1U << 11);
 
   a = (((a + b) - ((a ^ b) & mask))) >> 1;
+
   return a;
  }
  else
@@ -1541,7 +1590,7 @@ static INLINE uint32 Blend32(uint32 a, uint32 b)
  return a;
 }
 
-template<bool rgb565, typename T, unsigned Mode>
+template<uint64 rgb16_format, typename T, unsigned Mode>
 static MDFN_HOT uint32 T_DoHFilter(void* const t_in, const uint32 w, const bool hires)
 {
  T* const t = (T*)t_in;
@@ -1552,7 +1601,7 @@ static MDFN_HOT uint32 T_DoHFilter(void* const t_in, const uint32 w, const bool 
   {
    for(uint32 i = 0; i < 256; i++)
    {
-    t[i] = Blend32<rgb565, T>(t[(i << 1) + 0], t[(i << 1) + 1]);
+    t[i] = Blend32<rgb16_format, T>(t[(i << 1) + 0], t[(i << 1) + 1]);
    }
    return 256;
   }
@@ -1560,7 +1609,7 @@ static MDFN_HOT uint32 T_DoHFilter(void* const t_in, const uint32 w, const bool 
   {
    for(uint32 i = 0; i < 512; i += 2)
    {
-    const uint32 pix = Blend32<rgb565, T>(t[i + 0], t[i + 1]);
+    const uint32 pix = Blend32<rgb16_format, T>(t[i + 0], t[i + 1]);
 
     t[i + 0] = pix;
     t[i + 1] = pix;
@@ -1572,7 +1621,7 @@ static MDFN_HOT uint32 T_DoHFilter(void* const t_in, const uint32 w, const bool 
    uint32 prev = t[0];
    for(uint32 i = 0; i < 512; i++)
    {
-    const uint32 pix = Blend32<rgb565, T>(t[i], prev);
+    const uint32 pix = Blend32<rgb16_format, T>(t[i], prev);
 
     prev = t[i];
 
@@ -1600,7 +1649,7 @@ static MDFN_HOT uint32 T_DoHFilter(void* const t_in, const uint32 w, const bool 
   {
    for(uint32 i = 255; i > 0; i--)
    {
-    t[(i << 1) + 0] = Blend32<rgb565, T>(t[i], t[i - 1]);
+    t[(i << 1) + 0] = Blend32<rgb16_format, T>(t[i], t[i - 1]);
     t[(i << 1) + 1] = t[i];
    }
    t[1] = t[0];
@@ -1611,7 +1660,7 @@ static MDFN_HOT uint32 T_DoHFilter(void* const t_in, const uint32 w, const bool 
  }
 }
 
-template<bool rgb565, typename T>
+template<uint64 rgb16_format, typename T>
 static NO_INLINE MDFN_HOT void RenderLine(void)
 {
  if(MDFN_UNLIKELY(LineTarget > 239))	// Sanity check(239 isn't shown, too...)
@@ -1656,11 +1705,11 @@ static NO_INLINE MDFN_HOT void RenderLine(void)
   {
    // Nope, won't work right!
    //DoWindow<true>(5, linebuf.sub); // For color window masking to black.  Probably should find a more efficient/logical way to do this...
-   MixMainSub<true, rgb565>(out_target);
+   MixMainSub<true, rgb16_format>(out_target);
   }
   else
   {
-   MixMainSub<false, rgb565>(out_target);
+   MixMainSub<false, rgb16_format>(out_target);
   }
  }
 
@@ -1674,7 +1723,7 @@ static NO_INLINE MDFN_HOT void RenderLine(void)
   {
    if(MDFN_UNLIKELY(hfw > HFilter_PrevW))
    {
-    DoHFilter = T_DoHFilter<rgb565, T, PPU_HFILTER_PHR256BLEND_512>;
+    DoHFilter = T_DoHFilter<rgb16_format, T, PPU_HFILTER_PHR256BLEND_512>;
     HFilter_Auto512 = false;
 
     //printf("DERP: %u %d\n", LineTarget - 1, es->DisplayRect.y);
@@ -1760,13 +1809,15 @@ static INLINE void RenderCommon_RenderLine(void)
 {
  if(es->surface->format.opp == 2)
  {
-  if(es->surface->format.Gprec == 6)
-   RenderLine<true, uint16>();
+  if(es->surface->format == MDFN_PixelFormat::RGB16_565)
+   RenderLine<MDFN_PixelFormat::RGB16_565, uint16>();
+  else if(es->surface->format == MDFN_PixelFormat::IRGB16_1555)
+   RenderLine<MDFN_PixelFormat::IRGB16_1555, uint16>();
   else
-   RenderLine<false, uint16>();
+   RenderLine<MDFN_PixelFormat::RGBI16_5551, uint16>();
  }
  else
-  RenderLine<false, uint32>();
+  RenderLine<0, uint32>();
 }
 
 
@@ -1825,7 +1876,20 @@ static INLINE void RenderCommon_StartFrame(EmulateSpecStruct* espec, const unsig
  HFilter_Auto512 = false;
  HFilter_Out512 = false;
 
- #define HFILTH(n) { DoHFilter = (f.opp == 2) ? ((f.Gprec == 6) ? T_DoHFilter<true, uint16, n> : T_DoHFilter<false, uint16, n> ) : T_DoHFilter<false, uint32, n>; }
+ #define HFILTH(n)							\
+ {									\
+  if(f.opp == 2)							\
+  {									\
+   if(f == MDFN_PixelFormat::RGB16_565)					\
+    DoHFilter = T_DoHFilter<MDFN_PixelFormat::RGB16_565, uint16, n>;	\
+   else if(f == MDFN_PixelFormat::IRGB16_1555)				\
+    DoHFilter = T_DoHFilter<MDFN_PixelFormat::IRGB16_1555, uint16, n>;	\
+   else									\
+    DoHFilter = T_DoHFilter<MDFN_PixelFormat::RGBI16_5551, uint16, n>;	\
+  }									\
+  else									\
+   DoHFilter = T_DoHFilter<0, uint32, n>;				\
+ }
 
  switch(hfilter)
  {
@@ -1870,13 +1934,6 @@ static INLINE void RenderCommon_Reset(bool powering_up)
 
 static INLINE void RenderCommon_Init(void)
 {
- assert(linebuf.main == linebuf.bg[0]);
- assert(linebuf.main == linebuf.bghr[0]);
- assert(linebuf.sub == linebuf.bg[2]);
- assert(linebuf.sub == linebuf.bghr[1]);
- //
- //
- //
  DoHFilter = NULL;
  es = NULL;
  //
@@ -1923,65 +1980,90 @@ static INLINE void RenderCommon_Init(void)
  {
   sha256_hasher h;
   sha256_digest d;
-  const sha256_digest d_expected = "0299f757a85a1aad6cbe1ad2b0eda925d8df667cd04e646af8917f65cbf24537"_sha256;
+  const sha256_digest d_expected = "843cb9461fe757cf4c552d7181044a6e8fb4f8525c8acb2591ec5b9d16887446"_sha256;
   alignas(16) uint16 buf16_rgb555[256];
+  alignas(16) uint16 buf16_rgb5551[256];
   alignas(16) uint16 buf16_rgb565[256];
-
-  for(unsigned i = 0; i < 256; i++)
-  {
-   unsigned r = 0, g = 0, b = 0;
-
-   if(i < 0x20)
-    r = i & 0x1F;
-   else if(i < 0x40)
-    g = i & 0x1F;
-   else if(i < 0x60)
-    b = i & 0x1F;
-   else if(i < 0x80)
-    r = g = b = i & 0x1F;
-   else
-   {
-    r = g = b = i & 0x1F;
-    if(i < 0xA0)
-     r ^= 0x1F;
-    else if(i < 0xC0)
-     g ^= 0x1F;
-    else if(i < 0xE0)
-     b ^= 0x1F;
-    else
-    {
-     r ^= 0x10;
-     b ^= 0x10;
-    }
-   }
-   buf16_rgb555[i] = (r << 10) | (g << 5) | b;
-   buf16_rgb565[i] = (r << 11) | (g << 6) | ((g >> 4) << 5) | b;
-
-   //printf("%3u: 0x%02x 0x%02x 0x%02x --- 0x%04x 0x%04x\n", i, r, g, b, buf16_rgb555[i], buf16_rgb565[i]);
-  }
 
   for(unsigned bright = 0; bright < 15; bright++)
   {
-   ApplyBrightness<false, false>(buf16_rgb555, bright);
-   ApplyBrightness<false, true>(buf16_rgb565, bright);
+   for(unsigned i = 0; i < 256; i++)
+   {
+    unsigned r = 0, g = 0, b = 0;
+
+    if(i < 0x20)
+     r = i & 0x1F;
+    else if(i < 0x40)
+     g = i & 0x1F;
+    else if(i < 0x60)
+     b = i & 0x1F;
+    else if(i < 0x80)
+     r = g = b = i & 0x1F;
+    else
+    {
+     r = g = b = i & 0x1F;
+     if(i < 0xA0)
+      r ^= 0x1F;
+     else if(i < 0xC0)
+      g ^= 0x1F;
+     else if(i < 0xE0)
+      b ^= 0x1F;
+     else
+     {
+      r ^= 0x10;
+      b ^= 0x10;
+     }
+    }
+    buf16_rgb555[i] = (r << 10) | (g << 5) | b;
+    buf16_rgb5551[i] = buf16_rgb555[i] << 1;
+    buf16_rgb565[i] = (r << 11) | (g << 6) | ((g >> 4) << 5) | b;
+
+    //printf("%3u: 0x%02x 0x%02x 0x%02x --- 0x%04x 0x%04x\n", i, r, g, b, buf16_rgb555[i], buf16_rgb565[i]);
+   }
+
+   ApplyBrightness<false, MDFN_PixelFormat::IRGB16_1555>(buf16_rgb555, bright);
+   ApplyBrightness<false, MDFN_PixelFormat::RGBI16_5551, uint16>(buf16_rgb5551, bright);
+   ApplyBrightness<false, MDFN_PixelFormat::RGB16_565, uint16>(buf16_rgb565, bright);
 
    for(unsigned i = 0; i < 256; i++)
    {
     h.process_scalar<uint16>(buf16_rgb555[i]);
+    h.process_scalar<uint16>(buf16_rgb5551[i]);
     h.process_scalar<uint16>(buf16_rgb565[i]);
+
+    assert(buf16_rgb555[i] == (buf16_rgb5551[i] >> 1));
+    assert(!((buf16_rgb565[i] ^ buf16_rgb555[i]) & 0x1F));
+    assert(!((buf16_rgb565[i] ^ buf16_rgb5551[i]) & 0xF800));
+    //printf("%04x %04x\n", buf16_rgb565[i] & 0x7E0, buf16_rgb5551[i] & 0x7C0);
+    assert(!((buf16_rgb565[i] ^ buf16_rgb5551[i]) & 0x07C0));
    }
   }
   //
   d = h.digest();
-  assert(d == d_expected);
-  //
-/*
+
+#if 0
   for(unsigned i = 0; i < 32; i++)
    printf("%02x", d[i]);
   printf("\n");
   abort();
-*/
+#endif
+  assert(d == d_expected);
+  //
  }
+ //
+ //
+ //
+/*
+ {
+  assert((Blend32<0, uint32>(0xDEADBEEF, 0xCAFEBABE)) == ((((0xDEU + 0xCA) >> 1) << 24) | (((0xADU + 0xFE) >> 1) << 16) | (((0xBEU + 0xBA) >> 1) << 8) | (((0xEFU + 0xBE) >> 1) << 0)));
+
+  for(unsigned i = 0; i < 256; i++)
+  {
+   
+
+  }
+ }
+*/
 #endif
 }
 

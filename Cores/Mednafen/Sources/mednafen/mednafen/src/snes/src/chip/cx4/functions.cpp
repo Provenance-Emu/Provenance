@@ -1,9 +1,6 @@
 #ifdef CX4_CPP
 
-#ifndef M_PI
 #include <math.h>
-#endif
-
 #define Tan(a) (CosTable[a] ? ((((int32)SinTable[a]) << 16) / CosTable[a]) : 0x80000000)
 #define sar(b, n) ((b) >> (n))
 #ifdef PI

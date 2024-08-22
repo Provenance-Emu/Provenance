@@ -21,13 +21,17 @@
 
 /*
  TODO:
+	Test the relative timing between timers, LFO, EG, and the DSP ringbuffer position.
+
 	Open bus or something seems to get into the audio when a slot's playback ends by loop end, but not by env level being max, under
-	certain conditions.  Test further, maybe emulate in the future?
+	certain conditions when the 68K is running.  Test further, maybe emulate in the future?
 
 	Open bus emulation and cycle timing granularity instead of sample(someday?); be careful with DSP input/output buffering
-	with respect to dry/direct output path delay, and the mapping of the buffers to the address space.
+	with respect to dry/direct output path delay, and the mapping of the buffers to the address space.  Emulating the extra wait
+	states on 68K accesses caused by PCM playback and DSP memory accesses may be required to fix the problem of game music playing back
+	a very teensy bit too fast.
 
-	Finish MIDI interface emulation.
+	Hook up MIDI interface emulation to the outside somehow.
 
 	Proper reset/power-on state.
 
@@ -63,39 +67,32 @@ void SS_SCSP::RecalcSoundInt(void)	// Sound CPU interrupts
  if(mask_test &~ 0xFF)
   mask_test = (mask_test & 0xFF) | 0x80;
 
- lvmasked[0] = (SCILV[0] & mask_test) << 0;
- lvmasked[1] = (SCILV[1] & mask_test) << 1;
- lvmasked[2] = (SCILV[2] & mask_test) << 2;
+ lvmasked[0] = SCILV[0] & mask_test;
+ lvmasked[1] = SCILV[1] & mask_test;
+ lvmasked[2] = SCILV[2] & mask_test;
 
- for(unsigned i = 0; i < 8; i++)
+ if(lvmasked[2])
  {
-  unsigned l = (lvmasked[0] & 0x1) | (lvmasked[1] & 0x2) | (lvmasked[2] & 0x4);
-
-  if(l > out_level)
-   out_level = l;
-
-  lvmasked[0] >>= 1;
-  lvmasked[1] >>= 1;
-  lvmasked[2] >>= 1;
+  out_level |= 0x4;
+  lvmasked[1] &= lvmasked[2];
+  lvmasked[0] &= lvmasked[2];
  }
 
- SCSP_SoundIntChanged(out_level);
-#if 0
- if(mask_test)
+ if(lvmasked[1])
  {
-  const unsigned shift = std::min<unsigned>(7, MDFN_tzcount32(mask_test));
-  unsigned level;
-
-  level = (((SCILV[0] >> which) & 0x1) << 0) |
-	  (((SCILV[1] >> which) & 0x1) << 1) |
-	  (((SCILV[2] >> which) & 0x1) << 2);
+  out_level |= 0x2;
+  lvmasked[0] &= lvmasked[1];
  }
-#endif
+
+ out_level |= (bool)lvmasked[0];
+ //
+ //
+ SCSP_SoundIntChanged(this, out_level);
 }
 
 void SS_SCSP::RecalcMainInt(void)	// Main CPU interrupts
 {
- SCSP_MainIntChanged((bool)(MCIPD & MCIEB));
+ SCSP_MainIntChanged(this, (bool)(MCIPD & MCIEB));
 }
 
 INLINE void SS_SCSP::RecalcShortWaveMask(Slot* s)
@@ -136,7 +133,8 @@ void SS_SCSP::Reset(bool powering_up)
 
  if(powering_up)
  {
-  memset(RAM, 0x00, 0x40000 * sizeof(uint16));	// or something else?
+  for(size_t i = 0; i < 0x40000; i++)
+   RAM[i] = 0x0000; // or some other value?
  }
 
  //
@@ -154,7 +152,7 @@ void SS_SCSP::Reset(bool powering_up)
  LFSR = 1;
  GlobalCounter = 0;
 
- MIDI.Reset();
+ MIDI_Reset();
  //
  //
  DMEA = 0;
@@ -170,7 +168,6 @@ void SS_SCSP::Reset(bool powering_up)
  {
   Timers[i].Control = 0;
   Timers[i].Counter = 0;
-  Timers[i].PrevClockIn = false;
   Timers[i].Reload = -1;
  }
 
@@ -195,6 +192,138 @@ void SS_SCSP::Reset(bool powering_up)
  RecalcSoundInt();
  RecalcMainInt();
 }
+
+//
+//
+//
+INLINE uint8 SS_SCSP::MIDI_ReadInput(void)
+{
+ uint8 ret = MIDI.InputFIFO[MIDI.InputRP]; // TODO: May not be correct for InputCount == 0; test.
+
+ if(MIDI.InputCount)
+ {
+  //printf("MIDI Read: %02x\n", ret);
+
+  MIDI.InputRP = (MIDI.InputRP + 1) & 0x3;
+  MIDI.InputCount--;
+  MIDI.Flags &= ~MIDIF_INPUT_FULL;
+  MIDI.Flags &= ~MIDIF_INPUT_OFLOW;	// TODO: Test.
+
+  if(!MIDI.InputCount)
+  {
+   MIDI.Flags |= MIDIF_INPUT_EMPTY;
+
+   SCIPD &= ~0x008;
+   MCIPD &= ~0x008;
+   RecalcSoundInt();
+   RecalcMainInt();
+  }
+ }
+
+ return ret;
+}
+
+void SS_SCSP::MIDI_WriteInput(uint8 V)
+{
+ if(MIDI.InputCount == 4)
+ {
+  MIDI.Flags |= MIDIF_INPUT_OFLOW;
+  return;
+ }
+ //printf("MIDI Write: %02x\n", V);
+
+ MIDI.InputFIFO[MIDI.InputWP] = V;
+ MIDI.InputWP = (MIDI.InputWP + 1) & 0x3;
+ MIDI.InputCount++;
+
+ MIDI.Flags &= ~MIDIF_INPUT_EMPTY;
+ if(MIDI.InputCount == 4)
+  MIDI.Flags |= MIDIF_INPUT_FULL;
+
+ SCIPD |= 0x008;
+ MCIPD |= 0x008;
+ RecalcSoundInt();
+ RecalcMainInt();
+}
+
+INLINE void SS_SCSP::MIDI_WriteOutput(uint8 V)
+{
+ if(MIDI.OutputCount == 4)	// TODO: See if write is completely discarded, or replaces last entry in FIFO.
+  return;
+
+ MIDI.OutputFIFO[MIDI.OutputWP] = V;
+ MIDI.OutputWP = (MIDI.OutputWP + 1) & 0x3;
+ MIDI.OutputCount++;
+
+ MIDI.Flags &= ~MIDIF_OUTPUT_EMPTY;
+ if(MIDI.OutputCount == 4)
+  MIDI.Flags |= MIDIF_OUTPUT_FULL;
+
+ SCIPD &= ~0x200;
+ MCIPD &= ~0x200;
+ RecalcSoundInt();
+ RecalcMainInt();
+}
+
+INLINE void SS_SCSP::MIDI_Run(void (*midi_out)(uint8))
+{
+ MIDI.SimuClockDivider += 32;
+ if(MIDI.SimuClockDivider >= 45)
+ {
+  MIDI.SimuClockDivider -= 45;
+
+  if(!MIDI.TransmitBitCounter)
+  {
+   if(MIDI.OutputCount)
+   {
+    //printf("Transmit\n");
+    MIDI.TransmitBitCounter = 10;
+    MIDI.TransmitBuffer = (uint32)(MIDI.OutputFIFO[MIDI.OutputRP] | ~0xFF) << 1;
+    MIDI.OutputRP = (MIDI.OutputRP + 1) & 0x3;
+    MIDI.OutputCount--;
+
+    MIDI.Flags &= ~MIDIF_OUTPUT_FULL;
+    if(!MIDI.OutputCount)
+    {
+     MIDI.Flags |= MIDIF_OUTPUT_EMPTY;
+
+     SCIPD |= 0x200;
+     MCIPD |= 0x200;
+     RecalcSoundInt();
+     RecalcMainInt();
+    }
+   }
+  }
+
+  if(MIDI.TransmitBitCounter == 1 && midi_out)
+   midi_out((uint8)(MIDI.TransmitBuffer >> 1));
+
+  MIDI.TransmitBitCounter -= (bool)MIDI.TransmitBitCounter;
+ }
+}
+
+INLINE void SS_SCSP::MIDI_Reset(void)
+{
+ memset(MIDI.InputFIFO, 0, sizeof(MIDI.InputFIFO));
+ memset(MIDI.OutputFIFO, 0, sizeof(MIDI.OutputFIFO));
+
+ MIDI.InputRP = MIDI.InputWP = MIDI.InputCount = 0;
+ MIDI.OutputRP = MIDI.OutputWP = MIDI.OutputCount = 0;
+
+ MIDI.Flags = MIDIF_INPUT_EMPTY | MIDIF_OUTPUT_EMPTY;
+
+ MIDI.SimuClockDivider = 0;
+ MIDI.TransmitBitCounter = 0;
+ MIDI.TransmitBuffer = 0x00;
+
+ //SCIPD &= ~0x200;
+ //MCIPD &= ~0x200;
+ //RecalcSoundInt();
+ //RecalcMainInt();
+}
+//
+//
+//
 
 static INLINE void SDL_PAN_ToVolume(int16* outvol, const unsigned level, const unsigned pan)
 {
@@ -426,7 +555,7 @@ INLINE void SS_SCSP::RW(uint32 A, T& DBV)
 	  // TODO: Test correct order of flags latching returning versus input fetching/latching(also maybe take into consideration
 	  // 16-bit access from SCU being split into 2x 8-bit accesses on the real thing...).
 	  unsigned tmp = MIDI.Flags << 8;
-	  tmp |= MIDI.ReadInput();
+	  tmp |= MIDI_ReadInput();
 	  DBV = tmp & mask;
 	 }
 	 else
@@ -437,7 +566,12 @@ INLINE void SS_SCSP::RW(uint32 A, T& DBV)
    case 0x03:	// MOBUF (W)
 	if(IsWrite)
 	{
+	 if(!shift)
+	 {
+	  SS_DBG(SS_DBG_SCSP_MOBUF, "[SCSP] MOBUF write: 0x%02x\n", (uint8)DBV);
 
+	  MIDI_WriteOutput(DBV);
+	 }
 	}
 	else
 	 DBV = 0;
@@ -463,7 +597,7 @@ INLINE void SS_SCSP::RW(uint32 A, T& DBV)
 	 DBV = 0;
 	break;
 
-   case 0x08:	// Test Register?
+   case 0x08:	// TEST
 	if(IsWrite)
 	{
 	 //
@@ -473,6 +607,7 @@ INLINE void SS_SCSP::RW(uint32 A, T& DBV)
 	 // 0x40: blocks memory access to waveform playback? messes up sound cpu too?
 	 // 0x60: force wfallowaccess = 0 ? messes up sound cpu too?
 	 //
+	 // 0x08: appears to block SCU access to SCSP RAM(causes hang)
 	 // 0x04: kills sound cpu(blocks memory access?)
 	 // 0x02: blocks slot waveform playback from reading memory?
 	 // 0x01: messes up dsp or blocks dsp memory access? the ears are not happy!
@@ -868,21 +1003,25 @@ void NO_INLINE SS_SCSP::RunDMA(void)
 }
 
 
-INLINE void SS_SCSP::RunEG(Slot* s, const unsigned key_eg_scale)
+INLINE void SS_SCSP::RunEG(Slot* s, const unsigned key_eg_scale, const uint32 sc, const uint32 scxc)
 {
  const uint32 EnvLevelCache = s->EnvLevel;
  const unsigned ERateNoScale = s->EnvRates[s->EnvPhase];
  const unsigned ERate = std::min<unsigned>(0x1F, key_eg_scale + ERateNoScale);
- const unsigned ERateWBT = (0x22 - std::min<unsigned>(0x18, ERate)) >> 1;
- const bool EGCBT = (GlobalCounter >> ERateWBT) & 1;
+ const unsigned ERateWBT = (0x18 - std::min<unsigned>(0x18, ERate)) >> 1;
+ const bool ShiftAdj = (ERate < 0x18) & ERate;
  bool ClockEG;
 
- ClockEG = !s->EnvGCBTPrev && EGCBT;
-
- if((ERate < 0x18) && (ERate & 1))
-  ClockEG &= (bool)((GlobalCounter >> (ERateWBT + 1)) & 0x3);
-
- ClockEG &= (bool)ERateNoScale;
+ //
+ // The equivalent using SampleCounter instead of SampleCounterXC would be like:
+ //
+ //	When ShiftAdj is 0, look for a 1 at bit position ERateWBT, and lower bits must be 0, unless ERateWBT is 0, in which case
+ //	bit0 must be 0 instead of 1.
+ //
+ //	When ShiftAdj is 1, look for a 1 at bit position ERateWBT + 1 or(inclusive) bit position ERateWBT + 2, and lower bits
+ //	must be 0.
+ //
+ ClockEG = ((scxc | (scxc >> ShiftAdj)) >> (ERateWBT + ShiftAdj)) & (bool)ERateNoScale;
 
  if(s->EnvPhase == ENV_PHASE_ATTACK && (ERateNoScale + key_eg_scale) >= 0x20)
  {
@@ -891,21 +1030,15 @@ INLINE void SS_SCSP::RunEG(Slot* s, const unsigned key_eg_scale)
   if(EnvLevelCache)
   {
    SS_DBG(SS_DBG_WARNING | SS_DBG_SCSP, "[SCSP] Slot %u stuck in EG attack phase @ EGL=0x%03x: AR=0x%02x, KRS=0x%01x, OCT=0x%01x\n", (unsigned)(s - Slots), EnvLevelCache, ERateNoScale, s->KRS, s->Octave);
-   //assert(0);
   }
  }
-
- s->EnvGCBTPrev = EGCBT;
 
  if(ClockEG)
  {
   const int32 inc_base = (s->EnvPhase == ENV_PHASE_ATTACK) ? ~EnvLevelCache : 16;
   const unsigned ermaxo = std::max<unsigned>(0x18, std::min<unsigned>(0x1E, ERate));
-  const uint32 srac = ((0x20 - ermaxo) >> 1) + (ermaxo & 1 & (GlobalCounter >> (ERateWBT + 1)));
+  const uint32 srac = ((0x20 - ermaxo) >> 1) + (ermaxo & 1 & (sc >> (ERateWBT + 1)));
   int32 NewEnvLevel;
-
-  //if(s == &Slots[0] && EnvLevelCache)
-  // printf("EP: %u, EL: 0x%04x, AR: 0x%02x, %d, %u --- %02x\n", s->EnvPhase, EnvLevelCache, s->EnvRates[ENV_PHASE_ATTACK], inc_base, srac, ERate);
 
   NewEnvLevel = EnvLevelCache + (inc_base >> srac);
 
@@ -922,9 +1055,6 @@ INLINE void SS_SCSP::RunEG(Slot* s, const unsigned key_eg_scale)
  //
  if(s->EnvPhase == ENV_PHASE_DECAY1)
  {
-  //if(s->DecayLevel == 0 && s->EnvRates[ENV_PHASE_DECAY1] && s->EnvRates[ENV_PHASE_DECAY1] != s->EnvRates[ENV_PHASE_DECAY2])
-  // printf("MOO: key_eg_scale=0x%02x AR=0x%02x D1R=0x%02x D2R=0x%02x ClockEG=%d\n", key_eg_scale, s->EnvRates[ENV_PHASE_ATTACK], s->EnvRates[ENV_PHASE_DECAY1], s->EnvRates[ENV_PHASE_DECAY2], ClockEG);
-
   if((EnvLevelCache >> 5) == s->DecayLevel)
    s->EnvPhase = ENV_PHASE_DECAY2;
  }
@@ -1044,7 +1174,7 @@ static INLINE uint32 dspfloat_to_int(const uint16 inv)
 static INLINE uint32 int_to_dspfloat(const uint32 inv)
 {
  const uint32 invsl8 = inv << 8;
- const uint32 sign_xor = (int)invsl8 >> 31;
+ const uint32 sign_xor = (int32)invsl8 >> 31;
  uint32 exp, shift;
  uint32 ret;
 
@@ -1279,17 +1409,19 @@ INLINE void SS_SCSP::RunDSP(void)
 //
 //
 //
-INLINE void SS_SCSP::RunSample(int16* outlr)
+template<typename T_out>
+INLINE void SS_SCSP::RunSample(T_out* outlr, void (*midi_out)(uint8))
 {
+ const uint32 SampleCounter = GlobalCounter >> 5;
+ const uint32 SampleCounterXC = (SampleCounter ^ (SampleCounter - 1)) & (SampleCounter ^ 1);
  int32 out_accum[2] = { 0, 0 };
+
+ MIDI_Run(midi_out);
 
  for(unsigned i = 0; i < 3; i++)
  {
   auto* t = &Timers[i];
-  bool CCB = (GlobalCounter >> (4 + t->Control)) & 1;
-  bool DoClock = (t->Control == 0) || (!t->PrevClockIn && CCB);
-  t->PrevClockIn = CCB;
-
+  const bool DoClock = !(SampleCounter & ((1U << t->Control) - 1));
 
   if(DoClock)
   {
@@ -1337,7 +1469,7 @@ INLINE void SS_SCSP::RunSample(int16* outlr)
   else
    key_eg_scale = std::max<int>(0x00, std::min<int>(0x0F, s->KRS + (s->Octave ^ 0x8) - 0x8));
 
-  RunEG(s, key_eg_scale);
+  RunEG(s, key_eg_scale, SampleCounter, SampleCounterXC);
 
   if(KeyExecute && (s->EnvPhase == ENV_PHASE_RELEASE) == s->KeyBit)
   {
@@ -1558,9 +1690,7 @@ INLINE void SS_SCSP::RunSample(int16* outlr)
 
  if(DAC18bit)
  {
-  // Doesn't seem to improve precision.  Remember
-  // to extend the outlr[] types if this SCSP emulator is used
-  // in a system that actually has an 18-bit DAC.
+  // Doesn't seem to improve precision.
   out_accum[0] = (uint32)out_accum[0] << 2;
   out_accum[1] = (uint32)out_accum[1] << 2;
  }
@@ -1585,7 +1715,6 @@ void SS_SCSP::StateAction(StateMem* sm, const unsigned load, const bool data_onl
   SFVAR(Slots->WFAllowAccess, 32, sizeof(*Slots), Slots),
   SFVAR(Slots->EnvLevel, 32, sizeof(*Slots), Slots),
   SFVAR(Slots->EnvPhase, 32, sizeof(*Slots), Slots),
-  SFVAR(Slots->EnvGCBTPrev, 32, sizeof(*Slots), Slots),
   SFVAR(Slots->LFOCounter, 32, sizeof(*Slots), Slots),
   SFVAR(Slots->LFOTimeCounter, 32, sizeof(*Slots), Slots),
 
@@ -1615,7 +1744,10 @@ void SS_SCSP::StateAction(StateMem* sm, const unsigned load, const bool data_onl
   SFVAR(MIDI.OutputWP),
   SFVAR(MIDI.OutputCount),
   SFVAR(MIDI.Flags),
- 
+  SFVAR(MIDI.SimuClockDivider),
+  SFVAR(MIDI.TransmitBitCounter),
+  SFVAR(MIDI.TransmitBuffer),
+
   SFVAR(SCIEB),
   SFVAR(SCIPD),
 
@@ -1626,7 +1758,6 @@ void SS_SCSP::StateAction(StateMem* sm, const unsigned load, const bool data_onl
 
   SFVAR(Timers->Control, 3, sizeof(*Timers), Timers),
   SFVAR(Timers->Counter, 3, sizeof(*Timers), Timers),
-  SFVAR(Timers->PrevClockIn, 3, sizeof(*Timers), Timers),
   SFVAR(Timers->Reload, 3, sizeof(*Timers), Timers),
 
   SFVAR(DMEA),
@@ -1670,7 +1801,7 @@ void SS_SCSP::StateAction(StateMem* sm, const unsigned load, const bool data_onl
   SFEND
  };
 
- MDFNSS_StateAction(sm, load, data_only, StateRegs, "SCSP");
+ MDFNSS_StateAction(sm, load, data_only, StateRegs, sname);
 
  if(load)
  {

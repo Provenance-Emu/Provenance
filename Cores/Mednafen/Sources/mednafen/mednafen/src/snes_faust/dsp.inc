@@ -467,7 +467,7 @@ static INLINE void V3a(unsigned voice_num)
  if(HGS.Latch_PMON & (1U << voice_num) & ~1U)
  {
   //printf("%d, %d, %d\n", v->Pitch, Voices[voice_num - 1].CurSample, ((Voices[voice_num - 1].CurSample >> 6) * (int32)v->Pitch) >> 10);
-  v->Pitch += ((Voices[voice_num - 1].CurSample >> 6) * (int32)v->Pitch) >> 10;
+  v->Pitch += ((Voices[voice_num - 1].CurSample >> 5) * (int32)v->Pitch) >> 10;
   //printf(" %d\n", v->Pitch);
  }
 }

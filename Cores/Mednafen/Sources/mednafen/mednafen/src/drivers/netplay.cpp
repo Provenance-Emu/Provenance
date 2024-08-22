@@ -74,7 +74,7 @@ bool NetplayConsole::TextHook(const std::string &text)
 uint32 Netplay_GetLPM(void)
 {
  if(!MDFNDnetplay)
-  return ~(uint32)0;
+  return (uint32)-1;
 
  return lpm;
 }

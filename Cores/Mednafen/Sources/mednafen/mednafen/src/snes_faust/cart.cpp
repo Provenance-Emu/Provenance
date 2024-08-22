@@ -153,7 +153,7 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
  {
   if(s & (1U << i))
   {
-   SNES_DBG("[CART] Copy 0x%08x bytes from 0x%08x to 0x%08x\n", 1U << i, s - (1U << i), s);
+   SNES_DBG(SNES_DBG_CART, "[CART] Copy 0x%08x bytes from 0x%08x to 0x%08x\n", 1U << i, s - (1U << i), s);
    memcpy(Cart.ROM + s, Cart.ROM + s - (1U << i), 1U << i);
    s += (1U << i);
   }
@@ -192,7 +192,7 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
  else
   rom_layout = ROM_LAYOUT_LOROM;
 
- for(unsigned s = 0; s < 4 && header_found <= 0; s++)
+ for(unsigned s = (maybe_exrom ? 2 : 0), hfc = 4; hfc && header_found <= 0; s = (s + 1) & 3, hfc--)
  {
   uint8* tmp = &Cart.ROM[(s & 1) * 0x8000 + ((s & 2) ? 0x400000 : 0x000000)];
 
@@ -274,15 +274,13 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
 	// For "Derby Stallion 96", "RPG Tsukuru 2", and "Sound Novel Tsukuru"
 	if(header_developer == 0x33 && tmp[0x7FB0] == 0x42 && tmp[0x7FB1] == 0x31 && tmp[0x7FB2] == 0x5A && tmp[0x7FB3] > 0x20 && tmp[0x7FB4] > 0x20 && tmp[0x7FB5] > 0x20)
 	 rom_layout = ROM_LAYOUT_LOROM_SPECIAL;
+	else if(maybe_exrom && (s & 2))
+	 rom_layout = ROM_LAYOUT_EXLOROM;
 	break;
 
     case 0x31:
     case 0x21:
 	rom_layout = ROM_LAYOUT_HIROM;
-	break;
-
-    case 0x32:
-	rom_layout = ROM_LAYOUT_EXLOROM;
 	break;
 
     case 0x35:
@@ -299,11 +297,11 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
     const unsigned ln = header_chipset & 0xF;
     const unsigned hn = header_chipset >> 4;
 
-    SNES_DBG("[CART] %02x %02x\n", header_chipset, header_subchip);
+    SNES_DBG(SNES_DBG_CART, "[CART] %02x %02x\n", header_chipset, header_subchip);
 
     ram_size = (header_ram_size ? (0x800 << (header_ram_size - 1)) : 0);
 
-    SNES_DBG("[CART] %02x %02x %02x %02x --- %c%c%c%c\n", rom_layout, header_ram_size, header_rom_size, header_developer, tmp[0x7FB2], tmp[0x7FB3], tmp[0x7FB4], tmp[0x7FB5]);
+    SNES_DBG(SNES_DBG_CART, "[CART] %02x %02x %02x %02x --- %c%c%c%c\n", rom_layout, header_ram_size, header_rom_size, header_developer, tmp[0x7FB2], tmp[0x7FB3], tmp[0x7FB4], tmp[0x7FB5]);
 
     if(ln >= 0x3 && ln <= 0xA && ln != 0x7 && ln != 0x8)
     {
@@ -312,29 +310,29 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
       case 0x0: // DSPn
 		if(rom_layout == ROM_LAYOUT_LOROM && header_ram_size == 0x05 && header_rom_size == 0x0A)
 		{
-		 SNES_DBG("[CART] DSP2\n");
+		 SNES_DBG(SNES_DBG_CART, "[CART] DSP2\n");
 		 special_chip = SPECIAL_CHIP_DSP2;
 		}
 		else if(rom_layout == ROM_LAYOUT_LOROM && header_ram_size == 0x03 && header_rom_size == 0x0A && header_developer == 0xB2)
 		{
-		 SNES_DBG("[CART] DSP3\n");
+		 SNES_DBG(SNES_DBG_CART, "[CART] DSP3\n");
 		 special_chip = SPECIAL_CHIP_DSP3;
 		}
 		else if(rom_layout == ROM_LAYOUT_LOROM && header_ram_size == 0x00 && header_rom_size == 0x0A && header_developer == 0x33)
 		{
-		 SNES_DBG("[CART] DSP4\n");
+		 SNES_DBG(SNES_DBG_CART, "[CART] DSP4\n");
 		 special_chip = SPECIAL_CHIP_DSP4;
 		}
 /*
 		else if(rom_layout == ROM_LAYOUT_LOROM && header_ram_size == 0x03 && header_rom_size == 0x0A && header_developer == 0x29)
 		{
-		 SNES_DBG("ST010\n");
+		 SNES_DBG(SNES_DBG_CART, "[CART] ST010\n");
 		 special_chip = SPECIAL_CHIP_ST010;
 		}
 */
 		else
 		{
-		 SNES_DBG("[CART] DSP1\n");
+		 SNES_DBG(SNES_DBG_CART, "[CART] DSP1\n");
 		 special_chip = SPECIAL_CHIP_DSP1;
 		}
 		break;
@@ -399,7 +397,7 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
  //
  //
  //
- SNES_DBG("[CART] rom_layout=%d\n", rom_layout);
+ SNES_DBG(SNES_DBG_CART, "[CART] rom_layout=%d\n", rom_layout);
  Cart.ROMLayout = rom_layout;
  Cart.ROM_Size = size;
  //if((rom_type &~ 0x10) == 0x20)
@@ -419,7 +417,7 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
 
  Cart.RAM_Size = ram_size;
  Cart.RAM_Mask = (size_t)ram_size - 1;
- SNES_DBG("[CART] Cart RAM Size: %zu\n", Cart.RAM_Size);
+ SNES_DBG(SNES_DBG_CART, "[CART] Cart RAM Size: %zu\n", Cart.RAM_Size);
  //printf("%zu\n", Cart.RAM_Size);
 // abort();
 
@@ -438,7 +436,7 @@ bool CART_Init(Stream* fp, uint8 id[16], const int32 cx4_ocmultiplier, const int
 
    if(rom_layout == ROM_LAYOUT_LOROM || rom_layout == ROM_LAYOUT_EXLOROM || rom_layout == ROM_LAYOUT_LOROM_SRAM8000MIRROR)
    {
-    if(rom_layout == ROM_LAYOUT_EXLOROM && bank < 0xC0)
+    if(rom_layout == ROM_LAYOUT_EXLOROM && bank < 0x80)
      cart_r = ((bank >= 0x80) ? CartRead_LoROM<-1, 0x400000> : CartRead_LoROM<MEMCYC_SLOW, 0x400000>);
     else
      cart_r = ((bank >= 0x80) ? CartRead_LoROM<-1> : CartRead_LoROM<MEMCYC_SLOW>);
@@ -568,7 +566,7 @@ bool CART_LoadNV(void)
    const uint64 fp_size_tmp = fp.size();
 
    if(Cart.RAM_Size != fp_size_tmp) // Check before reading any data.
-    throw MDFN_Error(0, _("Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct size is %llu bytes."), path.c_str(), 
+    throw MDFN_Error(0, _("Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct size is %llu bytes."), MDFN_strhumesc(path).c_str(), 
 			(unsigned long long)fp_size_tmp, (unsigned long long)Cart.RAM_Size);
 
    fp.read(Cart.RAM, Cart.RAM_Size);

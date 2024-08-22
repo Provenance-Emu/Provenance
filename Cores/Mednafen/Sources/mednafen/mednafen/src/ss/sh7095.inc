@@ -3317,7 +3317,7 @@ static const uint8 InstrDecodeTab[65536] =
 #define CondRelBranch(cond, disp)	\
 {					\
  if(cond)				\
-  Branch(true, PC + (disp));		\
+  Branch(DebugMode, PC + (disp));	\
 }
 
 #define CondRelDelayBranch(cond, disp)	\
@@ -3463,8 +3463,10 @@ INLINE void SH7095::Step(void)
 //
 //
 //
-#pragma GCC push_options
-#pragma GCC optimize("O2,no-gcse") //no-unroll-loops,no-peel-loops,no-crossjumping")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC push_options
+ #pragma GCC optimize("O2,no-gcse") //no-unroll-loops,no-peel-loops,no-crossjumping")
+#endif
 
 #define DoIDIF(IntPreventNext) DoIDIF_MACRO(IntPreventNext)
 
@@ -3532,7 +3534,9 @@ NO_CLONE NO_INLINE MDFN_COLD void SH7095::RunSlaveUntil_Debug(const sscpu_timest
 }
 #undef SH7095_DEBUG_MODE
 
-#pragma GCC pop_options
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC pop_options
+#endif
 #undef DoIDIF
 #undef OnChipRegRead
 #undef ExtBusRead

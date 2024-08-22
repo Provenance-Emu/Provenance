@@ -4,7 +4,9 @@
 namespace Mednafen
 {
 
-bool MDFN_RunMathTests(void);
+// Cheap is relative. ;)
+// See also testsexp.h
+void MDFN_RunCheapTests(void);
 
 }
 

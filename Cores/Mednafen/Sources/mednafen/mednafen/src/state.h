@@ -61,6 +61,10 @@ void MDFNSS_LoadSM(Stream *st, bool data_only = false, const int fuzz = MDFNSS_F
 
 void MDFNSS_CheckStates(void);
 
+// For emulation modules' internal use.
+void MDFNSS_SaveInternal(Stream* st, void (*safunc)(StateMem*, const unsigned, const bool));
+void MDFNSS_LoadInternal(Stream* st, void (*safunc)(StateMem*, const unsigned, const bool));
+
 struct SFORMAT
 {
 	//

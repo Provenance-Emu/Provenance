@@ -2,7 +2,7 @@
 /* Mednafen Sony PS1 Emulation Module                                         */
 /******************************************************************************/
 /* gamepad.h:
-**  Copyright (C) 2011-2016 Mednafen Team
+**  Copyright (C) 2011-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -28,6 +28,7 @@ namespace MDFN_IEN_PSX
 InputDevice *Device_Gamepad_Create(void) MDFN_COLD;
 MDFN_HIDE extern IDIISG Device_Gamepad_IDII;
 MDFN_HIDE extern IDIISG Device_Dancepad_IDII;
+MDFN_HIDE extern IDIISG Device_PopnMusic_IDII;
 
 }
 #endif

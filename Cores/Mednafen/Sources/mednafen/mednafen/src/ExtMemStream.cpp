@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* ExtMemStream.cpp:
-**  Copyright (C) 2012-2018 Mednafen Team
+**  Copyright (C) 2012-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -45,7 +45,7 @@ ExtMemStream::~ExtMemStream()
 
 uint64 ExtMemStream::attributes(void)
 {
- return (ATTRIBUTE_READABLE | ATTRIBUTE_WRITEABLE | ATTRIBUTE_SEEKABLE | ATTRIBUTE_INMEM_FAST);
+ return (ATTRIBUTE_READABLE | (ro ? 0 : ATTRIBUTE_WRITEABLE) | ATTRIBUTE_SEEKABLE | ATTRIBUTE_INMEM_FAST);
 }
 
 

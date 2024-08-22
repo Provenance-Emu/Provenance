@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* git.cpp:
-**  Copyright (C) 2014-2016 Mednafen Team
+**  Copyright (C) 2014-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -46,7 +46,8 @@ IDIISG::IDIISG(std::initializer_list<InputDeviceInputInfoStruct> l) : std::vecto
 	abort();
 	break;
 
-   case IDIT_PADDING:
+   case IDIT_PADDING0:
+   case IDIT_PADDING1:
 	bit_size = idii.BitSize;
 	break;
 

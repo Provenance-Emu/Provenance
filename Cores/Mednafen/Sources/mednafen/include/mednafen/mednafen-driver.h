@@ -1,1 +1,0 @@
-../../mednafen/src/mednafen-driver.h

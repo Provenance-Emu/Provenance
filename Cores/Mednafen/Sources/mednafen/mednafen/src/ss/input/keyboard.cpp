@@ -367,7 +367,7 @@ const IDIISG IODevice_Keyboard_US101_IDII =
  /* 0x4B */ IDIIS_Button("l", "L", -1),
  /* 0x4C */ IDIIS_Button("semicolon", "Semicolon ;", -1),
  /* 0x4D */ IDIIS_Button("p", "P", -1),
- /* 0x4E */ IDIIS_Button("Minus", "Minus -", -1),
+ /* 0x4E */ IDIIS_Button("minus", "Minus -", -1),
  /* 0x4F */ IDIIS_Padding<1>(),
 
  /* 0x50 */ IDIIS_Padding<1>(),
@@ -405,7 +405,7 @@ const IDIISG IODevice_Keyboard_US101_IDII =
  /* 0x6F */ IDIIS_Padding<1>(),
 
  /* 0x70 */ IDIIS_Button("kp_insert", "Keypad Insert/0", -1),
- /* 0x71 */ IDIIS_Button("kp_delete", "Keypad Delete", -1),
+ /* 0x71 */ IDIIS_Button("kp_delete", "Keypad Delete/.", -1),
  /* 0x72 */ IDIIS_Button("kp_down", "Keypad Down/2", -1),
  /* 0x73 */ IDIIS_Button("kp_center", "Keypad Center/5", -1),
  /* 0x74 */ IDIIS_Button("kp_right", "Keypad Right/6", -1),

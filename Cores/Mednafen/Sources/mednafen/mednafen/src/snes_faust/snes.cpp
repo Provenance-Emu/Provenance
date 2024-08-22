@@ -35,6 +35,10 @@
 
 #include <bitset>
 
+#ifdef SNES_DBG_ENABLE
+ #include <trio/trio.h>
+#endif
+
 namespace MDFN_IEN_SNES_FAUST
 {
 static bool SpecEx, SpecExSoundToo;
@@ -145,7 +149,7 @@ static INLINE DEFREAD(OBRead)
  //if(MDFN_UNLIKELY(CPUM.timestamp >= events[SNES_EVENT_PPU].event_time) && !CPUM.InDMABusAccess)
  // CPUM.EventHandler();
 
- SNES_DBG("[SNES] Unknown Read: $%02x:%04x\n", A >> 16, A & 0xFFFF);
+ SNES_DBG(SNES_DBG_WARNING, "[SNES] Unknown Read: $%02x:%04x\n", A >> 16, A & 0xFFFF);
  return CPUM.mdr;
 }
 
@@ -157,7 +161,7 @@ static INLINE DEFWRITE(OBWrite)
  else
   CPUM.timestamp += CPUM.MemSelectCycles;
 
- SNES_DBG("[SNES] Unknown Write: $%02x:%04x $%02x\n", A >> 16, A & 0xFFFF, V);
+ SNES_DBG(SNES_DBG_WARNING, "[SNES] Unknown Write: $%02x:%04x $%02x\n", A >> 16, A & 0xFFFF, V);
 }
 
 DEFREAD(OBRead_XSLOW) { return OBRead<MEMCYC_XSLOW>(A); }
@@ -174,6 +178,18 @@ DEFWRITE(OBWrite_VAR) { OBWrite<-1>(A, V); }
 static uint8 WRAM[0x20000];
 #ifdef SNES_DBG_ENABLE
 static std::bitset<0x20000> WRAMWritten;	// for debugging
+
+uint32 snes_dbg_mask;
+void SNES_DBG(uint32 which, const char* format, ...)
+{
+ if(MDFN_LIKELY(!(snes_dbg_mask & which)))
+  return;
+ //
+ va_list ap;
+ va_start(ap, format);
+ trio_vprintf(format, ap);
+ va_end(ap);
+}
 #endif
 
 template<uint32 mask>
@@ -187,8 +203,8 @@ static DEFREAD(WRAMRead)
  CPUM.timestamp += MEMCYC_SLOW;
 
 #ifdef SNES_DBG_ENABLE
- //if(!WRAMWritten[A & mask])
- // SNES_DBG("[SNES] Read from uninitialized WRAM at 0x%08x!\n", A & mask);
+ if(!WRAMWritten[A & mask])
+  SNES_DBG(SNES_DBG_WRAM_UIR, "[SNES] Read from uninitialized WRAM at 0x%08x!\n", A & mask);
 #endif
 
  return WRAM[A & mask];
@@ -537,7 +553,9 @@ static MDFN_COLD void LoadReal(GameFile* gf)
  MDFNMP_RegSearchable(0x7E0000, 0x20000);
 
  DBG_Init();
-
+#ifdef SNES_DBG_ENABLE
+ snes_dbg_mask = MDFN_GetSettingMultiM("snes_faust.dbg_mask") | SNES_DBG_ERROR;
+#endif
  CPU_Init(&CPUM);
 
  memset(CPUM.ReadFuncs, 0, sizeof(CPUM.ReadFuncs));
@@ -943,6 +961,60 @@ void CPU_Misc::EventHandler(void)
  //return(Running);
 }
 
+#if 0
+static void CheckRWHandlerCycleOverhead(void)
+{
+ for(unsigned rw = 0; rw < 2; rw++)
+ {
+  for(unsigned msi = 0; msi < 2; msi++)
+  {
+   for(uint32 A = 0; A < (1U << 24); A++)
+   {
+    CPUM.timestamp = 0;
+    const uint32 pts = CPUM.timestamp;
+
+    CPUM.MemSelectCycles = msi ? MEMCYC_FAST : MEMCYC_SLOW;
+    if(rw)
+     CPUM.WriteA(A, 0);
+    else
+     CPUM.ReadA(A);
+    //
+    const uint32 td = CPUM.timestamp - pts;
+    const uint8 bank = A >> 16;
+    const uint16 offs = (uint16)A;
+    uint32 reqtd = ~0U;
+
+    if(!(bank & 0x40))
+    {
+     if(offs < 0x2000)
+      reqtd = 8;
+     else if(offs < 0x4000)
+      reqtd = 6;
+     else if(offs < 0x4200)
+      reqtd = 12;
+     else if(offs < 0x6000)
+      reqtd = 6;
+     else if(offs < 0x8000)
+      reqtd = 8;
+     else
+      reqtd = ((bank & 0x80) && msi) ? 6 : 8;
+    }
+    else
+     reqtd = ((bank & 0x80) && msi) ? 6 : 8;
+
+    if(td != reqtd)
+    {
+     fprintf(stderr, "0x%06x td=%d reqtd=%d\n", A, td, reqtd);
+     assert(td == reqtd);
+    }
+   }
+  }
+ }
+ printf("OK\n");
+ exit(0);
+}
+#endif
+
 static void NO_INLINE EmulateReal(EmulateSpecStruct* espec)
 {
  int32 apu_clock_multiplier;
@@ -963,50 +1035,8 @@ static void NO_INLINE EmulateReal(EmulateSpecStruct* espec)
   PPU_StartFrame(espec);
 
 #if 0
- for(unsigned msi = 0; msi < 2; msi++)
- {
-  for(uint32 A = 0; A < (1U << 24); A++)
-  {
-   CPUM.timestamp = 0;
-   const uint32 pts = CPUM.timestamp;
-
-   CPUM.MemSelectCycles = msi ? MEMCYC_FAST : MEMCYC_SLOW;;
-//   CPUM.ReadA(A);
-   CPUM.WriteA(A, 0);
-   //
-   const uint32 td = CPUM.timestamp - pts;
-   const uint8 bank = A >> 16;
-   const uint16 offs = (uint16)A;
-   uint32 reqtd = ~0U;
-
-   if(!(bank & 0x40))
-   {
-    if(offs < 0x2000)
-     reqtd = 8;
-    else if(offs < 0x4000)
-     reqtd = 6;
-    else if(offs < 0x4200)
-     reqtd = 12;
-    else if(offs < 0x6000)
-     reqtd = 6;
-    else if(offs < 0x8000)
-     reqtd = 8;
-    else
-     reqtd = ((bank & 0x80) && msi) ? 6 : 8;
-   }
-   else
-    reqtd = ((bank & 0x80) && msi) ? 6 : 8;
-
-   if(td != reqtd)
-   {
-    fprintf(stderr, "0x%06x td=%d reqtd=%d\n", A, td, reqtd);
-    assert(td == reqtd);
-   }
-  }
- }
- exit(0);
+  CheckRWHandlerCycleOverhead();
 #endif
-
 
   CPU_Run();
   uint32 prev = CPUM.timestamp;
@@ -1034,6 +1064,9 @@ static sha1_digest doggy;
 
 static void Emulate(EmulateSpecStruct* espec)
 {
+ if(!spc_reader && !snsf_loader)
+  MDFNGameInfo->mouse_sensitivity = MDFN_GetSettingF("snes_faust.input.mouse_sensitivity");
+
  if(!SpecEx || spc_reader || snsf_loader)
  {
   EmulateReal(espec);
@@ -1077,10 +1110,10 @@ static void Emulate(EmulateSpecStruct* espec)
 
 #ifdef SNES_DBG_ENABLE
    if(!expected_delta && doggy != sha1(tmp_espec.SoundBuf, tmp_espec.SoundBufSize * 2 * sizeof(int16)))
-    fprintf(stderr, "Oops\n");
+    SNES_DBG(SNES_DBG_ERROR, "[SPECEX] Oops\n");
 
    if(expected_delta)
-    fprintf(stderr, "%d\n", expected_delta);
+    SNES_DBG(SNES_DBG_ERROR, "[SPECEX] %d\n", expected_delta);
 #endif
 
    memmove(espec->SoundBuf, espec->SoundBuf + (tmp_espec.SoundBufSize - sbo) * 2, sbo * 2 * sizeof(int16));
@@ -1285,6 +1318,36 @@ static const MDFNSetting_EnumList Renderer_List[] =
  { NULL, 0 }
 };
 
+#ifdef SNES_DBG_ENABLE
+static const MDFNSetting_EnumList DBGMask_List[] =
+{
+ { "0",		0								},
+ { "none",	0,			gettext_noop("None")			},
+
+ { "all",	-1,			gettext_noop("All")			},
+
+ { "warning",	SNES_DBG_WARNING,	gettext_noop("Warnings")		},
+ //
+ //
+ { "wram_uir",	SNES_DBG_WRAM_UIR,	gettext_noop("Uninitialized read from main WRAM")	},
+ //
+ //
+ { "cpu",	SNES_DBG_CPU,		gettext_noop("Main CPU") 			},
+ { "dma",	SNES_DBG_DMA,		gettext_noop("Main DMA") 			},
+
+ { "ppu",	SNES_DBG_PPU,		gettext_noop("PPU")				},
+ { "ppu_bva",	SNES_DBG_PPU_BVA,	gettext_noop("PPU blocked VRAM accesses.")	},
+
+ { "spc700",	SNES_DBG_SPC700,	gettext_noop("APU SPC700")			},
+ { "dsp",	SNES_DBG_DSP,		gettext_noop("APU S-DSP")			},
+ { "msu1",	SNES_DBG_MSU1,		gettext_noop("MSU1")				},
+ { "cart",	SNES_DBG_CART,		gettext_noop("Cart")				},
+
+ { NULL, 0 },
+};
+
+#endif
+
 static const MDFNSetting Settings[] =
 {
  { "snes_faust.renderer", MDFNSF_NOFLAGS, gettext_noop("PPU renderer."), gettext_noop("If you have only one CPU with one physical CPU core, select the single-threaded renderer for better performance."), MDFNST_ENUM, "st", NULL, NULL, NULL, NULL, Renderer_List },
@@ -1302,6 +1365,7 @@ static const MDFNSetting Settings[] =
  { "snes_faust.spex", MDFNSF_NOFLAGS, gettext_noop("Enable 1-frame speculative execution for video output."), gettext_noop("Hack to reduce input->output video latency by 1 frame.  Enabling will increase CPU usage, and may cause video glitches(such as \"jerkiness\") in some oddball games, but most commercially-released games should be fine."), MDFNST_BOOL, "0" },
  { "snes_faust.spex.sound", MDFNSF_NOFLAGS, gettext_noop("Enable speculative execution for sound output too."), gettext_noop("Only has an effect when speculative-execution for video output is enabled.  Will cause minor sound glitches in some games."), MDFNST_BOOL, "1" },
 
+ { "snes_faust.input.mouse_sensitivity", MDFNSF_NOFLAGS, gettext_noop("Emulated mouse sensitivity."), NULL, MDFNST_FLOAT, "0.50", NULL, NULL },
  { "snes_faust.input.sport1.multitap", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Enable multitap on SNES port 1."), NULL, MDFNST_BOOL, "0" },
  { "snes_faust.input.sport2.multitap", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Enable multitap on SNES port 2."), NULL, MDFNST_BOOL, "0" },
 
@@ -1320,6 +1384,10 @@ static const MDFNSetting Settings[] =
  { "snes_faust.cx4.clock_rate", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("CX4 clock rate, specified in percentage of normal."), gettext_noop("Overclocking the CX4 will cause or worsen attract mode desynchronization."), MDFNST_UINT, "100", "100", "500" },
  { "snes_faust.superfx.clock_rate", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Super FX clock rate, specified in percentage of normal."), gettext_noop("Overclocking the Super FX will cause or worsen attract mode desynchronization."), MDFNST_UINT, "100", "25", "500" },
  { "snes_faust.superfx.icache", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Enable SuperFX instruction cache emulation."), gettext_noop("Enabling will likely increase CPU usage."), MDFNST_BOOL, "0" },
+
+#ifdef SNES_DBG_ENABLE
+ { "snes_faust.dbg_mask", MDFNSF_SUPPRESS_DOC, gettext_noop("Debug printf mask."), NULL, MDFNST_MULTI_ENUM, "none", NULL, NULL, NULL, NULL, DBGMask_List },
+#endif
 
  { NULL }
 };

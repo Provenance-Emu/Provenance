@@ -1,10 +1,15 @@
 #!/bin/bash
-VERSION=`head -n 1 mednafen/Documentation/modules.def`
+
+if [ "$1" = "" ]; then
+	VERSION=`head -n 1 mednafen/Documentation/modules.def`
+else
+	VERSION="$1"
+fi
 
 cd build32 && \
 cp src/mednafen.exe . && \
 i686-w64-mingw32-strip mednafen.exe && \
-i686-w64-mingw32-strip libcharset-1.dll libiconv-2.dll SDL2.dll && \
+i686-w64-mingw32-strip libcharset-1.dll libiconv-2.dll libgcc_s_dw2-1.dll SDL2.dll && \
 mkdir -p de/LC_MESSAGES ru/LC_MESSAGES && \
 cp ../mednafen/po/de.gmo de/LC_MESSAGES/mednafen.mo && \
 cp ../mednafen/po/ru.gmo ru/LC_MESSAGES/mednafen.mo && \
@@ -15,7 +20,7 @@ cd .. && \
 cd build64 && \
 cp src/mednafen.exe . && \
 x86_64-w64-mingw32-strip mednafen.exe && \
-x86_64-w64-mingw32-strip libcharset-1.dll libiconv-2.dll SDL2.dll && \
+x86_64-w64-mingw32-strip libcharset-1.dll libiconv-2.dll libgcc_s_seh-1.dll SDL2.dll && \
 mkdir -p de/LC_MESSAGES ru/LC_MESSAGES && \
 cp ../mednafen/po/de.gmo de/LC_MESSAGES/mednafen.mo && \
 cp ../mednafen/po/ru.gmo ru/LC_MESSAGES/mednafen.mo && \

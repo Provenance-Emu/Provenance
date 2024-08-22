@@ -277,6 +277,9 @@ class VCE final
 	uint32 surf_clut[2][512];
 
 	VDC vdc[2];
+	//
+	//
+	uint8 palette[2][512][3];
 
 	#ifdef WANT_DEBUGGER
 	MDFN_Surface *GfxDecode_Buf;// = NULL;

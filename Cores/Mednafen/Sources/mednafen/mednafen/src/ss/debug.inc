@@ -99,6 +99,9 @@ enum
  ASPACE_WORKRAML,
  ASPACE_WORKRAMH,
  ASPACE_SCSPRAM,
+ ASPACE_SCSPMPROG,
+ ASPACE_SCSPTEMP,
+ ASPACE_SCSPMEMS,
  ASPACE_DSPPROG,
  ASPACE_VDP1VRAM,
  ASPACE_VDP1FB0,
@@ -142,6 +145,21 @@ static MDFN_COLD void GetAddressSpaceBytes(const char *name, uint32 Address, uin
 	*Buffer = SOUND_PeekRAM(Address);
 	break;
 
+   case ASPACE_SCSPMPROG:
+	Address &= 0x3FF;
+	*Buffer = SOUND_PeekMPROG(Address >> 3) >> (((Address & 0x7) ^ 0x7) << 3);
+	break;
+
+   case ASPACE_SCSPMEMS:
+	Address &= 0x7F;
+	*Buffer = SOUND_PeekMEMS(Address >> 2) >> (((Address & 0x3) ^ 0x3) << 3);
+	break;
+
+   case ASPACE_SCSPTEMP:
+	Address &= 0x1FF;
+	*Buffer = SOUND_PeekTEMPRel(Address >> 2) >> (((Address & 0x3) ^ 0x3) << 3);
+	break;
+
    case ASPACE_DSPPROG:
 	Address &= 0x3FF;
 	*Buffer = SCU_DSP_PeekProgRAM(Address >> 2) >> (((Address & 0x3) ^ 0x3) << 3);
@@ -166,6 +184,33 @@ static MDFN_COLD void GetAddressSpaceBytes(const char *name, uint32 Address, uin
   Address++;
   Buffer++;
  }
+}
+
+template<typename T, uint64 N, typename PEFT, typename POFT>
+static INLINE void PutHelper(PEFT peekfunc, POFT pokefunc, uint32 address, const uint8* buffer)
+{
+ static_assert(sizeof(T) == 1 || sizeof(T) == 2 || sizeof(T) == 4 || sizeof(T) == 8, "Wrong type.");
+ uint32 stl2;
+
+ if(sizeof(T) == 8)
+  stl2 = 3;
+ else if(sizeof(T) == 4)
+  stl2 = 2;
+ else if(sizeof(T) == 2)
+  stl2 = 1;
+ else if(sizeof(T) == 1)
+  stl2 = 0;
+
+ address &= (sizeof(T) * N) - 1;
+ //
+ uint32 offs = address >> stl2;
+ uint8 shift = (((address & (sizeof(T) - 1)) ^ (sizeof(T) - 1)) << 3);
+ T tmp;
+
+ tmp = peekfunc(offs);
+ tmp &= ~((T)0xFF << shift);
+ tmp |= (T)*buffer << shift;
+ pokefunc(offs, tmp);
 }
 
 template<unsigned id>
@@ -203,6 +248,18 @@ static MDFN_COLD void PutAddressSpaceBytes(const char *name, uint32 Address, uin
    case ASPACE_SCSPRAM:
 	Address &= 0x7FFFF;
 	SOUND_PokeRAM(Address, *Buffer);
+	break;
+
+   case ASPACE_SCSPMPROG:
+	PutHelper<uint64, 0x80>(SOUND_PeekMPROG, SOUND_PokeMPROG, Address, Buffer);
+	break;
+
+   case ASPACE_SCSPMEMS:
+	PutHelper<uint32, 0x20>(SOUND_PeekMEMS, SOUND_PokeMEMS, Address, Buffer);
+	break;
+
+   case ASPACE_SCSPTEMP:
+	PutHelper<uint32, 0x80>(SOUND_PeekTEMPRel, SOUND_PokeTEMPRel, Address, Buffer);
 	break;
 
    case ASPACE_DSPPROG:
@@ -874,6 +931,22 @@ static const RegType DBG_Regs_VDP2[] =
  { (3 << 16) | VDP2::GSREG_ZMCTL, "ZMCTL", "ZMCTL", 2 },
  { (3 << 16) | VDP2::GSREG_SCRCTL, "SCRCTL", "SCRCTL", 2 },
 
+ { 0, "------", "", 0xFFFF },
+ { (3 << 16) | VDP2::GSREG_RPMD, "RPMD", "RPMD", 1 },
+ { (3 << 16) | VDP2::GSREG_RPRCTL, "RPRCTL", "RPRCTL", 2 },
+ { (3 << 16) | VDP2::GSREG_KTCTL, "KTCTL", "KTCTL", 2 },
+ { (3 << 16) | VDP2::GSREG_KTAOF, "KTAOF", "KTAOF", 2 },
+ { (3 << 16) | VDP2::GSREG_OVPNRA, "OVPNRA", "OVPNRA", 2 },
+ { (3 << 16) | VDP2::GSREG_OVPNRB, "OVPNRB", "OVPNRB", 2 },
+ { (3 << 16) | VDP2::GSREG_RPTA, "RPTA", "RPTA", 0x100 | 19 },
+
+
+ { 0, "------", "", 0xFFFF },
+ { (3 << 16) | VDP2::GSREG_PRINA, "PRINA", "PRINA", 2 },
+ { (3 << 16) | VDP2::GSREG_PRINB, "PRINB", "PRINB", 2 },
+ { (3 << 16) | VDP2::GSREG_PRIR, "PRIR", "PRIR", 2 },
+
+
  { 0, "", "", 0 },
 };
 
@@ -919,6 +992,9 @@ static MDFN_COLD void DBG_Init(void)
  ASpace_Add(GetAddressSpaceBytes<ASPACE_WORKRAML>, PutAddressSpaceBytes<ASPACE_WORKRAML>, "workraml", "Low Work RAM", 20);
  ASpace_Add(GetAddressSpaceBytes<ASPACE_WORKRAMH>, PutAddressSpaceBytes<ASPACE_WORKRAMH>, "workramh", "High Work RAM", 20);
  ASpace_Add(GetAddressSpaceBytes<ASPACE_SCSPRAM>, PutAddressSpaceBytes<ASPACE_SCSPRAM>, "scspram", "SCSP RAM", 19);
+ ASpace_Add(GetAddressSpaceBytes<ASPACE_SCSPMPROG>, PutAddressSpaceBytes<ASPACE_SCSPMPROG>, "scspmprog", "SCSP MPROG", 10);
+ ASpace_Add(GetAddressSpaceBytes<ASPACE_SCSPTEMP>, PutAddressSpaceBytes<ASPACE_SCSPTEMP>, "scsptemp", "SCSP TEMP, Relative Offset", 9);
+ ASpace_Add(GetAddressSpaceBytes<ASPACE_SCSPMEMS>, PutAddressSpaceBytes<ASPACE_SCSPMEMS>, "scspmems", "SCSP MEMS", 7);
 
  ASpace_Add(GetAddressSpaceBytes<ASPACE_DSPPROG>, PutAddressSpaceBytes<ASPACE_DSPPROG>, "dspprog", "DSP Program RAM", 10);
 

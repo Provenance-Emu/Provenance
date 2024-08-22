@@ -19,7 +19,9 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#pragma GCC optimize("O2")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize("O2")
+#endif
 
 /*
 cat superfx.cpp | sed -E "s/OPCASE_3(.)_Xn\(0x(.)0\)/OPCASE_3\1\(0x\20): OPCASE_3\1\(0x\21): OPCASE_3\1\(0x\22): OPCASE_3\1\(0x\23): OPCASE_3\1\(0x\24): OPCASE_3\1\(0x\25): OPCASE_3\1\(0x\26): OPCASE_3\1\(0x\27): OPCASE_3\1\(0x\28): OPCASE_3\1\(0x\29): OPCASE_3\1\(0x\2A): OPCASE_3\1\(0x\2B): OPCASE_3\1\(0x\2C): OPCASE_3\1\(0x\2D): OPCASE_3\1\(0x\2E): OPCASE_3\1\(0x\2F)/" | sed -E "s/OPCASE_Xn\(0x(.)0\)/OPCASE(0x\10): OPCASE(0x\11): OPCASE(0x\12): OPCASE(0x\13): OPCASE(0x\14): OPCASE(0x\15): OPCASE(0x\16): OPCASE(0x\17): OPCASE(0x\18): OPCASE(0x\19): OPCASE(0x\1A): OPCASE(0x\1B): OPCASE(0x\1C): OPCASE(0x\1D): OPCASE(0x\1E): OPCASE(0x\1F)/" | sed -E "s/OPCASE_NP_Xn\(0x(.)0\)/OPCASE_NP(0x\10): OPCASE_NP(0x\11): OPCASE_NP(0x\12): OPCASE_NP(0x\13): OPCASE_NP(0x\14): OPCASE_NP(0x\15): OPCASE_NP(0x\16): OPCASE_NP(0x\17): OPCASE_NP(0x\18): OPCASE_NP(0x\19): OPCASE_NP(0x\1A): OPCASE_NP(0x\1B): OPCASE_NP(0x\1C): OPCASE_NP(0x\1D): OPCASE_NP(0x\1E): OPCASE_NP(0x\1F)/" > superfx-adj.cpp
@@ -285,7 +287,7 @@ static struct SuperFX
 //
 void SuperFX::RecalcMultTiming(void)
 {
- SNES_DBG("[SuperFX] Clock speed: %d, mult speed: %d\n", ClockSelect, MultSpeed);
+ SNES_DBG(SNES_DBG_CART, "[SuperFX] Clock speed: %d, mult speed: %d\n", ClockSelect, MultSpeed);
 
  // FIXME: timings
  if(ClockSelect | MultSpeed)
@@ -829,7 +831,7 @@ INLINE void SuperFX::FMULT(void)
  superfx_timestamp += cycles_per_16x16mult;
  //
  if(Rd == 4)
-  SNES_DBG("[SuperFX] FMULT with Rd=4\n");
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SuperFX] FMULT with Rd=4\n");
 
  const uint32 tmp = (int16)ReadR(Rs) * (int16)R[6];
 
@@ -846,7 +848,7 @@ INLINE void SuperFX::LMULT(void)
  superfx_timestamp += cycles_per_16x16mult;
  //
  if(Rd == 4)
-  SNES_DBG("[SuperFX] LMULT with Rd=4\n");
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SuperFX] LMULT with Rd=4\n");
 
  const uint32 tmp = (int16)ReadR(Rs) * (int16)R[6];
 
@@ -1165,7 +1167,7 @@ pseudo64:asm volatile goto("1: .2byte ((1b-0b)*32)-1\n\t"::::Op_3_0xFF);
   switch(PrefixSL8 + opcode)
   {
    default:
-	SNES_DBG("[SuperFX] Unknown op 0x%03x\n", (unsigned)(PrefixSL8 + opcode));
+	SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SuperFX] Unknown op 0x%03x\n", (unsigned)(PrefixSL8 + opcode));
 	goto OpEnd;
 #endif
 
@@ -1820,7 +1822,7 @@ static DEFREAD(MainCPU_ReadHiROM)
 static DEFREAD(MainCPU_ReadRAM8K)
 {
  if(SFX.Running && (SFX.SCMR & 0x18) == 0x18)
-  SNES_DBG("[SuperFX] RAM read while SuperFX is running: %06x\n", A);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SuperFX] RAM read while SuperFX is running: %06x\n", A);
 
  if(MDFN_LIKELY(!DBG_InHLRead))
   CPUM.timestamp += MEMCYC_SLOW;
@@ -1834,7 +1836,7 @@ static DEFREAD(MainCPU_ReadRAM8K)
 static DEFWRITE(MainCPU_WriteRAM8K)
 {
  if(SFX.Running && (SFX.SCMR & 0x18) == 0x18)
-  SNES_DBG("[SuperFX] RAM write while SuperFX is running: %06x %02x\n", A, V);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SuperFX] RAM write while SuperFX is running: %06x %02x\n", A, V);
 
  CPUM.timestamp += MEMCYC_SLOW;
  //
@@ -1847,7 +1849,7 @@ static DEFWRITE(MainCPU_WriteRAM8K)
 static DEFREAD(MainCPU_ReadRAM)
 {
  if(SFX.Running && (SFX.SCMR & 0x18) == 0x18)
-  SNES_DBG("[SuperFX] RAM read while SuperFX is running: %06x\n", A);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SuperFX] RAM read while SuperFX is running: %06x\n", A);
 
  if(MDFN_LIKELY(!DBG_InHLRead))
   CPUM.timestamp += MEMCYC_SLOW;
@@ -1861,7 +1863,7 @@ static DEFREAD(MainCPU_ReadRAM)
 static DEFWRITE(MainCPU_WriteRAM)
 {
  if(SFX.Running && (SFX.SCMR & 0x18) == 0x18)
-  SNES_DBG("[SuperFX] RAM write while SuperFX is running: %06x %02x\n", A, V);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SuperFX] RAM write while SuperFX is running: %06x %02x\n", A, V);
 
  CPUM.timestamp += MEMCYC_SLOW;
  //
@@ -1884,12 +1886,12 @@ static DEFREAD(MainCPU_ReadGPR)
 static DEFWRITE(MainCPU_WriteGPR)
 {
  if(SFX.Running && (SFX.SCMR & 0x18) == 0x18)
-  SNES_DBG("[SuperFX] GPR write while SuperFX is running: %06x %02x\n", A, V);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SuperFX] GPR write while SuperFX is running: %06x %02x\n", A, V);
 
  CPUM.timestamp += MEMCYC_FAST;
  //
  //
- //SNES_DBG("[SuperFX] Write GPR 0x%06x 0x%02x\n", A, V);
+ //SNES_DBG(SNES_DBG_CART, "[SuperFX] Write GPR 0x%06x 0x%02x\n", A, V);
  if(A & 0x1)
  {
   const size_t index = (A >> 1) & 0xF;
@@ -1924,7 +1926,7 @@ static DEFREAD(MainCPU_ReadIO)
  switch(T_A & 0xF)
  {
   default:
-	SNES_DBG("[SuperFX] Unknown read 0x%06x\n", A);
+	SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SuperFX] Unknown read 0x%06x\n", A);
 	break;
 
   case 0x0:
@@ -1974,12 +1976,12 @@ static DEFWRITE(MainCPU_WriteIO)
  CPUM.timestamp += MEMCYC_FAST;
  //
  //
- //SNES_DBG("[SuperFX] IO write 0x%06x 0x%02x\n", A, V);
+ //SNES_DBG(SNES_DBG_CART, "[SuperFX] IO write 0x%06x 0x%02x\n", A, V);
 
  switch(T_A & 0xF)
  {
   default:
-	SNES_DBG("[SuperFX] Unknown write 0x%06x 0x%02x\n", A, V);
+	SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SuperFX] Unknown write 0x%06x 0x%02x\n", A, V);
 	break;
 
   case 0x0:
@@ -2025,7 +2027,7 @@ static DEFREAD(MainCPU_ReadCache)
   CPUM.timestamp += MEMCYC_FAST;
  //
  //
- SNES_DBG("[SuperFX] Cache read %06x\n", A);
+ SNES_DBG(SNES_DBG_CART, "[SuperFX] Cache read %06x\n", A);
  return SFX.CacheData[A & 0x1FF];
 }
 
@@ -2034,7 +2036,7 @@ static DEFWRITE(MainCPU_WriteCache)
  CPUM.timestamp += MEMCYC_FAST;
  //
  //
- SNES_DBG("[SuperFX] Cache write %06x %02x\n", A, V);
+ SNES_DBG(SNES_DBG_CART, "[SuperFX] Cache write %06x %02x\n", A, V);
  const size_t index = A & 0x1FF;
 
  SFX.CacheData[index] = V;

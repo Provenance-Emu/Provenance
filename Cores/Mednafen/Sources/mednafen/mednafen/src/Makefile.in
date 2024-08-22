@@ -101,7 +101,7 @@ bin_PROGRAMS = mednafen$(EXEEXT)
 @ENABLE_LIBXXX_MODE_TRUE@am__append_9 = drivers_libxxx/libmdfnxxx.a
 @ENABLE_LIBXXX_MODE_TRUE@am__append_10 = drivers_libxxx/libmdfnxxx.a
 @HAVE_SDL_TRUE@am__append_11 = @SDL_LIBS@
-@WANT_APPLE2_EMU_TRUE@am__append_12 = apple2/apple2.cpp
+@WANT_APPLE2_EMU_TRUE@am__append_12 = apple2/apple2.cpp apple2/disk2.cpp apple2/video.cpp apple2/sound.cpp apple2/kbio.cpp apple2/gameio.cpp apple2/hdd.cpp
 @WANT_GB_EMU_TRUE@am__append_13 = gb/gb.cpp gb/gfx.cpp gb/gbGlobals.cpp gb/memory.cpp gb/sound.cpp gb/z80.cpp
 @WANT_GBA_EMU_TRUE@am__append_14 = gba/GBAinline.cpp gba/arm.cpp \
 @WANT_GBA_EMU_TRUE@	gba/thumb.cpp gba/bios.cpp gba/eeprom.cpp \
@@ -226,16 +226,20 @@ bin_PROGRAMS = mednafen$(EXEEXT)
 @WANT_PSX_EMU_TRUE@	psx/gpu_polygon.cpp psx/gpu_line.cpp \
 @WANT_PSX_EMU_TRUE@	psx/gpu_sprite.cpp
 @WANT_DEBUGGER_TRUE@@WANT_PSX_EMU_TRUE@am__append_30 = psx/debug.cpp psx/dis.cpp
-@WANT_SMS_EMU_TRUE@am__append_31 = sms/cart.cpp sms/memz80.cpp sms/pio.cpp sms/render.cpp sms/romdb.cpp sms/sms.cpp sms/sound.cpp sms/system.cpp sms/tms.cpp sms/vdp.cpp 
-@WANT_SNES_EMU_TRUE@am__append_32 = libsnes.a
+@WANT_SASPLAY_EMU_TRUE@am__append_31 = sasplay/sasplay.cpp
+@WANT_SMS_EMU_TRUE@am__append_32 = sms/cart.cpp sms/memz80.cpp sms/pio.cpp sms/render.cpp sms/romdb.cpp sms/sms.cpp sms/sound.cpp sms/system.cpp sms/tms.cpp sms/vdp.cpp 
 @WANT_SNES_EMU_TRUE@am__append_33 = libsnes.a
 @WANT_SNES_EMU_TRUE@am__append_34 = libsnes.a
+@WANT_SNES_EMU_TRUE@am__append_35 = libsnes.a
 #
-@WANT_SNES_FAUST_EMU_TRUE@am__append_35 = snes_faust/cpu.cpp \
+@WANT_SNES_FAUST_EMU_TRUE@am__append_36 = snes_faust/cpu.cpp \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/snes.cpp \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/apu.cpp \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/cart.cpp \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/input.cpp \
+@WANT_SNES_FAUST_EMU_TRUE@	snes_faust/input/multitap.cpp \
+@WANT_SNES_FAUST_EMU_TRUE@	snes_faust/input/gamepad.cpp \
+@WANT_SNES_FAUST_EMU_TRUE@	snes_faust/input/mouse.cpp \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/ppu.cpp \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/ppu_st.cpp \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/ppu_mt.cpp \
@@ -250,55 +254,71 @@ bin_PROGRAMS = mednafen$(EXEEXT)
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/debug.cpp \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/dis65816.cpp \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/ppu_mtrender.cpp
-@WANT_SS_EMU_TRUE@am__append_36 = ss/libss.a
-@WANT_SS_EMU_TRUE@am__append_37 = ss/libss.a
-@WANT_SSFPLAY_EMU_TRUE@am__append_38 = ss/libssfplay.a
-@WANT_SSFPLAY_EMU_TRUE@am__append_39 = ss/libssfplay.a
-@WANT_VB_EMU_TRUE@am__append_40 = vb/vb.cpp vb/timer.cpp vb/input.cpp vb/vip.cpp vb/vsu.cpp
-@WANT_DEBUGGER_TRUE@@WANT_VB_EMU_TRUE@am__append_41 = vb/debug.cpp
-@WANT_WSWAN_EMU_TRUE@am__append_42 = wswan/gfx.cpp wswan/main.cpp wswan/memory.cpp wswan/comm.cpp wswan/v30mz.cpp wswan/sound.cpp wswan/tcache.cpp wswan/interrupt.cpp wswan/eeprom.cpp wswan/rtc.cpp
-@WANT_DEBUGGER_TRUE@@WANT_WSWAN_EMU_TRUE@am__append_43 = wswan/debug.cpp wswan/dis/dis_decode.cpp wswan/dis/dis_groups.cpp wswan/dis/resolve.cpp wswan/dis/syntax.cpp
-@WANT_DEBUGGER_TRUE@am__append_44 = libdesa68.a
-@WANT_DEBUGGER_TRUE@am__append_45 = libdesa68.a
-@WANT_DEBUGGER_TRUE@am__append_46 = libdesa68.a
-@NEED_68K_EMU_TRUE@am__append_47 = hw_cpu/m68k/m68k.cpp
-@NEED_Z80_EMU_TRUE@am__append_48 = hw_cpu/z80-fuse/z80.cpp hw_cpu/z80-fuse/z80_ops.cpp
-@NEED_V810_EMU_TRUE@am__append_49 = hw_cpu/v810/v810_cpu.cpp hw_cpu/v810/v810_cpuD.cpp hw_cpu/v810/v810_fp_ops.cpp
-@NEED_ARCADE_CARD_EMU_TRUE@am__append_50 = hw_misc/arcade_card/arcade_card.cpp
-@NEED_YM2413_EMU_TRUE@am__append_51 = hw_sound/ym2413/emu2413.cpp
-@NEED_YM2612_EMU_TRUE@am__append_52 = hw_sound/ym2612/Ym2612_Emu.cpp
-@NEED_GB_APU_EMU_TRUE@am__append_53 = hw_sound/gb_apu/Gb_Apu.cpp hw_sound/gb_apu/Gb_Apu_State.cpp hw_sound/gb_apu/Gb_Oscs.cpp
-@NEED_SMS_APU_EMU_TRUE@am__append_54 = hw_sound/sms_apu/Sms_Apu.cpp
-@NEED_PCE_PSG_EMU_TRUE@am__append_55 = hw_sound/pce_psg/pce_psg.cpp
-@NEED_HUC6270_EMU_TRUE@am__append_56 = hw_video/huc6270/vdc.cpp
-@WIN32_TRUE@am__append_57 = time/Time_Win32.cpp
-@WIN32_FALSE@am__append_58 = time/Time_POSIX.cpp
-@WIN32_TRUE@am__append_59 = mthreading/MThreading_Win32.cpp
-@WIN32_FALSE@am__append_60 = mthreading/MThreading_POSIX.cpp
-@HAVE_LIBFLAC_TRUE@am__append_61 = cdrom/CDAFReader_FLAC.cpp
-@NEED_BLIP_BUFFER_TRUE@am__append_62 = sound/Blip_Buffer.cpp sound/Stereo_Buffer.cpp
-@HAVE_POSIX_SOCKETS_TRUE@am__append_63 = net/Net_POSIX.cpp
-@WIN32_TRUE@am__append_64 = net/Net_WS2.cpp
-@ARCH_X86_TRUE@am__append_65 = cputest/x86_cpu.c
-@ARCH_POWERPC_TRUE@am__append_66 = cputest/ppc_cpu.c
-@HAVE_EXTERNAL_LZO2_TRUE@am__append_67 = @LZO2_LIBS@
-@HAVE_EXTERNAL_LZO2_TRUE@am__append_68 = @LZO2_CFLAGS@
-@HAVE_EXTERNAL_LZO2_FALSE@am__append_69 = minilzo/minilzo.c
-@HAVE_EXTERNAL_TREMOR_TRUE@am__append_70 = @TREMOR_LIBS@
-@HAVE_EXTERNAL_TREMOR_FALSE@am__append_71 = libvorbisidec.a
-@HAVE_EXTERNAL_TREMOR_FALSE@am__append_72 = libvorbisidec.a
-@HAVE_EXTERNAL_TREMOR_FALSE@am__append_73 = libvorbisidec.a
-@HAVE_EXTERNAL_MPCDEC_TRUE@am__append_74 = @MPCDEC_LIBS@
-@HAVE_EXTERNAL_MPCDEC_FALSE@am__append_75 = libmpcdec.a
-@HAVE_EXTERNAL_MPCDEC_FALSE@am__append_76 = libmpcdec.a
-@HAVE_EXTERNAL_MPCDEC_FALSE@am__append_77 = libmpcdec.a
-@HAVE_EXTERNAL_TRIO_TRUE@am__append_78 = @TRIO_LIBS@
-@HAVE_EXTERNAL_TRIO_FALSE@am__append_79 = libtrio.a
-@HAVE_EXTERNAL_TRIO_FALSE@am__append_80 = libtrio.a
-@HAVE_EXTERNAL_TRIO_FALSE@am__append_81 = libtrio.a
+
+#if WANT_NES_NEW_EMU
+#include nes_new/Makefile.am.inc
+#endif
+@WANT_SS_EMU_TRUE@am__append_37 = ss
+@WANT_SSFPLAY_EMU_TRUE@@WANT_SS_EMU_FALSE@am__append_38 = ss
+@WANT_SS_EMU_TRUE@am__append_39 = ss/libss.a
+@WANT_SS_EMU_TRUE@am__append_40 = ss/libss.a
+@WANT_SSFPLAY_EMU_TRUE@am__append_41 = ss/libssfplay.a
+@WANT_SSFPLAY_EMU_TRUE@am__append_42 = ss/libssfplay.a
+@WANT_VB_EMU_TRUE@am__append_43 = vb/vb.cpp vb/timer.cpp vb/input.cpp vb/vip.cpp vb/vsu.cpp
+@WANT_DEBUGGER_TRUE@@WANT_VB_EMU_TRUE@am__append_44 = vb/debug.cpp
+@WANT_WSWAN_EMU_TRUE@am__append_45 = wswan/gfx.cpp wswan/main.cpp wswan/memory.cpp wswan/comm.cpp wswan/v30mz.cpp wswan/sound.cpp wswan/tcache.cpp wswan/interrupt.cpp wswan/eeprom.cpp wswan/rtc.cpp
+@WANT_DEBUGGER_TRUE@@WANT_WSWAN_EMU_TRUE@am__append_46 = wswan/debug.cpp wswan/dis/dis_decode.cpp wswan/dis/dis_groups.cpp wswan/dis/resolve.cpp wswan/dis/syntax.cpp
+@WANT_DEBUGGER_TRUE@am__append_47 = libdesa68.a
+@WANT_DEBUGGER_TRUE@am__append_48 = libdesa68.a
+@WANT_DEBUGGER_TRUE@am__append_49 = libdesa68.a
+@NEED_68K_EMU_TRUE@am__append_50 = hw_cpu/m68k/m68k.cpp
+@NEED_Z80_EMU_TRUE@am__append_51 = hw_cpu/z80-fuse/z80.cpp hw_cpu/z80-fuse/z80_ops.cpp
+@NEED_V810_EMU_TRUE@am__append_52 = hw_cpu/v810/v810_cpu.cpp hw_cpu/v810/v810_cpuD.cpp hw_cpu/v810/v810_fp_ops.cpp
+@NEED_ARCADE_CARD_EMU_TRUE@am__append_53 = hw_misc/arcade_card/arcade_card.cpp
+@NEED_YM2413_EMU_TRUE@am__append_54 = hw_sound/ym2413/emu2413.cpp
+@NEED_YM2612_EMU_TRUE@am__append_55 = hw_sound/ym2612/Ym2612_Emu.cpp
+@NEED_GB_APU_EMU_TRUE@am__append_56 = hw_sound/gb_apu/Gb_Apu.cpp hw_sound/gb_apu/Gb_Apu_State.cpp hw_sound/gb_apu/Gb_Oscs.cpp
+@NEED_SMS_APU_EMU_TRUE@am__append_57 = hw_sound/sms_apu/Sms_Apu.cpp
+@NEED_PCE_PSG_EMU_TRUE@am__append_58 = hw_sound/pce_psg/pce_psg.cpp
+@NEED_HUC6270_EMU_TRUE@am__append_59 = hw_video/huc6270/vdc.cpp
+@WIN32_TRUE@am__append_60 = time/Time_Win32.cpp
+@WIN32_FALSE@am__append_61 = time/Time_POSIX.cpp
+@WIN32_TRUE@am__append_62 = mthreading/MThreading_Win32.cpp
+@WIN32_FALSE@am__append_63 = mthreading/MThreading_POSIX.cpp
+@HAVE_LIBFLAC_TRUE@am__append_64 = cdrom/CDAFReader_FLAC.cpp
+@NEED_BLIP_BUFFER_TRUE@am__append_65 = sound/Blip_Buffer.cpp sound/Stereo_Buffer.cpp
+@HAVE_POSIX_SOCKETS_TRUE@am__append_66 = net/Net_POSIX.cpp
+@WIN32_TRUE@am__append_67 = net/Net_WS2.cpp
+@ARCH_X86_TRUE@am__append_68 = cputest/x86_cpu.c
+@ARCH_POWERPC_TRUE@am__append_69 = cputest/ppc_cpu.c
+@HAVE_EXTERNAL_LZO2_TRUE@am__append_70 = @LZO2_LIBS@
+@HAVE_EXTERNAL_LZO2_TRUE@am__append_71 = @LZO2_CFLAGS@
+@HAVE_EXTERNAL_LZO2_FALSE@am__append_72 = minilzo/minilzo.c
+@HAVE_EXTERNAL_LIBZSTD_TRUE@am__append_73 = @LIBZSTD_LIBS@
+@HAVE_EXTERNAL_LIBZSTD_TRUE@am__append_74 = @LIBZSTD_CFLAGS@
+@HAVE_EXTERNAL_LIBZSTD_FALSE@am__append_75 = libzstd.a
+@HAVE_EXTERNAL_LIBZSTD_FALSE@am__append_76 = libzstd.a
+@HAVE_EXTERNAL_LIBZSTD_FALSE@am__append_77 = libzstd.a
+@HAVE_EXTERNAL_TREMOR_TRUE@am__append_78 = @TREMOR_LIBS@
+@HAVE_EXTERNAL_TREMOR_FALSE@am__append_79 = libvorbisidec.a
+@HAVE_EXTERNAL_TREMOR_FALSE@am__append_80 = libvorbisidec.a
+@HAVE_EXTERNAL_TREMOR_FALSE@am__append_81 = libvorbisidec.a
+@HAVE_EXTERNAL_MPCDEC_TRUE@am__append_82 = @MPCDEC_LIBS@
+@HAVE_EXTERNAL_MPCDEC_FALSE@am__append_83 = libmpcdec.a
+@HAVE_EXTERNAL_MPCDEC_FALSE@am__append_84 = libmpcdec.a
+@HAVE_EXTERNAL_MPCDEC_FALSE@am__append_85 = libmpcdec.a
+@HAVE_EXTERNAL_TRIO_TRUE@am__append_86 = @TRIO_LIBS@
+@HAVE_EXTERNAL_TRIO_TRUE@am__append_87 = @TRIO_CFLAGS@
+@HAVE_EXTERNAL_TRIO_FALSE@am__append_88 = libtrio.a
+@HAVE_EXTERNAL_TRIO_FALSE@am__append_89 = libtrio.a
+@HAVE_EXTERNAL_TRIO_FALSE@am__append_90 = libtrio.a
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/ax_cflags_gcc_option.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_append_compile_flags.m4 \
+	$(top_srcdir)/m4/ax_append_flag.m4 \
+	$(top_srcdir)/m4/ax_check_compile_flag.m4 \
+	$(top_srcdir)/m4/ax_check_link_flag.m4 \
+	$(top_srcdir)/m4/ax_require_defined.m4 \
 	$(top_srcdir)/m4/codeset.m4 $(top_srcdir)/m4/fcntl-o.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/glibc2.m4 \
 	$(top_srcdir)/m4/glibc21.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -471,6 +491,24 @@ am__libvorbisidec_a_SOURCES_DIST = tremor/mdct.c tremor/block.c \
 @HAVE_EXTERNAL_TREMOR_FALSE@	tremor/libvorbisidec_a-framing.$(OBJEXT) \
 @HAVE_EXTERNAL_TREMOR_FALSE@	tremor/libvorbisidec_a-bitwise.$(OBJEXT)
 libvorbisidec_a_OBJECTS = $(am_libvorbisidec_a_OBJECTS)
+libzstd_a_AR = $(AR) $(ARFLAGS)
+libzstd_a_LIBADD =
+am__libzstd_a_SOURCES_DIST = zstd/common/entropy_common.c \
+	zstd/common/error_private.c zstd/common/fse_decompress.c \
+	zstd/common/xxhash.c zstd/common/zstd_common.c \
+	zstd/decompress/huf_decompress.c zstd/decompress/zstd_ddict.c \
+	zstd/decompress/zstd_decompress_block.c \
+	zstd/decompress/zstd_decompress.c
+@HAVE_EXTERNAL_LIBZSTD_FALSE@am_libzstd_a_OBJECTS = zstd/common/libzstd_a-entropy_common.$(OBJEXT) \
+@HAVE_EXTERNAL_LIBZSTD_FALSE@	zstd/common/libzstd_a-error_private.$(OBJEXT) \
+@HAVE_EXTERNAL_LIBZSTD_FALSE@	zstd/common/libzstd_a-fse_decompress.$(OBJEXT) \
+@HAVE_EXTERNAL_LIBZSTD_FALSE@	zstd/common/libzstd_a-xxhash.$(OBJEXT) \
+@HAVE_EXTERNAL_LIBZSTD_FALSE@	zstd/common/libzstd_a-zstd_common.$(OBJEXT) \
+@HAVE_EXTERNAL_LIBZSTD_FALSE@	zstd/decompress/libzstd_a-huf_decompress.$(OBJEXT) \
+@HAVE_EXTERNAL_LIBZSTD_FALSE@	zstd/decompress/libzstd_a-zstd_ddict.$(OBJEXT) \
+@HAVE_EXTERNAL_LIBZSTD_FALSE@	zstd/decompress/libzstd_a-zstd_decompress_block.$(OBJEXT) \
+@HAVE_EXTERNAL_LIBZSTD_FALSE@	zstd/decompress/libzstd_a-zstd_decompress.$(OBJEXT)
+libzstd_a_OBJECTS = $(am_libzstd_a_OBJECTS)
 am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 	settings.cpp endian.cpp mednafen.cpp git.cpp file.cpp \
 	general.cpp memory.cpp netplay.cpp state.cpp state_rewind.cpp \
@@ -479,7 +517,9 @@ am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 	qtrecord.cpp IPSPatcher.cpp VirtualFS.cpp NativeVFS.cpp \
 	Stream.cpp MemoryStream.cpp ExtMemStream.cpp FileStream.cpp \
 	MTStreamReader.cpp win32-common.cpp drivers/win-resource.rc \
-	cdplay/cdplay.cpp demo/demo.cpp apple2/apple2.cpp gb/gb.cpp \
+	cdplay/cdplay.cpp demo/demo.cpp apple2/apple2.cpp \
+	apple2/disk2.cpp apple2/video.cpp apple2/sound.cpp \
+	apple2/kbio.cpp apple2/gameio.cpp apple2/hdd.cpp gb/gb.cpp \
 	gb/gfx.cpp gb/gbGlobals.cpp gb/memory.cpp gb/sound.cpp \
 	gb/z80.cpp gba/GBAinline.cpp gba/arm.cpp gba/thumb.cpp \
 	gba/bios.cpp gba/eeprom.cpp gba/flash.cpp gba/GBA.cpp \
@@ -561,10 +601,12 @@ am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 	psx/input/mouse.cpp psx/input/negcon.cpp psx/input/guncon.cpp \
 	psx/input/justifier.cpp psx/gpu.cpp psx/gpu_polygon.cpp \
 	psx/gpu_line.cpp psx/gpu_sprite.cpp psx/debug.cpp psx/dis.cpp \
-	sms/cart.cpp sms/memz80.cpp sms/pio.cpp sms/render.cpp \
-	sms/romdb.cpp sms/sms.cpp sms/sound.cpp sms/system.cpp \
-	sms/tms.cpp sms/vdp.cpp snes_faust/cpu.cpp snes_faust/snes.cpp \
-	snes_faust/apu.cpp snes_faust/cart.cpp snes_faust/input.cpp \
+	sasplay/sasplay.cpp sms/cart.cpp sms/memz80.cpp sms/pio.cpp \
+	sms/render.cpp sms/romdb.cpp sms/sms.cpp sms/sound.cpp \
+	sms/system.cpp sms/tms.cpp sms/vdp.cpp snes_faust/cpu.cpp \
+	snes_faust/snes.cpp snes_faust/apu.cpp snes_faust/cart.cpp \
+	snes_faust/input.cpp snes_faust/input/multitap.cpp \
+	snes_faust/input/gamepad.cpp snes_faust/input/mouse.cpp \
 	snes_faust/ppu.cpp snes_faust/ppu_st.cpp snes_faust/ppu_mt.cpp \
 	snes_faust/cart/dsp1.cpp snes_faust/cart/dsp2.cpp \
 	snes_faust/cart/sdd1.cpp snes_faust/cart/cx4.cpp \
@@ -599,10 +641,8 @@ am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 	cdrom/scsicd.cpp sound/Blip_Buffer.cpp sound/Stereo_Buffer.cpp \
 	sound/Fir_Resampler.cpp sound/WAVRecord.cpp sound/okiadpcm.cpp \
 	sound/DSPUtility.cpp sound/SwiftResampler.cpp \
-	sound/OwlResampler.cpp net/Net.cpp net/Net_POSIX.cpp \
-	net/Net_WS2.cpp compress/GZFileStream.cpp \
-	compress/ZLInflateFilter.cpp compress/ZIPReader.cpp \
-	hash/md5.cpp hash/sha1.cpp hash/sha256.cpp hash/crc.cpp \
+	sound/OwlResampler.cpp sound/CassowaryResampler.cpp \
+	net/Net.cpp net/Net_POSIX.cpp net/Net_WS2.cpp \
 	string/escape.cpp string/string.cpp video/surface.cpp \
 	video/convert.cpp video/tblur.cpp video/Deinterlacer.cpp \
 	video/Deinterlacer_Simple.cpp video/Deinterlacer_Blend.cpp \
@@ -611,10 +651,21 @@ am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 	video/font-data-18x18.c video/font-data-12x13.c \
 	resampler/resample.c cputest/cputest.c cputest/x86_cpu.c \
 	cputest/ppc_cpu.c cheat_formats/gb.cpp cheat_formats/psx.cpp \
-	cheat_formats/snes.cpp minilzo/minilzo.c
+	cheat_formats/snes.cpp compress/ArchiveReader.cpp \
+	compress/ZIPReader.cpp compress/GZFileStream.cpp \
+	compress/DecompressFilter.cpp \
+	compress/ZstdDecompressFilter.cpp compress/ZLInflateFilter.cpp \
+	hash/md5.cpp hash/sha1.cpp hash/sha256.cpp hash/crc.cpp \
+	minilzo/minilzo.c
 @HAVE_SDL_TRUE@@WIN32_TRUE@am__objects_1 = win32-common.$(OBJEXT) \
 @HAVE_SDL_TRUE@@WIN32_TRUE@	drivers/win-resource.$(OBJEXT)
-@WANT_APPLE2_EMU_TRUE@am__objects_2 = apple2/apple2.$(OBJEXT)
+@WANT_APPLE2_EMU_TRUE@am__objects_2 = apple2/apple2.$(OBJEXT) \
+@WANT_APPLE2_EMU_TRUE@	apple2/disk2.$(OBJEXT) \
+@WANT_APPLE2_EMU_TRUE@	apple2/video.$(OBJEXT) \
+@WANT_APPLE2_EMU_TRUE@	apple2/sound.$(OBJEXT) \
+@WANT_APPLE2_EMU_TRUE@	apple2/kbio.$(OBJEXT) \
+@WANT_APPLE2_EMU_TRUE@	apple2/gameio.$(OBJEXT) \
+@WANT_APPLE2_EMU_TRUE@	apple2/hdd.$(OBJEXT)
 @WANT_GB_EMU_TRUE@am__objects_3 = gb/gb.$(OBJEXT) gb/gfx.$(OBJEXT) \
 @WANT_GB_EMU_TRUE@	gb/gbGlobals.$(OBJEXT) gb/memory.$(OBJEXT) \
 @WANT_GB_EMU_TRUE@	gb/sound.$(OBJEXT) gb/z80.$(OBJEXT)
@@ -834,17 +885,21 @@ am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 @WANT_DEBUGGER_TRUE@@WANT_PSX_EMU_TRUE@am__objects_17 =  \
 @WANT_DEBUGGER_TRUE@@WANT_PSX_EMU_TRUE@	psx/debug.$(OBJEXT) \
 @WANT_DEBUGGER_TRUE@@WANT_PSX_EMU_TRUE@	psx/dis.$(OBJEXT)
-@WANT_SMS_EMU_TRUE@am__objects_18 = sms/cart.$(OBJEXT) \
+@WANT_SASPLAY_EMU_TRUE@am__objects_18 = sasplay/sasplay.$(OBJEXT)
+@WANT_SMS_EMU_TRUE@am__objects_19 = sms/cart.$(OBJEXT) \
 @WANT_SMS_EMU_TRUE@	sms/memz80.$(OBJEXT) sms/pio.$(OBJEXT) \
 @WANT_SMS_EMU_TRUE@	sms/render.$(OBJEXT) sms/romdb.$(OBJEXT) \
 @WANT_SMS_EMU_TRUE@	sms/sms.$(OBJEXT) sms/sound.$(OBJEXT) \
 @WANT_SMS_EMU_TRUE@	sms/system.$(OBJEXT) sms/tms.$(OBJEXT) \
 @WANT_SMS_EMU_TRUE@	sms/vdp.$(OBJEXT)
-@WANT_SNES_FAUST_EMU_TRUE@am__objects_19 = snes_faust/cpu.$(OBJEXT) \
+@WANT_SNES_FAUST_EMU_TRUE@am__objects_20 = snes_faust/cpu.$(OBJEXT) \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/snes.$(OBJEXT) \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/apu.$(OBJEXT) \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/cart.$(OBJEXT) \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/input.$(OBJEXT) \
+@WANT_SNES_FAUST_EMU_TRUE@	snes_faust/input/multitap.$(OBJEXT) \
+@WANT_SNES_FAUST_EMU_TRUE@	snes_faust/input/gamepad.$(OBJEXT) \
+@WANT_SNES_FAUST_EMU_TRUE@	snes_faust/input/mouse.$(OBJEXT) \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/ppu.$(OBJEXT) \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/ppu_st.$(OBJEXT) \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/ppu_mt.$(OBJEXT) \
@@ -859,12 +914,12 @@ am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/debug.$(OBJEXT) \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/dis65816.$(OBJEXT) \
 @WANT_SNES_FAUST_EMU_TRUE@	snes_faust/ppu_mtrender.$(OBJEXT)
-@WANT_VB_EMU_TRUE@am__objects_20 = vb/vb.$(OBJEXT) vb/timer.$(OBJEXT) \
+@WANT_VB_EMU_TRUE@am__objects_21 = vb/vb.$(OBJEXT) vb/timer.$(OBJEXT) \
 @WANT_VB_EMU_TRUE@	vb/input.$(OBJEXT) vb/vip.$(OBJEXT) \
 @WANT_VB_EMU_TRUE@	vb/vsu.$(OBJEXT)
-@WANT_DEBUGGER_TRUE@@WANT_VB_EMU_TRUE@am__objects_21 =  \
+@WANT_DEBUGGER_TRUE@@WANT_VB_EMU_TRUE@am__objects_22 =  \
 @WANT_DEBUGGER_TRUE@@WANT_VB_EMU_TRUE@	vb/debug.$(OBJEXT)
-@WANT_WSWAN_EMU_TRUE@am__objects_22 = wswan/gfx.$(OBJEXT) \
+@WANT_WSWAN_EMU_TRUE@am__objects_23 = wswan/gfx.$(OBJEXT) \
 @WANT_WSWAN_EMU_TRUE@	wswan/main.$(OBJEXT) \
 @WANT_WSWAN_EMU_TRUE@	wswan/memory.$(OBJEXT) \
 @WANT_WSWAN_EMU_TRUE@	wswan/comm.$(OBJEXT) \
@@ -874,44 +929,44 @@ am__mednafen_SOURCES_DIST = debug.cpp error.cpp mempatcher.cpp \
 @WANT_WSWAN_EMU_TRUE@	wswan/interrupt.$(OBJEXT) \
 @WANT_WSWAN_EMU_TRUE@	wswan/eeprom.$(OBJEXT) \
 @WANT_WSWAN_EMU_TRUE@	wswan/rtc.$(OBJEXT)
-@WANT_DEBUGGER_TRUE@@WANT_WSWAN_EMU_TRUE@am__objects_23 = wswan/debug.$(OBJEXT) \
+@WANT_DEBUGGER_TRUE@@WANT_WSWAN_EMU_TRUE@am__objects_24 = wswan/debug.$(OBJEXT) \
 @WANT_DEBUGGER_TRUE@@WANT_WSWAN_EMU_TRUE@	wswan/dis/dis_decode.$(OBJEXT) \
 @WANT_DEBUGGER_TRUE@@WANT_WSWAN_EMU_TRUE@	wswan/dis/dis_groups.$(OBJEXT) \
 @WANT_DEBUGGER_TRUE@@WANT_WSWAN_EMU_TRUE@	wswan/dis/resolve.$(OBJEXT) \
 @WANT_DEBUGGER_TRUE@@WANT_WSWAN_EMU_TRUE@	wswan/dis/syntax.$(OBJEXT)
-@NEED_68K_EMU_TRUE@am__objects_24 = hw_cpu/m68k/m68k.$(OBJEXT)
-@NEED_Z80_EMU_TRUE@am__objects_25 = hw_cpu/z80-fuse/z80.$(OBJEXT) \
+@NEED_68K_EMU_TRUE@am__objects_25 = hw_cpu/m68k/m68k.$(OBJEXT)
+@NEED_Z80_EMU_TRUE@am__objects_26 = hw_cpu/z80-fuse/z80.$(OBJEXT) \
 @NEED_Z80_EMU_TRUE@	hw_cpu/z80-fuse/z80_ops.$(OBJEXT)
-@NEED_V810_EMU_TRUE@am__objects_26 = hw_cpu/v810/v810_cpu.$(OBJEXT) \
+@NEED_V810_EMU_TRUE@am__objects_27 = hw_cpu/v810/v810_cpu.$(OBJEXT) \
 @NEED_V810_EMU_TRUE@	hw_cpu/v810/v810_cpuD.$(OBJEXT) \
 @NEED_V810_EMU_TRUE@	hw_cpu/v810/v810_fp_ops.$(OBJEXT)
-@NEED_ARCADE_CARD_EMU_TRUE@am__objects_27 = hw_misc/arcade_card/arcade_card.$(OBJEXT)
-@NEED_YM2413_EMU_TRUE@am__objects_28 =  \
+@NEED_ARCADE_CARD_EMU_TRUE@am__objects_28 = hw_misc/arcade_card/arcade_card.$(OBJEXT)
+@NEED_YM2413_EMU_TRUE@am__objects_29 =  \
 @NEED_YM2413_EMU_TRUE@	hw_sound/ym2413/emu2413.$(OBJEXT)
-@NEED_YM2612_EMU_TRUE@am__objects_29 =  \
+@NEED_YM2612_EMU_TRUE@am__objects_30 =  \
 @NEED_YM2612_EMU_TRUE@	hw_sound/ym2612/Ym2612_Emu.$(OBJEXT)
-@NEED_GB_APU_EMU_TRUE@am__objects_30 =  \
+@NEED_GB_APU_EMU_TRUE@am__objects_31 =  \
 @NEED_GB_APU_EMU_TRUE@	hw_sound/gb_apu/Gb_Apu.$(OBJEXT) \
 @NEED_GB_APU_EMU_TRUE@	hw_sound/gb_apu/Gb_Apu_State.$(OBJEXT) \
 @NEED_GB_APU_EMU_TRUE@	hw_sound/gb_apu/Gb_Oscs.$(OBJEXT)
-@NEED_SMS_APU_EMU_TRUE@am__objects_31 =  \
+@NEED_SMS_APU_EMU_TRUE@am__objects_32 =  \
 @NEED_SMS_APU_EMU_TRUE@	hw_sound/sms_apu/Sms_Apu.$(OBJEXT)
-@NEED_PCE_PSG_EMU_TRUE@am__objects_32 =  \
+@NEED_PCE_PSG_EMU_TRUE@am__objects_33 =  \
 @NEED_PCE_PSG_EMU_TRUE@	hw_sound/pce_psg/pce_psg.$(OBJEXT)
-@NEED_HUC6270_EMU_TRUE@am__objects_33 =  \
+@NEED_HUC6270_EMU_TRUE@am__objects_34 =  \
 @NEED_HUC6270_EMU_TRUE@	hw_video/huc6270/vdc.$(OBJEXT)
-@WIN32_TRUE@am__objects_34 = time/Time_Win32.$(OBJEXT)
-@WIN32_FALSE@am__objects_35 = time/Time_POSIX.$(OBJEXT)
-@WIN32_TRUE@am__objects_36 = mthreading/MThreading_Win32.$(OBJEXT)
-@WIN32_FALSE@am__objects_37 = mthreading/MThreading_POSIX.$(OBJEXT)
-@HAVE_LIBFLAC_TRUE@am__objects_38 = cdrom/CDAFReader_FLAC.$(OBJEXT)
-@NEED_BLIP_BUFFER_TRUE@am__objects_39 = sound/Blip_Buffer.$(OBJEXT) \
+@WIN32_TRUE@am__objects_35 = time/Time_Win32.$(OBJEXT)
+@WIN32_FALSE@am__objects_36 = time/Time_POSIX.$(OBJEXT)
+@WIN32_TRUE@am__objects_37 = mthreading/MThreading_Win32.$(OBJEXT)
+@WIN32_FALSE@am__objects_38 = mthreading/MThreading_POSIX.$(OBJEXT)
+@HAVE_LIBFLAC_TRUE@am__objects_39 = cdrom/CDAFReader_FLAC.$(OBJEXT)
+@NEED_BLIP_BUFFER_TRUE@am__objects_40 = sound/Blip_Buffer.$(OBJEXT) \
 @NEED_BLIP_BUFFER_TRUE@	sound/Stereo_Buffer.$(OBJEXT)
-@HAVE_POSIX_SOCKETS_TRUE@am__objects_40 = net/Net_POSIX.$(OBJEXT)
-@WIN32_TRUE@am__objects_41 = net/Net_WS2.$(OBJEXT)
-@ARCH_X86_TRUE@am__objects_42 = cputest/x86_cpu.$(OBJEXT)
-@ARCH_POWERPC_TRUE@am__objects_43 = cputest/ppc_cpu.$(OBJEXT)
-@HAVE_EXTERNAL_LZO2_FALSE@am__objects_44 = minilzo/minilzo.$(OBJEXT)
+@HAVE_POSIX_SOCKETS_TRUE@am__objects_41 = net/Net_POSIX.$(OBJEXT)
+@WIN32_TRUE@am__objects_42 = net/Net_WS2.$(OBJEXT)
+@ARCH_X86_TRUE@am__objects_43 = cputest/x86_cpu.$(OBJEXT)
+@ARCH_POWERPC_TRUE@am__objects_44 = cputest/ppc_cpu.$(OBJEXT)
+@HAVE_EXTERNAL_LZO2_FALSE@am__objects_45 = minilzo/minilzo.$(OBJEXT)
 am_mednafen_OBJECTS = debug.$(OBJEXT) error.$(OBJEXT) \
 	mempatcher.$(OBJEXT) settings.$(OBJEXT) endian.$(OBJEXT) \
 	mednafen.$(OBJEXT) git.$(OBJEXT) file.$(OBJEXT) \
@@ -935,37 +990,40 @@ am_mednafen_OBJECTS = debug.$(OBJEXT) error.$(OBJEXT) \
 	$(am__objects_27) $(am__objects_28) $(am__objects_29) \
 	$(am__objects_30) $(am__objects_31) $(am__objects_32) \
 	$(am__objects_33) $(am__objects_34) $(am__objects_35) \
-	$(am__objects_36) $(am__objects_37) cdrom/crc32.$(OBJEXT) \
-	cdrom/galois.$(OBJEXT) cdrom/l-ec.$(OBJEXT) \
-	cdrom/recover-raw.$(OBJEXT) cdrom/lec.$(OBJEXT) \
-	cdrom/CDUtility.$(OBJEXT) cdrom/CDInterface.$(OBJEXT) \
-	cdrom/CDInterface_MT.$(OBJEXT) cdrom/CDInterface_ST.$(OBJEXT) \
-	cdrom/CDAccess.$(OBJEXT) cdrom/CDAccess_Image.$(OBJEXT) \
-	cdrom/CDAccess_CCD.$(OBJEXT) cdrom/CDAFReader.$(OBJEXT) \
-	cdrom/CDAFReader_Vorbis.$(OBJEXT) \
-	cdrom/CDAFReader_MPC.$(OBJEXT) $(am__objects_38) \
+	$(am__objects_36) $(am__objects_37) $(am__objects_38) \
+	cdrom/crc32.$(OBJEXT) cdrom/galois.$(OBJEXT) \
+	cdrom/l-ec.$(OBJEXT) cdrom/recover-raw.$(OBJEXT) \
+	cdrom/lec.$(OBJEXT) cdrom/CDUtility.$(OBJEXT) \
+	cdrom/CDInterface.$(OBJEXT) cdrom/CDInterface_MT.$(OBJEXT) \
+	cdrom/CDInterface_ST.$(OBJEXT) cdrom/CDAccess.$(OBJEXT) \
+	cdrom/CDAccess_Image.$(OBJEXT) cdrom/CDAccess_CCD.$(OBJEXT) \
+	cdrom/CDAFReader.$(OBJEXT) cdrom/CDAFReader_Vorbis.$(OBJEXT) \
+	cdrom/CDAFReader_MPC.$(OBJEXT) $(am__objects_39) \
 	cdrom/CDAFReader_PCM.$(OBJEXT) cdrom/scsicd.$(OBJEXT) \
-	$(am__objects_39) sound/Fir_Resampler.$(OBJEXT) \
+	$(am__objects_40) sound/Fir_Resampler.$(OBJEXT) \
 	sound/WAVRecord.$(OBJEXT) sound/okiadpcm.$(OBJEXT) \
 	sound/DSPUtility.$(OBJEXT) sound/SwiftResampler.$(OBJEXT) \
-	sound/OwlResampler.$(OBJEXT) net/Net.$(OBJEXT) \
-	$(am__objects_40) $(am__objects_41) \
-	compress/GZFileStream.$(OBJEXT) \
-	compress/ZLInflateFilter.$(OBJEXT) \
-	compress/ZIPReader.$(OBJEXT) hash/md5.$(OBJEXT) \
-	hash/sha1.$(OBJEXT) hash/sha256.$(OBJEXT) hash/crc.$(OBJEXT) \
-	string/escape.$(OBJEXT) string/string.$(OBJEXT) \
-	video/surface.$(OBJEXT) video/convert.$(OBJEXT) \
-	video/tblur.$(OBJEXT) video/Deinterlacer.$(OBJEXT) \
+	sound/OwlResampler.$(OBJEXT) \
+	sound/CassowaryResampler.$(OBJEXT) net/Net.$(OBJEXT) \
+	$(am__objects_41) $(am__objects_42) string/escape.$(OBJEXT) \
+	string/string.$(OBJEXT) video/surface.$(OBJEXT) \
+	video/convert.$(OBJEXT) video/tblur.$(OBJEXT) \
+	video/Deinterlacer.$(OBJEXT) \
 	video/Deinterlacer_Simple.$(OBJEXT) \
 	video/Deinterlacer_Blend.$(OBJEXT) video/resize.$(OBJEXT) \
 	video/video.$(OBJEXT) video/primitives.$(OBJEXT) \
 	video/png.$(OBJEXT) video/text.$(OBJEXT) \
 	video/font-data.$(OBJEXT) video/font-data-18x18.$(OBJEXT) \
 	video/font-data-12x13.$(OBJEXT) resampler/resample.$(OBJEXT) \
-	cputest/cputest.$(OBJEXT) $(am__objects_42) $(am__objects_43) \
+	cputest/cputest.$(OBJEXT) $(am__objects_43) $(am__objects_44) \
 	cheat_formats/gb.$(OBJEXT) cheat_formats/psx.$(OBJEXT) \
-	cheat_formats/snes.$(OBJEXT) $(am__objects_44)
+	cheat_formats/snes.$(OBJEXT) compress/ArchiveReader.$(OBJEXT) \
+	compress/ZIPReader.$(OBJEXT) compress/GZFileStream.$(OBJEXT) \
+	compress/DecompressFilter.$(OBJEXT) \
+	compress/ZstdDecompressFilter.$(OBJEXT) \
+	compress/ZLInflateFilter.$(OBJEXT) hash/md5.$(OBJEXT) \
+	hash/sha1.$(OBJEXT) hash/sha256.$(OBJEXT) hash/crc.$(OBJEXT) \
+	$(am__objects_45)
 mednafen_OBJECTS = $(am_mednafen_OBJECTS)
 am__DEPENDENCIES_1 =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -998,6 +1056,9 @@ am__depfiles_remade = ./$(DEPDIR)/ExtMemStream.Po \
 	./$(DEPDIR)/state.Po ./$(DEPDIR)/state_rewind.Po \
 	./$(DEPDIR)/tests.Po ./$(DEPDIR)/testsexp.Po \
 	./$(DEPDIR)/win32-common.Po apple2/$(DEPDIR)/apple2.Po \
+	apple2/$(DEPDIR)/disk2.Po apple2/$(DEPDIR)/gameio.Po \
+	apple2/$(DEPDIR)/hdd.Po apple2/$(DEPDIR)/kbio.Po \
+	apple2/$(DEPDIR)/sound.Po apple2/$(DEPDIR)/video.Po \
 	cdplay/$(DEPDIR)/cdplay.Po cdrom/$(DEPDIR)/CDAFReader.Po \
 	cdrom/$(DEPDIR)/CDAFReader_FLAC.Po \
 	cdrom/$(DEPDIR)/CDAFReader_MPC.Po \
@@ -1013,9 +1074,12 @@ am__depfiles_remade = ./$(DEPDIR)/ExtMemStream.Po \
 	cdrom/$(DEPDIR)/recover-raw.Po cdrom/$(DEPDIR)/scsicd.Po \
 	cheat_formats/$(DEPDIR)/gb.Po cheat_formats/$(DEPDIR)/psx.Po \
 	cheat_formats/$(DEPDIR)/snes.Po \
+	compress/$(DEPDIR)/ArchiveReader.Po \
+	compress/$(DEPDIR)/DecompressFilter.Po \
 	compress/$(DEPDIR)/GZFileStream.Po \
 	compress/$(DEPDIR)/ZIPReader.Po \
 	compress/$(DEPDIR)/ZLInflateFilter.Po \
+	compress/$(DEPDIR)/ZstdDecompressFilter.Po \
 	cputest/$(DEPDIR)/cputest.Po cputest/$(DEPDIR)/ppc_cpu.Po \
 	cputest/$(DEPDIR)/x86_cpu.Po demo/$(DEPDIR)/demo.Po \
 	desa68/$(DEPDIR)/libdesa68_a-desa68.Po gb/$(DEPDIR)/gb.Po \
@@ -1195,12 +1259,13 @@ am__depfiles_remade = ./$(DEPDIR)/ExtMemStream.Po \
 	psx/input/$(DEPDIR)/memcard.Po psx/input/$(DEPDIR)/mouse.Po \
 	psx/input/$(DEPDIR)/multitap.Po psx/input/$(DEPDIR)/negcon.Po \
 	quicklz/$(DEPDIR)/libmdfnquicklz_a-quicklz.Po \
-	resampler/$(DEPDIR)/resample.Po sms/$(DEPDIR)/cart.Po \
-	sms/$(DEPDIR)/memz80.Po sms/$(DEPDIR)/pio.Po \
-	sms/$(DEPDIR)/render.Po sms/$(DEPDIR)/romdb.Po \
-	sms/$(DEPDIR)/sms.Po sms/$(DEPDIR)/sound.Po \
-	sms/$(DEPDIR)/system.Po sms/$(DEPDIR)/tms.Po \
-	sms/$(DEPDIR)/vdp.Po snes/$(DEPDIR)/libsnes_a-interface.Po \
+	resampler/$(DEPDIR)/resample.Po sasplay/$(DEPDIR)/sasplay.Po \
+	sms/$(DEPDIR)/cart.Po sms/$(DEPDIR)/memz80.Po \
+	sms/$(DEPDIR)/pio.Po sms/$(DEPDIR)/render.Po \
+	sms/$(DEPDIR)/romdb.Po sms/$(DEPDIR)/sms.Po \
+	sms/$(DEPDIR)/sound.Po sms/$(DEPDIR)/system.Po \
+	sms/$(DEPDIR)/tms.Po sms/$(DEPDIR)/vdp.Po \
+	snes/$(DEPDIR)/libsnes_a-interface.Po \
 	snes/src/cartridge/$(DEPDIR)/libsnes_a-cartridge.Po \
 	snes/src/cheat/$(DEPDIR)/libsnes_a-cheat.Po \
 	snes/src/chip/bsx/$(DEPDIR)/libsnes_a-bsx.Po \
@@ -1240,8 +1305,12 @@ am__depfiles_remade = ./$(DEPDIR)/ExtMemStream.Po \
 	snes_faust/cart/$(DEPDIR)/sa1cpu.Po \
 	snes_faust/cart/$(DEPDIR)/sdd1.Po \
 	snes_faust/cart/$(DEPDIR)/superfx.Po \
-	sound/$(DEPDIR)/Blip_Buffer.Po sound/$(DEPDIR)/DSPUtility.Po \
-	sound/$(DEPDIR)/Fir_Resampler.Po \
+	snes_faust/input/$(DEPDIR)/gamepad.Po \
+	snes_faust/input/$(DEPDIR)/mouse.Po \
+	snes_faust/input/$(DEPDIR)/multitap.Po \
+	sound/$(DEPDIR)/Blip_Buffer.Po \
+	sound/$(DEPDIR)/CassowaryResampler.Po \
+	sound/$(DEPDIR)/DSPUtility.Po sound/$(DEPDIR)/Fir_Resampler.Po \
 	sound/$(DEPDIR)/OwlResampler.Po \
 	sound/$(DEPDIR)/Stereo_Buffer.Po \
 	sound/$(DEPDIR)/SwiftResampler.Po sound/$(DEPDIR)/WAVRecord.Po \
@@ -1284,7 +1353,16 @@ am__depfiles_remade = ./$(DEPDIR)/ExtMemStream.Po \
 	wswan/$(DEPDIR)/sound.Po wswan/$(DEPDIR)/tcache.Po \
 	wswan/$(DEPDIR)/v30mz.Po wswan/dis/$(DEPDIR)/dis_decode.Po \
 	wswan/dis/$(DEPDIR)/dis_groups.Po \
-	wswan/dis/$(DEPDIR)/resolve.Po wswan/dis/$(DEPDIR)/syntax.Po
+	wswan/dis/$(DEPDIR)/resolve.Po wswan/dis/$(DEPDIR)/syntax.Po \
+	zstd/common/$(DEPDIR)/libzstd_a-entropy_common.Po \
+	zstd/common/$(DEPDIR)/libzstd_a-error_private.Po \
+	zstd/common/$(DEPDIR)/libzstd_a-fse_decompress.Po \
+	zstd/common/$(DEPDIR)/libzstd_a-xxhash.Po \
+	zstd/common/$(DEPDIR)/libzstd_a-zstd_common.Po \
+	zstd/decompress/$(DEPDIR)/libzstd_a-huf_decompress.Po \
+	zstd/decompress/$(DEPDIR)/libzstd_a-zstd_ddict.Po \
+	zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress.Po \
+	zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress_block.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -1318,13 +1396,14 @@ am__v_CXXLD_1 =
 SOURCES = $(libdesa68_a_SOURCES) $(libmdfnquicklz_a_SOURCES) \
 	$(libmpcdec_a_SOURCES) $(libngp_a_SOURCES) \
 	$(libsnes_a_SOURCES) $(libtrio_a_SOURCES) \
-	$(libvorbisidec_a_SOURCES) $(mednafen_SOURCES)
+	$(libvorbisidec_a_SOURCES) $(libzstd_a_SOURCES) \
+	$(mednafen_SOURCES)
 DIST_SOURCES = $(am__libdesa68_a_SOURCES_DIST) \
 	$(libmdfnquicklz_a_SOURCES) $(am__libmpcdec_a_SOURCES_DIST) \
 	$(am__libngp_a_SOURCES_DIST) $(am__libsnes_a_SOURCES_DIST) \
 	$(am__libtrio_a_SOURCES_DIST) \
 	$(am__libvorbisidec_a_SOURCES_DIST) \
-	$(am__mednafen_SOURCES_DIST)
+	$(am__libzstd_a_SOURCES_DIST) $(am__mednafen_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -1394,6 +1473,7 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(srcdir)/pcfx/Makefile.am.inc $(srcdir)/psx/Makefile.am.inc \
 	$(srcdir)/quicklz/Makefile.am.inc \
 	$(srcdir)/resampler/Makefile.am.inc \
+	$(srcdir)/sasplay/Makefile.am.inc \
 	$(srcdir)/sms/Makefile.am.inc $(srcdir)/snes/Makefile.am.inc \
 	$(srcdir)/snes_faust/Makefile.am.inc \
 	$(srcdir)/sound/Makefile.am.inc \
@@ -1402,8 +1482,8 @@ am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(srcdir)/tremor/Makefile.am.inc \
 	$(srcdir)/trio/Makefile.am.inc $(srcdir)/vb/Makefile.am.inc \
 	$(srcdir)/video/Makefile.am.inc \
-	$(srcdir)/wswan/Makefile.am.inc $(top_srcdir)/depcomp \
-	$(top_srcdir)/mkinstalldirs
+	$(srcdir)/wswan/Makefile.am.inc $(srcdir)/zstd/Makefile.am.inc \
+	$(top_srcdir)/depcomp $(top_srcdir)/mkinstalldirs
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
   dir0=`pwd`; \
@@ -1438,6 +1518,7 @@ AMTAR = @AMTAR@
 AM_CFLAGS = @AM_CFLAGS@
 AM_CXXFLAGS = @AM_CXXFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
+AM_LDFLAGS = @AM_LDFLAGS@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -1459,7 +1540,8 @@ CXXDEPMODE = @CXXDEPMODE@
 CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DATADIRNAME = @DATADIRNAME@
-DEFS = @DEFS@ @FLAC_CFLAGS@ $(am__append_68)
+DEFS = @DEFS@ @FLAC_CFLAGS@ $(am__append_71) $(am__append_74) \
+	$(am__append_87)
 DEPDIR = @DEPDIR@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
@@ -1504,6 +1586,8 @@ LIBPTH = @LIBPTH@
 LIBPTH_PREFIX = @LIBPTH_PREFIX@
 LIBS = @LIBS@
 LIBTHREAD = @LIBTHREAD@
+LIBZSTD_CFLAGS = @LIBZSTD_CFLAGS@
+LIBZSTD_LIBS = @LIBZSTD_LIBS@
 LTLIBC = @LTLIBC@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
@@ -1547,6 +1631,7 @@ SNES_EXTRA_FLAGS = @SNES_EXTRA_FLAGS@
 SS_EXTRA_FLAGS = @SS_EXTRA_FLAGS@
 STRIP = @STRIP@
 TREMOR_LIBS = @TREMOR_LIBS@
+TRIO_BUILD_CFLAGS = @TRIO_BUILD_CFLAGS@
 TRIO_CFLAGS = @TRIO_CFLAGS@
 TRIO_LIBS = @TRIO_LIBS@
 USE_INCLUDED_LIBINTL = @USE_INCLUDED_LIBINTL@
@@ -1615,22 +1700,23 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
 DEFAULT_INCLUDES = -I$(top_builddir)/include -I$(top_srcdir)/include -I$(top_builddir)/intl
 SUBDIRS = $(am__append_1) $(am__append_5) $(am__append_8) sexyal \
-	$(SS_SUBDIRS)
-noinst_LIBRARIES = $(am__append_21) $(am__append_32) $(am__append_44) \
-	libmdfnquicklz.a $(am__append_71) $(am__append_75) \
-	$(am__append_79)
+	$(am__append_37) $(am__append_38)
+noinst_LIBRARIES = $(am__append_21) $(am__append_33) $(am__append_47) \
+	libmdfnquicklz.a $(am__append_75) $(am__append_79) \
+	$(am__append_83) $(am__append_88)
 mednafen_LDADD = $(am__append_2) $(am__append_6) $(am__append_9) \
 	sexyal/libsexyal.a @ALSA_LIBS@ @JACK_LIBS@ $(am__append_11) \
-	$(am__append_22) $(am__append_33) $(am__append_36) \
-	$(am__append_38) $(am__append_45) libmdfnquicklz.a \
-	$(am__append_67) $(am__append_70) $(am__append_72) \
-	$(am__append_74) $(am__append_76) $(am__append_78) \
-	$(am__append_80) @FLAC_LIBS@ @ZLIB_LIBS@ @LIBINTL@ @LIBICONV@
+	$(am__append_22) $(am__append_34) $(am__append_39) \
+	$(am__append_41) $(am__append_48) libmdfnquicklz.a \
+	$(am__append_70) $(am__append_73) $(am__append_76) \
+	$(am__append_78) $(am__append_80) $(am__append_82) \
+	$(am__append_84) $(am__append_86) $(am__append_89) @FLAC_LIBS@ \
+	@ZLIB_LIBS@ @LIBINTL@ @LIBICONV@ $(am__empty)
 mednafen_DEPENDENCIES = $(am__append_3) $(am__append_7) \
 	$(am__append_10) sexyal/libsexyal.a $(am__append_23) \
-	$(am__append_34) $(am__append_37) $(am__append_39) \
-	$(am__append_46) libmdfnquicklz.a $(am__append_73) \
-	$(am__append_77) $(am__append_81)
+	$(am__append_35) $(am__append_40) $(am__append_42) \
+	$(am__append_49) libmdfnquicklz.a $(am__append_77) \
+	$(am__append_81) $(am__append_85) $(am__append_90)
 mednafen_SOURCES = debug.cpp error.cpp mempatcher.cpp settings.cpp \
 	endian.cpp mednafen.cpp git.cpp file.cpp general.cpp \
 	memory.cpp netplay.cpp state.cpp state_rewind.cpp movie.cpp \
@@ -1645,35 +1731,38 @@ mednafen_SOURCES = debug.cpp error.cpp mempatcher.cpp settings.cpp \
 	$(am__append_20) $(am__append_24) $(am__append_25) \
 	$(am__append_26) $(am__append_27) $(am__append_28) \
 	$(am__append_29) $(am__append_30) $(am__append_31) \
-	$(am__append_35) $(am__append_40) $(am__append_41) \
-	$(am__append_42) $(am__append_43) $(am__append_47) \
-	$(am__append_48) $(am__append_49) $(am__append_50) \
-	$(am__append_51) $(am__append_52) $(am__append_53) \
-	$(am__append_54) $(am__append_55) $(am__append_56) \
-	$(am__append_57) $(am__append_58) $(am__append_59) \
-	$(am__append_60) cdrom/crc32.cpp cdrom/galois.cpp \
-	cdrom/l-ec.cpp cdrom/recover-raw.cpp cdrom/lec.cpp \
-	cdrom/CDUtility.cpp cdrom/CDInterface.cpp \
+	$(am__append_32) $(am__append_36) $(am__append_43) \
+	$(am__append_44) $(am__append_45) $(am__append_46) \
+	$(am__append_50) $(am__append_51) $(am__append_52) \
+	$(am__append_53) $(am__append_54) $(am__append_55) \
+	$(am__append_56) $(am__append_57) $(am__append_58) \
+	$(am__append_59) $(am__append_60) $(am__append_61) \
+	$(am__append_62) $(am__append_63) cdrom/crc32.cpp \
+	cdrom/galois.cpp cdrom/l-ec.cpp cdrom/recover-raw.cpp \
+	cdrom/lec.cpp cdrom/CDUtility.cpp cdrom/CDInterface.cpp \
 	cdrom/CDInterface_MT.cpp cdrom/CDInterface_ST.cpp \
 	cdrom/CDAccess.cpp cdrom/CDAccess_Image.cpp \
 	cdrom/CDAccess_CCD.cpp cdrom/CDAFReader.cpp \
 	cdrom/CDAFReader_Vorbis.cpp cdrom/CDAFReader_MPC.cpp \
-	$(am__append_61) cdrom/CDAFReader_PCM.cpp cdrom/scsicd.cpp \
-	$(am__append_62) sound/Fir_Resampler.cpp sound/WAVRecord.cpp \
+	$(am__append_64) cdrom/CDAFReader_PCM.cpp cdrom/scsicd.cpp \
+	$(am__append_65) sound/Fir_Resampler.cpp sound/WAVRecord.cpp \
 	sound/okiadpcm.cpp sound/DSPUtility.cpp \
-	sound/SwiftResampler.cpp sound/OwlResampler.cpp net/Net.cpp \
-	$(am__append_63) $(am__append_64) compress/GZFileStream.cpp \
-	compress/ZLInflateFilter.cpp compress/ZIPReader.cpp \
+	sound/SwiftResampler.cpp sound/OwlResampler.cpp \
+	sound/CassowaryResampler.cpp net/Net.cpp $(am__append_66) \
+	$(am__append_67) string/escape.cpp string/string.cpp \
+	video/surface.cpp video/convert.cpp video/tblur.cpp \
+	video/Deinterlacer.cpp video/Deinterlacer_Simple.cpp \
+	video/Deinterlacer_Blend.cpp video/resize.cpp video/video.cpp \
+	video/primitives.cpp video/png.cpp video/text.cpp \
+	video/font-data.cpp video/font-data-18x18.c \
+	video/font-data-12x13.c resampler/resample.c cputest/cputest.c \
+	$(am__append_68) $(am__append_69) cheat_formats/gb.cpp \
+	cheat_formats/psx.cpp cheat_formats/snes.cpp \
+	compress/ArchiveReader.cpp compress/ZIPReader.cpp \
+	compress/GZFileStream.cpp compress/DecompressFilter.cpp \
+	compress/ZstdDecompressFilter.cpp compress/ZLInflateFilter.cpp \
 	hash/md5.cpp hash/sha1.cpp hash/sha256.cpp hash/crc.cpp \
-	string/escape.cpp string/string.cpp video/surface.cpp \
-	video/convert.cpp video/tblur.cpp video/Deinterlacer.cpp \
-	video/Deinterlacer_Simple.cpp video/Deinterlacer_Blend.cpp \
-	video/resize.cpp video/video.cpp video/primitives.cpp \
-	video/png.cpp video/text.cpp video/font-data.cpp \
-	video/font-data-18x18.c video/font-data-12x13.c \
-	resampler/resample.c cputest/cputest.c $(am__append_65) \
-	$(am__append_66) cheat_formats/gb.cpp cheat_formats/psx.cpp \
-	cheat_formats/snes.cpp $(am__append_69)
+	$(am__append_72)
 @WANT_NGP_EMU_TRUE@libngp_a_CFLAGS = @AM_CFLAGS@ @NO_STRICT_ALIASING_FLAGS@
 @WANT_NGP_EMU_TRUE@libngp_a_CXXFLAGS = @AM_CXXFLAGS@ @NO_STRICT_ALIASING_FLAGS@
 @WANT_NGP_EMU_TRUE@libngp_a_SOURCES = ngp/bios.cpp ngp/biosHLE.cpp ngp/dma.cpp ngp/flash.cpp ngp/gfx.cpp ngp/T6W28_Apu.cpp	\
@@ -1748,17 +1837,15 @@ mednafen_SOURCES = debug.cpp error.cpp mempatcher.cpp settings.cpp \
 @WANT_SNES_EMU_TRUE@	snes/src/chip/obc1/obc1.cpp \
 @WANT_SNES_EMU_TRUE@	snes/src/chip/st010/st010.cpp \
 @WANT_SNES_EMU_TRUE@	snes/src/chip/superfx/superfx.cpp
-
-#if WANT_NES_NEW_EMU
-#include nes_new/Makefile.am.inc
-#endif
-SS_SUBDIRS = 
-@WANT_SSFPLAY_EMU_TRUE@SS_SUBDIRS = ss
-@WANT_SS_EMU_TRUE@SS_SUBDIRS = ss
 @WANT_DEBUGGER_TRUE@libdesa68_a_CFLAGS = @AM_CFLAGS@ -Wno-multichar
 @WANT_DEBUGGER_TRUE@libdesa68_a_SOURCES = desa68/desa68.c
 libmdfnquicklz_a_CFLAGS = @AM_CFLAGS@ @NO_STRICT_ALIASING_FLAGS@ -Wno-shadow -Wno-unused-but-set-variable
 libmdfnquicklz_a_SOURCES = quicklz/quicklz.c
+@HAVE_EXTERNAL_LIBZSTD_FALSE@libzstd_a_CFLAGS = @AM_CFLAGS@ @CFLAG_VISIBILITY@
+@HAVE_EXTERNAL_LIBZSTD_FALSE@libzstd_a_CPPFLAGS = -DZSTD_NO_TRACE=1 -DZSTD_HAVE_WEAK_SYMBOLS=0
+@HAVE_EXTERNAL_LIBZSTD_FALSE@libzstd_a_SOURCES = zstd/common/entropy_common.c zstd/common/error_private.c zstd/common/fse_decompress.c zstd/common/xxhash.c zstd/common/zstd_common.c	\
+@HAVE_EXTERNAL_LIBZSTD_FALSE@				zstd/decompress/huf_decompress.c zstd/decompress/zstd_ddict.c zstd/decompress/zstd_decompress_block.c zstd/decompress/zstd_decompress.c
+
 @HAVE_EXTERNAL_TREMOR_FALSE@libvorbisidec_a_CFLAGS = @AM_CFLAGS@ @CFLAG_VISIBILITY@ -Wno-shadow -Wno-unused
 @HAVE_EXTERNAL_TREMOR_FALSE@libvorbisidec_a_CPPFLAGS = -I$(srcdir)/tremor
 @HAVE_EXTERNAL_TREMOR_FALSE@libvorbisidec_a_SOURCES = tremor/mdct.c tremor/block.c tremor/window.c \
@@ -1773,13 +1860,13 @@ libmdfnquicklz_a_SOURCES = quicklz/quicklz.c
 @HAVE_EXTERNAL_MPCDEC_FALSE@        mpcdec/requant.c mpcdec/streaminfo.c mpcdec/synth_filter.c mpcdec/mpc_bits_reader.c mpcdec/mpc_demux.c \
 @HAVE_EXTERNAL_MPCDEC_FALSE@	mpcdec/crc32.c
 
-@HAVE_EXTERNAL_TRIO_FALSE@libtrio_a_CFLAGS = @AM_CFLAGS@ @TRIO_CFLAGS@ @CFLAG_VISIBILITY@
+@HAVE_EXTERNAL_TRIO_FALSE@libtrio_a_CFLAGS = @AM_CFLAGS@ @TRIO_BUILD_CFLAGS@ @CFLAG_VISIBILITY@
 @HAVE_EXTERNAL_TRIO_FALSE@libtrio_a_SOURCES = trio/trio.c trio/trionan.c trio/triostr.c
 all: all-recursive
 
 .SUFFIXES:
 .SUFFIXES: .c .cpp .o .obj .rc
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/cdplay/Makefile.am.inc $(srcdir)/demo/Makefile.am.inc $(srcdir)/apple2/Makefile.am.inc $(srcdir)/gb/Makefile.am.inc $(srcdir)/gba/Makefile.am.inc $(srcdir)/lynx/Makefile.am.inc $(srcdir)/md/Makefile.am.inc $(srcdir)/nes/Makefile.am.inc $(srcdir)/nes/ppu/Makefile.am.inc $(srcdir)/nes/boards/Makefile.am.inc $(srcdir)/nes/input/Makefile.am.inc $(srcdir)/ngp/Makefile.am.inc $(srcdir)/pce/Makefile.am.inc $(srcdir)/pce_fast/Makefile.am.inc $(srcdir)/pcfx/Makefile.am.inc $(srcdir)/psx/Makefile.am.inc $(srcdir)/sms/Makefile.am.inc $(srcdir)/snes/Makefile.am.inc $(srcdir)/snes_faust/Makefile.am.inc $(srcdir)/vb/Makefile.am.inc $(srcdir)/wswan/Makefile.am.inc $(srcdir)/desa68/Makefile.am.inc $(srcdir)/hw_cpu/Makefile.am.inc $(srcdir)/hw_misc/Makefile.am.inc $(srcdir)/hw_sound/Makefile.am.inc $(srcdir)/hw_video/Makefile.am.inc $(srcdir)/time/Makefile.am.inc $(srcdir)/mthreading/Makefile.am.inc $(srcdir)/cdrom/Makefile.am.inc $(srcdir)/sound/Makefile.am.inc $(srcdir)/net/Makefile.am.inc $(srcdir)/quicklz/Makefile.am.inc $(srcdir)/compress/Makefile.am.inc $(srcdir)/hash/Makefile.am.inc $(srcdir)/string/Makefile.am.inc $(srcdir)/video/Makefile.am.inc $(srcdir)/resampler/Makefile.am.inc $(srcdir)/cputest/Makefile.am.inc $(srcdir)/cheat_formats/Makefile.am.inc $(srcdir)/minilzo/Makefile.am.inc $(srcdir)/tremor/Makefile.am.inc $(srcdir)/mpcdec/Makefile.am.inc $(srcdir)/trio/Makefile.am.inc $(am__configure_deps)
+$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/cdplay/Makefile.am.inc $(srcdir)/demo/Makefile.am.inc $(srcdir)/apple2/Makefile.am.inc $(srcdir)/gb/Makefile.am.inc $(srcdir)/gba/Makefile.am.inc $(srcdir)/lynx/Makefile.am.inc $(srcdir)/md/Makefile.am.inc $(srcdir)/nes/Makefile.am.inc $(srcdir)/nes/ppu/Makefile.am.inc $(srcdir)/nes/boards/Makefile.am.inc $(srcdir)/nes/input/Makefile.am.inc $(srcdir)/ngp/Makefile.am.inc $(srcdir)/pce/Makefile.am.inc $(srcdir)/pce_fast/Makefile.am.inc $(srcdir)/pcfx/Makefile.am.inc $(srcdir)/psx/Makefile.am.inc $(srcdir)/sasplay/Makefile.am.inc $(srcdir)/sms/Makefile.am.inc $(srcdir)/snes/Makefile.am.inc $(srcdir)/snes_faust/Makefile.am.inc $(srcdir)/vb/Makefile.am.inc $(srcdir)/wswan/Makefile.am.inc $(srcdir)/desa68/Makefile.am.inc $(srcdir)/hw_cpu/Makefile.am.inc $(srcdir)/hw_misc/Makefile.am.inc $(srcdir)/hw_sound/Makefile.am.inc $(srcdir)/hw_video/Makefile.am.inc $(srcdir)/time/Makefile.am.inc $(srcdir)/mthreading/Makefile.am.inc $(srcdir)/cdrom/Makefile.am.inc $(srcdir)/sound/Makefile.am.inc $(srcdir)/net/Makefile.am.inc $(srcdir)/string/Makefile.am.inc $(srcdir)/video/Makefile.am.inc $(srcdir)/resampler/Makefile.am.inc $(srcdir)/cputest/Makefile.am.inc $(srcdir)/cheat_formats/Makefile.am.inc $(srcdir)/quicklz/Makefile.am.inc $(srcdir)/compress/Makefile.am.inc $(srcdir)/hash/Makefile.am.inc $(srcdir)/minilzo/Makefile.am.inc $(srcdir)/zstd/Makefile.am.inc $(srcdir)/tremor/Makefile.am.inc $(srcdir)/mpcdec/Makefile.am.inc $(srcdir)/trio/Makefile.am.inc $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -1799,7 +1886,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles);; \
 	esac;
-$(srcdir)/cdplay/Makefile.am.inc $(srcdir)/demo/Makefile.am.inc $(srcdir)/apple2/Makefile.am.inc $(srcdir)/gb/Makefile.am.inc $(srcdir)/gba/Makefile.am.inc $(srcdir)/lynx/Makefile.am.inc $(srcdir)/md/Makefile.am.inc $(srcdir)/nes/Makefile.am.inc $(srcdir)/nes/ppu/Makefile.am.inc $(srcdir)/nes/boards/Makefile.am.inc $(srcdir)/nes/input/Makefile.am.inc $(srcdir)/ngp/Makefile.am.inc $(srcdir)/pce/Makefile.am.inc $(srcdir)/pce_fast/Makefile.am.inc $(srcdir)/pcfx/Makefile.am.inc $(srcdir)/psx/Makefile.am.inc $(srcdir)/sms/Makefile.am.inc $(srcdir)/snes/Makefile.am.inc $(srcdir)/snes_faust/Makefile.am.inc $(srcdir)/vb/Makefile.am.inc $(srcdir)/wswan/Makefile.am.inc $(srcdir)/desa68/Makefile.am.inc $(srcdir)/hw_cpu/Makefile.am.inc $(srcdir)/hw_misc/Makefile.am.inc $(srcdir)/hw_sound/Makefile.am.inc $(srcdir)/hw_video/Makefile.am.inc $(srcdir)/time/Makefile.am.inc $(srcdir)/mthreading/Makefile.am.inc $(srcdir)/cdrom/Makefile.am.inc $(srcdir)/sound/Makefile.am.inc $(srcdir)/net/Makefile.am.inc $(srcdir)/quicklz/Makefile.am.inc $(srcdir)/compress/Makefile.am.inc $(srcdir)/hash/Makefile.am.inc $(srcdir)/string/Makefile.am.inc $(srcdir)/video/Makefile.am.inc $(srcdir)/resampler/Makefile.am.inc $(srcdir)/cputest/Makefile.am.inc $(srcdir)/cheat_formats/Makefile.am.inc $(srcdir)/minilzo/Makefile.am.inc $(srcdir)/tremor/Makefile.am.inc $(srcdir)/mpcdec/Makefile.am.inc $(srcdir)/trio/Makefile.am.inc $(am__empty):
+$(srcdir)/cdplay/Makefile.am.inc $(srcdir)/demo/Makefile.am.inc $(srcdir)/apple2/Makefile.am.inc $(srcdir)/gb/Makefile.am.inc $(srcdir)/gba/Makefile.am.inc $(srcdir)/lynx/Makefile.am.inc $(srcdir)/md/Makefile.am.inc $(srcdir)/nes/Makefile.am.inc $(srcdir)/nes/ppu/Makefile.am.inc $(srcdir)/nes/boards/Makefile.am.inc $(srcdir)/nes/input/Makefile.am.inc $(srcdir)/ngp/Makefile.am.inc $(srcdir)/pce/Makefile.am.inc $(srcdir)/pce_fast/Makefile.am.inc $(srcdir)/pcfx/Makefile.am.inc $(srcdir)/psx/Makefile.am.inc $(srcdir)/sasplay/Makefile.am.inc $(srcdir)/sms/Makefile.am.inc $(srcdir)/snes/Makefile.am.inc $(srcdir)/snes_faust/Makefile.am.inc $(srcdir)/vb/Makefile.am.inc $(srcdir)/wswan/Makefile.am.inc $(srcdir)/desa68/Makefile.am.inc $(srcdir)/hw_cpu/Makefile.am.inc $(srcdir)/hw_misc/Makefile.am.inc $(srcdir)/hw_sound/Makefile.am.inc $(srcdir)/hw_video/Makefile.am.inc $(srcdir)/time/Makefile.am.inc $(srcdir)/mthreading/Makefile.am.inc $(srcdir)/cdrom/Makefile.am.inc $(srcdir)/sound/Makefile.am.inc $(srcdir)/net/Makefile.am.inc $(srcdir)/string/Makefile.am.inc $(srcdir)/video/Makefile.am.inc $(srcdir)/resampler/Makefile.am.inc $(srcdir)/cputest/Makefile.am.inc $(srcdir)/cheat_formats/Makefile.am.inc $(srcdir)/quicklz/Makefile.am.inc $(srcdir)/compress/Makefile.am.inc $(srcdir)/hash/Makefile.am.inc $(srcdir)/minilzo/Makefile.am.inc $(srcdir)/zstd/Makefile.am.inc $(srcdir)/tremor/Makefile.am.inc $(srcdir)/mpcdec/Makefile.am.inc $(srcdir)/trio/Makefile.am.inc $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -2266,6 +2353,49 @@ libvorbisidec.a: $(libvorbisidec_a_OBJECTS) $(libvorbisidec_a_DEPENDENCIES) $(EX
 	$(AM_V_at)-rm -f libvorbisidec.a
 	$(AM_V_AR)$(libvorbisidec_a_AR) libvorbisidec.a $(libvorbisidec_a_OBJECTS) $(libvorbisidec_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libvorbisidec.a
+zstd/common/$(am__dirstamp):
+	@$(MKDIR_P) zstd/common
+	@: > zstd/common/$(am__dirstamp)
+zstd/common/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) zstd/common/$(DEPDIR)
+	@: > zstd/common/$(DEPDIR)/$(am__dirstamp)
+zstd/common/libzstd_a-entropy_common.$(OBJEXT):  \
+	zstd/common/$(am__dirstamp) \
+	zstd/common/$(DEPDIR)/$(am__dirstamp)
+zstd/common/libzstd_a-error_private.$(OBJEXT):  \
+	zstd/common/$(am__dirstamp) \
+	zstd/common/$(DEPDIR)/$(am__dirstamp)
+zstd/common/libzstd_a-fse_decompress.$(OBJEXT):  \
+	zstd/common/$(am__dirstamp) \
+	zstd/common/$(DEPDIR)/$(am__dirstamp)
+zstd/common/libzstd_a-xxhash.$(OBJEXT): zstd/common/$(am__dirstamp) \
+	zstd/common/$(DEPDIR)/$(am__dirstamp)
+zstd/common/libzstd_a-zstd_common.$(OBJEXT):  \
+	zstd/common/$(am__dirstamp) \
+	zstd/common/$(DEPDIR)/$(am__dirstamp)
+zstd/decompress/$(am__dirstamp):
+	@$(MKDIR_P) zstd/decompress
+	@: > zstd/decompress/$(am__dirstamp)
+zstd/decompress/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) zstd/decompress/$(DEPDIR)
+	@: > zstd/decompress/$(DEPDIR)/$(am__dirstamp)
+zstd/decompress/libzstd_a-huf_decompress.$(OBJEXT):  \
+	zstd/decompress/$(am__dirstamp) \
+	zstd/decompress/$(DEPDIR)/$(am__dirstamp)
+zstd/decompress/libzstd_a-zstd_ddict.$(OBJEXT):  \
+	zstd/decompress/$(am__dirstamp) \
+	zstd/decompress/$(DEPDIR)/$(am__dirstamp)
+zstd/decompress/libzstd_a-zstd_decompress_block.$(OBJEXT):  \
+	zstd/decompress/$(am__dirstamp) \
+	zstd/decompress/$(DEPDIR)/$(am__dirstamp)
+zstd/decompress/libzstd_a-zstd_decompress.$(OBJEXT):  \
+	zstd/decompress/$(am__dirstamp) \
+	zstd/decompress/$(DEPDIR)/$(am__dirstamp)
+
+libzstd.a: $(libzstd_a_OBJECTS) $(libzstd_a_DEPENDENCIES) $(EXTRA_libzstd_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libzstd.a
+	$(AM_V_AR)$(libzstd_a_AR) libzstd.a $(libzstd_a_OBJECTS) $(libzstd_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libzstd.a
 drivers/$(am__dirstamp):
 	@$(MKDIR_P) drivers
 	@: > drivers/$(am__dirstamp)
@@ -2297,6 +2427,18 @@ apple2/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) apple2/$(DEPDIR)
 	@: > apple2/$(DEPDIR)/$(am__dirstamp)
 apple2/apple2.$(OBJEXT): apple2/$(am__dirstamp) \
+	apple2/$(DEPDIR)/$(am__dirstamp)
+apple2/disk2.$(OBJEXT): apple2/$(am__dirstamp) \
+	apple2/$(DEPDIR)/$(am__dirstamp)
+apple2/video.$(OBJEXT): apple2/$(am__dirstamp) \
+	apple2/$(DEPDIR)/$(am__dirstamp)
+apple2/sound.$(OBJEXT): apple2/$(am__dirstamp) \
+	apple2/$(DEPDIR)/$(am__dirstamp)
+apple2/kbio.$(OBJEXT): apple2/$(am__dirstamp) \
+	apple2/$(DEPDIR)/$(am__dirstamp)
+apple2/gameio.$(OBJEXT): apple2/$(am__dirstamp) \
+	apple2/$(DEPDIR)/$(am__dirstamp)
+apple2/hdd.$(OBJEXT): apple2/$(am__dirstamp) \
 	apple2/$(DEPDIR)/$(am__dirstamp)
 gb/$(am__dirstamp):
 	@$(MKDIR_P) gb
@@ -2851,6 +2993,14 @@ psx/gpu_sprite.$(OBJEXT): psx/$(am__dirstamp) \
 	psx/$(DEPDIR)/$(am__dirstamp)
 psx/debug.$(OBJEXT): psx/$(am__dirstamp) psx/$(DEPDIR)/$(am__dirstamp)
 psx/dis.$(OBJEXT): psx/$(am__dirstamp) psx/$(DEPDIR)/$(am__dirstamp)
+sasplay/$(am__dirstamp):
+	@$(MKDIR_P) sasplay
+	@: > sasplay/$(am__dirstamp)
+sasplay/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) sasplay/$(DEPDIR)
+	@: > sasplay/$(DEPDIR)/$(am__dirstamp)
+sasplay/sasplay.$(OBJEXT): sasplay/$(am__dirstamp) \
+	sasplay/$(DEPDIR)/$(am__dirstamp)
 sms/$(am__dirstamp):
 	@$(MKDIR_P) sms
 	@: > sms/$(am__dirstamp)
@@ -2886,6 +3036,18 @@ snes_faust/cart.$(OBJEXT): snes_faust/$(am__dirstamp) \
 	snes_faust/$(DEPDIR)/$(am__dirstamp)
 snes_faust/input.$(OBJEXT): snes_faust/$(am__dirstamp) \
 	snes_faust/$(DEPDIR)/$(am__dirstamp)
+snes_faust/input/$(am__dirstamp):
+	@$(MKDIR_P) snes_faust/input
+	@: > snes_faust/input/$(am__dirstamp)
+snes_faust/input/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) snes_faust/input/$(DEPDIR)
+	@: > snes_faust/input/$(DEPDIR)/$(am__dirstamp)
+snes_faust/input/multitap.$(OBJEXT): snes_faust/input/$(am__dirstamp) \
+	snes_faust/input/$(DEPDIR)/$(am__dirstamp)
+snes_faust/input/gamepad.$(OBJEXT): snes_faust/input/$(am__dirstamp) \
+	snes_faust/input/$(DEPDIR)/$(am__dirstamp)
+snes_faust/input/mouse.$(OBJEXT): snes_faust/input/$(am__dirstamp) \
+	snes_faust/input/$(DEPDIR)/$(am__dirstamp)
 snes_faust/ppu.$(OBJEXT): snes_faust/$(am__dirstamp) \
 	snes_faust/$(DEPDIR)/$(am__dirstamp)
 snes_faust/ppu_st.$(OBJEXT): snes_faust/$(am__dirstamp) \
@@ -3150,6 +3312,8 @@ sound/SwiftResampler.$(OBJEXT): sound/$(am__dirstamp) \
 	sound/$(DEPDIR)/$(am__dirstamp)
 sound/OwlResampler.$(OBJEXT): sound/$(am__dirstamp) \
 	sound/$(DEPDIR)/$(am__dirstamp)
+sound/CassowaryResampler.$(OBJEXT): sound/$(am__dirstamp) \
+	sound/$(DEPDIR)/$(am__dirstamp)
 net/$(am__dirstamp):
 	@$(MKDIR_P) net
 	@: > net/$(am__dirstamp)
@@ -3161,32 +3325,6 @@ net/Net_POSIX.$(OBJEXT): net/$(am__dirstamp) \
 	net/$(DEPDIR)/$(am__dirstamp)
 net/Net_WS2.$(OBJEXT): net/$(am__dirstamp) \
 	net/$(DEPDIR)/$(am__dirstamp)
-compress/$(am__dirstamp):
-	@$(MKDIR_P) compress
-	@: > compress/$(am__dirstamp)
-compress/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) compress/$(DEPDIR)
-	@: > compress/$(DEPDIR)/$(am__dirstamp)
-compress/GZFileStream.$(OBJEXT): compress/$(am__dirstamp) \
-	compress/$(DEPDIR)/$(am__dirstamp)
-compress/ZLInflateFilter.$(OBJEXT): compress/$(am__dirstamp) \
-	compress/$(DEPDIR)/$(am__dirstamp)
-compress/ZIPReader.$(OBJEXT): compress/$(am__dirstamp) \
-	compress/$(DEPDIR)/$(am__dirstamp)
-hash/$(am__dirstamp):
-	@$(MKDIR_P) hash
-	@: > hash/$(am__dirstamp)
-hash/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) hash/$(DEPDIR)
-	@: > hash/$(DEPDIR)/$(am__dirstamp)
-hash/md5.$(OBJEXT): hash/$(am__dirstamp) \
-	hash/$(DEPDIR)/$(am__dirstamp)
-hash/sha1.$(OBJEXT): hash/$(am__dirstamp) \
-	hash/$(DEPDIR)/$(am__dirstamp)
-hash/sha256.$(OBJEXT): hash/$(am__dirstamp) \
-	hash/$(DEPDIR)/$(am__dirstamp)
-hash/crc.$(OBJEXT): hash/$(am__dirstamp) \
-	hash/$(DEPDIR)/$(am__dirstamp)
 string/$(am__dirstamp):
 	@$(MKDIR_P) string
 	@: > string/$(am__dirstamp)
@@ -3263,6 +3401,38 @@ cheat_formats/psx.$(OBJEXT): cheat_formats/$(am__dirstamp) \
 	cheat_formats/$(DEPDIR)/$(am__dirstamp)
 cheat_formats/snes.$(OBJEXT): cheat_formats/$(am__dirstamp) \
 	cheat_formats/$(DEPDIR)/$(am__dirstamp)
+compress/$(am__dirstamp):
+	@$(MKDIR_P) compress
+	@: > compress/$(am__dirstamp)
+compress/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) compress/$(DEPDIR)
+	@: > compress/$(DEPDIR)/$(am__dirstamp)
+compress/ArchiveReader.$(OBJEXT): compress/$(am__dirstamp) \
+	compress/$(DEPDIR)/$(am__dirstamp)
+compress/ZIPReader.$(OBJEXT): compress/$(am__dirstamp) \
+	compress/$(DEPDIR)/$(am__dirstamp)
+compress/GZFileStream.$(OBJEXT): compress/$(am__dirstamp) \
+	compress/$(DEPDIR)/$(am__dirstamp)
+compress/DecompressFilter.$(OBJEXT): compress/$(am__dirstamp) \
+	compress/$(DEPDIR)/$(am__dirstamp)
+compress/ZstdDecompressFilter.$(OBJEXT): compress/$(am__dirstamp) \
+	compress/$(DEPDIR)/$(am__dirstamp)
+compress/ZLInflateFilter.$(OBJEXT): compress/$(am__dirstamp) \
+	compress/$(DEPDIR)/$(am__dirstamp)
+hash/$(am__dirstamp):
+	@$(MKDIR_P) hash
+	@: > hash/$(am__dirstamp)
+hash/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) hash/$(DEPDIR)
+	@: > hash/$(DEPDIR)/$(am__dirstamp)
+hash/md5.$(OBJEXT): hash/$(am__dirstamp) \
+	hash/$(DEPDIR)/$(am__dirstamp)
+hash/sha1.$(OBJEXT): hash/$(am__dirstamp) \
+	hash/$(DEPDIR)/$(am__dirstamp)
+hash/sha256.$(OBJEXT): hash/$(am__dirstamp) \
+	hash/$(DEPDIR)/$(am__dirstamp)
+hash/crc.$(OBJEXT): hash/$(am__dirstamp) \
+	hash/$(DEPDIR)/$(am__dirstamp)
 minilzo/$(am__dirstamp):
 	@$(MKDIR_P) minilzo
 	@: > minilzo/$(am__dirstamp)
@@ -3325,6 +3495,7 @@ mostlyclean-compile:
 	-rm -f psx/input/*.$(OBJEXT)
 	-rm -f quicklz/*.$(OBJEXT)
 	-rm -f resampler/*.$(OBJEXT)
+	-rm -f sasplay/*.$(OBJEXT)
 	-rm -f sms/*.$(OBJEXT)
 	-rm -f snes/*.$(OBJEXT)
 	-rm -f snes/src/cartridge/*.$(OBJEXT)
@@ -3354,6 +3525,7 @@ mostlyclean-compile:
 	-rm -f snes/src/system/*.$(OBJEXT)
 	-rm -f snes_faust/*.$(OBJEXT)
 	-rm -f snes_faust/cart/*.$(OBJEXT)
+	-rm -f snes_faust/input/*.$(OBJEXT)
 	-rm -f sound/*.$(OBJEXT)
 	-rm -f string/*.$(OBJEXT)
 	-rm -f time/*.$(OBJEXT)
@@ -3363,6 +3535,8 @@ mostlyclean-compile:
 	-rm -f video/*.$(OBJEXT)
 	-rm -f wswan/*.$(OBJEXT)
 	-rm -f wswan/dis/*.$(OBJEXT)
+	-rm -f zstd/common/*.$(OBJEXT)
+	-rm -f zstd/decompress/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -3399,6 +3573,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testsexp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/win32-common.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@apple2/$(DEPDIR)/apple2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@apple2/$(DEPDIR)/disk2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@apple2/$(DEPDIR)/gameio.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@apple2/$(DEPDIR)/hdd.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@apple2/$(DEPDIR)/kbio.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@apple2/$(DEPDIR)/sound.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@apple2/$(DEPDIR)/video.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cdplay/$(DEPDIR)/cdplay.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cdrom/$(DEPDIR)/CDAFReader.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cdrom/$(DEPDIR)/CDAFReader_FLAC.Po@am__quote@ # am--include-marker
@@ -3421,9 +3601,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@cheat_formats/$(DEPDIR)/gb.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cheat_formats/$(DEPDIR)/psx.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cheat_formats/$(DEPDIR)/snes.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@compress/$(DEPDIR)/ArchiveReader.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@compress/$(DEPDIR)/DecompressFilter.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@compress/$(DEPDIR)/GZFileStream.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@compress/$(DEPDIR)/ZIPReader.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@compress/$(DEPDIR)/ZLInflateFilter.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@compress/$(DEPDIR)/ZstdDecompressFilter.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cputest/$(DEPDIR)/cputest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cputest/$(DEPDIR)/ppc_cpu.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@cputest/$(DEPDIR)/x86_cpu.Po@am__quote@ # am--include-marker
@@ -3737,6 +3920,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@psx/input/$(DEPDIR)/negcon.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@quicklz/$(DEPDIR)/libmdfnquicklz_a-quicklz.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@resampler/$(DEPDIR)/resample.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@sasplay/$(DEPDIR)/sasplay.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sms/$(DEPDIR)/cart.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sms/$(DEPDIR)/memz80.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sms/$(DEPDIR)/pio.Po@am__quote@ # am--include-marker
@@ -3792,7 +3976,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@snes_faust/cart/$(DEPDIR)/sa1cpu.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@snes_faust/cart/$(DEPDIR)/sdd1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@snes_faust/cart/$(DEPDIR)/superfx.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@snes_faust/input/$(DEPDIR)/gamepad.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@snes_faust/input/$(DEPDIR)/mouse.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@snes_faust/input/$(DEPDIR)/multitap.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sound/$(DEPDIR)/Blip_Buffer.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@sound/$(DEPDIR)/CassowaryResampler.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sound/$(DEPDIR)/DSPUtility.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sound/$(DEPDIR)/Fir_Resampler.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@sound/$(DEPDIR)/OwlResampler.Po@am__quote@ # am--include-marker
@@ -3857,6 +4045,15 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@wswan/dis/$(DEPDIR)/dis_groups.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@wswan/dis/$(DEPDIR)/resolve.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@wswan/dis/$(DEPDIR)/syntax.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@zstd/common/$(DEPDIR)/libzstd_a-entropy_common.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@zstd/common/$(DEPDIR)/libzstd_a-error_private.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@zstd/common/$(DEPDIR)/libzstd_a-fse_decompress.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@zstd/common/$(DEPDIR)/libzstd_a-xxhash.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@zstd/common/$(DEPDIR)/libzstd_a-zstd_common.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@zstd/decompress/$(DEPDIR)/libzstd_a-huf_decompress.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@zstd/decompress/$(DEPDIR)/libzstd_a-zstd_ddict.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress_block.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -4299,6 +4496,132 @@ tremor/libvorbisidec_a-bitwise.obj: tremor/bitwise.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tremor/bitwise.c' object='tremor/libvorbisidec_a-bitwise.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libvorbisidec_a_CPPFLAGS) $(CPPFLAGS) $(libvorbisidec_a_CFLAGS) $(CFLAGS) -c -o tremor/libvorbisidec_a-bitwise.obj `if test -f 'tremor/bitwise.c'; then $(CYGPATH_W) 'tremor/bitwise.c'; else $(CYGPATH_W) '$(srcdir)/tremor/bitwise.c'; fi`
+
+zstd/common/libzstd_a-entropy_common.o: zstd/common/entropy_common.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/common/libzstd_a-entropy_common.o -MD -MP -MF zstd/common/$(DEPDIR)/libzstd_a-entropy_common.Tpo -c -o zstd/common/libzstd_a-entropy_common.o `test -f 'zstd/common/entropy_common.c' || echo '$(srcdir)/'`zstd/common/entropy_common.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/common/$(DEPDIR)/libzstd_a-entropy_common.Tpo zstd/common/$(DEPDIR)/libzstd_a-entropy_common.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/common/entropy_common.c' object='zstd/common/libzstd_a-entropy_common.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/common/libzstd_a-entropy_common.o `test -f 'zstd/common/entropy_common.c' || echo '$(srcdir)/'`zstd/common/entropy_common.c
+
+zstd/common/libzstd_a-entropy_common.obj: zstd/common/entropy_common.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/common/libzstd_a-entropy_common.obj -MD -MP -MF zstd/common/$(DEPDIR)/libzstd_a-entropy_common.Tpo -c -o zstd/common/libzstd_a-entropy_common.obj `if test -f 'zstd/common/entropy_common.c'; then $(CYGPATH_W) 'zstd/common/entropy_common.c'; else $(CYGPATH_W) '$(srcdir)/zstd/common/entropy_common.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/common/$(DEPDIR)/libzstd_a-entropy_common.Tpo zstd/common/$(DEPDIR)/libzstd_a-entropy_common.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/common/entropy_common.c' object='zstd/common/libzstd_a-entropy_common.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/common/libzstd_a-entropy_common.obj `if test -f 'zstd/common/entropy_common.c'; then $(CYGPATH_W) 'zstd/common/entropy_common.c'; else $(CYGPATH_W) '$(srcdir)/zstd/common/entropy_common.c'; fi`
+
+zstd/common/libzstd_a-error_private.o: zstd/common/error_private.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/common/libzstd_a-error_private.o -MD -MP -MF zstd/common/$(DEPDIR)/libzstd_a-error_private.Tpo -c -o zstd/common/libzstd_a-error_private.o `test -f 'zstd/common/error_private.c' || echo '$(srcdir)/'`zstd/common/error_private.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/common/$(DEPDIR)/libzstd_a-error_private.Tpo zstd/common/$(DEPDIR)/libzstd_a-error_private.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/common/error_private.c' object='zstd/common/libzstd_a-error_private.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/common/libzstd_a-error_private.o `test -f 'zstd/common/error_private.c' || echo '$(srcdir)/'`zstd/common/error_private.c
+
+zstd/common/libzstd_a-error_private.obj: zstd/common/error_private.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/common/libzstd_a-error_private.obj -MD -MP -MF zstd/common/$(DEPDIR)/libzstd_a-error_private.Tpo -c -o zstd/common/libzstd_a-error_private.obj `if test -f 'zstd/common/error_private.c'; then $(CYGPATH_W) 'zstd/common/error_private.c'; else $(CYGPATH_W) '$(srcdir)/zstd/common/error_private.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/common/$(DEPDIR)/libzstd_a-error_private.Tpo zstd/common/$(DEPDIR)/libzstd_a-error_private.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/common/error_private.c' object='zstd/common/libzstd_a-error_private.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/common/libzstd_a-error_private.obj `if test -f 'zstd/common/error_private.c'; then $(CYGPATH_W) 'zstd/common/error_private.c'; else $(CYGPATH_W) '$(srcdir)/zstd/common/error_private.c'; fi`
+
+zstd/common/libzstd_a-fse_decompress.o: zstd/common/fse_decompress.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/common/libzstd_a-fse_decompress.o -MD -MP -MF zstd/common/$(DEPDIR)/libzstd_a-fse_decompress.Tpo -c -o zstd/common/libzstd_a-fse_decompress.o `test -f 'zstd/common/fse_decompress.c' || echo '$(srcdir)/'`zstd/common/fse_decompress.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/common/$(DEPDIR)/libzstd_a-fse_decompress.Tpo zstd/common/$(DEPDIR)/libzstd_a-fse_decompress.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/common/fse_decompress.c' object='zstd/common/libzstd_a-fse_decompress.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/common/libzstd_a-fse_decompress.o `test -f 'zstd/common/fse_decompress.c' || echo '$(srcdir)/'`zstd/common/fse_decompress.c
+
+zstd/common/libzstd_a-fse_decompress.obj: zstd/common/fse_decompress.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/common/libzstd_a-fse_decompress.obj -MD -MP -MF zstd/common/$(DEPDIR)/libzstd_a-fse_decompress.Tpo -c -o zstd/common/libzstd_a-fse_decompress.obj `if test -f 'zstd/common/fse_decompress.c'; then $(CYGPATH_W) 'zstd/common/fse_decompress.c'; else $(CYGPATH_W) '$(srcdir)/zstd/common/fse_decompress.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/common/$(DEPDIR)/libzstd_a-fse_decompress.Tpo zstd/common/$(DEPDIR)/libzstd_a-fse_decompress.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/common/fse_decompress.c' object='zstd/common/libzstd_a-fse_decompress.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/common/libzstd_a-fse_decompress.obj `if test -f 'zstd/common/fse_decompress.c'; then $(CYGPATH_W) 'zstd/common/fse_decompress.c'; else $(CYGPATH_W) '$(srcdir)/zstd/common/fse_decompress.c'; fi`
+
+zstd/common/libzstd_a-xxhash.o: zstd/common/xxhash.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/common/libzstd_a-xxhash.o -MD -MP -MF zstd/common/$(DEPDIR)/libzstd_a-xxhash.Tpo -c -o zstd/common/libzstd_a-xxhash.o `test -f 'zstd/common/xxhash.c' || echo '$(srcdir)/'`zstd/common/xxhash.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/common/$(DEPDIR)/libzstd_a-xxhash.Tpo zstd/common/$(DEPDIR)/libzstd_a-xxhash.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/common/xxhash.c' object='zstd/common/libzstd_a-xxhash.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/common/libzstd_a-xxhash.o `test -f 'zstd/common/xxhash.c' || echo '$(srcdir)/'`zstd/common/xxhash.c
+
+zstd/common/libzstd_a-xxhash.obj: zstd/common/xxhash.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/common/libzstd_a-xxhash.obj -MD -MP -MF zstd/common/$(DEPDIR)/libzstd_a-xxhash.Tpo -c -o zstd/common/libzstd_a-xxhash.obj `if test -f 'zstd/common/xxhash.c'; then $(CYGPATH_W) 'zstd/common/xxhash.c'; else $(CYGPATH_W) '$(srcdir)/zstd/common/xxhash.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/common/$(DEPDIR)/libzstd_a-xxhash.Tpo zstd/common/$(DEPDIR)/libzstd_a-xxhash.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/common/xxhash.c' object='zstd/common/libzstd_a-xxhash.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/common/libzstd_a-xxhash.obj `if test -f 'zstd/common/xxhash.c'; then $(CYGPATH_W) 'zstd/common/xxhash.c'; else $(CYGPATH_W) '$(srcdir)/zstd/common/xxhash.c'; fi`
+
+zstd/common/libzstd_a-zstd_common.o: zstd/common/zstd_common.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/common/libzstd_a-zstd_common.o -MD -MP -MF zstd/common/$(DEPDIR)/libzstd_a-zstd_common.Tpo -c -o zstd/common/libzstd_a-zstd_common.o `test -f 'zstd/common/zstd_common.c' || echo '$(srcdir)/'`zstd/common/zstd_common.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/common/$(DEPDIR)/libzstd_a-zstd_common.Tpo zstd/common/$(DEPDIR)/libzstd_a-zstd_common.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/common/zstd_common.c' object='zstd/common/libzstd_a-zstd_common.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/common/libzstd_a-zstd_common.o `test -f 'zstd/common/zstd_common.c' || echo '$(srcdir)/'`zstd/common/zstd_common.c
+
+zstd/common/libzstd_a-zstd_common.obj: zstd/common/zstd_common.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/common/libzstd_a-zstd_common.obj -MD -MP -MF zstd/common/$(DEPDIR)/libzstd_a-zstd_common.Tpo -c -o zstd/common/libzstd_a-zstd_common.obj `if test -f 'zstd/common/zstd_common.c'; then $(CYGPATH_W) 'zstd/common/zstd_common.c'; else $(CYGPATH_W) '$(srcdir)/zstd/common/zstd_common.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/common/$(DEPDIR)/libzstd_a-zstd_common.Tpo zstd/common/$(DEPDIR)/libzstd_a-zstd_common.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/common/zstd_common.c' object='zstd/common/libzstd_a-zstd_common.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/common/libzstd_a-zstd_common.obj `if test -f 'zstd/common/zstd_common.c'; then $(CYGPATH_W) 'zstd/common/zstd_common.c'; else $(CYGPATH_W) '$(srcdir)/zstd/common/zstd_common.c'; fi`
+
+zstd/decompress/libzstd_a-huf_decompress.o: zstd/decompress/huf_decompress.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/decompress/libzstd_a-huf_decompress.o -MD -MP -MF zstd/decompress/$(DEPDIR)/libzstd_a-huf_decompress.Tpo -c -o zstd/decompress/libzstd_a-huf_decompress.o `test -f 'zstd/decompress/huf_decompress.c' || echo '$(srcdir)/'`zstd/decompress/huf_decompress.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/decompress/$(DEPDIR)/libzstd_a-huf_decompress.Tpo zstd/decompress/$(DEPDIR)/libzstd_a-huf_decompress.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/decompress/huf_decompress.c' object='zstd/decompress/libzstd_a-huf_decompress.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/decompress/libzstd_a-huf_decompress.o `test -f 'zstd/decompress/huf_decompress.c' || echo '$(srcdir)/'`zstd/decompress/huf_decompress.c
+
+zstd/decompress/libzstd_a-huf_decompress.obj: zstd/decompress/huf_decompress.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/decompress/libzstd_a-huf_decompress.obj -MD -MP -MF zstd/decompress/$(DEPDIR)/libzstd_a-huf_decompress.Tpo -c -o zstd/decompress/libzstd_a-huf_decompress.obj `if test -f 'zstd/decompress/huf_decompress.c'; then $(CYGPATH_W) 'zstd/decompress/huf_decompress.c'; else $(CYGPATH_W) '$(srcdir)/zstd/decompress/huf_decompress.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/decompress/$(DEPDIR)/libzstd_a-huf_decompress.Tpo zstd/decompress/$(DEPDIR)/libzstd_a-huf_decompress.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/decompress/huf_decompress.c' object='zstd/decompress/libzstd_a-huf_decompress.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/decompress/libzstd_a-huf_decompress.obj `if test -f 'zstd/decompress/huf_decompress.c'; then $(CYGPATH_W) 'zstd/decompress/huf_decompress.c'; else $(CYGPATH_W) '$(srcdir)/zstd/decompress/huf_decompress.c'; fi`
+
+zstd/decompress/libzstd_a-zstd_ddict.o: zstd/decompress/zstd_ddict.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/decompress/libzstd_a-zstd_ddict.o -MD -MP -MF zstd/decompress/$(DEPDIR)/libzstd_a-zstd_ddict.Tpo -c -o zstd/decompress/libzstd_a-zstd_ddict.o `test -f 'zstd/decompress/zstd_ddict.c' || echo '$(srcdir)/'`zstd/decompress/zstd_ddict.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/decompress/$(DEPDIR)/libzstd_a-zstd_ddict.Tpo zstd/decompress/$(DEPDIR)/libzstd_a-zstd_ddict.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/decompress/zstd_ddict.c' object='zstd/decompress/libzstd_a-zstd_ddict.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/decompress/libzstd_a-zstd_ddict.o `test -f 'zstd/decompress/zstd_ddict.c' || echo '$(srcdir)/'`zstd/decompress/zstd_ddict.c
+
+zstd/decompress/libzstd_a-zstd_ddict.obj: zstd/decompress/zstd_ddict.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/decompress/libzstd_a-zstd_ddict.obj -MD -MP -MF zstd/decompress/$(DEPDIR)/libzstd_a-zstd_ddict.Tpo -c -o zstd/decompress/libzstd_a-zstd_ddict.obj `if test -f 'zstd/decompress/zstd_ddict.c'; then $(CYGPATH_W) 'zstd/decompress/zstd_ddict.c'; else $(CYGPATH_W) '$(srcdir)/zstd/decompress/zstd_ddict.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/decompress/$(DEPDIR)/libzstd_a-zstd_ddict.Tpo zstd/decompress/$(DEPDIR)/libzstd_a-zstd_ddict.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/decompress/zstd_ddict.c' object='zstd/decompress/libzstd_a-zstd_ddict.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/decompress/libzstd_a-zstd_ddict.obj `if test -f 'zstd/decompress/zstd_ddict.c'; then $(CYGPATH_W) 'zstd/decompress/zstd_ddict.c'; else $(CYGPATH_W) '$(srcdir)/zstd/decompress/zstd_ddict.c'; fi`
+
+zstd/decompress/libzstd_a-zstd_decompress_block.o: zstd/decompress/zstd_decompress_block.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/decompress/libzstd_a-zstd_decompress_block.o -MD -MP -MF zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress_block.Tpo -c -o zstd/decompress/libzstd_a-zstd_decompress_block.o `test -f 'zstd/decompress/zstd_decompress_block.c' || echo '$(srcdir)/'`zstd/decompress/zstd_decompress_block.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress_block.Tpo zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress_block.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/decompress/zstd_decompress_block.c' object='zstd/decompress/libzstd_a-zstd_decompress_block.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/decompress/libzstd_a-zstd_decompress_block.o `test -f 'zstd/decompress/zstd_decompress_block.c' || echo '$(srcdir)/'`zstd/decompress/zstd_decompress_block.c
+
+zstd/decompress/libzstd_a-zstd_decompress_block.obj: zstd/decompress/zstd_decompress_block.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/decompress/libzstd_a-zstd_decompress_block.obj -MD -MP -MF zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress_block.Tpo -c -o zstd/decompress/libzstd_a-zstd_decompress_block.obj `if test -f 'zstd/decompress/zstd_decompress_block.c'; then $(CYGPATH_W) 'zstd/decompress/zstd_decompress_block.c'; else $(CYGPATH_W) '$(srcdir)/zstd/decompress/zstd_decompress_block.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress_block.Tpo zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress_block.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/decompress/zstd_decompress_block.c' object='zstd/decompress/libzstd_a-zstd_decompress_block.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/decompress/libzstd_a-zstd_decompress_block.obj `if test -f 'zstd/decompress/zstd_decompress_block.c'; then $(CYGPATH_W) 'zstd/decompress/zstd_decompress_block.c'; else $(CYGPATH_W) '$(srcdir)/zstd/decompress/zstd_decompress_block.c'; fi`
+
+zstd/decompress/libzstd_a-zstd_decompress.o: zstd/decompress/zstd_decompress.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/decompress/libzstd_a-zstd_decompress.o -MD -MP -MF zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress.Tpo -c -o zstd/decompress/libzstd_a-zstd_decompress.o `test -f 'zstd/decompress/zstd_decompress.c' || echo '$(srcdir)/'`zstd/decompress/zstd_decompress.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress.Tpo zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/decompress/zstd_decompress.c' object='zstd/decompress/libzstd_a-zstd_decompress.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/decompress/libzstd_a-zstd_decompress.o `test -f 'zstd/decompress/zstd_decompress.c' || echo '$(srcdir)/'`zstd/decompress/zstd_decompress.c
+
+zstd/decompress/libzstd_a-zstd_decompress.obj: zstd/decompress/zstd_decompress.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -MT zstd/decompress/libzstd_a-zstd_decompress.obj -MD -MP -MF zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress.Tpo -c -o zstd/decompress/libzstd_a-zstd_decompress.obj `if test -f 'zstd/decompress/zstd_decompress.c'; then $(CYGPATH_W) 'zstd/decompress/zstd_decompress.c'; else $(CYGPATH_W) '$(srcdir)/zstd/decompress/zstd_decompress.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress.Tpo zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='zstd/decompress/zstd_decompress.c' object='zstd/decompress/libzstd_a-zstd_decompress.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libzstd_a_CPPFLAGS) $(CPPFLAGS) $(libzstd_a_CFLAGS) $(CFLAGS) -c -o zstd/decompress/libzstd_a-zstd_decompress.obj `if test -f 'zstd/decompress/zstd_decompress.c'; then $(CYGPATH_W) 'zstd/decompress/zstd_decompress.c'; else $(CYGPATH_W) '$(srcdir)/zstd/decompress/zstd_decompress.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -5245,6 +5568,8 @@ distclean-generic:
 	-rm -f quicklz/$(am__dirstamp)
 	-rm -f resampler/$(DEPDIR)/$(am__dirstamp)
 	-rm -f resampler/$(am__dirstamp)
+	-rm -f sasplay/$(DEPDIR)/$(am__dirstamp)
+	-rm -f sasplay/$(am__dirstamp)
 	-rm -f sms/$(DEPDIR)/$(am__dirstamp)
 	-rm -f sms/$(am__dirstamp)
 	-rm -f snes/$(DEPDIR)/$(am__dirstamp)
@@ -5303,6 +5628,8 @@ distclean-generic:
 	-rm -f snes_faust/$(am__dirstamp)
 	-rm -f snes_faust/cart/$(DEPDIR)/$(am__dirstamp)
 	-rm -f snes_faust/cart/$(am__dirstamp)
+	-rm -f snes_faust/input/$(DEPDIR)/$(am__dirstamp)
+	-rm -f snes_faust/input/$(am__dirstamp)
 	-rm -f sound/$(DEPDIR)/$(am__dirstamp)
 	-rm -f sound/$(am__dirstamp)
 	-rm -f string/$(DEPDIR)/$(am__dirstamp)
@@ -5321,6 +5648,10 @@ distclean-generic:
 	-rm -f wswan/$(am__dirstamp)
 	-rm -f wswan/dis/$(DEPDIR)/$(am__dirstamp)
 	-rm -f wswan/dis/$(am__dirstamp)
+	-rm -f zstd/common/$(DEPDIR)/$(am__dirstamp)
+	-rm -f zstd/common/$(am__dirstamp)
+	-rm -f zstd/decompress/$(DEPDIR)/$(am__dirstamp)
+	-rm -f zstd/decompress/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -5363,6 +5694,12 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/testsexp.Po
 	-rm -f ./$(DEPDIR)/win32-common.Po
 	-rm -f apple2/$(DEPDIR)/apple2.Po
+	-rm -f apple2/$(DEPDIR)/disk2.Po
+	-rm -f apple2/$(DEPDIR)/gameio.Po
+	-rm -f apple2/$(DEPDIR)/hdd.Po
+	-rm -f apple2/$(DEPDIR)/kbio.Po
+	-rm -f apple2/$(DEPDIR)/sound.Po
+	-rm -f apple2/$(DEPDIR)/video.Po
 	-rm -f cdplay/$(DEPDIR)/cdplay.Po
 	-rm -f cdrom/$(DEPDIR)/CDAFReader.Po
 	-rm -f cdrom/$(DEPDIR)/CDAFReader_FLAC.Po
@@ -5385,9 +5722,12 @@ distclean: distclean-recursive
 	-rm -f cheat_formats/$(DEPDIR)/gb.Po
 	-rm -f cheat_formats/$(DEPDIR)/psx.Po
 	-rm -f cheat_formats/$(DEPDIR)/snes.Po
+	-rm -f compress/$(DEPDIR)/ArchiveReader.Po
+	-rm -f compress/$(DEPDIR)/DecompressFilter.Po
 	-rm -f compress/$(DEPDIR)/GZFileStream.Po
 	-rm -f compress/$(DEPDIR)/ZIPReader.Po
 	-rm -f compress/$(DEPDIR)/ZLInflateFilter.Po
+	-rm -f compress/$(DEPDIR)/ZstdDecompressFilter.Po
 	-rm -f cputest/$(DEPDIR)/cputest.Po
 	-rm -f cputest/$(DEPDIR)/ppc_cpu.Po
 	-rm -f cputest/$(DEPDIR)/x86_cpu.Po
@@ -5701,6 +6041,7 @@ distclean: distclean-recursive
 	-rm -f psx/input/$(DEPDIR)/negcon.Po
 	-rm -f quicklz/$(DEPDIR)/libmdfnquicklz_a-quicklz.Po
 	-rm -f resampler/$(DEPDIR)/resample.Po
+	-rm -f sasplay/$(DEPDIR)/sasplay.Po
 	-rm -f sms/$(DEPDIR)/cart.Po
 	-rm -f sms/$(DEPDIR)/memz80.Po
 	-rm -f sms/$(DEPDIR)/pio.Po
@@ -5756,7 +6097,11 @@ distclean: distclean-recursive
 	-rm -f snes_faust/cart/$(DEPDIR)/sa1cpu.Po
 	-rm -f snes_faust/cart/$(DEPDIR)/sdd1.Po
 	-rm -f snes_faust/cart/$(DEPDIR)/superfx.Po
+	-rm -f snes_faust/input/$(DEPDIR)/gamepad.Po
+	-rm -f snes_faust/input/$(DEPDIR)/mouse.Po
+	-rm -f snes_faust/input/$(DEPDIR)/multitap.Po
 	-rm -f sound/$(DEPDIR)/Blip_Buffer.Po
+	-rm -f sound/$(DEPDIR)/CassowaryResampler.Po
 	-rm -f sound/$(DEPDIR)/DSPUtility.Po
 	-rm -f sound/$(DEPDIR)/Fir_Resampler.Po
 	-rm -f sound/$(DEPDIR)/OwlResampler.Po
@@ -5821,6 +6166,15 @@ distclean: distclean-recursive
 	-rm -f wswan/dis/$(DEPDIR)/dis_groups.Po
 	-rm -f wswan/dis/$(DEPDIR)/resolve.Po
 	-rm -f wswan/dis/$(DEPDIR)/syntax.Po
+	-rm -f zstd/common/$(DEPDIR)/libzstd_a-entropy_common.Po
+	-rm -f zstd/common/$(DEPDIR)/libzstd_a-error_private.Po
+	-rm -f zstd/common/$(DEPDIR)/libzstd_a-fse_decompress.Po
+	-rm -f zstd/common/$(DEPDIR)/libzstd_a-xxhash.Po
+	-rm -f zstd/common/$(DEPDIR)/libzstd_a-zstd_common.Po
+	-rm -f zstd/decompress/$(DEPDIR)/libzstd_a-huf_decompress.Po
+	-rm -f zstd/decompress/$(DEPDIR)/libzstd_a-zstd_ddict.Po
+	-rm -f zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress.Po
+	-rm -f zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress_block.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -5898,6 +6252,12 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/testsexp.Po
 	-rm -f ./$(DEPDIR)/win32-common.Po
 	-rm -f apple2/$(DEPDIR)/apple2.Po
+	-rm -f apple2/$(DEPDIR)/disk2.Po
+	-rm -f apple2/$(DEPDIR)/gameio.Po
+	-rm -f apple2/$(DEPDIR)/hdd.Po
+	-rm -f apple2/$(DEPDIR)/kbio.Po
+	-rm -f apple2/$(DEPDIR)/sound.Po
+	-rm -f apple2/$(DEPDIR)/video.Po
 	-rm -f cdplay/$(DEPDIR)/cdplay.Po
 	-rm -f cdrom/$(DEPDIR)/CDAFReader.Po
 	-rm -f cdrom/$(DEPDIR)/CDAFReader_FLAC.Po
@@ -5920,9 +6280,12 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f cheat_formats/$(DEPDIR)/gb.Po
 	-rm -f cheat_formats/$(DEPDIR)/psx.Po
 	-rm -f cheat_formats/$(DEPDIR)/snes.Po
+	-rm -f compress/$(DEPDIR)/ArchiveReader.Po
+	-rm -f compress/$(DEPDIR)/DecompressFilter.Po
 	-rm -f compress/$(DEPDIR)/GZFileStream.Po
 	-rm -f compress/$(DEPDIR)/ZIPReader.Po
 	-rm -f compress/$(DEPDIR)/ZLInflateFilter.Po
+	-rm -f compress/$(DEPDIR)/ZstdDecompressFilter.Po
 	-rm -f cputest/$(DEPDIR)/cputest.Po
 	-rm -f cputest/$(DEPDIR)/ppc_cpu.Po
 	-rm -f cputest/$(DEPDIR)/x86_cpu.Po
@@ -6236,6 +6599,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f psx/input/$(DEPDIR)/negcon.Po
 	-rm -f quicklz/$(DEPDIR)/libmdfnquicklz_a-quicklz.Po
 	-rm -f resampler/$(DEPDIR)/resample.Po
+	-rm -f sasplay/$(DEPDIR)/sasplay.Po
 	-rm -f sms/$(DEPDIR)/cart.Po
 	-rm -f sms/$(DEPDIR)/memz80.Po
 	-rm -f sms/$(DEPDIR)/pio.Po
@@ -6291,7 +6655,11 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f snes_faust/cart/$(DEPDIR)/sa1cpu.Po
 	-rm -f snes_faust/cart/$(DEPDIR)/sdd1.Po
 	-rm -f snes_faust/cart/$(DEPDIR)/superfx.Po
+	-rm -f snes_faust/input/$(DEPDIR)/gamepad.Po
+	-rm -f snes_faust/input/$(DEPDIR)/mouse.Po
+	-rm -f snes_faust/input/$(DEPDIR)/multitap.Po
 	-rm -f sound/$(DEPDIR)/Blip_Buffer.Po
+	-rm -f sound/$(DEPDIR)/CassowaryResampler.Po
 	-rm -f sound/$(DEPDIR)/DSPUtility.Po
 	-rm -f sound/$(DEPDIR)/Fir_Resampler.Po
 	-rm -f sound/$(DEPDIR)/OwlResampler.Po
@@ -6356,6 +6724,15 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f wswan/dis/$(DEPDIR)/dis_groups.Po
 	-rm -f wswan/dis/$(DEPDIR)/resolve.Po
 	-rm -f wswan/dis/$(DEPDIR)/syntax.Po
+	-rm -f zstd/common/$(DEPDIR)/libzstd_a-entropy_common.Po
+	-rm -f zstd/common/$(DEPDIR)/libzstd_a-error_private.Po
+	-rm -f zstd/common/$(DEPDIR)/libzstd_a-fse_decompress.Po
+	-rm -f zstd/common/$(DEPDIR)/libzstd_a-xxhash.Po
+	-rm -f zstd/common/$(DEPDIR)/libzstd_a-zstd_common.Po
+	-rm -f zstd/decompress/$(DEPDIR)/libzstd_a-huf_decompress.Po
+	-rm -f zstd/decompress/$(DEPDIR)/libzstd_a-zstd_ddict.Po
+	-rm -f zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress.Po
+	-rm -f zstd/decompress/$(DEPDIR)/libzstd_a-zstd_decompress_block.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

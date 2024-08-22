@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* memdebugger.h:
-**  Copyright (C) 2007-2021 Mednafen Team
+**  Copyright (C) 2007-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -41,6 +41,7 @@ class MemDebugger
 
  void ICV_Init(const char *newcode);
  void ChangePos(int64 delta);
+ void ChangeASpace(int delta);
 
  std::vector<uint8> TextToBS(const std::string& text);
  void PromptFinish(const std::string& pstring);
@@ -58,7 +59,6 @@ class MemDebugger
 
  bool IsActive;
  std::vector<uint32> ASpacePos;
- std::vector<uint64> SizeCache;
  std::vector<uint64> GoGoPowerDD;
 
  int CurASpace; // Current address space number
@@ -91,8 +91,10 @@ class MemDebugger
 
  PromptType InPrompt;
 
- MemDebuggerPrompt *myprompt;
+ std::unique_ptr<MemDebuggerPrompt> myprompt;
  SDL_Keycode PromptTAKC;
+
+ uint8 waveform[128];
 
  friend class MemDebuggerPrompt;
 };

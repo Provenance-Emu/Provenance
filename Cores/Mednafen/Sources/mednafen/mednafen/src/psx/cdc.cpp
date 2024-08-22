@@ -2,7 +2,7 @@
 /* Mednafen Sony PS1 Emulation Module                                         */
 /******************************************************************************/
 /* cdc.cpp:
-**  Copyright (C) 2011-2021 Mednafen Team
+**  Copyright (C) 2011-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -24,7 +24,9 @@
 // TODO: Rewrite command processing to use switch() state machine madness, to handle some commands(like 0x0A) whose timing
 //       characteristics cannot be handled well with the current way.  Be sure to test interruptability(with a new command) of the commands, too.
 
-#pragma GCC optimize ("unroll-loops")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize ("unroll-loops")
+#endif
 
 /*
   Games to test after changing code affecting CD reading and buffering:
@@ -110,7 +112,7 @@ void PS_CDC::SetDisc(bool tray_open, CDInterface* cdif, const char *disc_id)
 
   if(disc_id)
   {
-   strncpy((char *)DiscID, disc_id, 4);
+   memcpy(DiscID, disc_id, std::min<size_t>(4, strlen(disc_id)));
    IsPSXDisc = true;
   }
  }
@@ -422,7 +424,7 @@ void PS_CDC::WriteResult(uint8 V)
  ResultsIn = (ResultsIn + 1) & 0x1F;
 
  if(!ResultsIn)
-  PSX_WARNING("[CDC] Results buffer overflow!");
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Results buffer overflow!\n");
 }
 
 uint8 PS_CDC::ReadResult(void)
@@ -430,7 +432,7 @@ uint8 PS_CDC::ReadResult(void)
  uint8 ret = ResultsBuffer[ResultsRP];
 
  if(!ResultsIn)
-  PSX_WARNING("[CDC] Results buffer underflow!");
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Results buffer underflow!\n");
 
  ResultsRP = (ResultsRP + 1) & 0xF;
  ResultsIn = (ResultsIn - 1) & 0x1F;
@@ -732,7 +734,7 @@ void PS_CDC::XA_ProcessSector(const uint8 *sdata, CD_Audio_Buffer *ab)
 
    if(param != param_copy)
    {
-    PSX_WARNING("[CDC] CD-XA param != param_copy --- %d %02x %02x\n", unit, param, param_copy);
+    PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] CD-XA param != param_copy --- %d %02x %02x\n", unit, param, param_copy);
    }
 
    for(unsigned i = 0; i < 28; i++)
@@ -817,7 +819,7 @@ void PS_CDC::SetAIP(unsigned irq, unsigned result_count, uint8 *r)
 {
  if(AsyncIRQPending)
  {
-  PSX_WARNING("***WARNING*** Previous notification skipped: CurSector=%d, old_notification=0x%02x", CurSector, AsyncIRQPending);
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] ***WARNING*** Previous notification skipped: CurSector=%d, old_notification=0x%02x\n", CurSector, AsyncIRQPending);
  }
  ClearAIP();
 
@@ -875,11 +877,11 @@ void PS_CDC::HandlePlayRead(void)
 {
  uint8 read_buf[2352 + 96];
 
- //PSX_WARNING("Read sector: %d", CurSector);
+ //PSX_DBG(PSX_DBG_CDC, "[CDC] Read sector: %d\n", CurSector);
 
  if(CurSector >= ((int32)toc.tracks[100].lba + 300) && CurSector >= (75 * 60 * 75 - 150))
  {
-  PSX_WARNING("[CDC] Read/Play position waaay too far out(%u), forcing STOP", CurSector);
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Read/Play position waaay too far out(%u), forcing STOP\n", CurSector);
   SeekFinished = -1;
   DriveStatus = DS_STOPPED;
   SectorPipe_Pos = SectorPipe_In = 0;
@@ -889,7 +891,7 @@ void PS_CDC::HandlePlayRead(void)
 
  if(CurSector >= (int32)toc.tracks[100].lba)
  {
-  PSX_WARNING("[CDC] In leadout area: %u", CurSector);
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] In leadout area: %u\n", CurSector);
  }
 
  Cur_CDIF->ReadRawSector(read_buf, CurSector);	// FIXME: error out on error.
@@ -899,7 +901,7 @@ void PS_CDC::HandlePlayRead(void)
  {
   HeaderBufValid = false;
 
-  PSX_WARNING("[CDC] CD-DA leadout reached: %u", CurSector);
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] CD-DA leadout reached: %u\n", CurSector);
 
   // Status in this end-of-disc context here should be generated after we're in the pause state.
   SeekTarget = CurSector;
@@ -1017,7 +1019,7 @@ void PS_CDC::HandlePlayRead(void)
      {
       if(AudioBuffer.ReadPos < AudioBuffer.Size)
       {
-       PSX_WARNING("[CDC] CD-XA ADPCM sector skipped - readpos=0x%04x, size=0x%04x", AudioBuffer.ReadPos, AudioBuffer.Size);
+       PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] CD-XA ADPCM sector skipped - readpos=0x%04x, size=0x%04x\n", AudioBuffer.ReadPos, AudioBuffer.Size);
       }
       else
       {
@@ -1037,7 +1039,7 @@ void PS_CDC::HandlePlayRead(void)
      }
 
      if(!(Mode & 0x30) && (buf[12 + 6] & 0x20))
-      PSX_WARNING("[CDC] BORK: %d", CurSector);
+      PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] BORK: %d\n", CurSector);
 
      int32 offs = (Mode & 0x20) ? 0 : 12;
      int32 size = (Mode & 0x20) ? 2340 : 2048;
@@ -1083,7 +1085,7 @@ void PS_CDC::HandlePlayRead(void)
    {
     if(AudioBuffer.ReadPos < AudioBuffer.Size)
     {
-     PSX_WARNING("[CDC] BUG CDDA buffer full");
+     PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] BUG CDDA buffer full\n");
     }
     else
     {
@@ -1300,7 +1302,7 @@ pscpu_timestamp_t PS_CDC::Update(const pscpu_timestamp_t timestamp)
      {
       BeginResults();
 
-      PSX_WARNING("[CDC] Unknown command: 0x%02x", PendingCommand);
+      PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Unknown command: 0x%02x\n", PendingCommand);
 
       WriteResult(MakeStatus(true));
       WriteResult(ERRCODE_BAD_COMMAND);
@@ -1310,10 +1312,10 @@ pscpu_timestamp_t PS_CDC::Update(const pscpu_timestamp_t timestamp)
      {
       BeginResults();
 
-      PSX_DBG(PSX_DBG_WARNING, "[CDC] Bad number(%d) of args(first check) for command 0x%02x", ArgsReceiveIn, PendingCommand);
+      PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Bad number(%d) of args(first check) for command 0x%02x", ArgsReceiveIn, PendingCommand);
       for(unsigned int i = 0; i < ArgsReceiveIn; i++)
-       PSX_DBG(PSX_DBG_WARNING, " 0x%02x", ArgsReceiveBuf[i]);
-      PSX_DBG(PSX_DBG_WARNING, "\n");
+       PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, " 0x%02x", ArgsReceiveBuf[i]);
+      PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "\n");
 
       WriteResult(MakeStatus(true));
       WriteResult(ERRCODE_BAD_NUMARGS);
@@ -1325,10 +1327,10 @@ pscpu_timestamp_t PS_CDC::Update(const pscpu_timestamp_t timestamp)
 
       const CDC_CTEntry *command = &Commands[PendingCommand];
 
-      PSX_DBG(PSX_DBG_SPARSE, "[CDC] Command: %s --- ", command->name);
+      PSX_DBG(PSX_DBG_CDC, "[CDC] Command: %s --- ", command->name);
       for(unsigned int i = 0; i < ArgsReceiveIn; i++)
-       PSX_DBG(PSX_DBG_SPARSE, " 0x%02x", ArgsReceiveBuf[i]);
-      PSX_DBG(PSX_DBG_SPARSE, "\n");
+       PSX_DBG(PSX_DBG_CDC, " 0x%02x", ArgsReceiveBuf[i]);
+      PSX_DBG(PSX_DBG_CDC, "\n");
 
       next_time = (this->*(command->func))(ArgsReceiveIn, ArgsReceiveBuf);
       PendingCommandPhase = 2;
@@ -1368,29 +1370,29 @@ void PS_CDC::Write(const pscpu_timestamp_t timestamp, uint32 A, uint8 V)
   const unsigned reg_index = ((RegSelector & 0x3) * 3) + (A - 1);
 
   Update(timestamp);
-  //PSX_WARNING("[CDC] Write to register 0x%02x: 0x%02x @ %d --- 0x%02x 0x%02x\n", reg_index, V, timestamp, DMABuffer.CanRead(), IRQBuffer);
+  //PSX_DBG(PSX_DBG_CDC, "[CDC] Write to register 0x%02x: 0x%02x @ %d --- 0x%02x 0x%02x\n", reg_index, V, timestamp, DMABuffer.CanRead(), IRQBuffer);
 
   switch(reg_index)
   {
 	default:
-		PSX_WARNING("[CDC] Unknown write to register 0x%02x: 0x%02x\n", reg_index, V);
+		PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Unknown write to register 0x%02x: 0x%02x\n", reg_index, V);
 		break;
 
 	 case 0x00:
 		if(PendingCommandCounter > 0)
 		{
-		 PSX_WARNING("[CDC] WARNING: Interrupting command 0x%02x, phase=%d, timeleft=%d with command=0x%02x", PendingCommand, PendingCommandPhase,
+		 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] WARNING: Interrupting command 0x%02x, phase=%d, timeleft=%d with command=0x%02x\n", PendingCommand, PendingCommandPhase,
 			PendingCommandCounter, V);
 		}
 
 		if(IRQBuffer & 0xF)
 		{
-		 PSX_WARNING("[CDC] Attempting to start command(0x%02x) while IRQBuffer(0x%02x) is not clear.", V, IRQBuffer);
+		 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Attempting to start command(0x%02x) while IRQBuffer(0x%02x) is not clear.\n", V, IRQBuffer);
 		}
 
 		if(ResultsIn > 0)
 		{
-		 PSX_WARNING("[CDC] Attempting to start command(0x%02x) while command results(count=%d) still in buffer.", V, ResultsIn);
+		 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Attempting to start command(0x%02x) while command results(count=%d) still in buffer.\n", V, ResultsIn);
 		}
 
          	PendingCommandCounter = 10500 + PSX_GetRandU32(0, 3000) + 1815;
@@ -1405,7 +1407,7 @@ void PS_CDC::Write(const pscpu_timestamp_t timestamp, uint32 A, uint8 V)
 		
 		if(!((ArgsWP - ArgsRP) & 0x0F))
 		{
-		 PSX_WARNING("[CDC] Argument buffer overflow");
+		 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Argument buffer overflow\n");
 		}
 		break;
 
@@ -1416,7 +1418,7 @@ void PS_CDC::Write(const pscpu_timestamp_t timestamp, uint32 A, uint8 V)
 	  	 {
 		  if(!SB_In)
 		  {
-		   PSX_WARNING("[CDC] Data read begin when no data to read!");
+		   PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Data read begin when no data to read!\n");
 
 		   DMABuffer.Write(SB, 2340);
 
@@ -1446,7 +1448,7 @@ void PS_CDC::Write(const pscpu_timestamp_t timestamp, uint32 A, uint8 V)
 
 		if(V & 0x20)
 		{
-		 PSX_WARNING("[CDC] Mystery IRQ trigger bit set.");
+		 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Mystery IRQ trigger bit set.\n");
 		 IRQBuffer |= 0x10;
 		 RecalcIRQ();
 		}
@@ -1463,7 +1465,7 @@ void PS_CDC::Write(const pscpu_timestamp_t timestamp, uint32 A, uint8 V)
 		 // To debug icky race-condition related problems in "Psychic Detective", and to see if any games suffer from the same potential issue
 		 // (to know what to test when we emulate CPU more accurately in regards to pipeline stalls and timing, which could throw off our kludge
 		 //  for this issue)
-		 PSX_WARNING("[CDC] Acknowledged IRQ(wrote 0x%02x, before_IRQBuffer=0x%02x) while %u bytes in results buffer.", V, IRQBuffer, ResultsIn);
+		 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Acknowledged IRQ(wrote 0x%02x, before_IRQBuffer=0x%02x) while %u bytes in results buffer.\n", V, IRQBuffer, ResultsIn);
 		}
 
 	 	IRQBuffer &= ~V;
@@ -1471,7 +1473,7 @@ void PS_CDC::Write(const pscpu_timestamp_t timestamp, uint32 A, uint8 V)
 
 		if(V & 0x80)	// Forced CD hardware reset of some kind(interface, controller, and drive?)  Seems to take a while(relatively speaking) to complete.
 		{
-		 PSX_WARNING("[CDC] Soft Reset");
+		 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Soft Reset\n");
 		 SoftReset();
 		}
 
@@ -1557,7 +1559,7 @@ uint8 PS_CDC::Read(const pscpu_timestamp_t timestamp, uint32 A)
 	 ret = DMABuffer.ReadByte();
 	else
 	{
-	 PSX_WARNING("[CDC] CD data transfer port read, but no data present!");
+	 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] CD data transfer port read, but no data present!\n");
 	}
 	break;
 
@@ -1593,7 +1595,7 @@ uint32 PS_CDC::DMARead(void)
    data |= DMABuffer.ReadByte() << (i * 8);
   else
   {
-   PSX_WARNING("[CDC] DMA read buffer underflow!");
+   PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] DMA read buffer underflow!\n");
   }
  }
 
@@ -1694,7 +1696,7 @@ int32 PS_CDC::CalcSeekTime(int32 initial, int32 target, bool motor_on, bool paus
 
  ret += PSX_GetRandU32(0, 25000);
 
- PSX_DBG(PSX_DBG_SPARSE, "[CDC] CalcSeekTime() %d->%d = %d\n", initial, target, ret);
+ PSX_DBG(PSX_DBG_CDC, "[CDC] CalcSeekTime() %d->%d = %d\n", initial, target, ret);
 
  return(ret);
 }
@@ -1748,12 +1750,12 @@ int32 PS_CDC::Command_Play(const int arg_count, const uint8 *args)
 
   if(track < toc.first_track)
   {
-   PSX_WARNING("[CDC] Attempt to play track before first track.");
+   PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Attempt to play track before first track.\n");
    track = toc.first_track;
   }
   else if(track > toc.last_track)
   {
-   PSX_WARNING("[CDC] Attempt to play track after last track.");
+   PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Attempt to play track after last track.\n");
    track = toc.last_track;
   }
 
@@ -1763,7 +1765,7 @@ int32 PS_CDC::Command_Play(const int arg_count, const uint8 *args)
 
   PlayTrackMatch = track;
 
-  PSX_WARNING("[CDC] Play track: %d", track);
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Play track: %d\n", track);
 
   SeekTarget = toc.tracks[track].lba;
   PSRCounter = CalcSeekTime(CurSector, SeekTarget, DriveStatus != DS_STOPPED, DriveStatus == DS_PAUSED);
@@ -2074,8 +2076,6 @@ int32 PS_CDC::Command_Setfilter(const int arg_count, const uint8 *args)
  FilterFile = args[0];
  FilterChan = args[1];
 
- //PSX_WARNING("[CDC] Setfilter: %02x %02x", args[0], args[1]);
-
  WriteResult(MakeStatus());
  WriteIRQ(CDCIRQ_ACKNOWLEDGE);
 
@@ -2285,7 +2285,7 @@ int32 PS_CDC::Command_Seek_PartN(void)
   }
   else
   {
-   PSX_WARNING("[CDC] DriveStatus no longer seeking, but SeekFinished is still 0.");
+   PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] DriveStatus no longer seeking, but SeekFinished is still 0.\n");
   }
 
   return 0;
@@ -2298,12 +2298,10 @@ int32 PS_CDC::Command_Seek_PartN(void)
 
 int32 PS_CDC::Command_Test(const int arg_count, const uint8 *args)
 {
- //PSX_WARNING("[CDC] Test command sub-operation: 0x%02x", args[0]);
-
  switch(args[0])
  {
   default:
-	PSX_WARNING("[CDC] Unknown Test command sub-operation: 0x%02x", args[0]);
+	PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Unknown Test command sub-operation: 0x%02x\n", args[0]);
 	WriteResult(MakeStatus(true));
 	WriteResult(0x10);
 	WriteIRQ(CDCIRQ_DISC_ERROR);
@@ -2324,7 +2322,7 @@ int32 PS_CDC::Command_Test(const int arg_count, const uint8 *args)
   case 0x18:
   case 0x19:
   case 0x1A:
-	PSX_WARNING("[CDC] Unknown Test command sub-operation: 0x%02x", args[0]);
+	PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Unknown Test command sub-operation: 0x%02x\n", args[0]);
 	WriteResult(MakeStatus());
 	WriteIRQ(CDCIRQ_ACKNOWLEDGE);
   	break;
@@ -2339,14 +2337,14 @@ int32 PS_CDC::Command_Test(const int arg_count, const uint8 *args)
 #endif
 
   case 0x51:	// *Need to retest this test command
-	PSX_WARNING("[CDC] Unknown Test command sub-operation: 0x%02x", args[0]);
+	PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Unknown Test command sub-operation: 0x%02x\n", args[0]);
 	WriteResult(0x01);
 	WriteResult(0x00);
 	WriteResult(0x00);
 	break;
 
   case 0x75:	// *Need to retest this test command
-	PSX_WARNING("[CDC] Unknown Test command sub-operation: 0x%02x", args[0]);
+	PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CDC, "[CDC] Unknown Test command sub-operation: 0x%02x\n", args[0]);
 	WriteResult(0x00);
 	WriteResult(0xC0);
 	WriteResult(0x00);

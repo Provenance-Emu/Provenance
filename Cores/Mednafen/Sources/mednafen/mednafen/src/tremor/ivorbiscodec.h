@@ -19,7 +19,8 @@
 #define _vorbis_codec_h_
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C"
+{
 #endif /* __cplusplus */
 
 #include "ogg.h"
@@ -196,7 +197,7 @@ extern long     vorbis_packet_blocksize(vorbis_info *vi,ogg_packet *op);
 #define OV_ENOSEEK    -138
 
 #ifdef __cplusplus
-//}
+}
 #endif /* __cplusplus */
 
 #endif

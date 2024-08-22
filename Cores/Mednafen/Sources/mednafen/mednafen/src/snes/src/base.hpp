@@ -16,7 +16,6 @@ static const unsigned bsnesSerializerVersion = 4;
 #include <libco/libco.h>
 
 #include <nall/algorithm.hpp>
-#include <nall/any.hpp>
 #include <nall/array.hpp>
 #include <nall/bit.hpp>
 #include <nall/detect.hpp>

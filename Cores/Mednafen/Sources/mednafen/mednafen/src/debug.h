@@ -60,11 +60,8 @@ struct AddressSpaceType
 	// The longer, descriptive name for this address space.
 	std::string long_name;
 
-	// The number of address bits for this address space.
-	uint32 TotalBits;
-
-	// Non-power-of-2 size.  Normally 0, unless the size of the address space isn't a power of 2!
-	uint32 NP2Size;
+	// Size of address space in bytes.  May be non-power-of-2.
+	uint64 size;
 
 	bool IsWave;
 	ASpace_WFMT WaveFormat;	// TODO
@@ -75,6 +72,7 @@ struct AddressSpaceType
 
 	void *private_data;
 
+#if 0
 	// Internal use...
 	void (*EnableUsageMap)(bool);
 
@@ -83,6 +81,7 @@ struct AddressSpaceType
 
 	uint64 UsageReadMemUsed;	// Keep track of how much memory we've allocated for UsageMap, so we don't go kaka-kookoo and use up an 					// excessive amount of RAM.
 	uint64 UsageWriteMemUsed;
+#endif
 };
 
 // TODO: newer branch trace interface not implemented yet.
@@ -196,6 +195,7 @@ int ASpace_Add(const AddressSpaceType &);
 // Removes all registered address spaces.
 void ASpace_Reset(void);
 
+#if 0
 // pre_bpoint should be true if these are "estimated" read/writes that will occur when the current instruction
 // is actually executed/committed.
 // size is the size of the read/write(ex: 1 byte, 2 bytes, 4 bytes), defaulting to 1 byte.
@@ -212,7 +212,7 @@ void ASpace_ClearWriteMap(const int id);
 
 void ASpace_AddBreakPoint(const int id, const int type, const uint32 A1, const uint32 A2, const bool logical);
 void ASpace_FlushBreakPoints(const int id);
-
+#endif
 
 void MDFNDBG_ResetRegGroupsInfo(void) MDFN_COLD;
 void MDFNDBG_AddRegGroup(const RegGroupType* groupie) MDFN_COLD;

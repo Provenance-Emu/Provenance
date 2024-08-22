@@ -808,7 +808,7 @@ NO_INLINE void DSP1Chip::Run(int32 cycles)
  {
   if(Command == 0x1A)
   {
-   SNES_DBG("[DSP1] Untested command: %02x\n", Command);
+   SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[DSP1] Untested command: %02x\n", Command);
   }
   // Mode 7 matrix calculation
   //
@@ -941,7 +941,7 @@ NO_INLINE void DSP1Chip::Run(int32 cycles)
  {
   if(Command != 0x80)
   {
-   SNES_DBG("[DSP1] Unknown command: %02x\n", Command);
+   SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[DSP1] Unknown command: %02x\n", Command);
   }
   Command = 0x80;
  }

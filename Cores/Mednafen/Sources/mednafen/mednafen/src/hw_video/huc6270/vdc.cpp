@@ -1589,7 +1589,7 @@ int32 VDC::Reset(void)
  memset(SAT, 0, sizeof(SAT));
  memset(SpriteList, 0, sizeof(SpriteList));
 
- for(uint32 A = 0; A < 65536; A += 16)
+ for(uint32 A = 0; A < 65536; A++)
   FixTileCache(A);
 
  pending_read = false;

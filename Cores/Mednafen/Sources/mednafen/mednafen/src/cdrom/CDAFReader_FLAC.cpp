@@ -23,7 +23,7 @@
 #include "CDAFReader.h"
 #include "CDAFReader_FLAC.h"
 
-//#include <FLAC/all.h>
+#include <FLAC/all.h>
 
 namespace Mednafen
 {

@@ -112,10 +112,7 @@ class OwlResampler
 	OwlResampler(const OwlResampler &resamp) MDFN_COLD;
 	~OwlResampler() MDFN_COLD;
 
-	INLINE int32 Resample(OwlBuffer* in, const uint32 in_count, int16* out, const uint32 max_out_count/*(unused currently)*/, const bool reverse = false)
-	{
-	 return (this->*OwlResampler::Resample_)(in, in_count, out, max_out_count, reverse);
-	}
+	int32 Resample(OwlBuffer* in, const uint32 in_count, int16* out, const uint32 max_out_count/*(unused currently)*/, const bool reverse = false, const bool stereo = true);
 	void ResetBufResampState(OwlBuffer* buf);
 
 	// Get the InputRate / OutputRate ratio, expressed as a / b
@@ -157,11 +154,11 @@ class OwlResampler
 
 	std::vector<PhaseInfo> PInfos;
 	std::vector<float> CoeffsBuffer;
-	std::vector<int32> IntermediateBuffer; //int32 boobuf[8192];
+	std::vector<int32> IntermediateBuffer;
 
 	template<unsigned TA_SIMD_Type>
-	int32 T_Resample(OwlBuffer* in, const uint32 in_count, int16* out, const uint32 max_out_count, const bool reverse);
-	int32 (OwlResampler::*Resample_)(OwlBuffer* in, const uint32 in_count, int16* out, const uint32 max_out_count, const bool reverse);
+	int32 T_Resample(OwlBuffer* in, const uint32 in_count);
+	int32 (OwlResampler::*Resample_)(OwlBuffer* in, const uint32 in_count);
 
 	uint16 debias_multiplier;
 

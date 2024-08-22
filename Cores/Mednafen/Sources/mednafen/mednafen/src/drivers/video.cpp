@@ -72,7 +72,7 @@ class SDL_to_MDFN_Surface_Wrapper : public MDFN_Surface
   pixels16 = NULL;
   pixels = NULL;
 
-  if(ss->format->BitsPerPixel == 16)
+  if(ss->format->BytesPerPixel == 2)
   {
    pixels16 = (uint16*)ss->pixels;
    pitchinpix = ss->pitch >> 1;
@@ -145,6 +145,23 @@ static const MDFNSetting_EnumList VDriver_List[] =
  { NULL, 0 },
 };
 
+enum
+{
+ CURSORVIS_HIDDEN = 0,
+ CURSORVIS_VISIBLE
+};
+
+static const MDFNSetting_EnumList CursorVis_List[] =
+{
+ { "hidden", CURSORVIS_HIDDEN, gettext_noop("Hidden") },
+ { "visible", CURSORVIS_VISIBLE, gettext_noop("Visible") },
+
+ { "0", CURSORVIS_HIDDEN },
+ { "1", CURSORVIS_VISIBLE },
+
+ { NULL, 0 }
+};
+
 static const MDFNSetting_EnumList GLFormat_List[] =
 {
  { "auto", EVFSUPPORT_NONE, gettext_noop("Auto"), gettext_noop("Currently the same as \"truecolor\", but may automatically select deeper color formats in the future.") },
@@ -168,13 +185,17 @@ static const MDFNSetting GlobalVideoSettings[] =
  //{ "video.window.x", MDFNSF_NOFLAGS, gettext_noop("Window starting X position."), NULL, MDFNST_INT, "0x2FFF0000" },
  //{ "video.window.y", MDFNSF_NOFLAGS, gettext_noop("Window starting Y position."), NULL, MDFNST_INT, "0x2FFF0000" },
 
+ { "video.cursorvis", MDFNSF_NOFLAGS, gettext_noop("Preferred window manager cursor visibility."), gettext_noop("The cursor will still be forcibly hidden in relative mouse mode(used automatically when emulating a mouse input device in fullscreen mode or in windowed mode and input grabbing is toggled on), and forcibly shown in the debugger."), MDFNST_ENUM, "hidden", NULL, NULL, NULL, NULL, CursorVis_List },
+
  { "video.glformat", MDFNSF_NOFLAGS, gettext_noop("Preferred source data pixel format for emulated video."), gettext_noop("Using hicolor(RGB555/RGB565) formats may boost performance, but at the cost of color fidelity.  Noticeability of color degradation depends on the emulated system and features, such as custom palettes or NTSC blitter, being used.  When hicolor format support is not available for the emulation module or special scaler being used, Mednafen will automatically fall back to using a truecolor format.  Examine Mednafen's startup output to see the actual OpenGL texture formats being used."), MDFNST_ENUM, "auto", NULL, NULL, NULL, NULL, GLFormat_List },
 
- { "video.glvsync", MDFNSF_NOFLAGS, gettext_noop("Attempt to synchronize OpenGL page flips to vertical retrace period."), 
-			       gettext_noop("Note: Additionally, if the environment variable \"__GL_SYNC_TO_VBLANK\" does not exist, then it will be created and set to the value specified for this setting.  This has the effect of forcibly enabling or disabling vblank synchronization when running under Linux with NVidia's drivers."),
-				MDFNST_BOOL, "1" },
+ { "video.force_bbclear", MDFNSF_NOFLAGS, gettext_noop("Force backbuffer clear before drawing."), gettext_noop("Enabling may result in a noticeable negative impact on performance with the \"softfb\" video driver, and with the \"opengl\" video driver on underpowered GPUs."), MDFNST_BOOL, "0" },
+
+ { "video.glvsync", MDFNSF_NOFLAGS, gettext_noop("Attempt to synchronize OpenGL page flips to vertical retrace period."), NULL, MDFNST_BOOL, "1" },
 
  { "video.disable_composition", MDFNSF_NOFLAGS, gettext_noop("Attempt to disable desktop composition."), gettext_noop("Currently, this setting only has an effect on Windows Vista and Windows 7(and probably the equivalent server versions as well)."), MDFNST_BOOL, "1" },
+
+ { NULL }
 };
 
 static const MDFNSetting_EnumList StretchMode_List[] =
@@ -267,7 +288,7 @@ static const MDFNSetting_EnumList GoatPat_List[] =
 	{ NULL, 0 },
 };
 
-void Video_MakeSettings(std::vector <MDFNSetting> &settings)
+void Video_MakeSettings(void)
 {
  static const char *CSD_xres = gettext_noop("Full-screen horizontal resolution.");
  static const char *CSD_yres = gettext_noop("Full-screen vertical resolution.");
@@ -279,19 +300,19 @@ void Video_MakeSettings(std::vector <MDFNSetting> &settings)
 
  static const char *CSD_xscalefs = gettext_noop("Scaling factor for the X axis in fullscreen mode.");
  static const char *CSD_yscalefs = gettext_noop("Scaling factor for the Y axis in fullscreen mode.");
- static const char *CSDE_xyscalefs = gettext_noop("For this setting to have any effect, the \"<system>.stretch\" setting must be set to \"0\".");
+ static const char *CSDE_xyscalefs = gettext_noop("For this setting to have any effect, the \"\5<system>.stretch\" setting must be set to \"0\".");
 
  static const char *CSD_scanlines = gettext_noop("Enable scanlines with specified opacity.");
- static const char *CSDE_scanlines = gettext_noop("Opacity is specified in %; IE a value of \"100\" will give entirely black scanlines.\n\nNegative values are the same as positive values for non-interlaced video, but for interlaced video will cause the scanlines to be overlaid over the previous(if the video.deinterlacer setting is set to \"weave\", the default) field's lines.");
+ static const char *CSDE_scanlines = gettext_noop("Opacity is specified in %; IE a value of \"100\" will give entirely black scanlines.\n\nNegative values are the same as positive values for non-interlaced video, but for interlaced video will cause the scanlines to be overlaid over the previous(if the \"\5video.deinterlacer\" setting is set to \"weave\", the default) field's lines.");
 
  static const char *CSD_stretch = gettext_noop("Stretch to fill screen.");
  static const char *CSDvideo_settingsip = gettext_noop("Enable (bi)linear interpolation.");
 
  static const char *CSD_special = gettext_noop("Enable specified special video scaler.");
- static const char *CSDE_special = gettext_noop("The destination rectangle is NOT altered by this setting, so if you have xscale and yscale set to \"2\", and try to use a 3x scaling filter like hq3x, the image is not going to look that great. The nearest-neighbor scalers are intended for use with bilinear interpolation enabled, at high resolutions(such as 1280x1024; nn2x(or nny2x) + bilinear interpolation + fullscreen stretching at this resolution looks quite nice).");
+ static const char *CSDE_special = gettext_noop("The destination rectangle is NOT altered by this setting, so if you have xscale and yscale set to \"2\", and try to use a 3x scaling filter like hq3x, the image is not going to look that great. The nearest-neighbor scalers are intended for use with bilinear interpolation enabled, for a sharper image, though the \"autoipsharper\" shader may provide better results.");
 
  static const char *CSD_shader = gettext_noop("Enable specified OpenGL shader.");
- static const char *CSDE_shader = gettext_noop("Obviously, this will only work with the OpenGL \"video.driver\" setting, and only on cards and OpenGL implementations that support shaders, otherwise you will get a black screen, or Mednafen may display an error message when starting up. When a shader is enabled, the \"<system>.videoip\" setting is ignored.");
+ static const char *CSDE_shader = gettext_noop("Obviously, this will only work with the OpenGL \"\5video.driver\" setting, and only on cards and OpenGL implementations that support shaders, otherwise you will get a black screen, or Mednafen may display an error message when starting up. When a shader is enabled, the \"\5<system>.videoip\" setting is ignored.");
 
  for(unsigned int i = 0; i < MDFNSystems.size() + 1; i++)
  {
@@ -300,7 +321,6 @@ void Video_MakeSettings(std::vector <MDFNSetting> &settings)
   const char* default_videoip;
   const char *sysname;
   char default_value[256];
-  MDFNSetting setting;
   const int default_xres = 0, default_yres = 0;
   const double default_scalefs = 1.0;
   double default_scale;
@@ -338,61 +358,33 @@ void Video_MakeSettings(std::vector <MDFNSetting> &settings)
    default_scale = 1;
 
   trio_snprintf(default_value, 256, "%d", default_xres);
-  BuildSystemSetting(&setting, sysname, "xres", CSD_xres, CSDE_xres, MDFNST_UINT, strdup(default_value), "0", "65536");
-  settings.push_back(setting);
+  AddSystemSetting(sysname, "xres", CSD_xres, CSDE_xres, MDFNST_UINT, strdup(default_value), "0", "65536", NULL, NULL, NULL, MDFNSF_FREE_DEFAULT);
 
   trio_snprintf(default_value, 256, "%d", default_yres);
-  BuildSystemSetting(&setting, sysname, "yres", CSD_yres, CSDE_yres, MDFNST_UINT, strdup(default_value), "0", "65536");
-  settings.push_back(setting);
+  AddSystemSetting(sysname, "yres", CSD_yres, CSDE_yres, MDFNST_UINT, strdup(default_value), "0", "65536", NULL, NULL, NULL, MDFNSF_FREE_DEFAULT);
 
   trio_snprintf(default_value, 256, "%f", default_scale);
-  BuildSystemSetting(&setting, sysname, "xscale", CSD_xscale, NULL, MDFNST_FLOAT, strdup(default_value), "0.01", "256");
-  settings.push_back(setting);
-  BuildSystemSetting(&setting, sysname, "yscale", CSD_yscale, NULL, MDFNST_FLOAT, strdup(default_value), "0.01", "256");
-  settings.push_back(setting);
+  AddSystemSetting(sysname, "xscale", CSD_xscale, NULL, MDFNST_FLOAT, strdup(default_value), "0.01", "256", NULL, NULL, NULL, MDFNSF_FREE_DEFAULT);
+  AddSystemSetting(sysname, "yscale", CSD_yscale, NULL, MDFNST_FLOAT, strdup(default_value), "0.01", "256", NULL, NULL, NULL, MDFNSF_FREE_DEFAULT);
 
   trio_snprintf(default_value, 256, "%f", default_scalefs);
-  BuildSystemSetting(&setting, sysname, "xscalefs", CSD_xscalefs, CSDE_xyscalefs, MDFNST_FLOAT, strdup(default_value), "0.01", "256");
-  settings.push_back(setting);
-  BuildSystemSetting(&setting, sysname, "yscalefs", CSD_yscalefs, CSDE_xyscalefs, MDFNST_FLOAT, strdup(default_value), "0.01", "256");
-  settings.push_back(setting);
+  AddSystemSetting(sysname, "xscalefs", CSD_xscalefs, CSDE_xyscalefs, MDFNST_FLOAT, strdup(default_value), "0.01", "256", NULL, NULL, NULL, MDFNSF_FREE_DEFAULT);
+  AddSystemSetting(sysname, "yscalefs", CSD_yscalefs, CSDE_xyscalefs, MDFNST_FLOAT, strdup(default_value), "0.01", "256", NULL, NULL, NULL, MDFNSF_FREE_DEFAULT);
 
-  BuildSystemSetting(&setting, sysname, "scanlines", CSD_scanlines, CSDE_scanlines, MDFNST_INT, "0", "-100", "100");
-  settings.push_back(setting);
-
-  BuildSystemSetting(&setting, sysname, "stretch", CSD_stretch, NULL, MDFNST_ENUM, "aspect_mult2", NULL, NULL, NULL, NULL, StretchMode_List);
-  settings.push_back(setting);
-
-  BuildSystemSetting(&setting, sysname, "videoip", CSDvideo_settingsip, NULL, MDFNST_ENUM, default_videoip, NULL, NULL, NULL, NULL, VideoIP_List);
-  settings.push_back(setting);
-
-  BuildSystemSetting(&setting, sysname, "special", CSD_special, CSDE_special, MDFNST_ENUM, "none", NULL, NULL, NULL, NULL, Special_List);
-  settings.push_back(setting);
-
-  BuildSystemSetting(&setting, sysname, "shader", CSD_shader, CSDE_shader, MDFNST_ENUM, "none", NULL, NULL, NULL, NULL, Shader_List);
-  settings.push_back(setting);
-
-  BuildSystemSetting(&setting, sysname, "shader.goat.hdiv", gettext_noop("Constant RGB horizontal divergence."), nullptr, MDFNST_FLOAT, "0.50", "-2.00", "2.00");
-  settings.push_back(setting);
-
-  BuildSystemSetting(&setting, sysname, "shader.goat.vdiv", gettext_noop("Constant RGB vertical divergence."), nullptr, MDFNST_FLOAT, "0.50", "-2.00", "2.00");
-  settings.push_back(setting);
-
-  BuildSystemSetting(&setting, sysname, "shader.goat.pat", gettext_noop("Mask pattern."), nullptr, MDFNST_ENUM, "goatron", NULL, NULL, NULL, NULL, GoatPat_List);
-  settings.push_back(setting);
-
-  BuildSystemSetting(&setting, sysname, "shader.goat.tp", gettext_noop("Transparency of otherwise-opaque mask areas."), nullptr, MDFNST_FLOAT, "0.50", "0.00", "1.00");
-  settings.push_back(setting);
-
-  BuildSystemSetting(&setting, sysname, "shader.goat.fprog", gettext_noop("Force interlaced video to be treated as progressive."), gettext_noop("When disabled, the default, the \"video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it's set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the *.goat.slen setting, or else the scanline effect may look objectionable."), MDFNST_BOOL, "0");
-  settings.push_back(setting);
-
-  BuildSystemSetting(&setting, sysname, "shader.goat.slen", gettext_noop("Enable scanlines effect."), nullptr, MDFNST_BOOL, "1");
-  settings.push_back(setting);
+  AddSystemSetting(sysname, "scanlines", CSD_scanlines, CSDE_scanlines, MDFNST_INT, "0", "-100", "100");
+  AddSystemSetting(sysname, "stretch", CSD_stretch, NULL, MDFNST_ENUM, "aspect_mult2", NULL, NULL, NULL, NULL, StretchMode_List);
+  AddSystemSetting(sysname, "videoip", CSDvideo_settingsip, NULL, MDFNST_ENUM, default_videoip, NULL, NULL, NULL, NULL, VideoIP_List);
+  AddSystemSetting(sysname, "special", CSD_special, CSDE_special, MDFNST_ENUM, "none", NULL, NULL, NULL, NULL, Special_List);
+  AddSystemSetting(sysname, "shader", CSD_shader, CSDE_shader, MDFNST_ENUM, "none", NULL, NULL, NULL, NULL, Shader_List);
+  AddSystemSetting(sysname, "shader.goat.hdiv", gettext_noop("Constant RGB horizontal divergence."), nullptr, MDFNST_FLOAT, "0.50", "-2.00", "2.00");
+  AddSystemSetting(sysname, "shader.goat.vdiv", gettext_noop("Constant RGB vertical divergence."), nullptr, MDFNST_FLOAT, "0.50", "-2.00", "2.00");
+  AddSystemSetting(sysname, "shader.goat.pat", gettext_noop("Mask pattern."), nullptr, MDFNST_ENUM, "goatron", NULL, NULL, NULL, NULL, GoatPat_List);
+  AddSystemSetting(sysname, "shader.goat.tp", gettext_noop("Transparency of otherwise-opaque mask areas."), nullptr, MDFNST_FLOAT, "0.50", "0.00", "1.00");
+  AddSystemSetting(sysname, "shader.goat.fprog", gettext_noop("Force interlaced video to be treated as progressive."), gettext_noop("When disabled, the default, the \"\5video.deinterlacer\" setting is effectively ignored with respect to what appears on the screen, unless it's set to \"blend\" or \"blend_rg\".  When enabled, it may be prudent to disable the scanlines effect controlled by the \"\5<system>.shader.goat.slen\" setting, or else the scanline effect may look objectionable."), MDFNST_BOOL, "0");
+  AddSystemSetting(sysname, "shader.goat.slen", gettext_noop("Enable scanlines effect."), nullptr, MDFNST_BOOL, "1");
  }
 
- for(unsigned i = 0; i < sizeof(GlobalVideoSettings) / sizeof(GlobalVideoSettings[0]); i++)
-  settings.push_back(GlobalVideoSettings[i]);
+ MDFNI_MergeSettings(GlobalVideoSettings);
 }
 
 static struct
@@ -406,8 +398,10 @@ static struct
  int stretch;
  int special;
  int scanlines;
+ bool force_bbclear;
  ShaderType shader;
  ShaderParams shader_params;
+ unsigned cursorvis;
 
  std::string special_str, shader_str, goat_pat_str;
 } video_settings;
@@ -479,6 +473,8 @@ static MDFN_PixelFormat game_pf; // Pixel format for game texture/surface
 static MDFN_PixelFormat osd_pf;	 // Pixel format for OSD textures/surfaces
 static MDFN_PixelFormat emu_pf;
 
+static void GrabbyGoAway(void);
+
 static INLINE void MarkNeedBBClear(void)
 {
  NeedClear = 15;
@@ -523,9 +519,7 @@ void Video_Kill(void)
   if(SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN)
    SDL_SetWindowFullscreen(window, 0);
   //
-  SDL_SetRelativeMouseMode(SDL_FALSE);
-  SDL_ShowCursor(SDL_TRUE);
-  SDL_SetWindowGrab(window, SDL_FALSE);
+  GrabbyGoAway();
 
   SDL_DestroyWindow(window);
   window = nullptr;
@@ -554,9 +548,7 @@ bool Video_ErrorPopup(bool warning, const char* title, const char* text)
  if(window)
  {
   // Best not to drive the user stark raving mad.
-  SDL_SetRelativeMouseMode(SDL_FALSE);
-  SDL_ShowCursor(SDL_TRUE);
-  SDL_SetWindowGrab(window, SDL_FALSE);
+  GrabbyGoAway();
   // should we or shouldn't we...: SDL_SetHint(SDL_HINT_WINDOWS_NO_CLOSE_ON_ALT_F4, "0");
  }
 #if 0
@@ -705,21 +697,65 @@ static bool GenerateFullscreenDestRect(void)
  return screen_dest_rect.w < 16384 && screen_dest_rect.h < 16384;
 }
 
-static bool weset_glstvb = false; 
+// Called on error popups and exit.
+static void GrabbyGoAway(void)
+{
+ SDL_SetRelativeMouseMode(SDL_FALSE);
+ SDL_ShowCursor(SDL_TRUE);
+
+#if SDL_VERSION_ATLEAST(2, 0, 16)
+ SDL_SetWindowKeyboardGrab(window, SDL_FALSE);
+ SDL_SetWindowMouseGrab(window, SDL_FALSE);
+#else
+ SDL_SetWindowGrab(window, SDL_FALSE);
+#endif
+}
 
 void Video_SetWMInputBehavior(const WMInputBehavior& beeeeees)
 {
  CurWMIB = beeeeees;
  //
  const bool fs = (SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN);
- const bool grab = CurWMIB.Grab;
- const bool relm = CurWMIB.MouseRel && !CurWMIB.MouseAbs && !CurWMIB.Cursor && (grab || fs);
- const bool curse = !relm && CurWMIB.Cursor;
+ const bool grab_keyboard = CurWMIB.Grab_Keyboard;
+ const bool grab_mouse = CurWMIB.Grab_Mouse;
+ const bool relm = CurWMIB.MouseRel && !CurWMIB.MouseAbs && !CurWMIB.Cursor && (grab_mouse || fs);
+ const bool curse = !relm && (CurWMIB.Cursor || video_settings.cursorvis == CURSORVIS_VISIBLE);
 
- //printf("Grab: %d, RelM: %d, Curse: %d\n", grab, relm, curse);
-
- if(grab)
+#if SDL_VERSION_ATLEAST(2, 0, 16)
+ if(grab_keyboard || grab_mouse)
  {
+  SDL_ShowWindow(window);
+  SDL_RaiseWindow(window);
+
+  if(grab_keyboard)
+   SDL_SetWindowKeyboardGrab(window, SDL_TRUE);
+
+  if(grab_mouse)
+   SDL_SetWindowMouseGrab(window, SDL_TRUE);
+ }
+
+ SDL_ShowCursor(SDL_FALSE);
+ SDL_SetRelativeMouseMode(relm ? SDL_TRUE : SDL_FALSE);
+ SDL_ShowCursor(curse ? SDL_TRUE : SDL_FALSE);
+
+ if(!grab_keyboard)
+  SDL_SetWindowKeyboardGrab(window, SDL_FALSE);
+
+ if(!grab_mouse)
+  SDL_SetWindowMouseGrab(window, SDL_FALSE);
+#else
+ const bool any_grab = (grab_keyboard || grab_mouse);
+
+ if(any_grab && (bool)(SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_GRABBED))
+ {
+  SDL_SetWindowGrab(window, SDL_FALSE);
+  SDL_SetRelativeMouseMode(SDL_FALSE);
+ }
+
+ if(any_grab)
+ {
+  SDL_SetHint(SDL_HINT_GRAB_KEYBOARD, grab_keyboard ? "1" : "0");
+
   SDL_ShowWindow(window);
   SDL_RaiseWindow(window);
   SDL_SetWindowGrab(window, SDL_TRUE);
@@ -729,10 +765,11 @@ void Video_SetWMInputBehavior(const WMInputBehavior& beeeeees)
  SDL_SetRelativeMouseMode(relm ? SDL_TRUE : SDL_FALSE);
  SDL_ShowCursor(curse ? SDL_TRUE : SDL_FALSE);
 
- if(!grab)
+ if(!any_grab)
   SDL_SetWindowGrab(window, SDL_FALSE);
+#endif
 
- SDL_SetHint(SDL_HINT_WINDOWS_NO_CLOSE_ON_ALT_F4, grab ? "1" : "0");
+ SDL_SetHint(SDL_HINT_WINDOWS_NO_CLOSE_ON_ALT_F4, grab_keyboard ? "1" : "0");
 }
 
 #if 0
@@ -798,29 +835,6 @@ void Video_Sync(MDFNGI *gi)
   }
  }
  #endif
-
- if(!getenv("__GL_SYNC_TO_VBLANK") || weset_glstvb)
- {
-  if(MDFN_GetSettingB("video.glvsync"))
-  {
-   #if HAVE_PUTENV
-   static char gl_pe_string[] = "__GL_SYNC_TO_VBLANK=1";
-   putenv(gl_pe_string); 
-   #elif HAVE_SETENV
-   setenv("__GL_SYNC_TO_VBLANK", "1", 1);
-   #endif
-  }
-  else
-  {
-   #if HAVE_PUTENV
-   static char gl_pe_string[] = "__GL_SYNC_TO_VBLANK=0";
-   putenv(gl_pe_string); 
-   #elif HAVE_SETENV
-   setenv("__GL_SYNC_TO_VBLANK", "0", 1);
-   #endif
-  }
-  weset_glstvb = true;
- }
  //
  osd_alpha_blend = MDFN_GetSettingB("osd.alpha_blend");
 
@@ -856,6 +870,9 @@ void Video_Sync(MDFNGI *gi)
  vdriver = MDFN_GetSettingI("video.driver");
  if(vdriver == VDRIVER__COUNT) // "default"
   vdriver = VDRIVER_OPENGL;
+
+ video_settings.force_bbclear = MDFN_GetSettingB("video.force_bbclear");
+ video_settings.cursorvis = MDFN_GetSettingUI("video.cursorvis");
 
  video_settings.shader = (ShaderType)MDFN_GetSettingI(snp + "shader");
  video_settings.shader_str = MDFN_GetSettingS(snp + "shader");
@@ -1096,6 +1113,16 @@ void Video_Sync(MDFNGI *gi)
   if(yres > 0)
    trymode.h = yres;
 
+  if(vdriver != VDRIVER_OPENGL)
+  {
+   if(!(trymode.format == SDL_PIXELFORMAT_RGB565 && (gi->ExtraVideoFormatSupport & EVFSUPPORT_RGB565)) &&
+      !(trymode.format == SDL_PIXELFORMAT_RGB555 && (gi->ExtraVideoFormatSupport & EVFSUPPORT_RGB555)) &&
+      !(SDL_BYTESPERPIXEL(trymode.format) == 4 && trymode.format != SDL_PIXELFORMAT_ARGB2101010))
+   {
+    trymode.format = SDL_PIXELFORMAT_RGB888;
+   }
+  }
+
   if(!SDL_GetClosestDisplayMode(dindex, &trymode, &mode))
   {
    MDFN_Notify(MDFN_NOTICE_WARNING, _("Reverting to windowed mode because no modes big enough for %dx%d."), trymode.w, trymode.h);
@@ -1165,18 +1192,33 @@ void Video_Sync(MDFNGI *gi)
    if(!(screen = SDL_GetWindowSurface(window)))
     throw MDFN_Error(0, _("SDL_GetWindowSurface() failed: %s"), SDL_GetError());
 
-   if(screen->format->BitsPerPixel != 32)
-    throw MDFN_Error(0, _("Window surface bit depth(%ubpp) is not supported by Mednafen."), screen->format->BitsPerPixel);
+   if(screen->format->BytesPerPixel == 4 &&
+	screen->format->Rloss == 0 && screen->format->Gloss == 0 && screen->format->Bloss == 0 &&
+	!((screen->format->Rshift | screen->format->Gshift | screen->format->Bshift) & 0x7))
+   {
+    int rs = screen->format->Rshift;
+    int gs = screen->format->Gshift;
+    int bs = screen->format->Bshift;
 
-   int rs = screen->format->Rshift;
-   int gs = screen->format->Gshift;
-   int bs = screen->format->Bshift;
+    int as = 0;
+    while(as == rs || as == gs || as == bs) // Find unused 8-bits to use as our alpha channel
+     as += 8;
 
-   int as = 0;
-   while(as == rs || as == gs || as == bs) // Find unused 8-bits to use as our alpha channel
-    as += 8;
+    osd_pf = game_pf = emu_pf = MDFN_PixelFormat(MDFN_COLORSPACE_RGB, 4, rs, gs, bs, as, 8, 8, 8, 8);
+   }
+   else if(screen->format->format == SDL_PIXELFORMAT_RGB565 && (gi->ExtraVideoFormatSupport & EVFSUPPORT_RGB565))
+    osd_pf = game_pf = emu_pf = MDFN_PixelFormat::RGB16_565;
+   else if(screen->format->format == SDL_PIXELFORMAT_RGB555 && (gi->ExtraVideoFormatSupport & EVFSUPPORT_RGB555))
+    osd_pf = game_pf = emu_pf = MDFN_PixelFormat::IRGB16_1555;
+   else
+   {
+    const char* pfname = SDL_GetPixelFormatName(screen->format->format);
 
-   osd_pf = game_pf = emu_pf = MDFN_PixelFormat(MDFN_COLORSPACE_RGB, 4, rs, gs, bs, as, 8, 8, 8, 8);
+    if(screen->format->format == SDL_PIXELFORMAT_RGB565 || screen->format->format == SDL_PIXELFORMAT_RGB555)
+     throw MDFN_Error(0, _("Window surface pixel format \"%s\" is not supported by module \"%s\"."), pfname, gi->shortname);
+    else
+     throw MDFN_Error(0, _("Window surface pixel format \"%s\" is not supported by Mednafen."), pfname);
+   }
   }
  }
 
@@ -1300,7 +1342,8 @@ void Video_Init(void)
  CurWMIB.Cursor = true;
  CurWMIB.MouseAbs = true;
  CurWMIB.MouseRel = false;
- CurWMIB.Grab = false;
+ CurWMIB.Grab_Keyboard = false;
+ CurWMIB.Grab_Mouse = false;
  //
  for(unsigned i = 0; i < 2 && !window; i++)
  {
@@ -1395,9 +1438,9 @@ void BlitOSD(MDFN_Surface *src, const MDFN_Rect *src_rect, const MDFN_Rect *dest
   MarkNeedBBClear();
 }
 
-static bool BlitInternalMessage(void)
+static bool BlitInternalMessage(const uint32 curtime)
 {
- if(Time::MonoMS() >= howlong)
+ if(curtime >= howlong)
  {
   if(CurrentMessage)
   {
@@ -1442,6 +1485,7 @@ static bool BlitInternalMessage(void)
  return true;
 }
 
+#ifdef WANT_FANCY_SCALERS
 template<typename T>
 static void BlitSaI(const MDFN_Surface* src, const MDFN_Rect& src_rect, MDFN_Surface* dest)
 {
@@ -1489,6 +1533,7 @@ static void BlitSaI(const MDFN_Surface* src, const MDFN_Rect& src_rect, MDFN_Sur
    SAI_SuperEagle32(spix, spitch, dpix, dpitch, src_rect.w, src_rect.h);
  }
 }
+#endif
 
 static void SubBlit(const MDFN_Surface *source_surface, const MDFN_Rect &src_rect, const MDFN_Rect &dest_rect, const int InterlaceField)
 {
@@ -1684,15 +1729,19 @@ void BlitScreen(MDFN_Surface *msurface, const MDFN_Rect *DisplayRect, const int3
   }
  }
 #endif
+ //
+ //
+ //
+ const uint32 curtime = Time::MonoMS();
 
- if(NeedClear)
+ if(NeedClear || video_settings.force_bbclear)
  {
-  uint32 ct = Time::MonoMS();
+  //printf("BBClear 0x%08x %d\n", curtime, NeedClear);
 
-  if((ct - LastBBClearTime) >= 30)
+  if((curtime - LastBBClearTime) >= 30)
   {
-   LastBBClearTime = ct;
-   NeedClear--;
+   LastBBClearTime = curtime;
+   NeedClear -= (bool)NeedClear;
   }
 
   if(vdriver == VDRIVER_OPENGL)
@@ -1899,7 +1948,7 @@ void BlitScreen(MDFN_Surface *msurface, const MDFN_Rect *DisplayRect, const int3
   MDFND_OutputNotice(MDFN_NOTICE_ERROR, e.what());
  }
 
- BlitInternalMessage();
+ BlitInternalMessage(curtime);
 
  //
  {

@@ -43,11 +43,11 @@ class Joystick_Linux : public Joystick
  Joystick_Linux(const char *jsdev_path, const char *evdev_path, const uint64 bvpv) MDFN_COLD;
  ~Joystick_Linux() MDFN_COLD;
 
- virtual unsigned HatToAxisCompat(unsigned hat);
+ virtual unsigned HatToAxisCompat(unsigned hat) override;
 
  void UpdateInternal(void);
 
- void SetRumble(uint8 weak_intensity, uint8 strong_intensity);
+ virtual void SetRumble(uint8 weak_intensity, uint8 strong_intensity) override;
 
  inline bool RumbleUsed(void)
  {
@@ -576,18 +576,16 @@ JoystickDriver_Linux::JoystickDriver_Linux()
  {
   for(int i = 0; i < namelist_num; i++)
   {
-   char jsdev_path[256];
    Joystick_Linux *jslin = NULL;
-
-   snprintf(jsdev_path, sizeof(jsdev_path), "%s/%s", base_path, namelist[i]->d_name);
 
    try
    {
+    const std::string jsdev_path = std::string(base_path) + '/' + namelist[i]->d_name;
     const std::string sysfs_input_dev_path = FindSysFSInputDeviceByJSDev(namelist[i]->d_name);
     const std::string evdev_path = FindEVDevFullPath(sysfs_input_dev_path.c_str());
     const uint64 bvpv = GetBVPV(sysfs_input_dev_path);
 
-    jslin = new Joystick_Linux(jsdev_path, (evdev_path.size() > 0) ? evdev_path.c_str() : NULL, bvpv);
+    jslin = new Joystick_Linux(jsdev_path.c_str(), (evdev_path.size() > 0) ? evdev_path.c_str() : NULL, bvpv);
     joys.push_back(jslin);
    }
    catch(std::exception &e)

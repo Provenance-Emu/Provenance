@@ -51,9 +51,10 @@ void MDFNDBG_Kill(void)
 
 
 
-AddressSpaceType::AddressSpaceType() : TotalBits(0), NP2Size(0), IsWave(false), WaveFormat(ASPACE_WFMT_UNSIGNED), WaveBits(0),
-				GetAddressSpaceBytes(NULL), PutAddressSpaceBytes(NULL), private_data(NULL), EnableUsageMap(NULL),
-				UsageMapRead(NULL), UsageMapWrite(NULL), UsageReadMemUsed(0), UsageWriteMemUsed(0)
+AddressSpaceType::AddressSpaceType() : size(0), IsWave(false), WaveFormat(ASPACE_WFMT_UNSIGNED), WaveBits(0),
+				GetAddressSpaceBytes(NULL), PutAddressSpaceBytes(NULL), private_data(NULL)
+				//,EnableUsageMap(NULL),
+				//UsageMapRead(NULL), UsageMapWrite(NULL), UsageReadMemUsed(0), UsageWriteMemUsed(0)
 {
 
 }
@@ -74,18 +75,18 @@ int ASpace_Add(void (*gasb)(const char *name, uint32 Address, uint32 Length, uin
 
  newt.name = std::string(name);
  newt.long_name = std::string(long_name);
- newt.TotalBits = TotalBits;
- newt.NP2Size = NP2Size;
+ newt.size = NP2Size ? NP2Size : ((uint64)1 << TotalBits);
 
  AddressSpaces.push_back(newt);
 
- return(AddressSpaces.size() - 1);
+ return AddressSpaces.size() - 1;
 }
 
 int ASpace_Add(const AddressSpaceType &newt)
 {
  AddressSpaces.push_back(newt);
- return(AddressSpaces.size() - 1);
+
+ return AddressSpaces.size() - 1;
 }
 
 #if 0

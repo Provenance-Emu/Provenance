@@ -47,7 +47,7 @@ SexyAL_enumdevice *SexyALI_OSS_EnumerateDevices(void)
  SexyAL_enumdevice *ret,*tmp,*last;
  struct stat buf;
  char fn[64];
- char numstring[64];
+ char numstring[32];
  unsigned int n;
 
  n = 0;
@@ -56,8 +56,8 @@ SexyAL_enumdevice *SexyALI_OSS_EnumerateDevices(void)
 
  for(;;)
  {
-  snprintf(numstring, 64, "%d", n);
-  snprintf(fn, 64, "/dev/dsp%s", numstring);
+  snprintf(numstring, sizeof(numstring), "%u", n);
+  snprintf(fn, sizeof(fn), "/dev/dsp%s", numstring);
 
   if(stat(fn,&buf)!=0) break;
 

@@ -286,8 +286,8 @@ static INLINE int32 PlotPixel(int32 x, int32 y, uint16 pix, bool transparent, Go
      {
       if(GouraudEn)
        pix = g->Apply(pix);
-      else
-       pix = pix;
+      //else
+      // pix = pix;
      }
      else
      {
@@ -392,8 +392,7 @@ struct line_inner_data
  //
  //
  //
- int32 x_inc;
- int32 y_inc;
+ int32 xy_inc[2];
  uint32 aa_xy_inc;
  uint32 term_xy;
 
@@ -402,8 +401,6 @@ struct line_inner_data
  uint32 error_adj;
 
  uint16 color;
-
- bool abs_dy_gt_abs_dx;
 };
 
 struct line_data
@@ -451,35 +448,6 @@ static INLINE int32 AdjustDrawTiming(const int32 cycles)
 
 bool SetupDrawLine(int32* const cycle_counter, const bool AA, const bool Textured, const uint16 mode);
 
-#define PSTART							\
-	bool transparent;					\
-	uint16 pix;						\
-								\
-	if(Textured)						\
-	{							\
-	 /*ret++;*/						\
-	 while(lid.t.IncPending())				\
-	 {							\
-	  int32 tx = lid.t.DoPendingInc();			\
-								\
-	  /*ret += (bool)t.IncPending();*/			\
-								\
-	  lid.texel = LineData.tffn(tx);			\
-								\
-	  if(!ECD && MDFN_UNLIKELY(LineData.ec_count <= 0))	\
-	   return ret;						\
-	 }							\
-	 lid.t.AddError();					\
-								\
-	 transparent = (SPD && ECD) ? false : (lid.texel >> 31);\
-	 pix = lid.texel;	\
-	}			\
-	else			\
-	{			\
-	 pix = lid.color;	\
-	 transparent = !SPD;	\
-	}
-
  /* hmm, possible problem with AA and drawn_ac...*/
  #define PBODY(pxy)											\
 	{												\
@@ -508,31 +476,6 @@ bool SetupDrawLine(int32* const cycle_counter, const bool AA, const bool Texture
 	 ret += PlotPixel<die, bpp8, MSBOn, UserClipEn, UserClipMode, MeshEn, GouraudEn, HalfFGEn, HalfBGEn>(px, py, pix, transparent | clipped, (GouraudEn ? &lid.g : NULL));	\
 	}
 
- #define PEND								\
-	{								\
-	 if(GouraudEn)							\
-	  lid.g.Step();							\
-									\
-	 if(MDFN_UNLIKELY(ret >= VDP1_SuspendResumeThreshold) && lid.xy != lid.term_xy)		\
-	 {								\
-	  LineInnerData.xy = lid.xy;					\
-	  LineInnerData.error = lid.error;				\
-	  LineInnerData.drawn_ac = lid.drawn_ac;			\
-									\
-	  if(Textured)							\
-	  {								\
-	   LineInnerData.texel = lid.texel;				\
-	   LineInnerData.t = lid.t;					\
-	  }								\
-									\
-	  if(GouraudEn)							\
-	   LineInnerData.g = lid.g;					\
-									\
-	  *need_line_resume = true;					\
-	  return ret;							\
-	 }								\
-	}
-
 template<bool AA, bool Textured, bool die, unsigned bpp8, bool MSBOn, bool UserClipEn, bool UserClipMode, bool MeshEn, bool ECD, bool SPD, bool GouraudEn, bool HalfFGEn, bool HalfBGEn>
 static int32 DrawLine(bool* need_line_resume)
 {
@@ -543,61 +486,82 @@ static int32 DrawLine(bool* need_line_resume)
  line_inner_data lid = LineInnerData;
  int32 ret = 0;
 
- if(lid.abs_dy_gt_abs_dx)
- //if(abs_dy > abs_dx)
+ do
  {
-  do
+  bool transparent;
+  uint16 pix;
+
+  if(Textured)
   {
-   PSTART;
-
-   lid.xy = (lid.xy + lid.y_inc) & 0x07FF07FF;
-   lid.error += lid.error_inc;
-   if((int32)lid.error >= lid.error_cmp)
+   /*ret++;*/
+   while(lid.t.IncPending())
    {
-    lid.error += lid.error_adj;
+    int32 tx = lid.t.DoPendingInc();
 
-    if(AA)
-    {
-     const uint32 aa_xy = (lid.xy + lid.aa_xy_inc) & 0x07FF07FF;
+    /*ret += (bool)t.IncPending();*/
 
-     PBODY(aa_xy);
-    }
+    lid.texel = LineData.tffn(tx);
 
-    lid.xy = (lid.xy + lid.x_inc) & 0x07FF07FF;
+    if(!ECD && MDFN_UNLIKELY(LineData.ec_count <= 0))
+     return ret;
+   }
+   lid.t.AddError();
+
+   transparent = (SPD && ECD) ? false : (lid.texel >> 31);
+   pix = lid.texel;
+  }
+  else
+  {
+   pix = lid.color;
+   transparent = !SPD;
+  }
+  //
+  //
+  //
+  lid.xy = (lid.xy + lid.xy_inc[0]) & 0x07FF07FF;
+  lid.error += lid.error_inc;
+  if((int32)lid.error >= lid.error_cmp)
+  {
+   lid.error += lid.error_adj;
+
+   if(AA)
+   {
+    const uint32 aa_xy = (lid.xy + lid.aa_xy_inc) & 0x07FF07FF;
+
+    PBODY(aa_xy);
    }
 
-   PBODY(lid.xy);
+   lid.xy = (lid.xy + lid.xy_inc[1]) & 0x07FF07FF;
+  }
+  //
+  //
+  //
+  PBODY(lid.xy);
+  //
+  //
+  //
+  if(GouraudEn)
+   lid.g.Step();
 
-   PEND;
-  } while(MDFN_LIKELY(lid.xy != lid.term_xy));
- }
- else
- {
-  do
+  if(MDFN_UNLIKELY(ret >= VDP1_SuspendResumeThreshold) && lid.xy != lid.term_xy)
   {
-   PSTART;
+   LineInnerData.xy = lid.xy;
+   LineInnerData.error = lid.error;
+   LineInnerData.drawn_ac = lid.drawn_ac;
 
-   lid.xy = (lid.xy + lid.x_inc) & 0x07FF07FF;
-   lid.error += lid.error_inc;
-   if((int32)lid.error >= lid.error_cmp)
+   if(Textured)
    {
-    lid.error += lid.error_adj;
-
-    if(AA)
-    {
-     const uint32 aa_xy = (lid.xy + lid.aa_xy_inc) & 0x07FF07FF;
-
-     PBODY(aa_xy);
-    }
-
-    lid.xy = (lid.xy + lid.y_inc) & 0x07FF07FF;
+    LineInnerData.texel = lid.texel;
+    LineInnerData.t = lid.t;
    }
 
-   PBODY(lid.xy);
+   if(GouraudEn)
+    LineInnerData.g = lid.g;
 
-   PEND;
-  } while(MDFN_LIKELY(lid.xy != lid.term_xy));
- }
+   *need_line_resume = true;
+   return ret;
+  }
+ } while(MDFN_LIKELY(lid.xy != lid.term_xy));
 
  return ret;
 }

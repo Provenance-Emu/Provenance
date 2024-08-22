@@ -2,7 +2,7 @@
 /* Mednafen Sony PS1 Emulation Module                                         */
 /******************************************************************************/
 /* cpu.cpp:
-**  Copyright (C) 2011-2016 Mednafen Team
+**  Copyright (C) 2011-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -19,7 +19,9 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#pragma GCC optimize ("unroll-loops")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize ("unroll-loops")
+#endif
 
 #include "psx.h"
 #include "cpu.h"
@@ -253,7 +255,7 @@ void PS_CPU::SetBIU(uint32 val)
   }
  }
 
- PSX_DBG(PSX_DBG_SPARSE, "[CPU] Set BIU=0x%08x\n", BIU);
+ PSX_DBG(PSX_DBG_CPU, "[CPU] Set BIU=0x%08x\n", BIU);
 }
 
 uint32 PS_CPU::GetBIU(void)
@@ -537,7 +539,7 @@ uint32 NO_INLINE PS_CPU::Exception(uint32 code, uint32 PC, const uint32 NP, cons
    "INT", "MOD", "TLBL", "TLBS", "ADEL", "ADES", "IBE", "DBE", "SYSCALL", "BP", "RI", "COPU", "OV", NULL, NULL, NULL
   };
 
-  PSX_DBG(PSX_DBG_WARNING, "[CPU] Exception %s(0x%02x) @ PC=0x%08x(NP=0x%08x, BDBT=0x%02x), Instr=0x%08x, IPCache=0x%02x, CAUSE=0x%08x, SR=0x%08x, IRQC_Status=0x%04x, IRQC_Mask=0x%04x\n",
+  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CPU, "[CPU] Exception %s(0x%02x) @ PC=0x%08x(NP=0x%08x, BDBT=0x%02x), Instr=0x%08x, IPCache=0x%02x, CAUSE=0x%08x, SR=0x%08x, IRQC_Status=0x%04x, IRQC_Mask=0x%04x\n",
 	exmne[code], code, PC, NP, BDBT, instr, IPCache, CP0.CAUSE, CP0.SR, IRQ_GetRegister(IRQ_GSREG_STATUS, NULL, 0), IRQ_GetRegister(IRQ_GSREG_MASK, NULL, 0));
  }
 
@@ -590,7 +592,7 @@ uint32 NO_INLINE PS_CPU::Exception(uint32 code, uint32 PC, const uint32 NP, cons
 // Should come before DO_LDS() so the EXP_ILL_CHECK() emulator debugging macro in GPR_DEP() will work properly.
 //
 #define GPR_DEPRES_BEGIN { uint8 back = ReadAbsorb[0];
-#define GPR_DEP(n) { unsigned tn = (n); ReadAbsorb[tn] = 0; EXP_ILL_CHECK(if(LDWhich > 0 && LDWhich < 0x20 && LDWhich == tn) { PSX_DBG(PSX_DBG_WARNING, "[CPU] Instruction at PC=0x%08x in load delay slot has dependency on load target register(0x%02x): SR=0x%08x\n", PC, LDWhich, CP0.SR); }) }
+#define GPR_DEP(n) { unsigned tn = (n); ReadAbsorb[tn] = 0; EXP_ILL_CHECK(if(LDWhich > 0 && LDWhich < 0x20 && LDWhich == tn) { PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CPU, "[CPU] Instruction at PC=0x%08x in load delay slot has dependency on load target register(0x%02x): SR=0x%08x\n", PC, LDWhich, CP0.SR); }) }
 #define GPR_RES(n) { unsigned tn = (n); ReadAbsorb[tn] = 0; }
 #define GPR_DEPRES_END ReadAbsorb[0] = back; }
 
@@ -641,11 +643,19 @@ pscpu_timestamp_t PS_CPU::RunReal(pscpu_timestamp_t timestamp_in)
 
    if(BIOSPrintMode)
    {
-    if(PC == 0xB0)
+    if(MDFN_UNLIKELY(!(PC & 0xFFFFFF00)))
     {
-     if(MDFN_UNLIKELY(GPR[9] == 0x3D))
+     switch((PC << 8) | GPR[9])
      {
-      PSX_DBG_BIOS_PUTC(GPR[4]);
+      case 0xA03C:
+      case 0xB03D:
+	PSX_DBG_BIOS_PUTC(GPR[4]);
+	break;
+
+      case 0xA03E:
+      case 0xB03F:
+	PSX_DBG_BIOS_PUTS(GPR[4]);
+	break;
      }
     }
    }
@@ -691,7 +701,7 @@ pscpu_timestamp_t PS_CPU::RunReal(pscpu_timestamp_t timestamp_in)
 	 const uint32 mask = (arg_mask);			\
 	 const uint32 old_PC = PC;				\
 								\
-	 EXP_ILL_CHECK(if(BDBT) { PSX_DBG(PSX_DBG_WARNING, "[CPU] Branch instruction at PC=0x%08x in branch delay slot: SR=0x%08x\n", PC, CP0.SR);}) 	\
+	 EXP_ILL_CHECK(if(BDBT) { PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CPU, "[CPU] Branch instruction at PC=0x%08x in branch delay slot: SR=0x%08x\n", PC, CP0.SR);}) 	\
 								\
 	 PC = new_PC;						\
 	 new_PC += 4;						\
@@ -1087,7 +1097,7 @@ pscpu_timestamp_t PS_CPU::RunReal(pscpu_timestamp_t timestamp_in)
 		 default:
 			// Tested to be rather NOPish
 			DO_LDS();
-			PSX_DBG(PSX_DBG_WARNING, "[CPU] MFC0 from unmapped CP0 register %u.\n", rd);
+			PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CPU, "[CPU] MFC0 from unmapped CP0 register %u.\n", rd);
 			break;
 		}
 		break;
@@ -1115,7 +1125,7 @@ pscpu_timestamp_t PS_CPU::RunReal(pscpu_timestamp_t timestamp_in)
 		 case CP0REG_DCIC:
 			if(val)
 			{
-			 PSX_DBG(PSX_DBG_WARNING, "[CPU] Non-zero write to DCIC: 0x%08x\n", val);
+			 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CPU, "[CPU] Non-zero write to DCIC: 0x%08x\n", val);
 			}
 			CP0.DCIC = val & 0xFF80003F;
 			break;
@@ -1148,7 +1158,7 @@ pscpu_timestamp_t PS_CPU::RunReal(pscpu_timestamp_t timestamp_in)
 		 const uint32 immediate = (int32)(int16)(instr & 0xFFFF);
 		 const bool result = (false == (bool)(instr & (1U << 16)));
 
-		 PSX_DBG(PSX_DBG_WARNING, "[CPU] BC0x instruction(0x%08x) @ PC=0x%08x\n", instr, PC);
+		 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CPU, "[CPU] BC0x instruction(0x%08x) @ PC=0x%08x\n", instr, PC);
 
 		 DO_BRANCH(result, (immediate << 2), ~0U, false, 0);
 		}
@@ -1256,7 +1266,7 @@ pscpu_timestamp_t PS_CPU::RunReal(pscpu_timestamp_t timestamp_in)
 		 const uint32 immediate = (int32)(int16)(instr & 0xFFFF);
 		 const bool result = (false == (bool)(instr & (1U << 16)));
 
-		 PSX_DBG(PSX_DBG_WARNING, "[CPU] BC2x instruction(0x%08x) @ PC=0x%08x\n", instr, PC);
+		 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CPU, "[CPU] BC2x instruction(0x%08x) @ PC=0x%08x\n", instr, PC);
 
 		 DO_BRANCH(result, (immediate << 2), ~0U, false, 0);
 		}
@@ -1287,7 +1297,7 @@ pscpu_timestamp_t PS_CPU::RunReal(pscpu_timestamp_t timestamp_in)
 	{
 	 const uint32 sub_op = (instr >> 21) & 0x1F;
 
-	 PSX_DBG(PSX_DBG_WARNING, "[CPU] COP%u instruction(0x%08x) @ PC=0x%08x\n", (instr >> 26) & 0x3, instr, PC);
+	 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CPU, "[CPU] COP%u instruction(0x%08x) @ PC=0x%08x\n", (instr >> 26) & 0x3, instr, PC);
 
 	 if(sub_op == 0x08 || sub_op == 0x0C)
 	 {
@@ -1321,7 +1331,7 @@ pscpu_timestamp_t PS_CPU::RunReal(pscpu_timestamp_t timestamp_in)
 	 }
          else
 	 {
-	  PSX_DBG(PSX_DBG_WARNING, "[CPU] LWC%u instruction(0x%08x) @ PC=0x%08x\n", (instr >> 26) & 0x3, instr, PC);
+	  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CPU, "[CPU] LWC%u instruction(0x%08x) @ PC=0x%08x\n", (instr >> 26) & 0x3, instr, PC);
 
           ReadMemory<uint32>(timestamp, address, false, true);
 	 }
@@ -1374,7 +1384,7 @@ pscpu_timestamp_t PS_CPU::RunReal(pscpu_timestamp_t timestamp_in)
 	 }
 	 else
 	 {
-	  PSX_DBG(PSX_DBG_WARNING, "[CPU] SWC%u instruction(0x%08x) @ PC=0x%08x\n", (instr >> 26) & 0x3, instr, PC);
+	  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_CPU, "[CPU] SWC%u instruction(0x%08x) @ PC=0x%08x\n", (instr >> 26) & 0x3, instr, PC);
 	  //WriteMemory<uint32>(timestamp, address, SOMETHING);
 	 }
 	}

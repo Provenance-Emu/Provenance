@@ -171,8 +171,13 @@ void VCE::Reset(const int32 timestamp)
  lc263 = 0;
  bw = 0;
 
- memset(color_table, 0, sizeof(color_table));
  memset(color_table_cache, 0, sizeof(color_table_cache));
+
+ for(unsigned i = 0; i < 0x200; i++)
+ {
+  color_table[i] = ((i ^ (i >> 3)) & 1) ? 0x000 : 0x1FF;
+  FixPCache(i);
+ }
 
  ctaddress = 0;
 
@@ -677,6 +682,14 @@ void VCE::SetPixelFormat(const MDFN_PixelFormat &format, const uint8* CustomColo
    sc_r = sc_g = sc_b = y;
   }
 
+  palette[0][x][0] = r;
+  palette[0][x][1] = g;
+  palette[0][x][2] = b;
+
+  palette[1][x][0] = sc_r;
+  palette[1][x][1] = sc_g;
+  palette[1][x][2] = sc_b;
+
   surf_clut[0][x] = format.MakeColor(r, g, b);
   surf_clut[1][x] = format.MakeColor(sc_r, sc_g, sc_b);
  }
@@ -1052,8 +1065,16 @@ void VCE::DoGfxDecode(void)
    neo_palette[x] = GfxDecode_Buf->MakeColor(x * 17, x * 17, x * 17, 0xFF);
  }
  else
+ {
   for(int x = 0; x < 16; x++)
-   neo_palette[x] = color_table_cache[x | (DecodeSprites ? 0x100 : 0x000) | ((GfxDecode_Pbn & 0xF) << 4)] | GfxDecode_Buf->MakeColor(0, 0, 0, 0xFF);
+  {
+   const uint32 ctindex = x | (DecodeSprites ? 0x100 : 0x000) | ((GfxDecode_Pbn & 0xF) << 4);
+   const uint16 cte = color_table[(ctindex & 0xF) ? ctindex : (ctindex & 0x100)] & 0x1FF;
+   const uint8* p = palette[0][cte];
+
+   neo_palette[x] = GfxDecode_Buf->MakeColor(p[0], p[1], p[2], 0xFF);
+  }
+ }
 
  vdc[which_vdc].DoGfxDecode(GfxDecode_Buf->pixels, neo_palette, GfxDecode_Buf->MakeColor(0, 0, 0, 0xFF), DecodeSprites, GfxDecode_Buf->w, GfxDecode_Buf->h, GfxDecode_Scroll);
 }

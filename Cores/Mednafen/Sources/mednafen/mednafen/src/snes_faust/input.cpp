@@ -2,7 +2,7 @@
 /* Mednafen Fast SNES Emulation Module                                        */
 /******************************************************************************/
 /* input.cpp:
-**  Copyright (C) 2015-2019 Mednafen Team
+**  Copyright (C) 2015-2022 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -21,26 +21,13 @@
 
 #include "snes.h"
 #include "input.h"
+#include "input_device.h"
+#include "input/multitap.h"
+#include "input/gamepad.h"
+#include "input/mouse.h"
 
 namespace MDFN_IEN_SNES_FAUST
 {
-
-class InputDevice
-{
- public:
-
- InputDevice() MDFN_COLD;
- virtual ~InputDevice() MDFN_COLD;
-
- virtual void Power(void) MDFN_COLD;
-
- virtual void MDFN_FASTCALL UpdatePhysicalState(const uint8* data);
-
- virtual uint8 MDFN_FASTCALL Read(bool IOB) MDFN_HOT;
- virtual void MDFN_FASTCALL SetLatch(bool state) MDFN_HOT;
-
- virtual void StateAction(StateMem* sm, const unsigned load, const bool data_only, const char* sname_prefix);
-};
 
 InputDevice::InputDevice()
 {
@@ -55,12 +42,10 @@ InputDevice::~InputDevice()
 void InputDevice::Power(void)
 {
 
-
 }
 
 void InputDevice::UpdatePhysicalState(const uint8* data)
 {
-
 
 }
 
@@ -72,197 +57,11 @@ uint8 InputDevice::Read(bool IOB)
 void InputDevice::SetLatch(bool state)
 {
 
-
 }
 
 void InputDevice::StateAction(StateMem* sm, const unsigned load, const bool data_only, const char* sname_prefix)
 {
 
-
-}
-
-class InputDevice_MTap final : public InputDevice
-{
- public:
- InputDevice_MTap() MDFN_COLD;
- virtual ~InputDevice_MTap() override MDFN_COLD;
-
- virtual void Power(void) override MDFN_COLD;
-
- virtual uint8 MDFN_FASTCALL Read(bool IOB) override MDFN_HOT;
- virtual void MDFN_FASTCALL SetLatch(bool state) override MDFN_HOT;
-
- virtual void StateAction(StateMem* sm, const unsigned load, const bool data_only, const char* sname_prefix) override;
-
- void SetSubDevice(const unsigned mport, InputDevice* device);
-
- private:
- InputDevice* MPorts[4];
- bool pls;
-};
-
-void InputDevice_MTap::Power(void)
-{
- for(unsigned mport = 0; mport < 4; mport++)
-  MPorts[mport]->Power();
-}
-
-void InputDevice_MTap::StateAction(StateMem* sm, const unsigned load, const bool data_only, const char* sname_prefix)
-{
- SFORMAT StateRegs[] = 
- {
-  SFVAR(pls),
-  SFEND
- };
-
- char sname[64] = "MT_";
-
- strncpy(sname + 3, sname_prefix, sizeof(sname) - 3);
- sname[sizeof(sname) - 1] = 0;
-
- if(!MDFNSS_StateAction(sm, load, data_only, StateRegs, sname, true) && load)
-  Power();
- else
- {
-  for(unsigned mport = 0; mport < 4; mport++)
-  {
-   sname[2] = '0' + mport;
-   MPorts[mport]->StateAction(sm, load, data_only, sname);
-  }
-
-  if(load)
-  {
-
-  }
- }
-}
-
-InputDevice_MTap::InputDevice_MTap()
-{
- for(unsigned mport = 0; mport < 4; mport++)
-  MPorts[mport] = nullptr;
-
- pls = false;
-}
-
-InputDevice_MTap::~InputDevice_MTap()
-{
-
-}
-
-uint8 InputDevice_MTap::Read(bool IOB)
-{
- uint8 ret;
-
- ret = ((MPorts[(!IOB << 1) + 0]->Read(false) & 0x1) << 0) | ((MPorts[(!IOB << 1) + 1]->Read(false) & 0x1) << 1);
-
- if(pls)
-  ret = 0x2;
-
- return ret;
-}
-
-void InputDevice_MTap::SetLatch(bool state)
-{
- for(unsigned mport = 0; mport < 4; mport++)
-  MPorts[mport]->SetLatch(state);
-
- pls = state;
-}
-
-void InputDevice_MTap::SetSubDevice(const unsigned mport, InputDevice* device)
-{
- MPorts[mport] = device;
-}
-
-class InputDevice_Gamepad final : public InputDevice
-{
- public:
-
- InputDevice_Gamepad() MDFN_COLD;
- virtual ~InputDevice_Gamepad() override MDFN_COLD;
-
- virtual void Power(void) override MDFN_COLD;
-
- virtual void MDFN_FASTCALL UpdatePhysicalState(const uint8* data) override;
-
- virtual uint8 MDFN_FASTCALL Read(bool IOB) override MDFN_HOT;
- virtual void MDFN_FASTCALL SetLatch(bool state) override MDFN_HOT;
-
- virtual void StateAction(StateMem* sm, const unsigned load, const bool data_only, const char* sname_prefix) override;
-
- private:
- uint16 buttons;
- uint32 latched;
-
- bool pls;
-};
-
-InputDevice_Gamepad::InputDevice_Gamepad()
-{
- pls = false;
- buttons = 0;
-}
-
-InputDevice_Gamepad::~InputDevice_Gamepad()
-{
-
-}
-
-void InputDevice_Gamepad::StateAction(StateMem* sm, const unsigned load, const bool data_only, const char* sname_prefix)
-{
- SFORMAT StateRegs[] = 
- {
-  SFVAR(buttons),
-  SFVAR(latched),
-  SFVAR(pls),
-  SFEND
- };
-
- char sname[64] = "GP_";
-
- strncpy(sname + 3, sname_prefix, sizeof(sname) - 3);
- sname[sizeof(sname) - 1] = 0;
-
- //printf("%s\n", sname);
-
- if(!MDFNSS_StateAction(sm, load, data_only, StateRegs, sname, true) && load)
-  Power();
- else if(load)
- {
-
- }
-}
-
-
-void InputDevice_Gamepad::Power(void)
-{
- latched = ~0U;
-}
-
-void InputDevice_Gamepad::UpdatePhysicalState(const uint8* data)
-{
- buttons = MDFN_de16lsb(data);
- if(pls)
-  latched = buttons | 0xFFFF0000;
-}
-
-uint8 InputDevice_Gamepad::Read(bool IOB)
-{
- uint8 ret = latched & 1;
-
- if(!pls)
-  latched = (int32)latched >> 1;
-
- return ret;
-}
-
-void InputDevice_Gamepad::SetLatch(bool state)
-{
- if(pls && !state)
-  latched = buttons | 0xFFFF0000;
-
- pls = state;
 }
 
 //
@@ -273,6 +72,7 @@ void InputDevice_Gamepad::SetLatch(bool state)
 static struct
 {
  InputDevice_Gamepad gamepad;
+ InputDevice_Mouse mouse;
 } PossibleDevices[8];
 
 static InputDevice NoneDevice;
@@ -486,6 +286,8 @@ void INPUT_Set(unsigned vport, const char* type, uint8* ptr)
 
  if(!strcmp(type, "gamepad"))
   nd = &PossibleDevices[vport].gamepad;
+ else if(!strcmp(type, "mouse"))
+  nd = &PossibleDevices[vport].mouse;
  else if(strcmp(type, "none"))
   abort();
 
@@ -529,22 +331,6 @@ void INPUT_UpdatePhysicalState(void)
   Devices[vport]->UpdatePhysicalState(DeviceData[vport]);
 }
 
-static const IDIISG GamepadIDII =
-{
- IDIIS_ButtonCR("b", "B (center, lower)", 7, NULL),
- IDIIS_ButtonCR("y", "Y (left)", 6, NULL),
- IDIIS_Button("select", "SELECT", 4, NULL),
- IDIIS_Button("start", "START", 5, NULL),
- IDIIS_Button("up", "UP ↑", 0, "down"),
- IDIIS_Button("down", "DOWN ↓", 1, "up"),
- IDIIS_Button("left", "LEFT ←", 2, "right"),
- IDIIS_Button("right", "RIGHT →", 3, "left"),
- IDIIS_ButtonCR("a", "A (right)", 9, NULL),
- IDIIS_ButtonCR("x", "X (center, upper)", 8, NULL),
- IDIIS_Button("l", "Left Shoulder", 10, NULL),
- IDIIS_Button("r", "Right Shoulder", 11, NULL),
-};
-
 static const std::vector<InputDeviceInfoStruct> InputDeviceInfo =
 {
  // None
@@ -561,6 +347,14 @@ static const std::vector<InputDeviceInfoStruct> InputDeviceInfo =
   "Gamepad",
   NULL,
   GamepadIDII
+ },
+
+ // Mouse
+ {
+  "mouse",
+  "Mouse",
+  NULL,
+  MouseIDII
  },
 };
 

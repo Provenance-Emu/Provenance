@@ -2,7 +2,7 @@
 /* Mednafen Sony PS1 Emulation Module                                         */
 /******************************************************************************/
 /* memcard.cpp:
-**  Copyright (C) 2012-2016 Mednafen Team
+**  Copyright (C) 2012-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -226,7 +226,7 @@ void InputDevice_Memcard::SetDTR(bool new_dtr)
  else if(dtr && !new_dtr)
  {
   if(command_phase > 0)
-   PSX_WARNING("[MCR] Communication aborted on phase %d", command_phase);
+   PSX_DBG(PSX_DBG_WARNING | PSX_DBG_MEMCARD, "[MCR] Communication aborted on phase %d\n", command_phase);
  }
  dtr = new_dtr;
 }
@@ -295,7 +295,7 @@ bool InputDevice_Memcard::Clock(bool TxD, int32 &dsr_pulse_delay)
 	{
 	 if(command == 'S')
 	 {
-	  PSX_WARNING("[MCR] Memcard S command unsupported.");
+	  PSX_DBG(PSX_DBG_WARNING | PSX_DBG_MEMCARD, "[MCR] Memcard S command unsupported.\n");
 	 }
 
 	 command_phase = -1;
@@ -337,7 +337,7 @@ bool InputDevice_Memcard::Clock(bool TxD, int32 &dsr_pulse_delay)
   }
   else if(command_phase == 1002)
   {
-	PSX_DBG(PSX_DBG_SPARSE, "[MCR] Read Command: 0x%04x\n", addr);
+	PSX_DBG(PSX_DBG_MEMCARD, "[MCR] Read Command: 0x%04x\n", addr);
 	if(addr >= (sizeof(card_data) >> 7))
 	 addr = 0xFFFF;
 
@@ -412,7 +412,7 @@ bool InputDevice_Memcard::Clock(bool TxD, int32 &dsr_pulse_delay)
   {
 	calced_xor ^= receive_buffer;
         addr |= receive_buffer & 0xFF;
-	PSX_DBG(PSX_DBG_SPARSE, "[MCR] Write command: 0x%04x\n", addr);
+	PSX_DBG(PSX_DBG_MEMCARD, "[MCR] Write command: 0x%04x\n", addr);
         transmit_buffer = receive_buffer;
         transmit_count = 1;
         command_phase = 2048;
@@ -447,12 +447,12 @@ bool InputDevice_Memcard::Clock(bool TxD, int32 &dsr_pulse_delay)
 	if(calced_xor != write_xor)
 	{
  	 transmit_buffer = 'N';
-   	 PSX_WARNING("[MCR] Write end, calced_xor(0x%02x) != written_xor(0x%02x)", calced_xor, write_xor);
+   	 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_MEMCARD, "[MCR] Write end, calced_xor(0x%02x) != written_xor(0x%02x)\n", calced_xor, write_xor);
 	}
 	else if(addr >= (sizeof(card_data) >> 7))
 	{
 	 transmit_buffer = 0xFF;
-	 PSX_WARNING("[MCR] Attempt to write to invalid block 0x%04x", addr);
+	 PSX_DBG(PSX_DBG_WARNING | PSX_DBG_MEMCARD, "[MCR] Attempt to write to invalid block 0x%04x\n", addr);
 	}
 	else
 	{

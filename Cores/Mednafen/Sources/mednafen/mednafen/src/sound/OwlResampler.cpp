@@ -24,17 +24,8 @@
 #include "DSPUtility.h"
 #include "../cputest/cputest.h"
 
-#if defined(HAVE_ALTIVEC_INTRINSICS) && defined(HAVE_ALTIVEC_H)
- #include <altivec.h>
-#endif
-
-#ifdef HAVE_NEON_INTRINSICS
- #include <arm_neon.h>
-#endif
-
-#if defined(HAVE_SSE_INTRINSICS)
- #include <xmmintrin.h>
-#endif
+#define RESAMPLERMAC_FLOATOUT 0
+#include "ResamplerMAC.h"
 
 namespace Mednafen
 {
@@ -265,36 +256,6 @@ void RavenBuffer::Finish(unsigned count)
  memset(&BB[OwlBuffer::HRBUF_OVERFLOW_PADDING], 0, count * sizeof(BB[0]));
 }
 
-static INLINE void DoMAC(float *wave, float *coeffs, int32 count, int32 *accum_output)
-{
- float acc[4] = { 0, 0, 0, 0 };
-
- for(int c = 0; MDFN_LIKELY(c < count); c += 4)
- {
-  acc[0] += wave[c + 0] * coeffs[c + 0];
-  acc[1] += wave[c + 1] * coeffs[c + 1];
-  acc[2] += wave[c + 2] * coeffs[c + 2];
-  acc[3] += wave[c + 3] * coeffs[c + 3];
- }
-
- *accum_output = (acc[0] + acc[2]) + (acc[1] + acc[3]);
-}
-
-#ifdef ARCH_X86
- #include "OwlResampler_x86.inc"
-#elif defined(HAVE_SSE_INTRINSICS)
- #include "OwlResampler_sse.inc"
-#endif
-
-#ifdef HAVE_ALTIVEC_INTRINSICS
- #include "OwlResampler_altivec.inc"
-#endif
-
-#ifdef HAVE_NEON_INTRINSICS
- #include "OwlResampler_neon.inc"
-#endif
-
-
 template<typename T, unsigned sa>
 static T SDP2(T v)
 {
@@ -328,24 +289,8 @@ enum
 };
 
 template<unsigned TA_SIMD_Type>
-NO_INLINE int32 OwlResampler::T_Resample(OwlBuffer* in, const uint32 in_count, int16* out, const uint32 max_out_count/*(unused currently)*/, const bool reverse)
+NO_INLINE int32 OwlResampler::T_Resample(OwlBuffer* in, const uint32 in_count)
 {
-	if(reverse)
-	{
-	 int32* a = in->Buf();
-	 int32* b = in->Buf() + in_count - 1;
-
-	 while(MDFN_LIKELY(a < b))
-	 {
-	  std::swap(*a, *b);
-	  a++;
-	  b--;
-	 }
-	}
-
-	//
-	//
-	//
 	uint32 count = 0;
 	int32* I32Out = &IntermediateBuffer[0];
 	const uint32 in_count_WLO = in->leftover + in_count;
@@ -435,51 +380,6 @@ NO_INLINE int32 OwlResampler::T_Resample(OwlBuffer* in, const uint32 in_count, i
 	 InputIndex = 0;
 	}
 
-#if 0
-	for(uint32 x = 0; x < count; x++)
-	{
- 	 int s = IntermediateBuffer[x] >> 8;
-
-	 if(s < -32768 || s > 32767)
-	 {
-	  //printf("Flow: %6d\n", s);
-	  if(s < -32768)
-	   s = -32768;
-	  else if(s > 32767)
-	   s = 32767;
-	 }
-	 out[x * 2] = s;
-	}
-#else
-	{
-	 int64 debias = in->debias;
-
- 	 for(uint32 x = 0; x < count; x++)
-	 {
- 	  int32 sample = IntermediateBuffer[x];
-	  int32 s;
-
-          debias += (((int64)((uint64)(int64)sample << 16) - debias) * debias_multiplier) >> 16;
-	  sample -= debias >> 16;
-#if 0
-	  s = (sample + ((rand() & 0xFF) - 0x80)) / 256; //>> 8;
-#else
-          s = SDP2<int32, 8>(sample);
-#endif
-	  if(s < -32768 || s > 32767)
-	  {
-	   //printf("Flow: %6d\n", s);
-	   if(s < -32768)
-	    s = -32768;
-	   else if(s > 32767)
-	    s = 32767;
-	  }
-	  out[x * 2] = s;
-	 }
-
-	 in->debias = debias;
-	}
-#endif
         memmove(in->Buf() - leftover,
 	        in->Buf() + in_count - leftover,
 		sizeof(int32) * (leftover + OwlBuffer::HRBUF_OVERFLOW_PADDING));
@@ -491,6 +391,55 @@ NO_INLINE int32 OwlResampler::T_Resample(OwlBuffer* in, const uint32 in_count, i
 	in->InputIndex = InputIndex;
 
 	return count;
+}
+
+
+int32 OwlResampler::Resample(OwlBuffer* in, const uint32 in_count, int16* out, const uint32 max_out_count/*(unused currently)*/, const bool reverse, const bool stereo)
+{
+ if(reverse)
+ {
+  int32* a = in->Buf();
+  int32* b = in->Buf() + in_count - 1;
+
+  while(MDFN_LIKELY(a < b))
+  {
+   std::swap(*a, *b);
+   a++;
+   b--;
+  }
+ }
+ //
+ //
+ const uint32 count = (this->*OwlResampler::Resample_)(in, in_count);
+ //
+ int32* src = &IntermediateBuffer[0];
+ int64 debias = in->debias;
+ const unsigned out_inc = 1 + stereo;
+
+ for(uint32 i = 0; i < count; i++)
+ {
+  int32 sample = src[i];
+  int32 s;
+
+  debias += (((int64)((uint64)(int64)sample << 16) - debias) * debias_multiplier) >> 16;
+  sample -= debias >> 16;
+  s = SDP2<int32, 8>(sample);
+
+  if(s < -32768 || s > 32767)
+  {
+   //printf("Flow: %6d\n", s);
+   if(s < -32768)
+    s = -32768;
+   else if(s > 32767)
+    s = 32767;
+  }
+  *out = s;
+  out += out_inc;
+ }
+
+ in->debias = debias;
+
+ return count;
 }
 
 void OwlResampler::ResetBufResampState(OwlBuffer* buf)

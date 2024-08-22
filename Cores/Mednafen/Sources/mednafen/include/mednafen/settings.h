@@ -1,1 +1,0 @@
-../../mednafen/src/settings.h

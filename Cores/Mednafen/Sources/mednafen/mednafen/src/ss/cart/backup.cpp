@@ -26,6 +26,7 @@ namespace MDFN_IEN_SS
 {
 
 static uint8 ExtBackupRAM[0x80000];
+static uint8 ExtBackupRAM_StateHelper[0x80000];
 static bool ExtBackupRAM_Dirty;
 
 // TODO: Check mirroring.
@@ -38,8 +39,11 @@ static MDFN_HOT void ExtBackupRAM_RW_DB(uint32 A, uint16* DB)
  {
   if(A & 1)
   {
-   ExtBackupRAM_Dirty = true;
-   *ptr = *DB;
+   if(*ptr != (uint8)*DB)
+   {
+    ExtBackupRAM_Dirty = true;
+    *ptr = (uint8)*DB;
+   }
   }
  }
  else
@@ -76,11 +80,17 @@ static MDFN_COLD void StateAction(StateMem* sm, const unsigned load, const bool 
   SFEND
  };
 
+ if(load)
+  memcpy(ExtBackupRAM_StateHelper, ExtBackupRAM, 0x80000);
+ //
+ //
  MDFNSS_StateAction(sm, load, data_only, StateRegs, "CART_BACKUP");
-
+ //
+ //
  if(load)
  {
-  ExtBackupRAM_Dirty = true;
+  if(memcmp(ExtBackupRAM, ExtBackupRAM_StateHelper, 0x80000))
+   ExtBackupRAM_Dirty = true;
  }
 }
 

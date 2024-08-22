@@ -143,10 +143,10 @@ static inline uint32 INTERPOLATE (uint32 A, uint32 B)
 
 static inline uint32 Q_INTERPOLATE (uint32 A, uint32 B, uint32 C, uint32 D)
 {
-  register uint32 x = ((A & qcolorMask) >> 2) +
+  uint32 x = ((A & qcolorMask) >> 2) +
     ((B & qcolorMask) >> 2) +
     ((C & qcolorMask) >> 2) + ((D & qcolorMask) >> 2);
-  register uint32 y = (A & qlowpixelMask) +
+  uint32 y = (A & qlowpixelMask) +
     (B & qlowpixelMask) + (C & qlowpixelMask) + (D & qlowpixelMask);
 
   y = (y >> 2) & qlowpixelMask;
@@ -206,7 +206,7 @@ void SAI_Super2xSaI (uint8 *srcPtr, uint32 srcPitch,
           } else if (color5 == color3 && color2 != color6) {
             product2b = product1b = color5;
           } else if (color5 == color3 && color2 == color6) {
-            register int r = 0;
+            int r = 0;
 
             r += GetResult (color6, color5, color1, colorA1);
             r += GetResult (color6, color5, color4, colorB1);
@@ -336,7 +336,7 @@ void SAI_Super2xSaI32 (uint8 *srcPtr, uint32 srcPitch,
       } else if (color5 == color3 && color2 != color6) {
         product2b = product1b = color5;
       } else if (color5 == color3 && color2 == color6) {
-        register int r = 0;
+        int r = 0;
 
         r += GetResult (color6, color5, color1, colorA1);
         r += GetResult (color6, color5, color4, colorB1);
@@ -482,7 +482,7 @@ void SAI_SuperEagle (uint8 *srcPtr, uint32 srcPitch,
           }
 
         } else if (color5 == color3 && color2 == color6) {
-          register int r = 0;
+          int r = 0;
 
           r += GetResult (color6, color5, color1, colorA1);
           r += GetResult (color6, color5, color4, colorB1);
@@ -611,7 +611,7 @@ void SAI_SuperEagle32 (uint8 *srcPtr, uint32 srcPitch,
         }
 
       } else if (color5 == color3 && color2 == color6) {
-        register int r = 0;
+        int r = 0;
 
         r += GetResult (color6, color5, color1, colorA1);
         r += GetResult (color6, color5, color4, colorB1);
@@ -678,7 +678,7 @@ void SAI_2xSaI (uint8 *srcPtr, uint32 srcPitch,
 
       for (uint32 finish = width; finish; finish -= inc_bP) {
 
-        register uint32 colorA, colorB;
+        uint32 colorA, colorB;
         uint32 colorC, colorD,
           colorE, colorF, colorG, colorH,
           colorI, colorJ, colorK, colorL,
@@ -751,7 +751,7 @@ void SAI_2xSaI (uint8 *srcPtr, uint32 srcPitch,
             product1 = colorA;
             product2 = colorA;
           } else {
-            register int r = 0;
+            int r = 0;
 
             product1 = INTERPOLATE (colorA, colorC);
             product = INTERPOLATE (colorA, colorB);
@@ -837,7 +837,7 @@ void SAI_2xSaI32 (uint8 *srcPtr, uint32 srcPitch,
     dP = (uint32 *) dstPtr;
 
     for (uint32 finish = width; finish; finish -= inc_bP) {
-      register uint32 colorA, colorB;
+      uint32 colorA, colorB;
       uint32 colorC, colorD,
         colorE, colorF, colorG, colorH,
         colorI, colorJ, colorK, colorL,
@@ -910,7 +910,7 @@ void SAI_2xSaI32 (uint8 *srcPtr, uint32 srcPitch,
           product1 = colorA;
           product2 = colorA;
         } else {
-          register int r = 0;
+          int r = 0;
 
           product1 = INTERPOLATE (colorA, colorC);
           product = INTERPOLATE (colorA, colorB);
@@ -1104,7 +1104,7 @@ void SAI_Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch,
             a1 = y1 - x1;
             product1 = Bilinear (A, C, a1);
           }
-        else if (y1 <= x1)      // close to B
+        else /*if (y1 <= x1)*/      // close to B
           {
             a1 = x1 - y1;
             product1 = Bilinear (A, B, a1);
@@ -1141,7 +1141,7 @@ void SAI_Scale_2xSaI (uint8 *srcPtr, uint32 srcPitch,
                 a1 = y2 - x1;
                 product1 = Bilinear (B, A, a1);
               }
-            else if (y2 <= x1)  // close to D
+            else /*if (y2 <= x1)*/  // close to D
               {
                 a1 = x1 - y2;
                 product1 = Bilinear (B, D, a1);

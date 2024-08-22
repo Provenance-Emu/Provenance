@@ -18,7 +18,7 @@
 
 #include "os_types.h"
 
-static const LOOKUP_T vwin64[32] = {
+static LOOKUP_T vwin64[32] = {
   X(0x001f0003), X(0x01168c98), X(0x030333c8), X(0x05dfe3a4),
   X(0x09a49562), X(0x0e45df18), X(0x13b47ef2), X(0x19dcf676),
   X(0x20a74d83), X(0x27f7137c), X(0x2fabb05a), X(0x37a1105a),
@@ -29,7 +29,7 @@ static const LOOKUP_T vwin64[32] = {
   X(0x7fdd78a5), X(0x7ff6ec6d), X(0x7ffed0e9), X(0x7ffffc3f),
 };
 
-static const LOOKUP_T vwin128[64] = {
+static LOOKUP_T vwin128[64] = {
   X(0x0007c04d), X(0x0045bb89), X(0x00c18b87), X(0x017ae294),
   X(0x02714a4e), X(0x03a4217a), X(0x05129952), X(0x06bbb24f),
   X(0x089e38a1), X(0x0ab8c073), X(0x0d09a228), X(0x0f8ef6bd),
@@ -48,7 +48,7 @@ static const LOOKUP_T vwin128[64] = {
   X(0x7ffdcf39), X(0x7fff6dac), X(0x7fffed01), X(0x7fffffc4),
 };
 
-static const LOOKUP_T vwin256[128] = {
+static LOOKUP_T vwin256[128] = {
   X(0x0001f018), X(0x00117066), X(0x00306e9e), X(0x005ee5f1),
   X(0x009ccf26), X(0x00ea208b), X(0x0146cdea), X(0x01b2c87f),
   X(0x022dfedf), X(0x02b85ced), X(0x0351cbbd), X(0x03fa317f),
@@ -83,7 +83,7 @@ static const LOOKUP_T vwin256[128] = {
   X(0x7fffdcd2), X(0x7ffff6d6), X(0x7ffffed0), X(0x7ffffffc),
 };
 
-static const LOOKUP_T vwin512[256] = {
+static LOOKUP_T vwin512[256] = {
   X(0x00007c06), X(0x00045c32), X(0x000c1c62), X(0x0017bc4c),
   X(0x00273b7a), X(0x003a9955), X(0x0051d51c), X(0x006cede7),
   X(0x008be2a9), X(0x00aeb22a), X(0x00d55b0d), X(0x00ffdbcc),
@@ -150,7 +150,7 @@ static const LOOKUP_T vwin512[256] = {
   X(0x7ffffdcd), X(0x7fffff6d), X(0x7fffffed), X(0x7fffffff),
 };
 
-static const LOOKUP_T vwin1024[512] = {
+static LOOKUP_T vwin1024[512] = {
   X(0x00001f02), X(0x0001170e), X(0x00030724), X(0x0005ef40),
   X(0x0009cf59), X(0x000ea767), X(0x0014775e), X(0x001b3f2e),
   X(0x0022fec8), X(0x002bb618), X(0x00356508), X(0x00400b81),
@@ -281,7 +281,7 @@ static const LOOKUP_T vwin1024[512] = {
   X(0x7fffffdd), X(0x7ffffff7), X(0x7fffffff), X(0x7fffffff),
 };
 
-static const LOOKUP_T vwin2048[1024] = {
+static LOOKUP_T vwin2048[1024] = {
   X(0x000007c0), X(0x000045c4), X(0x0000c1ca), X(0x00017bd3),
   X(0x000273de), X(0x0003a9eb), X(0x00051df9), X(0x0006d007),
   X(0x0008c014), X(0x000aee1e), X(0x000d5a25), X(0x00100428),
@@ -540,7 +540,7 @@ static const LOOKUP_T vwin2048[1024] = {
   X(0x7ffffffe), X(0x7fffffff), X(0x7fffffff), X(0x7fffffff),
 };
 
-static const LOOKUP_T vwin4096[2048] = {
+static LOOKUP_T vwin4096[2048] = {
   X(0x000001f0), X(0x00001171), X(0x00003072), X(0x00005ef5),
   X(0x00009cf8), X(0x0000ea7c), X(0x00014780), X(0x0001b405),
   X(0x0002300b), X(0x0002bb91), X(0x00035698), X(0x0004011e),
@@ -1055,7 +1055,7 @@ static const LOOKUP_T vwin4096[2048] = {
   X(0x7fffffff), X(0x7fffffff), X(0x7fffffff), X(0x7fffffff),
 };
 
-static const LOOKUP_T vwin8192[4096] = {
+static LOOKUP_T vwin8192[4096] = {
   X(0x0000007c), X(0x0000045c), X(0x00000c1d), X(0x000017bd),
   X(0x0000273e), X(0x00003a9f), X(0x000051e0), X(0x00006d02),
   X(0x00008c03), X(0x0000aee5), X(0x0000d5a7), X(0x00010049),

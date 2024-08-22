@@ -67,7 +67,7 @@ FileStream::FileStream(const std::string& path, const uint32 mode, const int do_
 	: fd(-1), pos(0),
 	  buf(buffer_size ? new uint8[buffer_size] : nullptr), buf_size(buffer_size), buf_write_offs(0), buf_read_offs(0), buf_read_avail(0),
 	  need_real_seek(false), locked(false), mapping(NULL), mapping_size(0),
-	  OpenedMode(mode), path_save(path)
+	  OpenedMode(mode), path_humesc(MDFN_strhumesc(path))
 {
  int open_flags;
 
@@ -119,7 +119,7 @@ FileStream::FileStream(const std::string& path, const uint32 mode, const int do_
  #endif
 
  if(path.find('\0') != std::string::npos)
-  throw MDFN_Error(EINVAL, _("Error opening file \"%s\": %s"), path_save.c_str(), _("Null character in path."));
+  throw MDFN_Error(EINVAL, _("Error opening file \"%s\" %s: %s"), path_humesc.c_str(), VirtualFS::get_human_mode(mode).c_str(), _("Null character in path."));
 
  #ifdef WIN32
  {
@@ -127,7 +127,7 @@ FileStream::FileStream(const std::string& path, const uint32 mode, const int do_
   auto tpath = Win32Common::UTF8_to_T(path, &invalid_utf8, true);
 
   if(invalid_utf8)
-   throw MDFN_Error(EINVAL, _("Error opening file \"%s\": %s"), path_save.c_str(), _("Invalid UTF-8 in path."));
+   throw MDFN_Error(EINVAL, _("Error opening file \"%s\" %s: %s"), path_humesc.c_str(), VirtualFS::get_human_mode(mode).c_str(), _("Invalid UTF-8 in path."));
 
   fd = ::_topen((const TCHAR*)tpath.c_str(), open_flags, perm_mode);
  }
@@ -139,7 +139,7 @@ FileStream::FileStream(const std::string& path, const uint32 mode, const int do_
  {
   ErrnoHolder ene(errno);
 
-  throw MDFN_Error(ene.Errno(), _("Error opening file \"%s\": %s"), path_save.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error opening file \"%s\" %s: %s"), path_humesc.c_str(), VirtualFS::get_human_mode(mode).c_str(), ene.StrError());
  }
 
  //
@@ -177,7 +177,7 @@ FileStream::~FileStream()
 #if 0
   if(fp && (attributes() & ATTRIBUTE_WRITEABLE))
   {
-   MDFN_printf(_("FileStream::close() not explicitly called for file \"%s\" opened for writing!\n"), path_save.c_str());
+   MDFN_printf(_("FileStream::close() not explicitly called for file \"%s\" opened for writing!\n"), path_humesc.c_str());
   } 
 #endif
 
@@ -305,7 +305,7 @@ uint64 FileStream::read_ub(void* data, uint64 count)
 
    need_real_seek = true;
 
-   throw MDFN_Error(ene.Errno(), _("Error reading from opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+   throw MDFN_Error(ene.Errno(), _("Error reading from opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
   }
   else if(!dr)
    break;
@@ -338,7 +338,7 @@ uint64 FileStream::write_ub(const void* data, uint64 count)
 
    need_real_seek = true;
 
-   throw MDFN_Error(ene.Errno(), _("Error writing to opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+   throw MDFN_Error(ene.Errno(), _("Error writing to opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
   }
   else if(!dw)
    break;
@@ -362,7 +362,7 @@ void FileStream::write_buffered_data(void)
   //
   ErrnoHolder ene(ENOSPC);
 
-  throw MDFN_Error(ene.Errno(), _("Error writing to opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error writing to opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
  }
  else
   buf_write_offs = 0;
@@ -374,7 +374,7 @@ void FileStream::write(const void *data, uint64 count)
  {
   ErrnoHolder ene(EBADF);
 
-  throw MDFN_Error(ene.Errno(), _("Error writing to opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error writing to opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
  }
  //
  //
@@ -401,7 +401,7 @@ void FileStream::write(const void *data, uint64 count)
    {
     ErrnoHolder ene(ENOSPC);
 
-    throw MDFN_Error(ene.Errno(), _("Error writing to opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+    throw MDFN_Error(ene.Errno(), _("Error writing to opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
    }
 
    break;
@@ -465,7 +465,7 @@ uint64 FileStream::read(void *data, uint64 count, bool error_on_eos)
  //
  //
  if(tmp_count && error_on_eos)
-  throw MDFN_Error(0, _("Error reading from opened file \"%s\": %s"), path_save.c_str(), _("Unexpected EOF"));
+  throw MDFN_Error(0, _("Error reading from opened file \"%s\": %s"), path_humesc.c_str(), _("Unexpected EOF"));
 
  return count - tmp_count;
 }
@@ -479,7 +479,7 @@ static INLINE bool SFPW(HANDLE fhand, uint64 offset, uint64* pos_save, uint32 me
  SetLastError(NO_ERROR);
  rv = SetFilePointer(fhand, (uint32)offset, &h, method);
 
- if(rv == ~(uint32)0 && GetLastError() != NO_ERROR)
+ if(rv == (uint32)-1 && GetLastError() != NO_ERROR)
   return false;
 
  if(pos_save)
@@ -495,7 +495,7 @@ void FileStream::truncate(uint64 length)
  {
   ErrnoHolder ene(EBADF);
 
-  throw MDFN_Error(ene.Errno(), _("Error truncating opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error truncating opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
  }
  //
  //
@@ -509,14 +509,14 @@ void FileStream::truncate(uint64 length)
  {
   const uint32 ec = GetLastError();
 
-  throw MDFN_Error(0, _("Error truncating opened file \"%s\": %s"), path_save.c_str(), Win32Common::ErrCodeToString(ec).c_str());
+  throw MDFN_Error(0, _("Error truncating opened file \"%s\": %s"), path_humesc.c_str(), Win32Common::ErrCodeToString(ec).c_str());
  }
 
  if(!SFPW(fhand, length, nullptr, FILE_BEGIN))
  {
   const uint32 ec = GetLastError();
 
-  throw MDFN_Error(0, _("Error truncating opened file \"%s\": %s"), path_save.c_str(), Win32Common::ErrCodeToString(ec).c_str());
+  throw MDFN_Error(0, _("Error truncating opened file \"%s\": %s"), path_humesc.c_str(), Win32Common::ErrCodeToString(ec).c_str());
  }
 
  if(!SetEndOfFile(fhand))
@@ -526,7 +526,7 @@ void FileStream::truncate(uint64 length)
   if(!SFPW(fhand, pos_save, nullptr, FILE_BEGIN))
    need_real_seek = true;
 
-  throw MDFN_Error(0, _("Error truncating opened file \"%s\": %s"), path_save.c_str(), Win32Common::ErrCodeToString(ec).c_str());
+  throw MDFN_Error(0, _("Error truncating opened file \"%s\": %s"), path_humesc.c_str(), Win32Common::ErrCodeToString(ec).c_str());
  }
 
  if(!SFPW(fhand, pos_save, nullptr, FILE_BEGIN))
@@ -536,14 +536,14 @@ void FileStream::truncate(uint64 length)
 
   need_real_seek = true;
 
-  throw MDFN_Error(0, _("Error truncating opened file \"%s\": %s"), path_save.c_str(), Win32Common::ErrCodeToString(ec).c_str());
+  throw MDFN_Error(0, _("Error truncating opened file \"%s\": %s"), path_humesc.c_str(), Win32Common::ErrCodeToString(ec).c_str());
  }
 #else
  if(ftruncate(fd, length) != 0)
  {
   ErrnoHolder ene(errno);
 
-  throw MDFN_Error(ene.Errno(), _("Error truncating opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error truncating opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
  }
 #endif
 }
@@ -563,7 +563,7 @@ void FileStream::seek(int64 offset, int whence)
    {
     ErrnoHolder ene(EINVAL);
 
-    throw MDFN_Error(ene.Errno(), _("Error seeking in opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+    throw MDFN_Error(ene.Errno(), _("Error seeking in opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
    }
    //
    whence = SEEK_SET;
@@ -597,7 +597,7 @@ void FileStream::seek(int64 offset, int whence)
  {
   ErrnoHolder ene(errno);
 
-  throw MDFN_Error(ene.Errno(), _("Error seeking in opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error seeking in opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
  }
  pos = (std::make_unsigned<decltype(rv)>::type)rv;
  need_real_seek = false;
@@ -630,11 +630,11 @@ uint64 FileStream::size(void)
 
  SetLastError(NO_ERROR);
  rv = GetFileSize((HANDLE)_get_osfhandle(fd), &h);
- if(rv == ~(uint32)0 && GetLastError() != NO_ERROR)
+ if(rv == (uint32)-1 && GetLastError() != NO_ERROR)
  {
   const uint32 ec = GetLastError();
 
-  throw MDFN_Error(0, _("Error getting the size of opened file \"%s\": %s"), path_save.c_str(), Win32Common::ErrCodeToString(ec).c_str());
+  throw MDFN_Error(0, _("Error getting the size of opened file \"%s\": %s"), path_humesc.c_str(), Win32Common::ErrCodeToString(ec).c_str());
  }
 
  return ((uint64)h << 32) | rv;
@@ -645,7 +645,7 @@ uint64 FileStream::size(void)
  {
   ErrnoHolder ene(errno);
 
-  throw MDFN_Error(ene.Errno(), _("Error getting the size of opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error getting the size of opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
  }
 
  return (std::make_unsigned<decltype(stbuf.st_size)>::type)stbuf.st_size;
@@ -658,15 +658,15 @@ void FileStream::lock(bool nb)
   return;
 
  #ifdef WIN32
- uint64 lock_offset = ~(uint64)0;
+ uint64 lock_offset = (uint64)-1;
  TryAgain:;
  if(!LockFile((HANDLE)_get_osfhandle(fd), lock_offset, lock_offset >> 32, 1, 0))
  {
   const uint32 ec = GetLastError();
 
-  if(ec == ERROR_INVALID_PARAMETER && lock_offset != ~(uint32)0)
+  if(ec == ERROR_INVALID_PARAMETER && lock_offset != (uint32)-1)
   {
-   lock_offset = ~(uint32)0;
+   lock_offset = (uint32)-1;
    goto TryAgain;
   }
 
@@ -677,7 +677,7 @@ void FileStream::lock(bool nb)
    goto TryAgain;
   }
 
-  throw MDFN_Error((ec == ERROR_LOCK_VIOLATION) ? EWOULDBLOCK : 0, _("Error locking opened file \"%s\": %s"), path_save.c_str(), Win32Common::ErrCodeToString(ec).c_str());
+  throw MDFN_Error((ec == ERROR_LOCK_VIOLATION) ? EWOULDBLOCK : 0, _("Error locking opened file \"%s\": %s"), path_humesc.c_str(), Win32Common::ErrCodeToString(ec).c_str());
  }
  locked = lock_offset;
  #else
@@ -685,7 +685,7 @@ void FileStream::lock(bool nb)
  {
   ErrnoHolder ene(errno);
 
-  throw MDFN_Error(ene.Errno(), _("Error locking opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error locking opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
  } 
 
  locked = true;
@@ -702,14 +702,14 @@ void FileStream::unlock(void)
  {
   const uint32 ec = GetLastError();
 
-  throw MDFN_Error(0, _("Error unlocking opened file \"%s\": %s"), path_save.c_str(), Win32Common::ErrCodeToString(ec).c_str());
+  throw MDFN_Error(0, _("Error unlocking opened file \"%s\": %s"), path_humesc.c_str(), Win32Common::ErrCodeToString(ec).c_str());
  }
  #else
  if(flock(fd, LOCK_UN) == -1)
  {
   ErrnoHolder ene(errno);
 
-  throw MDFN_Error(ene.Errno(), _("Error unlocking opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error unlocking opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
  }
  #endif
 
@@ -758,7 +758,7 @@ void FileStream::close(void)
   {
    ErrnoHolder ene(errno);
    fd = -1;
-   throw MDFN_Error(ene.Errno(), _("Error closing opened file \"%s\": %s"), path_save.c_str(), ene.StrError());
+   throw MDFN_Error(ene.Errno(), _("Error closing opened file \"%s\": %s"), path_humesc.c_str(), ene.StrError());
   }
   fd = -1;
  }

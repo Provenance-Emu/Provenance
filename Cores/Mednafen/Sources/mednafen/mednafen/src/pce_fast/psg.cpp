@@ -321,6 +321,7 @@ void PCEFast_PSG::Write(int32 timestamp, uint8 A, uint8 V)
         case 0x08: /* LFO frequency */
             lfofreq = V & 0xFF;
 	    //printf("LFO Freq: %02x\n", V);
+            RecalcFreqCache(1);
             break;
 
         case 0x09: /* LFO trigger and control */

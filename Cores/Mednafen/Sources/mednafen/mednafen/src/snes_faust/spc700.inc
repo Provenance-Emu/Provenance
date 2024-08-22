@@ -1441,13 +1441,13 @@ INLINE void SPC700::Instr_NOP(void)
 
 INLINE void SPC700::Instr_SLEEP(void)
 {
- SNES_DBG("[SPC700] SLEEP @ PC=%04x\n", PC);
+ SNES_DBG(SNES_DBG_SPC700, "[SPC700] SLEEP @ PC=%04x\n", PC);
  Halted = true;
 }
 
 INLINE void SPC700::Instr_STOP(void)
 {
- SNES_DBG("[SPC700] STOP @ PC=%04x\n", PC);
+ SNES_DBG(SNES_DBG_SPC700, "[SPC700] STOP @ PC=%04x\n", PC);
  Halted = true;
 }
 

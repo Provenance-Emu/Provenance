@@ -726,6 +726,8 @@ MDFN_FASTCALL void Main68K_BusRMW(uint32 A, uint8 (MDFN_FASTCALL *cb)(M68K*, uin
 
 MDFN_FASTCALL unsigned Main68K_BusIntAck(uint8 level)
 {
+ Main68K.timestamp += 4;
+
  return MainVDP.IntAckCallback(level);
 }
 

@@ -389,7 +389,7 @@ uint32 CSusie::PaintSprites(void)
 
 			cycles_used+=6*SPR_RDWR_CYC;
 
-			bool enable_sizing=false;
+			//bool enable_sizing=false;
 			bool enable_stretch=false;
 			bool enable_tilt=false;
 		
@@ -400,7 +400,7 @@ uint32 CSusie::PaintSprites(void)
 			{
 				case 1:
 					TRACE_SUSIE0("PaintSprites() Sizing Enabled");
-					enable_sizing=true;
+					//enable_sizing=true;
 
 					mSPRHSIZ.Val16=RAM_PEEKW(mTMPADR.Val16);	// Sprite Horizontal size
 					mTMPADR.Val16+=2;
@@ -414,7 +414,7 @@ uint32 CSusie::PaintSprites(void)
 				case 2:
 					TRACE_SUSIE0("PaintSprites() Sizing Enabled");
 					TRACE_SUSIE0("PaintSprites() Stretch Enabled");
-					enable_sizing=true;
+					//enable_sizing=true;
 					enable_stretch=true;
 
 					mSPRHSIZ.Val16=RAM_PEEKW(mTMPADR.Val16);	// Sprite Horizontal size
@@ -433,7 +433,7 @@ uint32 CSusie::PaintSprites(void)
 					TRACE_SUSIE0("PaintSprites() Sizing Enabled");
 					TRACE_SUSIE0("PaintSprites() Stretch Enabled");
 					TRACE_SUSIE0("PaintSprites() Tilt Enabled");
-					enable_sizing=true;
+					//enable_sizing=true;
 					enable_stretch=true;
 					enable_tilt=true;
 

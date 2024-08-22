@@ -17,6 +17,7 @@ php pce.php > pce.html
 php pce_fast.php > pce_fast.html
 php pcfx.php > pcfx.html
 php psx.php > psx.html
+php sasplay.php > sasplay.html
 php sms.php > sms.html
 php snes.php > snes.html
 php snes_faust.php > snes_faust.html

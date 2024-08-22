@@ -45,6 +45,7 @@ namespace MDFN_IEN_SSFPLAY
 #include "scsp.h"
 
 static SS_SCSP SCSP;
+static void (*MIDI_Out)(uint8);
 
 static M68K SoundCPU(true);
 static int64 run_until_time;	// 32.32
@@ -61,12 +62,12 @@ static SpeexResamplerState* resampler = NULL;
 static int last_rate;
 static uint32 last_quality;
 
-static INLINE void SCSP_SoundIntChanged(unsigned level)
+static INLINE void SCSP_SoundIntChanged(SS_SCSP* s, unsigned level)
 {
  SoundCPU.SetIPL(level);
 }
 
-static INLINE void SCSP_MainIntChanged(bool state)
+static INLINE void SCSP_MainIntChanged(SS_SCSP* s, bool state)
 {
  #ifndef MDFN_SSFPLAY_COMPILE
  SCU_SetInt(SCU_INT_SCSP, state);
@@ -77,21 +78,27 @@ static INLINE void SCSP_MainIntChanged(bool state)
 
 //
 //
-template<typename T>
+template<typename T, bool TA_STV>
 static MDFN_FASTCALL T SoundCPU_BusRead(uint32 A);
 
+template<bool TA_STV>
 static MDFN_FASTCALL uint16 SoundCPU_BusReadInstr(uint32 A);
 
-template<typename T>
+template<typename T, bool TA_STV>
 static MDFN_FASTCALL void SoundCPU_BusWrite(uint32 A, T V);
 
+template<bool TA_STV>
 static MDFN_FASTCALL void SoundCPU_BusRMW(uint32 A, uint8 (MDFN_FASTCALL *cb)(M68K*, uint8));
 static MDFN_FASTCALL unsigned SoundCPU_BusIntAck(uint8 level);
 static MDFN_FASTCALL void SoundCPU_BusRESET(bool state);
 //
 //
+void SOUND_SetMIDIOutput(void (*p)(uint8))
+{
+ MIDI_Out = p;
+}
 
-void SOUND_Init(void)
+void SOUND_Init(bool stv_mapping)
 {
  memset(IBuffer, 0, sizeof(IBuffer));
  IBufferCount = 0;
@@ -103,15 +110,32 @@ void SOUND_Init(void)
  next_scsp_time = 0;
  lastts = 0;
 
- SoundCPU.BusRead8 = SoundCPU_BusRead<uint8>;
- SoundCPU.BusRead16 = SoundCPU_BusRead<uint16>;
+ MIDI_Out = nullptr;
 
- SoundCPU.BusWrite8 = SoundCPU_BusWrite<uint8>;
- SoundCPU.BusWrite16 = SoundCPU_BusWrite<uint16>;
+ if(stv_mapping)
+ {
+  SoundCPU.BusRead8 = SoundCPU_BusRead<uint8, true>;
+  SoundCPU.BusRead16 = SoundCPU_BusRead<uint16, true>;
 
- SoundCPU.BusReadInstr = SoundCPU_BusReadInstr;
+  SoundCPU.BusWrite8 = SoundCPU_BusWrite<uint8, true>;
+  SoundCPU.BusWrite16 = SoundCPU_BusWrite<uint16, true>;
 
- SoundCPU.BusRMW = SoundCPU_BusRMW;
+  SoundCPU.BusReadInstr = SoundCPU_BusReadInstr<true>;
+
+  SoundCPU.BusRMW = SoundCPU_BusRMW<true>;
+ }
+ else
+ {
+  SoundCPU.BusRead8 = SoundCPU_BusRead<uint8, false>;
+  SoundCPU.BusRead16 = SoundCPU_BusRead<uint16, false>;
+
+  SoundCPU.BusWrite8 = SoundCPU_BusWrite<uint8, false>;
+  SoundCPU.BusWrite16 = SoundCPU_BusWrite<uint16, false>;
+
+  SoundCPU.BusReadInstr = SoundCPU_BusReadInstr<false>;
+
+  SoundCPU.BusRMW = SoundCPU_BusRMW<false>;
+ }
 
  SoundCPU.BusIntAck = SoundCPU_BusIntAck;
  SoundCPU.BusRESET = SoundCPU_BusRESET;
@@ -134,6 +158,37 @@ void SOUND_PokeRAM(uint32 A, uint8 V)
 {
  ne16_wbo_be<uint8>(SCSP.GetRAMPtr(), A & 0x7FFFF, V);
 }
+
+uint64 SOUND_PeekMPROG(uint32 A)
+{
+ return SCSP.PeekMPROG(A);
+}
+
+void SOUND_PokeMPROG(uint32 A, uint64 V)
+{
+ SCSP.PokeMPROG(A, V);
+}
+
+uint32 SOUND_PeekTEMPRel(uint32 A)
+{
+ return SCSP.PeekTEMPRel(A);
+}
+
+void SOUND_PokeTEMPRel(uint32 A, uint32 V)
+{
+ SCSP.PokeTEMPRel(A, V);
+}
+
+uint32 SOUND_PeekMEMS(uint32 A)
+{
+ return SCSP.PeekMEMS(A);
+}
+
+void SOUND_PokeMEMS(uint32 A, uint32 V)
+{
+ SCSP.PokeMEMS(A, V);
+}
+
 
 static INLINE void ResetTS_68K(void)
 {
@@ -159,6 +214,11 @@ void SOUND_Reset(bool powering_up)
 void SOUND_Reset68K(void)
 {
  SoundCPU.Reset(false);
+}
+
+void SOUND_ResetSCSP(void)
+{
+ SCSP.Reset(false);
 }
 
 void SOUND_Kill(void)
@@ -200,11 +260,22 @@ static NO_INLINE void RunSCSP(void)
  //
  //
  int16* const bp = IBuffer[IBufferCount];
- SCSP.RunSample(bp);
+ SCSP.RunSample(bp, MIDI_Out);
  //bp[0] = rand();
  //bp[1] = rand();
  bp[0] = (bp[0] * 27 + 16) >> 5;
  bp[1] = (bp[1] * 27 + 16) >> 5;
+
+/*
+ // TODO?  Need to measure frequency response more reliably first, ideally after capacitor
+ // replacement.  Should probably be controlled by a boolean setting, too.
+ for(unsigned lr = 0; lr < 2; lr++)
+ {
+  static int32 filt[2];
+  filt[lr] += (((int64)(int32)((uint32)bp[lr] << 16) - filt[lr]) * 60500) >> 16;
+  bp[lr] = filt[lr] >> 16;
+ }
+*/
 
  IBufferCount = (IBufferCount + 1) & 1023;
  next_scsp_time += 256;
@@ -287,7 +358,7 @@ int32 SOUND_FlushOutput(int16* SoundBuf, const int32 SoundBufMaxSize, const bool
   }
  }
  
- if(SoundBuf && last_rate == 44100)
+ if(last_rate == 44100)
  {
   int32 ret = IBufferCount;
 
@@ -349,7 +420,7 @@ void SOUND_StateAction(StateMem* sm, const unsigned load, const bool data_only)
 //
 //
 //
-template<typename T>
+template<typename T, bool TA_STV>
 static MDFN_FASTCALL T SoundCPU_BusRead(uint32 A)
 {
  if(MDFN_UNLIKELY(A & (0xE00000 | (sizeof(T) - 1))))
@@ -358,6 +429,12 @@ static MDFN_FASTCALL T SoundCPU_BusRead(uint32 A)
 
   if(A & (sizeof(T) - 1))
    SoundCPU.SignalAddressError(A, 0x3);
+  else if(TA_STV && !(A & 0x800000))
+  {
+   SS_DBG(SS_DBG_WARNING, "[M68K BUS] Unknown %u-byte read from 0x%06x\n", (unsigned)sizeof(T), A & 0xFFFFFF);
+
+   return (T)-1;
+  }
   else
    SoundCPU.SignalDTACKHalted(A);
 
@@ -378,6 +455,7 @@ static MDFN_FASTCALL T SoundCPU_BusRead(uint32 A)
  return ret;
 }
 
+template<bool TA_STV>
 static MDFN_FASTCALL uint16 SoundCPU_BusReadInstr(uint32 A)
 {
  if(MDFN_UNLIKELY(A & 0xE00001))
@@ -386,6 +464,12 @@ static MDFN_FASTCALL uint16 SoundCPU_BusReadInstr(uint32 A)
 
   if(A & 1)
    SoundCPU.SignalAddressError(A, 0x2);
+  else if(TA_STV && !(A & 0x800000))
+  {
+   SS_DBG(SS_DBG_WARNING, "[M68K BUS] Unknown %u-byte read from 0x%06x\n", (unsigned)sizeof(uint16), A & 0xFFFFFF);
+
+   return 0xFFFF;
+  }
   else
    SoundCPU.SignalDTACKHalted(A);
 
@@ -406,7 +490,7 @@ static MDFN_FASTCALL uint16 SoundCPU_BusReadInstr(uint32 A)
  return ret;
 }
 
-template<typename T>
+template<typename T, bool TA_STV>
 static MDFN_FASTCALL void SoundCPU_BusWrite(uint32 A, T V)
 {
  if(MDFN_UNLIKELY(A & (0xE00000 | (sizeof(T) - 1))))
@@ -415,6 +499,12 @@ static MDFN_FASTCALL void SoundCPU_BusWrite(uint32 A, T V)
 
   if(A & (sizeof(T) - 1))
    SoundCPU.SignalAddressError(A, 0x1);
+  else if(TA_STV && !(A & 0x800000))
+  {
+   SS_DBG(SS_DBG_WARNING, "[M68K BUS] Unknown %u-byte write of 0x%0*x to 0x%06x\n", (unsigned)sizeof(T), (int)sizeof(T) * 2, V, A & 0xFFFFFF);
+
+   return;
+  }
   else
    SoundCPU.SignalDTACKHalted(A);
 
@@ -432,11 +522,32 @@ static MDFN_FASTCALL void SoundCPU_BusWrite(uint32 A, T V)
  SoundCPU.timestamp += 2;
 }
 
-
+template<bool TA_STV>
 static MDFN_FASTCALL void SoundCPU_BusRMW(uint32 A, uint8 (MDFN_FASTCALL *cb)(M68K*, uint8))
 {
  if(MDFN_UNLIKELY(A & 0xE00000))
  {
+  if(TA_STV && !(A & 0x800000))
+  {
+   uint8 tmp;
+
+   SS_DBG(SS_DBG_WARNING, "[M68K BUS] Unknown RMW from/to 0x%06x\n", A & 0xFFFFFF);
+
+   SoundCPU.timestamp += 2;
+   //
+   tmp = 0xFF;
+   //
+   tmp = cb(&SoundCPU, tmp);
+
+   SoundCPU.timestamp += 4;
+   //
+   
+   //
+   SoundCPU.timestamp += 2;
+
+   return;
+  }
+
   SoundCPU.timestamp += 4;
   SoundCPU.SignalDTACKHalted(A);
   MDFN_longjmp(jbuf);
@@ -462,6 +573,8 @@ static MDFN_FASTCALL void SoundCPU_BusRMW(uint32 A, uint8 (MDFN_FASTCALL *cb)(M6
 
 static MDFN_FASTCALL unsigned SoundCPU_BusIntAck(uint8 level)
 {
+ SoundCPU.timestamp += 10;
+
  return M68K::BUS_INT_ACK_AUTO;
 }
 

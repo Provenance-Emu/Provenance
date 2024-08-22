@@ -97,7 +97,7 @@ INLINE void Core65816::ISequence(unsigned which)
  PC = VecRead(vecaddr);
  BranchOccurred(which);
 
- SNES_DBG("[CPU] ISeq %u: %04x\n", which, PC);
+ SNES_DBG(SNES_DBG_CPU, "[CPU] ISeq %u: %04x\n", which, PC);
 }
 
 //
@@ -1098,7 +1098,7 @@ INLINE void Core65816::Instr_XCE(void)
  E = new_E;
 
  IO();
- SNES_DBG("[CPU] XCE: %u\n", E);
+ SNES_DBG(SNES_DBG_CPU, "[CPU] XCE: %u\n", E);
 }
 
 //

@@ -109,7 +109,7 @@ static MDFN_COLD void Load(GameFile* gf)
   SongNames.push_back(ssf_loader->tags.GetTag("title"));
   Player_Init(1, ssf_loader->tags.GetTag("game"), ssf_loader->tags.GetTag("artist"), ssf_loader->tags.GetTag("copyright"), SongNames, false);
 
-  SOUND_Init();
+  SOUND_Init(false);
 
   MDFNGameInfo->fps = 75 * 65536 * 256;
   MDFNGameInfo->MasterClock = MDFN_MASTERCLOCK_FIXED(44100 * 256);
@@ -151,7 +151,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
 static const MDFNSetting SSFPlaySettings[] =
 {
  { "ssfplay.resamp_quality", MDFNSF_NOFLAGS, gettext_noop("SCSP output resampler quality."),
-	gettext_noop("0 is lowest quality and CPU usage, 10 is highest quality and CPU usage.  The resampler that this setting refers to is used for converting from 44.1KHz to the sampling rate of the host audio device Mednafen is using.  Changing Mednafen's output rate, via the \"sound.rate\" setting, to \"44100\" may bypass the resampler, which can decrease CPU usage by Mednafen, and can increase or decrease audio quality, depending on various operating system and hardware factors."), MDFNST_UINT, "4", "0", "10" },
+	gettext_noop("0 is lowest quality and CPU usage, 10 is highest quality and CPU usage.  The resampler that this setting refers to is used for converting from 44.1KHz to the sampling rate of the host audio device Mednafen is using.  Changing Mednafen's output rate, via the \"\5sound.rate\" setting, to \"44100\" may bypass the resampler, which can decrease CPU usage by Mednafen, and can increase or decrease audio quality, depending on various operating system and hardware factors."), MDFNST_UINT, "4", "0", "10" },
 
  { NULL },
 };

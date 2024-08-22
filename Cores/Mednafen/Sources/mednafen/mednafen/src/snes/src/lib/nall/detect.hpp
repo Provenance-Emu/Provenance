@@ -21,9 +21,17 @@
 
 /* Endian detection */
 
-#if defined(__i386__) || defined(__amd64__) || defined(_M_IX86) || defined(_M_AMD64)
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
   #define ARCH_LSB
-#elif defined(__powerpc__) || defined(_M_PPC) || defined(__BIG_ENDIAN__)
+#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  #define ARCH_MSB
+#elif defined(__LITTLE_ENDIAN__)
+  #define ARCH_LSB
+#elif defined(__BIG_ENDIAN__)
+  #define ARCH_MSB
+#elif defined(__i386__) || defined(__amd64__) || defined(_M_IX86) || defined(_M_AMD64)
+  #define ARCH_LSB
+#elif defined(__powerpc__) || defined(_M_PPC)
   #define ARCH_MSB
 #endif
 

@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* m68k.cpp - Motorola 68000 CPU Emulator
-**  Copyright (C) 2015-2021 Mednafen Team
+**  Copyright (C) 2015-2022 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -19,20 +19,19 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+// TODO: Emulate prefetch.
+//
+// TODO: Make sure flags are ok for divide by zero.
+//
 // TODO: Check CHK
 //
-// TODO: Address errors(or just cheap out and mask off the lower bit on 16-bit memory accesses).
-//
-// TODO: Predec, postinc order for same address register.
-//
-// TODO: Fix instruction timings(currently execute too fast).
-//
-// TODO: Fix division timing, and make sure flags are ok for divide by zero.
-//
-// FIXME: Handle NMI differently; how to test?  Maybe MOVEM to interrupt control registers...
+// TODO: Double-check predec, postinc order for same address register.
 //
 // TODO: Test MOVEM
 //
+// FIXME: Handle NMI differently; how to test?  Maybe MOVEM to interrupt control registers...
+//
+
 /*
  Be sure to test the following thoroughly:
 	SUBA -(a0), a0
@@ -49,7 +48,9 @@
 
 #include <tuple>
 
-#pragma GCC optimize ("no-crossjumping,no-gcse")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize ("no-crossjumping,no-gcse")
+#endif
 
 namespace Mednafen
 {
@@ -420,7 +421,7 @@ struct M68K::HAM
   }
  }
 
- INLINE T read(void)
+ INLINE T read(const int predec_penalty = 2)
  {
   switch(am)
   {
@@ -442,7 +443,7 @@ struct M68K::HAM
    case ABS_LONG:
    case PC_DISP:
    case PC_INDEX:
-	calcea(2);
+	calcea(predec_penalty);
 	return zptr->Read<T>(ea);
   }
  }
@@ -671,11 +672,14 @@ void NO_INLINE M68K::Exception(unsigned which, unsigned vecnum)
  SetSVisor(true);
  SetTrace(false);
  
+ if(which == EXCEPTION_BUS_ERROR || which == EXCEPTION_ADDRESS_ERROR || which == EXCEPTION_ZERO_DIVIDE || which == EXCEPTION_CHK || which == EXCEPTION_INT)
+  timestamp += 6;
+
+ Write<uint16>(A[7] - 2, PC_save);
+
  if(which == EXCEPTION_INT)
  {
   unsigned evn;
-
-  timestamp += 4;
 
   SetIMask(IPL);
 
@@ -686,17 +690,19 @@ void NO_INLINE M68K::Exception(unsigned which, unsigned vecnum)
   else
    vecnum = evn;
 
-  timestamp += 2;
+  timestamp += 4;
  }
 
- Push<uint32>(PC_save);
- Push<uint16>(SR_save);
+ Write<uint16>(A[7] - 6, SR_save);
+ Write<uint16>(A[7] - 4, PC_save >> 16);
+ A[7] -= 6;
 
  if(MDFN_UNLIKELY(which == EXCEPTION_BUS_ERROR || which == EXCEPTION_ADDRESS_ERROR))
  {
   Push<uint16>(0); // TODO: Instruction register
   Push<uint32>(0); // TODO: Access address
   Push<uint16>(0); // TODO: R/W, I/N, function code
+  timestamp += 2;
  }
 
  PC = Read<uint32>(vecnum << 2);
@@ -714,6 +720,7 @@ void NO_INLINE M68K::Exception(unsigned which, unsigned vecnum)
 
  // TODO: Prefetch
  ReadOp();
+ timestamp += 2;
  ReadOp();
  PC -= 4;
 }
@@ -743,7 +750,7 @@ INLINE void M68K::ADD(HAM<T, SAM> &src, HAM<DT, DAM> &dst)
  }
  else if(DAM == DATA_REG_DIR && sizeof(DT) == 4)
  {
-  if(SAM == DATA_REG_DIR || SAM == IMMEDIATE)
+  if(SAM == DATA_REG_DIR || SAM == ADDR_REG_DIR || SAM == IMMEDIATE)
    timestamp += 4;
   else
    timestamp += 2;
@@ -767,18 +774,11 @@ template<typename T, M68K::AddressMode SAM, M68K::AddressMode DAM>
 INLINE void M68K::ADDX(HAM<T, SAM> &src, HAM<T, DAM> &dst)
 {
  uint32 const src_data = src.read();
- uint32 const dst_data = dst.read();
+ uint32 const dst_data = dst.read(0);
  uint64 const result = (uint64)dst_data + src_data + GetX();
 
- if(DAM != DATA_REG_DIR)
- {
-  timestamp += 2;
- }
- else
- {
-  if(sizeof(T) == 4)
-   timestamp += 4;
- }
+ if(DAM == DATA_REG_DIR && sizeof(T) == 4)
+  timestamp += 4;
 
  CalcZN<T, true>(result);
  SetCX((result >> (sizeof(T) * 8)) & 1);
@@ -812,7 +812,7 @@ INLINE DT M68K::Subtract(HAM<T, SAM> &src, HAM<DT, DAM> &dst)
  {
   if(sizeof(DT) == 4)
   {
-   if(SAM == DATA_REG_DIR || SAM == IMMEDIATE)
+   if(SAM == DATA_REG_DIR || SAM == ADDR_REG_DIR || SAM == IMMEDIATE)
     timestamp += 4;
    else
     timestamp += 2;
@@ -820,7 +820,7 @@ INLINE DT M68K::Subtract(HAM<T, SAM> &src, HAM<DT, DAM> &dst)
  }
  else if(DAM == IMMEDIATE)	// NEG, NEGX only and always.
  {
-  if(sizeof(T) == 4)
+  if(sizeof(T) == 4 && SAM == DATA_REG_DIR)
   {
    timestamp += 2;
   }
@@ -898,6 +898,9 @@ INLINE void M68K::CMP(HAM<T, SAM> &src, HAM<DT, DAM> &dst)
  uint32 const src_data = (DT)static_cast<typename std::make_signed<T>::type>(src.read());
  uint32 const dst_data = dst.read();
  uint64 const result = (uint64)dst_data - src_data;
+
+ if((sizeof(T) == 4 || sizeof(DT) == 4) && (DAM == DATA_REG_DIR || DAM == ADDR_REG_DIR))
+  timestamp += 2;
 
  CalcZN<DT>(result);
  SetC((result >> (sizeof(DT) * 8)) & 1);
@@ -1173,7 +1176,6 @@ template<bool sdiv>
 INLINE void M68K::Divide(uint16 divisor, const unsigned dr)
 {
  uint32 dividend = D[dr];
- uint32 tmp;
  bool neg_quotient = false;
  bool neg_remainder = false;
  bool oflow = false;
@@ -1184,6 +1186,8 @@ INLINE void M68K::Divide(uint16 divisor, const unsigned dr)
   return;
  }
 
+ timestamp += 4;
+
  if(sdiv)
  {
   neg_quotient = (dividend >> 31) ^ (divisor >> 15);
@@ -1191,63 +1195,105 @@ INLINE void M68K::Divide(uint16 divisor, const unsigned dr)
   {
    dividend = -dividend;
    neg_remainder = true;
+   timestamp += 2;
   }
 
   if(divisor & 0x8000)
+  {
    divisor = -divisor;
- }
-
- tmp = dividend;
-
- for(int i = 0; i < 16; i++)
- {
-  bool lb = false;
-  bool ob;
-
-  if(tmp >= ((uint32)divisor << 15))
-  {
-   tmp -= divisor << 15;
-   lb = true;
-  }
-
-  ob = tmp >> 31;
-  tmp = (tmp << 1) | lb;
-
-  if(ob)
-  {
-   oflow = true;
-   //puts("OVERFLOW");
-   //break;
   }
  }
+ //
+ //
+ const uint32 divisor_sl16 = divisor << 16;
+ uint32 tmp = dividend;
 
- if(sdiv)
+ if(dividend >= divisor_sl16)
  {
-  if((tmp & 0xFFFF) > (uint32)(0x7FFF + neg_quotient))
-   oflow = true;
- }
-
- if((uint32)(tmp >> 16) >= divisor)
+  timestamp += 2;
   oflow = true;
 
- if(sdiv && !oflow)
+  if(sdiv)
+   timestamp += 6;
+ }
+ else
  {
-  if(neg_quotient)
-   tmp = ((-tmp) & 0xFFFF) | (tmp & 0xFFFF0000);
+  if(sdiv)
+  {
+   timestamp += 14;
 
-  if(neg_remainder)
-   tmp = (((-(tmp >> 16)) << 16) & 0xFFFF0000) | (tmp & 0xFFFF);
+   if(neg_remainder || neg_quotient)
+    timestamp += 2;
+
+   if(neg_remainder && neg_quotient)
+    timestamp += 2;
+  }
+  //
+  //
+  bool carry = false;
+
+  for(int i = 0; i < 16; i++)
+  {
+   bool lb;
+
+   timestamp += 4;
+
+   if(!carry)
+   {
+    timestamp += 2;
+    carry |= (tmp >= divisor_sl16);
+   }
+
+   if(carry)
+    tmp -= divisor_sl16;
+   else
+    timestamp += 2;
+
+   lb = carry;
+   carry = (tmp >> 31) & 1;
+   tmp = (tmp << 1) | lb;
+  }
+
+  carry |= (tmp >= divisor_sl16);
+  if(carry)
+   tmp -= divisor_sl16;
+  tmp = (uint16)(tmp << 1) | carry | (tmp & 0xFFFF0000);
+
+  if(sdiv)
+  {
+   if((tmp & 0xFFFF) > (uint32)(0x7FFF + neg_quotient))
+   {
+    oflow = true;
+   }
+   else
+   {
+    if(neg_quotient)
+     tmp = ((-tmp) & 0xFFFF) | (tmp & 0xFFFF0000);
+
+    if(neg_remainder)
+     tmp = (((-(tmp >> 16)) << 16) & 0xFFFF0000) | (tmp & 0xFFFF);
+   }
+  }
  }
 
  //
  // Doesn't affect X flag
  //
- CalcZN<uint16>(tmp);
  SetC(false);
- SetV(oflow);
 
- if(!oflow)
+ if(oflow)
+ {
+  SetZ(false);
+  SetN(true);
+  SetV(true);
+ }
+ else
+ {
+  CalcZN<uint16>(tmp);
+  SetV(false);
+
   D[dr] = tmp;
+ }
 }
 
 
@@ -1290,7 +1336,7 @@ INLINE void M68K::ABCD(HAM<T, SAM> &src, HAM<T, DAM> &dst)	// ...XYZ, now I know
 
  bool V = false;
  uint8 const src_data = src.read();
- uint8 const dst_data = dst.read();
+ uint8 const dst_data = dst.read(0);
  uint32 tmp;
 
  tmp = dst_data + src_data + GetX();
@@ -1315,8 +1361,6 @@ INLINE void M68K::ABCD(HAM<T, SAM> &src, HAM<T, DAM> &dst)	// ...XYZ, now I know
 
  if(DAM == DATA_REG_DIR)
   timestamp += 2;
- else
-  timestamp += 4;
 
  dst.write(tmp);
 }
@@ -1361,12 +1405,10 @@ INLINE void M68K::SBCD(HAM<T, SAM> &src, HAM<T, DAM> &dst)
 {
  static_assert(sizeof(T) == 1, "Wrong size.");
  uint8 const src_data = src.read();
- uint8 const dst_data = dst.read();
+ uint8 const dst_data = dst.read(0);
 
  if(DAM == DATA_REG_DIR)
   timestamp += 2;
- else
-  timestamp += 4;
 
  dst.write(DecimalSubtractX(src_data, dst_data));
 }
@@ -1381,7 +1423,8 @@ INLINE void M68K::NBCD(HAM<T, DAM> &dst)
  static_assert(sizeof(T) == 1, "Wrong size.");
  uint8 const dst_data = dst.read();
 
- timestamp += 2;
+ if(DAM == DATA_REG_DIR)
+  timestamp += 2;
 
  dst.write(DecimalSubtractX(dst_data, 0));
 }
@@ -1417,6 +1460,9 @@ INLINE void M68K::BTST(HAM<T, TAM> &targ, unsigned wb)
  T const src_data = targ.read();
  wb &= (sizeof(T) << 3) - 1;
 
+ if((sizeof(T) == 4 && TAM == DATA_REG_DIR) || TAM == IMMEDIATE)
+  timestamp += 2;
+
  SetZ(((src_data >> wb) & 1) == 0);
 }
 
@@ -1425,6 +1471,12 @@ INLINE void M68K::BCHG(HAM<T, TAM> &targ, unsigned wb)
 {
  T const src_data = targ.read();
  wb &= (sizeof(T) << 3) - 1;
+
+ if(sizeof(T) == 4 && TAM == DATA_REG_DIR)
+ {
+  timestamp += 2;
+  timestamp += (wb >> 3) & 2;
+ }
 
  SetZ(((src_data >> wb) & 1) == 0);
 
@@ -1437,6 +1489,12 @@ INLINE void M68K::BCLR(HAM<T, TAM> &targ, unsigned wb)
  T const src_data = targ.read();
  wb &= (sizeof(T) << 3) - 1;
 
+ if(sizeof(T) == 4 && TAM == DATA_REG_DIR)
+ {
+  timestamp += 4;
+  timestamp += (wb >> 3) & 2;
+ }
+
  SetZ(((src_data >> wb) & 1) == 0);
 
  targ.write(src_data & ~(1U << wb));
@@ -1447,6 +1505,12 @@ INLINE void M68K::BSET(HAM<T, TAM> &targ, unsigned wb)
 {
  T const src_data = targ.read();
  wb &= (sizeof(T) << 3) - 1;
+
+ if(sizeof(T) == 4 && TAM == DATA_REG_DIR)
+ {
+  timestamp += 2;
+  timestamp += (wb >> 3) & 2;
+ }
 
  SetZ(((src_data >> wb) & 1) == 0);
 
@@ -1470,7 +1534,7 @@ INLINE void M68K::MOVE(HAM<T, SAM> &src, HAM<T, DAM> &dst)
   SetC(false);
  }
 
- dst.write(tmp);
+ dst.write(tmp, 0);
 }
 
 template<typename T, M68K::AddressMode SAM>
@@ -1953,6 +2017,7 @@ INLINE void M68K::Scc(HAM<T, DAM> &dst)
 {
  static_assert(std::is_same<T, uint8>::value, "Wrong type");
 
+ dst.read();
  T const result = TestCond<cc>() ? ~(T)0 : 0;
 
  if(DAM == DATA_REG_DIR && result)
@@ -1970,6 +2035,12 @@ INLINE void M68K::JSR(HAM<T, TAM> &targ)
 {
  Push<uint32>(PC);
  targ.jump();
+
+ // TODO: Prefetch, proper timing of penalty cycles.
+ if(TAM == PC_INDEX || TAM == ADDR_REG_INDIR || TAM == ADDR_REG_INDIR_INDX)
+  timestamp += 4;
+ else if(TAM == PC_DISP || TAM == ADDR_REG_INDIR_DISP || TAM == ABS_SHORT)
+  timestamp += 2;
 }
 
 
@@ -1980,6 +2051,12 @@ template<typename T, M68K::AddressMode TAM>
 INLINE void M68K::JMP(HAM<T, TAM> &targ)
 {
  targ.jump();
+
+ // TODO: Prefetch, proper timing of penalty cycles.
+ if(TAM == PC_INDEX || TAM == ADDR_REG_INDIR || TAM == ADDR_REG_INDIR_INDX)
+  timestamp += 4;
+ else if(TAM == PC_DISP || TAM == ADDR_REG_INDIR_DISP || TAM == ABS_SHORT)
+  timestamp += 2;
 }
 
 
@@ -2023,7 +2100,11 @@ INLINE void M68K::MOVE_to_SR(HAM<T, SAM> &src)
 
  SetSR(src.read());
 
- timestamp += 8;
+ timestamp += 4;
+
+ // TODO: Prefetch
+ ReadOp();
+ PC -= 2;
 }
 
 
@@ -2048,6 +2129,9 @@ INLINE void M68K::LEA(HAM<T, SAM> &src, const unsigned ar)
 {
  const uint32 ea = src.getea();
 
+ if(SAM == ADDR_REG_INDIR_INDX || SAM == PC_INDEX)
+  timestamp += 2;
+
  A[ar] = ea;
 }
 
@@ -2059,6 +2143,9 @@ template<typename T, M68K::AddressMode SAM>
 INLINE void M68K::PEA(HAM<T, SAM> &src)
 {
  const uint32 ea = src.getea();
+
+ if(SAM == ADDR_REG_INDIR_INDX || SAM == PC_INDEX)
+  timestamp += 2;
 
  Push<uint32>(ea);
 }
@@ -2100,6 +2187,10 @@ INLINE void M68K::RTE(void)
  PC = Pull<uint32>();
 
  SetSR(new_SR);
+
+ // TODO: Prefetch
+ ReadOp();
+ PC -= 2;
 }
 
 
@@ -2110,6 +2201,10 @@ INLINE void M68K::RTR(void)
 {
  SetCCR(Pull<uint16>());
  PC = Pull<uint32>();
+
+ // TODO: Prefetch
+ ReadOp();
+ PC -= 2;
 }
 
 
@@ -2119,6 +2214,10 @@ INLINE void M68K::RTR(void)
 INLINE void M68K::RTS(void)
 {
  PC = Pull<uint32>();
+
+ // TODO: Prefetch
+ ReadOp();
+ PC -= 2;
 }
 
 

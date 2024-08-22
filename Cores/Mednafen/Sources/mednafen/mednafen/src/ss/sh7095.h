@@ -30,7 +30,7 @@ class SH7095 final
  ~SH7095() MDFN_COLD;
 
  void Init(const bool EmulateICache, const bool CacheBypassHack) MDFN_COLD;
- void SetDebugMode(const bool DebugMode) MDFN_COLD;
+ void SetDebugMode(const bool DebugMode); // Don't mark MDFN_COLD, will cause newer gcc's optimizer to put the CPU execution loop in the wrong text section.
 
  void StateAction(StateMem* sm, const unsigned load, const bool data_only, const char* sname) MDFN_COLD;
  void StateAction_SlaveResume(StateMem* sm, const unsigned load, const bool data_only, const char* sname) MDFN_COLD;

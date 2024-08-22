@@ -2,7 +2,7 @@
 /* Mednafen NEC PC-FX Emulation Module                                        */
 /******************************************************************************/
 /* pcfx.cpp:
-**  Copyright (C) 2006-2017 Mednafen Team
+**  Copyright (C) 2006-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -65,7 +65,7 @@ static bool WantHuC6273 = false;
 VDC *fx_vdc_chips[2];
 
 static uint16 BackupControl;
-static uint8 BackupRAM[0x8000], ExBackupRAM[0x8000];
+static uint8 BackupRAM[0x8000], ExBackupRAM[0x20000];
 static uint8 ExBusReset; // I/O Register at 0x0700
 
 static bool BRAMDisabled;	// Cached at game load, don't remove this caching behavior or save game loss may result(if we ever get a GUI).
@@ -76,10 +76,11 @@ static bool BRAMDisabled;	// Cached at game load, don't remove this caching beha
 //
 // Set BackupSaveDelay to 0 on save game load.
 //
-static bool BackupSignalDirty;
-static uint32 BackupSaveDelay;
+static bool BackupSignalDirty[2];
+static uint32 BackupSaveDelay[2];
 
 static void SaveBackupMemory(void);
+static void SaveExternalBackupMemory(void);
 
 // Checks to see if this main-RAM-area access
 // is in the same DRAM page as the last access.
@@ -290,27 +291,36 @@ static void Emulate(EmulateSpecStruct *espec)
  //
  //
  //
- if(BackupSignalDirty)
+ for(unsigned exb = 0; exb < 2; exb++)
  {
-  BackupSaveDelay = 120;
-  BackupSignalDirty = false;
- }
- else if(BackupSaveDelay)
- {
-  BackupSaveDelay--;
-
-  if(!BackupSaveDelay)
+  if(BackupSignalDirty[exb])
   {
-   //puts("SAVE");
-   try
+   BackupSaveDelay[exb] = 120;
+   BackupSignalDirty[exb] = false;
+  }
+  else if(BackupSaveDelay[exb])
+  {
+   BackupSaveDelay[exb]--;
+
+   if(!BackupSaveDelay[exb])
    {
-    SaveBackupMemory();
-   }
-   catch(std::exception &e)
-   {
-    MDFN_Notify(MDFN_NOTICE_ERROR, _("Error saving save-game memory: %s"), e.what());
-    BackupSaveDelay = 60 * 60;	// Try it again in about 60 seconds emulated time(unless more writes occur to the backup memory before then, then the regular delay
-				// will be used from that time).
+    //printf("SAVE: %d\n", exb);
+
+    try
+    {
+     if(exb)
+      SaveExternalBackupMemory();
+     else
+      SaveBackupMemory();
+    }
+    catch(std::exception &e)
+    {
+     MDFN_Notify(MDFN_NOTICE_ERROR, _("Error saving save-game memory: %s"), e.what());
+
+     // Try it again in about 60 seconds emulated time(unless more writes occur to the backup memory before then, then the regular delay
+     // will be used from that time).
+     BackupSaveDelay[exb] = 60 * 60;
+    }
    }
   }
  }
@@ -408,7 +418,7 @@ static void PCFXDBG_GetAddressSpaceBytes(const char *name, uint32 Address, uint3
  {
   while(Length--)
   {
-   Address &= 0x7FFF;
+   Address &= 0x1FFFF;
    *Buffer = ExBackupRAM[Address];
    Address++;
    Buffer++;
@@ -470,7 +480,7 @@ static void PCFXDBG_PutAddressSpaceBytes(const char *name, uint32 Address, uint3
    {
     if(!(Address & 1))
     {
-     BackupSignalDirty |= (BackupRAM[(Address & 0xFFFF) >> 1] != *Buffer);
+     BackupSignalDirty[0] |= (BackupRAM[(Address & 0xFFFF) >> 1] != *Buffer);
      BackupRAM[(Address & 0xFFFF) >> 1] = *Buffer;
     }
    }
@@ -478,8 +488,8 @@ static void PCFXDBG_PutAddressSpaceBytes(const char *name, uint32 Address, uint3
    {
     if(!(Address & 1))
     {
-     BackupSignalDirty |= (ExBackupRAM[(Address & 0xFFFF) >> 1] != *Buffer);
-     ExBackupRAM[(Address & 0xFFFF) >> 1] = *Buffer;
+     BackupSignalDirty[1] |= (ExBackupRAM[(Address & 0x3FFFF) >> 1] != *Buffer);
+     ExBackupRAM[(Address & 0x3FFFF) >> 1] = *Buffer;
     }
    }
    Address++;
@@ -501,7 +511,7 @@ static void PCFXDBG_PutAddressSpaceBytes(const char *name, uint32 Address, uint3
   while(Length--)
   {
    Address &= 0x7FFF;
-   BackupSignalDirty |= (BackupRAM[Address] != *Buffer);
+   BackupSignalDirty[0] |= (BackupRAM[Address] != *Buffer);
    BackupRAM[Address] = *Buffer;
    Address++;
    Buffer++;
@@ -511,8 +521,8 @@ static void PCFXDBG_PutAddressSpaceBytes(const char *name, uint32 Address, uint3
  {
   while(Length--)
   {
-   Address &= 0x7FFF;
-   BackupSignalDirty |= (ExBackupRAM[Address] != *Buffer);
+   Address &= 0x1FFFF;
+   BackupSignalDirty[1] |= (ExBackupRAM[Address] != *Buffer);
    ExBackupRAM[Address] = *Buffer;
    Address++;
    Buffer++;
@@ -598,7 +608,7 @@ static MDFN_COLD void LoadCommon(std::vector<CDInterface*> *CDInterfaces)
   {
    { ".rom", 0, "" },
   };
-  MDFNFILE BIOSFile(&NVFS, biospath.c_str(), KnownBIOSExtensions, "BIOS");
+  MDFNFILE BIOSFile(&NVFS, biospath, KnownBIOSExtensions, "BIOS");
 
   if(BIOSFile.size() != 1024 * 1024)
    throw MDFN_Error(0, _("BIOS ROM file is incorrect size.\n"));
@@ -625,7 +635,7 @@ static MDFN_COLD void LoadCommon(std::vector<CDInterface*> *CDInterfaces)
  ASpace_Add(PCFXDBG_GetAddressSpaceBytes, PCFXDBG_PutAddressSpaceBytes, "cpu", "CPU Physical", 32);
  ASpace_Add(PCFXDBG_GetAddressSpaceBytes, PCFXDBG_PutAddressSpaceBytes, "ram", "RAM", 21);
  ASpace_Add(PCFXDBG_GetAddressSpaceBytes, PCFXDBG_PutAddressSpaceBytes, "backup", "Internal Backup Memory", 15);
- ASpace_Add(PCFXDBG_GetAddressSpaceBytes, PCFXDBG_PutAddressSpaceBytes, "exbackup", "External Backup Memory", 15);
+ ASpace_Add(PCFXDBG_GetAddressSpaceBytes, PCFXDBG_PutAddressSpaceBytes, "exbackup", "External Backup Memory", 17);
  ASpace_Add(PCFXDBG_GetAddressSpaceBytes, PCFXDBG_PutAddressSpaceBytes, "bios", "BIOS ROM", 20);
  #endif
 
@@ -692,8 +702,11 @@ static MDFN_COLD void LoadCommon(std::vector<CDInterface*> *CDInterfaces)
  MDFNMP_AddRAM(2048 * 1024, 0x00000000, RAM);
 
 
- BackupSignalDirty = false;
- BackupSaveDelay = 0;
+ for(unsigned exb = 0; exb < 2; exb++)
+ {
+  BackupSignalDirty[exb] = false;
+  BackupSaveDelay[exb] = 0;
+ }
 
  BRAMDisabled = MDFN_GetSettingB("pcfx.disable_bram");
 
@@ -706,20 +719,22 @@ static MDFN_COLD void LoadCommon(std::vector<CDInterface*> *CDInterfaces)
   memset(BackupRAM, 0, sizeof(BackupRAM));
   memset(ExBackupRAM, 0, sizeof(ExBackupRAM));
 
-  static const uint8 BRInit00[] = { 0x24, 0x8A, 0xDF, 0x50, 0x43, 0x46, 0x58, 0x53, 0x72, 0x61, 0x6D, 0x80,
-                                   0x00, 0x01, 0x01, 0x00, 0x01, 0x40, 0x00, 0x00, 0x01, 0xF9, 0x03, 0x00,
-                                   0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00
-                                  };
+  static const uint8 BRInit00[] =
+  {
+   0x24, 0x8A, 0xDF, 0x50, 0x43, 0x46, 0x58, 0x53, 0x72, 0x61, 0x6D, 0x80, 0x00, 0x01, 0x01, 0x00,
+   0x01, 0x40, 0x00, 0x00, 0x01, 0xF9, 0x03, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00
+  };
   static const uint8 BRInit80[] = { 0xF9, 0xFF, 0xFF };
 
   memcpy(BackupRAM + 0x00, BRInit00, sizeof(BRInit00));
   memcpy(BackupRAM + 0x80, BRInit80, sizeof(BRInit80));
 
 
-  static const uint8 ExBRInit00[] = { 0x24, 0x8A, 0xDF, 0x50, 0x43, 0x46, 0x58, 0x43, 0x61, 0x72, 0x64, 0x80,
-                                     0x00, 0x01, 0x01, 0x00, 0x01, 0x40, 0x00, 0x00, 0x01, 0xF9, 0x03, 0x00,
-                                     0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00
-                                  };
+  static const uint8 ExBRInit00[] =
+  {
+   0x24, 0x8A, 0xDF, 0x50, 0x43, 0x46, 0x58, 0x43, 0x61, 0x72, 0x64, 0x80, 0x00, 0x01, 0x01, 0x00,
+   0x01, 0xFC, 0x00, 0x00, 0x04, 0xF9, 0x0C, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00
+  };
   static const uint8 ExBRInit80[] = { 0xF9, 0xFF, 0xFF };
 
   memcpy(ExBackupRAM + 0x00, ExBRInit00, sizeof(ExBRInit00));
@@ -731,11 +746,13 @@ static MDFN_COLD void LoadCommon(std::vector<CDInterface*> *CDInterfaces)
    GZFileStream savefp(save_path, GZFileStream::MODE::READ);
    const uint64 fp_size_tmp = savefp.size();
 
-   if(fp_size_tmp != 65536)
-    throw MDFN_Error(0, _("Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct size is %llu bytes."), save_path.c_str(), (unsigned long long)fp_size_tmp, (unsigned long long)65536);
+   if(fp_size_tmp != 65536 && fp_size_tmp != 32768)
+    throw MDFN_Error(0, _("Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct size is %llu bytes."), MDFN_strhumesc(save_path).c_str(), (unsigned long long)fp_size_tmp, (unsigned long long)32768);
 
    savefp.read(BackupRAM, 0x8000);
-   savefp.read(ExBackupRAM, 0x8000);
+
+   if(fp_size_tmp == 65536)
+    savefp.read(ExBackupRAM, 0x8000);
   }
   catch(MDFN_Error &e)
   {
@@ -743,6 +760,26 @@ static MDFN_COLD void LoadCommon(std::vector<CDInterface*> *CDInterfaces)
     throw;
   }
  }
+
+ try
+ {
+  std::string save_path = MDFN_MakeFName(MDFNMKF_SAV, 0, "fxb");
+  GZFileStream savefp(save_path, GZFileStream::MODE::READ);
+  const uint64 fp_size_tmp = savefp.size();
+
+  if(fp_size_tmp != 131072)
+   throw MDFN_Error(0, _("Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct size is %llu bytes."), MDFN_strhumesc(save_path).c_str(), (unsigned long long)fp_size_tmp, (unsigned long long)131072);
+
+  savefp.read(ExBackupRAM, 0x20000);
+ }
+ catch(MDFN_Error &e)
+ {
+  if(e.GetErrno() != ENOENT)
+   throw;
+ }
+
+ MDFN_BackupSavFile(10, "sav");
+ MDFN_BackupSavFile(10, "fxb");
 
  // Default to 16-bit bus.
  for(int i = 0; i < 256; i++)
@@ -947,7 +984,19 @@ static void SaveBackupMemory(void)
   FileStream fp(MDFN_MakeFName(MDFNMKF_SAV, 0, "sav"), FileStream::MODE_WRITE_INPLACE);
 
   fp.write(BackupRAM, 0x8000);
-  fp.write(ExBackupRAM, 0x8000);
+
+  fp.truncate(fp.tell());
+  fp.close();
+ }
+}
+
+static void SaveExternalBackupMemory(void)
+{
+ if(!BRAMDisabled)
+ {
+  FileStream fp(MDFN_MakeFName(MDFNMKF_SAV, 0, "fxb"), FileStream::MODE_WRITE_INPLACE);
+
+  fp.write(ExBackupRAM, 0x20000);
 
   fp.truncate(fp.tell());
   fp.close();
@@ -959,6 +1008,15 @@ static MDFN_COLD void CloseGame(void)
  try
  {
   SaveBackupMemory();
+ }
+ catch(std::exception &e)
+ {
+  MDFN_Notify(MDFN_NOTICE_ERROR, _("Error saving save-game memory: %s"), e.what());
+ }
+
+ try
+ {
+  SaveExternalBackupMemory();
  }
  catch(std::exception &e)
  {
@@ -990,6 +1048,7 @@ static void StateAction(StateMem *sm, const unsigned load, const bool data_only)
   SFVAR(ExBusReset),
   SFPTR8(BackupRAM, BRAMDisabled ? 0 : 0x8000, SFORMAT::FORM::NVMEM),
   SFPTR8(ExBackupRAM, BRAMDisabled ? 0 : 0x8000, SFORMAT::FORM::NVMEM),
+  SFPTR8N(ExBackupRAM + 0x8000, BRAMDisabled ? 0 : (0x20000 - 0x8000), SFORMAT::FORM::NVMEM, "ExBackupRAMH"),
 
   SFEND
  };
@@ -1017,7 +1076,10 @@ static void StateAction(StateMem *sm, const unsigned load, const bool data_only)
   ForceEventUpdates(timestamp);
 
   if(!BRAMDisabled)
-   BackupSignalDirty = true;
+  {
+   for(unsigned exb = 0; exb < 2; exb++)
+    BackupSignalDirty[exb] = true;
+  }
  }
 
  //printf("0x%08x, %d %d %d %d\n", load, next_pad_ts, next_timer_ts, next_adpcm_ts, next_king_ts);

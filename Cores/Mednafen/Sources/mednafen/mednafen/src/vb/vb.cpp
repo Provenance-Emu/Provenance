@@ -2,7 +2,7 @@
 /* Mednafen Virtual Boy Emulation Module                                      */
 /******************************************************************************/
 /* vb.cpp:
-**  Copyright (C) 2010-2017 Mednafen Team
+**  Copyright (C) 2010-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -902,6 +902,10 @@ static const MDFNSetting_EnumList VB3DMode_List[] =
 // { "overunder", VB3DMODE_OVERUNDER },
  { "vli", VB3DMODE_VLI, gettext_noop("Vertical Line Interlaced"), gettext_noop("Vertical lines alternate between left view and right view.") },
  { "hli", VB3DMODE_HLI, gettext_noop("Horizontal Line Interlaced"), gettext_noop("Horizontal lines alternate between left view and right view.") },
+
+ { "left", VB3DMODE_LEFT, gettext_noop("Left View Only"), gettext_noop("Show only the left view.") },
+ { "right", VB3DMODE_RIGHT, gettext_noop("Right View Only"), gettext_noop("Show only the right view.") },
+
  { NULL, 0 },
 };
 
@@ -926,7 +930,7 @@ static const MDFNSetting VBSettings[] =
  { "vb.input.instant_read_hack", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Input latency reduction hack."), gettext_noop("Reduces latency in some games by 20ms by returning the current pad state, rather than latched state, on serial port data reads.  This hack may cause some homebrew software to malfunction, but it should be relatively safe for commercial official games."), MDFNST_BOOL, "1", NULL, NULL, NULL, SettingChanged },
  
  { "vb.instant_display_hack", MDFNSF_NOFLAGS, gettext_noop("Display latency reduction hack."), gettext_noop("Reduces latency in games by displaying the framebuffer 20ms earlier.  This hack has some potential of causing graphical glitches, so it is disabled by default."), MDFNST_BOOL, "0", NULL, NULL, NULL, SettingChanged },
- { "vb.allow_draw_skip", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Allow draw skipping."), gettext_noop("If vb.instant_display_hack is set to \"1\", and this setting is set to \"1\", then frame-skipping the drawing to the emulated framebuffer will be allowed.  THIS WILL CAUSE GRAPHICAL GLITCHES, AND THEORETICALLY(but unlikely) GAME CRASHES, ESPECIALLY WITH DIRECT FRAMEBUFFER DRAWING GAMES."), MDFNST_BOOL, "0", NULL, NULL, NULL, SettingChanged },
+ { "vb.allow_draw_skip", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Allow draw skipping."), gettext_noop("If \"\5vb.instant_display_hack\" is set to \"1\", and this setting is set to \"1\", then frame-skipping the drawing to the emulated framebuffer will be allowed.  THIS WILL CAUSE GRAPHICAL GLITCHES, AND THEORETICALLY(but unlikely) GAME CRASHES, ESPECIALLY WITH DIRECT FRAMEBUFFER DRAWING GAMES."), MDFNST_BOOL, "0", NULL, NULL, NULL, SettingChanged },
 
  // FIXME: We're going to have to set up some kind of video mode change notification for changing vb.3dmode while the game is running to work properly.
  { "vb.3dmode", MDFNSF_NOFLAGS, gettext_noop("3D mode."), NULL, MDFNST_ENUM, "anaglyph", NULL, NULL, NULL, /*SettingChanged*/NULL, VB3DMode_List },

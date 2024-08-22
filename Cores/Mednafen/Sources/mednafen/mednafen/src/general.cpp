@@ -43,9 +43,25 @@ std::string MDFN_GetBaseDirectory(void)
  return BaseDirectory;
 }
 
+void MDFN_SetFileBase(const std::string& dir_path, const std::string& file_base, const std::string& file_ext)
+{
+#if 0
+ printf("\nFileBaseDirectory=%s\nFileBase=%s\nFileExt=%s\n\n", MDFN_strhumesc(FileBaseDirectory).c_str(), MDFN_strhumesc(FileBase).c_str(), MDFN_strhumesc(FileExt).c_str());
+#endif
+ //
+ //
+ //assert(!NVFS.is_absolute_path(file_base + MDFN_PSS));
+ //assert(!NVFS.is_absolute_path(file_ext + MDFN_PSS));
+ //
+ //
+ FileBaseDirectory = dir_path;
+ FileBase = file_base;
+ FileExt = file_ext;
+}
+
 typedef std::map<char, std::string> FSMap;
 
-static std::string EvalPathFS(const std::string &fstring, /*const (won't work because entry created if char doesn't exist) */ FSMap &fmap)
+static std::string EvalPathFS(const std::string& fstring, const FSMap& fmap)
 {
  std::string ret = "";
  const char *str = fstring.c_str();
@@ -62,13 +78,41 @@ static std::string EvalPathFS(const std::string &fstring, /*const (won't work be
    if(c == '%')
     ret = ret + "%";
    else
-    ret = ret + fmap[(char)c];
+   {
+    auto const& fvi = fmap.find((char)c);
+
+    if(fvi != fmap.end())
+     ret += fvi->second;
+   }
    in_spec = false;
   }
   else
    ret.push_back(c);
 
   str++;
+ }
+
+ return ret;
+}
+
+static std::string GeneratePath(const std::string& fstring, const FSMap& fmap, const std::string& dir)
+{
+ const bool fstring_force_noprefix = (fstring.size() >= 2 && fstring[0] == '%' && (fstring[1] == 'd' || fstring[1] == 'b'));
+ const std::string fspath = EvalPathFS(fstring, fmap);
+ std::string ret;
+
+ if(NVFS.is_absolute_path(fspath) || fstring_force_noprefix)
+  ret = fspath;
+ else if(NVFS.is_absolute_path(dir))
+  ret = dir + MDFN_PSS + fspath;
+ else
+ {
+  ret = BaseDirectory + MDFN_PSS;
+
+  if(dir.size())
+   ret += dir + MDFN_PSS;
+
+  ret += fspath;
  }
 
  return ret;
@@ -81,25 +125,24 @@ std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
  FSMap fmap;
 
  fmap['b'] = BaseDirectory;
- fmap['z'] = PSS;
+ fmap['z'] = MDFN_PSS;
+
+ fmap['d'] = FileBaseDirectory;
+ fmap['f'] = fmap['F'] = FileBase;
+ fmap['e'] = FileExt;
+
+ fmap['p'] = "";
+
+ fmap['x'] = "";		// Default extension(without period)
+ fmap['X'] = "";		// A merging of x and p
 
  if(MDFNGameInfo)
  {
-  fmap['d'] = FileBaseDirectory;
-  fmap['f'] = fmap['F'] = FileBase;
-
   fmap['m'] = md5_context::asciistr(MDFNGameInfo->MD5, 0); // MD5 hash of the currently loaded game ONLY.
 
   fmap['M'] = "";		// One with this empty, if file not found, then fill with the hash of the currently loaded game,
 				// followed by a period and go with that result.
-  fmap['e'] = FileExt;
   fmap['s'] = MDFNGameInfo->shortname;
-
-  fmap['p'] = "";
-
-
-  fmap['x'] = "";		// Default extension(without period)
-  fmap['X'] = "";		// A merging of x and p
  }
 
 
@@ -165,15 +208,9 @@ std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
 	  fmap['X'] = fmap['X'].erase(fmap['X'].size() - 1) + fmap['p'];
          //
 	 //
-	 if(!NVFS.is_absolute_path(dir))
-	  dir = BaseDirectory + PSS + dir;
-
 	 for(int i = 0; i < 2; i++)
 	 {
-	  ret = EvalPathFS(fstring, fmap);
-
-	  if(!NVFS.is_absolute_path(ret))
-	   ret = dir + PSS + ret;
+	  ret = GeneratePath(fstring, fmap, dir);
 
 	  if(!NVFS.finfo(ret, nullptr, false))
 	   fmap['M'] = fmap['m'] + ".";
@@ -189,8 +226,8 @@ std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
   case MDFNMKF_SNAP_DAT:
   case MDFNMKF_SNAP:
 	{
-	 std::string dir = MDFN_GetSettingS("filesys.path_snap");
-	 std::string fstring = MDFN_GetSettingS("filesys.fname_snap");
+	 const std::string dir = MDFN_GetSettingS("filesys.path_snap");
+	 const std::string fstring = MDFN_GetSettingS("filesys.fname_snap");
 
 	 trio_snprintf(numtmp, sizeof(numtmp), "%04u", id1);
 
@@ -205,12 +242,7 @@ std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
 	  fmap['x'] = "txt";
 	 }
 
-	 if(!NVFS.is_absolute_path(dir))
-	  dir = BaseDirectory + PSS + dir;
-
-	 ret = EvalPathFS(fstring, fmap);
-	 if(!NVFS.is_absolute_path(ret))
-	  ret = dir + PSS + ret;
+	 ret = GeneratePath(fstring, fmap, dir);
 	}
 
 	NVFS.create_missing_dirs(ret);
@@ -223,15 +255,22 @@ std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
 	 std::string basepath = MDFN_GetSettingS("filesys.path_cheat");
 
 	 if(!NVFS.is_absolute_path(basepath))
-	  basepath = BaseDirectory + PSS + basepath;
+	  basepath = BaseDirectory + MDFN_PSS + basepath;
 
-	 ret = basepath + PSS + MDFNGameInfo->shortname + "." + ((type == MDFNMKF_CHEAT_TMP) ? "tmpcht" : "cht");
+	 ret = basepath + MDFN_PSS + MDFNGameInfo->shortname + "." + ((type == MDFNMKF_CHEAT_TMP) ? "tmpcht" : "cht");
 	}
 	break;
 
 
-  case MDFNMKF_IPS:
-	ret = FileBaseDirectory + PSS + FileBase + FileExt + ".ips";
+  case MDFNMKF_PATCH:
+	{
+	 const std::string fstring = "%d%z%f%e.%x";
+
+	 if(cd1)
+	  fmap['x'] = cd1;
+
+	 ret = GeneratePath(fstring, fmap, "");
+	}
 	break;
 
 
@@ -243,15 +282,15 @@ std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
 	 std::string overpath = MDFN_GetSettingS("filesys.path_firmware");
 
 	 if(NVFS.is_absolute_path(overpath))
-	  ret = overpath + PSS + cd1;
+	  ret = overpath + MDFN_PSS + cd1;
 	 else
 	 {
-	  ret = BaseDirectory + PSS + overpath + PSS + cd1;
+	  ret = BaseDirectory + MDFN_PSS + overpath + MDFN_PSS + cd1;
 
 	  // For backwards-compatibility with < 0.9.0
 	  if(!NVFS.finfo(ret, nullptr, false))
 	  {
-	   std::string new_ret = BaseDirectory + PSS + cd1;
+	   std::string new_ret = BaseDirectory + MDFN_PSS + cd1;
 
 	   if(NVFS.finfo(new_ret, nullptr, false))
             ret = new_ret;
@@ -269,42 +308,46 @@ std::string MDFN_MakeFName(MakeFName_Type type, int id1, const char *cd1)
 	 if(NVFS.is_absolute_path(overpath))
 	  eff_dir = overpath;
 	 else
-	  eff_dir = BaseDirectory + PSS + overpath;
+	  eff_dir = BaseDirectory + MDFN_PSS + overpath;
 
-	 ret = eff_dir + PSS + FileBase + ".pal";
+	 ret = eff_dir + MDFN_PSS + FileBase + ".pal";
 
 	 if(!NVFS.finfo(ret, nullptr, false))
 	 {
-	  ret = eff_dir + PSS + FileBase + "." + md5_context::asciistr(MDFNGameInfo->MD5, 0) + ".pal";
+	  ret = eff_dir + MDFN_PSS + FileBase + "." + md5_context::asciistr(MDFNGameInfo->MD5, 0) + ".pal";
 
 	  if(!NVFS.finfo(ret, nullptr, false))
-	   ret = eff_dir + PSS + (cd1 ? cd1 : MDFNGameInfo->shortname) + ".pal";
+	   ret = eff_dir + MDFN_PSS + (cd1 ? cd1 : MDFNGameInfo->shortname) + ".pal";
 	 }
 	}
 	break;
 
 
+  case MDFNMKF_PMCONFIG:
   case MDFNMKF_PGCONFIG:
 	{
-	 std::string overpath = MDFN_GetSettingS("filesys.path_pgconfig");
-	 std::string eff_dir;
+	 std::string dir, fstring;
 
-	 if(NVFS.is_absolute_path(overpath))
-	  eff_dir = overpath;
+	 if(type == MDFNMKF_PMCONFIG)
+	 {
+	  dir = "";
+	  fstring = "%s.%x";
+	 }
 	 else
-	  eff_dir = BaseDirectory + PSS + overpath;
+	 {
+	  dir = MDFN_GetSettingS("filesys.path_pgconfig");
+	  fstring = "%f.%s.%x";
+	 }
 
-	 ret = eff_dir + PSS + FileBase + "." + MDFNGameInfo->shortname + ".cfg";
+	 if(cd1)
+	  fmap['x'] = cd1;
+
+	 ret = GeneratePath(fstring, fmap, dir);
 	}
 	break;
  }
 
  return ret;
-}
-
-void GetFileBase(const char *f)
-{
- NVFS.get_file_path_components(f, &FileBaseDirectory, &FileBase, &FileExt);
 }
 
 }

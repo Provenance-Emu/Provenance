@@ -33,17 +33,29 @@ class AtomicFIFO
   return size - in_count.load(std::memory_order_acquire);
  }
 
- INLINE T Read(void)
+ INLINE void AdvanceRead(size_t count)
  {
-  T ret = data[read_pos];
-  read_pos = (read_pos + 1) % size;
-  in_count.fetch_sub(1, std::memory_order_release);
-  return ret;
+  read_pos = (read_pos + count) % size;
+  in_count.fetch_sub(count, std::memory_order_release);
  }
 
  INLINE T Peek(void)
  {
   return data[read_pos];
+ }
+
+ INLINE T Peek(size_t offs)
+ {
+  return data[(read_pos + offs) % size];
+ }
+
+ INLINE T Read(void)
+ {
+  T ret = Peek();
+
+  AdvanceRead(1);
+
+  return ret;
  }
 
  INLINE void Write(T v)

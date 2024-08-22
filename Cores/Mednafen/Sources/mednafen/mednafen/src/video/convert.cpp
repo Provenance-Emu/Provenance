@@ -74,8 +74,12 @@ static NO_INLINE void Convert_Fast(const void* src, void* dest, uint32 count, co
    dest_row[x] = ctx->palconv[c];
   else if(old_pftag == MDFN_PixelFormat::IRGB16_1555 && new_pftag == MDFN_PixelFormat::RGB16_565)
    dest_row[x] = (c & 0x1F) | ((c << 1) & 0xF800) | (MDFN_PixelFormat::LUT8to6[MDFN_PixelFormat::LUT5to8[(c >> 5) & 0x1F]] << 5);
+  else if(old_pftag == MDFN_PixelFormat::RGBI16_5551 && new_pftag == MDFN_PixelFormat::RGB16_565)
+   dest_row[x] = ((c >> 1) & 0x1F) | (c & 0xF800) | (MDFN_PixelFormat::LUT8to6[MDFN_PixelFormat::LUT5to8[(c >> 6) & 0x1F]] << 5);
   else if(old_pftag == MDFN_PixelFormat::RGB16_565 && new_pftag == MDFN_PixelFormat::IRGB16_1555)
    dest_row[x] = (c & 0x1F) | ((c >> 1) & 0x7C00) | (MDFN_PixelFormat::LUT8to5[MDFN_PixelFormat::LUT6to8[(c >> 5) & 0x3F]] << 5);
+  else if(old_pftag == MDFN_PixelFormat::RGB16_565 && new_pftag == MDFN_PixelFormat::RGBI16_5551)
+   dest_row[x] = ((c << 1) & 0x3E) | (c & 0xF800) | (MDFN_PixelFormat::LUT8to5[MDFN_PixelFormat::LUT6to8[(c >> 5) & 0x3F]] << 6);
   else
   {
    int r, g, b, a;
@@ -85,6 +89,13 @@ static NO_INLINE void Convert_Fast(const void* src, void* dest, uint32 count, co
     r = MDFN_PixelFormat::LUT5to8[(c >> 10) & 0x1F];
     g = MDFN_PixelFormat::LUT5to8[(c >>  5) & 0x1F];
     b = MDFN_PixelFormat::LUT5to8[(c >>  0) & 0x1F];
+    a = 0;
+   }
+   else if(old_pftag == MDFN_PixelFormat::RGBI16_5551)
+   {
+    r = MDFN_PixelFormat::LUT5to8[(c >> 11) & 0x1F];
+    g = MDFN_PixelFormat::LUT5to8[(c >>  6) & 0x1F];
+    b = MDFN_PixelFormat::LUT5to8[(c >>  1) & 0x1F];
     a = 0;
    }
    else if(old_pftag == MDFN_PixelFormat::RGB16_565)
@@ -125,6 +136,8 @@ static NO_INLINE void Convert_Fast(const void* src, void* dest, uint32 count, co
    {
     if(new_pftag == MDFN_PixelFormat::IRGB16_1555)
      c = (MDFN_PixelFormat::LUT8to5[r] << 10) | (MDFN_PixelFormat::LUT8to5[g] << 5) | (MDFN_PixelFormat::LUT8to5[b] << 0);
+    else if(new_pftag == MDFN_PixelFormat::RGBI16_5551)
+     c = (MDFN_PixelFormat::LUT8to5[r] << 11) | (MDFN_PixelFormat::LUT8to5[g] << 6) | (MDFN_PixelFormat::LUT8to5[b] << 1);
     else if(new_pftag == MDFN_PixelFormat::RGB16_565)
      c = (MDFN_PixelFormat::LUT8to5[r] << 11) | (MDFN_PixelFormat::LUT8to6[g] << 5) | (MDFN_PixelFormat::LUT8to5[b] << 0);
     else
@@ -171,6 +184,7 @@ static MDFN_PixelFormatConverter::convert_func CalcConversionFunction(const MDFN
 				 CROWE(st, sft, uint32, RGBA32_8888)	\
 				 CROWE(st, sft, uint32, BGRA32_8888)	\
 				 CROWE(st, sft, uint16, IRGB16_1555)	\
+				 CROWE(st, sft, uint16, RGBI16_5551)	\
 				 CROWE(st, sft, uint16, RGB16_565)	\
 				 CROWE(st, sft, uint16, ARGB16_4444)	\
 				 /*CROWE(st, sft, uint8, RGB8X3_888)*/	\
@@ -183,6 +197,7 @@ static MDFN_PixelFormatConverter::convert_func CalcConversionFunction(const MDFN
   CROW(uint32, RGBA32_8888)
   CROW(uint32, BGRA32_8888)
   CROW(uint16, IRGB16_1555)
+  CROW(uint16, RGBI16_5551)
   CROW(uint16, RGB16_565)
   CROW(uint16, ARGB16_4444)
   //

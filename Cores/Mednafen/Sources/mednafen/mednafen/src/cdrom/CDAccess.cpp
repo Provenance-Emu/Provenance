@@ -43,7 +43,7 @@ CDAccess* CDAccess_Open(VirtualFS* vfs, const std::string& path, bool image_memc
 {
  CDAccess *ret = NULL;
 
- if(path.size() >= 4 && !MDFN_strazicmp(path.c_str() + path.size() - 4, ".ccd"))
+ if(vfs->test_ext(path, ".ccd"))
   ret = new CDAccess_CCD(vfs, path, image_memcache);
  else
   ret = new CDAccess_Image(vfs, path, image_memcache);

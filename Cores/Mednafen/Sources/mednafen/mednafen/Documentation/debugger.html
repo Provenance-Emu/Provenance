@@ -6,7 +6,7 @@
  <body>
   <center><h1><img alt="Mednafen" src="mednafen.png" width="696" height="204" /></h1></center>
   <center><h1>Debugger Documentation</h1></center>
-  <center><i>Last updated October 8, 2018<br />Valid as of Mednafen 1.22.0-UNSTABLE</i></center>
+  <center><i>Last updated November 25, 2023<br />Valid as of Mednafen 1.32.0-UNSTABLE</i></center>
   <hr>
    <h2>Notes and Cautions:</h2>
    <p>
@@ -65,7 +65,10 @@
     <tr><td>ALT+2</td><td>Graphics viewer.</td></tr>
     <tr><td>ALT+3</td><td>Memory editor.</td></tr>
     <tr><td>ALT+4</td><td>Log viewer.</td></tr>
-    <tr><td>-/+</td><td>Decrease/Increase debugger background opacity.</td></tr>
+    <tr><td>CTRL+Down</td><td rowspan="2">Decrease debugger background opacity.</td></tr>
+    <tr><td>-</td></tr>
+    <tr><td>CTRL+Up</td><td rowspan="2">Increase debugger background opacity.</td></tr>
+    <tr><td>=</td></tr>
     <tr><th colspan="2">CPU Debugger</th></tr>
     <tr><td>R</td><td>Run</td></tr>
     <tr><td>S</td><td>Step</td></tr>
@@ -88,11 +91,14 @@
     <tr><td>SHIFT + P</td><td>High-level poke a value to the underlying ROM or RAM.</td></tr>
 
     <tr><th colspan="2">Graphics Viewer</th></tr>
-    <tr><td>&lt;</td><td>Decrease palette bank number.</td></tr>
-    <tr><td>&gt;</td><td>Increase palette bank number.</td></tr>
+    <tr><td>CTRL+Left</td><td rowspan="2">Decrease palette bank number.</td></tr>
+    <tr><td>,</td></tr>
+    <tr><td>CTRL+Right</td><td rowspan="2">Increase palette bank number.</td></tr>
+    <tr><td>.</td></tr>
     <tr><td>Up, Down</td><td>Scroll up or down.</td></tr>
     <tr><td>Left, Right</td><td>Select graphics layer.</td></tr>
-    <tr><td>-/+</td><td>Select line number(not necessarily visible line number...) to decode graphics on.</td></tr>
+    <tr><td>CTRL + (Down, Up)</td><td rowspan="2">Select line number(not necessarily visible line number...) to decode graphics on.</td></tr>
+    <tr><td>-/=</td></tr>
 
     <tr><th colspan="2">Memory Editor</th></tr>
     <tr><td>D</td><td>Dump memory from the selected address space to a file.
@@ -113,7 +119,10 @@ and
     <tr><td>S</td><td>Byte(hex)-string search.</td></tr>
     <tr><td>R</td><td>8-bit relative byte-string search.</td></tr>
     <tr><td>T</td><td>Text search.</td></tr>
-    <tr><td>&lt;, &gt;</td><td>Select address space.</td></tr>
+    <tr><td>CTRL+Left</td><td rowspan="2">Select address space left.</td></tr>
+    <tr><td>,</td></tr>
+    <tr><td>CTRL+Right</td><td rowspan="2">Select address space right.</td></tr>
+    <tr><td>.</td></tr>
     <tr><td>Up, Down, Left, Right</td><td>Move the cursor around and possibly scroll.</td></tr>
     <tr><td>PageUp, PageDown</td><td>Scroll up, or scroll down, one page(256 bytes).</td></tr>
     <tr><td>Home</td><td>Move cursor to address 0.</td></tr>

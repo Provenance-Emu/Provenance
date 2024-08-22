@@ -16,7 +16,6 @@
  */
 
 #ifdef MDFN_ENABLE_DEV_BUILD
-static bool InHLPeek = false;
 namespace DBG
 {
 static void RedoHooks(void) { }
@@ -102,25 +101,15 @@ static std::vector<BranchTraceResult> GetBranchTrace(void)
    case 0xFFFE:
         tmp.code[0] = 'I';      // IRQ
         break;
+
+   case 0xFFFF:
+        tmp.code[0] = 'B';      // BRK
+        break;
   }
 
   ret.push_back(tmp);
  }
  return(ret);
-}
-
-static uint8 PeekMem(uint16 A)
-{
- const uint8 DB_save = DB;
- uint8 ret;
-
- InHLPeek = true;
- ReadFuncs[A](A);
- ret = DB;
- DB = DB_save;
- InHLPeek = false;
-
- return ret;
 }
 
 static uint32 MemPeek(uint32 A, unsigned int bsize, bool hl, bool logical)
@@ -174,11 +163,8 @@ static void GetAddressSpaceBytes(const char *name, uint32 Address, uint32 Length
  {
   while(Length--)
   {
-   Address &= 0xFFFF;
-   if(Address < 0xC000)
-    *Buffer = RAM48K[Address];
-   else
-    *Buffer = LangRAM[Address - 0xC000];
+   Address %= RAMSize;
+   *Buffer = RAM[Address];
 
    Address++;
    Buffer++;
@@ -192,10 +178,17 @@ static void PutAddressSpaceBytes(const char *name, uint32 Address, uint32 Length
  {
   while(Length--)
   {
+   // FIXME
+/*
    Address &= 0xFFFF;
    if(Address < 0xC000)
-    RAM48K[Address] = *Buffer;
-
+   {
+    size_t offs = GetRAMOffs_IIE(
+    const bool aux = (bool)(SoftSwitch & ((Address < 0x200) ? SOFTSWITCH_ALTZP : SOFTSWITCH_RAMWRT));
+    size_t offs = WriteSelectAuxBank_IIE
+    RAM[(aux << 16) + Address] = *Buffer;
+   }
+*/
    Address++;
    Buffer++;
   }
@@ -204,11 +197,8 @@ static void PutAddressSpaceBytes(const char *name, uint32 Address, uint32 Length
  {
   while(Length--)
   {
-   Address &= 0xFFFF;
-   if(Address < 0xC000)
-    RAM48K[Address] = *Buffer;
-   else
-    LangRAM[Address - 0xC000] = *Buffer;
+   Address %= RAMSize;
+   RAM[Address] = *Buffer;
 
    Address++;
    Buffer++;
@@ -497,6 +487,112 @@ static const RegGroupType CPURegsGroup =
         SetRegister_CPU
 };
 
+enum
+{
+ MISC_GSREG_TEXT = 0x0,
+ MISC_GSREG_MIXED,
+ MISC_GSREG_PAGE2,
+ MISC_GSREG_HIRES,
+ MISC_GSREG_AN0,
+ MISC_GSREG_AN1,
+ MISC_GSREG_AN2,
+ MISC_GSREG_AN3 = 0x7,
+ //
+ MISC_GSREG_80STORE = 0x8,
+ MISC_GSREG_RAMRD,
+ MISC_GSREG_RAMWRT,
+ MISC_GSREG_INTCXROM,
+ MISC_GSREG_ALTZP,
+ MISC_GSREG_SLOTC3ROM,
+ MISC_GSREG_80COL,
+ MISC_GSREG_ALTCHARSET = 0xF
+};
+
+static const RegType MiscRegs[] =
+{
+	{ MISC_GSREG_TEXT, "TEXT", "TEXT", 0x100 | 1 },
+	{ MISC_GSREG_MIXED, "MIXED", "MIXED", 0x100 | 1 },
+	{ MISC_GSREG_PAGE2, "PAGE2", "PAGE2", 0x100 | 1 },
+	{ MISC_GSREG_HIRES, "HIRES", "HIRES", 0x100 | 1 },
+        { 0, "---------", "", 0xFFFF },
+	{ MISC_GSREG_AN0, "AN0", "AN0", 0x100 | 1 },
+	{ MISC_GSREG_AN1, "AN1", "AN1", 0x100 | 1 },
+	{ MISC_GSREG_AN2, "AN2", "AN2", 0x100 | 1 },
+	{ MISC_GSREG_AN3, "AN3", "AN3", 0x100 | 1 },
+
+        { 0, "", "", 0 },
+};
+
+static const RegType MiscRegs_IIE[] =
+{
+	{ MISC_GSREG_80STORE, "80STORE", "80STORE", 0x100 | 1 },
+	{ MISC_GSREG_RAMRD, "RAMRD", "RAMRD", 0x100 | 1 },
+	{ MISC_GSREG_RAMWRT, "RAMWRT", "RAMWRT", 0x100 | 1 },
+	{ MISC_GSREG_INTCXROM, "INTCXROM", "INTCXROM", 0x100 | 1 },
+	{ MISC_GSREG_ALTZP, "ALZP", "ALTZP", 0x100 | 1 },
+	{ MISC_GSREG_SLOTC3ROM, "SLOTC3ROM", "SLOTC3ROM", 0x100 | 1 },
+	{ MISC_GSREG_80COL, "80COL", "80COL", 0x100 | 1 },
+	{ MISC_GSREG_ALTCHARSET, "ALTCHARSET", "ALTCHARSET", 0x100 | 1 },
+
+        { 0, "", "", 0 },
+};
+
+static uint32 GetRegister_Misc(const unsigned int id, char *special, const uint32 special_len)
+{
+ uint32 value = 0xDEADBEEF;
+
+ if(id < 0x10)
+ {
+  value = (SoftSwitch >> id) & 0x1;
+ }
+
+ return value;
+}
+
+static void SetRegister_Misc(const unsigned int id, uint32 value)
+{
+ if(id < 0x10)
+ {
+  SoftSwitch &= ~(1U << id);
+  SoftSwitch |= (value & 0x1) << id;
+ }
+}
+
+static const RegGroupType MiscRegsGroup =
+{
+        "Misc",
+        MiscRegs,
+        GetRegister_Misc,
+        SetRegister_Misc
+};
+
+static const RegGroupType MiscRegsGroup_IIE =
+{
+        "Misc IIe",
+        MiscRegs_IIE,
+        GetRegister_Misc,
+        SetRegister_Misc
+};
+
+
+static const RegType Disk2Regs[] =
+{
+	{ Disk2::GSREG_STEPPHASE, "STEPPH", "Stepper Phase Control", 0x100 | 4 },
+	{ Disk2::GSREG_MOTORON, "MOTORON", "Motor On", 0x100 | 1 },
+	{ Disk2::GSREG_DRIVESEL, "DRIVESEL", "Drive Select", 0x100 | 1 },
+	{ Disk2::GSREG_MODE, "MODE", "Mode", 0x100 | 2 },
+
+        { 0, "", "", 0 },
+};
+
+static const RegGroupType Disk2RegsGroup =
+{
+	"Disk II",
+	Disk2Regs,
+	Disk2::GetRegister,
+	Disk2::SetRegister
+};
+
 static DebuggerInfoStruct DBGInfo =
 {
  true,
@@ -527,13 +623,20 @@ static void Init(void)
  BTEnabled = false;
 
  MDFNDBG_AddRegGroup(&CPURegsGroup);
+ MDFNDBG_AddRegGroup(&MiscRegsGroup);
+
+ if(EnableIIE)
+  MDFNDBG_AddRegGroup(&MiscRegsGroup_IIE);
+
+ if(EnableDisk2)
+  MDFNDBG_AddRegGroup(&Disk2RegsGroup);
+
  ASpace_Add(GetAddressSpaceBytes, PutAddressSpaceBytes, "cpu", "CPU", 16);
- ASpace_Add(GetAddressSpaceBytes, PutAddressSpaceBytes, "ram", "RAM(48K+Language linear)", 16);
+ ASpace_Add(GetAddressSpaceBytes, PutAddressSpaceBytes, "ram", "RAM", 0, RAMSize);
 }
 
 }
 #else
-static const bool InHLPeek = false;
 namespace DBG
 {
 static INLINE void Init(void) { }

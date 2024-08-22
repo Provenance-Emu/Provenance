@@ -121,8 +121,8 @@ static uint32 NO_INLINE Update(uint32 master_timestamp)
    const float imp_b = Impulse[phase_index + 1][i];
    const float imp = imp_a + (imp_b - imp_a) * phase_ip;
 
-   accum[0] += imp * MDFN_densb<int16>(&inbuf[(i << 2) + 0]);
-   accum[1] += imp * MDFN_densb<int16>(&inbuf[(i << 2) + 2]);
+   accum[0] += imp * MDFN_delsb<int16>(&inbuf[(i << 2) + 0]);
+   accum[1] += imp * MDFN_delsb<int16>(&inbuf[(i << 2) + 2]);
   }
 
   (&ResampBuf[0].BufPudding()->f)[ResampBufPos] = accum[0] * eff_volume;
@@ -316,7 +316,7 @@ static DEFWRITE(MSU1_WriteDataSeek)
  //
  Update(CPUM.timestamp);
  //
- SNES_DBG("[MSU1] Write data seek: %06x %02x\n", A, V);
+ SNES_DBG(SNES_DBG_MSU1, "[MSU1] Write data seek: %06x %02x\n", A, V);
 
  const unsigned shift = (A & 0x3) << 3;
  pending_data_seek_pos &= ~(0xFF << shift);
@@ -338,7 +338,7 @@ static DEFWRITE(MSU1_WriteTrack)
  //
  Update(CPUM.timestamp);
  //
- SNES_DBG("[MSU1] Write track: %06x %02x\n", A, V);
+ SNES_DBG(SNES_DBG_MSU1, "[MSU1] Write track: %06x %02x\n", A, V);
 
  const unsigned shift = (A & 0x1) << 3;
  pending_track &= ~(0xFF << shift);
@@ -374,7 +374,7 @@ static DEFWRITE(MSU1_WriteVolume)
  //
  Update(CPUM.timestamp);
  //
- SNES_DBG("[MSU1] Write volume: %02x\n", V);
+ SNES_DBG(SNES_DBG_MSU1, "[MSU1] Write volume: %02x\n", V);
 
  volume = V;
 }
@@ -385,7 +385,7 @@ static DEFWRITE(MSU1_WriteControl)
  //
  Update(CPUM.timestamp);
  //
- SNES_DBG("[MSU1] Write control: %02x\n", V);
+ SNES_DBG(SNES_DBG_MSU1, "[MSU1] Write control: %02x\n", V);
 
  if(!(status & 0x40))
  {

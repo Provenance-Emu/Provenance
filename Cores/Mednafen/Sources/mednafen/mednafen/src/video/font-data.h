@@ -73,8 +73,8 @@ extern "C" {
 
 typedef struct
 {
-        uint16_t glyph_num;
-        uint8_t data[13 * 2];
+        uint16 glyph_num;
+        uint8 data[13 * 2];
 } font12x13;
 
 typedef struct

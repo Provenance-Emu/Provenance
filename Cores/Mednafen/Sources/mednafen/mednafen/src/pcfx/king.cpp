@@ -494,13 +494,13 @@ static bool RAINBOWLayerDisable;
 
 static void RedoKINGIRQCheck(void);
 
+#ifdef WANT_DEBUGGER
 static INLINE void REGSETP(uint16 &reg, const uint8 data, const bool msb)
 {
  reg &= 0xFF << (msb ? 0 : 8);
  reg |= data << (msb ? 8 : 0);
 }
 
-#ifdef WANT_DEBUGGER
 static bool KRAMReadBPE = false;
 static bool KRAMWriteBPE = false;
 

@@ -292,7 +292,11 @@ struct TileFetcher
     nt_ok[bank] = false;
     cg_ok[bank] = false;
 
-    if(!(BGON & 0x30) || rdbs == RDBS_UNUSED)
+    if((BGON & 0x20) && (bank & 0x2))
+    {
+     //
+    }
+    else if(!(BGON & 0x10) || rdbs == RDBS_UNUSED)
     {
      for(unsigned ac = 0; ac < ((HRes & 0x6) ? 4 : 8); ac++)
      {
@@ -1324,8 +1328,10 @@ static void ApplyWin(const unsigned wlayer, uint64* buf)
  }
 }
 
-#pragma GCC push_options
-#pragma GCC optimize("no-unroll-loops,no-peel-loops,no-crossjumping")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC push_options
+ #pragma GCC optimize("no-unroll-loops,no-peel-loops,no-crossjumping")
+#endif
 static NO_INLINE void ApplyHMosaic(const unsigned layer, uint64* buf, const unsigned w)
 {
  if(!(MZCTL & (1U << layer)))
@@ -1359,7 +1365,9 @@ static NO_INLINE void ApplyHMosaic(const unsigned layer, uint64* buf, const unsi
  for(auto b = buf[x]; x < w; x++)
   buf[x] = b;
 }
-#pragma GCC pop_options
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC pop_options
+#endif
 
 //
 // NBG0(HRES=0x1):
@@ -1925,9 +1933,29 @@ static void SetupRotVars(const T* rs, const unsigned rbg_w)
 
   if(!(VRAM_Mode & 0x2))
    bank_tab[3] = bank_tab[2];
+  //
+  // If CRKTE is 1, or the setting in RDBS for an active bank field is 0x1(COEFF), per-dot mode will be enabled.
+  //
+  // If the bank to read the coefficient from is not configured for coefficient reads, it should be treated as
+  // if the value 0 were read.
+  //
+  // RBG1 being enabled doesn't seem to affect the calculation for determining if per-dot mode is enabled
+  // or not, but having a coefficient read in bank B0/B1 with RBG1 enabled resulted in unstable,
+  // inconsistent behavior in tests.  Reluctant to test further as it may be a sign of a potentially
+  // damaging electrical conflict inside the VDP2.
+  //
+  const uint32 perdot_mask = (CRKTE || bank_tab[0] || bank_tab[1] || bank_tab[2] || bank_tab[3]) - 1;
 
+/*
+  //
+  // Disable RBG1 handling here until inconsistencies across different test runs can be accounted for.
+  //
   if(BGON & 0x20)
-   bank_tab[2] = bank_tab[3] = false;
+  {
+   bank_tab[2] = false;
+   //bank_tab[3] = false;
+  }
+*/
   //
   if(CRKTE)
    bank_tab[0] = bank_tab[1] = bank_tab[2] = bank_tab[3] = true;
@@ -1941,7 +1969,7 @@ static void SetupRotVars(const T* rs, const unsigned rbg_w)
   for(unsigned i = 0; i < 2; i++)
    LB.rotv[i].base_coeff = coeff[i] = ReadCoeff(i, GetCoeffAddr(i, rs[i].KAstAccum));
 
-  //if(grumpus == 120)
+  //if(grumpus == 8)
   // printf("BankTab: %d %d %d %d, UC: %d %d, Coeff: @0x%05x=0x%08x @0x%05x=0x%08x, DKAx: %f %f\n", bank_tab[0], bank_tab[1], bank_tab[2], bank_tab[3], LB.rotv[0].use_coeff, LB.rotv[1].use_coeff, GetCoeffAddr(0, rs[0].KAstAccum), coeff[0], GetCoeffAddr(1, rs[1].KAstAccum), coeff[1], rs[0].DKAx / 1024.0, rs[1].DKAx / 1024.0);
 
   for(unsigned x = 0; MDFN_LIKELY(x < rbg_w); x++)
@@ -1949,6 +1977,12 @@ static void SetupRotVars(const T* rs, const unsigned rbg_w)
    const unsigned i = ((EffRPMD == 2) ? 0 : LB.rotabsel[x]);
    const uint32 addr = GetCoeffAddr(i, rs[i].KAstAccum + (x * rs[i].DKAx));
 
+#if 0
+   if(!perdot_mask && !(bank_tab[addr >> 16]) && coeff[i])
+    printf("BORP: %d %08x\n", i, coeff[i]);
+#endif
+
+   coeff[i] &= perdot_mask;
    if(bank_tab[addr >> 16])
     coeff[i] = ReadCoeff(i, addr);
 
@@ -2338,13 +2372,15 @@ enum
  MIXIT_SPECIAL_EXCC_CRAM0 = 0x2,
  MIXIT_SPECIAL_EXCC_CRAM12 = 0x3,
  MIXIT_SPECIAL_EXCC_LINE_CRAM0 = 0x4,
- MIXIT_SPECIAL_EXCC_LINE_CRAM12 = 0x5
+ MIXIT_SPECIAL_EXCC_LINE_CRAM12 = 0x5,
+ //
+ MIXIT_SPECIAL_HIRES_CRAM12 = 0x6
 };
 
-template<bool TA_rbg1en, unsigned TA_Special, bool TA_CCRTMD, bool TA_CCMD>
+template<bool TA_rbgdualen, unsigned TA_Special, bool TA_CCRTMD, bool TA_CCMD>
 static void T_MixIt(uint32* target, const unsigned vdp2_line, const unsigned w, const uint32 back_rgb24, const uint64* blursrc)
 {
- //printf("MixIt: %d, %d, %d, %d\n", TA_rbg1en, TA_Special, TA_CCRTMD, TA_CCMD);
+ //printf("MixIt: %d, %d, %d, %d\n", TA_rbgdualen, TA_Special, TA_CCRTMD, TA_CCMD);
  const uint32* lclut = &ColorCache[CurLCColor &~ 0x7F];
  uint32 blurprev[2];
 
@@ -2382,9 +2418,9 @@ static void T_MixIt(uint32* target, const unsigned vdp2_line, const unsigned w, 
   //
   uint64 tmp_pix[8] =
   {
-   (TA_rbg1en ? 0 : (LB.nbg[3] + 8)[i]),
-   (TA_rbg1en ? 0 : (LB.nbg[2] + 8)[i]),
-   (TA_rbg1en ? 0 : (LB.nbg[1] + 8)[i]),
+   (TA_rbgdualen ? 0 : (LB.nbg[3] + 8)[i]),
+   (TA_rbgdualen ? 0 : (LB.nbg[2] + 8)[i]),
+   (TA_rbgdualen ? 0 : (LB.nbg[1] + 8)[i]),
    (LB.nbg[0] + 8)[i],
    LB.rbg0[i],
    LB.spr[i],
@@ -2415,6 +2451,15 @@ static void T_MixIt(uint32* target, const unsigned vdp2_line, const unsigned w, 
    pix = tmp_pix[st & 0x7];
    pix |= (1U << PIX_DOSHAD_SHIFT);
   }
+
+  //
+  // Prevent blending with a transparent sprite shadow pixel beneath the topmost layer:
+  //
+  //if(tmp_pix[5] & (1U << PIX_DOSHAD_SHIFT))
+  // pt &= ~0x2020202020202020ULL;
+  static_assert((1U << PIX_DOSHAD_SHIFT) == 0x40, "PIX_DOSHAD_SHIFT is wrong value.");
+  pt &= ~((((tmp_pix[5] >> 1) & 0x20) << (uint8)(tmp_pix[5] >> PIX_PRIO_TEST_SHIFT)));
+
 
   if(TA_Special == MIXIT_SPECIAL_GRAD)
   {
@@ -2509,6 +2554,9 @@ static void T_MixIt(uint32* target, const unsigned vdp2_line, const unsigned w, 
    uint32 sec_rgb = pix2 >> PIX_RGB_SHIFT;
    uint32 new_rgb;
 
+   if(TA_Special == MIXIT_SPECIAL_HIRES_CRAM12 && !(pix2 & (1U << PIX_ISRGB_SHIFT)))
+    sec_rgb = fore_rgb;
+
    if(TA_CCMD)	// Ignore ratio, add as-is.
    {
     new_rgb =  std::min<unsigned>(0x0000FF, (fore_rgb & 0x0000FF) + (sec_rgb & 0x0000FF));
@@ -2561,11 +2609,11 @@ static void T_MixIt(uint32* target, const unsigned vdp2_line, const unsigned w, 
  }
 }
 
-//template<bool TA_rbg1en, unsigned TA_Special, bool TA_CCRTMD, bool TA_CCMD>
-static void (*MixIt[2][6][2][2])(uint32* target, const unsigned vdp2_line, const unsigned w, const uint32 back_rgb24, const uint64* blursrc) =
+//template<bool TA_rbgdualen, unsigned TA_Special, bool TA_CCRTMD, bool TA_CCMD>
+static void (*MixIt[2][7][2][2])(uint32* target, const unsigned vdp2_line, const unsigned w, const uint32 back_rgb24, const uint64* blursrc) =
 {
- {  {  { T_MixIt<0, 0, 0, 0>, T_MixIt<0, 0, 0, 1>,  },  { T_MixIt<0, 0, 1, 0>, T_MixIt<0, 0, 1, 1>,  },  },  {  { T_MixIt<0, 1, 0, 0>, T_MixIt<0, 1, 0, 1>,  },  { T_MixIt<0, 1, 1, 0>, T_MixIt<0, 1, 1, 1>,  },  },  {  { T_MixIt<0, 2, 0, 0>, T_MixIt<0, 2, 0, 1>,  },  { T_MixIt<0, 2, 1, 0>, T_MixIt<0, 2, 1, 1>,  },  },  {  { T_MixIt<0, 3, 0, 0>, T_MixIt<0, 3, 0, 1>,  },  { T_MixIt<0, 3, 1, 0>, T_MixIt<0, 3, 1, 1>,  },  },  {  { T_MixIt<0, 4, 0, 0>, T_MixIt<0, 4, 0, 1>,  },  { T_MixIt<0, 4, 1, 0>, T_MixIt<0, 4, 1, 1>,  },  },  {  { T_MixIt<0, 5, 0, 0>, T_MixIt<0, 5, 0, 1>,  },  { T_MixIt<0, 5, 1, 0>, T_MixIt<0, 5, 1, 1>,  },  },  },
- {  {  { T_MixIt<1, 0, 0, 0>, T_MixIt<1, 0, 0, 1>,  },  { T_MixIt<1, 0, 1, 0>, T_MixIt<1, 0, 1, 1>,  },  },  {  { T_MixIt<1, 1, 0, 0>, T_MixIt<1, 1, 0, 1>,  },  { T_MixIt<1, 1, 1, 0>, T_MixIt<1, 1, 1, 1>,  },  },  {  { T_MixIt<1, 2, 0, 0>, T_MixIt<1, 2, 0, 1>,  },  { T_MixIt<1, 2, 1, 0>, T_MixIt<1, 2, 1, 1>,  },  },  {  { T_MixIt<1, 3, 0, 0>, T_MixIt<1, 3, 0, 1>,  },  { T_MixIt<1, 3, 1, 0>, T_MixIt<1, 3, 1, 1>,  },  },  {  { T_MixIt<1, 4, 0, 0>, T_MixIt<1, 4, 0, 1>,  },  { T_MixIt<1, 4, 1, 0>, T_MixIt<1, 4, 1, 1>,  },  },  {  { T_MixIt<1, 5, 0, 0>, T_MixIt<1, 5, 0, 1>,  },  { T_MixIt<1, 5, 1, 0>, T_MixIt<1, 5, 1, 1>,  },  },  },
+ {  {  { T_MixIt<0, 0, 0, 0>, T_MixIt<0, 0, 0, 1>,  },  { T_MixIt<0, 0, 1, 0>, T_MixIt<0, 0, 1, 1>,  },  },  {  { T_MixIt<0, 1, 0, 0>, T_MixIt<0, 1, 0, 1>,  },  { T_MixIt<0, 1, 1, 0>, T_MixIt<0, 1, 1, 1>,  },  },  {  { T_MixIt<0, 2, 0, 0>, T_MixIt<0, 2, 0, 1>,  },  { T_MixIt<0, 2, 1, 0>, T_MixIt<0, 2, 1, 1>,  },  },  {  { T_MixIt<0, 3, 0, 0>, T_MixIt<0, 3, 0, 1>,  },  { T_MixIt<0, 3, 1, 0>, T_MixIt<0, 3, 1, 1>,  },  },  {  { T_MixIt<0, 4, 0, 0>, T_MixIt<0, 4, 0, 1>,  },  { T_MixIt<0, 4, 1, 0>, T_MixIt<0, 4, 1, 1>,  },  },  {  { T_MixIt<0, 5, 0, 0>, T_MixIt<0, 5, 0, 1>,  },  { T_MixIt<0, 5, 1, 0>, T_MixIt<0, 5, 1, 1>,  },  },  {  { T_MixIt<0, 6, 0, 0>, T_MixIt<0, 6, 0, 1>,  },  { T_MixIt<0, 6, 1, 0>, T_MixIt<0, 6, 1, 1>,  },  },  },
+ {  {  { T_MixIt<1, 0, 0, 0>, T_MixIt<1, 0, 0, 1>,  },  { T_MixIt<1, 0, 1, 0>, T_MixIt<1, 0, 1, 1>,  },  },  {  { T_MixIt<1, 1, 0, 0>, T_MixIt<1, 1, 0, 1>,  },  { T_MixIt<1, 1, 1, 0>, T_MixIt<1, 1, 1, 1>,  },  },  {  { T_MixIt<1, 2, 0, 0>, T_MixIt<1, 2, 0, 1>,  },  { T_MixIt<1, 2, 1, 0>, T_MixIt<1, 2, 1, 1>,  },  },  {  { T_MixIt<1, 3, 0, 0>, T_MixIt<1, 3, 0, 1>,  },  { T_MixIt<1, 3, 1, 0>, T_MixIt<1, 3, 1, 1>,  },  },  {  { T_MixIt<1, 4, 0, 0>, T_MixIt<1, 4, 0, 1>,  },  { T_MixIt<1, 4, 1, 0>, T_MixIt<1, 4, 1, 1>,  },  },  {  { T_MixIt<1, 5, 0, 0>, T_MixIt<1, 5, 0, 1>,  },  { T_MixIt<1, 5, 1, 0>, T_MixIt<1, 5, 1, 1>,  },  },  {  { T_MixIt<1, 6, 0, 0>, T_MixIt<1, 6, 0, 1>,  },  { T_MixIt<1, 6, 1, 0>, T_MixIt<1, 6, 1, 1>,  },  },  },
 };
 
 static int32 ApplyHBlend(uint32* const target, int32 w)
@@ -2892,7 +2940,7 @@ static NO_INLINE void DrawLine(const uint16 out_line, const uint16 vdp2_line, co
     Doubleize(LB.lc, rbg_w);
 
    // RBG0
-   if(MDFN_LIKELY(UserLayerEnableMask & 0x10))
+   if(MDFN_LIKELY(BGON & UserLayerEnableMask & 0x10))
    {
     const bool igntp = (BGON >> 12) & 1;
     const bool bmen = (CHCTLB >> 9) & 1;
@@ -2985,9 +3033,9 @@ static NO_INLINE void DrawLine(const uint16 out_line, const uint16 vdp2_line, co
   if(SCRCTL & 0x0101)
    FetchVCScroll(w);	// Call after handling line scroll, and before DrawNBG() stuff
 
-  if(!(BGON & 0x20))
+  if((BGON & 0x30) != 0x30)
   {
-   for(unsigned n = 0; n < 4; n++)
+   for(unsigned n = (bool)(BGON & 0x20); n < 4; n++)
    {
     if(((BGON >> n) & 1) && MDFN_LIKELY((UserLayerEnableMask >> n) & 1))
     {
@@ -3069,7 +3117,7 @@ static NO_INLINE void DrawLine(const uint16 out_line, const uint16 vdp2_line, co
    target[i] = border_ncf;
 
   {
-   const bool rbg1en = (bool)(BGON & 0x20);
+   const bool rbgdualen = ((BGON & 0x30) == 0x30);
    unsigned special = MIXIT_SPECIAL_NONE;
    const bool CCRTMD = (bool)(CCCTL & 0x0200);
    const bool CCMD = (bool)(CCCTL & 0x0100);
@@ -3092,7 +3140,13 @@ static NO_INLINE void DrawLine(const uint16 out_line, const uint16 vdp2_line, co
      special += (CCCTL >> 4) & 0x2;
     }
    }
-   MixIt[rbg1en][special][CCRTMD][CCMD](target + tvxo, vdp2_line, w, back_rgb24, blursrc);
+   else
+   {
+    if(CRAM_Mode)
+     special = MIXIT_SPECIAL_HIRES_CRAM12;
+   }
+
+   MixIt[rbgdualen][special][CCRTMD][CCMD](target + tvxo, vdp2_line, w, back_rgb24, blursrc);
    ReorderRGB(target + tvxo, w, espec->surface->format.Rshift, espec->surface->format.Gshift, espec->surface->format.Bshift);
   }
 
@@ -3154,7 +3208,7 @@ struct WQ_Entry
 
 static std::array<WQ_Entry, 0x80000> WQ;
 static size_t WQ_ReadPos, WQ_WritePos;
-static std::atomic_int_least32_t WQ_InCount;
+static std::atomic_uint_least32_t WQ_InCount;
 static std::atomic_int_least32_t DrawCounter;
 static bool DoBusyWait;
 static MThreading::Sem* WakeupSem;

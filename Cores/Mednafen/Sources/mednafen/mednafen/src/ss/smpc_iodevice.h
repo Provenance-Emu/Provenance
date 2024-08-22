@@ -34,6 +34,10 @@ class IODevice
 
  virtual void Power(void) MDFN_COLD;
 
+ // frequency of clock that 'timestamp' is based on, i.e.
+ // the Saturn system/CPU clock
+ virtual void SetTSFreq(const int32 rate);
+
  virtual void TransformInput(uint8* const data, float gun_x_scale, float gun_x_offs) const;
  //
  // time_elapsed is emulated time elapsed since last call to UpdateInput(), in microseconds;

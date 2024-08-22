@@ -734,9 +734,9 @@ typedef struct {
            int number;   
            int (*init)(CartInfo *);
 	   uint32 flags;
-} BMAPPING;
+} INES_BMAPPING;
 
-static const BMAPPING bmap[] = {
+static const INES_BMAPPING bmap[] = {
 	{ 0, NROM256_Init, BMAPF_INESWRAMOK },
 	{ 1, Mapper1_Init, 0 },
 	{ 2, UNROM_Init, BMAPF_INESWRAMOK },
@@ -872,7 +872,7 @@ static const BMAPPING bmap[] = {
 
 static void NewiNES_Init(int num)
 {
- const BMAPPING *tmp=bmap;
+ const INES_BMAPPING *tmp=bmap;
 
  while(tmp->init)
  {

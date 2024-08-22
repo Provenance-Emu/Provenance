@@ -47,33 +47,51 @@ enum MDFNSettingType
 };
 
 
-//#define MDFNST_EX_DRIVER = (1U << 16),    // If this is not set, the setting is assumed to be internal.  This...should probably be set automatically?
+enum : unsigned
+{
+ //MDFNST_EX_DRIVER = (1U << 16),    // If this is not set, the setting is assumed to be internal.  This...should probably be set automatically?
         
-#define MDFNSF_NOFLAGS		0U	  // Always 0, makes setting definitions prettier...maybe.
+ MDFNSF_NOFLAGS			= 0U,	  // Always 0, makes setting definitions prettier...maybe.
 
-// TODO(cats)
-#define MDFNSF_CAT_INPUT        	(1U << 8)
-#define MDFNSF_CAT_SOUND		(1U << 9)
-#define MDFNSF_CAT_VIDEO		(1U << 10)
-#define MDFNSF_CAT_INPUT_MAPPING	(1U << 11)	// User-configurable physical->virtual button/axes and hotkey mappings(driver-side code category mainly).
+ // TODO(cats)
+ MDFNSF_CAT_INPUT		= (1U <<  0),
+ MDFNSF_CAT_SOUND		= (1U <<  1),
+ MDFNSF_CAT_VIDEO		= (1U <<  2),
+ MDFNSF_CAT_INPUT_MAPPING	= (1U <<  3),	// User-configurable physical->virtual button/axes and hotkey mappings(driver-side code category mainly).
 
-// Setting is used as a path or filename(mostly intended for automatic charset conversion of 0.9.x settings on MS Windows).
-#define MDFNSF_CAT_PATH			(1U << 12)
+ // Setting is used as a path or filename(mostly intended for automatic charset conversion of 0.9.x settings on MS Windows).
+ MDFNSF_CAT_PATH		= (1U <<  4),
 
-#define MDFNSF_EMU_STATE	(1U << 17) // If the setting affects emulation from the point of view of the emulated program
-#define MDFNSF_UNTRUSTED_SAFE	(1U << 18) // If it's safe for an untrusted source to modify it, probably only used in conjunction with
-                                          // MDFNST_EX_EMU_STATE and network play
+ MDFNSF_EMU_STATE		= (1U <<  8), // If the setting affects emulation from the point of view of the emulated program
+ MDFNSF_UNTRUSTED_SAFE		= (1U <<  9), // If it's safe for an untrusted source to modify it, probably only used in conjunction with
+					      // MDFNSF_EMU_STATE and network play
 
-#define MDFNSF_SUPPRESS_DOC	(1U << 19) // Suppress documentation generation for this setting.
-#define MDFNSF_COMMON_TEMPLATE	(1U << 20) // Auto-generated common template setting(like nes.xscale, pce.xscale, vb.xscale, nes.enable, pce.enable, vb.enable)
-#define MDFNSF_NONPERSISTENT	(1U << 21) // Don't save setting in settings file.
+ MDFNSF_SUPPRESS_DOC		= (1U << 10), // Suppress documentation generation for this setting.
+ MDFNSF_COMMON_TEMPLATE		= (1U << 11), // Auto-generated common template setting(like nes.xscale, pce.xscale, vb.xscale, nes.enable, pce.enable, vb.enable)
+ MDFNSF_NONPERSISTENT		= (1U << 12), // Don't save setting in settings file.
 
 // TODO:
-// #define MDFNSF_WILL_BREAK_GAMES (1U << ) // If changing the value of the setting from the default value will break games/programs that would otherwise work.
-
+// MDFNSF_WILL_BREAK_GAMES 	= (1U << 13), // If changing the value of the setting from the default value will break games/programs that would otherwise work.
 // TODO(in progress):
-#define MDFNSF_REQUIRES_RELOAD	(1U << 24)	// If a game reload is required for the setting to take effect.
-#define MDFNSF_REQUIRES_RESTART	(1U << 25)	// If Mednafen restart is required for the setting to take effect.
+ MDFNSF_REQUIRES_RELOAD		= (1U << 14), // If a game reload is required for the setting to take effect.
+ MDFNSF_REQUIRES_RESTART	= (1U << 15), // If Mednafen restart is required for the setting to take effect.
+
+ //
+ // Flags to mark which members to call free() on when MDFN_KillSettings() is called.  Use carefully.
+ //
+ MDFNSF_FREE__ANY	= (0xFFFU << 20),
+ MDFNSF_FREE_STRUCT	= (1U << 20),
+ MDFNSF_FREE_NAME	= (1U << 21),
+ MDFNSF_FREE_DESC	= (1U << 22),
+ MDFNSF_FREE_DESC_EXTRA	= (1U << 23),
+ MDFNSF_FREE_DEFAULT	= (1U << 24),
+ MDFNSF_FREE_MINIMUM	= (1U << 25),
+ MDFNSF_FREE_MAXIMUM	= (1U << 26),
+ MDFNSF_FREE_ENUMLIST	= (1U << 27),
+ MDFNSF_FREE_ENUMLIST_STRING = (1U << 28),
+ MDFNSF_FREE_ENUMLIST_DESC   = (1U << 29),
+ MDFNSF_FREE_ENUMLIST_DESC_EXTRA = (1U << 30)
+};
 
 struct MDFNSetting_EnumList
 {
@@ -101,15 +119,10 @@ struct MDFNSetting
 
 struct MDFNCS
 {
-	char *name;
-	char *value;
-	char *game_override;    // per-game setting override(netplay_override > game_override > value, in precedence)
-	char *netplay_override; // "value" override for network play.
-
-	const MDFNSetting *desc;
-	void (*ChangeNotification)(const char *name);
+	char* value[4];		// priority: [3] > [2] > [1] > [0]
 
 	uint32 name_hash;
+	MDFNSetting desc;
 };
 
 }

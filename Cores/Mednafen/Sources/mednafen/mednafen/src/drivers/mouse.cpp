@@ -49,7 +49,7 @@ static struct __MouseState
  uint32 button;
  uint32 button_realstate;
  uint32 button_prevsent;
-} MouseState = { 0, 0, 0, 0, 0, 0, 0 };
+} MouseState = { 0, 0, { 0, 0, 0, 0 }, 0 };
 //
 //
 //

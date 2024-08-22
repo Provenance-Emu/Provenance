@@ -19,7 +19,9 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#pragma GCC optimize ("no-unroll-loops,no-peel-loops")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize ("no-unroll-loops,no-peel-loops")
+#endif
 
 #include "psx.h"
 #include "gpu.h"

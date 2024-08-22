@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* GZFileStream.cpp:
-**  Copyright (C) 2014-2018 Mednafen Team
+**  Copyright (C) 2014-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -36,14 +36,15 @@
 namespace Mednafen
 {
 
-GZFileStream::GZFileStream(const std::string& path, const MODE mode, const int level) : OpenedMode(mode)
+GZFileStream::GZFileStream(const std::string& path, const MODE mode, const int level) : OpenedMode(mode), path_humesc(MDFN_strhumesc(path))
 {
  char zmode[16];
  int open_flags;
  int tmpfd;
  auto perm_mode = S_IRUSR | S_IWUSR;
 
- path_save = path;
+ if(path.find('\0') != std::string::npos)
+  throw MDFN_Error(EINVAL, _("Error opening file \"%s\" %s: %s"), path_humesc.c_str(), VirtualFS::get_human_mode((uint32)mode).c_str(), _("Null character in path."));
 
  #if defined(S_IRGRP)
  perm_mode |= S_IRGRP;
@@ -68,7 +69,7 @@ GZFileStream::GZFileStream(const std::string& path, const MODE mode, const int l
    trio_snprintf(zmode, sizeof(zmode), "wbT");
  }
  else
-  abort();
+  throw MDFN_Error(EINVAL, _("Error opening file \"%s\" %s: %s"), path_humesc.c_str(), VirtualFS::get_human_mode((uint32)mode).c_str(), _("Specified mode is unsupported"));
 
  #ifdef O_BINARY
   open_flags |= O_BINARY;
@@ -76,16 +77,13 @@ GZFileStream::GZFileStream(const std::string& path, const MODE mode, const int l
   open_flags |= _O_BINARY;
  #endif
 
- if(path.find('\0') != std::string::npos)
-  throw MDFN_Error(EINVAL, _("Error opening file \"%s\": %s"), path_save.c_str(), _("Null character in path."));
-
  #ifdef WIN32
  {
   bool invalid_utf8;
   auto tpath = Win32Common::UTF8_to_T(path, &invalid_utf8, true);
 
   if(invalid_utf8)
-   throw MDFN_Error(EINVAL, _("Error opening file \"%s\": %s"), path_save.c_str(), _("Invalid UTF-8 in path."));
+   throw MDFN_Error(EINVAL, _("Error opening file \"%s\" %s: %s"), path_humesc.c_str(), VirtualFS::get_human_mode((uint32)mode).c_str(), _("Invalid UTF-8 in path."));
 
   tmpfd = ::_topen((const TCHAR*)tpath.c_str(), open_flags, perm_mode);
  }
@@ -97,7 +95,7 @@ GZFileStream::GZFileStream(const std::string& path, const MODE mode, const int l
  {
   ErrnoHolder ene(errno);
 
-  throw MDFN_Error(ene.Errno(), _("Error opening file \"%s\": %s"), path_save.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error opening file \"%s\" %s: %s"), path_humesc.c_str(), VirtualFS::get_human_mode((uint32)mode).c_str(), ene.StrError());
  }
 
  // Clear errno to 0 so can we detect internal zlib errors.
@@ -110,7 +108,7 @@ GZFileStream::GZFileStream(const std::string& path, const MODE mode, const int l
 
   ::close(tmpfd);
 
-  throw MDFN_Error(ene.Errno(), _("Error opening file \"%s\": %s"), path_save.c_str(), (ene.Errno() == 0) ? _("zlib error") : ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error opening file \"%s\" %s: %s"), path_humesc.c_str(), VirtualFS::get_human_mode((uint32)mode).c_str(), (ene.Errno() == 0) ? _("zlib error") : ene.StrError());
  }
 }
 
@@ -121,7 +119,7 @@ GZFileStream::~GZFileStream()
 #if 0
   if(gzp && (attributes() & ATTRIBUTE_WRITEABLE))
   {
-   MDFN_printf(_("GZFileStream::close() not explicitly called for file \"%s\" opened for writing!\n"), path_save.c_str());
+   MDFN_printf(_("GZFileStream::close() not explicitly called for file \"%s\" opened for writing!\n"), path_humesc.c_str());
   } 
 #endif
 
@@ -143,7 +141,7 @@ void GZFileStream::close(void)
 
   if(gzclose(tmp) != Z_OK)
   {
-   throw MDFN_Error(0, _("Error closing opened file \"%s\"."), path_save.c_str());
+   throw MDFN_Error(0, _("Error closing opened file \"%s\"."), path_humesc.c_str());
   }
  }
 }
@@ -158,13 +156,13 @@ uint64 GZFileStream::read(void *data, uint64 count, bool error_on_eof)
   const char* errstring;
 
   errstring = gzerror(gzp, &errnum);
-  throw MDFN_Error(0, _("Error reading from opened file \"%s\": %s"), path_save.c_str(), errstring);
+  throw MDFN_Error(0, _("Error reading from opened file \"%s\": %s"), path_humesc.c_str(), errstring);
  }
 
  const uint64 read_count_u64 = (std::make_unsigned<std::remove_const<decltype(read_count)>::type>::type)read_count;
 
  if(read_count_u64 != count && error_on_eof)
-  throw MDFN_Error(0, _("Error reading from opened file \"%s\": %s"), path_save.c_str(), _("Unexpected EOF"));
+  throw MDFN_Error(0, _("Error reading from opened file \"%s\": %s"), path_humesc.c_str(), _("Unexpected EOF"));
 
  return(read_count_u64);
 }
@@ -189,7 +187,7 @@ int GZFileStream::get_line(std::string &str)
   const char* errstring;
 
   errstring = gzerror(gzp, &errnum);
-  throw MDFN_Error(0, _("Error reading from opened file \"%s\": %s"), path_save.c_str(), errstring);
+  throw MDFN_Error(0, _("Error reading from opened file \"%s\": %s"), path_humesc.c_str(), errstring);
  }
 
  return(str.length() ? 256 : -1);
@@ -206,7 +204,7 @@ void GZFileStream::flush(void)
   const char* errstring;
 
   errstring = gzerror(gzp, &errnum);
-  throw MDFN_Error(0, _("Error flushing to opened file \"%s\": %s"), path_save.c_str(), errstring);
+  throw MDFN_Error(0, _("Error flushing to opened file \"%s\": %s"), path_humesc.c_str(), errstring);
  }
 }
 
@@ -222,7 +220,7 @@ void GZFileStream::write(const void *data, uint64 count)
   const char* errstring;
 
   errstring = gzerror(gzp, &errnum);
-  throw MDFN_Error(0, _("Error writing to opened file \"%s\": %s"), path_save.c_str(), errstring);
+  throw MDFN_Error(0, _("Error writing to opened file \"%s\": %s"), path_humesc.c_str(), errstring);
  }
 }
 
@@ -242,7 +240,7 @@ void GZFileStream::seek(int64 offset, int whence)
 
   errstring = gzerror(gzp, &errnum);
 
-  throw MDFN_Error(0, _("Error seeking in opened file \"%s\": %s"), path_save.c_str(), errstring);
+  throw MDFN_Error(0, _("Error seeking in opened file \"%s\": %s"), path_humesc.c_str(), errstring);
  }
 }
 
@@ -280,7 +278,7 @@ uint64 GZFileStream::tell(void)
 
   errstring = gzerror(gzp, &errnum);
 
-  throw MDFN_Error(0, _("Error getting position in opened file \"%s\": %s"), path_save.c_str(), errstring);
+  throw MDFN_Error(0, _("Error getting position in opened file \"%s\": %s"), path_humesc.c_str(), errstring);
  }
 
  return (std::make_unsigned<decltype(gofs)>::type)gofs;

@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* ZLInflateFilter.h:
-**  Copyright (C) 2014-2016 Mednafen Team
+**  Copyright (C) 2014-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -19,17 +19,18 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef __MDFN_ZLINFLATEFILTER_H
-#define __MDFN_ZLINFLATEFILTER_H
+#ifndef __MDFN_COMPRESS_ZLINFLATEFILTER_H
+#define __MDFN_COMPRESS_ZLINFLATEFILTER_H
 
 #include <mednafen/Stream.h>
+#include "DecompressFilter.h"
 
 #include <zlib.h>
 
 namespace Mednafen
 {
 
-class ZLInflateFilter : public Stream
+class ZLInflateFilter : public DecompressFilter
 {
  public:
 
@@ -41,45 +42,24 @@ class ZLInflateFilter : public Stream
   AUTO_ZGZ = 3	// zlib or gzip, autodetect
  };
 
- ZLInflateFilter(Stream *source_stream, const std::string& vfcontext, FORMAT df, uint64 csize, uint64 ucs = ~(uint64)0, uint64 ucrc32 = ~(uint64)0);
+ ZLInflateFilter(janky_ptr<Stream> source_stream, const std::string& vfcontext, FORMAT df, uint64 csize, uint64 ucs = (uint64)-1, uint64 ucrc32 = (uint64)-1);
  virtual ~ZLInflateFilter() override;
- virtual uint64 read(void *data, uint64 count, bool error_on_eos = true) override;
- virtual void write(const void *data, uint64 count) override;
- virtual void seek(int64 offset, int whence) override;
- virtual uint64 tell(void) override;
- virtual uint64 size(void) override;
- virtual void close(void) override;
- virtual uint64 attributes(void) override;
- virtual void truncate(uint64 length) override;
- virtual void flush(void) override;
+
+ virtual uint64 read_decompress(void* data, uint64 count) override;
+ virtual void reset_decompress(void) override;
+ virtual void close_decompress(void) override;
 
  private:
 
- uint64 read_real(void *data, uint64 count, bool error_on_eos);
-
- Stream* ss;
- const uint64 ss_startpos;
- const uint64 ss_boundpos;
- uint64 ss_pos;
-
  z_stream zs;
  uint8 buf[8192];
-
- uint64 position;
- uint64 target_position;
- uint64 uc_size;
-
- uint32 running_crc32;
- const uint64 expected_crc32;
-
- std::string vfcontext;
 };
 
 /*
 class GZIPReadFilter : public ZLInflateFilter
 {
  public:
- INLINE GZIPReadFilter(Stream* source_stream) : ZLInflateFilter(source_stream, "", FORMAT::GZIP, ~(uint64)0);
+ INLINE GZIPReadFilter(Stream* source_stream) : ZLInflateFilter(source_stream, "", FORMAT::GZIP, (uint64)-1);
 
 }
 */

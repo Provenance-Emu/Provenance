@@ -2,7 +2,6 @@
 #define __MDFN_DRIVER_H
 
 #include "mednafen.h"
-#include "settings-driver.h"
 #include "mednafen-driver.h"
 #include "netplay-driver.h"
 #include "state-driver.h"

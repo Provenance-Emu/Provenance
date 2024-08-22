@@ -736,7 +736,7 @@ static const MDFNSetting_EnumList ReportedRegionList[] =
 {
  { "same", REGION_SAME, gettext_noop("Match the region emulated.") },
 
- { "game", REGION_GAME, gettext_noop("Match game's header."), gettext_noop("This option, in conjunction with the \"md.region\" setting, can be used to run all games at NTSC speeds, or all games at PAL speeds.")  },
+ { "game", REGION_GAME, gettext_noop("Match game's header."), gettext_noop("This option, in conjunction with the \"\5md.region\" setting, can be used to run all games at NTSC speeds, or all games at PAL speeds.")  },
 
  { "overseas_ntsc", REGION_OVERSEAS_NTSC, gettext_noop("Overseas(non-Japan), NTSC"), gettext_noop("Region used in North America.") },
  { "overseas_pal", REGION_OVERSEAS_PAL, gettext_noop("Overseas(non-Japan), PAL"), gettext_noop("Region used in Europe.") },
@@ -768,7 +768,7 @@ static const MDFNSetting MDSettings[] =
 
 static const FileExtensionSpecStruct KnownExtensions[] =
 {
- { ".bin", -80, gettext_noop("Super Magic Drive binary ROM Image") },
+ { ".bin", -1000, gettext_noop("Super Magic Drive binary ROM Image") },
  { ".smd", -10, gettext_noop("Super Magic Drive interleaved format ROM Image") },
  { ".md", 0, gettext_noop("Multi Game Doctor format ROM Image") },
 

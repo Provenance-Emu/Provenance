@@ -117,6 +117,9 @@
 /* Define to 1 if you have the `dup2' function. */
 #undef HAVE_DUP2
 
+/* Define if we are compiling and linking with external libzstd. */
+#undef HAVE_EXTERNAL_LIBZSTD
+
 /* Define if we are compiling and linking with external LZO. */
 #undef HAVE_EXTERNAL_LZO2
 
@@ -138,29 +141,14 @@
 /* Define to 1 if you have the <fenv.h> header file. */
 #undef HAVE_FENV_H
 
-/* Define to 1 if you have the `fopen64' function. */
-#undef HAVE_FOPEN64
-
 /* Define to 1 if you have the `fork' function. */
 #undef HAVE_FORK
 
 /* Define to 1 if you have the `freeaddrinfo' function. */
 #undef HAVE_FREEADDRINFO
 
-/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
-#undef HAVE_FSEEKO
-
-/* Define to 1 if you have the `fseeko64' function. */
-#undef HAVE_FSEEKO64
-
 /* Define to 1 if you have the `fstat64' function. */
 #undef HAVE_FSTAT64
-
-/* Define to 1 if you have the `ftello' function. */
-#undef HAVE_FTELLO
-
-/* Define to 1 if you have the `ftello64' function. */
-#undef HAVE_FTELLO64
 
 /* Define to 1 if you have the `ftruncate64' function. */
 #undef HAVE_FTRUNCATE64
@@ -557,6 +545,9 @@
    enabled. */
 #undef MDFN_ENABLE_DEV_BUILD
 
+/* Defines the filesystem path-separator type. */
+#undef MDFN_PSS_STYLE
+
 /* Mednafen version definition. */
 #undef MEDNAFEN_VERSION
 
@@ -598,9 +589,6 @@
 
 /* Define if <inttypes.h> exists and defines unusable PRI* macros. */
 #undef PRI_MACROS_BROKEN
-
-/* Defines the filesystem path-separator type. */
-#undef PSS_STYLE
 
 /* Define to CPU set type if we are compiling with pthreads affinity setting
    support. */
@@ -747,6 +735,9 @@
 
 /* Define if we are compiling with PlayStation emulation. */
 #undef WANT_PSX_EMU
+
+/* Define if we are compiling with Sega Arcade SCSP Player. */
+#undef WANT_SASPLAY_EMU
 
 /* Define if we are compiling with SMS+GG emulation. */
 #undef WANT_SMS_EMU

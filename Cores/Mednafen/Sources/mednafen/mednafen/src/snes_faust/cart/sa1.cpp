@@ -50,13 +50,13 @@ static INLINE void CPU_SetNMI(bool active)
  CPUM.NMILineState = active;
 }
 
+/*
 static INLINE void CPU_SetIRQNMISuppress(bool active)
 {
  CPUM.CombinedNIState &= ~0x80;
  CPUM.CombinedNIState |= active ? 0x80 : 0x00;
 }
-
-
+*/
 static INLINE void CPU_Exit(void)
 {
  CPUM.running_mask = 0;
@@ -242,7 +242,7 @@ static DEFWRITE(WriteIRAM)
  if((IWRAMWriteEnable[SA1Side] >> (A >> 8)) & 1)
   IRAM[A] = V;
  else
-  SNES_DBG("[%s] IRAM write blocked; 0x%06x 0x%02x\n", SA1Side ? "SA1CPU" : "SA1", A, V);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[%s] IRAM write blocked; 0x%06x 0x%02x\n", SA1Side ? "SA1CPU" : "SA1", A, V);
 }
 
 template<bool SA1Side>
@@ -288,7 +288,7 @@ static INLINE uint8 DMA_ReadROM(uint32 A)
 
 static NO_INLINE void DMA_RunNormal(const uint32 timestamp)
 {
- SNES_DBG("[SA1] DMA: 0x%06x->0x%06x * 0x%04x, Control=0x%02x\n", DMASourceAddr, DMADestAddr, DMALength, DMAControl);
+ SNES_DBG(SNES_DBG_CART, "[SA1] DMA: 0x%06x->0x%06x * 0x%04x, Control=0x%02x\n", DMASourceAddr, DMADestAddr, DMALength, DMAControl);
 
  uint32 DMACurSourceAddr = DMASourceAddr;
  uint32 DMACurDestAddr = DMADestAddr;
@@ -299,9 +299,9 @@ static NO_INLINE void DMA_RunNormal(const uint32 timestamp)
  DMAFinishTS = timestamp + (DMALength << (DMASourceMem == 1 || DMADestMem == 1));
 
  if(((DMASourceMem & 2) && DMADestMem == 0) || (DMASourceMem == 1 && DMADestMem == 1))
-  SNES_DBG("[SA1] Attempted to start illegal DMA.");
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1] Attempted to start illegal DMA.");
  else if(!DMACurCount)
-  SNES_DBG("[SA1] Attempted to start 0-length DMA.");
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1] Attempted to start 0-length DMA.");
  else while(MDFN_LIKELY(DMACurCount))
  {
   uint8 tmp = 0xFF;
@@ -472,13 +472,13 @@ static DEFWRITE(MainCPU_WriteIO)
  //
  Update(CPUM.timestamp);
  //
- SNES_DBG("[SA1] IO Write 0x%06x 0x%02x\n", T_A, V);
+ SNES_DBG(SNES_DBG_CART, "[SA1] IO Write 0x%06x 0x%02x\n", T_A, V);
  assert((A & 0xFFFF) == T_A);
 
  switch(T_A)
  {
   default:
-	SNES_DBG("[SA1] Unknown Write: $%02x:%04x $%02x\n", A >> 16, A & 0xFFFF, V);
+	SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1] Unknown Write: $%02x:%04x $%02x\n", A >> 16, A & 0xFFFF, V);
 	break;
 
   case 0x2200:
@@ -602,12 +602,12 @@ static DEFREAD(MainCPU_ReadIO)
  //
  uint8 ret = 0x00;
 
- SNES_DBG("[SA1] IO Read 0x%06x\n", A);
+ SNES_DBG(SNES_DBG_CART, "[SA1] IO Read 0x%06x\n", A);
  assert((A & 0xFFFF) == T_A);
  switch(T_A)
  {
   default:
-	SNES_DBG("[SA1CPU] Unknown Read: $%02x:%04x\n", A >> 16, A & 0xFFFF);
+	SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1] Unknown Read: $%02x:%04x\n", A >> 16, A & 0xFFFF);
 	break;
 
   case 0x2300:
@@ -634,24 +634,6 @@ static DEFREAD(MainCPU_ReadVector)
   return *(MainVectors + (w << 1) + (A & 1));
 
  return ReadROM(0, A);
-}
-
-static DEFREAD(SA1CPU_ReadVector)
-{
- SA1CPU::CPUM.timestamp += 2;
- //
- uint8 ret = ReadROM(0, A);
-
- if(MDFN_UNLIKELY(A >= 0xFFE0))
- {
-  if(SA1CPU::CPUM.VectorPull)
-  {
-   const size_t index = A & 0xF;
-   ret = (ret & SA1VectorMask[index]) | SA1VectorSpace[index];
-  }
- }
-
- return ret;
 }
 
 template<unsigned T_Region, bool SA1Side>
@@ -705,7 +687,7 @@ static DEFWRITE(WriteBWRAM_40_43)
  //
  if(!BWRAMWriteEnable[SA1Side] && (A & 0x3FFFF) < (256U << BWRAMWriteProtectSize))
  {
-  SNES_DBG("[SA1] %d, BWRAM write blocked; 0x%06x 0x%02x\n", SA1Side, A, V);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1] %d, BWRAM write blocked; 0x%06x 0x%02x\n", SA1Side, A, V);
   //return;
  }
 
@@ -734,7 +716,7 @@ static DEFWRITE(MainCPU_WriteBWRAM_Banked)
  //
  //if(!BWRAMWriteEnable[0])
  //{
- // SNES_DBG("[SA1] BWRAM write blocked; 0x%06x 0x%02x\n", A, V);
+ // SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1] BWRAM write blocked; 0x%06x 0x%02x\n", A, V);
  // return;
  //}
 
@@ -800,7 +782,7 @@ static DEFWRITE(SA1CPU_WriteBWRAM_Banked)
  //
  //if(!BWRAMWriteEnable[1])
  //{
- // SNES_DBG("[SA1CPU] BWRAM write blocked; 0x%06x 0x%02x\n", A, V);
+ // SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1CPU] BWRAM write blocked; 0x%06x 0x%02x\n", A, V);
  // return;
  //}
 
@@ -828,7 +810,7 @@ static DEFWRITE(SA1CPU_WriteBWRAM_Bitmap)
  //
  if(!BWRAMWriteEnable[1])
  {
-  SNES_DBG("[SA1CPU] BWRAM write blocked; 0x%06x 0x%02x\n", A, V);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1CPU] BWRAM write blocked; 0x%06x 0x%02x\n", A, V);
   return;
  }
 
@@ -841,14 +823,14 @@ static DEFWRITE(SA1CPU_OBWrite)
 {
  SA1CPU::CPUM.timestamp += 2;
  //
- SNES_DBG("[SA1CPU] Unknown Write: $%02x:%04x $%02x\n", A >> 16, A & 0xFFFF, V);
+ SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1CPU] Unknown Write: $%02x:%04x $%02x\n", A >> 16, A & 0xFFFF, V);
 }
 
 static DEFREAD(SA1CPU_OBRead)
 {
  SA1CPU::CPUM.timestamp += 2;
  //
- SNES_DBG("[SA1CPU] Unknown Read: $%02x:%04x\n", A >> 16, A & 0xFFFF);
+ SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1CPU] Unknown Read: $%02x:%04x\n", A >> 16, A & 0xFFFF);
  return CPUM.mdr;
 }
 
@@ -884,11 +866,11 @@ static DEFWRITE(SA1CPU_WriteIO)
 {
  SA1CPU::CPUM.timestamp += 2;
  //
- SNES_DBG("[SA1CPU] IO Write 0x%06x 0x%02x\n", T_A, V);
+ SNES_DBG(SNES_DBG_CART, "[SA1CPU] IO Write 0x%06x 0x%02x\n", T_A, V);
  switch(T_A)
  {
   default:
-	SNES_DBG("[SA1CPU] Unknown Write: $%02x:%04x $%02x\n", A >> 16, A & 0xFFFF, V);
+	SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1CPU] Unknown Write: $%02x:%04x $%02x\n", A >> 16, A & 0xFFFF, V);
 	break;
 
   case 0x2209:
@@ -1053,11 +1035,11 @@ static DEFREAD(SA1CPU_ReadIO)
  //
  uint8 ret = 0x00;
 
- SNES_DBG("[SA1CPU] IO Read 0x%06x\n", A);
+ SNES_DBG(SNES_DBG_CART, "[SA1CPU] IO Read 0x%06x\n", A);
  switch(T_A)
  {
   default:
-	SNES_DBG("[SA1CPU] Unknown Read: $%02x:%04x\n", A >> 16, A & 0xFFFF);
+	SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[SA1CPU] Unknown Read: $%02x:%04x\n", A >> 16, A & 0xFFFF);
 	break;
 
   case 0x2301:
@@ -1089,6 +1071,22 @@ static DEFREAD(SA1CPU_ReadIO)
  }
 
  return ret;
+}
+
+//
+// See CPU_ReadOp() vs CPU_Read() in sa1cpu.h.
+//
+// Will be called for op reads from all of the I/O space,
+// and for normal reads from the first byte of I/O space.
+//
+static DEFREAD(SA1CPU_OpReadIO)
+{
+ //printf("HRM: %08x\n", A);
+
+ if(A & 0x1FF)
+  return SA1CPU::CPUM.ReadFuncs[A & 0x1FF](A);
+
+ return SA1CPU_OBRead(A);
 }
 
 static void Reset(bool powering_up)
@@ -1251,8 +1249,8 @@ void CART_SA1_Init(const int32 master_clock)
   }
   else if(!(bank & 0x40))
   {
-   readfunc rf;
-   readfunc sa1cpu_rf;
+   readfunc rf = nullptr;
+   readfunc sa1cpu_rf = nullptr;
 
    if(bank < 0x20)
    {
@@ -1275,6 +1273,8 @@ void CART_SA1_Init(const int32 master_clock)
     sa1cpu_rf = ReadROM<3, true>;
    }
 
+   assert(rf && sa1cpu_rf);
+
    Set_A_Handlers((bank << 16) | 0x8000, (bank << 16) | 0xFFFF, rf, (bank & 0x80) ? OBWrite_VAR : OBWrite_SLOW);
    SA1CPU::CPU_SetRWHandlers((bank << 16) | 0x8000, (bank << 16) | 0xFFFF, sa1cpu_rf, SA1CPU_OBWrite);
 
@@ -1286,8 +1286,6 @@ void CART_SA1_Init(const int32 master_clock)
      Set_A_Handlers(0xFFEA + offs, MainCPU_ReadVector<0>, OBWrite_SLOW);
      Set_A_Handlers(0xFFEE + offs, MainCPU_ReadVector<1>, OBWrite_SLOW);
     }
-
-    SA1CPU::CPU_SetRWHandlers(0xFE00, 0xFFFF, SA1CPU_ReadVector, SA1CPU_OBWrite);
    }
   }
   else if(bank >= 0xC0)
@@ -1375,6 +1373,11 @@ void CART_SA1_Init(const int32 master_clock)
    MHR(0x2300)
    MHR(0x230E)
    #undef MHR
+
+   assert(SA1CPU::CPUM.ReadFuncs[0] == SA1CPU_OBRead);
+   assert(SA1CPU::CPUM.WriteFuncs[0] == SA1CPU_OBWrite);
+   SA1CPU::CPU_SetRWHandlers((bank << 16) | 0x2200, (bank << 16) | 0x2200, SA1CPU_OpReadIO, SA1CPU_OBWrite, true);
+   assert(SA1CPU::CPUM.ReadFuncs[0] = SA1CPU_OpReadIO);
 
    #define SHW(a) SA1CPU::CPU_SetRWHandlers((bank << 16) | a, (bank << 16) | a, SA1CPU_OBRead, SA1CPU_WriteIO<a>, true);
    SHW(0x2209)

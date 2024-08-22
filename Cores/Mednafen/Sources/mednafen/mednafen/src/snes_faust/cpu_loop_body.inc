@@ -40,7 +40,7 @@ while(MDFN_LIKELY(lc.cpum->running_mask))
     // Mortal Kombat II-related kludge.
     lc.IO();
 #endif
-    SNES_DBG("WAI done\n");
+    SNES_DBG(SNES_DBG_CPU, "[CPU] WAI done\n");
     lc.cpum->halted = CPU_Misc::HALTED_NOT;
    }
    else if(lc.cpum->timestamp < lc.cpum->next_event_ts)
@@ -48,7 +48,7 @@ while(MDFN_LIKELY(lc.cpum->running_mask))
   }
 #ifdef SNES_DBG_ENABLE
   if(!lc.cpum->halted)
-   printf("CPU halted finished: %u\n", lc.cpum->timestamp);
+   SNES_DBG(SNES_DBG_CPU, "[CPU] CPU halted finished: %u\n", lc.cpum->timestamp);
 #endif
  }
 

@@ -70,16 +70,18 @@ INLINE uint16 Core65816::VecRead(uint32 addr)
 {
  uint16 ret;
 
- cpum->VectorPull = true;
- ret = MemRead<uint16>(addr);
- cpum->VectorPull = false;
+ ret = cpum->CPU_ReadVec(addr);
+ addr++;
+ ret |= cpum->CPU_ReadVec(addr) << 8;
 
  return ret;
 }
 
 INLINE uint8 Core65816::OpRead(uint32 addr)
 {
- uint8 ret = MemRead<uint8>(addr);
+ uint8 ret;
+
+ ret = cpum->CPU_ReadOp(addr);
 
  return ret;
 }

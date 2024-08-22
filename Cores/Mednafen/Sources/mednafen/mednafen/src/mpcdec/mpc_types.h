@@ -44,8 +44,8 @@
 #include <stdlib.h>
 #include <memory.h>
 
-#ifdef __cplusplus && false
-//extern "C" {
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 #ifdef _MSC_VER
@@ -145,6 +145,6 @@ enum {
 #endif
 
 #ifdef __cplusplus
-//}
+}
 #endif
 #endif

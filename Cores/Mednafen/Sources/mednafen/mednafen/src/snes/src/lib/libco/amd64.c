@@ -1,18 +1,6 @@
-/*
-  libco.amd64 (2015-06-19)
-  author: byuu
-  license: public domain
-*/
-
 #define LIBCO_C
 #include "libco.h"
-
-//Win64 only: provides a substantial speed-up, but will thrash XMM regs
-//do not use this unless you are certain your application won't use SSE
-//#define LIBCO_AMD64_NO_SSE
-
-#include <assert.h>
-#include <stdlib.h>
+#include "settings.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,9 +10,14 @@ static thread_local long long co_active_buffer[64];
 static thread_local cothread_t co_active_handle = 0;
 static void (*co_swap)(cothread_t, cothread_t) = 0;
 
+#ifdef LIBCO_MPROTECT
+  alignas(4096)
+#else
+  section(text)
+#endif
 #ifdef _WIN32
   /* ABI: Win64 */
-  force_text_section static const unsigned char co_swap_function[] = {
+  static const unsigned char co_swap_function[4096] = {
     0x48, 0x89, 0x22,              /* mov [rdx],rsp          */
     0x48, 0x8b, 0x21,              /* mov rsp,[rcx]          */
     0x58,                          /* pop rax                */
@@ -36,7 +29,7 @@ static void (*co_swap)(cothread_t, cothread_t) = 0;
     0x4c, 0x89, 0x6a, 0x30,        /* mov [rdx+48],r13       */
     0x4c, 0x89, 0x72, 0x38,        /* mov [rdx+56],r14       */
     0x4c, 0x89, 0x7a, 0x40,        /* mov [rdx+64],r15       */
-  #if !defined(LIBCO_AMD64_NO_SSE)
+  #if !defined(LIBCO_NO_SSE)
     0x0f, 0x29, 0x72, 0x50,        /* movaps [rdx+ 80],xmm6  */
     0x0f, 0x29, 0x7a, 0x60,        /* movaps [rdx+ 96],xmm7  */
     0x44, 0x0f, 0x29, 0x42, 0x70,  /* movaps [rdx+112],xmm8  */
@@ -57,7 +50,7 @@ static void (*co_swap)(cothread_t, cothread_t) = 0;
     0x4c, 0x8b, 0x69, 0x30,        /* mov r13,[rcx+48]       */
     0x4c, 0x8b, 0x71, 0x38,        /* mov r14,[rcx+56]       */
     0x4c, 0x8b, 0x79, 0x40,        /* mov r15,[rcx+64]       */
-  #if !defined(LIBCO_AMD64_NO_SSE)
+  #if !defined(LIBCO_NO_SSE)
     0x0f, 0x28, 0x71, 0x50,        /* movaps xmm6, [rcx+ 80] */
     0x0f, 0x28, 0x79, 0x60,        /* movaps xmm7, [rcx+ 96] */
     0x44, 0x0f, 0x28, 0x41, 0x70,  /* movaps xmm8, [rcx+112] */
@@ -73,11 +66,17 @@ static void (*co_swap)(cothread_t, cothread_t) = 0;
     0xff, 0xe0,                    /* jmp rax                */
   };
 
-  void co_init() {
+  #include <windows.h>
+
+  static void co_init() {
+    #ifdef LIBCO_MPROTECT
+    DWORD old_privileges;
+    VirtualProtect((void*)co_swap_function, sizeof co_swap_function, PAGE_EXECUTE_READ, &old_privileges);
+    #endif
   }
 #else
   /* ABI: SystemV */
-  force_text_section static const unsigned char co_swap_function[] = {
+  static const unsigned char co_swap_function[4096] = {
     0x48, 0x89, 0x26,        /* mov [rsi],rsp    */
     0x48, 0x8b, 0x27,        /* mov rsp,[rdi]    */
     0x58,                    /* pop rax          */
@@ -96,12 +95,23 @@ static void (*co_swap)(cothread_t, cothread_t) = 0;
     0xff, 0xe0,              /* jmp rax          */
   };
 
-  void co_init() {
+  #ifdef LIBCO_MPROTECT
+    #include <unistd.h>
+    #include <sys/mman.h>
+  #endif
+
+  static void co_init() {
+    #ifdef LIBCO_MPROTECT
+    unsigned long long addr = (unsigned long long)co_swap_function;
+    unsigned long long base = addr - (addr % sysconf(_SC_PAGESIZE));
+    unsigned long long size = (addr - base) + sizeof co_swap_function;
+    mprotect((void*)base, size, PROT_READ | PROT_EXEC);
+    #endif
   }
 #endif
 
 static void crash() {
-  assert(0);  /* called only if cothread_t entrypoint returns */
+  LIBCO_ASSERT(0);  /* called only if cothread_t entrypoint returns */
 }
 
 cothread_t co_active() {
@@ -109,33 +119,42 @@ cothread_t co_active() {
   return co_active_handle;
 }
 
-cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
+cothread_t co_derive(void* memory, unsigned int size, void (*entrypoint)(void)) {
   cothread_t handle;
   if(!co_swap) {
     co_init();
     co_swap = (void (*)(cothread_t, cothread_t))co_swap_function;
   }
   if(!co_active_handle) co_active_handle = &co_active_buffer;
-  size += 512;  /* allocate additional space for storage */
-  size &= ~15;  /* align stack to 16-byte boundary */
 
-  if(handle = (cothread_t)malloc(size)) {
-    long long *p = (long long*)((char*)handle + size);  /* seek to top of stack */
-    *--p = (long long)crash;                            /* crash if entrypoint returns */
-    *--p = (long long)entrypoint;                       /* start of function */
-    *(long long*)handle = (long long)p;                 /* stack pointer */
+  if(handle = (cothread_t)memory) {
+    unsigned int offset = (size & ~15) - 32;
+    long long *p = (long long*)((char*)handle + offset);  /* seek to top of stack */
+    *--p = (long long)crash;                              /* crash if entrypoint returns */
+    *--p = (long long)entrypoint;                         /* start of function */
+    *(long long*)handle = (long long)p;                   /* stack pointer */
   }
 
   return handle;
 }
 
+cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
+  void* memory = LIBCO_MALLOC(size);
+  if(!memory) return (cothread_t)0;
+  return co_derive(memory, size, entrypoint);
+}
+
 void co_delete(cothread_t handle) {
-  free(handle);
+  LIBCO_FREE(handle);
 }
 
 void co_switch(cothread_t handle) {
   register cothread_t co_previous_handle = co_active_handle;
   co_swap(co_active_handle = handle, co_previous_handle);
+}
+
+int co_serializable() {
+  return 1;
 }
 
 #ifdef __cplusplus

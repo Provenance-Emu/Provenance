@@ -71,12 +71,12 @@
 #include <map>
 #endif
 
-typedef int8_t int8;
+typedef signed char int8;
 typedef int16_t int16;
 typedef int32_t int32;
 typedef int64_t int64;
 
-typedef uint8_t uint8;
+typedef unsigned char uint8;	// Avoid uint8_t in case it's ever implemented as not being able to alias everything else, which Mednafen code relies on.
 typedef uint16_t uint16;
 typedef uint32_t uint32;
 typedef uint64_t uint64;
@@ -183,6 +183,8 @@ typedef uint64_t uint64;
   #else
    #define MDFN_HIDE __attribute__((visibility("hidden")))
   #endif
+
+  #define MDFN_UNDEFINED(cond) ((cond) ? (void)__builtin_unreachable() : (void)0)
 #elif defined(__GNUC__)
   //
   // Begin gcc
@@ -249,6 +251,8 @@ typedef uint64_t uint64;
   #else
    #define MDFN_HIDE __attribute__((visibility("hidden")))
   #endif
+
+  #define MDFN_UNDEFINED(cond) ((cond) ? (void)__builtin_unreachable() : (void)0)
 #elif defined(_MSC_VER)
   //
   // Begin MSVC
@@ -277,6 +281,7 @@ typedef uint64_t uint64;
 
   #define MDFN_ASSUME_ALIGNED(p, align) (p)
   #define MDFN_HIDE
+  #define MDFN_UNDEFINED(cond) ((void)__assume(!(cond)))
 #else
   #define INLINE inline
   #define NO_INLINE
@@ -300,6 +305,7 @@ typedef uint64_t uint64;
 
   #define MDFN_ASSUME_ALIGNED(p, align) (p)
   #define MDFN_HIDE
+  #define MDFN_UNDEFINED(cond) ((void)(cond))
 #endif
 
 #ifndef FALSE

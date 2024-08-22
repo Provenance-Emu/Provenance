@@ -210,7 +210,7 @@ NO_INLINE void DSP2Chip::Run(int32 cycles)
  //////
  READ8(Command)
 
- SNES_DBG("[DSP2] DSP2Chip::Run(); Command: %02x\n", Command);
+ SNES_DBG(SNES_DBG_CART, "[DSP2] DSP2Chip::Run(); Command: %02x\n", Command);
  //
  Command &= 0x0F; // Wrong?
 
@@ -392,7 +392,7 @@ NO_INLINE void DSP2Chip::Run(int32 cycles)
   READ8(Args[0]) // nybbles in count
   READ8(Args[1]) // nybbles out count
 
-  SNES_DBG("[DSP2] scale: 0x%02x 0x%02x\n", Args[0], Args[1]);
+  SNES_DBG(SNES_DBG_CART, "[DSP2] scale: 0x%02x 0x%02x\n", Args[0], Args[1]);
 
   count = (Args[0] + 1) >> 1;
   for(i = 0; i < count; i++)
@@ -447,7 +447,7 @@ NO_INLINE void DSP2Chip::Run(int32 cycles)
  }
  else
  {
-  SNES_DBG("[DSP2] Unknown command: %02x\n", Command);
+  SNES_DBG(SNES_DBG_WARNING | SNES_DBG_CART, "[DSP2] Unknown command: %02x\n", Command);
   DataReg = 0xFFFF;
  }
 

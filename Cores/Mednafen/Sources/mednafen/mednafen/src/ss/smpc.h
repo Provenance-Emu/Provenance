@@ -54,7 +54,7 @@ enum
  SMPC_RTC_LANG_JAPANESE = 5,
 };
 
-void SMPC_Init(const uint8 area_code, const int32 master_clock) MDFN_COLD;
+void SMPC_Init(const uint8 area_code, const int32 master_clock, bool block_soundcpu_control) MDFN_COLD;
 void SMPC_Reset(bool powering_up) MDFN_COLD;
 void SMPC_LoadNV(Stream* s) MDFN_COLD;
 void SMPC_SaveNV(Stream* s) MDFN_COLD;

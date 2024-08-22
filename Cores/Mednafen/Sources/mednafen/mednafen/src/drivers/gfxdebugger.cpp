@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* gfxdebugger.cpp:
-**  Copyright (C) 2006-2020 Mednafen Team
+**  Copyright (C) 2006-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -22,6 +22,8 @@
 #include "main.h"
 #include "gfxdebugger.h"
 #include "debugger.h"
+#include "nongl.h"
+
 #include <trio/trio.h>
 
 static MDFN_Surface *gd_surface = NULL;
@@ -76,100 +78,104 @@ void GfxDebugger_SetActive(bool newia)
  }
 }
 
-#define MK_COLOR_A(r,g,b,a) (pf_cache.MakeColor(r, g, b, a))
-
 // Call this function from the game thread
 void GfxDebugger_Draw(MDFN_Surface *surface, const MDFN_Rect *rect, const MDFN_Rect *screen_rect)
 {
  if(!IsActive)
   return;
-
+ //
+ //
  const MDFN_PixelFormat pf_cache = surface->format;
- uint32 *src_pixels;
- uint32 * pixels = surface->pixels;
- uint32 pitch32 = surface->pitchinpix;
+ const uint32 text_bg_color = pf_cache.MakeColor(0x00, 0x00, 0x00, 0xC0);
+ const uint32 text_color = pf_cache.MakeColor(0xF0, 0xF0, 0xF0, 0xFF);
+ const uint32 text_shadow_color = pf_cache.MakeColor(0x00, 0x00, 0x00, 0xFF);
+
+ const uint32* src_pixels;
  const bool ism = Debugger_GT_IsInSteppingMode();
 
  if(ism)
  {
-  RedoSGD(TRUE);
+  RedoSGD(true);
  }
 
- if(gd_surface->format.Rshift != surface->format.Rshift || gd_surface->format.Gshift != surface->format.Gshift ||
-  gd_surface->format.Bshift != surface->format.Bshift || gd_surface->format.Ashift != surface->format.Ashift ||
-  gd_surface->format.colorspace != surface->format.colorspace)
- {
-  //puts("Convert Meow");
-  gd_surface->SetFormat(surface->format, TRUE);
- }
+ if(surface->format.opp == 4)
+  gd_surface->SetFormat(surface->format, true);
 
  src_pixels = gd_surface->pixels;
 
  if(!src_pixels)
- {
-  
   return;
- }
+ //
+ //
+ const unsigned scale = 2;
+ const MDFN_Rect gd_srect = { 0, 0, (int32)gd_surface->w, (int32)gd_surface->h };
+ const MDFN_Rect drect = { (int32)(rect->w - gd_surface->w * scale) / 2, 0, (int32)(gd_surface->w * scale), (int32)(gd_surface->h * scale) };
 
- for(unsigned int y = 0; y < 128; y++)
+ if(gd_surface->format == surface->format)
+  MDFN_StretchBlitSurface(gd_surface, gd_srect, surface, drect);
+ else
  {
-  uint32 *row = pixels + ((rect->w - 256) / 2) + y * pitch32 * 2;
-  for(unsigned int x = 0; x < 128; x++)
-  {
-   //printf("%d %d %d\n", y, x, pixels);
-   row[x*2] = row[x*2 + 1] = row[pitch32 + x*2] = row[pitch32 + x*2 + 1] = src_pixels[x + y * 128 * 3];
-   //row[x] = MK_COLOR_A(0, 0, 0, 0xc0);
-   //row[x] = MK_COLOR_A(0x00, 0x00, 0x00, 0x7F);
-  }
- }
+  std::unique_ptr<MDFN_Surface> tsurf(gd_surface->DupeCompactConvert(surface->format));
 
+  MDFN_StretchBlitSurface(tsurf.get(), gd_srect, surface, drect);
+ }
 
  // Draw layer name
  {
-  for(int y = 256; y < 256 + 18; y++)
-  {
-   for(int x = 0; x < rect->w; x++)
-   {
-    pixels[y * pitch32 + x] = MK_COLOR_A(0x00, 0x00, 0x00, 0xC0);
-   }
-  }
   char buf[256];
+
+  MDFN_DrawFillRect(surface, 0, gd_surface->h * scale, rect->w, 18, text_bg_color);
 
   if(ism)
    trio_snprintf(buf, 256, "%s, PBN: %d, Scroll: %d, Instant", LayerNames[CurLayer], LayerPBN[CurLayer], LayerScroll[CurLayer]);
   else
    trio_snprintf(buf, 256, "%s, PBN: %d, Scroll: %d, Line: %d", LayerNames[CurLayer], LayerPBN[CurLayer], LayerScroll[CurLayer], LayerScanline[CurLayer]);
-  DrawTextShadow(surface, 0, 256, buf, MK_COLOR_A(0xF0, 0xF0, 0xF0, 0xFF), MK_COLOR_A(0, 0, 0, 0xFF), MDFN_FONT_9x18_18x18, rect->w);
+
+  DrawTextShadow(surface, 0, gd_surface->h * scale, buf, text_color, text_shadow_color, MDFN_FONT_9x18_18x18, rect->w);
  }
 
  int mousex, mousey;
- SDL_GetMouseState(&mousex, &mousey);
  int vx, vy;
 
- vx = (mousex - screen_rect->x) * rect->w / screen_rect->w - ((rect->w - 256) / 2);
- vy = (mousey - screen_rect->y) * rect->h / screen_rect->h;
+ SDL_GetMouseState(&mousex, &mousey);
 
- vx /= 2;
- vy /= 2;
+ vx = (mousex - screen_rect->x) * rect->w / screen_rect->w - drect.x;
+ vy = (mousey - screen_rect->y) * rect->h / screen_rect->h - drect.y;
 
- if(vx < 128 && vy < 128 && vx >= 0 && vy >= 0)
+ vx /= scale;
+ vy /= scale;
+
+ if(vx < gd_surface->w && vy < gd_surface->h && vx >= 0 && vy >= 0)
  {
-  if(src_pixels[vx + vy * 128 * 3] & (0xFF << surface->format.Ashift))
+  if(src_pixels[vx + vy * gd_surface->pitchinpix] & (0xFF << surface->format.Ashift))
   {
-   for(int y = 278; y < 278 + 18; y++)
-    for(int x = 0; x < rect->w; x++)
-    {
-     pixels[y * pitch32 + x] = MK_COLOR_A(0x00, 0x00, 0x00, 0xC0);
-    }
    char buf[256];
 
-   trio_snprintf(buf, 256, "Tile: %08x, Address: %08x", src_pixels[128 + vx + vy * 128 * 3], src_pixels[256 + vx + vy * 128 * 3]);
+   MDFN_DrawFillRect(surface, 0, gd_surface->h * scale + 22, rect->w, 18, text_bg_color);
 
-   DrawTextShadow(surface, 0, 278, buf, MK_COLOR_A(0xF0, 0xF0, 0xF0, 0xFF), MK_COLOR_A(0, 0, 0, 0xFF), MDFN_FONT_9x18_18x18, rect->w);
+   trio_snprintf(buf, 256, "Tile: %08x, Address: %08x", src_pixels[gd_surface->w * 1 + vx + vy * gd_surface->pitchinpix], src_pixels[gd_surface->w * 2 + vx + vy * gd_surface->pitchinpix]);
+
+   DrawTextShadow(surface, 0, gd_surface->h * scale + 22, buf, text_color, text_shadow_color, MDFN_FONT_9x18_18x18, rect->w);
   }
  }
+}
 
- 
+static void ChangeScanline(int delta)
+{
+ LayerScanline[CurLayer] = std::max<int64>(0, (int64)LayerScanline[CurLayer] + delta);
+ RedoSGD();
+}
+
+static void ChangePBN(int delta)
+{
+ LayerPBN[CurLayer] = std::max<int64>(-1, (int64)LayerPBN[CurLayer] + delta);
+ RedoSGD();
+}
+
+static void ChangeScroll(int delta)
+{
+ LayerScroll[CurLayer] = std::max<int64>(0, (int64)LayerScroll[CurLayer] + delta);
+ RedoSGD();
 }
 
 // Call this from the game thread
@@ -186,66 +192,65 @@ int GfxDebugger_Event(const SDL_Event *event)
 	break;
 
    case SDLK_MINUS:
-	if(LayerScanline[CurLayer])
-	{
-	 LayerScanline[CurLayer]--;
-	 RedoSGD();
-	}
+	ChangeScanline(-1);
 	break;
 
    case SDLK_EQUALS:
-	LayerScanline[CurLayer]++;
-	RedoSGD();
+	ChangeScanline(1);
 	break;
 
    case SDLK_UP:
-	if(LayerScroll[CurLayer])
+	if(event->key.keysym.mod & KMOD_CTRL)
+	 ChangeScanline(1);
+	else
+	 ChangeScroll(-1);
+	break;
+
+   case SDLK_DOWN:
+	if(event->key.keysym.mod & KMOD_CTRL)
+	 ChangeScanline(-1);
+	else
+	 ChangeScroll(1);
+	break;
+
+   case SDLK_PAGEUP:
+	ChangeScroll(-8);
+	break;
+
+   case SDLK_PAGEDOWN:
+	ChangeScroll(8);
+	break;
+
+   case SDLK_LEFT:
+	if(event->key.keysym.mod & KMOD_CTRL)
+	 ChangePBN(-1);
+	else
 	{
-	 LayerScroll[CurLayer]--;
+	 CurLayer = (CurLayer - 1);
+
+	 if(CurLayer < 0)
+	  CurLayer = LayerCount - 1;
+
 	 RedoSGD();
 	}
 	break;
 
-   case SDLK_PAGEUP:
-	LayerScroll[CurLayer] -= 8;
-	if(LayerScroll[CurLayer] < 0)
-	 LayerScroll[CurLayer] = 0;
-	RedoSGD();
-	break;
-
-   case SDLK_PAGEDOWN:
-	LayerScroll[CurLayer] += 8;
-	RedoSGD();
-	break;
-
-   case SDLK_DOWN:
-	LayerScroll[CurLayer]++;
-	RedoSGD();
-	break;
-
-   case SDLK_LEFT:
-	CurLayer = (CurLayer - 1);
-
-	if(CurLayer < 0)
-	 CurLayer = LayerCount - 1;
-
-	RedoSGD();
-	break;
-
    case SDLK_RIGHT:
-	CurLayer = (CurLayer + 1) % LayerCount;
-	RedoSGD();
+	if(event->key.keysym.mod & KMOD_CTRL)
+	 ChangePBN(1);
+	else
+	{
+	 CurLayer = (CurLayer + 1) % LayerCount;
+	 RedoSGD();
+	}
 	break;
 
    case SDLK_COMMA:
-	if(LayerPBN[CurLayer] >= 0)
-	 LayerPBN[CurLayer]--;
-	RedoSGD();
+	ChangePBN(-1);
 	break;
 
    case SDLK_PERIOD:
-	LayerPBN[CurLayer]++;
-	RedoSGD();
+	ChangePBN(1);
 	break;
   }
  }

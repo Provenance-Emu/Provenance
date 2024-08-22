@@ -2,7 +2,7 @@
 /* Mednafen Sony PS1 Emulation Module                                         */
 /******************************************************************************/
 /* psx.h:
-**  Copyright (C) 2011-2016 Mednafen Team
+**  Copyright (C) 2011-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -49,23 +49,38 @@ using namespace Mednafen;
 
 namespace MDFN_IEN_PSX
 {
- #define PSX_DBG_ERROR		0	// Emulator-level error.
- #define PSX_DBG_WARNING	1	// Warning about game doing questionable things/hitting stuff that might not be emulated correctly.
- #define PSX_DBG_BIOS_PRINT	2	// BIOS printf/putchar output.
- #define PSX_DBG_SPARSE		3	// Sparse(relatively) information debug messages(CDC commands).
- #define PSX_DBG_FLOOD		4	// Heavy informational debug messages(GPU commands; TODO).
+ enum
+ {
+  PSX_DBG_ERROR 	= (1U <<  0),	// Emulator-level error.
+  PSX_DBG_INFO		= (1U <<  1),	// Emulator-level info.
+  PSX_DBG_WARNING	= (1U <<  2),	// Warning about game doing questionable things/hitting stuff that might not be emulated correctly.
+  PSX_DBG_BIOS_PRINT	= (1U <<  3),	// BIOS printf/putchar/puts output.
+
+  PSX_DBG_CPU		= (1U <<  8),
+  PSX_DBG_GTE		= (1U <<  9),
+  PSX_DBG_IRQ		= (1U << 10),
+  PSX_DBG_TIMER		= (1U << 11),
+  PSX_DBG_DMA		= (1U << 12),
+  PSX_DBG_SIO		= (1U << 13),
+  PSX_DBG_FIO		= (1U << 14),
+  PSX_DBG_CDC		= (1U << 15),
+  PSX_DBG_MDEC		= (1U << 16),
+  PSX_DBG_SPU		= (1U << 17),
+  PSX_DBG_GPU		= (1U << 18),
+
+  PSX_DBG_MEMCARD	= (1U << 24),
+ };
 
 #if PSX_DBGPRINT_ENABLE
- void PSX_DBG(unsigned level, const char *format, ...) noexcept MDFN_COLD MDFN_FORMATSTR(gnu_printf, 2, 3);
- void PSX_DBG_BIOS_PUTC(uint8 c) noexcept;
+ void PSX_DBG(uint32 which, const char *format, ...) noexcept MDFN_COLD MDFN_FORMATSTR(gnu_printf, 2, 3);
 
- #define PSX_WARNING(format, ...) { PSX_DBG(PSX_DBG_WARNING, format "\n", ## __VA_ARGS__); }
- #define PSX_DBGINFO(format, ...) { }
+ void PSX_DBG_BIOS_PUTC(uint8 c) noexcept;
+ void PSX_DBG_BIOS_PUTS(uint32 p) noexcept;
 #else
- static INLINE void PSX_DBG(unsigned level, const char* format, ...) { }
+ static INLINE void PSX_DBG(uint32 which, const char* format, ...) { }
+
  static INLINE void PSX_DBG_BIOS_PUTC(uint8 c) { }
- static INLINE void PSX_WARNING(const char* format, ...) { }
- static INLINE void PSX_DBGINFO(const char* format, ...) { }
+ static INLINE void PSX_DBG_BIOS_PUTS(uint32 p) { }
 #endif
 
  typedef int32 pscpu_timestamp_t;

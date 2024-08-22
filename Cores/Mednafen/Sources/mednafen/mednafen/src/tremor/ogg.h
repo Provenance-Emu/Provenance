@@ -17,8 +17,8 @@
 #ifndef _OGG_H
 #define _OGG_H
 
-#ifdef __cplusplus && false
-//extern "C" {
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 #include <stddef.h>
@@ -203,8 +203,8 @@ extern int      ogg_page_packets(const ogg_page *og);
 extern void     ogg_packet_clear(ogg_packet *op);
 
 
-#ifdef __cplusplus && false
-//}
+#ifdef __cplusplus
+}
 #endif
 
 #endif  /* _OGG_H */

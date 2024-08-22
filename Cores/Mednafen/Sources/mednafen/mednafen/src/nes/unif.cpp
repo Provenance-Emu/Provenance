@@ -33,7 +33,7 @@ struct UNIF_HEADER
            uint32 info;
 };
 
-struct BMAPPING
+struct UNIF_BMAPPING
 {
            const char *name;
 	   uint16 prg_rm;
@@ -175,8 +175,7 @@ static void NAME(Stream *fp)
 {
  assert(uchead.info <= (SIZE_MAX - 1));
 
- MDFNGameInfo->name.resize((size_t)uchead.info);
- fp->read(&MDFNGameInfo->name[0], (size_t)uchead.info);
+ fp->get_string(&MDFNGameInfo->name, (size_t)uchead.info);
  MDFN_zapctrlchars(&MDFNGameInfo->name);
 
  MDFN_printf(_("Name: %s\n"), MDFNGameInfo->name.c_str());
@@ -344,7 +343,7 @@ static void LoadCHR(Stream *fp)
 #define BMCFLAG_FORCE4	1
 #define BMCFLAG_32KCHRR	2	// Generic UNIF code should make available 32K CHR RAM if no VROM is present(else just 8KB CHR RAM).
 
-static const BMAPPING bmap[] = 
+static const UNIF_BMAPPING bmap[] = 
 {
  { "BTR", 0x0001U, BTR_Init, 0 },
 

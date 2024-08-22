@@ -223,8 +223,6 @@ static void AddBreakPoint(int type, unsigned int A1, unsigned int A2, bool logic
 
 void FlushBreakPoints(int type)
 {
- std::vector<MD_BPOINT>::iterator bpit;
-
  if(type == BPOINT_READ)
   BreakPointsRead.clear();
  else if(type == BPOINT_WRITE)

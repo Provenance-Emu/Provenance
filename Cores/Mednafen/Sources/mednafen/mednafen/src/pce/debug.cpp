@@ -500,8 +500,6 @@ void PCEDBG_AddBreakPoint(int type, unsigned int A1, unsigned int A2, bool logic
 
 void PCEDBG_FlushBreakPoints(int type)
 {
- std::vector<PCE_BPOINT>::iterator bpit;
-
  if(type == BPOINT_READ)
   BreakPointsRead.clear();
  else if(type == BPOINT_WRITE)
@@ -1212,8 +1210,7 @@ void PCEDBG_Init(bool sgx, PCE_PSG *new_psg, const uint32 vram_size)
 
      newt.name = std::string(tmpname);
      newt.long_name = std::string(tmpinfo);
-     newt.TotalBits = 5;
-     newt.NP2Size = 0;
+     newt.size = 32;
 
      newt.IsWave = true;
      newt.WaveFormat = ASPACE_WFMT_UNSIGNED;

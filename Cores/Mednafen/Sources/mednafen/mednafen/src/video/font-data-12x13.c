@@ -19,19 +19,12 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-//#include "../mednafen.h"
-//#include "font-data.h"
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <inttypes.h>
+#include <mednafen/types.h>
 
 typedef struct
 {
-        uint16_t glyph_num;
-        uint8_t data[13 * 2];
+        uint16 glyph_num;
+        uint8 data[13 * 2];
 } font12x13;
 
 const font12x13 FontData12x13[]=

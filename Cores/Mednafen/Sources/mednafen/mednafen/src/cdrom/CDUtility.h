@@ -1,3 +1,24 @@
+/******************************************************************************/
+/* Mednafen - Multi-system Emulator                                           */
+/******************************************************************************/
+/* CDUtility.h:
+**  Copyright (C) 2009-2021 Mednafen Team
+**
+** This program is free software; you can redistribute it and/or
+** modify it under the terms of the GNU General Public License
+** as published by the Free Software Foundation; either version 2
+** of the License, or (at your option) any later version.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software Foundation, Inc.,
+** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
+
 #ifndef __MDFN_CDROM_CDUTILITY_H
 #define __MDFN_CDROM_CDUTILITY_H
 
@@ -17,7 +38,7 @@ namespace CDUtility
  // Quick definitions here:
  //
  // ABA - Absolute block address, synonymous to absolute MSF
- //  aba = (m_a * 60 * 75) + (s_a * 75) + f_a
+ //  aba = ((m * 60) + s) * 75 + f
  //
  // LBA - Logical block address(related: data CDs are required to have a pregap of 2 seconds, IE 150 frames/sectors)
  //  lba = aba - 150
@@ -98,80 +119,77 @@ namespace CDUtility
  //
  // BCD conversion functions
  //
- static INLINE bool BCD_is_valid(uint8 bcd_number)
+ static INLINE bool BCD_is_valid(const uint8 bcd_value)
  {
-  if((bcd_number & 0xF0) >= 0xA0)
-   return(false);
-
-  if((bcd_number & 0x0F) >= 0x0A)
-   return(false);
-
-  return(true);
+  return !(((bcd_value + 0x66) ^ bcd_value) & 0x110);
  }
 
- static INLINE uint8 BCD_to_U8(uint8 bcd_number)
+ static INLINE uint8 BCD_to_U8(const uint8 bcd_value)
  {
-  return( ((bcd_number >> 4) * 10) + (bcd_number & 0x0F) );
+  return ((bcd_value >> 4) * 10) + (bcd_value & 0xF);
  }
 
- static INLINE uint8 U8_to_BCD(uint8 num)
+ static INLINE uint8 U8_to_BCD(const uint8 value)
  {
-  return( ((num / 10) << 4) + (num % 10) );
+  return ((value / 10) << 4) + (value % 10);
  }
 
- // should always perform the conversion, even if the bcd number is invalid.
- static INLINE bool BCD_to_U8_check(uint8 bcd_number, uint8 *out_number)
+ static INLINE bool BCD_to_U8_check(const uint8 bcd_value, uint8* const value_out)
  {
-  *out_number = BCD_to_U8(bcd_number);
+  *value_out = BCD_to_U8(bcd_value);
 
-  if(!BCD_is_valid(bcd_number))
-   return(false);
-
-  return(true);
+  return BCD_is_valid(bcd_value);
  }
 
  //
  // Address conversion functions.
  //
- static INLINE uint32 AMSF_to_ABA(int32 m_a, int32 s_a, int32 f_a)
+ static INLINE uint32 AMSF_to_ABA(const uint8 m, const uint8 s, const uint8 f)
  {
-  return(f_a + 75 * s_a + 75 * 60 * m_a);
+  return ((m * 60) + s) * 75 + f;
  }
 
- static INLINE void ABA_to_AMSF(uint32 aba, uint8 *m_a, uint8 *s_a, uint8 *f_a)
+ static INLINE void ABA_to_AMSF(const uint32 aba, uint8* const m_out, uint8* const s_out, uint8* const f_out)
  {
-  *m_a = aba / 75 / 60;
-  *s_a = (aba - *m_a * 75 * 60) / 75;
-  *f_a = aba - (*m_a * 75 * 60) - (*s_a * 75);
+  uint32 f;
+  uint32 s_tmp;
+
+  f = aba % 75;
+  s_tmp = aba / 75;
+  *m_out = s_tmp / 60;
+  *s_out = s_tmp % 60;
+  *f_out = f;
  }
 
- static INLINE void ABA_to_AMSF_BCD(uint32 aba, uint8 *m_a, uint8 *s_a, uint8 *f_a)
+ static INLINE void ABA_to_AMSF_BCD(const uint32 aba, uint8* const bcd_m_out, uint8* const bcd_s_out, uint8* const bcd_f_out)
  {
-  ABA_to_AMSF(aba, m_a, s_a, f_a);
+  uint8 m, s, f;
 
-  *m_a = U8_to_BCD(*m_a);
-  *s_a = U8_to_BCD(*s_a);
-  *f_a = U8_to_BCD(*f_a);
+  ABA_to_AMSF(aba, &m, &s, &f);
+
+  *bcd_m_out = U8_to_BCD(m);
+  *bcd_s_out = U8_to_BCD(s);
+  *bcd_f_out = U8_to_BCD(f);
  }
 
- static INLINE int32 ABA_to_LBA(uint32 aba)
+ static INLINE int32 ABA_to_LBA(const uint32 aba)
  {
-  return(aba - 150);
+  return aba - 150;
  }
 
- static INLINE uint32 LBA_to_ABA(int32 lba)
+ static INLINE uint32 LBA_to_ABA(const int32 lba)
  {
-  return(lba + 150);
+  return (uint32)lba + 150;
  }
 
- static INLINE int32 AMSF_to_LBA(uint8 m_a, uint8 s_a, uint8 f_a)
+ static INLINE int32 AMSF_to_LBA(const uint8 m, const uint8 s, const uint8 f)
  {
-  return(ABA_to_LBA(AMSF_to_ABA(m_a, s_a, f_a)));
+  return ABA_to_LBA(AMSF_to_ABA(m, s, f));
  }
 
- static INLINE void LBA_to_AMSF(int32 lba, uint8 *m_a, uint8 *s_a, uint8 *f_a)
+ static INLINE void LBA_to_AMSF(const int32 lba, uint8* const m_out, uint8* const s_out, uint8* const f_out)
  {
-  ABA_to_AMSF(LBA_to_ABA(lba), m_a, s_a, f_a);
+  ABA_to_AMSF(LBA_to_ABA(lba), m_out, s_out, f_out);
  }
 
  //
@@ -225,14 +243,14 @@ namespace CDUtility
  // Returns false on checksum mismatch, true on match.
  static INLINE bool subq_check_checksum(const uint8* subq_buf)
  {
-  return MDFN_de16msb(&subq_buf[0xA]) == (0xFFFF ^ crc16_ccitt(subq_buf, 0xA));
+  return MDFN_de16msb(&subq_buf[0xA]) == (0xFFFF ^ crc16_ccitt(0, subq_buf, 0xA));
  }
 
  // Calculates the checksum of Q subchannel data(not including the checksum bytes of course ;)) from subq_buf, and stores it into the appropriate position
  // in subq_buf.
  static INLINE void subq_generate_checksum(uint8* subq_buf)
  {
-  MDFN_en16msb(&subq_buf[0xA], 0xFFFF ^ crc16_ccitt(subq_buf, 0xA));
+  MDFN_en16msb(&subq_buf[0xA], 0xFFFF ^ crc16_ccitt(0, subq_buf, 0xA));
  }
 
  // Deinterleaves 12 bytes of subchannel Q data from 96 bytes of interleaved subchannel PW data.

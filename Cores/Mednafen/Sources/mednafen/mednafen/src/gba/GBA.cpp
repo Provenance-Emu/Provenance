@@ -126,9 +126,9 @@ const uint8 gamepakWaitState[4] =  { 4, 3, 2, 8 };
 const uint8 gamepakWaitState0[2] = { 2, 1 };
 const uint8 gamepakWaitState1[2] = { 4, 1 };
 const uint8 gamepakWaitState2[2] = { 8, 1 };
-const bool isInRom [16]=
-  { false, false, false, false, false, false, false, false,
-    true, true, true, true, true, true, false, false };              
+//const bool isInRom [16]=
+//  { false, false, false, false, false, false, false, false,
+//    true, true, true, true, true, true, false, false };              
 
 uint8 memoryWait[16] =
   { 0, 0, 2, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 4, 0 };
@@ -485,7 +485,7 @@ static void CPUReadBatteryFile(const std::string& path)
   }
   else
    throw MDFN_Error(0, _("Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct size is %llu or %llu bytes."),
-		path.c_str(), (unsigned long long)size, (unsigned long long)0x10000, (unsigned long long)0x20000);
+		MDFN_strhumesc(path).c_str(), (unsigned long long)size, (unsigned long long)0x10000, (unsigned long long)0x20000);
  }
  catch(MDFN_Error &e)
  {
@@ -2478,7 +2478,7 @@ static void CPUInit(const std::string &bios_fn)
    { ".bin", -10, gettext_noop("GameBoy Advance ROM Image") },
    { ".bios", 0, gettext_noop("BIOS Image") },
   };
-  MDFNFILE bios_fp(&NVFS, MDFN_MakeFName(MDFNMKF_FIRMWARE, 0, bios_fn.c_str()).c_str(), KnownBIOSExtensions, _("GBA BIOS"));
+  MDFNFILE bios_fp(&NVFS, MDFN_MakeFName(MDFNMKF_FIRMWARE, 0, bios_fn.c_str()), KnownBIOSExtensions, _("GBA BIOS"));
   
   if(bios_fp.size() != 0x4000)
    throw MDFN_Error(0, _("Invalid BIOS file size"));
@@ -3323,7 +3323,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
  { ".minigsf", -20, gettext_noop("MiniGSF Rip") },
  { ".gba",   0, gettext_noop("GameBoy Advance ROM Image") },
  { ".agb",   0, gettext_noop("GameBoy Advance ROM Image") },
- { ".bin", -80, gettext_noop("GameBoy Advance ROM Image") },
+ { ".bin", -1000, gettext_noop("GameBoy Advance ROM Image") },
  { NULL, 0, NULL }
 };
 

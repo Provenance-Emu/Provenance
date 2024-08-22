@@ -55,7 +55,7 @@ static const IO_type_t IO_types[] =
  { IOS_MEGA_MOUSE, 'M', "Mega Mouse" },
 };
 
-typedef struct
+struct md_game_info
 {
 	uint32 rom_size;
 
@@ -72,11 +72,11 @@ typedef struct
 	uint32 sram_end;
 
         // Convenience, not set by the header parsing code:
-	uint32 crc32 = 0;
+	uint32 crc32;
         uint8 md5[16];
         uint8 info_header_md5[16];
 	uint16 checksum_real;
-} md_game_info;
+};
 
 void MD_ReadSegaHeader(const uint8 *header, md_game_info *ginfo);
 

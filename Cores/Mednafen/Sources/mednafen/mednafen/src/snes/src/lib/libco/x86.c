@@ -1,14 +1,6 @@
-/*
-  libco.x86 (2009-10-12)
-  author: byuu
-  license: public domain
-*/
-
 #define LIBCO_C
 #include "libco.h"
-
-#include <assert.h>
-#include <stdlib.h>
+#include "settings.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,8 +18,13 @@ static thread_local long co_active_buffer[64];
 static thread_local cothread_t co_active_handle = 0;
 static void (fastcall *co_swap)(cothread_t, cothread_t) = 0;
 
+#ifdef LIBCO_MPROTECT
+  alignas(4096)
+#else
+  section(text)
+#endif
 /* ABI: fastcall */
-force_text_section static const unsigned char co_swap_function[] = {
+static const unsigned char co_swap_function[4096] = {
   0x89, 0x22,        /* mov [edx],esp    */
   0x8b, 0x21,        /* mov esp,[ecx]    */
   0x58,              /* pop eax          */
@@ -42,11 +39,33 @@ force_text_section static const unsigned char co_swap_function[] = {
   0xff, 0xe0,        /* jmp eax          */
 };
 
-void co_init() {
-}
+#ifdef _WIN32
+  #include <windows.h>
+
+  static void co_init() {
+    #ifdef LIBCO_MPROTECT
+    DWORD old_privileges;
+    VirtualProtect((void*)co_swap_function, sizeof co_swap_function, PAGE_EXECUTE_READ, &old_privileges);
+    #endif
+  }
+#else
+  #ifdef LIBCO_MPROTECT
+    #include <unistd.h>
+    #include <sys/mman.h>
+  #endif
+
+  static void co_init() {
+    #ifdef LIBCO_MPROTECT
+    unsigned long addr = (unsigned long)co_swap_function;
+    unsigned long base = addr - (addr % sysconf(_SC_PAGESIZE));
+    unsigned long size = (addr - base) + sizeof co_swap_function;
+    mprotect((void*)base, size, PROT_READ | PROT_EXEC);
+    #endif
+  }
+#endif
 
 static void crash() {
-  assert(0);  /* called only if cothread_t entrypoint returns */
+  LIBCO_ASSERT(0);  /* called only if cothread_t entrypoint returns */
 }
 
 cothread_t co_active() {
@@ -54,33 +73,42 @@ cothread_t co_active() {
   return co_active_handle;
 }
 
-cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
+cothread_t co_derive(void* memory, unsigned int size, void (*entrypoint)(void)) {
   cothread_t handle;
   if(!co_swap) {
     co_init();
     co_swap = (void (fastcall*)(cothread_t, cothread_t))co_swap_function;
   }
   if(!co_active_handle) co_active_handle = &co_active_buffer;
-  size += 256;  /* allocate additional space for storage */
-  size &= ~15;  /* align stack to 16-byte boundary */
 
-  if(handle = (cothread_t)malloc(size)) {
-    long *p = (long*)((char*)handle + size);  /* seek to top of stack */
-    *--p = (long)crash;                       /* crash if entrypoint returns */
-    *--p = (long)entrypoint;                  /* start of function */
-    *(long*)handle = (long)p;                 /* stack pointer */
+  if(handle = (cothread_t)memory) {
+    unsigned int offset = (size & ~15) - 32;
+    long *p = (long*)((char*)handle + offset);  /* seek to top of stack */
+    *--p = (long)crash;                         /* crash if entrypoint returns */
+    *--p = (long)entrypoint;                    /* start of function */
+    *(long*)handle = (long)p;                   /* stack pointer */
   }
 
   return handle;
 }
 
+cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
+  void* memory = LIBCO_MALLOC(size);
+  if(!memory) return (cothread_t)0;
+  return co_derive(memory, size, entrypoint);
+}
+
 void co_delete(cothread_t handle) {
-  free(handle);
+  LIBCO_FREE(handle);
 }
 
 void co_switch(cothread_t handle) {
   register cothread_t co_previous_handle = co_active_handle;
   co_swap(co_active_handle = handle, co_previous_handle);
+}
+
+int co_serializable() {
+  return 1;
 }
 
 #ifdef __cplusplus

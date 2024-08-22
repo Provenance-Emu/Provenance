@@ -2,7 +2,7 @@
 /* Mednafen Sony PS1 Emulation Module                                         */
 /******************************************************************************/
 /* psx.cpp:
-**  Copyright (C) 2011-2017 Mednafen Team
+**  Copyright (C) 2011-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -39,29 +39,82 @@ namespace MDFN_IEN_PSX
 {
 
 #if PSX_DBGPRINT_ENABLE
-static unsigned psx_dbg_level = 0;
+static uint32 psx_dbg_mask = 0;
+
+// Crude character sanity limit for the puts() debug snooping.
+static const uint32 psx_dbg_puts_pfcl = 100000;
+static uint32 psx_dbg_puts_pfcc;
+static bool psx_dbg_puts_warned;
 
 void PSX_DBG_BIOS_PUTC(uint8 c) noexcept
 {
- if(psx_dbg_level >= PSX_DBG_BIOS_PRINT)
+ if(psx_dbg_mask & PSX_DBG_BIOS_PRINT)
  {
   if(c == 0x1B)
    return;
 
   fputc(c, stdout);
-
-  //if(c == '\n')
-  //{
-  // fputc('%', stdout);
-  // fputc(' ', stdout);
-  //}
   fflush(stdout);
  }
 }
 
-void PSX_DBG(unsigned level, const char *format, ...) noexcept
+static INLINE bool BIOSPutsOutChar(char c)
 {
- if(psx_dbg_level >= level)
+ if(c != 0x1B)
+ {
+  if(psx_dbg_puts_pfcc >= psx_dbg_puts_pfcl)
+  {
+   if(!psx_dbg_puts_warned)
+   {
+    printf("\n(Excessive puts() output squelched by Mednafen)\n");
+    psx_dbg_puts_warned = true;
+   }
+   return false;
+  }
+
+  fputc(c, stdout);
+  psx_dbg_puts_pfcc++;
+ }
+
+ return true;
+}
+
+void PSX_DBG_BIOS_PUTS(uint32 p) noexcept
+{
+ if(!(psx_dbg_mask & PSX_DBG_BIOS_PRINT))
+  return;
+ //
+ if(!p)
+ {
+  const char s[6] = { '<', 'N', 'U', 'L', 'L', '>' };
+
+  for(unsigned i = 0; i < 6; i++)
+  {
+   if(!BIOSPutsOutChar(s[i]))
+    break;
+  }
+ }
+ else
+ {
+  for(;;)
+  {
+   const uint8 c = CPU->PeekMem8(p);
+   p++;
+
+   if(!c)
+    break;
+
+   if(!BIOSPutsOutChar(c))
+    break;
+  }
+ }
+
+ fflush(stdout);
+}
+
+void PSX_DBG(uint32 which, const char *format, ...) noexcept
+{
+ if(psx_dbg_mask & which)
  {
   va_list ap;
 
@@ -73,7 +126,7 @@ void PSX_DBG(unsigned level, const char *format, ...) noexcept
  }
 }
 #else
-static unsigned const psx_dbg_level = 0;
+static uint32 const psx_dbg_mask = 0;
 #endif
 
 
@@ -770,12 +823,12 @@ template<typename T, bool IsWrite, bool Access24> static INLINE void MemRW(pscpu
 
  if(IsWrite)
  {
-  PSX_WARNING("[MEM] Unknown write%d to %08x at time %d, =%08x(%d)", (int)(sizeof(T) * 8), A, timestamp, V, V);
+  PSX_DBG(PSX_DBG_WARNING, "[MEM] Unknown write%d to %08x at time %d, =%08x(%d)\n", (int)(sizeof(T) * 8), A, timestamp, V, V);
  }
  else
  {
   V = 0;
-  PSX_WARNING("[MEM] Unknown read%d from %08x at time %d", (int)(sizeof(T) * 8), A, timestamp);
+  PSX_DBG(PSX_DBG_WARNING, "[MEM] Unknown read%d from %08x at time %d\n", (int)(sizeof(T) * 8), A, timestamp);
  }
 }
 
@@ -1066,6 +1119,12 @@ static void Emulate(EmulateSpecStruct *espec)
 {
  pscpu_timestamp_t timestamp = 0;
 
+#if PSX_DBGPRINT_ENABLE
+ //printf("psx_dbg_puts_pfcc: %7u\n", psx_dbg_puts_pfcc);
+ psx_dbg_puts_warned = false;
+ psx_dbg_puts_pfcc -= (psx_dbg_puts_pfcc + 3) >> 2;
+#endif
+
  if(FIO->RequireNoFrameskip())
  {
   //puts("MEOW");
@@ -1085,7 +1144,7 @@ static void Emulate(EmulateSpecStruct *espec)
  SPU->StartFrame(espec->SoundRate, MDFN_GetSettingUI("psx.spu.resamp_quality"));
 
  Running = -1;
- timestamp = CPU->Run(timestamp, psf_loader == NULL && psx_dbg_level >= PSX_DBG_BIOS_PRINT, psf_loader != NULL);
+ timestamp = CPU->Run(timestamp, psf_loader == NULL && (psx_dbg_mask & PSX_DBG_BIOS_PRINT), psf_loader != NULL);
 
  assert(timestamp);
 
@@ -1151,7 +1210,7 @@ static void Emulate(EmulateSpecStruct *espec)
     Memcard_SaveDelay[i] += timestamp;
     if(Memcard_SaveDelay[i] >= (33868800 * 2))	// Wait until about 2 seconds of no new writes.
     {
-     PSX_DBG(PSX_DBG_SPARSE, "Saving memcard %d...\n", i);
+     PSX_DBG(PSX_DBG_INFO | PSX_DBG_MEMCARD, "[INFO] Saving memcard %d...\n", i);
      try
      {
       char ext[64];
@@ -1306,7 +1365,7 @@ static bool CalcRegion_By_SA(const uint8 buf[2048 * 8], unsigned* region)
 
 	fbuf[opos++] = 0;
 
-	PSX_DBG(PSX_DBG_SPARSE, "License string: %s\n", (char *)fbuf);
+	PSX_DBG(PSX_DBG_INFO, "[INFO] License string: %s\n", (char *)fbuf);
 
 	if(strstr((char *)fbuf, "licensedby") != NULL)
 	{
@@ -1588,7 +1647,7 @@ static MDFN_COLD void InitCommon(std::vector<CDInterface*> *CDInterfaces, const 
  bool correct_aspect;
 
 #if PSX_DBGPRINT_ENABLE
- psx_dbg_level = MDFN_GetSettingUI("psx.dbg_level");
+ psx_dbg_mask = MDFN_GetSettingMultiM("psx.dbg_mask") | PSX_DBG_ERROR;
 #endif
 
  cdifs = CDInterfaces;
@@ -1716,7 +1775,7 @@ static MDFN_COLD void InitCommon(std::vector<CDInterface*> *CDInterfaces, const 
   FileStream BIOSFile(biospath, FileStream::MODE_READ);
 
   if(BIOSFile.size() != 524288)
-   throw MDFN_Error(0, _("BIOS file \"%s\" is of an incorrect size."), biospath.c_str());
+   throw MDFN_Error(0, _("BIOS file \"%s\" is of an incorrect size."), MDFN_strhumesc(biospath).c_str());
 
   BIOSFile.read(BIOSROM->data8, 512 * 1024);
   BIOS_SHA256 = sha256(BIOSROM->data8, 512 * 1024);
@@ -1730,10 +1789,10 @@ static MDFN_COLD void InitCommon(std::vector<CDInterface*> *CDInterfaces, const 
     if(BIOS_SHA256 == dbe.sd)
     {
      if(dbe.bad)
-      throw MDFN_Error(0, _("BIOS file \"%s\" is a known bad dump."), biospath.c_str());
+      throw MDFN_Error(0, _("BIOS file \"%s\" is a known bad dump."), MDFN_strhumesc(biospath).c_str());
 
      if(dbe.region != region)
-      throw MDFN_Error(0, _("BIOS file \"%s\" is not the proper BIOS for the region of PS1 being emulated."), biospath.c_str());
+      throw MDFN_Error(0, _("BIOS file \"%s\" is not the proper BIOS for the region of PS1 being emulated."), MDFN_strhumesc(biospath).c_str());
 
      bios_recognized = true;
      break;
@@ -2233,15 +2292,57 @@ static const FileExtensionSpecStruct KnownExtensions[] =
  { ".psf", -20, gettext_noop("PSF1 Rip") },
  { ".minipsf", -20, gettext_noop("MiniPSF1 Rip") },
  { ".psx",   0, gettext_noop("PS-X Executable") },
- { ".exe", -80, gettext_noop("PS-X Executable") },
+ { ".exe", -1000, gettext_noop("PS-X Executable") },
+
  { NULL, 0, NULL }
 };
+
+#if PSX_DBGPRINT_ENABLE
+static const MDFNSetting_EnumList DBGMask_List[] =
+{
+ { "0",		0								},
+ { "none",	0,			gettext_noop("None")			},
+
+ { "all",	~0			},		//	gettext_noop("All")			},
+
+ { "info",	PSX_DBG_INFO		},		//		gettext_noop("Emulator informational messages") },
+
+ { "warning",	PSX_DBG_WARNING,	gettext_noop("Warnings"), gettext_noop("Warnings about games engaging in questionable behavior, or hitting hardware in ways that may not be correctly emulated.") },
+
+ { "stdout",	PSX_DBG_BIOS_PRINT,	gettext_noop("BIOS TTY stdout"), gettext_noop("Transparent snooping of relevant BIOS TTY stdout functions.") },
+
+ { "cpu",	PSX_DBG_CPU		}, 		//,		gettext_noop("CPU") },
+ { "cdc",	PSX_DBG_CDC,		gettext_noop("CDC") },
+ { "spu",	PSX_DBG_SPU 		},		//,		gettext_noop("SPU") },
+
+ { "gte",	PSX_DBG_GTE },
+ { "irq",	PSX_DBG_IRQ },
+ { "timer",	PSX_DBG_TIMER },
+ { "dma",	PSX_DBG_DMA },
+ { "sio",	PSX_DBG_SIO },
+ { "fio",	PSX_DBG_FIO },
+ { "mdec",	PSX_DBG_MDEC },
+ { "gpu",	PSX_DBG_GPU },
+
+ { "memcard",	PSX_DBG_MEMCARD,	gettext_noop("Memory card") },
+ //
+ //
+ //
+ { "1",		PSX_DBG_WARNING },
+ { "2",		PSX_DBG_WARNING | PSX_DBG_BIOS_PRINT },
+ { "3",		PSX_DBG_WARNING | PSX_DBG_BIOS_PRINT | PSX_DBG_INFO | PSX_DBG_MEMCARD | PSX_DBG_CPU | PSX_DBG_CDC },
+ { "4",		PSX_DBG_WARNING | PSX_DBG_BIOS_PRINT | PSX_DBG_INFO | PSX_DBG_MEMCARD | PSX_DBG_CPU | PSX_DBG_CDC | PSX_DBG_SPU },
+
+ { NULL, 0 },
+};
+#endif
+
 
 static const MDFNSetting PSXSettings[] =
 {
  { "psx.input.mouse_sensitivity", MDFNSF_NOFLAGS, gettext_noop("Emulated mouse sensitivity."), NULL, MDFNST_FLOAT, "1.00", NULL, NULL },
 
- { "psx.input.analog_mode_ct", MDFNSF_NOFLAGS, gettext_noop("Enable analog mode combo-button alternate toggle."), gettext_noop("When enabled, instead of the configured Analog mode toggle button for the emulated DualShock, use a combination of buttons held down for one emulated second to toggle it instead.  The specific combination is controlled via the \"psx.input.analog_mode_ct.compare\" setting, which by default is Select, Start, and all four shoulder buttons."), MDFNST_BOOL, "0", NULL, NULL },
+ { "psx.input.analog_mode_ct", MDFNSF_NOFLAGS, gettext_noop("Enable analog mode combo-button alternate toggle."), gettext_noop("When enabled, instead of the configured Analog mode toggle button for the emulated DualShock, use a combination of buttons held down for one emulated second to toggle it instead.  The specific combination is controlled via the \"\5psx.input.analog_mode_ct.compare\" setting, which by default is Select, Start, and all four shoulder buttons."), MDFNST_BOOL, "0", NULL, NULL },
  { "psx.input.analog_mode_ct.compare", MDFNSF_NOFLAGS, gettext_noop("Compare value for analog mode combo-button alternate toggle."), gettext_noop("0x0001=SELECT\n0x0002=L3\n0x0004=R3\n0x0008=START\n0x0010=D-Pad UP\n0x0020=D-Pad Right\n0x0040=D-Pad Down\n0x0080=D-Pad Left\n0x0100=L2\n0x0200=R2\n0x0400=L1\n0x0800=R1\n0x1000=△\n0x2000=○\n0x4000=x\n0x8000=□"), MDFNST_UINT, "0x0F09", "0x0000", "0xFFFF" },
 
  { "psx.input.pport1.multitap", MDFNSF_EMU_STATE | MDFNSF_UNTRUSTED_SAFE, gettext_noop("Enable multitap on PSX port 1."), gettext_noop("Makes 3 more virtual ports available.\n\nNOTE: Enabling multitap in games that don't fully support it may cause deleterious effects."), MDFNST_BOOL, "0", NULL, NULL }, //MDFNST_ENUM, "auto", NULL, NULL, NULL, NULL, MultiTap_List },
@@ -2277,7 +2378,7 @@ static const MDFNSetting PSXSettings[] =
  { "psx.cd_sanity", MDFNSF_NOFLAGS, gettext_noop("Enable CD (image) sanity checks."), gettext_noop("Sanity checks are only performed on discs detected(via heuristics) to be PS1 discs.  The checks primarily consist of ensuring that Q subchannel data is as expected for a typical commercially-released PS1 disc."), MDFNST_BOOL, "1" },
 
  { "psx.spu.resamp_quality", MDFNSF_NOFLAGS, gettext_noop("SPU output resampler quality."),
-	gettext_noop("0 is lowest quality and CPU usage, 10 is highest quality and CPU usage.  The resampler that this setting refers to is used for converting from 44.1KHz to the sampling rate of the host audio device Mednafen is using.  Changing Mednafen's output rate, via the \"sound.rate\" setting, to \"44100\" may bypass the resampler, which can decrease CPU usage by Mednafen, and can increase or decrease audio quality, depending on various operating system and hardware factors."), MDFNST_UINT, "5", "0", "10" },
+	gettext_noop("0 is lowest quality and CPU usage, 10 is highest quality and CPU usage.  The resampler that this setting refers to is used for converting from 44.1KHz to the sampling rate of the host audio device Mednafen is using.  Changing Mednafen's output rate, via the \"\5sound.rate\" setting, to \"44100\" may bypass the resampler, which can decrease CPU usage by Mednafen, and can increase or decrease audio quality, depending on various operating system and hardware factors."), MDFNST_UINT, "5", "0", "10" },
 
  { "psx.correct_aspect", MDFNSF_NOFLAGS, gettext_noop("Correct aspect ratio."), gettext_noop("Disabling aspect ratio correction with this setting should be considered a hack.\n\nIf disabling it to allow for sharper pixels by also separately disabling interpolation(though using Mednafen's \"autoipsharper\" OpenGL shader is usually a better option), remember to use scale factors that are multiples of 2, or else games that use high-resolution and interlaced modes will have distorted pixels.\n\nDisabling aspect ratio correction with this setting will allow for the QuickTime movie recording feature to produce much smaller files using much less CPU time."), MDFNST_BOOL, "1" },
 
@@ -2290,7 +2391,7 @@ static const MDFNSetting PSXSettings[] =
  { "psx.h_overscan", MDFNSF_NOFLAGS, gettext_noop("Show horizontal overscan area."), NULL, MDFNST_BOOL, "1" },
 
 #if PSX_DBGPRINT_ENABLE
- { "psx.dbg_level", MDFNSF_NOFLAGS, gettext_noop("Debug printf verbosity level."), NULL, MDFNST_UINT, "0", "0", "4" },
+ { "psx.dbg_mask", MDFNSF_NOFLAGS, gettext_noop("Enable debug messages."), NULL, MDFNST_MULTI_ENUM, "none", NULL, NULL, NULL, NULL,  DBGMask_List },
 #endif
 
  { "psx.dbg_exe_cdpath", MDFNSF_SUPPRESS_DOC | MDFNSF_CAT_PATH, gettext_noop("CD image to use with .PSX/.EXE loading."), NULL, MDFNST_STRING, "" },

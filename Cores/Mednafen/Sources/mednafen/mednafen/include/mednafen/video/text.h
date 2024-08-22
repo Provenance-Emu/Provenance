@@ -1,1 +1,0 @@
-../../../src/video/text.h

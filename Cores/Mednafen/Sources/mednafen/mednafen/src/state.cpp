@@ -200,7 +200,7 @@ static void ReadStateChunk(Stream *st, const SFORMAT *sf, const char* sname, uin
 
   sfmit = sfmap.find((char *)toa + 1);
 
-  if(sfmit != sfmap.end())
+  if(MDFN_LIKELY(sfmit != sfmap.end()))
   {
    const SFORMAT *tmp = sfmit->second;
 
@@ -286,7 +286,7 @@ static void ReadStateChunk(Stream *st, const SFORMAT *sf, const char* sname, uin
   }
   else
   {
-   printf("Unknown variable in save state section \"%s\": %s\n", sname, toa + 1);
+   printf("Unknown variable in save state section \"%s\": %s\n", sname, MDFN_strhumesc((char*)toa + 1).c_str());
    st->seek(recorded_size, SEEK_CUR);
   }
  } // while(...)
@@ -419,15 +419,16 @@ bool MDFNSS_StateAction(StateMem *sm, const unsigned load, const bool data_only,
    }
    else
    {
+    const size_t sname_len = strlen(sname);
     int64 data_start_pos;
     int64 end_pos;
     uint8 sname_tmp[32];
 
-    memset(sname_tmp, 0, sizeof(sname_tmp));
-    strncpy((char *)sname_tmp, sname, 32);
-
-    if(strlen(sname) > 32)
+    if(sname_len > 32)
      printf("Warning: section name is too long: %s\n", sname);
+
+    memset(sname_tmp, 0, sizeof(sname_tmp));
+    memcpy(sname_tmp, sname, std::min<size_t>(32, sname_len));
 
     st->write(sname_tmp, 32);
 
@@ -642,6 +643,26 @@ void MDFNSS_LoadSM(Stream *st, bool data_only, const int fuzz)
 	 }
 	 st->seek(start_pos + total_len, SEEK_SET);			// Seek to just beyond end of save state before returning.
 	}
+}
+
+void MDFNSS_SaveInternal(Stream* st, void (*safunc)(StateMem*, const unsigned, const bool))
+{
+ if(!MDFNGameInfo->StateAction)
+  throw MDFN_Error(0, _("Module \"%s\" doesn't support save states."), MDFNGameInfo->shortname);
+ //
+ StateMem sm(st);
+ safunc(&sm, 0, true);
+ sm.ThrowDeferred();
+}
+
+void MDFNSS_LoadInternal(Stream* st, void (*safunc)(StateMem*, const unsigned, const bool))
+{
+ if(!MDFNGameInfo->StateAction)
+  throw MDFN_Error(0, _("Module \"%s\" doesn't support save states."), MDFNGameInfo->shortname);
+ //
+ StateMem sm(st);
+ safunc(&sm, MEDNAFEN_VERSION_NUMERIC, true);
+ sm.ThrowDeferred();
 }
 
 //

@@ -22,7 +22,9 @@
 #include "ss.h"
 #include "scu.h"
 
-#pragma GCC optimize("Os")
+#if defined(__GNUC__) && !defined(__clang__)
+ #pragma GCC optimize("Os")
+#endif
   // Is first DSP instruction cached on PC load, or when execution starts?
 
   // MOV [s],[d] s=0x8 = 0xFFFFFFFF?

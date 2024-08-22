@@ -19,7 +19,8 @@
 #define _OV_FILE_H_
 
 #ifdef __cplusplus
-//extern "C" {
+extern "C"
+{
 #endif /* __cplusplus */
 
 #include <stdio.h>
@@ -122,7 +123,7 @@ extern long ov_read(OggVorbis_File *vf,char *buffer,int length,
 		    int *bitstream);
 
 #ifdef __cplusplus
-//}
+}
 #endif /* __cplusplus */
 
 #endif

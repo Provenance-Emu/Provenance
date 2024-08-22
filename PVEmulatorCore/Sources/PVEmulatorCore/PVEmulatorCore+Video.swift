@@ -11,8 +11,10 @@ import PVLogging
 
 #if canImport(OpenGL)
 import OpenGL
+import OpenGL.GL3
 #elseif canImport(OpenGLES)
 import OpenGLES
+import OpenGLES.ES3
 #endif
 
 @objc

@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* MemoryStream.h:
-**  Copyright (C) 2012-2016 Mednafen Team
+**  Copyright (C) 2012-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ class MemoryStream : public Stream
 
  MemoryStream();
  MemoryStream(uint64 alloc_hint, int alloc_hint_is_size = false);	// Pass -1 instead of 1 for alloc_hint_is_size to skip initialization of the memory.
- MemoryStream(Stream *stream, uint64 size_limit = ~(uint64)0);
+ MemoryStream(Stream *stream, uint64 size_limit = (uint64)-1);
 				// Will create a MemoryStream equivalent of the contents of "stream", and then "delete stream".
 				// Will only work if stream->tell() == 0, or if "stream" is seekable.
 				// stream will be deleted even if this constructor throws.
@@ -69,6 +69,69 @@ class MemoryStream : public Stream
  virtual void close(void) override;
 
  virtual int get_line(std::string &str) override;
+
+ // 'ls' points to the first character in the line, 'lb' points to one after the last character in the line.
+ // ls == lb for empty lines, so be sure to handle that case.
+ //
+ // Unlike Stream::get_line(), will treat a line terminated with <CR><LF> as one line and return the value 0x0D0A.
+ //
+ // Using the returned pointers after calling any functions on the MemoryStream object, including the destructor,
+ // will result in undefined behavior.
+ //
+ // The memory pointed to by 'ls' may be read and/or written to up to but not including 'lb', as 'lb' may
+ // point one past the end of the allocated memory in the case of a line terminated by the end being reached.
+ // Since the pointers are directly to the underlying allocated memory in the MemoryStream object, writing
+ // will modify the state of the MemoryStream object.
+ INLINE int get_line_mem(char** ls, const char** lb)
+ {
+  char* mp = (char*)data_buffer + std::min<uint64>(data_buffer_size, position);
+  char* sp = mp;
+  char* const bp = (char*)data_buffer + data_buffer_size;
+  const uint32 tsv = (1U << (31 - '\r')) | (1U << (31 - '\n')) | (1U << (31 - 0));
+
+  while(mp != bp)
+  {
+   const uint8 c = *mp;
+
+   if(c >= 0x10)
+   {
+    mp++;
+    continue;
+   }
+
+   if((int32)(tsv << c) < 0)
+   {
+    int ret = *mp;
+
+    *ls = sp;
+    *lb = mp;
+    mp++;
+
+    if(mp != bp && ret == '\r' && *mp == '\n')
+    {
+     ret = (ret << 8) | *mp;
+     mp++;
+    }
+
+    position = mp - (char*)data_buffer;
+
+    return ret;
+   }
+   mp++;
+  }
+
+  position = data_buffer_size;
+
+  if(mp != sp)
+  {
+   *ls = sp;
+   *lb = mp;
+
+   return 256;
+  }
+
+  return -1;
+ }
 
  void shrink_to_fit(void) noexcept;	// Minimizes alloced memory.
 

@@ -1736,13 +1736,17 @@ static void DoGfxDecode(void)
 
  if(GfxDecode_Pbn == -1)
  {
-  for(int x = 0; x <  4; x++)
-   neo_palette[x] = GfxDecode_Buf->format.MakeColor(x * 85, x * 85, x * 85, 0xFF);
+  for(unsigned i = 0; i < 4; i++)
+   neo_palette[i] = GfxDecode_Buf->format.MakeColor(i * 85, i * 85, i * 85, 0xFF);
  }
  else
  {
-  for(int x = 0; x < 4; x++)
-   neo_palette[x] = CM.PALRAMLUTCache[PALRAMCache[pbn * 4 + x] & 0x3F] | GfxDecode_Buf->format.MakeColor(0, 0, 0, 0xFF);
+  for(unsigned i = 0; i < 4; i++)
+  {
+   auto const& pe = ActiveNESPalette[PALRAMCache[pbn * 4 + i] & 0x3F];
+
+   neo_palette[i] = GfxDecode_Buf->format.MakeColor(pe.r, pe.g, pe.b, 0xFF);
+  }
  }
 
  for(int y = 0; y < GfxDecode_Buf->h; y++)

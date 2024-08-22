@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* ZIPReader.cpp:
-**  Copyright (C) 2018 Mednafen Team
+**  Copyright (C) 2018-2024 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -19,21 +19,27 @@
 ** 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-// TODO: 64-bit ZIP support(limit sizes to 2**63 - 2?)
-// TODO: Stream::clone()
-
 #include <mednafen/mednafen.h>
+
 #include "ZIPReader.h"
 #include "ZLInflateFilter.h"
+#include "ZstdDecompressFilter.h"
 
 namespace Mednafen
 {
 
+//
+//
+//
+enum : bool { EnableZstandardCRC32Check = false };
+//
+//
+//
 class StreamViewFilter : public Stream
 {
  public:
 
- StreamViewFilter(Stream* source_stream, const std::string& vfc, uint64 sp, uint64 bp, uint64 expcrc32 = ~(uint64)0);
+ StreamViewFilter(Stream* source_stream, const std::string& vfc, uint64 sp, uint64 bp, uint64 expcrc32 = (uint64)-1);
  virtual ~StreamViewFilter() override;
  virtual uint64 read(void *data, uint64 count, bool error_on_eos = true) override;
  virtual void write(const void *data, uint64 count) override;
@@ -75,11 +81,11 @@ StreamViewFilter::~StreamViewFilter()
 
 uint64 StreamViewFilter::read(void *data, uint64 count, bool error_on_eos)
 {
+ const uint64 size_ = ss_bound_pos - ss_start_pos;
  uint64 cc = count;
  uint64 ret;
 
- cc = std::min<uint64>(cc, ss_bound_pos - ss_start_pos);
- cc = std::min<uint64>(cc, ss_bound_pos - std::min<uint64>(ss_bound_pos, pos));
+ cc = std::min<uint64>(cc, size_ - std::min<uint64>(size_, pos));
 
  if(cc < count && error_on_eos)
   throw MDFN_Error(0, _("Error reading from %s: %s"), vfcontext.c_str(), _("Unexpected EOF"));
@@ -90,7 +96,7 @@ uint64 StreamViewFilter::read(void *data, uint64 count, bool error_on_eos)
  ret = ss->read(data, cc, error_on_eos);
  pos += ret;
 
- if(expected_crc32 != ~(uint64)0)
+ if(expected_crc32 != (uint64)-1)
  {
   if(pos > running_crc32_posreached && (pos - ret) <= running_crc32_posreached)
   {
@@ -199,10 +205,39 @@ void StreamViewFilter::flush(void)
 }
 
 
+size_t ZIPReader::num_files(void)
+{
+ return entries.size();
+}
+
+const std::string* ZIPReader::get_file_path(size_t which)
+{
+ return &entries[which].name;
+}
+
+uint64 ZIPReader::get_file_size(size_t which)
+{
+ return entries[which].uncomp_size;
+}
+
 Stream* ZIPReader::open(size_t which)
 {
  const auto& e = entries[which];
 
+ //
+ //
+ {
+  // Must be (2**63) - 1 or smaller.
+  const uint64 sanity_limit = ((uint64)1 << 48) - 1;
+
+  if(e.comp_size > sanity_limit)
+   throw MDFN_Error(0, _("Compressed size of %llu bytes exceeds sanity limit of %llu bytes."), (unsigned long long)e.comp_size, (unsigned long long)sanity_limit);
+
+  if(e.uncomp_size > sanity_limit)
+   throw MDFN_Error(0, _("Uncompressed size of %llu bytes exceeds sanity limit of %llu bytes."), (unsigned long long)e.uncomp_size, (unsigned long long)sanity_limit);
+ }
+ //
+ //
  zs->seek(e.lh_reloffs, SEEK_SET);
 
  struct
@@ -245,24 +280,58 @@ Stream* ZIPReader::open(size_t which)
  if(lfh.gpflags & 0x1)
   throw MDFN_Error(0, _("ZIP decryption support not implemented."));
 
- if(e.method != 0 && e.method != 8 && e.method != 9)
-  throw MDFN_Error(0, _("ZIP compression method %u not implemented."), e.method);
-
  zs->seek(lfh.name_len + lfh.extra_len, SEEK_CUR);
 
- std::string vfcontext = MDFN_sprintf(_("opened file \"%s\" in ZIP archive"), e.name.c_str());
+ const std::string vfcontext = MDFN_sprintf(_("opened file %s"), this->get_human_path(e.name).c_str());
 
- if(e.method == 0)
+ return make_stream(zs.get(), vfcontext, e.method, e.comp_size, e.uncomp_size, e.crc32);
+}
+
+Stream* ZIPReader::make_stream(Stream* s, std::string vfcontext, const uint16 method, const uint64 comp_size, const uint64 uncomp_size, const uint32 crc)
+{
+ if(method == 0)
  {
-  uint64 start_pos = zs->tell();
-  uint64 bound_pos = start_pos + e.uncomp_size;
+  uint64 start_pos = s->tell();
+  uint64 bound_pos = start_pos + uncomp_size;
 
-  return new StreamViewFilter(zs.get(), vfcontext, start_pos, bound_pos, e.crc32);
+  return new StreamViewFilter(s, vfcontext, start_pos, bound_pos, crc);
  }
- else if(e.method == 8)
-  return new ZLInflateFilter(zs.get(), vfcontext, ZLInflateFilter::FORMAT::RAW, e.comp_size, e.uncomp_size, e.crc32);
+ else if(method == 8)
+  return new ZLInflateFilter(s, vfcontext, ZLInflateFilter::FORMAT::RAW, comp_size, uncomp_size, crc);
+ else if(method == 93 || method == 20)
+  return new ZstdDecompressFilter(s, vfcontext, comp_size, uncomp_size, EnableZstandardCRC32Check ? crc : (uint64)-1);
+ //else if(method == 97) // TODO, maybe?
+ // return new WAVPackDecodeFilter(s, vfcontext, comp_size, uncomp_size, crc);
  else
-  throw MDFN_Error(0, _("ZIP compression method %u not implemented."), lfh.method);
+ {
+  static struct
+  {
+   uint16 id;
+   const char* name;
+  } umt[] =
+  {
+   { 1, "Shrunk" },
+   { 2, "Reduce" },
+   { 3, "Reduce" },
+   { 4, "Reduce" },
+   { 5, "Reduce" },
+   { 6, "Implode" },
+   { 9, "Deflate64" },
+   { 12, "bzip2" },
+   { 14, "LZMA" },
+   { 94, "MP3" },
+   { 95, "xz" },
+   { 97, "WavPack" },
+  };
+
+  for(auto const& umte : umt)
+  {
+   if(umte.id == method)
+    throw MDFN_Error(0, _("ZIP compression method %u(\"%s\") not implemented."), method, umte.name);
+  }
+
+  throw MDFN_Error(0, _("ZIP compression method %u not implemented."), method);
+ }
 }
 
 ZIPReader::~ZIPReader()
@@ -270,9 +339,12 @@ ZIPReader::~ZIPReader()
 
 }
 
-
-ZIPReader::ZIPReader(std::unique_ptr<Stream> s) : VirtualFS('/', "/")
+ZIPReader::ZIPReader(std::unique_ptr<Stream> s)
 {
+ if((s->attributes() & (Stream::ATTRIBUTE_SEEKABLE | Stream::ATTRIBUTE_SLOW_SEEK | Stream::ATTRIBUTE_SLOW_SIZE)) != Stream::ATTRIBUTE_SEEKABLE)
+  throw MDFN_Error(0, _("ZIPReader requires a performant, seekable source stream."));
+ //
+ //
  const uint64 size = s->size();
 
  if(size < 22)
@@ -299,17 +371,24 @@ ZIPReader::ZIPReader(std::unique_ptr<Stream> s) : VirtualFS('/', "/")
  //
  //
  //
+ const uint64 eocdr_offs = (size - scan_size) + (eocdrp - buf.get());
+
  struct
  {
   uint32 sig;
-  uint16 disk;
-  uint16 cd_start_disk;
-  uint16 disk_cde_count;
-  uint16 total_cde_count;
-  uint32 cd_size;
-  uint32 cd_offs;
+  uint64 size;
+  uint16 version_made;
+  uint16 version_need;
+  uint32 disk;
+  uint32 cd_start_disk;
+  uint64 disk_cde_count;
+  uint64 total_cde_count;
+  uint64 cd_size;
+  uint64 cd_offs;
   uint16 comment_size;
  } eocdr;
+
+ memset(&eocdr, 0, sizeof(eocdr));
 
  eocdr.sig  = MDFN_de32lsb(&eocdrp[0x00]);
  eocdr.disk = MDFN_de16lsb(&eocdrp[0x04]);
@@ -325,16 +404,149 @@ ZIPReader::ZIPReader(std::unique_ptr<Stream> s) : VirtualFS('/', "/")
 
  if(eocdr.cd_offs >= size)
   throw MDFN_Error(0, _("ZIP Central Directory start offset is bad.")); 
+ //
+ //
+ if(eocdr_offs >= 20 && (eocdr.cd_size == 0xFFFFFFFF || eocdr.cd_offs == 0xFFFFFFFF || eocdr.total_cde_count == 0xFFFF))
+ {
+  uint8 eocdl_raw[20];
+  struct
+  {
+   uint32 sig;
+   uint32 eocd_start_disk;
+   uint64 eocd_offs;
+   uint32 disk_count;
+  } eocdl;
 
+  s->seek(eocdr_offs - 20, SEEK_SET);
+  s->read(eocdl_raw, sizeof(eocdl_raw));
+
+  eocdl.sig = MDFN_de32lsb(&eocdl_raw[0x00]);
+  eocdl.eocd_start_disk = MDFN_de32lsb(&eocdl_raw[0x04]);
+  eocdl.eocd_offs = MDFN_de64lsb(&eocdl_raw[0x08]);
+  eocdl.disk_count = MDFN_de32lsb(&eocdl_raw[0x10]);
+
+  if(eocdl.sig != 0x07064B50)
+   throw MDFN_Error(0, _("Bad signature(0x%08x) in ZIP64 End of Central Directory Locator"), eocdl.sig);
+
+  if(eocdl.eocd_start_disk != 0 || eocdl.disk_count != 1)
+   throw MDFN_Error(0, _("ZIP split archive support not implemented."));
+
+  if(eocdl.eocd_offs >= size)
+   throw MDFN_Error(0, _("ZIP64 End of Central Directory start offset is bad."));
+
+  uint8 eocdr64_raw[0x38];
+
+  s->seek(eocdl.eocd_offs, SEEK_SET);
+  s->read(eocdr64_raw, sizeof(eocdr64_raw));
+
+  eocdr.sig = MDFN_de32lsb(&eocdr64_raw[0x00]);
+  eocdr.size = MDFN_de64lsb(&eocdr64_raw[0x04]);
+  eocdr.version_made = MDFN_de16lsb(&eocdr64_raw[0x0C]);
+  eocdr.version_need = MDFN_de16lsb(&eocdr64_raw[0x0E]);
+  eocdr.disk = MDFN_de32lsb(&eocdr64_raw[0x10]);
+  eocdr.cd_start_disk = MDFN_de32lsb(&eocdr64_raw[0x14]);
+  eocdr.disk_cde_count = MDFN_de64lsb(&eocdr64_raw[0x18]);
+  eocdr.total_cde_count = MDFN_de64lsb(&eocdr64_raw[0x20]);
+  eocdr.cd_size = MDFN_de64lsb(&eocdr64_raw[0x28]);
+  eocdr.cd_offs = MDFN_de64lsb(&eocdr64_raw[0x30]);
+
+  if(eocdr.sig != 0x06064b50)
+   throw MDFN_Error(0, _("Bad signature(0x%08x) in ZIP64 End of Central Directory Record"), eocdr.sig);
+
+  if((eocdr.disk != eocdr.cd_start_disk) || eocdr.disk != 0 || (eocdr.disk_cde_count != eocdr.total_cde_count))
+   throw MDFN_Error(0, _("ZIP split archive support not implemented."));
+
+  if(eocdr.cd_offs >= size)
+   throw MDFN_Error(0, _("ZIP64 Central Directory start offset is bad."));
+ }
+ //
+ //
+ const uint64 cde_count_limit = 65535;
+
+ if(eocdr.total_cde_count > cde_count_limit)
+  throw MDFN_Error(0, _("Number of Central Directory entries exceeds this implementation's limit of %llu."), (unsigned long long)cde_count_limit);
+
+ if(eocdr.total_cde_count > SIZE_MAX)
+  throw MDFN_Error(0, _("Number of Central Directory entries exceeds SIZE_MAX."));
+ //
+ //
  s->seek(eocdr.cd_offs, SEEK_SET);
 
- for(uint32 i = 0; i < eocdr.total_cde_count; i++)
+ read_central_directory(s.get(), size, eocdr.total_cde_count);
+
+ zs = std::move(s);
+}
+
+static std::string canonicalize_zip_path(const std::string& name)
+{
+ //
+ // Collapse multiple sequential '/' into one '/'.
+ // Turn /./ into /
+ // Turn (...)a/b/../c(...) into (...)a/c(...)
+ //
+ // Leave trailing /. and /.. unaltered.
+ //
+ std::string ret;
+ const char* const ncs = name.c_str(); // So we don't have to keep checking name.size() in the if() statements
+
+ ret.reserve(name.size());
+
+ for(size_t i = 0; i < name.size(); i++)
+ {
+  while(ncs[i] == '/' && ncs[i + 1] == '/')
+   i++;
+
+  if(ncs[i] == '/' && ncs[i + 1] == '.' && ncs[i + 2] == '/')
+   i += 1;
+  else if(ncs[i] == '/' && ncs[i + 1] == '.' && ncs[i + 2] == '.' && ncs[i + 3] == '/')
+  {
+   i += 2;
+
+   while(ret.size())
+   {
+    const char c = ret.back();
+
+    ret.pop_back();
+
+    if(c == '/')
+     break;
+   }
+  }
+  else
+   ret.push_back(ncs[i]);
+ }
+
+ return ret;
+}
+
+void ZIPReader::read_central_directory(Stream* s, const uint64 zip_size, const uint64 total_cde_count)
+{
+/*
+ {
+  static const char* test_strings[] =
+  {
+   "/../meow",
+   "/../../meow",
+   "/./.././meow",
+   "/woof/./../meow",
+   "////bow//wow//..//.//meow",
+   "/how/now/brown/cow/../../meow/../bark/././///./crow",
+   "/toot/.."
+  };
+
+  for(const char* const ts : test_strings)
+   printf("%s -> %s\n", ts, canonicalize_zip_path(ts).c_str());
+ }
+*/
+ entries.reserve(total_cde_count);
+
+ for(uint64 i = 0; i < total_cde_count; i++)
  {
   uint8 cdr_raw[46];
   FileDesc d;
 
   if(s->read(cdr_raw, sizeof(cdr_raw), false) != sizeof(cdr_raw))
-   throw MDFN_Error(0, _("Unexpected EOF when reading ZIP Central Directory entry %u"), i);
+   throw MDFN_Error(0, _("ZIP Central Directory entry %llu: Unexpected EOF"), (unsigned long long)i);
 
   d.sig 	 = MDFN_de32lsb(&cdr_raw[0x00]);
   d.version_made = MDFN_de16lsb(&cdr_raw[0x04]);
@@ -355,79 +567,172 @@ ZIPReader::ZIPReader(std::unique_ptr<Stream> s) : VirtualFS('/', "/")
   d.lh_reloffs   = MDFN_de32lsb(&cdr_raw[0x2A]);
 
   if(d.sig != 0x02014B50)
-   throw MDFN_Error(0, _("Bad signature in ZIP Central Directory entry %u"), i);
+   throw MDFN_Error(0, _("ZIP Central Directory entry %llu: Bad signature(0x%08x)."), (unsigned long long)i, d.sig);
 
   if(d.disk_start != 0)
    throw MDFN_Error(0, _("ZIP split archive support not implemented."));
 
-  if(d.lh_reloffs >= size)
-   throw MDFN_Error(0, _("Bad local header relative offset in ZIP Central Directory entry %u"), i);
+  if(d.lh_reloffs >= zip_size)
+   throw MDFN_Error(0, _("ZIP Central Directory entry %llu: Bad local header relative offset."), (unsigned long long)i);
 
-  d.name.resize(1 + d.name_len);
-  d.name[0] = '/';
-  if(s->read(&d.name[1], d.name_len, false) != d.name_len)
-   throw MDFN_Error(0, _("Unexpected EOF when reading ZIP Central Directory entry %u"), i);
+  d.name = '/';
+  if(s->get_string_append(&d.name, d.name_len, false) != d.name_len)
+   throw MDFN_Error(0, _("ZIP Central Directory entry %llu: Unexpected EOF"), (unsigned long long)i);
 
-  s->seek(d.extra_len + d.comment_len, SEEK_CUR);
+  d.name = canonicalize_zip_path(d.name);
 
-  entries.push_back(d);
+  const uint64 extra_end_offs = s->tell() + d.extra_len;
+  for(uint32 efi = 0; s->tell() < extra_end_offs; efi++)
+  {
+   uint8 header_raw[4];
+   uint16 header_id;
+   uint16 data_size;
+
+   if(s->read(header_raw, sizeof(header_raw), false) != sizeof(header_raw))
+    throw MDFN_Error(0, _("ZIP Central Directory entry %llu: Extra field entry %u: Unexpected EOF"), (unsigned long long)i, efi);
+
+   header_id = MDFN_de16lsb(&header_raw[0x0]);
+   data_size = MDFN_de16lsb(&header_raw[0x2]);
+
+   //printf("%u: %04x %04x\n", efi, header_id, data_size);
+   //
+   const bool want64_uncomp_size = (d.uncomp_size == 0xFFFFFFFF); 
+   const bool want64_comp_size = (d.comp_size == 0xFFFFFFFF);
+   const bool want64_lh_reloffs = (d.lh_reloffs == 0xFFFFFFFF);
+   const bool want32_disk_start = (d.disk_start == 0xFFFF);
+
+   if(header_id == 0x0001) // ZIP64 extended info
+   {
+    uint8 ei_raw[28];
+    const uint32 expected_size = (want64_uncomp_size + want64_comp_size + want64_lh_reloffs) * 8 + want32_disk_start * 4;
+
+    assert(expected_size <= sizeof(ei_raw));
+
+    if(data_size != expected_size)
+     throw MDFN_Error(0, _("ZIP Central Directory entry %llu: Extra field entry %u: ZIP64 extended info data size of %u is invalid(expected %u)."), (unsigned long long)i, efi, data_size, expected_size);
+
+    if(s->read(ei_raw, expected_size, false) != expected_size)
+     throw MDFN_Error(0, _("ZIP Central Directory entry %llu: Extra field entry %u: Unexpected EOF"), (unsigned long long)i, efi);
+    //
+    uint8* rp = ei_raw;
+
+    if(want64_uncomp_size)
+    {
+     d.uncomp_size = MDFN_de64lsb(rp);
+     rp += 8;
+    }
+
+    if(want64_comp_size)
+    {
+     d.comp_size = MDFN_de64lsb(rp);
+     rp += 8;
+    }
+
+    if(want64_lh_reloffs)
+    {
+     d.lh_reloffs = MDFN_de64lsb(rp);
+     rp += 8;
+
+     if(d.lh_reloffs >= zip_size)
+      throw MDFN_Error(0, _("ZIP Central Directory entry %llu: Extra field entry %u: Bad ZIP64 local header relative offset."), (unsigned long long)i, efi);
+    }
+
+    if(want32_disk_start)
+    {
+     d.disk_start = MDFN_de32lsb(rp);
+     rp += 4;
+
+     if(d.disk_start != 0)
+      throw MDFN_Error(0, _("ZIP split archive support not implemented."));
+    }
+   }
+   else
+    s->seek(data_size, SEEK_CUR);
+  }
+
+  if(s->tell() != extra_end_offs)
+   throw MDFN_Error(0, _("ZIP Central Directory entry %llu: Malformed extra field."), (unsigned long long)i);
+  //
+  //
+  s->seek(d.comment_len, SEEK_CUR);
+
+  //printf("name=%s, comp_size=%llu, uncomp_size=%llu, lh_reloffs=%llu\n", d.name.c_str(), (unsigned long long)d.comp_size, (unsigned long long)d.uncomp_size, (unsigned long long)d.lh_reloffs);
+
+  //
+  //
+  FileEntry fe;
+  std::map<std::string, size_t>::iterator it;
+
+  fe.name = d.name;
+  fe.mod_time = d.mod_time;
+  fe.mod_date = d.mod_date;
+  fe.crc32 = d.crc32;
+  fe.comp_size = d.comp_size;
+  fe.uncomp_size = d.uncomp_size;
+  fe.lh_reloffs = d.lh_reloffs;
+  fe.method = d.method;
+  fe.counter = 0;
+
+  entries.push_back(fe);
+  if(!entries_map.count(fe.name))
+   entries_map[fe.name] = entries.size() - 1;
  }
 
- zs = std::move(s);
+ // Read in all entries first, then resolve duplicates, so we don't
+ // rename files that collide with new duplicates we created.
+ for(size_t i = 0; i < entries.size(); i++)
+ {
+  FileEntry* fe = &entries[i];
+  std::map<std::string, size_t>::iterator it = entries_map.find(fe->name);
+
+  assert(it != entries_map.end());
+
+  if(it->second != i)
+  {
+   uint64 counter = entries[it->second].counter;
+   std::string dir_path, file_base, file_ext;
+
+   get_file_path_components(fe->name, &dir_path, &file_base, &file_ext);
+
+   do
+   {
+    counter++;
+    //
+    char nbuf[20 + 1];
+
+    MDFN_sndec_u64(nbuf, sizeof(nbuf), counter);
+    fe->name = dir_path + '/' + nbuf + ':' + file_base + file_ext;
+   } while(entries_map.count(fe->name));
+
+   entries_map[fe->name] = i;
+   entries[it->second].counter = counter;
+  }
+ }
+
+#if 0
+ for(size_t i = 0; i < entries.size(); i++)
+ {
+  printf("%s\n", entries[i].name.c_str());
+ }
+#endif
 }
 
+/*
+// and persistent VFS?
+bool ZIPReader::is_mt_safe(void)
+{
+ return false;
+}
+*/
 
 size_t ZIPReader::find_by_path(const std::string& path)
 {
- for(size_t i = 0; i < entries.size(); i++)
- {
-  if(path == entries[i].name)
-   return i;
- }
+ auto it = entries_map.find(canonicalize_zip_path(path));
 
- return SIZE_MAX;
-}
+ if(it == entries_map.end())
+  return SIZE_MAX;
 
-Stream* ZIPReader::open(const std::string& path, const uint32 mode, const int do_lock, const bool throw_on_noent, const CanaryType canary)
-{
- if(mode != MODE_READ)
-  throw MDFN_Error(EINVAL, _("Error opening file \"%s\" in ZIP archive: %s"), path.c_str(), _("Specified mode is unsupported"));
-
- if(do_lock != 0)
-  throw MDFN_Error(EINVAL, _("Error opening file \"%s\" in ZIP archive: %s"), path.c_str(), _("Locking requested but is unsupported"));
-
- size_t which = find_by_path(path);
-
- if(which == SIZE_MAX)
- {
-  ErrnoHolder ene(ENOENT);
-
-  throw MDFN_Error(ene.Errno(), _("Error opening file \"%s\" in ZIP archive: %s"), path.c_str(), ene.StrError());
- }
-
- try
- {
-  return open(which);
- }
- catch(const MDFN_Error& e)
- {
-  throw MDFN_Error(e.GetErrno(), _("Error opening file \"%s\" in ZIP archive: %s"), path.c_str(), e.what());
- }
-}
-
-bool ZIPReader::mkdir(const std::string& path, const bool throw_on_exist)
-{
- throw MDFN_Error(EINVAL, _("Error creating directory \"%s\" in ZIP archive: %s"), path.c_str(), _("ZIPReader::mkdir() not implemented"));
-}
-
-bool ZIPReader::unlink(const std::string& path, const bool throw_on_noent, const CanaryType canary)
-{
- throw MDFN_Error(EINVAL, _("Error unlinking \"%s\" in ZIP archive: %s"), path.c_str(), _("ZIPReader::unlink() not implemented"));
-}
-
-void ZIPReader::rename(const std::string& oldpath, const std::string& newpath, const CanaryType canary)
-{
- throw MDFN_Error(EINVAL, _("Error renaming \"%s\" to \"%s\" in ZIP archive: %s"), oldpath.c_str(), newpath.c_str(), _("ZIPReader::rename() not implemented"));
+ return it->second;
 }
 
 bool ZIPReader::finfo(const std::string& path, FileInfo* fi, const bool throw_on_noent)
@@ -439,7 +744,7 @@ bool ZIPReader::finfo(const std::string& path, FileInfo* fi, const bool throw_on
   ErrnoHolder ene(ENOENT);
 
   if(throw_on_noent)
-   throw MDFN_Error(ene.Errno(), _("Error getting file information for \"%s\" in ZIP archive: %s"), path.c_str(), ene.StrError());
+   throw MDFN_Error(ene.Errno(), _("Error getting file information for %s: %s"), this->get_human_path(path).c_str(), ene.StrError());
 
   return false;
  }
@@ -449,6 +754,8 @@ bool ZIPReader::finfo(const std::string& path, FileInfo* fi, const bool throw_on
   FileInfo new_fi;
 
   new_fi.size = entries[which].uncomp_size;
+  new_fi.check = entries[which].crc32;
+  new_fi.check_type = FileInfo::CHECK_TYPE_CRC32;
 
   // TODO/FIXME:
   new_fi.mtime_us = 0;
@@ -463,8 +770,33 @@ bool ZIPReader::finfo(const std::string& path, FileInfo* fi, const bool throw_on
 
 void ZIPReader::readdirentries(const std::string& path, std::function<bool(const std::string&)> callb)
 {
- // TODO/FIXME:
- throw MDFN_Error(EINVAL, _("ZIPReader::readdirentries() not implemented."));
+ const std::string canpath = canonicalize_zip_path(path + '/');
+
+ //printf("Path: %s\n", MDFN_strhumesc(canpath).c_str());
+
+ for(auto const& e : entries)
+ {
+  if(e.name.size() <= canpath.size())
+   continue;
+
+  if(memcmp(e.name.data(), canpath.data(), canpath.size()))
+   continue;
+
+  if(e.name.find('/', canpath.size()) != std::string::npos)
+   continue;
+  //
+  std::string tmp = e.name.substr(canpath.size());
+
+  //printf("File: %s\n", MDFN_strhumesc(tmp).c_str());
+
+  if(!callb(tmp))
+   break;
+ }
+}
+
+std::string ZIPReader::get_human_path(const std::string& path)
+{
+ return MDFN_sprintf(_("\"%s\" in ZIP archive"), MDFN_strhumesc(path).c_str());
 }
 
 bool ZIPReader::is_absolute_path(const std::string& path)

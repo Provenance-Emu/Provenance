@@ -6,18 +6,18 @@
 namespace Mednafen
 {
 
+VirtualFS* MDFN_OpenArchive(VirtualFS* vfs, const std::string& path, const std::vector<FileExtensionSpecStruct>& known_ext, std::string* path_out);
+
 class MDFNFILE
 {
 	public:
 
-	MDFNFILE(VirtualFS* vfs, const char* path, const std::vector<FileExtensionSpecStruct>& known_ext, const char* purpose = nullptr);
+	MDFNFILE(VirtualFS* vfs, const std::string& path, const std::vector<FileExtensionSpecStruct>& known_ext, const char* purpose = nullptr, int* monocomp_double_ext = nullptr);
+	MDFNFILE(VirtualFS* vfs, const std::string& path, const char* purpose = nullptr, int* monocomp_double_ext = nullptr);
 	~MDFNFILE();
 
         void ApplyIPS(Stream*);
-	void Close(void) throw();
-
-        const std::string &ext;		// For file-type determination.  Leading period has been removed, and A-Z chars have been converted to a-z.
-        const std::string &fbase;	// For region detection heuristics.
+	void Close(void) noexcept;
 
 	INLINE uint64 size(void)
 	{
@@ -49,42 +49,12 @@ class MDFNFILE
 	 return str.get();
 	}
 
-	INLINE VirtualFS* active_vfs(void)
-	{
-	 return f_vfs;
-	}
-
-	// Path of file opened from archive, in the archive.
-	INLINE std::string active_dir_path(void)
-	{
-	 return f_dir_path;
-	}
-
-	INLINE std::string active_path(void)
-	{
-	 return f_path;
-	}
-
-	INLINE std::unique_ptr<VirtualFS> steal_archive_vfs(void)
-	{
-	 f_vfs = nullptr;
-
-	 return std::move(archive_vfs);
-	}
-
 	private:
-
-	std::string f_ext;
-	std::string f_fbase;
 
 	std::unique_ptr<Stream> str;
 	std::unique_ptr<VirtualFS> archive_vfs;
 
-	VirtualFS* f_vfs;
-	std::string f_dir_path;
-	std::string f_path;
-
-	void Open(VirtualFS* vfs, const char* path, const std::vector<FileExtensionSpecStruct>& known_ext, const char* purpose = nullptr);
+	void Open(VirtualFS* vfs, const std::string& path, const char* purpose, int* monocomp_double_ext);
 
 	MDFNFILE(const MDFNFILE&);
 	MDFNFILE& operator=(const MDFNFILE&);

@@ -1,17 +1,21 @@
 <?php require("docgen.inc"); ?>
 
-<?php BeginPage('apple2', 'Apple II/II+'); ?>
+<?php BeginPage('apple2', 'Apple II/II+/IIe/Enhanced IIe'); ?>
 
 <?php BeginSection('Introduction', "Section_intro"); ?>
-Mednafen's "<b>apple2</b>" emulation module emulates an Apple II/II+.  It is geared more towards running individual software releases independently of other
+Mednafen's "<b>apple2</b>" emulation module supports emulation of Apple II, II+, IIe, and Enhanced IIe.  It is geared more towards running individual software releases independently of other
 software releases; it can be used differently, but the abstractions chosen may make it rather awkward.
-
+<p>
+The model emulated by default is the Apple II/II+, but it can be changed by altering the <a href="#apple2.model">apple2.model</a> setting, or by using the "<b>model</b>" directive in a <a href="#Section_mai">MAI file</a>.
+Note that save states and modified disk image data are not shared between different emulated models(barring unlikely hash collisions),
+to avoid emulated software malfunctions that may, among other effects, corrupt emulated disk data.
 <?php EndSection(); ?>
 
 <?php BeginSection("MAI System and Disks Configuration File", "Section_mai"); ?>
 <p>
-Single-disk single-side software can be loaded directly.  Multi-disk or multi-side software will require the creation of a special configuration file,
-saved with the file extension "mai", to be loaded with Mednafen.
+Single-disk single-side software can be loaded directly.  The recommended way to use multi-disk or multi-side software is to
+create a special configuration file, saved with the file extension "mai", to be loaded with Mednafen.  Alternatively, the
+<a href="#apple2.multiload">automatic multiload</a> feature can be used with ZIP archives.
 <p>
 Mednafen does not write to the floppy disk image files specified via the MAI configuration file.  Modified disk data is automatically saved into
 and loaded from files in Mednafen's nonvolatile memory/save game directory.  The ID/hash used in naming these files is calculated by hashing data generated based on the
@@ -27,45 +31,111 @@ Sample MAI configuration file:
 MEDNAFEN_SYSTEM_APPLE2
 # Above signature must be the first line.
 #
-# File paths specified in this file are relative to the directory containing the MAI file.
+# File paths specified in this file are relative to the directory containing
+# the MAI file.
 #
 
 #
-# Specify available RAM, in KiB.  Can be one of: 4 8 12 16 20 24 28 32 36 40 44 48 64
+# Specify nominal model of Apple II to emulate.
+#
+#  Options: ii ii+ iie iie_enh
+#    ii:  Apple II with 48KiB RAM, Integer BASIC, AppleSoft BASIC ROM card, and Autostart.
+#    ii+: Apple II+ with 64KiB RAM, AppleSoft BASIC, and Autostart.
+#    iie: Apple IIe with 128KiB RAM and DHGR support.
+#    iie_enh: Enhanced Apple IIe with 128KiB RAM and DHGR support.
+#
+#  Default: ii+
+#
+model ii+
+
+#
+# Uncomment to specify available RAM, in KiB.
+#
+#  Options for Apple II/II+: 4 8 12 16 20 24 28 32 36 40 44 48 64
+#  Options for Apple IIe: 64 65 128 320 576 1088 3136
+#
 #  Specifying "64" enables emulation of a RAM-based 16K language card.
 #
-#  Default: 64
+#  Specifying "65" enables emulation of a IIe 80-column text card.
 #
-ram 64
+#  Specifying "128" enables emulation of a IIe extended 80-column text card.
+#
+#  Specifying "320" or higher enables emulation of a IIe RamWorks III-type card,
+#    usable in some productivity software.
+#
+#  Defaults:
+#    ii:   48
+#    ii+:  64
+#    iie: 128
+#    iie_enh: 128
+#
+#ram 64
 
 #
-# Select Apple II/II+ firmware.  Options are: integer applesoft
+# Uncomment to select Apple II/II+ firmware.
+#
+#  Options for Apple II/II+: integer applesoft
+#  Options for Apple IIe: (setting ignored)
+#
 #  Ignored if "firmware.override" is specified.
 #
-#  Default: applesoft
+#  Defaults:
+#    ii:  integer
+#    ii+: applesoft
 #
-firmware applesoft
+#firmware applesoft
 
-# Apple II/II+ firmware, 12KiB, located at $D000-$FFFF
+# Uncomment to specify custom system firmware.
+#
+#  Apple II/II+: 12KiB, located at $D000-$FFFF
+#  Apple IIe: 16KB, located at $C000-$FFFF
+#
 #  Optional; specify to override the firmware loaded via Mednafen's firmware
 #  loading system.
 #
 #firmware.override "apple2.rom"
 
 #
-# Select ROM card firmware.  Options are: none integer applesoft
-#  ROM card emulation is disabled if "none" is selected(regardless of the "romcard.override" setting), or if 64K of RAM
-#  is selected by the "ram" setting.
+# Uncomment to select ROM card firmware for Apple II/II+.
 #
-#  Default: integer
+#  Options for Apple II/II+: none integer applesoft
+#  Options for Apple IIe: (setting ignored)
 #
-romcard integer
+#  ROM card emulation is disabled if "none" is selected(regardless of
+#  the "romcard.override" setting), or if 64K of RAM is selected
+#  by the "ram" setting.
+#
+#  Defaults:
+#    ii:  applesoft
+#    ii+: integer
+#
+#romcard integer
 
+# Uncomment to specify custom ROM card firmware for Apple II/II+.
 #
-# (see firmware.override description)
-#  Note: Ignored if "romcard" is set to "none".
+#  Optional; specify to override the firmware loaded via Mednafen's firmware
+#  loading system.
+#
+#  Note: Ignored if "romcard" is set to "none", or if 64K of RAM is selected
+#  by the "ram" setting.
 #
 #romcard.override "applesoft.rom"
+
+#
+# Uncomment to specify custom Apple IIe Video (Character Generator) ROM, 4KiB.
+#
+#  Optional; specify to override the video ROM loaded via Mednafen's
+#  firmware loading system.
+#
+#video.override
+
+#
+# Uncomment to specify custom Apple IIe Keyboard ASCII Mapping ROM, 2KiB.
+#
+#  Optional; specify to override the keyboard ROM loaded via Mednafen's
+#  firmware loading system.
+#
+#kbmap.override
 
 
 #
@@ -82,6 +152,10 @@ romcard integer
 #            setting(1 through 4).
 #
 #     atari: two Atari digital joyport joysticks
+#            Note: Incompatible with Apple IIe, due to conflicts with the
+#            Open Apple and Closed Apple keys.  As a partial workaround, hold
+#            the first emulated joystick's D-pad in the left position upon
+#            power-on/startup/reset.
 #
 # Examples:
 #  gameio none
@@ -118,8 +192,10 @@ disk2.drive2.enable 1
 #
 disk2.firmware 16sec
 
-# Optionally, specify to override the firmware loaded via Mednafen's
-# firmware loading system.
+# Uncomment to specify custom Disk II firmware.
+#
+#  Optional; specify to override the Disk II firmware loaded via Mednafen's
+#  firmware loading system.
 #
 #disk2.firmware.override "disk2_dos33_boot.rom" "disk2_dos33_seq.rom"
 
@@ -128,7 +204,7 @@ disk2.firmware 16sec
 # Define available floppy disks (or sides).  Disk identifiers(the part
 # immediately after "disk2.disks." must only contain characters a-z, 0-9, and _)
 #
-# Fields are: name filepath write_protect(optional)
+# Fields: name filepath write_protect(optional)
 #  If the write_protect field is omitted, then the default write protect setting
 #  for the format is used.  For WOZ disk images, write protect is explicitly
 #  specified in the INFO header.  For other formats, write protect defaults
@@ -149,6 +225,22 @@ disk2.disks.save "Save Disk" "SomeGame - Save Disk.dsk" 0
 #
 disk2.drive1.disks *game1 game2 game3
 disk2.drive2.disks *save
+
+#
+# Uncomment to enable ProDOS-compatible, high-level HDD emulation in specified
+# slot with specified hard disk drive image.
+#
+# The hard disk drive image must be a multiple of 512 bytes, and no larger
+# than 33,553,920 bytes(65535 * 512).
+#
+# Slot must be either 1 or 7.
+#
+# Fields: slot filepath write_protect
+#
+#   Default: (undefined/disabled)
+#
+#hdd 7 "ProDOS.hdv" 0
+
 </pre>
 </blockquote>
 <?php EndSection(); ?>
@@ -168,7 +260,7 @@ The following 5.25" Apple II floppy disk image formats are supported:
  <tr><td>d13</td><td>116480</td><td>Apple DOS 13 sectors/track</td></tr>
  <tr><td>dsk<br>do</td><td>143360</td><td>Apple DOS-order 16 sectors/track</td></tr>
  <tr><td>po</td><td>143360</td><td>Apple ProDOS-order 16 sectors/track</td></tr>
- <tr><td>woz</td><td><i>(variable)</i></td><td>https://applesaucefdc.com/woz/</td></tr>
+ <tr><td>woz</td><td><i>(variable)</i></td><td><a href="https://applesaucefdc.com/woz/">https://applesaucefdc.com/woz/</a></td></tr>
 </table>
 </p>
 
@@ -193,6 +285,7 @@ a simple program running on an Apple II).
 </p>
 
 <table border>
+ <tr><th colspan="3">Apple II/II+:</th></tr>
  <tr><th>Filename:</th><th>Purpose:</th><th>SHA-256 Hash:</tr>
  <tr><td nowrap>apple2-int-auto.rom</td><td>Apple II Integer BASIC and Autostart System ROMs, concatenated(8KiB).
 <p>
@@ -227,6 +320,20 @@ Consists of 2KiB ROMs(in order, with SHA-256 hashes):
 341-0020<br><i><font size="-1">(29465303e7844fa56a8c846d0565e45f5ee082f98f2ccf1b261de4a7e902201b)</i></font>
 </td><td>fc3e9d41e9428534a883df5aa10eb55b73ea53d2fcbb3ee4f39bed1b07a82905</td></tr>
 
+
+ <tr><th colspan="3">Apple IIe:</th></tr>
+ <tr><td nowrap>apple2e.rom</td><td>Apple IIe BASIC and System ROMs, concatenated, 16KiB.</td><td>1fb812584c6633fa16b77b20915986ed1178d1e6fc07a647f7ee8d4e6ab9d40b</td></tr>
+ <tr><td nowrap>apple2e-video.rom</td><td>Apple IIe Video ROM, 4KiB, 342-0133-A</td><td>ed5bdd4afa509134e85f1d020685af7ff50e279226eb869a17825b471cc1634c</td></tr>
+ <tr><td nowrap>apple2e-kb.rom</td><td>Apple IIe Keyboard ROM, 2KiB, 342-0132-B</td><td>68198ae95923926b0307893d03ec286f00822c93a0b6dabfca565f6718dd5a56</td></tr>
+
+
+ <tr><th colspan="3">Enhanced Apple IIe:</th></tr>
+ <tr><td nowrap>apple2e-enh.rom</td><td>Enhanced Apple IIe BASIC and System ROMs, concatenated, 16KiB.</td><td>aab38a03ca8deabbb2f868733148c2efd6f655a59cd9c5d058ef3e0b7aa86a1a</td></tr>
+ <tr><td nowrap>apple2e-enh-video.rom</td><td>Enhanced Apple IIe Video ROM, 4KiB, 342-0265-A</td><td>52c3b87900ac939f6525402cab1ccfd8f8259290fc6df54da48fb4c98ae3ed0f</td></tr>
+ <tr><td nowrap>apple2e-enh-kb.rom</td><td>Enhanced Apple IIe Keyboard ROM, 2KiB, 341-0132-D</td><td>a1989da84ea4381d309e7e08783771f884e913236b9bcc71c3d649aacf76537a</td></tr>
+
+
+ <tr><th colspan="3">Disk II:</th></tr>
  <tr><td nowrap>disk2-13boot.rom</td><td>Disk II Interface 13-Sector P5 Boot ROM, 341-0009</td><td>2d2599521fc5763d4e8c308c2ee7c5c4d5c93785b8fb9a4f7d0381dfd5eb60b6<br><i>(TODO: verify)</i></td></tr>
  <tr><td nowrap>disk2-13seq.rom</td><td>Disk II Interface 13-Sector P6 Sequencer ROM, 341-0010</td><td>4234aed053c622b266014c4e06ab1ce9e0e085d94a28512aa4030462be0a3cb9</td></tr>
 
@@ -324,13 +431,16 @@ The following software is known to be compatible with one or more Atari joystick
  <li>Laf-Pak, Mine Sweep <i>(uses controller port typically used for player 2?)</i></li>
  <li>Lemmings <i>(Sirius Software)</i></li>
  <li>Lunar Leepers <i>(uses controller port typically used for player 2?)</i></li>
+ <li>Mating Zone <i>(press CTRL+I during game for config screen)</i></li>
  <li>Miner 2049er</li>
  <li>Miner 2049er II</li>
  <li>Minotaur <i>(press CTRL+SHIFT+P)</i></li>
  <li>Mouskattack</li>
+ <li>Outpost</li>
  <li>Pest Patrol</li>
  <li>Pie-Man</li>
  <li>Plasmania</li>
+ <li>Roundabout</li>
  <li>Seadragon</li>
  <li>Snake Byte <i>(press CTRL+SHIFT+P)</i></li>
  <li>Space Ark <i>(press CTRL+N during game for config screen)</i></li>
@@ -348,6 +458,8 @@ The following software is known to be compatible with one or more Atari joystick
 
 <?php BeginSection('Apple II/II+ Keyboard', 'Section_keyboard'); ?>
  Mednafen emulates the later II/II+ two-piece keyboard that uses the AY-5-3600 encoder.
+ <p>
+ Note that emulated keyboard key state is not updated unless <a href="mednafen.html#Section_input_grabbing">input grabbing</a>(by default, mapped to CTRL+SHIFT+Menu) is toggled on.
  <?php BeginSection('Default Mappings', 'Section_default_keys_keyboard'); ?>
   <p>
   <table border>
@@ -372,6 +484,48 @@ The following software is known to be compatible with one or more Atari joystick
    <tr><td>/<br>End</td><td>/</td></tr>
   </table>
   </p>
+ <?php EndSection(); ?>
+
+<?php EndSection(); ?>
+
+<?php BeginSection('Apple IIe Keyboard', 'Section_keyboard_apple2e'); ?>
+ Note that emulated keyboard key state is not updated unless <a href="mednafen.html#Section_input_grabbing">input grabbing</a>(by default, mapped to CTRL+SHIFT+Menu) is toggled on.
+ <?php BeginSection('Default Mappings', 'Section_default_keys_keyboard_apple2e'); ?>
+  <p>
+  <table border>
+   <tr><th>Key(s):</th><th nowrap>Virtual Apple IIe Key:</th></tr>
+   <tr><td>Insert</td><td>RESET</td></tr>
+   <tr><td>ESC</td><td>ESC</td></tr>
+   <tr><td>Tab</td><td>TAB</td></tr>
+   <tr><td>CTRL</td><td>CONTROL</td></tr>
+   <tr><td>SHIFT</td><td>SHIFT</td></tr>
+   <tr><td>Caps Lock</td><td>CAPS LOCK</td></tr>
+   <tr><td>Left ALT<br>Left Windows</td><td>Open Apple ○</td></tr>
+   <tr><td>Right ALT<br>Right Windows</td><td>Closed Apple ●</td></tr>
+   <tr><td>Space</td><td>Space</td></tr>
+   <tr><td>Enter</td><td>RETURN</td></tr>
+   <tr><td>Backspace</td><td>DELETE</td></tr>
+   <tr><td>⭠</td><td>⭠</td></tr>
+   <tr><td>⭢</td><td>⭢</td></tr>
+   <tr><td>⭣</td><td>⭣</td></tr>
+   <tr><td>⭡</td><td>⭡</td></tr>
+   <tr><td>A <i>through</i> Z</td><td>A <i>through</i> Z</td></tr>
+   <tr><td>0 <i>through</i> 9</td><td>0 <i>through</i> 9</td></tr>
+   <tr><td>`</td><td>`</td></tr>
+   <tr><td>-</td><td>-</td></tr>
+   <tr><td>=</td><td>=</td></tr>
+
+   <tr><td>[</td><td>[</td></tr>
+   <tr><td>]</td><td>]</td></tr>
+   <tr><td>\</td><td>\</td></tr>
+
+   <tr><td>;</td><td>;</td></tr>
+   <tr><td>'</td><td>'</td></tr>
+
+   <tr><td>,</td><td>,</td></tr>
+   <tr><td>.</td><td>.</td></tr>
+   <tr><td>/</td><td>/</td></tr>
+  </table>
  <?php EndSection(); ?>
 
 <?php EndSection(); ?>

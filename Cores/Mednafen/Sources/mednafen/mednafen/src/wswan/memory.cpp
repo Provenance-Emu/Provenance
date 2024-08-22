@@ -678,7 +678,7 @@ void WSwan_MemoryLoadNV(void)
    const uint64 fp_size_tmp = savegame_fp->size();
 
    if(fp_size_tmp != ((uint64)eeprom_size + sram_size))
-    throw MDFN_Error(0, _("Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct size is %llu bytes."), path.c_str(), (unsigned long long)fp_size_tmp, ((unsigned long long)eeprom_size + sram_size));
+    throw MDFN_Error(0, _("Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct size is %llu bytes."), MDFN_strhumesc(path).c_str(), (unsigned long long)fp_size_tmp, ((unsigned long long)eeprom_size + sram_size));
 
    if(eeprom_size)
     savegame_fp->read(wsEEPROM, eeprom_size);
@@ -702,7 +702,7 @@ void WSwan_MemoryLoadNV(void)
    const uint64 fp_size_tmp = savegame_fp.size();
 
    if(fp_size_tmp != 524288)
-    throw MDFN_Error(0, _("Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct size is %llu bytes."), path.c_str(), (unsigned long long)fp_size_tmp, (unsigned long long)524288);
+    throw MDFN_Error(0, _("Save game memory file \"%s\" is an incorrect size(%llu bytes).  The correct size is %llu bytes."), MDFN_strhumesc(path).c_str(), (unsigned long long)fp_size_tmp, (unsigned long long)524288);
 
    savegame_fp.read(wsCartROM, 524288);
   }

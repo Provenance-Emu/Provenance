@@ -2,7 +2,7 @@
 /* Mednafen - Multi-system Emulator                                           */
 /******************************************************************************/
 /* NativeVFS.cpp:
-**  Copyright (C) 2018-2019 Mednafen Team
+**  Copyright (C) 2018-2023 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -22,6 +22,7 @@
 #include <mednafen/mednafen.h>
 #include <mednafen/NativeVFS.h>
 #include <mednafen/FileStream.h>
+#include <mednafen/Time.h>
 
 #ifdef WIN32
  #include <mednafen/win32-common.h>
@@ -36,7 +37,7 @@
 namespace Mednafen
 {
 
-NativeVFS::NativeVFS() : VirtualFS(MDFN_PS, (PSS_STYLE == 2) ? "\\/" : PSS)
+NativeVFS::NativeVFS() : VirtualFS(MDFN_PS, (MDFN_PSS_STYLE == 2) ? "\\/" : MDFN_PSS)
 {
 
 
@@ -66,17 +67,17 @@ Stream* NativeVFS::open(const std::string& path, const uint32 mode, const int do
  }
 }
 
-bool NativeVFS::mkdir(const std::string& path, const bool throw_on_exist)
+int NativeVFS::mkdir(const std::string& path, const bool throw_on_exist, const bool throw_on_noent)
 {
  if(path.find('\0') != std::string::npos)
-  throw MDFN_Error(EINVAL, _("Error creating directory \"%s\": %s"), path.c_str(), _("Null character in path."));
+  throw MDFN_Error(EINVAL, _("Error creating directory \"%s\": %s"), MDFN_strhumesc(path).c_str(), _("Null character in path."));
 
  #ifdef WIN32
  bool invalid_utf8;
  auto tpath = Win32Common::UTF8_to_T(path, &invalid_utf8, true);
 
  if(invalid_utf8)
-  throw MDFN_Error(EINVAL, _("Error creating directory \"%s\": %s"), path.c_str(), _("Invalid UTF-8"));
+  throw MDFN_Error(EINVAL, _("Error creating directory \"%s\": %s"), MDFN_strhumesc(path).c_str(), _("Invalid UTF-8"));
 
  if(::_tmkdir((const TCHAR*)tpath.c_str()))
  #elif defined HAVE_MKDIR
@@ -91,10 +92,12 @@ bool NativeVFS::mkdir(const std::string& path, const bool throw_on_exist)
  {
   ErrnoHolder ene(errno);
 
-  if(ene.Errno() != EEXIST || throw_on_exist)
-   throw MDFN_Error(ene.Errno(), _("Error creating directory \"%s\": %s"), path.c_str(), ene.StrError());
-
-  return false;
+  if(ene.Errno() == EEXIST && !throw_on_exist)
+   return -1;
+  else if(ene.Errno() == ENOENT && !throw_on_noent)
+   return 0;
+  else
+   throw MDFN_Error(ene.Errno(), _("Error creating directory \"%s\": %s"), MDFN_strhumesc(path).c_str(), ene.StrError());
  }
 
  return true;
@@ -107,14 +110,14 @@ bool NativeVFS::unlink(const std::string& path, const bool throw_on_noent, const
   _exit(-1);
 
  if(path.find('\0') != std::string::npos)
-  throw MDFN_Error(EINVAL, _("Error unlinking \"%s\": %s"), path.c_str(), _("Null character in path."));
+  throw MDFN_Error(EINVAL, _("Error unlinking \"%s\": %s"), MDFN_strhumesc(path).c_str(), _("Null character in path."));
 
  #ifdef WIN32
  bool invalid_utf8;
  auto tpath = Win32Common::UTF8_to_T(path, &invalid_utf8, true);
 
  if(invalid_utf8)
-  throw MDFN_Error(EINVAL, _("Error unlinking \"%s\": %s"), path.c_str(), _("Invalid UTF-8"));
+  throw MDFN_Error(EINVAL, _("Error unlinking \"%s\": %s"), MDFN_strhumesc(path).c_str(), _("Invalid UTF-8"));
 
  if(::_tunlink((const TCHAR*)tpath.c_str()))
  #else
@@ -126,7 +129,7 @@ bool NativeVFS::unlink(const std::string& path, const bool throw_on_noent, const
   if(ene.Errno() == ENOENT && !throw_on_noent)
    return false;
   else
-   throw MDFN_Error(ene.Errno(), _("Error unlinking \"%s\": %s"), path.c_str(), ene.StrError());
+   throw MDFN_Error(ene.Errno(), _("Error unlinking \"%s\": %s"), MDFN_strhumesc(path).c_str(), ene.StrError());
  }
 
  return true;
@@ -138,7 +141,7 @@ void NativeVFS::rename(const std::string& oldpath, const std::string& newpath, c
   _exit(-1);
 
  if(oldpath.find('\0') != std::string::npos || newpath.find('\0') != std::string::npos)
-  throw MDFN_Error(EINVAL, _("Error renaming \"%s\" to \"%s\": %s"), oldpath.c_str(), newpath.c_str(), _("Null character in path."));
+  throw MDFN_Error(EINVAL, _("Error renaming \"%s\" to \"%s\": %s"), MDFN_strhumesc(oldpath).c_str(), MDFN_strhumesc(newpath).c_str(), _("Null character in path."));
 
  #ifdef WIN32
  bool invalid_utf8_old;
@@ -147,7 +150,7 @@ void NativeVFS::rename(const std::string& oldpath, const std::string& newpath, c
  auto tnewpath = Win32Common::UTF8_to_T(newpath, &invalid_utf8_new, true);
 
  if(invalid_utf8_old || invalid_utf8_new)
-  throw MDFN_Error(EINVAL, _("Error renaming \"%s\" to \"%s\": %s"), oldpath.c_str(), newpath.c_str(), _("Invalid UTF-8"));
+  throw MDFN_Error(EINVAL, _("Error renaming \"%s\" to \"%s\": %s"), MDFN_strhumesc(oldpath).c_str(), MDFN_strhumesc(newpath).c_str(), _("Invalid UTF-8"));
 
  if(::_trename((const TCHAR*)toldpath.c_str(), (const TCHAR*)tnewpath.c_str()))
  {
@@ -157,10 +160,10 @@ void NativeVFS::rename(const std::string& oldpath, const std::string& newpath, c
   if(oldpath != newpath && (ene.Errno() == EACCES || ene.Errno() == EEXIST))
   {
    if(::_tunlink((const TCHAR*)tnewpath.c_str()) || ::_trename((const TCHAR*)toldpath.c_str(), (const TCHAR*)tnewpath.c_str()))
-    throw MDFN_Error(ene.Errno(), _("Error renaming \"%s\" to \"%s\": %s"), oldpath.c_str(), newpath.c_str(), ene.StrError());
+    throw MDFN_Error(ene.Errno(), _("Error renaming \"%s\" to \"%s\": %s"), MDFN_strhumesc(oldpath).c_str(), MDFN_strhumesc(newpath).c_str(), ene.StrError());
   }
   else
-   throw MDFN_Error(ene.Errno(), _("Error renaming \"%s\" to \"%s\": %s"), oldpath.c_str(), newpath.c_str(), ene.StrError());
+   throw MDFN_Error(ene.Errno(), _("Error renaming \"%s\" to \"%s\": %s"), MDFN_strhumesc(oldpath).c_str(), MDFN_strhumesc(newpath).c_str(), ene.StrError());
  }
  #else
 
@@ -168,7 +171,7 @@ void NativeVFS::rename(const std::string& oldpath, const std::string& newpath, c
  {
   ErrnoHolder ene(errno);
 
-  throw MDFN_Error(ene.Errno(), _("Error renaming \"%s\" to \"%s\": %s"), oldpath.c_str(), newpath.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error renaming \"%s\" to \"%s\": %s"), MDFN_strhumesc(oldpath).c_str(), MDFN_strhumesc(newpath).c_str(), ene.StrError());
  }
 
  #endif
@@ -177,29 +180,162 @@ void NativeVFS::rename(const std::string& oldpath, const std::string& newpath, c
 bool NativeVFS::finfo(const std::string& path, FileInfo* fi, const bool throw_on_noent)
 {
  if(path.find('\0') != std::string::npos)
-  throw MDFN_Error(EINVAL, _("Error getting file information for \"%s\": %s"), path.c_str(), _("Null character in path."));
+  throw MDFN_Error(EINVAL, _("Error getting file information for \"%s\": %s"), MDFN_strhumesc(path).c_str(), _("Null character in path."));
  //
  //
  #ifdef WIN32
+ HANDLE hand;
  bool invalid_utf8;
  auto tpath = Win32Common::UTF8_to_T(path, &invalid_utf8, true);
- struct _stati64 buf;
+ BY_HANDLE_FILE_INFORMATION buf;
 
  if(invalid_utf8)
-  throw MDFN_Error(EINVAL, _("Error getting file information for \"%s\": %s"), path.c_str(), _("Invalid UTF-8"));
+  throw MDFN_Error(EINVAL, _("Error getting file information for \"%s\": %s"), MDFN_strhumesc(path).c_str(), _("Invalid UTF-8"));
 
- if(::_tstati64((const TCHAR*)tpath.c_str(), &buf))
+ hand = CreateFile((const TCHAR*)tpath.c_str(), 0, FILE_SHARE_DELETE | FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+ if(hand == INVALID_HANDLE_VALUE)
+ {
+  const uint32 ec = GetLastError();
+  uint32 en = 0;
+
+  //
+  // Begin Win9x fallback
+  //
+  if(ec == ERROR_INVALID_PARAMETER && (GetVersion() & 0x80000000))
+  {
+   WIN32_FILE_ATTRIBUTE_DATA fad;
+   FileInfo new_fi;
+   uint64 mus;
+
+   if(path.size() > 0 && (path.back() == '/' || path.back() == '\\'))
+    tpath.push_back('.');
+
+   memset(&fad, 0, sizeof(fad));
+
+   if(!GetFileAttributesEx((const TCHAR*)tpath.c_str(), GetFileExInfoStandard, &fad))
+   {
+    const uint32 nec = GetLastError();
+    int nen = 0;
+
+    if(nec == ERROR_FILE_NOT_FOUND || nec == ERROR_PATH_NOT_FOUND)
+    {
+     nen = ENOENT;
+
+     if(!throw_on_noent)
+      return false;
+    }
+    else if(nec == ERROR_ACCESS_DENIED)
+     nen = EPERM;
+
+    throw MDFN_Error(nen, _("Error getting file information for \"%s\": %s"), MDFN_strhumesc(path).c_str(), Win32Common::ErrCodeToString(nec).c_str());
+   }
+
+   //MDFN_printf("%016llx %016llx\n", ((uint64)fad.ftLastWriteTime.dwHighDateTime << 32) | fad.ftLastWriteTime.dwLowDateTime, ((uint64)fad.ftCreationTime.dwHighDateTime << 32) | fad.ftCreationTime.dwLowDateTime);
+
+   mus = ((uint64)fad.ftLastWriteTime.dwHighDateTime << 32) | fad.ftLastWriteTime.dwLowDateTime;
+   if(!mus)
+    mus = ((uint64)fad.ftCreationTime.dwHighDateTime << 32) | fad.ftCreationTime.dwLowDateTime;
+
+   new_fi.size = ((uint64)fad.nFileSizeHigh << 32) | fad.nFileSizeLow;
+   new_fi.mtime_us = (int64)(mus / 10) - 11644473600000000LL;
+
+   new_fi.is_directory = (bool)(fad.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+   new_fi.is_regular = !(fad.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_REPARSE_POINT));
+
+#if 0
+   MDFN_printf("finfo(\"%s\", [], %s):\n", path.c_str(), throw_on_noent ? "true" : "false");
+   {
+    MDFN_AutoIndent aind(1);
+
+    MDFN_printf("size: %llu\n", (unsigned long long)new_fi.size);
+    MDFN_printf("mtime_us: %llu - %s\n", (unsigned long long)new_fi.mtime_us, Time::StrTime(Time::LocalTime(new_fi.mtime_us / 1000 / 1000)).c_str());
+    MDFN_printf("is_regular: %d\n", new_fi.is_regular);
+    MDFN_printf("is_directory: %d\n", new_fi.is_directory);
+   }
+#endif
+
+   if(fi)
+    *fi = new_fi;
+   //
+   //
+   //
+   return true;
+  }
+  //
+  // End Win9x fallback
+  //
+
+  if(ec == ERROR_FILE_NOT_FOUND || ec == ERROR_PATH_NOT_FOUND)
+  {
+   en = ENOENT;
+
+   if(!throw_on_noent)
+    return false;
+  }
+  else if(ec == ERROR_ACCESS_DENIED)
+   en = EPERM;
+
+  throw MDFN_Error(en, _("Error getting file information for \"%s\": %s"), MDFN_strhumesc(path).c_str(), Win32Common::ErrCodeToString(ec).c_str());
+ }
+
+ //MDFN_printf("0x%016llx\n", (unsigned long long)hand);
+
+ memset(&buf, 0, sizeof(buf));
+ if(!GetFileInformationByHandle(hand, &buf))
+ {
+  uint32 ec = GetLastError();
+  uint32 en = 0;
+
+  CloseHandle(hand);
+
+  if(ec == ERROR_ACCESS_DENIED)
+   en = EPERM;
+
+  throw MDFN_Error(en, _("Error getting file information for \"%s\": %s"), MDFN_strhumesc(path).c_str(), Win32Common::ErrCodeToString(ec).c_str());
+ } 
+ CloseHandle(hand);
+ //
+ //
+ //
+ {
+  FileInfo new_fi;
+  uint64 mus;
+
+  mus = ((uint64)buf.ftLastWriteTime.dwHighDateTime << 32) | buf.ftLastWriteTime.dwLowDateTime;
+  if(!mus)
+   mus = ((uint64)buf.ftCreationTime.dwHighDateTime << 32) | buf.ftCreationTime.dwLowDateTime;
+
+  new_fi.size = ((uint64)buf.nFileSizeHigh << 32) | buf.nFileSizeLow;
+  new_fi.mtime_us = (int64)(mus / 10) - 11644473600000000LL;
+
+  new_fi.is_directory = (bool)(buf.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
+  new_fi.is_regular = !(buf.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE | FILE_ATTRIBUTE_REPARSE_POINT));
+
+#if 0
+  MDFN_printf("finfo(\"%s\", [], %s):\n", path.c_str(), throw_on_noent ? "true" : "false");
+  {
+   MDFN_AutoIndent aind(1);
+
+   MDFN_printf("size: %llu\n", (unsigned long long)new_fi.size);
+   MDFN_printf("mtime_us: %llu - %s\n", (unsigned long long)new_fi.mtime_us, Time::StrTime(Time::LocalTime(new_fi.mtime_us / 1000 / 1000)).c_str());
+   MDFN_printf("is_regular: %d\n", new_fi.is_regular);
+   MDFN_printf("is_directory: %d\n", new_fi.is_directory);
+  }
+#endif
+
+  if(fi)
+   *fi = new_fi;
+ }
  #else
  struct stat buf;
  if(::stat(path.c_str(), &buf))
- #endif
  {
   ErrnoHolder ene(errno);
 
   if(ene.Errno() == ENOENT && !throw_on_noent)
    return false;
 
-  throw MDFN_Error(ene.Errno(), _("Error getting file information for \"%s\": %s"), path.c_str(), ene.StrError());
+  throw MDFN_Error(ene.Errno(), _("Error getting file information for \"%s\": %s"), MDFN_strhumesc(path).c_str(), ene.StrError());
  }
 
  if(fi)
@@ -214,6 +350,7 @@ bool NativeVFS::finfo(const std::string& path, FileInfo* fi, const bool throw_on
 
   *fi = new_fi;
  }
+ #endif
 
  return true;
 }
@@ -221,7 +358,7 @@ bool NativeVFS::finfo(const std::string& path, FileInfo* fi, const bool throw_on
 void NativeVFS::readdirentries(const std::string& path, std::function<bool(const std::string&)> callb)
 {
  if(path.find('\0') != std::string::npos)
-  throw MDFN_Error(EINVAL, _("Error reading directory entries from \"%s\": %s"), path.c_str(), _("Null character in path."));
+  throw MDFN_Error(EINVAL, _("Error reading directory entries from \"%s\": %s"), MDFN_strhumesc(path).c_str(), _("Null character in path."));
  //
  //
 #ifdef WIN32
@@ -234,7 +371,7 @@ void NativeVFS::readdirentries(const std::string& path, std::function<bool(const
  WIN32_FIND_DATA ded;
 
  if(invalid_utf8)
-  throw MDFN_Error(EINVAL, _("Error reading directory entries from \"%s\": %s"), path.c_str(), _("Invalid UTF-8"));
+  throw MDFN_Error(EINVAL, _("Error reading directory entries from \"%s\": %s"), MDFN_strhumesc(path).c_str(), _("Invalid UTF-8"));
 
  try
  {
@@ -242,7 +379,7 @@ void NativeVFS::readdirentries(const std::string& path, std::function<bool(const
   {
    const uint32 ec = GetLastError();
 
-   throw MDFN_Error(0, _("Error reading directory entries from \"%s\": %s"), path.c_str(), Win32Common::ErrCodeToString(ec).c_str());
+   throw MDFN_Error(0, _("Error reading directory entries from \"%s\": %s"), MDFN_strhumesc(path).c_str(), Win32Common::ErrCodeToString(ec).c_str());
   }
 
   for(;;)
@@ -258,7 +395,7 @@ void NativeVFS::readdirentries(const std::string& path, std::function<bool(const
     if(ec == ERROR_NO_MORE_FILES)
      break;
     else
-     throw MDFN_Error(0, _("Error reading directory entries from \"%s\": %s"), path.c_str(), Win32Common::ErrCodeToString(ec).c_str());
+     throw MDFN_Error(0, _("Error reading directory entries from \"%s\": %s"), MDFN_strhumesc(path).c_str(), Win32Common::ErrCodeToString(ec).c_str());
    }
   }
   //
@@ -286,7 +423,7 @@ void NativeVFS::readdirentries(const std::string& path, std::function<bool(const
   {
    ErrnoHolder ene(errno);
 
-   throw MDFN_Error(ene.Errno(), _("Error reading directory entries from \"%s\": %s"), path.c_str(), ene.StrError());
+   throw MDFN_Error(ene.Errno(), _("Error reading directory entries from \"%s\": %s"), MDFN_strhumesc(path).c_str(), ene.StrError());
   }
   //
   for(;;)
@@ -300,7 +437,7 @@ void NativeVFS::readdirentries(const std::string& path, std::function<bool(const
     {
      ErrnoHolder ene(errno);
 
-     throw MDFN_Error(ene.Errno(), _("Error reading directory entries from \"%s\": %s"), path.c_str(), ene.StrError());     
+     throw MDFN_Error(ene.Errno(), _("Error reading directory entries from \"%s\": %s"), MDFN_strhumesc(path).c_str(), ene.StrError());     
     }    
     break;
    }
@@ -337,11 +474,18 @@ bool NativeVFS::is_absolute_path(const std::string& path)
   return true;
 
  #if defined(WIN32) || defined(DOS)
- if(path.size() >= 2 && path[1] == ':')
- {
-  if((path[0] >= 'a' && path[0] <= 'z') || (path[0] >= 'A' && path[0] <= 'Z'))
-   return true;
- }
+ if(path.size() >= 2 && MDFN_isaz(path[0]) && path[1] == ':')
+  return true;
+ #endif
+
+ return false;
+}
+
+bool NativeVFS::is_driverel_path(const std::string& path)
+{
+ #if defined(WIN32) || defined(DOS)
+ if(path.size() >= 2 && MDFN_isaz(path[0]) && path[1] == ':' && (path.size() < 3 || !is_path_separator(path[2])))
+  return true;
  #endif
 
  return false;
@@ -356,7 +500,7 @@ void NativeVFS::check_firop_safe(const std::string& path)
  {
   if(path[x] & 0x80)
   {
-   MDFN_printf(_("WARNING: Referenced path \"%s\" contains at least one 8-bit non-ASCII character; this may cause portability issues.\n"), path.c_str());
+   MDFN_printf(_("WARNING: Referenced path \"%s\" contains at least one 8-bit non-ASCII character; this may cause portability issues.\n"), MDFN_strhumesc(path).c_str());
    break;
   }
  }
@@ -421,13 +565,13 @@ void NativeVFS::check_firop_safe(const std::string& path)
 #endif
 
  if(unsafe_reason.size() > 0)
-  throw MDFN_Error(0, _("Referenced path \"%s\" (escaped) is potentially unsafe.  %s Refer to the documentation about the \"filesys.untrusted_fip_check\" setting.\n"), MDFN_strescape(path).c_str(), unsafe_reason.c_str());
+  throw MDFN_Error(0, _("Referenced path \"%s\" is potentially unsafe.  %s Refer to the documentation about the \"filesys.untrusted_fip_check\" setting.\n"), MDFN_strhumesc(path).c_str(), unsafe_reason.c_str());
 }
 
 void NativeVFS::get_file_path_components(const std::string &file_path, std::string* dir_path_out, std::string* file_base_out, std::string *file_ext_out)
 {
 #if defined(WIN32) || defined(DOS)
- if(file_path.size() >= 3 && ((file_path[0] >= 'a' && file_path[0] <= 'z') || (file_path[0] >= 'A' && file_path[0] <= 'Z')) && file_path[1] == ':' && file_path.find_last_of(allowed_path_separators) == std::string::npos)
+ if(file_path.size() >= 3 && MDFN_isaz(file_path[0]) && file_path[1] == ':' && file_path.find_last_of(allowed_path_separators) == std::string::npos)
  {
   VirtualFS::get_file_path_components(file_path.substr(0, 2) + '.' + preferred_path_separator + file_path.substr(2), dir_path_out, file_base_out, file_ext_out);
   return;
@@ -435,6 +579,11 @@ void NativeVFS::get_file_path_components(const std::string &file_path, std::stri
 #endif
 
  VirtualFS::get_file_path_components(file_path, dir_path_out, file_base_out, file_ext_out);
+}
+
+std::string NativeVFS::get_human_path(const std::string& path)
+{
+ return MDFN_sprintf(_("\"%s\""), MDFN_strhumesc(path).c_str());
 }
 
 }

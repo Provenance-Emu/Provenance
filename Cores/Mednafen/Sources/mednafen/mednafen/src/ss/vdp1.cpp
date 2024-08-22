@@ -2,7 +2,7 @@
 /* Mednafen Sega Saturn Emulation Module                                      */
 /******************************************************************************/
 /* vdp1.cpp - VDP1 Emulation
-**  Copyright (C) 2015-2020 Mednafen Team
+**  Copyright (C) 2015-2021 Mednafen Team
 **
 ** This program is free software; you can redistribute it and/or
 ** modify it under the terms of the GNU General Public License
@@ -22,7 +22,7 @@
 // TODO: Draw timing for small lines(somewhere between 2 and 15 pixels wide) on the VDP1 seems weird; investigate further
 // before making timing changes to the drawing code.
 
-// TODO: Draw timing for (large) primitives should be about 20% higher.
+// TODO: Investigate and more accurately model the 10-20% draw overhead currently approximated in AdjustDrawTiming().
 
 // TODO: Draw timing for shrunken(even just slightly) sprite lines with HSS disabled should be 100% higher.
 
@@ -149,11 +149,11 @@ static void VRAMUsageStart(void)
  {
   for(size_t i = 0; i < 0x40000; i++)
   {
-   VRAMDrawReads[i].earliest = ~(uint64)0;
-   VRAMDrawReads[i].latest = ~(uint64)0;
+   VRAMDrawReads[i].earliest = (uint64)-1;
+   VRAMDrawReads[i].latest = (uint64)-1;
 
-   VRAMWrites[i].earliest = ~(uint64)0;
-   VRAMWrites[i].latest = ~(uint64)0;
+   VRAMWrites[i].earliest = (uint64)-1;
+   VRAMWrites[i].latest = (uint64)-1;
   }
  }
  VRAMUsageStartTS = VRAMUsageTSBase;
@@ -166,7 +166,7 @@ static void VRAMUsageWrite(uint32 A)
   const uint64 fullts = VRAMUsageTSBase + SH7095_mem_timestamp;
   const size_t index = A & 0x3FFFF;
 
-  if(VRAMWrites[index].earliest == ~(uint64)0)
+  if(VRAMWrites[index].earliest == (uint64)-1)
    VRAMWrites[index].earliest = fullts;
 
   VRAMWrites[index].latest = fullts;
@@ -180,7 +180,7 @@ static void VRAMUsageDrawRead(uint32 A)
   const uint64 fullts = VRAMUsageTSBase + SH7095_mem_timestamp;
   const size_t index = A & 0x3FFFF;
 
-  if(VRAMDrawReads[index].earliest == ~(uint64)0)
+  if(VRAMDrawReads[index].earliest == (uint64)-1)
    VRAMDrawReads[index].earliest = fullts;
 
   VRAMDrawReads[index].latest = fullts;
@@ -193,7 +193,7 @@ static void VRAMUsageEnd(void)
  {
   for(unsigned i = 0; i < 0x40000; i++)
   {
-   if(VRAMWrites[i].latest != ~(uint64)0 && VRAMDrawReads[i].latest != ~(uint64)0)
+   if(VRAMWrites[i].latest != (uint64)-1 && VRAMDrawReads[i].latest != (uint64)-1)
    {
     SS_DBG(SS_DBG_VDP1_RACE, "[VDP1] VRAM[0x%06x] Race --- Write, earliest=%llu, latest=%llu --- Draw Read, earliest=%llu, latest=%llu\n", i * 2, (unsigned long long)(VRAMWrites[i].earliest - VRAMUsageStartTS), (unsigned long long)(VRAMWrites[i].latest - VRAMUsageStartTS), (unsigned long long)(VRAMDrawReads[i].earliest - VRAMUsageStartTS), (unsigned long long)(VRAMDrawReads[i].latest - VRAMUsageStartTS));
    }
@@ -542,9 +542,9 @@ bool SetupDrawLine(int32* const cycle_counter, const bool AA, const bool Texture
  const int32 max_adx_ady = std::max<int32>(abs_dx, abs_dy);
  const int32 x_inc = (dx >= 0) ? 1 : -1;
  const int32 y_inc = (dy >= 0) ? 1 : -1;
+ const int32 lid_x_inc = (x_inc & 0x7FF) <<  0;
+ const int32 lid_y_inc = (y_inc & 0x7FF) << 16;
 
- lid.x_inc = (x_inc & 0x7FF) <<  0;
- lid.y_inc = (y_inc & 0x7FF) << 16;
  lid.xy = (p0.x & 0x7FF) + ((p0.y & 0x7FF) << 16);
  lid.term_xy = (p1.x & 0x7FF) + ((p1.y & 0x7FF) << 16);
  lid.drawn_ac = true;	// Drawn all-clipped
@@ -605,8 +605,6 @@ bool SetupDrawLine(int32* const cycle_counter, const bool AA, const bool Texture
  }
 
  // x, y, x_inc, y_inc, aa_x_inc, aa_y_inc, term_x, term_y, error, error_inc, error_adj, t, g, color
- lid.abs_dy_gt_abs_dx = abs_dy > abs_dx;
-
  if(abs_dy > abs_dx)
  {
   lid.error_inc =  (2 * abs_dx);
@@ -618,7 +616,9 @@ bool SetupDrawLine(int32* const cycle_counter, const bool AA, const bool Texture
    lid.error_cmp--;
 
   lid.error -= lid.error_inc;
-  lid.xy = (lid.xy + (0x8000000 - lid.y_inc)) & 0x07FF07FF;
+  lid.xy = (lid.xy + (0x8000000 - lid_y_inc)) & 0x07FF07FF;
+  lid.xy_inc[0] = lid_y_inc;
+  lid.xy_inc[1] = lid_x_inc;
  }
  else
  {
@@ -631,7 +631,9 @@ bool SetupDrawLine(int32* const cycle_counter, const bool AA, const bool Texture
    lid.error_cmp--;
 
   lid.error -= lid.error_inc;
-  lid.xy = (lid.xy + (0x800 - lid.x_inc)) & 0x07FF07FF;
+  lid.xy = (lid.xy + (0x800 - lid_x_inc)) & 0x07FF07FF;
+  lid.xy_inc[0] = lid_x_inc;
+  lid.xy_inc[1] = lid_y_inc;
  }
  if(AA)
  {
@@ -643,7 +645,7 @@ bool SetupDrawLine(int32* const cycle_counter, const bool AA, const bool Texture
  lid.error_inc <<= 32 - 13;
  lid.error_adj <<= 32 - 13;
  lid.error <<= 32 - 13;
- lid.error_cmp <<= 32 - 13;
+ lid.error_cmp = (uint32)lid.error_cmp << (32 - 13);
 
  return clipped;
 }
@@ -683,17 +685,17 @@ void EdgeStepper::Setup(const bool gourauden, const line_vertex& p0, const line_
   x_error <<= (32 - 13);
   x_error_inc <<= (32 - 13);
   x_error_adj <<= (32 - 13);
-  x_error_cmp <<= (32 - 13);
+  x_error_cmp = (uint32)x_error_cmp << (32 - 13);
 
   y_error <<= (32 - 13);
   y_error_inc <<= (32 - 13);
   y_error_adj <<= (32 - 13);
-  y_error_cmp <<= (32 - 13);
+  y_error_cmp = (uint32)y_error_cmp << (32 - 13);
 
   d_error <<= (32 - 13);
   d_error_inc <<= (32 - 13);
   d_error_adj <<= (32 - 13);
-  d_error_cmp <<= (32 - 13);
+  d_error_cmp = (uint32)d_error_cmp << (32 - 13);
   //
   if(gourauden)
    g.Setup(max_adxdy + 1, p0.g, p1.g);
@@ -1315,6 +1317,8 @@ MDFN_FASTCALL uint16 Read16_DB(uint32 A)
 
 void StateAction(StateMem* sm, const unsigned load, const bool data_only)
 {
+ bool tmp_abs_dy_gt_abs_dx = false;
+
  SFORMAT Prim_StateRegs[] =
  {
   SFVAR(PrimData.e->d_error, 0x2, sizeof(*PrimData.e), PrimData.e),
@@ -1374,8 +1378,8 @@ void StateAction(StateMem* sm, const unsigned load, const bool data_only)
   SFVAR(LineInnerData.g.error_inc),
   SFVAR(LineInnerData.g.error_adj),
 
-  SFVAR(LineInnerData.x_inc),
-  SFVAR(LineInnerData.y_inc),
+  SFVARN(LineInnerData.xy_inc[0], "LineInnerData.x_inc"),
+  SFVARN(LineInnerData.xy_inc[1], "LineInnerData.y_inc"),
   SFVAR(LineInnerData.aa_xy_inc),
   SFVAR(LineInnerData.term_xy),
 
@@ -1385,7 +1389,7 @@ void StateAction(StateMem* sm, const unsigned load, const bool data_only)
 
   SFVAR(LineInnerData.color),
 
-  SFVAR(LineInnerData.abs_dy_gt_abs_dx),
+  SFVARN(tmp_abs_dy_gt_abs_dx, "LineInnerData.abs_dy_gt_abs_dx"),
   //
   //
   //
@@ -1494,6 +1498,9 @@ void StateAction(StateMem* sm, const unsigned load, const bool data_only)
   {
    CommandPhase = 0;
   }
+
+  if(tmp_abs_dy_gt_abs_dx)
+   std::swap(LineInnerData.xy_inc[0], LineInnerData.xy_inc[1]);
  }
 }
 
