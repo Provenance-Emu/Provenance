@@ -111,7 +111,10 @@ let package = Package(
                     "PVSupport"
                 ],
                 path: "Sources/MednafenGameCoreSwift",
-                cSettings: CSETTINGS,
+                cSettings: [
+                    .headerSearchPath("../mednafen/mednafen/include_mednafen"),
+                    .headerSearchPath("../mednafen/mednafen/include")
+                ] + CSETTINGS,
                 swiftSettings: [.interoperabilityMode(.Cxx)]
             ),
         
@@ -120,7 +123,7 @@ let package = Package(
             .target(
                 name: "MednafenGameCoreC",
                 dependencies: [
-//                    "mednafen",
+                    "mednafen",
 //                    "megadrive",
 //                    "nes",
 //                    "pce",
@@ -135,6 +138,8 @@ let package = Package(
 //                    "wonderswan"
                 ],
                 cSettings: [
+                    .headerSearchPath("./include"),
+                    .headerSearchPath("./include/MednafenGameCoreC"),
                     .headerSearchPath("../mednafen/mednafen/include_mednafen"),
                     .headerSearchPath("../mednafen/mednafen/include"),
                 ] + CSETTINGS
@@ -875,7 +880,7 @@ let package = Package(
                     "convert.cpp",
                     "sexyal.cpp"
                 ].map { "src/sexyal/\($0)" },
-                publicHeadersPath: "include_mednafen/",
+                publicHeadersPath: "src/sexyal/",
                 cSettings: [
                     .headerSearchPath("./include_mednafen"),
                     .headerSearchPath("./include"),
@@ -900,7 +905,7 @@ let package = Package(
                     "text.cpp",
                     "video.cpp"
                 ].map { "src/video/\($0)" },
-                publicHeadersPath: "include_mednafen/",
+                publicHeadersPath: "src/video/",
                 cSettings: [
                     .headerSearchPath("./include_mednafen"),
                     .headerSearchPath("./include"),
@@ -1274,7 +1279,7 @@ let package = Package(
             dependencies: ["MednafenGameCoreC"]
         )
     ],
-    swiftLanguageModes: [.v5, .v6],
+    swiftLanguageModes: [.v5],
     cLanguageStandard: .gnu99,
     cxxLanguageStandard: .gnucxx14
     

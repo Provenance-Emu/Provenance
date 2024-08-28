@@ -7,7 +7,9 @@
 //
 
 import Foundation
-import GameController
+#if canImport(GameController)
+@_exported import GameController
+#endif
 import PVCoreBridge
 import PVLogging
 import PVAudio
@@ -24,7 +26,9 @@ import PVEmulatorCore
 open class PVVisualBoyAdvanceCore: PVEmulatorCore { //, PVGBSystemResponderClient {
 
     // MARK: Controller
+#if canImport(GameController)
     public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
+#endif
 
     // MARK: Cheats
     public var cheats: NSMutableArray = .init()

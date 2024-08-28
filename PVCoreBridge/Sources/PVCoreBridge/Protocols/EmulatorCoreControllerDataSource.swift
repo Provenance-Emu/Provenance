@@ -5,10 +5,18 @@
 //  Created by Joseph Mattiello on 8/3/24.
 //
 
+import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(GameController)
 import GameController
+#endif
 import PVLogging
 
 @objc public protocol EmulatorCoreControllerDataSource {
+#if canImport(GameController)
     var controller1: GCController? { get }
     var controller2: GCController? { get }
     var controller3: GCController? { get }
@@ -20,11 +28,13 @@ import PVLogging
     var controller8: GCController? { get }
 
     func controller(forPlayer: UInt) -> GCController?
-#if canImport(UIKit)
+#endif
+#if canImport(UIKit) && !os(watchOS)
     var touchViewController: UIViewController? { get }
 #endif
 }
 
+#if canImport(GameController)
 public extension EmulatorCoreControllerDataSource {
 
     @MainActor
@@ -52,6 +62,7 @@ public extension EmulatorCoreControllerDataSource {
         }
     }
 }
+#endif
 
 #if canImport(CoreHaptics)
 import CoreHaptics
@@ -67,6 +78,7 @@ public extension EmulatorCoreRumbleDataSource {
 }
 #endif
 
+#if canImport(CoreHaptics)
 public extension EmulatorCoreRumbleDataSource {
 
     @MainActor
@@ -74,7 +86,7 @@ public extension EmulatorCoreRumbleDataSource {
     func hapticEngine(for player: Int) async -> CHHapticEngine? {
         return await HapticsManager.shared.hapticsEngine(forPlayer: player)
     }
-
+    
     @MainActor
     func rumble(player: Int) async {
         guard self.supportsRumble else {
@@ -122,3 +134,4 @@ public extension EmulatorCoreRumbleDataSource {
 #endif
     }
 }
+#endif

@@ -14,7 +14,7 @@ import RxDataSources
 import UIKit
 
 public extension PVSearchViewController {
-    public static func createEmbeddedInNavigationController(gameLibrary: PVGameLibrary) -> UINavigationController {
+    public static func createEmbeddedInNavigationController(gameLibrary: PVGameLibrary<RealmDatabaseDriver>) -> UINavigationController {
         let searchViewController = PVSearchViewController(gameLibrary: gameLibrary)
         let searchController = UISearchController(searchResultsController: searchViewController)
         searchViewController.searchController = searchController
@@ -26,11 +26,11 @@ public extension PVSearchViewController {
 }
 
 public final class PVSearchViewController: UICollectionViewController, GameLaunchingViewController {
-    private let gameLibrary: PVGameLibrary
+    private let gameLibrary: PVGameLibrary<RealmDatabaseDriver>
     fileprivate var searchController: UISearchController!
     private let disposeBag = DisposeBag()
 
-    init(gameLibrary: PVGameLibrary) {
+    init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>) {
         self.gameLibrary = gameLibrary
         let flowLayout = UICollectionViewFlowLayout()
         let width = tvOSCellUnit

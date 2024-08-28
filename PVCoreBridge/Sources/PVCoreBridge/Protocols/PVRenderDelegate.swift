@@ -6,6 +6,9 @@
 //
 
 // MARK: Delegate Protocols
+
+import Foundation
+
 @objc public protocol PVRenderDelegate {
     // Required methods
     func startRenderingOnAlternateThread()

@@ -8,14 +8,19 @@
 
 import Foundation
 
-#if canImport(UIKit)
+#if canImport(UIKit)  && !os(watchOS)
 import UIKit.UIAlert
 public typealias CoreActionAlertStyle = UIAlertAction.Style
 public let CoreActionAlertDefaultStyle: CoreActionAlertStyle = UIAlertAction.Style.destructive
-#elseif canImport(AppKit)
+#elseif canImport(AppKit.NSAlert)
 import AppKit.NSAlert
 public typealias CoreActionAlertStyle = NSAlert.Style
 public let CoreActionAlertDefaultStyle: CoreActionAlertStyle = NSAlert.Style.critical
+#elseif canImport(WatchKit)
+import WatchKit
+public typealias CoreActionAlertStyle = WKAlertActionStyle
+public let CoreActionAlertDefaultStyle: CoreActionAlertStyle = WKAlertActionStyle.destructive
+
 #endif
 public protocol CoreActions {
     var coreActions: [CoreAction]? { get }

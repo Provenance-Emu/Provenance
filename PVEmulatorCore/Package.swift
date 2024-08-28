@@ -70,11 +70,11 @@ let package = Package(
             ],
             swiftSettings: pvemulatorCoreSwiftFlags,
             linkerSettings: [
-				.linkedFramework("Metal"),
-				.linkedFramework("MetalKit"),
+                .linkedFramework("Metal", .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst])),
+				.linkedFramework("MetalKit", .when(platforms: [.iOS, .tvOS, .macOS, .macCatalyst])),
                 .linkedFramework("GameController", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
 				.linkedFramework("UIKit", .when(platforms: [.iOS, .tvOS, .macCatalyst])),
-                .linkedFramework("OpenGLES", .when(platforms: [.iOS, .tvOS, .watchOS])),
+                .linkedFramework("OpenGLES", .when(platforms: [.iOS, .tvOS])),
                 .linkedFramework("OpenGL", .when(platforms: [.macOS])),
 				.linkedFramework("AppKit", .when(platforms: [.macOS])),
                 .linkedFramework("CoreGraphics"),
@@ -88,7 +88,7 @@ let package = Package(
             dependencies: ["PVEmulatorCore"]
         )
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageModes: [.v5],
     cLanguageStandard: .gnu2x,
     cxxLanguageStandard: .gnucxx20
 )

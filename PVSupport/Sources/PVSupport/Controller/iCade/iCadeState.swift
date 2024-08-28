@@ -6,6 +6,8 @@
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
 
+#if canImport(UIKit) && canImport(GameController)
+
 @MainActor
 public struct iCadeControllerState: OptionSet, Hashable, @preconcurrency CustomStringConvertible, Sendable {
     public let rawValue: Int
@@ -100,3 +102,5 @@ public protocol iCadeEventDelegate: AnyObject, Sendable {
     func buttonDown(button: iCadeControllerState)
     func buttonUp(button: iCadeControllerState)
 }
+
+#endif

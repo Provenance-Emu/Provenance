@@ -8,7 +8,9 @@
 
 import Foundation
 import PVCoreBridge
+#if canImport(GameController)
 import GameController
+#endif
 import PVLogging
 import PVAudio
 import PVEmulatorCore
@@ -24,9 +26,11 @@ import libstella
 @objcMembers
 public final class PVStellaGameCore: PVEmulatorCore {
 
+#if canImport(GameController)
     @MainActor
     public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
-
+#endif
+    
     // MARK: Cheats
     @MainActor
     public let cheats: NSMutableArray = .init()

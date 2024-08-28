@@ -6,7 +6,7 @@
 //  Copyright (c) 2018 Joseph Mattiello. All rights reserved.
 //
 
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
 import UIKit
 import PVLogging
 

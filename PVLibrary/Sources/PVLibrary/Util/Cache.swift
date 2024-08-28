@@ -41,7 +41,7 @@ open class Cache<KeyType: Hashable & Sendable, ObjectType> {
     private let cache: NSCache<KeyWrapper<KeyType>, ObjectWrapper> = NSCache()
 
     public init(lowMemoryAware: Bool = true) {
-        #if !os(macOS)
+        #if !os(macOS) && !os(watchOS)
         guard lowMemoryAware else { return }
         NotificationCenter.default.addObserver(
             self,

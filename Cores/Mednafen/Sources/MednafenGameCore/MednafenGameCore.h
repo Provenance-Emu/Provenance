@@ -27,8 +27,11 @@
 
 @import Foundation;
 @import PVEmulatorCore;
+@import MednafenGameCoreC;
+@import MednafenGameCoreSwift;
 
-#import <MednafenGameCore/MednafenGameCore-Swift.h>
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
 
 //#pragma clang diagnostic push
 //#pragma clang diagnostic ignored "-Wall"
@@ -86,7 +89,7 @@ static int SSMap[] = { 4, 5, 6, 7, 10, 8, 9, 2, 1, 0, 15, 3, 11 };
 static const int GenesisMap[] = { 5, 7, 11, 10, 0 ,1, 2, 3, 4, 6, 8, 9};
 //
 __attribute__((visibility("default")))
-@interface MednafenGameCore (ObjC) //: PVEmulatorCore
+@interface MednafenGameCore (ObjCCoreBridge) <ObjCCoreBridge>
 //
 //@property (nonatomic) BOOL isStartPressed;
 //@property (nonatomic) BOOL isSelectPressed;
@@ -128,95 +131,97 @@ __attribute__((visibility("default")))
 //-(const void *)getGame;
 //
 @end
-//
-//@interface MednafenGameCore (Cheats)
-//- (NSArray<NSString*> *)getCheatCodeTypes;
-//- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
-//- (BOOL)getCheatSupport;
-//@end
-//
-//@interface MednafenGameCore (Controls)
-//
-//- (void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player;
-//- (void)didReleaseLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player;
-//- (NSInteger)LynxControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//
-//#pragma mark SNES
-//- (void)didPushSNESButton:(enum PVSNESButton)button forPlayer:(NSInteger)player;
-//- (void)didReleaseSNESButton:(enum PVSNESButton)button forPlayer:(NSInteger)player;
-//
-//#pragma mark NES
-//- (void)didPushNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player;
-//- (void)didReleaseNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player;
-//
-//#pragma mark GB / GBC
-//- (void)didPushGBButton:(enum PVGBButton)button forPlayer:(NSInteger)player;
-//- (void)didReleaseGBButton:(enum PVGBButton)button forPlayer:(NSInteger)player;
-//
-//#pragma mark GBA
-//- (void)didPushGBAButton:(enum PVGBAButton)button forPlayer:(NSInteger)player;
-//- (void)didReleaseGBAButton:(enum PVGBAButton)button forPlayer:(NSInteger)player;
-//
-//#pragma mark Sega
-//- (void)didPushSegaButton:(enum PVGenesisButton)button forPlayer:(NSInteger)player;
-//- (void)didReleaseSegaButton:(enum PVGenesisButton)button forPlayer:(NSInteger)player;
-//
-//#pragma mark Neo Geo
-//- (void)didPushNGPButton:(PVNGPButton)button forPlayer:(NSInteger)player;
-//- (void)didReleaseNGPButton:(PVNGPButton)button forPlayer:(NSInteger)player;
-//
-//#pragma mark PC-*
-//#pragma mark PCE aka TurboGFX-16 & SuperGFX
-//- (void)didPushPCEButton:(PVPCEButton)button forPlayer:(NSInteger)player;
-//- (void)didReleasePCEButton:(PVPCEButton)button forPlayer:(NSInteger)player;
-//
-//#pragma mark PCE-CD
-//- (void)didPushPCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player;
-//- (void)didReleasePCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player;
-//#pragma mark PCFX
-//- (void)didPushPCFXButton:(PVPCFXButton)button forPlayer:(NSInteger)player;
-//- (void)didReleasePCFXButton:(PVPCFXButton)button forPlayer:(NSInteger)player;
-//#pragma mark SS Sega Saturn
-//- (void)didPushSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player;
-//-(void)didReleaseSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player;
-//
-//#pragma mark PSX
-//- (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
-//
-//- (void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
-//- (void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
-//#pragma mark Virtual Boy
-//- (void)didPushVBButton:(PVVBButton)button forPlayer:(NSInteger)player;
-//- (void)didReleaseVBButton:(PVVBButton)button forPlayer:(NSInteger)player;
-//#pragma mark WonderSwan
-//- (void)didPushWSButton:(PVWSButton)button forPlayer:(NSInteger)player;
-//- (void)didReleaseWSButton:(PVWSButton)button forPlayer:(NSInteger)player;
-//
-//- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player withAnalogMode:(bool)analogMode;
-//#pragma mark SS Buttons
-//- (NSInteger)SSValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//#pragma mark GB Buttons
-//- (NSInteger)GBValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//#pragma mark GBA Buttons
-//- (NSInteger)GBAValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//
-//#pragma mark SNES Buttons
-//- (NSInteger)SNESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//#pragma mark NES Buttons
-//- (NSInteger)NESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//#pragma mark NEOGEOPOCKET Buttons
-//- (NSInteger)NeoGeoValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//#pragma mark PCE Buttons
-//- (NSInteger)PCEValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//#pragma mark PSX Buttons
-//- (float)PSXAnalogControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//- (NSInteger)PSXcontrollerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller withAnalogMode:(bool)analogMode;
-//#pragma mark VirtualBoy Buttons
-//- (NSInteger)VirtualBoyControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//#pragma mark Wonderswan Buttons
-//- (NSInteger)WonderSwanControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
-//
-////- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;
-////- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player;
-////- (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
-//@end
+
+@interface MednafenGameCore (Cheats)
+- (NSArray<NSString*> *)getCheatCodeTypes;
+- (BOOL)setCheat:(NSString *)code setType:(NSString *)type setCodeType:(NSString *)codeType setIndex:(UInt8)cheatIndex setEnabled:(BOOL)enabled error:(NSError**)error;
+- (BOOL)getCheatSupport;
+@end
+
+@interface MednafenGameCore (Controls)
+
+- (void)didPushLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseLynxButton:(PVLynxButton)button forPlayer:(NSInteger)player;
+- (NSInteger)LynxControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+
+#pragma mark SNES
+- (void)didPushSNESButton:(enum PVSNESButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseSNESButton:(enum PVSNESButton)button forPlayer:(NSInteger)player;
+
+#pragma mark NES
+- (void)didPushNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseNESButton:(enum PVNESButton)button forPlayer:(NSInteger)player;
+
+#pragma mark GB / GBC
+- (void)didPushGBButton:(enum PVGBButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseGBButton:(enum PVGBButton)button forPlayer:(NSInteger)player;
+
+#pragma mark GBA
+- (void)didPushGBAButton:(enum PVGBAButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseGBAButton:(enum PVGBAButton)button forPlayer:(NSInteger)player;
+
+#pragma mark Sega
+- (void)didPushSegaButton:(enum PVGenesisButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseSegaButton:(enum PVGenesisButton)button forPlayer:(NSInteger)player;
+
+#pragma mark Neo Geo
+- (void)didPushNGPButton:(PVNGPButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseNGPButton:(PVNGPButton)button forPlayer:(NSInteger)player;
+
+#pragma mark PC-*
+#pragma mark PCE aka TurboGFX-16 & SuperGFX
+- (void)didPushPCEButton:(PVPCEButton)button forPlayer:(NSInteger)player;
+- (void)didReleasePCEButton:(PVPCEButton)button forPlayer:(NSInteger)player;
+
+#pragma mark PCE-CD
+- (void)didPushPCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player;
+- (void)didReleasePCECDButton:(PVPCECDButton)button forPlayer:(NSInteger)player;
+#pragma mark PCFX
+- (void)didPushPCFXButton:(PVPCFXButton)button forPlayer:(NSInteger)player;
+- (void)didReleasePCFXButton:(PVPCFXButton)button forPlayer:(NSInteger)player;
+#pragma mark SS Sega Saturn
+- (void)didPushSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player;
+-(void)didReleaseSSButton:(enum PVSaturnButton)button forPlayer:(NSInteger)player;
+
+#pragma mark PSX
+- (void)didPushPSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
+
+- (void)didReleasePSXButton:(PVPSXButton)button forPlayer:(NSInteger)player;
+- (void)didMovePSXJoystickDirection:(PVPSXButton)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+#pragma mark Virtual Boy
+- (void)didPushVBButton:(PVVBButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseVBButton:(PVVBButton)button forPlayer:(NSInteger)player;
+#pragma mark WonderSwan
+- (void)didPushWSButton:(PVWSButton)button forPlayer:(NSInteger)player;
+- (void)didReleaseWSButton:(PVWSButton)button forPlayer:(NSInteger)player;
+
+- (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player withAnalogMode:(bool)analogMode;
+#pragma mark SS Buttons
+- (NSInteger)SSValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+#pragma mark GB Buttons
+- (NSInteger)GBValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+#pragma mark GBA Buttons
+- (NSInteger)GBAValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+
+#pragma mark SNES Buttons
+- (NSInteger)SNESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+#pragma mark NES Buttons
+- (NSInteger)NESValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+#pragma mark NEOGEOPOCKET Buttons
+- (NSInteger)NeoGeoValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+#pragma mark PCE Buttons
+- (NSInteger)PCEValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+#pragma mark PSX Buttons
+- (float)PSXAnalogControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+- (NSInteger)PSXcontrollerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller withAnalogMode:(bool)analogMode;
+#pragma mark VirtualBoy Buttons
+- (NSInteger)VirtualBoyControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+#pragma mark Wonderswan Buttons
+- (NSInteger)WonderSwanControllerValueForButtonID:(unsigned)buttonID forController:(GCController*)controller;
+
+//- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player;
+//- (void)didRelease:(NSInteger)button forPlayer:(NSInteger)player;
+//- (void)didMoveJoystick:(NSInteger)button withValue:(CGFloat)value forPlayer:(NSInteger)player;
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)

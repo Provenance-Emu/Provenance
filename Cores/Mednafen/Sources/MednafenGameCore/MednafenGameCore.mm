@@ -28,7 +28,7 @@
 
 #import "MednafenGameCore.h"
 
-#import <MednafenGameCore/MednafenGameCore-Swift.h>
+@import MednafenGameCoreSwift;
 @import MednafenGameCoreC;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
@@ -48,8 +48,9 @@
 @import PVEmulatorCore;
 @import PVLoggingObjC;
 @import PVObjCUtils;
+@import PVAudio;
 
-//#import <mednafen/mempatcher.h>
+//#import <mednafen/mednafen-driver.h.h>
 //#import <PVMednafen/PVMednafen-Swift.h>
 //#import <PVMednafenGameCoreC/PVMednafenGameCoreC.h>
 
@@ -69,12 +70,12 @@ static Mednafen::MDFNGI *game;
 static Mednafen::MDFN_Surface *backBufferSurf;
 static Mednafen::MDFN_Surface *frontBufferSurf;
 
-namespace MDFN_IEN_VB
-{
-extern void VIP_SetParallaxDisable(bool disabled);
-extern void VIP_SetAnaglyphColors(uint32 lcolor, uint32 rcolor);
-int mednafenCurrentDisplayMode = 1;
-}
+//namespace MDFN_IEN_VB
+//{
+//extern void VIP_SetParallaxDisable(bool disabled);
+//extern void VIP_SetAnaglyphColors(uint32 lcolor, uint32 rcolor);
+//int mednafenCurrentDisplayMode = 1;
+//}
 
 
 @interface MednafenGameCore () <PVPSXSystemResponderClient, PVWonderSwanSystemResponderClient, PVVirtualBoySystemResponderClient, PVPCESystemResponderClient, PVPCFXSystemResponderClient, PVPCECDSystemResponderClient, PVLynxSystemResponderClient, PVNeoGeoPocketSystemResponderClient, PVSNESSystemResponderClient, PVNESSystemResponderClient, PVGBSystemResponderClient, PVGBASystemResponderClient, PVSaturnSystemResponderClient>
@@ -82,34 +83,37 @@ int mednafenCurrentDisplayMode = 1;
     OEIntSize mednafenCoreAspect;
     
     Mednafen::EmulateSpecStruct spec;
+    uint32_t *inputBuffer[13];
 }
 
 @end
 
 static __weak MednafenGameCore *_current;
 
-@implementation MednafenGameCore
+@implementation MednafenGameCore (ObjCCoreBridge)
+
 
 -(const void *)getGame
 {
     return (const void *)game;
 }
 
--(uint32_t*) getInputBuffer:(int)bufferId
-{
-    return inputBuffer[bufferId];
-}
+//-(uint32_t*) getInputBuffer:(int)bufferId
+//{
+//    return inputBuffer[bufferId];
+//}
 
 static void mednafen_init(MednafenGameCore* current)
 {
     NSString* batterySavesDirectory = current.batterySavesPath;
     NSString* biosPath = current.BIOSPath;
     
-    Mednafen::MDFNI_InitializeModules();
+#warning Fix me
+//    Mednafen::MDFNI_InitializeModules();
     
     std::vector<Mednafen::MDFNSetting> settings;
-    
-    MDFNI_Initialize([biosPath UTF8String], settings);
+#warning Fix me
+//    MDFNI_Initialize([biosPath UTF8String], settings);
     
     // Set bios/system file and memcard save paths
     Mednafen::MDFNI_SetSetting("pce.cdbios", [[[biosPath stringByAppendingPathComponent:@"syscard3"] stringByAppendingPathExtension:@"pce"] UTF8String]); // PCE CD BIOS
@@ -183,11 +187,11 @@ static void mednafen_init(MednafenGameCore* current)
     BOOL snes_faust_spex = current.mednafen_snesFast_spex;
     Mednafen::MDFNI_SetSettingB("snes_faust.spex", snes_faust_spex);
     // Enable 1-frame speculative execution for video output.
-    // Hack to reduce input->output video latency by 1 frame. Enabling will increase CPU usage,
+    // Hack to reduce input.output video latency by 1 frame. Enabling will increase CPU usage,
     // and may cause video glitches(such as "jerkiness") in some oddball games, but most commercially-released games should be fine.
     // Default 0
     
-    //	MDFNI_SetSetting("snes_faust.special", "nn2x");
+    //	MDFNI_SetSetting("snes_faust->special", "nn2x");
     
     // MARK: Sega Saturn Settings
     // https://mednafen.github.io/documentation/ss.html
@@ -281,7 +285,7 @@ static void mednafen_init(MednafenGameCore* current)
      */
     // Analog/Digital Toggle
     uint64 amct =
-    ((1 << PSXMap[PVPSXButtonL1]) | (1 << PSXMap[PVPSXButtonR1]) | (1 << PSXMap[PVPSXButtonL2]) | (1 << PSXMap[PVPSXButtonR2]) | (1 << PSXMap[PVPSXButtonCircle])) ||
+    ((1 << PSXMap[PVPSXButtonL1]) | (1 << PSXMap[PVPSXButtonR1]) | (1 << PSXMap[PVPSXButtonL2]) | (1 << PSXMap[PVPSXButtonR2]) | (1 << PSXMap[PVPSXButtonCircle])) |
     ((1 << PSXMap[PVPSXButtonL1]) | (1 << PSXMap[PVPSXButtonR1]) | (1 << PSXMap[PVPSXButtonCircle]));
     Mednafen::MDFNI_SetSettingUI("psx.input.analog_mode_ct.compare", amct);
     
@@ -328,7 +332,7 @@ static void mednafen_init(MednafenGameCore* current)
     if((self = [super init])) {
         _current = self;
         
-        multiTapPlayerCount = 2;
+        self.multiTapPlayerCount = 2;
         
         for(unsigned i = 0; i < 13; i++) {
             inputBuffer[i] = (uint32_t *) calloc(9, sizeof(uint32_t));
@@ -471,9 +475,9 @@ static void mednafen_init(MednafenGameCore* current)
 }
 
 - (void)dealloc {
-    for(unsigned i = 0; i < 13; i++) {
-        free(inputBuffer[i]);
-    }
+//    for(unsigned i = 0; i < 13; i++) {
+//        free(inputBuffer[i]);
+//    }
     
     
     if (_current == self) {
@@ -489,13 +493,15 @@ static void emulation_run(BOOL skipFrame) {
     GET_CURRENT_OR_RETURN();
     
     static int16_t sound_buf[0x10000];
-    int32 rects[game->fb_height];//int32 *rects = new int32[game->fb_height]; //(int32 *)malloc(sizeof(int32) * game->fb_height);
+//    int32 rects[game->fb_height];
+    int32 *rects = new int32[game->fb_height];
+//    (int32 *)malloc(sizeof(int32) * game->fb_height);
     memset(rects, 0, game->fb_height*sizeof(int32));
     rects[0] = ~0;
     
     current->spec = {0};
     current->spec.surface = backBufferSurf;
-    current->spec.SoundRate = current->sampleRate;
+    current->spec.SoundRate = current.sampleRate;
     current->spec.SoundBuf = sound_buf;
     current->spec.LineWidths = rects;
     current->spec.SoundBufMaxSize = sizeof(sound_buf) / 2;
@@ -506,22 +512,22 @@ static void emulation_run(BOOL skipFrame) {
     
     MDFNI_Emulate(&current->spec);
     
-    current->mednafenCoreTiming = current->masterClock / current->spec.MasterCycles;
+    current.mednafenCoreTiming = current.masterClock / current->spec.MasterCycles;
     
     // Fix for game stutter. mednafenCoreTiming flutters on init before settling so
-    // now we reset the game speed each frame to make sure current->gameInterval
+    // now we reset the game speed each frame to make sure current.gameInterval
     // is up to date while respecting the current game speed setting
     [current setGameSpeed:[current gameSpeed]];
     
-    current->videoOffsetX = current->spec.DisplayRect.x;
-    current->videoOffsetY = current->spec.DisplayRect.y;
-    if(game->multires || current->_systemType == MednaSystemPSX) {
-        current->videoWidth = rects[current->spec.DisplayRect.y];
+    current.videoOffsetX = current->spec.DisplayRect.x;
+    current.videoOffsetY = current->spec.DisplayRect.y;
+    if(game->multires || current.systemType == MednaSystemPSX) {
+        current.videoWidth = rects[current->spec.DisplayRect.y];
     }
     else {
-        current->videoWidth = current->spec.DisplayRect.w ?: rects[current->spec.DisplayRect.y];
+        current.videoWidth = current->spec.DisplayRect.w ?: rects[current->spec.DisplayRect.y];
     }
-    current->videoHeight  = current->spec.DisplayRect.h;
+    current.videoHeight  = current->spec.DisplayRect.h;
     
     update_audio_batch(current->spec.SoundBuf, current->spec.SoundBufSize);
 }
@@ -534,130 +540,130 @@ static void emulation_run(BOOL skipFrame) {
     {
         self.systemType = MednaSystemLynx;
         
-        mednafenCoreModule = @"lynx";
+        self.mednafenCoreModule = @"lynx";
         //mednafenCoreAspect = OEIntSizeMake(80, 51);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 48000;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 48000;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.nes"])
     {
         self.systemType = MednaSystemNES;
         
-        mednafenCoreModule = @"nes";
+        self.mednafenCoreModule = @"nes";
         //mednafenCoreAspect = OEIntSizeMake(4, 3);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 48000;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 48000;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.snes"])
     {
         self.systemType = MednaSystemSNES;
         
-        mednafenCoreModule = self.mednafen_snesFast ? @"snes_faust" : @"snes";
+        self.mednafenCoreModule = self.mednafen_snesFast ? @"snes_faust" : @"snes";
         
         //mednafenCoreAspect = OEIntSizeMake(4, 3);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 48000;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 48000;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.gb"] || [[self systemIdentifier] isEqualToString:@"com.provenance.gbc"])
     {
         self.systemType = MednaSystemGB;
         
-        mednafenCoreModule = @"gb";
+        self.mednafenCoreModule = @"gb";
         //mednafenCoreAspect = OEIntSizeMake(10, 9);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 48000;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 48000;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.gba"])
     {
         self.systemType = MednaSystemGBA;
         
-        mednafenCoreModule = @"gba";
+        self.mednafenCoreModule = @"gba";
         //mednafenCoreAspect = OEIntSizeMake(3, 2);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 44100;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 44100;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.genesis"]) // Genesis aka Megaddrive
     {
         self.systemType = MednaSystemMD;
         
-        mednafenCoreModule = @"md";
+        self.mednafenCoreModule = @"md";
         //mednafenCoreAspect = OEIntSizeMake(4, 3);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 48000;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 48000;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.mastersystem"])
     {
         self.systemType = MednaSystemSMS;
         
-        mednafenCoreModule = @"sms";
+        self.mednafenCoreModule = @"sms";
         //mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 192);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 48000;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 48000;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.ngp"] || [[self systemIdentifier] isEqualToString:@"com.provenance.ngpc"])
     {
         self.systemType = MednaSystemNeoGeo;
         
-        mednafenCoreModule = @"ngp";
+        self.mednafenCoreModule = @"ngp";
         //mednafenCoreAspect = OEIntSizeMake(20, 19);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 44100;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 44100;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.pce"] || [[self systemIdentifier] isEqualToString:@"com.provenance.pcecd"] || [[self systemIdentifier] isEqualToString:@"com.provenance.sgfx"])
     {
         self.systemType = MednaSystemPCE;
         
         
-        mednafenCoreModule = self.mednafen_pceFast ? @"pce_fast" : @"pce";
+        self.mednafenCoreModule = self.mednafen_pceFast ? @"pce_fast" : @"pce";
         //mednafenCoreAspect = OEIntSizeMake(256 * (8.0/7.0), 240);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 48000;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 48000;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.pcfx"])
     {
         self.systemType = MednaSystemPCFX;
         
-        mednafenCoreModule = @"pcfx";
+        self.mednafenCoreModule = @"pcfx";
         //mednafenCoreAspect = OEIntSizeMake(4, 3);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 48000;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 48000;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.saturn"])
     {
         self.systemType = MednaSystemSS;
         
-        mednafenCoreModule = @"ss";
+        self.mednafenCoreModule = @"ss";
         //mednafenCoreAspect = OEIntSizeMake(4, 3);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 44100;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 44100;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.psx"])
     {
         self.systemType = MednaSystemPSX;
         
-        mednafenCoreModule = @"psx";
+        self.mednafenCoreModule = @"psx";
         // Note: OpenEmu sets this to 4:3, but it's demonstrably wrong. Tested and looked into it myself… the other emulators got this wrong, 3:2 was close, but it's actually 10:7 - Sev
         //mednafenCoreAspect = OEIntSizeMake(10, 7);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 44100;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 44100;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.vb"])
     {
         self.systemType = MednaSystemVirtualBoy;
         
-        mednafenCoreModule = @"vb";
+        self.mednafenCoreModule = @"vb";
         //mednafenCoreAspect = OEIntSizeMake(12, 7);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 48000;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 48000;
     }
     else if([[self systemIdentifier] isEqualToString:@"com.provenance.ws"] || [[self systemIdentifier] isEqualToString:@"com.provenance.wsc"])
     {
         self.systemType = MednaSystemWonderSwan;
         
-        mednafenCoreModule = @"wswan";
+        self.mednafenCoreModule = @"wswan";
         //mednafenCoreAspect = OEIntSizeMake(14, 9);
-        //mednafenCoreAspect = OEIntSizeMake(game->nominal_width, game->nominal_height);
-        sampleRate         = 48000;
+        //mednafenCoreAspect = OEIntSizeMake(game.nominal_width, game.nominal_height);
+        self.sampleRate         = 48000;
     }
     else
     {
@@ -669,7 +675,7 @@ static void emulation_run(BOOL skipFrame) {
     mednafen_init(_current);
     Mednafen::NativeVFS fs = Mednafen::NativeVFS();
     
-    game = Mednafen::MDFNI_LoadGame([mednafenCoreModule UTF8String], &fs, [path UTF8String]);
+    game = Mednafen::MDFNI_LoadGame([self.mednafenCoreModule UTF8String], &fs, [path UTF8String]);
     assert(game);
     
     if(!game) {
@@ -680,7 +686,7 @@ static void emulation_run(BOOL skipFrame) {
                 NSLocalizedRecoverySuggestionErrorKey: @"Check the file isn't corrupt and supported Mednafen ROM format."
             };
             
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+            NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                     code:PVEmulatorCoreErrorCodeCouldNotLoadRom
                                                 userInfo:userInfo];
             
@@ -698,7 +704,7 @@ static void emulation_run(BOOL skipFrame) {
     backBufferSurf = new Mednafen::MDFN_Surface(NULL, game->fb_width, game->fb_height, game->fb_width, pix_fmt);
     frontBufferSurf = new Mednafen::MDFN_Surface(NULL, game->fb_width, game->fb_height, game->fb_width, pix_fmt);
     
-    masterClock = game->MasterClock >> 32;
+    self.masterClock = game->MasterClock >> 32;
     BOOL multiDiscGame = NO;
     
     if (self.systemType == MednaSystemPCE)
@@ -734,7 +740,7 @@ static void emulation_run(BOOL skipFrame) {
     }
     else if (self.systemType == MednaSystemPSX)
     {
-        for(unsigned i = 0; i < multiTapPlayerCount; i++) {
+        for(unsigned i = 0; i < self.multiTapPlayerCount; i++) {
             // Center the Dual Analog Sticks
             uint8 *buf = (uint8 *)inputBuffer[i];
             Mednafen::MDFN_en16lsb(&buf[3], (uint16) 32767);
@@ -760,14 +766,14 @@ static void emulation_run(BOOL skipFrame) {
         // Set multitap configuration if detected
         //    if (multiTapGames[[current ROMSerial]])
         //    {
-        //        current->multiTapPlayerCount = [[multiTapGames objectForKey:[current ROMSerial]] intValue];
+        //        current.multiTapPlayerCount = [[multiTapGames objectForKey:[current ROMSerial]] intValue];
         //
         //        if([multiTap5PlayerPort2 containsObject:[current ROMSerial]])
         //            MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
         //        else
         //        {
         //            MDFNI_SetSetting("psx.input.pport1.multitap", "1"); // Enable multitap on PSX port 1
-        //            if(current->multiTapPlayerCount > 5)
+        //            if(current.multiTapPlayerCount > 5)
         //                MDFNI_SetSetting("psx.input.pport2.multitap", "1"); // Enable multitap on PSX port 2
         //        }
         //    }
@@ -789,7 +795,7 @@ static void emulation_run(BOOL skipFrame) {
         // PSX: Check if SBI file is required
         if ([MednafenGameCore sbiRequiredGames][self.romSerial])
         {
-            _isSBIRequired = YES;
+            self._isSBIRequired = YES;
         }
         
         // Handle required SBI files for games
@@ -836,8 +842,8 @@ static void emulation_run(BOOL skipFrame) {
     } else {
         game->SetInput(0, "gamepad", (uint8_t *)inputBuffer[0]);
         game->SetInput(1, "gamepad", (uint8_t *)inputBuffer[1]);
-//        game->SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
-//        game->SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
+//        game.SetInput(2, "gamepad", (uint8_t *)inputBuffer[2]);
+//        game.SetInput(3, "gamepad", (uint8_t *)inputBuffer[3]);
     }
     
     if (multiDiscGame && ![path.pathExtension.lowercaseString isEqualToString:@"m3u"]) {
@@ -856,7 +862,7 @@ static void emulation_run(BOOL skipFrame) {
                 NSLocalizedRecoverySuggestionErrorKey: message
             };
             
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+            NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                     code:PVEmulatorCoreErrorCodeMissingM3U
                                                 userInfo:userInfo];
             
@@ -898,15 +904,15 @@ static void emulation_run(BOOL skipFrame) {
     return YES;
 }
 
--(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc {
-    Mednafen::MDFNI_SetMedia(0, open ? 0 : 2, (uint32) disc, 0);
-}
+//-(void)setMedia:(BOOL)open forDisc:(NSUInteger)disc {
+//    Mednafen::MDFNI_SetMedia(0, open ? 0 : 2, (uint32) disc, 0);
+//}
 
 -(NSUInteger)maxNumberPlayers {
     NSUInteger maxPlayers = 2;
     switch (self.systemType) {
         case MednaSystemPSX:
-            maxPlayers = multiTapPlayerCount;
+            maxPlayers = self.multiTapPlayerCount;
             break;
         case MednaSystemPCE:
             maxPlayers = 5;
@@ -1070,13 +1076,13 @@ static void emulation_run(BOOL skipFrame) {
 }
 
 - (NSTimeInterval)frameInterval {
-    return mednafenCoreTiming ?: 60;
+    return self.mednafenCoreTiming ?: 60;
 }
 
 # pragma mark - Video
 
 - (CGRect)screenRect {
-    return CGRectMake(videoOffsetX, videoOffsetY, videoWidth, videoHeight);
+    return CGRectMake(self.videoOffsetX, self.videoOffsetY, self.videoWidth, self.videoHeight);
 }
 
 - (CGSize)bufferSize {
@@ -1131,6 +1137,17 @@ static void emulation_run(BOOL skipFrame) {
     frontBufferSurf = tempSurf;
 }
 
+- (void)loadStateFromFileAtPathWithFileName:(NSString * _Nonnull)fileName completionHandler:(void (^ _Nonnull)(NSError * _Nullable))completionHandler { 
+#warning Finish me
+}
+
+
+- (void)saveStateToFileAtPathWithFileName:(NSString * _Nonnull)fileName completionHandler:(void (^ _Nonnull)(NSError * _Nullable))completionHandler { 
+#warning Finish me
+
+}
+
+
 - (BOOL)rendersToOpenGL {
     return self.video_opengl;
 }
@@ -1141,13 +1158,13 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
 {
     GET_CURRENT_OR_RETURN(frames);
     
-    [[current ringBufferAtIndex:0] write:data maxLength:frames * [current channelCount] * 2];
+    [[current ringBufferAtIndex:0] writeBuffer:data maxLength:frames * [current channelCount] * 2];
     return frames;
 }
 
 - (double)audioSampleRate
 {
-    return sampleRate ? sampleRate : 48000;
+    return self.sampleRate ? self.sampleRate : 48000;
 }
 
 - (NSUInteger)channelCount
@@ -1169,7 +1186,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                     NSLocalizedRecoverySuggestionErrorKey: @""
                 };
                 
-                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                         code:PVEmulatorCoreErrorCodeCouldNotSaveState
                                                     userInfo:userInfo];
                 
@@ -1185,7 +1202,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 NSLocalizedRecoverySuggestionErrorKey: @""
             };
             
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+            NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                     code:PVEmulatorCoreErrorCodeCouldNotSaveState
                                                 userInfo:userInfo];
             
@@ -1206,7 +1223,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                     NSLocalizedRecoverySuggestionErrorKey: @""
                 };
                 
-                NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+                NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                         code:PVEmulatorCoreErrorCodeCouldNotLoadState
                                                     userInfo:userInfo];
                 
@@ -1222,7 +1239,7 @@ static size_t update_audio_batch(const int16_t *data, size_t frames)
                 NSLocalizedRecoverySuggestionErrorKey: @""
             };
             
-            NSError *newError = [NSError errorWithDomain:PVEmulatorCoreErrorDomain
+            NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
                                                     code:PVEmulatorCoreErrorCodeCouldNotLoadState
                                                 userInfo:userInfo];
             

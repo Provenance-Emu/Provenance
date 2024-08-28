@@ -27,7 +27,7 @@ public struct SideMenuView: SwiftUI.View {
 	var viewModel: PVRootViewModel
 
 	weak var rootDelegate: PVRootDelegate!
-    var gameLibrary: PVGameLibrary
+    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>
 
     @ObservedResults(
         PVSystem.self,
@@ -36,14 +36,14 @@ public struct SideMenuView: SwiftUI.View {
 
     @ObservedObject var searchBar: SearchBar = SearchBar()
 
-    public init(gameLibrary: PVGameLibrary, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
+    public init(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) {
         self.gameLibrary = gameLibrary
         self.viewModel = viewModel
         self.delegate = delegate
         self.rootDelegate = rootDelegate
     }
 
-    public static func instantiate(gameLibrary: PVGameLibrary, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
+    public static func instantiate(gameLibrary: PVGameLibrary<RealmDatabaseDriver>, viewModel: PVRootViewModel, delegate: PVMenuDelegate, rootDelegate: PVRootDelegate) -> UIViewController {
         let view = SideMenuView(gameLibrary: gameLibrary, viewModel: viewModel, delegate: delegate, rootDelegate: rootDelegate)
         let hostingView = UIHostingController(rootView: view)
         let nav = UINavigationController(rootViewController: hostingView)

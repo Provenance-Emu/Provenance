@@ -31,7 +31,9 @@
 @import PVStellaCPP;
 @import PVStellaSwift;
 @import PVLoggingObjC;
+#if !TARGET_OS_WATCH
 @import GameController;
+#endif
 @import PVCoreBridge;
 @import PVObjCUtils;
 @import PVEmulatorCore;
@@ -40,12 +42,12 @@
 
 #import "PVStellaGameCore.h"
 
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX && !TARGET_OS_WATCH
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/EAGL.h>
-#else
+#elseif !TARGET_OS_WATCH
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/GL3.h>
 #import <GLUT/GLUT.h>
@@ -270,16 +272,20 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (void)executeFrame {
+#if !TARGET_OS_WATCH
     if (self.controller1 || self.controller2) {
         [self pollControllers];
     }
+#endif
     retro_run();
 }
 
 - (void)executeFrameSkippingFrame: (BOOL) skip {
+#if !TARGET_OS_WATCH
     if (!skip && (self.controller1 || self.controller2)) {
         [self pollControllers];
     }
+#endif
     retro_run();
 }
 
@@ -365,6 +371,7 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 #pragma mark - Input
+#if !TARGET_OS_WATCH
 
 - (void)pollControllers {
     for (NSInteger playerIndex = 0; playerIndex < 2; playerIndex++) {
@@ -458,6 +465,7 @@ static void writeSaveFile(const char* path, int type) {
 - (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player {
     _pad[player][A2600EmulatorValues[button]] = 0;
 }
+#endif
 
 #pragma mark - Video
 - (const void *)videoBuffer
@@ -486,6 +494,8 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 #pragma mark - Video
+#if !TARGET_OS_WATCH
+
 - (GLenum)pixelFormat
 {
     return STELLA_PIXEL_FORMAT;
@@ -500,6 +510,7 @@ static void writeSaveFile(const char* path, int type) {
 {
     return STELLA_INTERNAL_FORMAT;
 }
+#endif
 
 #pragma mark - Audio
 - (double)audioSampleRate {

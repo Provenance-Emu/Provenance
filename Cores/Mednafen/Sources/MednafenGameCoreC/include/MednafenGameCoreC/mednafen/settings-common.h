@@ -1,0 +1,1 @@
+../../../../mednafen/mednafen/src/settings-common.h

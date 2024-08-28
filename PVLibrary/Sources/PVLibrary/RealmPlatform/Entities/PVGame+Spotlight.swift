@@ -9,7 +9,10 @@
 import Foundation
 import RealmSwift
 
+#if canImport(CoreSpotlight)
 import CoreSpotlight
+#endif
+
 import CoreServices
 // import UIKit
 

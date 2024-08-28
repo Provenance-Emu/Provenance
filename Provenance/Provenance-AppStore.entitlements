@@ -9,8 +9,6 @@
 		<string>applinks:provenance-emu.com</string>
 		<string>applinks:provenance.app</string>
 	</array>
-	<key>com.apple.developer.devicecheck.appattest-environment</key>
-	<string>development</string>
 	<key>com.apple.developer.driverkit.communicates-with-drivers</key>
 	<true/>
 	<key>com.apple.developer.group-session</key>
@@ -24,22 +22,14 @@
 		<string>CloudDocuments</string>
 		<string>CloudKit</string>
 	</array>
-	<key>com.apple.developer.journal.allow</key>
-	<array>
-		<string>suggestions</string>
-	</array>
 	<key>com.apple.developer.kernel.extended-virtual-addressing</key>
 	<true/>
 	<key>com.apple.developer.kernel.increased-debugging-memory-limit</key>
-	<true/>
-	<key>com.apple.developer.kernel.increased-memory-limit</key>
 	<true/>
 	<key>com.apple.developer.nfc.readersession.formats</key>
 	<array>
 		<string>TAG</string>
 	</array>
-	<key>com.apple.developer.siri</key>
-	<true/>
 	<key>com.apple.developer.sustained-execution</key>
 	<true/>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>

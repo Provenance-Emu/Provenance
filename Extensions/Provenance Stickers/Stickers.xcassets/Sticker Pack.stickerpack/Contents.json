@@ -1,0 +1,47 @@
+{
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "grid-size" : "regular"
+  },
+  "stickers" : [
+    {
+      "filename" : "Icon-512.sticker"
+    },
+    {
+      "filename" : "ColorCartridge.sticker"
+    },
+    {
+      "filename" : "Stella.sticker"
+    },
+    {
+      "filename" : "AppIcon 1.sticker"
+    },
+    {
+      "filename" : "tic80.sticker"
+    },
+    {
+      "filename" : "ppsspp.sticker"
+    },
+    {
+      "filename" : "mupen64plus.sticker"
+    },
+    {
+      "filename" : "iconfile.sticker"
+    },
+    {
+      "filename" : "gb-icon-256.sticker"
+    },
+    {
+      "filename" : "AppIcon512x512.sticker"
+    },
+    {
+      "filename" : "sgb-icon-256.sticker"
+    },
+    {
+      "filename" : "tv.sticker"
+    }
+  ]
+}

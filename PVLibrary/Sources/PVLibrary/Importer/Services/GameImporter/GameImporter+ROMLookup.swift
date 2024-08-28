@@ -255,7 +255,7 @@ public extension GameImporter {
                     game.originalArtworkFile = file
                 } catch { ELOG("\(error.localizedDescription)") }
             }
-#else
+#elseif !os(watchOS)
             if let artwork = UIImage(data: data) {
                 do {
                     let localURL = try PVMediaCache.writeImage(toDisk: artwork, withKey: url)

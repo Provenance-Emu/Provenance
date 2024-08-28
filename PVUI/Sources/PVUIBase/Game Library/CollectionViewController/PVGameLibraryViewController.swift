@@ -52,7 +52,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
     
     let disposeBag = DisposeBag()
     public var updatesController: PVGameLibraryUpdatesController!
-    public var gameLibrary: PVGameLibrary!
+    public var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
     public var gameImporter: GameImporter!
     public var filePathsToImport = [URL]()
     

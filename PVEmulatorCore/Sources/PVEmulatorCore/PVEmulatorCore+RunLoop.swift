@@ -67,7 +67,7 @@ import PVLogging
             return
         }
 
-        #if !os(tvOS) && !os(macOS)
+        #if !os(tvOS) && !os(macOS) && !os(watchOS)
         startHaptic()
         do {
             try setPreferredSampleRate(sampleRate)

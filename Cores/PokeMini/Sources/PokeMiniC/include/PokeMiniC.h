@@ -8,7 +8,9 @@
 #ifndef PokeMiniC_h
 #define PokeMiniC_h
 
+#if __has_include(<AudioToolbox/AudioToolbox.h>)
 #import <AudioToolbox/AudioToolbox.h>
+#endif
 #include "PMCommon.h"
 #include "PokeMini.h"
 #include "Hardware.h"

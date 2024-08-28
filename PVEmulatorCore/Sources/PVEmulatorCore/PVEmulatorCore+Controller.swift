@@ -5,9 +5,11 @@
 //  Created by Joseph Mattiello on 5/22/24.
 //
 
+#if canImport(GameController)
+import GameController
+
 import Foundation
 import PVCoreBridge
-import GameController
 import PVLogging
 
 @objc
@@ -16,3 +18,4 @@ extension PVEmulatorCore: EmulatorCoreControllerDataSource {
         return (self as EmulatorCoreControllerDataSource).controller(forPlayer: player)
     }
 }
+#endif

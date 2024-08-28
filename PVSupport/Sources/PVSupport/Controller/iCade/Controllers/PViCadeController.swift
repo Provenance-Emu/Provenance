@@ -6,7 +6,7 @@
 //  Created by Josejulio Martínez on 19/06/15.
 //  Copyright (c) 2015 Josejulio Martínez. All rights reserved.
 //
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
 
 // MARK: - Imports
 
@@ -162,4 +162,5 @@ public class PViCadeController: GCController {
         }
     }
 }
-#endif
+
+#endif // CanImport UIKit, GCGameController

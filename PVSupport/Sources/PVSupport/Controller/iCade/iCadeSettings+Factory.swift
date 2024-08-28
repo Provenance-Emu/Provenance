@@ -7,7 +7,7 @@
 
 import PVSettings
 
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
 
 public extension iCadeControllerSetting {
     nonisolated

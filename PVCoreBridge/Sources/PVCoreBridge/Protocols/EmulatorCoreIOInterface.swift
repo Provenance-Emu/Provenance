@@ -5,6 +5,7 @@
 //  Created by Joseph Mattiello on 8/12/24.
 //
 
+import Foundation
 
 @objc public protocol EmulatorCoreIOInterface {
     @objc var romName: String? { get }

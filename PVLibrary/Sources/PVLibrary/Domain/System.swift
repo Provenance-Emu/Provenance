@@ -67,7 +67,7 @@ public struct System: Codable, SystemProtocol {
 
     public init(name: String, identifier: String, shortName: String, shortNameAlt: String? = nil, manufacturer: String,
                 releaseYear: Int, bits: SystemBits, headerByteSize: Int, openvgDatabaseID: Int, requiresBIOS: Bool = false,
-                options: SystemOptions, bioses: [BIOS]? = nil, extensions: [String], games: [Game], cores: [Core], userPreferredCore: Core? = nil, usesCDs: Bool = false, portableSystem: Bool = false, supportsRumble: Bool = false, screenType: ScreenType, supported: Bool = true) {
+                options: SystemOptions, bioses: [BIOS]? = nil, extensions: [String], games: [Game], cores: [Core], userPreferredCore: Core? = nil, usesCDs: Bool = false, portableSystem: Bool = false, supportsRumble: Bool = false, screenType: ScreenType = .crt, supported: Bool = true) {
         self.name = name
         self.identifier = identifier
         self.shortName = shortName

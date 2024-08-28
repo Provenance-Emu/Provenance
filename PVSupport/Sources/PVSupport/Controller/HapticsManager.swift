@@ -7,7 +7,9 @@ The class that manages the app's haptics playback.
 
 #if canImport(CoreHaptics)
 import Foundation
+#if canImport(GameController)
 import GameController
+#endif
 import CoreHaptics
 import PVLogging
 

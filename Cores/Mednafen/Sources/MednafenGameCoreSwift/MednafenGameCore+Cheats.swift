@@ -5,6 +5,28 @@ import PVLogging
 import PVLoggingObjC
 import MednafenGameCoreC
 
+class CppString {
+    private var cppStringPtr: UnsafeMutableRawPointer
+
+    init(_ swiftString: String) {
+        let cString = swiftStringToCppString(swiftString)
+        cppStringPtr = createCppString(cString)
+    }
+
+    deinit {
+        deleteCppString(cppStringPtr)
+    }
+
+    func getCPPString() -> UnsafePointer<CChar> {
+        return getCppStringContents(cppStringPtr)!
+    }
+    
+    func getString() -> String {
+        let cString = getCppStringContents(cppStringPtr)!
+        return String(cString: cString)
+    }
+}
+
 //@objc public protocol MednafenGameCoreCheatSyntax: NSObjectProtocol {
 //    @objc func getCheatCodeTypes() -> [String]
 //    @objc func setCheat(_ code: String, setType type: String, setCodeType codeType: String, setIndex cheatIndex: UInt8, setEnabled enabled: Bool) throws -> Bool
@@ -30,11 +52,11 @@ import MednafenGameCoreC
         
         ILOG("Applying Cheat Code \(code) \(type)")     
         
-        let game = getGame().assumingMemoryBound(to: Mednafen.MDFNGI.self)
+        let game = getGame()?.assumingMemoryBound(to: Mednafen.MDFNGI.self)
         let multipleCodes = code.components(separatedBy: "+")
         ILOG("Multiple Codes \(multipleCodes) at INDEX \(cheatIndex)")
         
-        for (i, singleCode) in multipleCodes.enumerated() {
+        for (var i, singleCode) in multipleCodes.enumerated() {
             guard !singleCode.isEmpty else { continue }
             
             ILOG("Applying Code \(singleCode)")
@@ -42,7 +64,7 @@ import MednafenGameCoreC
             var patch = Mednafen.MemoryPatch()
             
             do {
-                if game.pointee.CheatInfo.CheatFormatInfo.count > 0 {
+                if let game = game, game.pointee.CheatInfo.pointee.CheatFormatInfo.pointee.size() > 0 {
                     var formatIndex: UInt8 = 0
                     
                     switch systemType {
@@ -62,23 +84,29 @@ import MednafenGameCoreC
                         break
                     }
                     
-                    game.pointee.CheatInfo.CheatFormatInfo[Int(formatIndex)].DecodeCheat(cheatCode, &patch)
-                    patch.status = enabled
+#warning("TODO: Fix Swift String to C++ std::string")
+                    
+//                    let decoded = game.pointee.CheatInfo.pointee.CheatFormatInfo.pointee[Int(formatIndex)].DecodeCheat(cheatCode.cString(using: .utf8)!, &patch)
+//                    
+//                    if !decoded {
+//                        throw MednafenCheatError.invalidCode
+//                    }
+//                    patch.status = enabled
                     
                     if cheatIndex < Mednafen.MDFNI_CheatSearchGetCount() {
-                        Mednafen.MDFNI_SetCheat(cheatIndex, patch)
-                        Mednafen.MDFNI_ToggleCheat(cheatIndex)
+                        Mednafen.MDFNI_SetCheat(uint32(cheatIndex), patch)
+                        Mednafen.MDFNI_ToggleCheat(uint32(cheatIndex))
                     } else {
                         Mednafen.MDFNI_AddCheat(patch)
                     }
                 }
             } catch {
                 ILOG("Game Code Error \(error.localizedDescription)")
+                throw error
             }
         }
         
         Mednafen.MDFNMP_ApplyPeriodicCheats()
-        return true
     }
     
     @objc public func getCheatCodeTypes() -> [String] {

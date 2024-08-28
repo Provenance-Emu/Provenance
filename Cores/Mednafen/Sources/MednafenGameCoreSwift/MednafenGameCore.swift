@@ -15,6 +15,7 @@ import PVCoreBridge
 import GameController
 import PVLogging
 import PVAudio
+import MednafenGameCoreC
 public import PVEmulatorCore
 
 import Foundation
@@ -23,7 +24,21 @@ class OERingBuffer {}
 
 @objc
 public enum MednaSystem: Int {
-    case gb, gba, gg, lynx, md, nes, neoGeo, pce, pcfx, ss, sms, snes, psx, virtualBoy, wonderSwan
+    @objc(MednaSystemGB) case gb
+    @objc(MednaSystemGBA) case gba
+    @objc(MednaSystemGG) case gg
+    @objc(MednaSystemLynx) case lynx
+    @objc(MednaSystemMD) case md
+    @objc(MednaSystemNES) case nes
+    @objc(MednaSystemNeoGeo) case neoGeo
+    @objc(MednaSystemPCE) case pce
+    @objc(MednaSystemPCFX) case pcfx
+    @objc(MednaSystemSS) case ss
+    @objc(MednaSystemSMS) case sms
+    @objc(MednaSystemSNES) case snes
+    @objc(MednaSystemPSX) case psx
+    @objc(MednaSystemVirtualBoy) case virtualBoy
+    @objc(MednaSystemWonderSwan) case wonderSwan
 }
 
 // Input maps
@@ -46,36 +61,105 @@ public enum MednaSystem: Int {
 @objc
 @objcMembers
 open class MednafenGameCore: PVEmulatorCore, @unchecked Sendable {
-    @objc var isStartPressed: Bool = false
-    @objc var isSelectPressed: Bool = false
-    @objc var isAnalogModePressed: Bool = false
-    @objc var isL3Pressed: Bool = false
-    @objc var isR3Pressed: Bool = false
+    @objc public var isStartPressed: Bool = false
+    @objc public var isSelectPressed: Bool = false
+    @objc public var isAnalogModePressed: Bool = false
+    @objc public var isL3Pressed: Bool = false
+    @objc public var isR3Pressed: Bool = false
     
-    @objc var inputBuffer: [[UInt32]] = Array(repeating: [], count: 13)
-    @objc var axis: [Int16] = Array(repeating: 0, count: 8)
-    @objc var videoWidth: Int = 0
-    @objc var videoHeight: Int = 0
-    @objc var videoOffsetX: Int = 0
-    @objc var videoOffsetY: Int = 0
-    @objc var multiTapPlayerCount: Int = 0
+    @objc public var inputBuffer: [[UInt32]] = Array(repeating: [], count: 13)
+    @objc public var axis: [Int16] = Array(repeating: 0, count: 8)
+    @objc public var videoWidth: Int = 0
+    @objc public var videoHeight: Int = 0
+    @objc public var videoOffsetX: Int = 0
+    @objc public var videoOffsetY: Int = 0
+    @objc public var multiTapPlayerCount: Int = 0
 //    private var romName: String = ""
 //    private var sampleRate: Double = 0
-    @objc var masterClock: Double = 0
+    @objc public var masterClock: Double = 0
     
-    @objc var _isSBIRequired: Bool = false
+    @objc public var _isSBIRequired: Bool = false
     
-    @objc var mednafenCoreModule: String = ""
-    @objc var mednafenCoreTiming: TimeInterval = 0
+    @objc public var mednafenCoreModule: String = ""
+    @objc public var mednafenCoreTiming: TimeInterval = 0
     
-    @objc var systemType: MednaSystem = .gb
-    @objc var maxDiscs: UInt = 0
+    @objc public var systemType: MednaSystem = .gb
+    @objc public var maxDiscs: UInt = 0
     
-    @objc var video_opengl: Bool = false
+    @objc public var video_opengl: Bool = false
     
-    @objc func setMedia(_ open: Bool, forDisc disc: UInt) {}
-    @objc func changeDisplayMode() {}
-    @objc func getGame() -> UnsafeRawPointer? { return nil }
+    @objc public func setMedia(_ open: Bool, forDisc disc: UInt) {
+        Mednafen.MDFNI_SetMedia(0, open ? 0 : 2, uint32(disc), 0);
+
+    }
+    @preconcurrency
+    @objc public func changeDisplayMode() {
+        if (self.systemType == .virtualBoy)
+        {
+            switch (MDFN_IEN_VB.mednafenCurrentDisplayMode)
+            {
+            case 0: // (2D) red/black
+                MDFN_IEN_VB.VIP_SetAnaglyphColors(0xFF0000, 0x000000);
+                MDFN_IEN_VB.VIP_SetParallaxDisable(true);
+                MDFN_IEN_VB.mednafenCurrentDisplayMode += 1;
+                break;
+                
+            case 1: // (2D) white/black
+                MDFN_IEN_VB.VIP_SetAnaglyphColors(0xFFFFFF, 0x000000);
+                MDFN_IEN_VB.VIP_SetParallaxDisable(true);
+                MDFN_IEN_VB.mednafenCurrentDisplayMode += 1;
+                break;
+                
+            case 2: // (2D) purple/black
+                MDFN_IEN_VB.VIP_SetAnaglyphColors(0xFF00FF, 0x000000);
+                MDFN_IEN_VB.VIP_SetParallaxDisable(true);
+                MDFN_IEN_VB.mednafenCurrentDisplayMode += 1;
+                break;
+                
+            case 3: // (3D) red/blue
+                MDFN_IEN_VB.VIP_SetAnaglyphColors(0xFF0000, 0x0000FF);
+                MDFN_IEN_VB.VIP_SetParallaxDisable(false);
+                MDFN_IEN_VB.mednafenCurrentDisplayMode += 1;
+                break;
+                
+            case 4: // (3D) red/cyan
+                MDFN_IEN_VB.VIP_SetAnaglyphColors(0xFF0000, 0x00B7EB);
+                MDFN_IEN_VB.VIP_SetParallaxDisable(false);
+                MDFN_IEN_VB.mednafenCurrentDisplayMode += 1;
+                break;
+                
+            case 5: // (3D) red/electric cyan
+                MDFN_IEN_VB.VIP_SetAnaglyphColors(0xFF0000, 0x00FFFF);
+                MDFN_IEN_VB.VIP_SetParallaxDisable(false);
+                MDFN_IEN_VB.mednafenCurrentDisplayMode += 1;
+                break;
+                
+            case 6: // (3D) red/green
+                MDFN_IEN_VB.VIP_SetAnaglyphColors(0xFF0000, 0x00FF00);
+                MDFN_IEN_VB.VIP_SetParallaxDisable(false);
+                MDFN_IEN_VB.mednafenCurrentDisplayMode += 1;
+                break;
+                
+            case 7: // (3D) green/red
+                MDFN_IEN_VB.VIP_SetAnaglyphColors(0x00FF00, 0xFF0000);
+                MDFN_IEN_VB.VIP_SetParallaxDisable(false);
+                MDFN_IEN_VB.mednafenCurrentDisplayMode += 1;
+                break;
+                
+            case 8: // (3D) yellow/blue
+                MDFN_IEN_VB.VIP_SetAnaglyphColors(0xFFFF00, 0x0000FF);
+                MDFN_IEN_VB.VIP_SetParallaxDisable(false);
+                MDFN_IEN_VB.mednafenCurrentDisplayMode = 0;
+                break;
+                
+            default:
+                return;
+                break;
+            }
+        }
+    }
+#warning("This is a stub")
+    @objc public func getGame() -> UnsafeRawPointer? { return nil }
 }
 
 @objc public extension MednafenGameCore {

@@ -32,10 +32,11 @@ public final class PokeMFiState: NSObject, @unchecked Sendable {
 @objcMembers
 public final class PVPokeMiniEmulatorCore: PVEmulatorCore {
 
+    #if canImport(GameController)
     @objc
     @MainActor
     public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
-
+    #endif
     public let controllerState: PokeMFiState = .init()
 
     @objc

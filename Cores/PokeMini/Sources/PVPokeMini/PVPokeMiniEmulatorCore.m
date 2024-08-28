@@ -24,7 +24,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if __has_include(<GameController/GameController.h>)
 @import GameController;
+#endif
 @import PVCoreBridge;
 
 #import "PVPokeMiniEmulatorCore.h"
@@ -44,16 +46,18 @@
 @import libpokemini;
 
 
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX
+#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX && !TARGET_OS_WATCH
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
-#else
+#elseif !TARGET_OS_WATCH
 @import OpenGL;
 @import GLUT;
 #endif
 
+#if __has_include(<AudioToolbox/AudioToolbox.h>)
 #import <AudioToolbox/AudioToolbox.h>
+#endif
 
 @interface PVPokeMiniEmulatorCore (ObjC) <PVPokeMiniSystemResponderClient>
 
@@ -298,7 +302,9 @@ int saveEEPROM(const char *filename) {
 - (void)startEmulation
 {
 //    if(self.rate != 0) return;
+#if !TARGET_OS_WATCH
     [self setupController];
+#endif
     [self setupEmulation];
     
     [super startEmulation];
@@ -371,17 +377,21 @@ int saveEEPROM(const char *filename) {
 
 - (CGSize)aspectSize { return (CGSize){self.videoWidth, self.videoHeight}; }
 
+#if !TARGET_OS_WATCH
 - (CGRect)screenRect { return CGRectMake(0, 0, self.videoWidth, self.videoHeight); }
 
 - (CGSize)bufferSize { return CGSizeMake(self.videoWidth, self.videoHeight); }
+#endif
 
 - (const void *)videoBuffer { return self._videoBuffer; }
 
+#if !TARGET_OS_WATCH
 - (GLenum)pixelFormat { return GL_BGRA; }
 
 - (GLenum)pixelType { return GL_UNSIGNED_BYTE; }
 
 - (GLenum)internalPixelFormat { return GL_RGBA; }
+#endif
 
 - (NSTimeInterval)frameInterval { return 72; }
 
@@ -394,6 +404,7 @@ int saveEEPROM(const char *filename) {
 - (NSUInteger)channelCount { return 1; }
 
 #pragma mark - Input
+#if !TARGET_OS_WATCH
 
 - (void)didPushPMButton:(PVPMButton)button forPlayer:(NSUInteger)player {
     JoystickButtonsEvent((int)button, 1);
@@ -402,6 +413,10 @@ int saveEEPROM(const char *filename) {
 - (void)didReleasePMButton:(PVPMButton)button forPlayer:(NSUInteger)player {
     JoystickButtonsEvent((int)button, 0);
 }
+
+#endif
+
+#if __has_include(<GameController/GameController.h>)
 
 - (void)dpadValueChanged:(GCControllerDirectionPad * _Nonnull)dpad {
     // DPAD
@@ -537,8 +552,9 @@ int saveEEPROM(const char *filename) {
 #endif
     }
 }
+#endif
 
-- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player { 
+- (void)didPush:(NSInteger)button forPlayer:(NSInteger)player {
     [self didPushPMButton:button forPlayer:player];
 }
 

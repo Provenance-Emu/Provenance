@@ -97,12 +97,14 @@ typedef void (^SaveStateCompletion)(BOOL, NSError * _Nullable );
 
     GameSpeed _gameSpeed;
 
+#if !TARGET_OS_WATCH
     GCController *_controller1;
     GCController *_controller2;
     GCController *_controller3;
     GCController *_controller4;
+#endif
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     UIViewController* _Nullable _touchViewController;
 #endif
 }
@@ -170,17 +172,20 @@ typedef void (^SaveStateCompletion)(BOOL, NSError * _Nullable );
 @property (nonatomic, strong, readonly, nonnull) NSCondition  *frontBufferCondition;
 @property (nonatomic, strong, readonly, nonnull) NSLock  *frontBufferLock;
 @property (nonatomic, assign) BOOL isFrontBufferReady;
+
+#if !TARGET_OS_WATCH
 @property (nonatomic, assign) GLESVersion glesVersion;
 @property (nonatomic, readonly) GLenum depthFormat;
+@property (nonatomic, readonly) GLenum pixelFormat;
+@property (nonatomic, readonly) GLenum pixelType;
+@property (nonatomic, readonly) GLenum internalPixelFormat;
+#endif
 
 @property (nonatomic, readonly) CGRect screenRect;
 @property (nonatomic, readonly) CGSize aspectSize;
 @property (nonatomic, readonly) CGSize bufferSize;
 @property (nonatomic, readonly) BOOL isDoubleBuffered;
 @property (nonatomic, readonly) BOOL rendersToOpenGL;
-@property (nonatomic, readonly) GLenum pixelFormat;
-@property (nonatomic, readonly) GLenum pixelType;
-@property (nonatomic, readonly) GLenum internalPixelFormat;
 @property (nonatomic, readonly) NSTimeInterval frameInterval;
 
 @property (nonatomic, readonly, nullable) const void * videoBuffer;
@@ -190,18 +195,20 @@ typedef void (^SaveStateCompletion)(BOOL, NSError * _Nullable );
 
 @interface PVCoreObjCBridge (Controllers) <EmulatorCoreControllerDataSource>
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 @property (nonatomic, assign) UIViewController* _Nullable touchViewController;
 #endif
 
+#if !TARGET_OS_WATCH
 @property (nonatomic, strong, nullable) GCController *controller1;
 @property (nonatomic, strong, nullable) GCController *controller2;
 @property (nonatomic, strong, nullable) GCController *controller3;
 @property (nonatomic, strong, nullable) GCController *controller4;
+#endif
 
 - (void)updateControllers;
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 - (void)sendEvent:(UIEvent *_Nullable)event;
 #endif
 

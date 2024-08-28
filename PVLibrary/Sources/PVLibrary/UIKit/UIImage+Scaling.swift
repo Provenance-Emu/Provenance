@@ -8,8 +8,10 @@
 
 import CoreGraphics
 import Foundation
+import UIKit
 
 public extension UIImage {
+    #if !os(watchOS)
     func scalePreservingAspectRatio(width: Int, height: Int) -> UIImage {
         let widthRatio = CGFloat(width) / size.width
         let heightRatio = CGFloat(height) / size.height
@@ -38,6 +40,7 @@ public extension UIImage {
 
         return scaledImage
     }
+    #endif
 
     func scaledImage(withMaxResolution maxResolution: Int) -> UIImage? {
         guard let imgRef = cgImage else { return nil }

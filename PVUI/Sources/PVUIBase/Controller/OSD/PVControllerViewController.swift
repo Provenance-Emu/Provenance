@@ -10,7 +10,9 @@
 // TLDR; refactor this to SwiftUI or constraints
 
 import AudioToolbox
+#if canImport(GameController)
 import GameController
+#endif
 import PVLibrary
 import PVSupport
 import QuartzCore

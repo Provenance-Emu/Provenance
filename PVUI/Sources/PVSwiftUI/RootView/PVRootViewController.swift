@@ -52,7 +52,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     var viewModel: PVRootViewModel!
 
     var updatesController: PVGameLibraryUpdatesController!
-    var gameLibrary: PVGameLibrary!
+    var gameLibrary: PVGameLibrary<RealmDatabaseDriver>!
     var gameImporter: GameImporter!
 
     let disposeBag = DisposeBag()
@@ -61,7 +61,7 @@ public class PVRootViewController: UIViewController, GameLaunchingViewController
     lazy var consolesWrapperViewDelegate = ConsolesWrapperViewDelegate()
     var consoleIdentifiersAndNamesMap: [String:String] = [:]
 
-    public static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
+    public static func instantiate(updatesController: PVGameLibraryUpdatesController, gameLibrary: PVGameLibrary<RealmDatabaseDriver>, gameImporter: GameImporter, viewModel: PVRootViewModel) -> PVRootViewController {
         let controller = PVRootViewController()
         controller.updatesController = updatesController
         controller.gameLibrary = gameLibrary

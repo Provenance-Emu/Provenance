@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 74;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -252,20 +252,22 @@
 		93DC577F2A3582C4008645AB /* libMoltenVK_PPSSPP.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9328B14B2A31837A0094C712 /* libMoltenVK_PPSSPP.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		93F28DC9295E2F3D00E4D464 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; platformFilters = (ios, tvos, ); };
 		93F28DCA295E2F5100E4D464 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B300593D2C794D6B003010F5 /* Provenance Mini Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B300593C2C794D6B003010F5 /* Provenance Mini Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B30059732C794E09003010F5 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30059722C794E09003010F5 /* StoreKit.framework */; };
+		B30059752C7974C8003010F5 /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B30059742C7974C8003010F5 /* PVVirtualJaguar-Dynamic */; };
+		B30059762C7974C8003010F5 /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B30059742C7974C8003010F5 /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B30059792C7974D6003010F5 /* PVStella-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B30059782C7974D6003010F5 /* PVStella-Dynamic */; };
+		B300597A2C7974D6003010F5 /* PVStella-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B30059782C7974D6003010F5 /* PVStella-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B300597C2C7974DD003010F5 /* PVPokeMini-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B300597B2C7974DD003010F5 /* PVPokeMini-Dynamic */; };
+		B300597D2C7974DD003010F5 /* PVPokeMini-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B300597B2C7974DD003010F5 /* PVPokeMini-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B300597F2C7974E4003010F5 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B300597E2C7974E4003010F5 /* PVEmulatorCore */; };
+		B30059812C7974EB003010F5 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30059802C7974EB003010F5 /* PVCoreBridge */; };
+		B30059832C7974EF003010F5 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B30059822C7974EF003010F5 /* PVLibrary */; };
+		B30059852C7974F5003010F5 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30059842C7974F5003010F5 /* PVSupport */; };
 		B300DED5295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */; };
 		B300DED6295FEEE20049F2AB /* PVAppDelegate+JIT.swift in Sources */ = {isa = PBXBuildFile; fileRef = B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */; };
 		B30585692C0C14EE00B91D7A /* PVWebServer in Frameworks */ = {isa = PBXBuildFile; productRef = B30585682C0C14EE00B91D7A /* PVWebServer */; };
 		B305856E2C0D52F200B91D7A /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B305856D2C0D52F200B91D7A /* PVLibrary */; };
-		B305EEFB276B4C71003AE510 /* Provenance Watch WatchKit App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B305EF00276B4C72003AE510 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B305EEFF276B4C72003AE510 /* Assets.xcassets */; };
-		B305EF06276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		B305EF0B276B4C73003AE510 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B305EF0A276B4C73003AE510 /* ContentView.swift */; };
-		B305EF0D276B4C73003AE510 /* ProvenanceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B305EF0C276B4C73003AE510 /* ProvenanceApp.swift */; };
-		B305EF0F276B4C73003AE510 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B305EF0E276B4C73003AE510 /* ComplicationController.swift */; };
-		B305EF11276B4C73003AE510 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B305EF10276B4C73003AE510 /* Assets.xcassets */; };
-		B305EF14276B4C73003AE510 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B305EF13276B4C73003AE510 /* Preview Assets.xcassets */; };
-		B305EF2F276B4CB0003AE510 /* PVStella.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; };
-		B305EF30276B4CB0003AE510 /* PVStella.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B305EF2E276B4CB0003AE510 /* PVStella.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B307830628924D69007E7A2D /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B307830728924D6B007E7A2D /* GLES in Resources */ = {isa = PBXBuildFile; fileRef = B3427C0C287EA5030054C1B5 /* GLES */; };
 		B30E9A4F2C6F212F00C1431E /* flycast_libretro_ios.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E9A1C2C6F212600C1431E /* flycast_libretro_ios.dylib */; platformFilter = ios; };
@@ -372,9 +374,6 @@
 		B30E9AB42C6F214900C1431E /* yabause_libretro_ios.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = B30E9A462C6F212D00C1431E /* yabause_libretro_ios.dylib */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B30E9AB62C6F217C00C1431E /* PVRetroArch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; };
 		B30E9AB72C6F217D00C1431E /* PVRetroArch.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 934BE9AE296F177B00FB9933 /* PVRetroArch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B311B1C227A52F1700D1DE41 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C127A52F1700D1DE41 /* UIKit.framework */; };
-		B311B1C427A52F2000D1DE41 /* PVPokeMini.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; };
-		B311B1C527A52F2000D1DE41 /* PVPokeMini.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B311B1C327A52F2000D1DE41 /* PVPokeMini.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B312805F274C60EC00550720 /* SteamController in Frameworks */ = {isa = PBXBuildFile; productRef = B3D30FC026F0BCE60064603F /* SteamController */; };
 		B313647C2970095B00C34FED /* PVPCSXRearmed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B38E0F10289290E5004720DA /* PVPCSXRearmed.framework */; };
 		B313647D2970095B00C34FED /* PVPCSXRearmed.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B38E0F10289290E5004720DA /* PVPCSXRearmed.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -701,21 +700,11 @@
 		B355DF9C29209B6700E4C858 /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9B29209B6700E4C858 /* PreviewViewController.swift */; };
 		B355DF9E29209B6700E4C858 /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355DF9D29209B6700E4C858 /* PreviewProvider.swift */; };
 		B355DFA129209B6700E4C858 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B355DF9F29209B6700E4C858 /* MainInterface.storyboard */; };
-		B355DFD52920A42800E4C858 /* Stickers.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B355DFD42920A42800E4C858 /* Stickers.xcassets */; };
 		B355E0002920AA2100E4C858 /* QuickLookThumbnailing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */; };
 		B355E0032920AA2600E4C858 /* ThumbnailProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0022920AA2600E4C858 /* ThumbnailProvider.swift */; };
 		B355E0142920AA9D00E4C858 /* ImportExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0132920AA9D00E4C858 /* ImportExtension.swift */; };
-		B355E0232920AB8200E4C858 /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E0222920AB8100E4C858 /* UniformTypeIdentifiers.framework */; };
-		B355E0262920AB8600E4C858 /* FileProviderExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0252920AB8600E4C858 /* FileProviderExtension.swift */; };
-		B355E0282920AB8600E4C858 /* FileProviderItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0272920AB8600E4C858 /* FileProviderItem.swift */; };
-		B355E02A2920AB8600E4C858 /* FileProviderEnumerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0292920AB8600E4C858 /* FileProviderEnumerator.swift */; };
 		B355E03A2920AC1A00E4C858 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E0392920AC1A00E4C858 /* WidgetKit.framework */; };
 		B355E03B2920AC1A00E4C858 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D54EF42768306200476241 /* SwiftUI.framework */; };
-		B355E03E2920AC1E00E4C858 /* WidgetExtensionBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E03D2920AC1E00E4C858 /* WidgetExtensionBundle.swift */; };
-		B355E0402920AC1E00E4C858 /* WidgetExtensionLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E03F2920AC1E00E4C858 /* WidgetExtensionLiveActivity.swift */; };
-		B355E0422920AC1E00E4C858 /* WidgetExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B355E0412920AC1E00E4C858 /* WidgetExtension.swift */; };
-		B355E0452920AC2000E4C858 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B355E0442920AC2000E4C858 /* Assets.xcassets */; };
-		B355E0472920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */; };
 		B357A43C2709228E002C7C0F /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
 		B35EEF882C6C6D1A00EBD1A8 /* blit_ps.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE9287EA0CE0054C1B5 /* blit_ps.metal */; };
 		B35EEF892C6C6D1A00EBD1A8 /* ulTron.metal in Sources */ = {isa = PBXBuildFile; fileRef = B3427BE2287EA0CE0054C1B5 /* ulTron.metal */; };
@@ -1035,6 +1024,11 @@
 		B3B925A22C6141BC006317EC /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; };
 		B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B3BD95EB2C1AD2AC00B92276 /* Cores.h in Headers */ = {isa = PBXBuildFile; fileRef = B3270F8127DCB25100E83180 /* Cores.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3BE9F9B2C79869F006D989E /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9A2C79869F006D989E /* PVSettings */; };
+		B3BE9F9D2C7986A4006D989E /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9C2C7986A4006D989E /* Defaults */; };
+		B3BE9F9F2C7986A9006D989E /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9E2C7986A9006D989E /* PVPlists */; };
+		B3BE9FA52C7987B1006D989E /* UniformTypeIdentifiers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B355E0222920AB8100E4C858 /* UniformTypeIdentifiers.framework */; };
+		B3BE9FD72C7988BF006D989E /* Provenance Stickers.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3C8A6C02878238C0037A946 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B3270FB727DCB62C00E83180 /* libz.dylib */; };
 		B3C8A6C52878238C0037A946 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A2B0E8D1AD18961005FB77C /* libc++.dylib */; };
 		B3C8A6CE2878238C0037A946 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A4869D717C8D54D0019F6D2 /* libxml2.dylib */; };
@@ -1443,19 +1437,26 @@
 			remoteGlobalIDString = B3C7621020783162009950E4;
 			remoteInfo = PVRetroArch;
 		};
-		B305EEFC276B4C71003AE510 /* PBXContainerItemProxy */ = {
+		B300593E2C794D6B003010F5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B305EEF9276B4C71003AE510;
-			remoteInfo = "Provenance Watch WatchKit App";
+			remoteGlobalIDString = B300593B2C794D6B003010F5;
+			remoteInfo = "Provenance Mini Watch App";
 		};
-		B305EF07276B4C73003AE510 /* PBXContainerItemProxy */ = {
+		B300594F2C794D6C003010F5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = B305EF04276B4C73003AE510;
-			remoteInfo = "Provenance Watch WatchKit Extension";
+			remoteGlobalIDString = B300593B2C794D6B003010F5;
+			remoteInfo = "Provenance Mini Watch App";
+		};
+		B30059592C794D6D003010F5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B300593B2C794D6B003010F5;
+			remoteInfo = "Provenance Mini Watch App";
 		};
 		B341FCB92BE61EC100718929 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1603,6 +1604,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = BE9FDCB61C210B9E0046DF0E;
 			remoteInfo = TopShelf;
+		};
+		B3BE9FD52C7988BF006D989E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1A3D408C17B2DCE4004DFFFC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B3BE9FCF2C7988BD006D989E;
+			remoteInfo = "Provenance Stickers";
 		};
 		B3C8A6B628781EBC0037A946 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1794,36 +1802,26 @@
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B305EF19276B4C74003AE510 /* Embed Watch Content */ = {
+		B30059642C794D6D003010F5 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				B305EEFB276B4C71003AE510 /* Provenance Watch WatchKit App.app in Embed Watch Content */,
+				B300593D2C794D6B003010F5 /* Provenance Mini Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B305EF1D276B4C74003AE510 /* Embed App Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				B305EF06276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex in Embed App Extensions */,
-			);
-			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B305EF27276B4C7E003AE510 /* Embed Frameworks */ = {
+		B30059772C7974C8003010F5 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B311B1C527A52F2000D1DE41 /* PVPokeMini.framework in Embed Frameworks */,
-				B305EF30276B4CB0003AE510 /* PVStella.framework in Embed Frameworks */,
+				B30059762C7974C8003010F5 /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
+				B300597A2C7974D6003010F5 /* PVStella-Dynamic in Embed Frameworks */,
+				B300597D2C7974DD003010F5 /* PVPokeMini-Dynamic in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2027,6 +2025,7 @@
 			files = (
 				B38C69B42BEB2CB300AE4F86 /* TopShelf.appex in Embed App Extensions */,
 				B396208B2C66E14C0094F6F0 /* Spotlight.appex in Embed App Extensions */,
+				B3BE9FD72C7988BF006D989E /* Provenance Stickers.appex in Embed App Extensions */,
 				B396208E2C66E14C0094F6F0 /* SpotlightImportExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
@@ -2243,20 +2242,15 @@
 		93DB7D2F2A750967005F8B26 /* libavformat.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libavformat.framework; path = Cores/emuThree/lib/libavformat.framework; sourceTree = "<group>"; };
 		93DB7D302A750967005F8B26 /* libswresample.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libswresample.framework; path = Cores/emuThree/lib/libswresample.framework; sourceTree = "<group>"; };
 		93F28DC8295E2F3D00E4D464 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30059372C794D6A003010F5 /* Provenance Mini.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Mini.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B300593C2C794D6B003010F5 /* Provenance Mini Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Mini Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B300594E2C794D6C003010F5 /* Provenance Mini Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Provenance Mini Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30059582C794D6C003010F5 /* Provenance Mini Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Provenance Mini Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30059722C794E09003010F5 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS11.0.sdk/System/Library/Frameworks/StoreKit.framework; sourceTree = DEVELOPER_DIR; };
 		B300DED4295FEEDD0049F2AB /* PVAppDelegate+JIT.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+JIT.swift"; sourceTree = "<group>"; };
 		B30172C9274A34FA00B0E695 /* PVDuckStation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDuckStation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B302BFA320825ADC0029CEDB /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305436D2720237400F5257D /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B305EEF7276B4C71003AE510 /* Provenance Watch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Watch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance Watch WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B305EEFF276B4C72003AE510 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Provenance Watch WatchKit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B305EF0A276B4C73003AE510 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		B305EF0C276B4C73003AE510 /* ProvenanceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProvenanceApp.swift; sourceTree = "<group>"; };
-		B305EF0E276B4C73003AE510 /* ComplicationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
-		B305EF10276B4C73003AE510 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		B305EF13276B4C73003AE510 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		B305EF15276B4C73003AE510 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B305EF24276B4C7E003AE510 /* PVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305EF2B276B4C89003AE510 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B305EF2E276B4CB0003AE510 /* PVStella.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVStella.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2486,9 +2480,6 @@
 		B355DFA029209B6700E4C858 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		B355DFA229209B6700E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B355DFA629209B7200E4C858 /* QuickLookPreview.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuickLookPreview.entitlements; sourceTree = "<group>"; };
-		B355DFD22920A42200E4C858 /* StickerPack.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StickerPack.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		B355DFD42920A42800E4C858 /* Stickers.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Stickers.xcassets; sourceTree = "<group>"; };
-		B355DFD62920A42800E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ThumbnailExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B355DFFF2920AA2100E4C858 /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		B355E0022920AA2600E4C858 /* ThumbnailProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailProvider.swift; sourceTree = "<group>"; };
@@ -2497,22 +2488,9 @@
 		B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SpotlightImportExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B355E0132920AA9D00E4C858 /* ImportExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportExtension.swift; sourceTree = "<group>"; };
 		B355E0152920AA9D00E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B355E0212920AB8100E4C858 /* FileProviderExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = FileProviderExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B355E0222920AB8100E4C858 /* UniformTypeIdentifiers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UniformTypeIdentifiers.framework; path = System/Library/Frameworks/UniformTypeIdentifiers.framework; sourceTree = SDKROOT; };
-		B355E0252920AB8600E4C858 /* FileProviderExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProviderExtension.swift; sourceTree = "<group>"; };
-		B355E0272920AB8600E4C858 /* FileProviderItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProviderItem.swift; sourceTree = "<group>"; };
-		B355E0292920AB8600E4C858 /* FileProviderEnumerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileProviderEnumerator.swift; sourceTree = "<group>"; };
-		B355E02B2920AB8600E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B355E02C2920AB8600E4C858 /* FileProviderExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FileProviderExtension.entitlements; sourceTree = "<group>"; };
 		B355E0382920AC1A00E4C858 /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		B355E0392920AC1A00E4C858 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
-		B355E03D2920AC1E00E4C858 /* WidgetExtensionBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetExtensionBundle.swift; sourceTree = "<group>"; };
-		B355E03F2920AC1E00E4C858 /* WidgetExtensionLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetExtensionLiveActivity.swift; sourceTree = "<group>"; };
-		B355E0412920AC1E00E4C858 /* WidgetExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetExtension.swift; sourceTree = "<group>"; };
-		B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = WidgetExtension.intentdefinition; sourceTree = "<group>"; };
-		B355E0442920AC2000E4C858 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		B355E0462920AC2000E4C858 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B355E04C2920AC2D00E4C858 /* WidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WidgetExtension.entitlements; path = Extensions/WidgetExtension/WidgetExtension.entitlements; sourceTree = SOURCE_ROOT; };
 		B3579D0221069B4E00DDEBD6 /* Spotlight.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Spotlight.entitlements; sourceTree = "<group>"; };
 		B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PVAppDelegate+AppCenter.swift"; sourceTree = "<group>"; };
 		B35B31CA206CA04A00AEAF88 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
@@ -2569,7 +2547,6 @@
 		B380EAC12759D689001B8532 /* Build.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Build.xcconfig; sourceTree = "<group>"; };
 		B380EAC22759D692001B8532 /* CodeSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CodeSigning.xcconfig; sourceTree = "<group>"; };
 		B380EAC32759D69A001B8532 /* CodeSigning.xcconfig.sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = CodeSigning.xcconfig.sample; sourceTree = "<group>"; };
-		B381A2792926345F00305322 /* StickerPack.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StickerPack.entitlements; sourceTree = "<group>"; };
 		B381A27B292639E200305322 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		B38CCD8D2BE70DFB00DDB592 /* ProvenanceTV-AppStore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-AppStore.entitlements"; sourceTree = "<group>"; };
 		B38E0F10289290E5004720DA /* PVPCSXRearmed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVPCSXRearmed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2629,6 +2606,9 @@
 		B3B9239C202D054B00580FFC /* Provenance-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Provenance-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3B9239D202D054B00580FFC /* ProvenanceTV-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProvenanceTV-Bridging-Header.h"; sourceTree = "<group>"; };
 		B3BA902129583A1600142E32 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3BE9FA42C7987B1006D989E /* ROM File Provider.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "ROM File Provider.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "ROM File ProviderUI.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Provenance Stickers.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7CCC927DCB0DA0003F9D2 /* PVDolphin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDolphin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C8A6632877DE280037A946 /* PVMelonDS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMelonDS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C8A6A428781E810037A946 /* CoresRetro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoresRetro.h; sourceTree = "<group>"; };
@@ -2753,10 +2733,48 @@
 			);
 			target = B30E9A0C2C6F209400C1431E /* CoresRetroarch */;
 		};
+		B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B3BE9FA32C7987B1006D989E /* ROM File Provider */;
+		};
+		B3BE9FC62C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				/Localized/MainInterface.storyboard,
+				Info.plist,
+			);
+			target = B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */;
+		};
+		B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B3BE9FCF2C7988BD006D989E /* Provenance Stickers */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		B3BE9FCB2C7987B2006D989E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = B3BE9FB12C7987B1006D989E /* Resources */;
+			membershipExceptions = (
+				Base.lproj/MainInterface.storyboard,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		B30059402C794D6B003010F5 /* Provenance Mini Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch App"; sourceTree = "<group>"; };
+		B30059512C794D6C003010F5 /* Provenance Mini Watch AppTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch AppTests"; sourceTree = "<group>"; };
+		B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch AppUITests"; sourceTree = "<group>"; };
 		B30E9A0E2C6F209400C1431E /* CoresRetroarch */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B30E9A172C6F209400C1431E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CoresRetroarch; sourceTree = "<group>"; };
+		B3BE9FA62C7987B1006D989E /* ROM File Provider */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File Provider"; sourceTree = "<group>"; };
+		B3BE9FB42C7987B1006D989E /* ROM File ProviderUI */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC62C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3BE9FCB2C7987B2006D989E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File ProviderUI"; sourceTree = "<group>"; };
+		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Provenance Stickers"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2952,13 +2970,35 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B305EF02276B4C73003AE510 /* Frameworks */ = {
+		B30059392C794D6B003010F5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B311B1C227A52F1700D1DE41 /* UIKit.framework in Frameworks */,
-				B311B1C427A52F2000D1DE41 /* PVPokeMini.framework in Frameworks */,
-				B305EF2F276B4CB0003AE510 /* PVStella.framework in Frameworks */,
+				B300597F2C7974E4003010F5 /* PVEmulatorCore in Frameworks */,
+				B30059792C7974D6003010F5 /* PVStella-Dynamic in Frameworks */,
+				B30059752C7974C8003010F5 /* PVVirtualJaguar-Dynamic in Frameworks */,
+				B30059832C7974EF003010F5 /* PVLibrary in Frameworks */,
+				B3BE9F9D2C7986A4006D989E /* Defaults in Frameworks */,
+				B3BE9F9B2C79869F006D989E /* PVSettings in Frameworks */,
+				B30059852C7974F5003010F5 /* PVSupport in Frameworks */,
+				B300597C2C7974DD003010F5 /* PVPokeMini-Dynamic in Frameworks */,
+				B30059812C7974EB003010F5 /* PVCoreBridge in Frameworks */,
+				B30059732C794E09003010F5 /* StoreKit.framework in Frameworks */,
+				B3BE9F9F2C7986A9006D989E /* PVPlists in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B300594B2C794D6C003010F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30059552C794D6C003010F5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3170,14 +3210,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B355E01E2920AB8100E4C858 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B355E0232920AB8200E4C858 /* UniformTypeIdentifiers.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B355E0352920AC1900E4C858 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3292,6 +3324,21 @@
 				B394CDB12BDEE53A006B63E8 /* Introspect in Frameworks */,
 				B3E0CFA82C05508500F45074 /* PVCoreAudio in Frameworks */,
 				B33BD1C22C6A621A001E933A /* PVPokeMini-Dynamic in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3BE9FA12C7987B1006D989E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B3BE9FA52C7987B1006D989E /* UniformTypeIdentifiers.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3BE9FB02C7987B1006D989E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3530,6 +3577,9 @@
 				B3C8A6A328781E810037A946 /* CoresRetro */,
 				934BE9B3296F178400FB9933 /* modules */,
 				B30E9A0E2C6F209400C1431E /* CoresRetroarch */,
+				B30059402C794D6B003010F5 /* Provenance Mini Watch App */,
+				B30059512C794D6C003010F5 /* Provenance Mini Watch AppTests */,
+				B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */,
 				1A3D409617B2DCE4004DFFFC /* Frameworks */,
 				1A3D409517B2DCE4004DFFFC /* Products */,
 			);
@@ -3543,16 +3593,11 @@
 				1AD481B41BA350A400FDA50A /* Provenance.app */,
 				BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */,
 				B3E21D6B203211BE009939D3 /* Spotlight.appex */,
-				B305EEF7276B4C71003AE510 /* Provenance Watch.app */,
-				B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */,
-				B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */,
 				B3270F7F27DCB25100E83180 /* Cores.framework */,
 				B3C8A6EF2878238C0037A946 /* CoresRetro.framework */,
 				B355DF9729209B6200E4C858 /* QuickLookPreview.appex */,
-				B355DFD22920A42200E4C858 /* StickerPack.appex */,
 				B355DFFE2920AA2100E4C858 /* ThumbnailExtension.appex */,
 				B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */,
-				B355E0212920AB8100E4C858 /* FileProviderExtension.appex */,
 				B355E0382920AC1A00E4C858 /* WidgetExtension.appex */,
 				B3EEED882920B006008E2603 /* ControllerDriver.dext */,
 				B3EEED9E2920B099008E2603 /* QuickLookMacOS.appex */,
@@ -3565,6 +3610,13 @@
 				B341FE082BE61EC100718929 /* Provenance.app */,
 				B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */,
 				B30E9A0D2C6F209400C1431E /* CoresRetroarch.framework */,
+				B30059372C794D6A003010F5 /* Provenance Mini.app */,
+				B300593C2C794D6B003010F5 /* Provenance Mini Watch App.app */,
+				B300594E2C794D6C003010F5 /* Provenance Mini Watch AppTests.xctest */,
+				B30059582C794D6C003010F5 /* Provenance Mini Watch AppUITests.xctest */,
+				B3BE9FA42C7987B1006D989E /* ROM File Provider.appex */,
+				B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */,
+				B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3572,6 +3624,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B30059722C794E09003010F5 /* StoreKit.framework */,
 				B34170C12C71765100469519 /* PVMupen64Plus.framework */,
 				B30E9A4B2C6F212E00C1431E /* a5200_libretro_ios.dylib */,
 				B30E9A482C6F212E00C1431E /* atari800_libretro_ios.dylib */,
@@ -4030,35 +4083,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B305EEFE276B4C71003AE510 /* WatchKit App */ = {
-			isa = PBXGroup;
-			children = (
-				B305EEFF276B4C72003AE510 /* Assets.xcassets */,
-			);
-			path = "WatchKit App";
-			sourceTree = "<group>";
-		};
-		B305EF09276B4C73003AE510 /* WatchKit Extension */ = {
-			isa = PBXGroup;
-			children = (
-				B305EF0A276B4C73003AE510 /* ContentView.swift */,
-				B305EF0C276B4C73003AE510 /* ProvenanceApp.swift */,
-				B305EF0E276B4C73003AE510 /* ComplicationController.swift */,
-				B305EF10276B4C73003AE510 /* Assets.xcassets */,
-				B305EF15276B4C73003AE510 /* Info.plist */,
-				B305EF12276B4C73003AE510 /* Preview Content */,
-			);
-			path = "WatchKit Extension";
-			sourceTree = "<group>";
-		};
-		B305EF12276B4C73003AE510 /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				B305EF13276B4C73003AE510 /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
 		B30E99B02C6EF79A00C1431E /* Debug */ = {
 			isa = PBXGroup;
 			children = (
@@ -4176,16 +4200,6 @@
 			path = QuickLookPreview;
 			sourceTree = "<group>";
 		};
-		B355DFD32920A42600E4C858 /* StickerPack */ = {
-			isa = PBXGroup;
-			children = (
-				B381A2792926345F00305322 /* StickerPack.entitlements */,
-				B355DFD42920A42800E4C858 /* Stickers.xcassets */,
-				B355DFD62920A42800E4C858 /* Info.plist */,
-			);
-			path = StickerPack;
-			sourceTree = "<group>";
-		};
 		B355E0012920AA2600E4C858 /* ThumbnailExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -4206,32 +4220,6 @@
 			path = SpotlightImportExtension;
 			sourceTree = "<group>";
 		};
-		B355E0242920AB8600E4C858 /* FileProviderExtension */ = {
-			isa = PBXGroup;
-			children = (
-				B355E0252920AB8600E4C858 /* FileProviderExtension.swift */,
-				B355E0272920AB8600E4C858 /* FileProviderItem.swift */,
-				B355E0292920AB8600E4C858 /* FileProviderEnumerator.swift */,
-				B355E02B2920AB8600E4C858 /* Info.plist */,
-				B355E02C2920AB8600E4C858 /* FileProviderExtension.entitlements */,
-			);
-			path = FileProviderExtension;
-			sourceTree = "<group>";
-		};
-		B355E03C2920AC1E00E4C858 /* WidgetExtension */ = {
-			isa = PBXGroup;
-			children = (
-				B355E0442920AC2000E4C858 /* Assets.xcassets */,
-				B355E0462920AC2000E4C858 /* Info.plist */,
-				B355E04C2920AC2D00E4C858 /* WidgetExtension.entitlements */,
-				B355E0432920AC1E00E4C858 /* WidgetExtension.intentdefinition */,
-				B355E0412920AC1E00E4C858 /* WidgetExtension.swift */,
-				B355E03D2920AC1E00E4C858 /* WidgetExtensionBundle.swift */,
-				B355E03F2920AC1E00E4C858 /* WidgetExtensionLiveActivity.swift */,
-			);
-			path = WidgetExtension;
-			sourceTree = "<group>";
-		};
 		B355E0512920AC7600E4C858 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -4241,17 +4229,15 @@
 				B3EEED722920AF1E008E2603 /* ActivityReportExtension */,
 				B3EEEDCE2920B56A008E2603 /* BackgroundDownloadExtension */,
 				B3EEED8B2920B00A008E2603 /* ControllerDriver */,
-				B355E0242920AB8600E4C858 /* FileProviderExtension */,
 				B391F2BC27C157E600730B53 /* Provenance Clip */,
 				B355DF9A29209B6700E4C858 /* QuickLookPreview */,
 				B3E21D6C203211BE009939D3 /* Spotlight */,
 				B355E0122920AA9D00E4C858 /* SpotlightImportExtension */,
-				B355DFD32920A42600E4C858 /* StickerPack */,
 				B355E0012920AA2600E4C858 /* ThumbnailExtension */,
 				BE9FDCBA1C210B9E0046DF0E /* TopShelf */,
-				B305EEFE276B4C71003AE510 /* WatchKit App */,
-				B305EF09276B4C73003AE510 /* WatchKit Extension */,
-				B355E03C2920AC1E00E4C858 /* WidgetExtension */,
+				B3BE9FA62C7987B1006D989E /* ROM File Provider */,
+				B3BE9FB42C7987B1006D989E /* ROM File ProviderUI */,
+				B3BE9FD12C7988BE006D989E /* Provenance Stickers */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -4587,57 +4573,103 @@
 			productReference = 930499EF2A93073800BF257F /* Provenance-UnderDevelopment.app */;
 			productType = "com.apple.product-type.application";
 		};
-		B305EEF6276B4C71003AE510 /* Provenance Watch */ = {
+		B30059362C794D6A003010F5 /* Provenance Mini */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B305EF23276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch" */;
+			buildConfigurationList = B30059652C794D6D003010F5 /* Build configuration list for PBXNativeTarget "Provenance Mini" */;
 			buildPhases = (
-				B305EEF5276B4C71003AE510 /* Resources */,
-				B305EF19276B4C74003AE510 /* Embed Watch Content */,
+				B30059352C794D6A003010F5 /* Resources */,
+				B30059642C794D6D003010F5 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				B305EEFD276B4C71003AE510 /* PBXTargetDependency */,
+				B300593F2C794D6B003010F5 /* PBXTargetDependency */,
 			);
-			name = "Provenance Watch";
-			productName = "Provenance Watch";
-			productReference = B305EEF7276B4C71003AE510 /* Provenance Watch.app */;
+			name = "Provenance Mini";
+			packageProductDependencies = (
+			);
+			productName = "Provenance Mini";
+			productReference = B30059372C794D6A003010F5 /* Provenance Mini.app */;
 			productType = "com.apple.product-type.application.watchapp2-container";
 		};
-		B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */ = {
+		B300593B2C794D6B003010F5 /* Provenance Mini Watch App */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B305EF22276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit App" */;
+			buildConfigurationList = B30059602C794D6D003010F5 /* Build configuration list for PBXNativeTarget "Provenance Mini Watch App" */;
 			buildPhases = (
-				B305EEF8276B4C71003AE510 /* Resources */,
-				B305EF1D276B4C74003AE510 /* Embed App Extensions */,
+				B30059382C794D6B003010F5 /* Sources */,
+				B30059392C794D6B003010F5 /* Frameworks */,
+				B300593A2C794D6B003010F5 /* Resources */,
+				B30059772C7974C8003010F5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				B305EF08276B4C73003AE510 /* PBXTargetDependency */,
 			);
-			name = "Provenance Watch WatchKit App";
-			productName = "Provenance Watch WatchKit App";
-			productReference = B305EEFA276B4C71003AE510 /* Provenance Watch WatchKit App.app */;
-			productType = "com.apple.product-type.application.watchapp2";
+			fileSystemSynchronizedGroups = (
+				B30059402C794D6B003010F5 /* Provenance Mini Watch App */,
+			);
+			name = "Provenance Mini Watch App";
+			packageProductDependencies = (
+				B30059742C7974C8003010F5 /* PVVirtualJaguar-Dynamic */,
+				B30059782C7974D6003010F5 /* PVStella-Dynamic */,
+				B300597B2C7974DD003010F5 /* PVPokeMini-Dynamic */,
+				B300597E2C7974E4003010F5 /* PVEmulatorCore */,
+				B30059802C7974EB003010F5 /* PVCoreBridge */,
+				B30059822C7974EF003010F5 /* PVLibrary */,
+				B30059842C7974F5003010F5 /* PVSupport */,
+				B3BE9F9A2C79869F006D989E /* PVSettings */,
+				B3BE9F9C2C7986A4006D989E /* Defaults */,
+				B3BE9F9E2C7986A9006D989E /* PVPlists */,
+			);
+			productName = "Provenance Mini Watch App";
+			productReference = B300593C2C794D6B003010F5 /* Provenance Mini Watch App.app */;
+			productType = "com.apple.product-type.application";
 		};
-		B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */ = {
+		B300594D2C794D6C003010F5 /* Provenance Mini Watch AppTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B305EF21276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit Extension" */;
+			buildConfigurationList = B30059692C794D6D003010F5 /* Build configuration list for PBXNativeTarget "Provenance Mini Watch AppTests" */;
 			buildPhases = (
-				B305EF01276B4C73003AE510 /* Sources */,
-				B305EF02276B4C73003AE510 /* Frameworks */,
-				B305EF03276B4C73003AE510 /* Resources */,
-				B305EF27276B4C7E003AE510 /* Embed Frameworks */,
+				B300594A2C794D6C003010F5 /* Sources */,
+				B300594B2C794D6C003010F5 /* Frameworks */,
+				B300594C2C794D6C003010F5 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B30059502C794D6C003010F5 /* PBXTargetDependency */,
 			);
-			name = "Provenance Watch WatchKit Extension";
-			productName = "Provenance Watch WatchKit Extension";
-			productReference = B305EF05276B4C73003AE510 /* Provenance Watch WatchKit Extension.appex */;
-			productType = "com.apple.product-type.watchkit2-extension";
+			fileSystemSynchronizedGroups = (
+				B30059512C794D6C003010F5 /* Provenance Mini Watch AppTests */,
+			);
+			name = "Provenance Mini Watch AppTests";
+			packageProductDependencies = (
+			);
+			productName = "Provenance Mini Watch AppTests";
+			productReference = B300594E2C794D6C003010F5 /* Provenance Mini Watch AppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B30059572C794D6C003010F5 /* Provenance Mini Watch AppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B300596D2C794D6D003010F5 /* Build configuration list for PBXNativeTarget "Provenance Mini Watch AppUITests" */;
+			buildPhases = (
+				B30059542C794D6C003010F5 /* Sources */,
+				B30059552C794D6C003010F5 /* Frameworks */,
+				B30059562C794D6C003010F5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B300595A2C794D6D003010F5 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */,
+			);
+			name = "Provenance Mini Watch AppUITests";
+			packageProductDependencies = (
+			);
+			productName = "Provenance Mini Watch AppUITests";
+			productReference = B30059582C794D6C003010F5 /* Provenance Mini Watch AppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		B30E9A0C2C6F209400C1431E /* CoresRetroarch */ = {
 			isa = PBXNativeTarget;
@@ -4756,21 +4788,6 @@
 			productReference = B355DF9729209B6200E4C858 /* QuickLookPreview.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		B355DFD12920A42100E4C858 /* StickerPack */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B355DFDA2920A42F00E4C858 /* Build configuration list for PBXNativeTarget "StickerPack" */;
-			buildPhases = (
-				B355DFD02920A42100E4C858 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = StickerPack;
-			productName = StickerPack;
-			productReference = B355DFD22920A42200E4C858 /* StickerPack.appex */;
-			productType = "com.apple.product-type.app-extension.messages-sticker-pack";
-		};
 		B355DFFD2920AA2000E4C858 /* ThumbnailExtension */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B355E0092920AA4700E4C858 /* Build configuration list for PBXNativeTarget "ThumbnailExtension" */;
@@ -4803,23 +4820,6 @@
 			name = SpotlightImportExtension;
 			productName = SpotlightImportExtension;
 			productReference = B355E0112920AA9800E4C858 /* SpotlightImportExtension.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
-		B355E0202920AB8100E4C858 /* FileProviderExtension */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B355E0302920AB9000E4C858 /* Build configuration list for PBXNativeTarget "FileProviderExtension" */;
-			buildPhases = (
-				B355E01D2920AB8100E4C858 /* Sources */,
-				B355E01E2920AB8100E4C858 /* Frameworks */,
-				B355E01F2920AB8100E4C858 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = FileProviderExtension;
-			productName = FileProviderExtension;
-			productReference = B355E0212920AB8100E4C858 /* FileProviderExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		B355E0372920AC1900E4C858 /* WidgetExtension */ = {
@@ -4901,6 +4901,7 @@
 				B38C69B62BEB2CB300AE4F86 /* PBXTargetDependency */,
 				B396208D2C66E14C0094F6F0 /* PBXTargetDependency */,
 				B39620902C66E14C0094F6F0 /* PBXTargetDependency */,
+				B3BE9FD62C7988BF006D989E /* PBXTargetDependency */,
 			);
 			name = "Provenance (AppStore)";
 			packageProductDependencies = (
@@ -4933,6 +4934,70 @@
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B3BE9FA32C7987B1006D989E /* ROM File Provider */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3BE9FC22C7987B2006D989E /* Build configuration list for PBXNativeTarget "ROM File Provider" */;
+			buildPhases = (
+				B3BE9FA02C7987B1006D989E /* Sources */,
+				B3BE9FA12C7987B1006D989E /* Frameworks */,
+				B3BE9FA22C7987B1006D989E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B3BE9FA62C7987B1006D989E /* ROM File Provider */,
+			);
+			name = "ROM File Provider";
+			packageProductDependencies = (
+			);
+			productName = "ROM File Provider";
+			productReference = B3BE9FA42C7987B1006D989E /* ROM File Provider.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3BE9FC72C7987B2006D989E /* Build configuration list for PBXNativeTarget "ROM File ProviderUI" */;
+			buildPhases = (
+				B3BE9FAF2C7987B1006D989E /* Sources */,
+				B3BE9FB02C7987B1006D989E /* Frameworks */,
+				B3BE9FB12C7987B1006D989E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B3BE9FB42C7987B1006D989E /* ROM File ProviderUI */,
+			);
+			name = "ROM File ProviderUI";
+			packageProductDependencies = (
+			);
+			productName = "ROM File ProviderUI";
+			productReference = B3BE9FB32C7987B1006D989E /* ROM File ProviderUI.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		B3BE9FCF2C7988BD006D989E /* Provenance Stickers */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B3BE9FD92C7988BF006D989E /* Build configuration list for PBXNativeTarget "Provenance Stickers" */;
+			buildPhases = (
+				B3BE9FCE2C7988BD006D989E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B3BE9FD12C7988BE006D989E /* Provenance Stickers */,
+			);
+			name = "Provenance Stickers";
+			packageProductDependencies = (
+			);
+			productName = "Provenance Stickers";
+			productReference = B3BE9FD02C7988BD006D989E /* Provenance Stickers.appex */;
+			productType = "com.apple.product-type.app-extension.messages-sticker-pack";
 		};
 		B3C8A6BB2878238C0037A946 /* CoresRetro */ = {
 			isa = PBXNativeTarget;
@@ -5131,7 +5196,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
 				DefaultBuildSystemTypeForWorkspace = Latest;
-				LastSwiftUpdateCheck = 1410;
+				LastSwiftUpdateCheck = 1610;
 				LastUpgradeCheck = 1300;
 				ORGANIZATIONNAME = "Provenance Emu";
 				TargetAttributes = {
@@ -5178,14 +5243,19 @@
 						LastSwiftMigration = 1000;
 						TestTargetID = 1A3D409317B2DCE4004DFFFC;
 					};
-					B305EEF6276B4C71003AE510 = {
-						CreatedOnToolsVersion = 13.2;
+					B30059362C794D6A003010F5 = {
+						CreatedOnToolsVersion = 16.0;
 					};
-					B305EEF9276B4C71003AE510 = {
-						CreatedOnToolsVersion = 13.2;
+					B300593B2C794D6B003010F5 = {
+						CreatedOnToolsVersion = 16.0;
 					};
-					B305EF04276B4C73003AE510 = {
-						CreatedOnToolsVersion = 13.2;
+					B300594D2C794D6C003010F5 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = B300593B2C794D6B003010F5;
+					};
+					B30059572C794D6C003010F5 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = B300593B2C794D6B003010F5;
 					};
 					B30E9A0C2C6F209400C1431E = {
 						CreatedOnToolsVersion = 16.1;
@@ -5196,16 +5266,10 @@
 					B355DF9629209B6200E4C858 = {
 						CreatedOnToolsVersion = 14.1;
 					};
-					B355DFD12920A42100E4C858 = {
-						CreatedOnToolsVersion = 14.1;
-					};
 					B355DFFD2920AA2000E4C858 = {
 						CreatedOnToolsVersion = 14.1;
 					};
 					B355E0102920AA9700E4C858 = {
-						CreatedOnToolsVersion = 14.1;
-					};
-					B355E0202920AB8100E4C858 = {
 						CreatedOnToolsVersion = 14.1;
 					};
 					B355E0372920AC1900E4C858 = {
@@ -5219,6 +5283,15 @@
 					};
 					B3B29D4D21561F0600903290 = {
 						CreatedOnToolsVersion = 10.0;
+					};
+					B3BE9FA32C7987B1006D989E = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					B3BE9FB22C7987B1006D989E = {
+						CreatedOnToolsVersion = 16.1;
+					};
+					B3BE9FCF2C7988BD006D989E = {
+						CreatedOnToolsVersion = 16.1;
 					};
 					B3C8A6BB2878238C0037A946 = {
 						LastSwiftMigration = 1610;
@@ -5255,7 +5328,6 @@
 				};
 			};
 			buildConfigurationList = 1A3D408F17B2DCE4004DFFFC /* Build configuration list for PBXProject "Provenance" */;
-			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -5306,6 +5378,7 @@
 				B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */,
 				B33BD1B72C6A61DD001E933A /* XCLocalSwiftPackageReference "MoltenVK" */,
 			);
+			preferredProjectObjectVersion = 63;
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
 			projectDirPath = "";
 			projectReferences = (
@@ -5332,21 +5405,23 @@
 				B3B29D4D21561F0600903290 /* Setup Code-Signing */,
 				B383225D26ED9C530029D12F /* Check Git Submodules */,
 				B30E94832793B8BE00871E57 /* Check CodeSigning */,
-				B305EEF6276B4C71003AE510 /* Provenance Watch */,
-				B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */,
-				B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */,
 				B3270F7E27DCB25100E83180 /* Cores */,
 				B3C8A6BB2878238C0037A946 /* CoresRetro */,
 				B30E9A0C2C6F209400C1431E /* CoresRetroarch */,
 				B3EEED872920B005008E2603 /* ControllerDriver */,
-				B355E0202920AB8100E4C858 /* FileProviderExtension */,
 				B355DF9629209B6200E4C858 /* QuickLookPreview */,
 				B3EEED9D2920B098008E2603 /* QuickLookMacOS */,
-				B355DFD12920A42100E4C858 /* StickerPack */,
 				B355E0102920AA9700E4C858 /* SpotlightImportExtension */,
 				B355DFFD2920AA2000E4C858 /* ThumbnailExtension */,
 				B3EEEDB22920B0D4008E2603 /* ThumbnailExtensionMacOS */,
 				B355E0372920AC1900E4C858 /* WidgetExtension */,
+				B30059362C794D6A003010F5 /* Provenance Mini */,
+				B300593B2C794D6B003010F5 /* Provenance Mini Watch App */,
+				B300594D2C794D6C003010F5 /* Provenance Mini Watch AppTests */,
+				B30059572C794D6C003010F5 /* Provenance Mini Watch AppUITests */,
+				B3BE9FA32C7987B1006D989E /* ROM File Provider */,
+				B3BE9FB22C7987B1006D989E /* ROM File ProviderUI */,
+				B3BE9FCF2C7988BD006D989E /* Provenance Stickers */,
 			);
 		};
 /* End PBXProject section */
@@ -5471,27 +5546,31 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B305EEF5276B4C71003AE510 /* Resources */ = {
+		B30059352C794D6A003010F5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B305EEF8276B4C71003AE510 /* Resources */ = {
+		B300593A2C794D6B003010F5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B305EF00276B4C72003AE510 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B305EF03276B4C73003AE510 /* Resources */ = {
+		B300594C2C794D6C003010F5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B305EF14276B4C73003AE510 /* Preview Assets.xcassets in Resources */,
-				B305EF11276B4C73003AE510 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30059562C794D6C003010F5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5586,14 +5665,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B355DFD02920A42100E4C858 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B355DFD52920A42800E4C858 /* Stickers.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B355DFFC2920AA2000E4C858 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5608,18 +5679,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B355E01F2920AB8100E4C858 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B355E0362920AC1900E4C858 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B355E0452920AC2000E4C858 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5690,6 +5753,27 @@
 				B394CDD52BDEE53A006B63E8 /* Scale4x.fsh in Resources */,
 				B394CDD72BDEE53A006B63E8 /* OmniScaleLegacy.fsh in Resources */,
 				B394CDD92BDEE53A006B63E8 /* GLES in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3BE9FA22C7987B1006D989E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3BE9FB12C7987B1006D989E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3BE9FCE2C7988BD006D989E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6425,13 +6509,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B305EF01276B4C73003AE510 /* Sources */ = {
+		B30059382C794D6B003010F5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B305EF0D276B4C73003AE510 /* ProvenanceApp.swift in Sources */,
-				B305EF0B276B4C73003AE510 /* ContentView.swift in Sources */,
-				B305EF0F276B4C73003AE510 /* ComplicationController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B300594A2C794D6C003010F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30059542C794D6C003010F5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6535,24 +6630,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B355E01D2920AB8100E4C858 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B355E0262920AB8600E4C858 /* FileProviderExtension.swift in Sources */,
-				B355E0282920AB8600E4C858 /* FileProviderItem.swift in Sources */,
-				B355E02A2920AB8600E4C858 /* FileProviderEnumerator.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B355E0342920AC1900E4C858 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B355E0472920AC2000E4C858 /* WidgetExtension.intentdefinition in Sources */,
-				B355E0402920AC1E00E4C858 /* WidgetExtensionLiveActivity.swift in Sources */,
-				B355E03E2920AC1E00E4C858 /* WidgetExtensionBundle.swift in Sources */,
-				B355E0422920AC1E00E4C858 /* WidgetExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6615,6 +6696,20 @@
 				B394CD232BDEE53A006B63E8 /* fullscreen_vs.metal in Sources */,
 				B394CD2B2BDEE53A006B63E8 /* simpleCRT.metal in Sources */,
 				B394CD2C2BDEE53A006B63E8 /* PVAppDelegate+Open.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3BE9FA02C7987B1006D989E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B3BE9FAF2C7987B1006D989E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6764,15 +6859,20 @@
 			target = B383225D26ED9C530029D12F /* Check Git Submodules */;
 			targetProxy = 9304F9662AB355B700A92418 /* PBXContainerItemProxy */;
 		};
-		B305EEFD276B4C71003AE510 /* PBXTargetDependency */ = {
+		B300593F2C794D6B003010F5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B305EEF9276B4C71003AE510 /* Provenance Watch WatchKit App */;
-			targetProxy = B305EEFC276B4C71003AE510 /* PBXContainerItemProxy */;
+			target = B300593B2C794D6B003010F5 /* Provenance Mini Watch App */;
+			targetProxy = B300593E2C794D6B003010F5 /* PBXContainerItemProxy */;
 		};
-		B305EF08276B4C73003AE510 /* PBXTargetDependency */ = {
+		B30059502C794D6C003010F5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = B305EF04276B4C73003AE510 /* Provenance Watch WatchKit Extension */;
-			targetProxy = B305EF07276B4C73003AE510 /* PBXContainerItemProxy */;
+			target = B300593B2C794D6B003010F5 /* Provenance Mini Watch App */;
+			targetProxy = B300594F2C794D6C003010F5 /* PBXContainerItemProxy */;
+		};
+		B300595A2C794D6D003010F5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B300593B2C794D6B003010F5 /* Provenance Mini Watch App */;
+			targetProxy = B30059592C794D6D003010F5 /* PBXContainerItemProxy */;
 		};
 		B32987DA2B661C8A00728996 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6910,6 +7010,11 @@
 			isa = PBXTargetDependency;
 			target = BE9FDCB61C210B9E0046DF0E /* TopShelf */;
 			targetProxy = B3B4C953279E69AD00505424 /* PBXContainerItemProxy */;
+		};
+		B3BE9FD62C7988BF006D989E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B3BE9FCF2C7988BD006D989E /* Provenance Stickers */;
+			targetProxy = B3BE9FD52C7988BF006D989E /* PBXContainerItemProxy */;
 		};
 		B3C8A6B728781EBC0037A946 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7746,13 +7851,15 @@
 			};
 			name = Archive;
 		};
-		B305EF16276B4C74003AE510 /* Debug */ = {
+		B30059612C794D6D003010F5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -7760,31 +7867,185 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_ENTITLEMENTS = "Provenance Mini Watch App/Provenance Mini Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				DEVELOPMENT_ASSET_PATHS = "\"Provenance Mini Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Mini";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini.watchkitapp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Debug;
+		};
+		B30059622C794D6D003010F5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Provenance Mini Watch App/Provenance Mini Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "\"Provenance Mini Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Mini";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Release;
+		};
+		B30059632C794D6D003010F5 /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "Provenance Mini Watch App/Provenance Mini Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_ASSET_PATHS = "\"Provenance Mini Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Mini";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKWatchOnly = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
+			};
+			name = Archive;
+		};
+		B30059662C794D6D003010F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Mini";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
-		B305EF17276B4C74003AE510 /* Release */ = {
+		B30059672C794D6D003010F5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -7792,32 +8053,34 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Mini";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
-		B305EF18276B4C74003AE510 /* Archive */ = {
+		B30059682C794D6D003010F5 /* Archive */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -7825,34 +8088,35 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
+				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Mini";
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SDKROOT = watchos;
+				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Archive;
 		};
-		B305EF1A276B4C74003AE510 /* Debug */ = {
+		B300596A2C794D6D003010F5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -7860,41 +8124,39 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
-				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini-Watch-AppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance Mini Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Provenance Mini Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Debug;
 		};
-		B305EF1B276B4C74003AE510 /* Release */ = {
+		B300596B2C794D6D003010F5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -7902,42 +8164,39 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
-				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini-Watch-AppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance Mini Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Provenance Mini Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Release;
 		};
-		B305EF1C276B4C74003AE510 /* Archive */ = {
+		B300596C2C794D6D003010F5 /* Archive */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -7945,41 +8204,38 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				IBSC_MODULE = Provenance_Watch_WatchKit_Extension;
-				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit App";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini-Watch-AppTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Provenance Mini Watch App.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Provenance Mini Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Archive;
 		};
-		B305EF1E276B4C74003AE510 /* Debug */ = {
+		B300596E2C794D6D003010F5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -7987,49 +8243,38 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
-				ENABLE_PREVIEWS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
-				INFOPLIST_KEY_WKWatchOnly = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_EXTENSION_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+				TEST_TARGET_NAME = "Provenance Mini Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Debug;
 		};
-		B305EF1F276B4C74003AE510 /* Release */ = {
+		B300596F2C794D6D003010F5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -8037,50 +8282,38 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_PREVIEWS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
-				INFOPLIST_KEY_WKWatchOnly = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_EXTENSION_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+				TEST_TARGET_NAME = "Provenance Mini Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Release;
 		};
-		B305EF20276B4C74003AE510 /* Archive */ = {
+		B30059702C794D6D003010F5 /* Archive */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B326758727B1E27E0033C5D1 /* Build-watchOS.xcconfig */;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_COMPLICATION_NAME = Complication;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -8088,39 +8321,28 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_ASSET_PATHS = "\"Provenance Watch WatchKit Extension/Preview Content\"";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_PREVIEWS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Watch WatchKit Extension/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Watch WatchKit Extension";
-				INFOPLIST_KEY_CLKComplicationPrincipalClass = Provenance_Watch_WatchKit_Extension.ComplicationController;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 Provenance Emu. All rights reserved.";
-				INFOPLIST_KEY_WKWatchOnly = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = "$(MARKETING_VERSION)";
-				MTL_ENABLE_DEBUG_INFO = NO;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(WATCH_APP_EXTENSION_PRODUCT_BUNDLE_IDENTIFIER)";
-				PRODUCT_NAME = "${TARGET_NAME}";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.Provenance-Mini-Watch-AppUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 8.3;
+				TEST_TARGET_NAME = "Provenance Mini Watch App";
+				WATCHOS_DEPLOYMENT_TARGET = 10.6;
 			};
 			name = Archive;
 		};
@@ -9081,121 +9303,6 @@
 			};
 			name = Archive;
 		};
-		B355DFDB2920A42F00E4C858 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = StickerPack.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/StickerPack/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.StickerPack";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		B355DFDC2920A42F00E4C858 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = StickerPack.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/StickerPack/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.StickerPack";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		B355DFDD2920A42F00E4C858 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = StickerPack.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/StickerPack/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.StickerPack";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SUPPORTS_MACCATALYST = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
 		B355E00A2920AA4700E4C858 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -9478,152 +9585,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos";
-				SUPPORTS_MACCATALYST = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Archive;
-		};
-		B355E0312920AB9000E4C858 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Extensions/FileProviderExtension/FileProviderExtension.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/FileProviderExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = FileProviderExtension;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.FileProviderExtension";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos";
-				SUPPORTS_MACCATALYST = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		B355E0322920AB9000E4C858 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Extensions/FileProviderExtension/FileProviderExtension.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/FileProviderExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = FileProviderExtension;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.FileProviderExtension";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos";
-				SUPPORTS_MACCATALYST = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		B355E0332920AB9000E4C858 /* Archive */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = Extensions/FileProviderExtension/FileProviderExtension.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Extensions/FileProviderExtension/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = FileProviderExtension;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2022 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.FileProviderExtension";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "xrsimulator xros iphonesimulator iphoneos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -10774,6 +10735,421 @@
 				SUPPORTS_MACCATALYST = YES;
 			};
 			name = Release;
+		};
+		B3BE9FC32C7987B2006D989E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "ROM File Provider/ROM_File_Provider.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ROM File Provider/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "ROM File Provider";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-Provider";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3BE9FC42C7987B2006D989E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "ROM File Provider/ROM_File_Provider.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ROM File Provider/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "ROM File Provider";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-Provider";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3BE9FC52C7987B2006D989E /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_ENTITLEMENTS = "ROM File Provider/ROM_File_Provider.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ROM File Provider/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "ROM File Provider";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-Provider";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
+		B3BE9FC82C7987B2006D989E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-ProviderUI";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3BE9FC92C7987B2006D989E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-ProviderUI";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3BE9FCA2C7987B2006D989E /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.ROM-File-ProviderUI";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
+		};
+		B3BE9FDA2C7988BF006D989E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Provenance Stickers/Info.plist";
+				INFOPLIST_KEY_NSStickerSharingLevel = OS;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.Provenance-Stickers";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B3BE9FDB2C7988BF006D989E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Provenance Stickers/Info.plist";
+				INFOPLIST_KEY_NSStickerSharingLevel = OS;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.Provenance-Stickers";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B3BE9FDC2C7988BF006D989E /* Archive */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "iMessage App Icon";
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S32Z3HMYVQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Provenance Stickers/Info.plist";
+				INFOPLIST_KEY_NSStickerSharingLevel = OS;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.provenance.Provenance-Stickers";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Archive;
 		};
 		B3C8A6EC2878238C0037A946 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -12017,32 +12393,42 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B305EF21276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit Extension" */ = {
+		B30059602C794D6D003010F5 /* Build configuration list for PBXNativeTarget "Provenance Mini Watch App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B305EF1E276B4C74003AE510 /* Debug */,
-				B305EF1F276B4C74003AE510 /* Release */,
-				B305EF20276B4C74003AE510 /* Archive */,
+				B30059612C794D6D003010F5 /* Debug */,
+				B30059622C794D6D003010F5 /* Release */,
+				B30059632C794D6D003010F5 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B305EF22276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch WatchKit App" */ = {
+		B30059652C794D6D003010F5 /* Build configuration list for PBXNativeTarget "Provenance Mini" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B305EF1A276B4C74003AE510 /* Debug */,
-				B305EF1B276B4C74003AE510 /* Release */,
-				B305EF1C276B4C74003AE510 /* Archive */,
+				B30059662C794D6D003010F5 /* Debug */,
+				B30059672C794D6D003010F5 /* Release */,
+				B30059682C794D6D003010F5 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B305EF23276B4C74003AE510 /* Build configuration list for PBXNativeTarget "Provenance Watch" */ = {
+		B30059692C794D6D003010F5 /* Build configuration list for PBXNativeTarget "Provenance Mini Watch AppTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B305EF16276B4C74003AE510 /* Debug */,
-				B305EF17276B4C74003AE510 /* Release */,
-				B305EF18276B4C74003AE510 /* Archive */,
+				B300596A2C794D6D003010F5 /* Debug */,
+				B300596B2C794D6D003010F5 /* Release */,
+				B300596C2C794D6D003010F5 /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B300596D2C794D6D003010F5 /* Build configuration list for PBXNativeTarget "Provenance Mini Watch AppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B300596E2C794D6D003010F5 /* Debug */,
+				B300596F2C794D6D003010F5 /* Release */,
+				B30059702C794D6D003010F5 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -12107,16 +12493,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B355DFDA2920A42F00E4C858 /* Build configuration list for PBXNativeTarget "StickerPack" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B355DFDB2920A42F00E4C858 /* Debug */,
-				B355DFDC2920A42F00E4C858 /* Release */,
-				B355DFDD2920A42F00E4C858 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		B355E0092920AA4700E4C858 /* Build configuration list for PBXNativeTarget "ThumbnailExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -12133,16 +12509,6 @@
 				B355E01A2920AAA600E4C858 /* Debug */,
 				B355E01B2920AAA600E4C858 /* Release */,
 				B355E01C2920AAA600E4C858 /* Archive */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B355E0302920AB9000E4C858 /* Build configuration list for PBXNativeTarget "FileProviderExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B355E0312920AB9000E4C858 /* Debug */,
-				B355E0322920AB9000E4C858 /* Release */,
-				B355E0332920AB9000E4C858 /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -12203,6 +12569,36 @@
 				B3B29D4F21561F0600903290 /* Debug */,
 				B3B29D5021561F0600903290 /* Release */,
 				B3721CF421912B7400433E4C /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3BE9FC22C7987B2006D989E /* Build configuration list for PBXNativeTarget "ROM File Provider" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3BE9FC32C7987B2006D989E /* Debug */,
+				B3BE9FC42C7987B2006D989E /* Release */,
+				B3BE9FC52C7987B2006D989E /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3BE9FC72C7987B2006D989E /* Build configuration list for PBXNativeTarget "ROM File ProviderUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3BE9FC82C7987B2006D989E /* Debug */,
+				B3BE9FC92C7987B2006D989E /* Release */,
+				B3BE9FCA2C7987B2006D989E /* Archive */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B3BE9FD92C7988BF006D989E /* Build configuration list for PBXNativeTarget "Provenance Stickers" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B3BE9FDA2C7988BF006D989E /* Debug */,
+				B3BE9FDB2C7988BF006D989E /* Release */,
+				B3BE9FDC2C7988BF006D989E /* Archive */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -12733,6 +13129,41 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
 		};
+		B30059742C7974C8003010F5 /* PVVirtualJaguar-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B925A02C6141BC006317EC /* XCLocalSwiftPackageReference "Cores/VirtualJaguar" */;
+			productName = "PVVirtualJaguar-Dynamic";
+		};
+		B30059782C7974D6003010F5 /* PVStella-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
+			productName = "PVStella-Dynamic";
+		};
+		B300597B2C7974DD003010F5 /* PVPokeMini-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
+			productName = "PVPokeMini-Dynamic";
+		};
+		B300597E2C7974E4003010F5 /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3E0CFA32C054FC200F45074 /* XCLocalSwiftPackageReference "PVEmulatorCore" */;
+			productName = PVEmulatorCore;
+		};
+		B30059802C7974EB003010F5 /* PVCoreBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */;
+			productName = PVCoreBridge;
+		};
+		B30059822C7974EF003010F5 /* PVLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */;
+			productName = PVLibrary;
+		};
+		B30059842C7974F5003010F5 /* PVSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B323B00C2BF46DB900CEA3CF /* XCLocalSwiftPackageReference "PVSupport" */;
+			productName = PVSupport;
+		};
 		B30585682C0C14EE00B91D7A /* PVWebServer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVWebServer;
@@ -13029,6 +13460,21 @@
 		B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = "PVVirtualJaguar-Dynamic";
+		};
+		B3BE9F9A2C79869F006D989E /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B39B53862C66E7A900C220C6 /* XCLocalSwiftPackageReference "PVSettings" */;
+			productName = PVSettings;
+		};
+		B3BE9F9C2C7986A4006D989E /* Defaults */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */;
+			productName = Defaults;
+		};
+		B3BE9F9E2C7986A9006D989E /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B34A20132C62F96100E34059 /* XCLocalSwiftPackageReference "PVPlists" */;
+			productName = PVPlists;
 		};
 		B3CE94B6293446AC0053B891 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;

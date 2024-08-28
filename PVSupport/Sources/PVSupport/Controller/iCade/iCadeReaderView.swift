@@ -1,4 +1,4 @@
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
 import UIKit
 import PVLogging
 /*

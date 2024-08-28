@@ -5,6 +5,8 @@
 //  Created by Joseph Mattiello on 8/12/24.
 //
 
+import Foundation
+
 @objc public enum GameSpeed: Int {
     case slow, normal, fast
 }

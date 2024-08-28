@@ -7,7 +7,9 @@
 //  Copyright (c) 2015 James Addyman. All rights reserved.
 //
 
+#if canImport(CoreSpotlight)
 import CoreSpotlight
+#endif
 import Foundation
 import PVSupport
 import RealmSwift

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+#if canImport(GameController) && canImport(CoreHaptics)
 import GameController
 import CoreHaptics
 
@@ -46,3 +47,4 @@ internal final class HapticsManager: Sendable {
         return engine
     }
 }
+#endif

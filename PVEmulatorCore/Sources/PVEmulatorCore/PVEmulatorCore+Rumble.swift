@@ -7,7 +7,9 @@
 
 import Foundation
 import PVCoreBridge
+#if canImport(GameController)
 import GameController
+#endif
 import PVLogging
 import PVAudio
 

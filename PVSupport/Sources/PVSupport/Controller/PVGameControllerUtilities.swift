@@ -7,6 +7,8 @@
 //
 
 import Foundation
+
+#if canImport(GameController)
 @_exported import GameController
 //import simd
 
@@ -101,3 +103,4 @@ public final class PVGameControllerUtilities : NSObject {
         return .init(forThumbstick: thumbstick)
     }
 }
+#endif

@@ -58,7 +58,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
     func _initUI(
         libraryUpdatesController: PVGameLibraryUpdatesController,
         gameImporter: GameImporter,
-        gameLibrary: PVGameLibrary
+        gameLibrary: PVGameLibrary<RealmDatabaseDriver>
     ) {
         // Set root view controller and make windows visible
         let window = UIWindow.init(frame: UIScreen.main.bounds)
@@ -158,7 +158,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             return true
         }
 
-        let gameLibrary = PVGameLibrary(database: RomDatabase.sharedInstance)
+        let gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
 
         #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
             // Setup shortcuts

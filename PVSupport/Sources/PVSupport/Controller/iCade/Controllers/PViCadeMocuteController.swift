@@ -6,7 +6,7 @@
 //  Created by Edgar Neto on 8/12/17.
 //  Copyright © 2017 James Addyman. All rights reserved.
 //
-#if canImport(UIKit)
+#if canImport(UIKit) && canImport(GameController)
 import Foundation
 
 public final class PViCadeMocuteController: PViCadeController {

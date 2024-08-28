@@ -22,9 +22,9 @@ FOUNDATION_EXPORT const unsigned char MednafenGameCoreCVersionString[];
 #pragma clang diagnostic ignored "-Wall"
 #pragma clang diagnostic ignored "-Wextra"
 #import <mednafen/mednafen.h>
-//#import <mednafen/settings-driver.h>
-//#import <mednafen/state-driver.h>
-//#import <mednafen/mednafen-driver.h>
-//#import <mednafen/MemoryStream.h>
-//#import <mednafen/mempatcher.h>
+#import <mednafen/settings-driver.h>
+#import <mednafen/state-driver.h>
+#import <mednafen/mednafen-driver.h>
+#import <mednafen/MemoryStream.h>
+#import <mednafen/mempatcher.h>
 #pragma clang diagnostic pop

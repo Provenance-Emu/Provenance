@@ -24,7 +24,7 @@ import UIKit
 #if os(macOS)
 import OpenGL.GL3
 import GLUT
-#else
+#elseif !os(watchOS)
 import OpenGLES
 import GLKit
 #endif

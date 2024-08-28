@@ -207,6 +207,8 @@ public typealias RomDB = RomDatabase
 public final class RomDatabase {
 
     public private(set) static var databaseInitialized = false
+    
+    
     static var gamesCache: [String: PVGame]?
     static var systemCache: [String: PVSystem]?
     static var coreCache: [String: PVCore]?
@@ -486,8 +488,8 @@ public extension RomDatabase {
             NSLog("Failed to hide game \(game.title)\n\(error.localizedDescription)")
         }
     }
-    func delete(game: PVGame, deleteArtwork: Bool = false, deleteSaves: Bool = false) async throws {
-        let romURL = await PVEmulatorConfiguration.path(forGame: game)
+    func delete(game: PVGame, deleteArtwork: Bool = false, deleteSaves: Bool = false) throws {
+        let romURL = PVEmulatorConfiguration.path(forGame: game)
         if deleteArtwork, !game.customArtworkURL.isEmpty {
             do {
                 try PVMediaCache.deleteImage(forKey: game.customArtworkURL)
@@ -497,7 +499,7 @@ public extension RomDatabase {
             }
         }
         if deleteSaves {
-            let savesPath = await PVEmulatorConfiguration.saveStatePath(forGame: game)
+            let savesPath = PVEmulatorConfiguration.saveStatePath(forGame: game)
             if FileManager.default.fileExists(atPath: savesPath.path) {
                 do {
                     try FileManager.default.removeItem(at: savesPath)
@@ -506,7 +508,7 @@ public extension RomDatabase {
                 }
             }
 
-            let batteryPath = await PVEmulatorConfiguration.batterySavesPath(forGame: game)
+            let batteryPath = PVEmulatorConfiguration.batterySavesPath(forGame: game)
             if FileManager.default.fileExists(atPath: batteryPath.path) {
                 do {
                     try FileManager.default.removeItem(at: batteryPath)
@@ -527,7 +529,7 @@ public extension RomDatabase {
         deleteFromSpotlight(game: game)
 #endif
         do {
-            await deleteRelatedFilesGame(game)
+            deleteRelatedFilesGame(game)
             game.saveStates.forEach { try? $0.delete() }
             game.cheats.forEach { try? $0.delete() }
             game.recentPlays.forEach { try? $0.delete() }
@@ -542,14 +544,14 @@ public extension RomDatabase {
         }
     }
 
-    func deleteRelatedFilesGame(_ game: PVGame) async {
+    func deleteRelatedFilesGame(_ game: PVGame) {
 //        guard let system = game.system else {
 //            ELOG("Game \(game.title) belongs to an unknown system \(game.systemIdentifier)")
 //            return
 //        }
-        await game.relatedFiles.concurrentForEach {
+        game.relatedFiles.forEach {
             do {
-                let file = await PVEmulatorConfiguration.path(forGame: game, url: $0.url)
+                let file = PVEmulatorConfiguration.path(forGame: game, url: $0.url)
                 if FileManager.default.fileExists(atPath: file.path) {
                     try FileManager.default.removeItem(at: file)
                 }
@@ -734,18 +736,18 @@ public extension RomDatabase {
     }
     func reloadFileSystemROMCache() {
         Task {
-            NSLog("RomDatabase: reloadFileSystemROMCache")
+            ILOG("RomDatabase: reloadFileSystemROMCache")
             var files:[URL:PVSystem]=[:]
-            await getSystemCache().values.asyncForEach { system in
-                files = await addFileSystemROMCache(system, files:files)
+            getSystemCache().values.forEach { system in
+                files = addFileSystemROMCache(system, files:files)
             }
             RomDatabase.fileSystemROMCache = files
         }
     }
     
-    func addFileSystemROMCache(_ system:PVSystem, files:[URL:PVSystem]) async -> [URL:PVSystem] {
+    func addFileSystemROMCache(_ system:PVSystem, files:[URL:PVSystem]) -> [URL:PVSystem] {
         var files = files
-        let systemDir = await system.romsDirectory
+        let systemDir = system.romsDirectory
         if !FileManager.default.fileExists(atPath: systemDir.path) {
             do {
                 try FileManager.default.createDirectory(atPath: systemDir.path, withIntermediateDirectories: true, attributes: nil)
@@ -769,7 +771,7 @@ public extension RomDatabase {
     func addFileSystemROMCache(_ system:PVSystem) {
         Task {
             if let files = RomDatabase.fileSystemROMCache {
-                RomDatabase.fileSystemROMCache = await addFileSystemROMCache(system, files:files)
+                RomDatabase.fileSystemROMCache = addFileSystemROMCache(system, files:files)
             }
         }
     }
@@ -785,9 +787,9 @@ public extension RomDatabase {
         return files
     }
 
-    func getFileSystemROMCache(for system: PVSystem) async -> [URL:PVSystem] {
+    func getFileSystemROMCache(for system: PVSystem) -> [URL:PVSystem] {
         if RomDatabase.fileSystemROMCache == nil {
-            await self.reloadFileSystemROMCache()
+            self.reloadFileSystemROMCache()
         }
         var files:[URL:PVSystem] = [:]
         if let fileCache = RomDatabase.fileSystemROMCache {
@@ -801,75 +803,17 @@ public extension RomDatabase {
         return files
     }
 
-    func reloadArtDBCache(_ db: OESQLiteDatabase? ) {
-        NSLog("RomDatabase:reloadArtDBCache")
+    func reloadArtDBCache() {
+        VLOG("RomDatabase:reloadArtDBCache")
         if RomDatabase.artMD5DBCache != nil && RomDatabase.artFileNameToMD5Cache != nil {
-            NSLog("RomDatabase:reloadArtDBCache:Cache Found, Skipping Data Reload")
+            ILOG("RomDatabase:reloadArtDBCache:Cache Found, Skipping Data Reload")
         }
         do {
-            var openVGDB: OESQLiteDatabase?
-            if let db=db {
-                openVGDB = db
-            } else {
-                openVGDB = try {
-                    let bundle = Bundle.module
-                    guard let openvgdbSQLITE = bundle.url(forResource: "openvgdb", withExtension: "sqlite") else {
-                        fatalError("Could not find openvgdb.sqlite resource")
-                    }
-                    let _openVGDB = try OESQLiteDatabase(withURL: openvgdbSQLITE)
-                    return _openVGDB
-                }()
-            }
-            let queryString = """
-                SELECT
-                    rom.romHashMD5 as 'romHashMD5',
-                    rom.romFileName as 'romFileName',
-                    rom.systemID as 'systemID',
-                    release.releaseTitleName as 'gameTitle',
-                    release.releaseCoverFront as 'boxImageURL',
-                    rom.TEMPRomRegion as 'region',
-                    release.releaseDescription as 'gameDescription',
-                    release.releaseCoverBack as 'boxBackURL',
-                    release.releaseDeveloper as 'developer',
-                    release.releasePublisher as 'publisher',
-                    rom.romSerial as 'serial',
-                    release.releaseDate as 'releaseDate',
-                    release.releaseGenre as 'genres',
-                    release.releaseReferenceURL as 'referenceURL',
-                    release.releaseID as 'releaseID',
-                    rom.romLanguage as 'language',
-                    release.regionLocalizedID as 'regionID',
-                    system.systemShortName as 'systemShortName',
-                    rom.romHashCRC as 'romHashCRC',
-                    rom.romID as 'romID'
-                FROM ROMs rom, RELEASES release, SYSTEMS system, REGIONS region
-                WHERE rom.romID = release.romID
-                AND rom.systemID = system.systemID
-                AND release.regionLocalizedID = region.regionID
-                """
-            let results = try openVGDB!.execute(query: queryString)
-            var romMD5:[String:[String: AnyObject]] = [:]
-            var romFileNameToMD5:[String:String] = [:]
-            for res in results {
-                if let md5 = res["romHashMD5"] as? String, !md5.isEmpty {
-                    let md5 : String = md5.uppercased()
-                    romMD5[md5] = res
-                    if let systemID = res["systemID"] as? Int {
-                        if let filename = res["romFileName"] as? String, !filename.isEmpty {
-                            let key : String = String(systemID) + ":" + filename
-                            romFileNameToMD5[key]=md5
-                            romFileNameToMD5[filename]=md5
-                        }
-                        let key : String = String(systemID) + ":" + md5
-                        romFileNameToMD5[key]=md5
-                    }
-                    if let crc = res["romHashCRC"] as? String, !crc.isEmpty {
-                        romFileNameToMD5[crc]=md5
-                    }
-                }
-            }
-            RomDatabase.artMD5DBCache = romMD5
-            RomDatabase.artFileNameToMD5Cache = romFileNameToMD5
+
+            let openVGDB = OpenVGDB.init()
+            let mappings = try openVGDB.getArtworkMappings()
+            RomDatabase.artMD5DBCache = mappings.romMD5
+            RomDatabase.artFileNameToMD5Cache = mappings.romFileNameToMD5
         } catch {
             NSLog("Failed to execute query: \(error.localizedDescription)")
         }
@@ -878,7 +822,7 @@ public extension RomDatabase {
     func getArtCache(_ md5:String) -> [String: AnyObject]? {
         if RomDatabase.artMD5DBCache == nil {
             NSLog("RomDatabase:getArtCache:Artcache not found reloading")
-            self.reloadArtDBCache(nil)
+            self.reloadArtDBCache()
         }
         if let artCache = RomDatabase.artMD5DBCache,
            let art = artCache[md5] {
@@ -891,7 +835,7 @@ public extension RomDatabase {
         if RomDatabase.artMD5DBCache == nil ||
             RomDatabase.artFileNameToMD5Cache == nil {
             NSLog("RomDatabase:getArtCache:ArtCache not found, reloading")
-            self.reloadArtDBCache(nil)
+            self.reloadArtDBCache()
         }
         if let systemID = PVEmulatorConfiguration.databaseID(forSystemID: systemIdentifier),
            let artFile = RomDatabase.artFileNameToMD5Cache,
@@ -907,7 +851,7 @@ public extension RomDatabase {
         if RomDatabase.artMD5DBCache == nil ||
             RomDatabase.artFileNameToMD5Cache == nil {
             NSLog("RomDatabase:getArtCacheByFileName:ArtCache not found, reloading")
-            self.reloadArtDBCache(nil)
+            self.reloadArtDBCache()
         }
         if  let systemID = PVEmulatorConfiguration.databaseID(forSystemID: systemIdentifier),
             let artFile = RomDatabase.artFileNameToMD5Cache,
@@ -922,7 +866,7 @@ public extension RomDatabase {
     func getArtCacheByFileName(_ filename:String) -> [String: AnyObject]? {
         if RomDatabase.artMD5DBCache == nil || RomDatabase.artFileNameToMD5Cache == nil {
             NSLog("RomDatabase:getArtCacheByFileName: ArtCache not found, reloading")
-            self.reloadArtDBCache(nil)
+            self.reloadArtDBCache()
         }
         if let artFile = RomDatabase.artFileNameToMD5Cache,
            let artCache = RomDatabase.artMD5DBCache,

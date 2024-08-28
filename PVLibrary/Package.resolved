@@ -1,5 +1,5 @@
 {
-  "originHash" : "21dc202b2c4b4e01a2fb53935e6681ee13c477f9fc4c1dd809e46058e398e12b",
+  "originHash" : "8d5634932f777f1ca3ca0b61e20a8ed8d25025dc6382929628c21109578da36e",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -20,12 +20,12 @@
       }
     },
     {
-      "identity" : "grdb.swift",
+      "identity" : "defaults",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/groue/GRDB.swift.git",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
-        "revision" : "639fa9168d36931b36a79e60dc06b7d23852f1f4",
-        "version" : "6.27.0"
+        "branch" : "main",
+        "revision" : "4c009d5c2496e7aa126e922c94dd3d6ae049efa2"
       }
     },
     {
@@ -92,12 +92,48 @@
       }
     },
     {
+      "identity" : "swift-async-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-async-algorithms",
+      "state" : {
+        "revision" : "6ae9a051f76b81cc668305ceed5b0e0a7fd93d20",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections.git",
+      "state" : {
+        "revision" : "3d2dc41a01f9e49d84f0a3925fb858bed64f702d",
+        "version" : "1.1.2"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
+        "version" : "509.1.1"
+      }
+    },
+    {
       "identity" : "swiftgenplugin",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftGen/SwiftGenPlugin",
+      "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
       "state" : {
-        "revision" : "879b85a470cacd70c19e22eb7e11a3aed66f4068",
-        "version" : "6.6.2"
+        "branch" : "develop",
+        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
+      }
+    },
+    {
+      "identity" : "swiftmacros",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ShenghaiWang/SwiftMacros.git",
+      "state" : {
+        "revision" : "fcb92029bb19594f9ae9a079e8aa5fc7acc77c10",
+        "version" : "1.4.1"
       }
     },
     {

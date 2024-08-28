@@ -6,7 +6,9 @@
 //
 
 import Foundation
+#if canImport(GameController)
 import GameController
+#endif
 import PVLogging
 
 @_exported import PVAudio
@@ -54,6 +56,7 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
 
     // MARK: EmulatorCoreAudioDataSource
 
+#if canImport(GameController)
     // MARK: EmulatorCoreControllerDataSource
     @objc
     dynamic open var controller1: GCController? = nil
@@ -66,6 +69,7 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
             startHaptic()
         }
     }
+    
     @objc dynamic open var controller2: GCController? = nil
     @objc dynamic open var controller3: GCController? = nil
     @objc dynamic open var controller4: GCController? = nil
@@ -74,8 +78,9 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
     @objc dynamic open var controller6: GCController? = nil
     @objc dynamic open var controller7: GCController? = nil
     @objc dynamic open var controller8: GCController? = nil
+#endif
 
-    #if !os(macOS)
+    #if !os(macOS) && !os(watchOS)
     @objc dynamic open var touchViewController: UIViewController? = nil
     #endif
 
@@ -90,8 +95,9 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
 
     // MARK: EmulatorCoreVideoDelegate
 
+#if canImport(OpenGL) || canImport(OpenGLES)
     @objc dynamic open var glesVersion: GLESVersion = .version3
-
+#endif
 
     // PVRenderDelegate
     @objc open weak var renderDelegate: (any PVCoreBridge.PVRenderDelegate)? = nil
@@ -202,7 +208,7 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
 //    @objc func loadStateFromFileAtPath(fileName: String, completionHandler block: @escaping (Bool, Error?) -> Void)
 }
 
-#if !os(macOS)
+#if !os(macOS) && !os(watchOS)
 @objc
 extension PVEmulatorCore: ResponderClient {
     @objc open func send(event: UIEvent?) {

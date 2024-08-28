@@ -30,9 +30,7 @@ public protocol GameLaunchingViewController: AnyObject {
     func presentCoreSelection(forGame game: PVGame, sender: Any?)
 }
 
-public protocol GameLaunchingAppDelegate: UIApplicationDelegate {
-    var shortcutItemGame: PVGame? { get set }
-}
+
 
 public
 extension GameLaunchingViewController where Self: UIViewController {

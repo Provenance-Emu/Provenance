@@ -21,15 +21,9 @@ import OpenGLES.ES3
 extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     open var alwaysUseMetal: Bool { false }
     open var aspectSize: CGSize { .zero }
-    open var depthFormat: GLenum { 0 }
+
     open var emulationFPS: Double { 0.0 }
-    open var internalPixelFormat: GLenum  {
-        if let objcBridge = self as? ObjCCoreBridge {
-            return objcBridge.internalPixelFormat
-        } else {
-            return GLenum(GL_UNSIGNED_SHORT_5_6_5)
-        }
-    }
+
     open var isDoubleBuffered: Bool {
         if let objcBridge = self as? ObjCCoreBridge {
             return objcBridge.isDoubleBuffered
@@ -37,6 +31,17 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
             return false
         }
     }
+    
+#if canImport(OpenGL) || canImport(OpenGLES)
+    open var depthFormat: GLenum { 0 }
+    open var internalPixelFormat: GLenum  {
+        if let objcBridge = self as? ObjCCoreBridge {
+            return objcBridge.internalPixelFormat
+        } else {
+            return GLenum(GL_UNSIGNED_SHORT_5_6_5)
+        }
+    }
+
     
     open var pixelFormat: GLenum  {
         if let objcBridge = self as? ObjCCoreBridge {
@@ -53,6 +58,8 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
             return GLenum(GL_UNSIGNED_SHORT_5_6_5)
         }
     }
+#endif
+    
     open var renderFPS: Double { 0.0 }
     
     open var rendersToOpenGL: Bool {

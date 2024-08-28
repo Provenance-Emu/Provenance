@@ -7,13 +7,17 @@
 //
 
 import Foundation
-@_exported import GameController
 
 @objc public protocol ResponderClient: AnyObject {}
 
-@objc public protocol ButtonResponder {
-	var valueChangedHandler: GCExtendedGamepadValueChangedHandler? { get }
+#if canImport(GameController)
+@_exported import GameController
+#endif
 
+@objc public protocol ButtonResponder {
+#if canImport(GameController)
+	var valueChangedHandler: GCExtendedGamepadValueChangedHandler? { get }
+#endif
     func didPush(_ button: Int, forPlayer player: Int)
     func didRelease(_ button: Int, forPlayer player: Int)
 }
@@ -23,18 +27,18 @@ import Foundation
 }
 
 @objc public protocol KeyboardResponder {
-	var gameSupportsKeyboard: Bool { get }
-	var requiresKeyboard: Bool { get }
-
-	var keyChangedHandler: GCKeyboardValueChangedHandler? { get }
-
+    var gameSupportsKeyboard: Bool { get }
+    var requiresKeyboard: Bool { get }
+#if canImport(GameController)
+    var keyChangedHandler: GCKeyboardValueChangedHandler? { get }
     @available(iOS 14.0, tvOS 14.0, *)
-	func keyDown(_ key: GCKeyCode)
-//	func keyDown(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
-
+    func keyDown(_ key: GCKeyCode)
+    //	func keyDown(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
+    
     @available(iOS 14.0, tvOS 14.0, *)
     func keyUp(_ key: GCKeyCode)
-//	func keyUp(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
+    //	func keyUp(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
+#endif
 }
 
 @objc public enum MouseButton: Int {
@@ -48,10 +52,12 @@ import Foundation
 	var gameSupportsMouse: Bool { get }
 	var requiresMouse: Bool { get }
 
+#if canImport(GameController)
     @available(iOS 14.0, tvOS 14.0, *)
     func didScroll(_ cursor: GCDeviceCursor)
 
 	var mouseMovedHandler: GCMouseMoved? { get }
+#endif
 	func mouseMoved(atPoint point: CGPoint)
 
 	func leftMouseDown(atPoint point: CGPoint)
@@ -67,9 +73,11 @@ import Foundation
 }
 
 @objc public protocol TouchPadResponder {
+#if canImport(GameController)
 	var touchedChangedHandler: GCControllerButtonTouchedChangedHandler? { get }
 	var pressedChangedHandler: GCControllerButtonValueChangedHandler? { get }
 	var valueChangedHandler: GCControllerButtonValueChangedHandler? { get }
+#endif
 
 	var gameSupportsTouchpad: Bool { get }
 }

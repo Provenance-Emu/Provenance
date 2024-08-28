@@ -6,13 +6,14 @@
 //
 
 import PVAudio
+import Foundation
 
 @objc public protocol EmulatorCoreAudioDataSource: Sendable {
 
     @objc var frameInterval: TimeInterval { get }
     @objc var audioDelegate: PVAudioDelegate? { get set }
 
-    var sampleRate: Double { get }
+    var sampleRate: Double { get set }
     var audioBitDepth: UInt { get }
     var channelCount: UInt { get }
 

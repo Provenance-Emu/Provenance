@@ -7,7 +7,6 @@
 
 import Foundation
 import PVCoreBridge
-import GameController
 import PVLogging
 import PVAudio
 
@@ -23,7 +22,24 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
         }
     }
 
-    @objc open var sampleRate: Double { 48000.00 }
+    @objc open var sampleRate: Double {
+        get {
+            // use objc stored property
+            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+                return objcBridge.sampleRate
+            } else {
+                return 48000
+            }
+        }
+        set {
+            // use objc stored property
+            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+                return objcBridge.sampleRate = newValue
+            } else {
+                fatalError("Should be overridden by subclass")
+            }
+        }
+    }
     @objc open var audioBitDepth: UInt { 16 }
     @objc open var channelCount: UInt { 1 }
 
@@ -79,7 +95,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
     }
 }
 
-#if !os(tvOS) && !os(macOS)
+#if !os(tvOS) && !os(macOS) && !os(watchOS)
 import AVFAudio
 internal extension PVEmulatorCore {
     func getSampleRate() -> Float64 {

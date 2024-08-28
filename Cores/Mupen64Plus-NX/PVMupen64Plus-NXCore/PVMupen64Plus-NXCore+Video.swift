@@ -12,7 +12,7 @@ import PVSupport
 #if targetEnvironment(macCatalyst)
 import OpenGL
 import GLUT
-#else
+#elseif !os(watchOS)
 import OpenGLES.ES3
 #endif
 

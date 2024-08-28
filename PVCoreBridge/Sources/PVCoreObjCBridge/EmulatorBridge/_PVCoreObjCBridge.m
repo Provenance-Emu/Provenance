@@ -120,13 +120,14 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
     }
     gameInterval = 1.0 / ([self frameInterval] * framerateMultiplier);
 }
-#if !TARGET_OS_TV && !TARGET_OS_OSX
+
+#if !TARGET_OS_TV && !TARGET_OS_OSX && !TARGET_OS_WATCH
 - (Float64) getSampleRate {
     return [[AVAudioSession sharedInstance] sampleRate];
 }
 
 - (BOOL) setPreferredSampleRate:(double)preferredSampleRate error:(NSError **)error {
-	double preferredSampleRate2 = preferredSampleRate ?: 48000;
+    double preferredSampleRate2 = preferredSampleRate ?: 48000;
     return [[AVAudioSession sharedInstance] setPreferredSampleRate:preferredSampleRate2 error:error];
 }
 #endif
@@ -162,7 +163,7 @@ static NSString *_systemName;
 
 - (BOOL) suppportRumble { return NO; }
 
-#if !TARGET_OS_TV
+#if !TARGET_OS_TV && !TARGET_OS_WATCH
 -(BOOL)startHaptic {
     if (!NSThread.isMainThread) {
         __block BOOL started = NO;
@@ -172,7 +173,7 @@ static NSString *_systemName;
         return started;
     }
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
     if (self.supportsRumble && !(self.controller1 != nil && !self.controller1.isAttachedToDevice)) {
         self.rumbleGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
         [self.rumbleGenerator prepare];
@@ -338,7 +339,7 @@ static NSString *_systemName;
 - (void)startEmulation {
     if ([self class] != PVEmulatorCoreClass) {
         if (!_isRunning) {
-#if !TARGET_OS_TV && !TARGET_OS_OSX
+#if !TARGET_OS_TV && !TARGET_OS_OSX && !TARGET_OS_WATCH
             [self startHaptic];
             NSError *error;
             BOOL success = [self setPreferredSampleRate:[self audioSampleRate] error:&error];
@@ -415,7 +416,7 @@ static NSString *_systemName;
 @implementation PVCoreObjCBridge (Controllers)
 
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH
 - (UIViewController *)touchViewController {
     return _touchViewController;
 }
@@ -427,6 +428,7 @@ static NSString *_systemName;
 }
 #endif
 
+#if !TARGET_OS_WATCH
 -(void)setController1:(GCController *)controller1 {
     if(![controller1 isEqual:_controller1]) {
         _controller1 = controller1;
@@ -475,8 +477,9 @@ static NSString *_systemName;
         _controller4 = controller4;
     }
 }
+#endif
 
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX  && !TARGET_OS_WATCH
 - (void)sendEvent:(UIEvent *)event {
 }
 #endif
@@ -573,6 +576,7 @@ static NSString *_systemName;
     return CGSizeZero;
 }
 
+#if !TARGET_OS_WATCH
 - (GLenum)pixelFormat
 {
     [self doesNotImplementSelector:_cmd];
@@ -595,6 +599,7 @@ static NSString *_systemName;
     // 0, GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24
     return 0;
 }
+#endif
 
 - (NSTimeInterval)frameInterval {
     return defaultFrameInterval;
