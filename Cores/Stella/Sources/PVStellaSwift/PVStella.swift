@@ -53,6 +53,10 @@ public final class PVStellaGameCore: PVEmulatorCore, @unchecked Sendable {
     @objc public override var audioBufferCount: UInt { 1 }
     @objc public override var audioBitDepth: UInt { 16 }
 
+    // MARK: Video
+    
+    @objc dynamic public override var rendersToOpenGL: Bool { false }
+    
     @objc
     public var _frameInterval: TimeInterval = 60.0
     @objc public dynamic override var frameInterval: TimeInterval { _frameInterval  }

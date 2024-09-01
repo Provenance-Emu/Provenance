@@ -36,11 +36,10 @@ public class PVGameLibrary<T> where T: DatabaseDriver {
 }
 
 public extension PVGameLibrary where T == RealmDatabaseDriver {
-    public func toggleFavorite(for game: PVGame) -> Completable {
+    func toggleFavorite(for game: PVGame) -> Completable {
         return databaseDriver.toggleFavorite(for: game)
     }
 }
-
 
 extension RealmSwift.LinkingObjects where Element: PVGame {
     func sorted(by sortOptions: SortOptions) -> Results<Element> {

@@ -90,7 +90,7 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
         }
     }
 
-    @MainActor
+//    @MainActor
     open var videoBufferSize: CGSize { .zero }
 
     // Requires Override

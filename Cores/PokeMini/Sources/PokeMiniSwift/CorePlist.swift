@@ -12,8 +12,8 @@ import PVPlists
 
 #if SWIFT_PACKAGE
 public extension PVBundleFinder {
-    static public var PVPokeMiniEmulatorCoreModule: Bundle { Bundle.module }
-    static public var PVPokeMiniEmulatorCoreBundle: Bundle { Bundle(for: PVPokeMiniEmulatorCore.self) }
+    static var PVPokeMiniEmulatorCoreModule: Bundle { Bundle.module }
+    static var PVPokeMiniEmulatorCoreBundle: Bundle { Bundle(for: PVPokeMiniEmulatorCore.self) }
 }
 #else
 public extension PVBundleFinder {

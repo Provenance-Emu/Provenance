@@ -173,7 +173,7 @@ static NSString *_systemName;
         return started;
     }
 
-#if !TARGET_OS_OSX && !TARGET_OS_WATCH
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH && !TARGET_OS_VISION
     if (self.supportsRumble && !(self.controller1 != nil && !self.controller1.isAttachedToDevice)) {
         self.rumbleGenerator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
         [self.rumbleGenerator prepare];
@@ -185,7 +185,7 @@ static NSString *_systemName;
 }
 
 -(void)stopHaptic {
-#if !TARGET_OS_OSX
+#if !TARGET_OS_OSX && !TARGET_OS_WATCH && !TARGET_OS_VISION
     if (!NSThread.isMainThread) {
         MAKEWEAK(self);
         dispatch_async(dispatch_get_main_queue(), ^{

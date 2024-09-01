@@ -24,10 +24,15 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Foundation/Foundation.h>
-//#import <PVSupport/PVEmulatorCore.h>
-//#import <PVSupport/PVSupport-Swift.h>
-//
+@import Foundation;
+@import PVCoreBridge;
+@import PokeMiniSwift;
+@import PokeMiniC;
+@import PVCoreObjCBridge;
+
 //PVCORE_DIRECT_MEMBERS
-//@interface PVPokeMiniEmulatorCore : PVEmulatorCore <PVPokeMiniSystemResponderClient>
-//@end
+@interface PVPokeMiniEmulatorCore (ObjCCoreBridge) <ObjCCoreBridge, PVPokeMiniSystemResponderClient> //: PVEmulatorCore <PVPokeMiniSystemResponderClient>
+
+- (double)sampleRate;
+
+@end

@@ -10,6 +10,7 @@ import Foundation
 import GameController
 #endif
 import PVLogging
+import PVPrimitives
 
 @_exported import PVAudio
 @_exported import PVCoreBridge
@@ -42,14 +43,15 @@ public enum EmulationError: Error, CustomStringConvertible, CustomNSError {
 @objcMembers
 open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesDataSource, @unchecked Sendable {
 
-    @objc
-    public static var coreClassName: String = ""
+    @MainActor
+    @objc public static var coreClassName: String = ""
 
-    @objc
-    public static var systemName: String = ""
-
+    @MainActor
+    @objc public static var systemName: String = ""
+    
     @objc dynamic open var resourceBundle: Bundle { Bundle.module }
 
+    @MainActor
     @available(*, deprecated, message: "Why does this need to exist? Only used for macII in PVRetroCore")
     public static var status: [String: Any] = .init()
 
@@ -58,8 +60,7 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
 #if canImport(GameController)
     // MARK: EmulatorCoreControllerDataSource
     @objc
-    dynamic open var controller1: GCController? = nil
-    {
+    dynamic open var controller1: GCController? = nil {
         didSet {
             guard let controller1 = controller1, !controller1.isAttachedToDevice else {
                 stopHaptic()
@@ -171,17 +172,19 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
     required
     public override init() {
         super.init()
-        // Init `audioBufferCount` number of `RingBuffer`s.
+        buildRingBuffers()
+    }
+    
+    private func buildRingBuffers() {
         let audioBufferCount = Int(audioBufferCount)
-        ringBuffers = (0..<audioBufferCount).map {
+        ringBuffers = (0..<audioBufferCount).compactMap {
             let length: Int = Int(audioBufferSize(forBuffer: UInt($0)))
-            return RingBuffer.init(withLength: length)!
+            return RingBuffer.init(withLength: length)
         }
     }
 
     // EmulatorCoreAudioDataSource
-    @objc
-    dynamic open var ringBuffers: [RingBuffer]? = nil
+    @objc dynamic open var ringBuffers: [RingBuffer]? = nil
 }
 
 @objc public protocol ObjCCoreBridge where Self: PVEmulatorCore {
@@ -195,20 +198,21 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
     @objc func resetEmulation()
     
     // MARK: Output
-    @objc optional var screenRect: CGRect { get }
-    @objc optional var videoBuffer: UnsafeMutableRawPointer? { get }
-    @objc optional var frameInterval: TimeInterval { get }
-    @objc optional var rendersToOpenGL: Bool { get }
+    @objc dynamic optional var screenRect: CGRect { get }
+    @objc dynamic optional var videoBuffer: UnsafeMutableRawPointer? { get }
+    @objc dynamic optional var frameInterval: TimeInterval { get }
+    @objc dynamic optional var rendersToOpenGL: Bool { get }
     
     // MARK: Audio
-    @objc optional var audioBufferCount: UInt { get }
+    @objc dynamic optional var audioBufferCount: UInt { get }
+    @objc dynamic optional var audioBitDepth: UInt { get }
 
     // MARK: Input
-    @objc optional func pollControllers()
+    @objc dynamic optional func pollControllers()
     
     // MARK: Save States
-    @objc optional func saveStateToFileAtPath(fileName: String) async throws
-    @objc optional func loadStateFromFileAtPath(fileName: String) async throws
+    @objc dynamic optional func saveStateToFileAtPath(fileName: String) async throws
+    @objc dynamic optional func loadStateFromFileAtPath(fileName: String) async throws
 
 //    @objc func saveStateToFileAtPath(fileName: String, completionHandler block: @escaping (Bool, Error?) -> Void)
 //    @objc func loadStateFromFileAtPath(fileName: String, completionHandler block: @escaping (Bool, Error?) -> Void)

@@ -7,32 +7,7 @@
 //
 
 import Foundation
-import PVCoreBridge
 import PVSupport
-
-public enum SystemBits: Int, Codable, Sendable {
-    case unknown = 0
-    case four = 4
-    case eight = 8
-    case sixteen = 16
-    case thirtyTwo = 32
-    case sixtyFour = 64
-    case oneTwentyEight = 128
-}
-
-public enum SystemGeneration: UInt, Codable, Sendable {
-    case none = 0
-    case first
-    case second
-    case third
-    case fourth
-    case fifth
-    case sixth
-    case seventh
-    case eighth
-    case ninth
-    case tenth
-}
 
 public struct System: Codable, SystemProtocol, Sendable {
     public let name: String
@@ -92,10 +67,6 @@ public struct System: Codable, SystemProtocol, Sendable {
         self.screenType = screenType
         self.supported = supported
     }
-}
-
-func compareThing1<T: LocalFileBacked>(_ thing1: T) -> Bool {
-    return true
 }
 
 public extension System {

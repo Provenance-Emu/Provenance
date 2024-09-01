@@ -10,7 +10,7 @@ import Foundation
 import PVSupport
 import RealmSwift
 import PVLogging
-import PVLibraryPrimitives
+import PVPrimitives
 
 @objcMembers
 public final class PVSaveState: Object, Identifiable, Filed, LocalFileProvider {

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import PVCoreBridge
 
 public protocol SystemProtocol {
     associatedtype BIOSInfoProviderType: BIOSInfoProvider

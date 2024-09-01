@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import PVLibraryPrimitives
+import PVPrimitives
 
 public struct SavePackage: Package {
     public var type: SerializerPackageType { return .saveState }

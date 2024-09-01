@@ -1,7 +1,7 @@
 import Foundation
 import RxSwift
 import AsyncAlgorithms
-import PVLibraryPrimitives
+import PVPrimitives
 
 public extension RxSwift.Observable where Element: Sequence, Element.Iterator.Element: DomainConvertibleType {
     typealias DomainType = Element.Iterator.Element.DomainType

@@ -30,7 +30,7 @@ public final class PokeMFiState: NSObject, @unchecked Sendable {
 
 @objc
 @objcMembers
-public final class PVPokeMiniEmulatorCore: PVEmulatorCore {
+public final class PVPokeMiniEmulatorCore: PVEmulatorCore, @unchecked Sendable {
 
     #if canImport(GameController)
     @objc
@@ -39,20 +39,25 @@ public final class PVPokeMiniEmulatorCore: PVEmulatorCore {
     #endif
     public let controllerState: PokeMFiState = .init()
 
-    @objc
-    @MainActor
-    public var audioStream: UnsafeMutablePointer<UInt8>?
+    // MARK: Video
+    
+    @objc dynamic public override var rendersToOpenGL: Bool { false }
+    @MainActor public var _videoBuffer: UnsafeMutablePointer<UInt32>? = nil
 
-    @MainActor
-    public var _videoBuffer: UnsafeMutablePointer<UInt32>? = nil
-
-//    @objc
-//    public var videoBuffer: UnsafeMutableBufferPointer<UInt32> {
+//    @objc dynamic public override var videoBuffer: UnsafeMutableBufferPointer<UInt32> {
 //        get {
-//            _videoBuffer?.bindMemory(to: UInt32.self, capacity: videoWidth * videoHeight) ?? UnsafeMutableBufferPointer<UInt32>.init(start: nil, count: 0)
+//            _videoBuffer?.withMemoryRebound(to: UInt32.self, capacity: videoWidth * videoHeight) {
+//                UnsafeMutableBufferPointer(start: $0, count: videoWidth * videoHeight)
+//            }
 //        }
 //    }
 
+    // MARK: Audio
+    
+    @objc dynamic public override var audioBufferCount: UInt { 1 }
+    
+    @objc @MainActor
+    public var audioStream: UnsafeMutablePointer<UInt8>?
 
     /// Width in pixels
     /// Bindable

@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 import AsyncAlgorithms
-import PVLibraryPrimitives
+import PVPrimitives
 
 // Hack for game library having eitehr PVGame or PVRecentGame in containers
 public protocol PVLibraryEntry where Self: RealmSwift.Object {}
@@ -125,16 +125,16 @@ public extension PVGame {
         return exts.contains(ext.lowercased())
     }
 
-    var discCount: Int { get async {
+    var discCount: Int { get {
 
-        @Sendable func _isM3U(_ file: PVFile) async -> Bool { await file.pathExtension.lowercased() != "m3u" }
-        @Sendable func _isCD(_ file: PVFile) async -> Bool { await PVEmulatorConfiguration.supportedCDFileExtensions.contains(file.pathExtension.lowercased()) }
-        let relatedFilesArray = relatedFiles.toArray().async
+        @Sendable func _isM3U(_ file: PVFile) -> Bool { file.pathExtension.lowercased() != "m3u" }
+        @Sendable func _isCD(_ file: PVFile) -> Bool { PVEmulatorConfiguration.supportedCDFileExtensions.contains(file.pathExtension.lowercased()) }
+        let relatedFilesArray = relatedFiles.toArray()
 
         if self.isCD {
-            let filtered = await relatedFilesArray
-                .filter({ await _isM3U($0) })
-                .filter({ await _isCD($0)}).map(\.self).collect()
+            let filtered = relatedFilesArray
+                .filter({ _isM3U($0) })
+                .filter({ _isCD($0)}).map(\.self)
                 .count
             return filtered
         } else {

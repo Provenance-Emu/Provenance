@@ -12,7 +12,7 @@ import PVSupport
 import RealmSwift
 import RxRealm
 import RxSwift
-import PVLibraryPrimitives
+import PVPrimitives
 
 public enum SyncError: Error {
     case noUbiquityURL
@@ -26,12 +26,12 @@ public enum SyncResult {
 }
 
 public protocol Container {
-    var containerURL: URL? { get async }
+    var containerURL: URL? { get }
 }
 
 extension Container {
-    public var containerURL: URL? { get async { return PVEmulatorConfiguration.iCloudContainerDirectory }}
-    var documentsURL: URL? { get async { return await PVEmulatorConfiguration.iCloudDocumentsDirectory }}
+    public var containerURL: URL? { get { return PVEmulatorConfiguration.iCloudContainerDirectory }}
+    var documentsURL: URL? { get { return PVEmulatorConfiguration.iCloudDocumentsDirectory }}
 }
 
 public protocol SyncFileToiCloud: Container {
@@ -70,7 +70,7 @@ extension iCloudTypeSyncer {
     public func loadAllFromICloud() -> Completable {
         return Completable.create { completable in
             Task {
-                guard await self.containerURL != nil else {
+                guard self.containerURL != nil else {
                     completable(.error(SyncError.noUbiquityURL))
                     return Disposables.create {}
                 }
@@ -97,7 +97,7 @@ extension iCloudTypeSyncer {
         return Completable.create { completable in
             Task {
 
-                guard await self.containerURL != nil else {
+                guard self.containerURL != nil else {
                     completable(.error(SyncError.noUbiquityURL))
                     return Disposables.create {}
                 }
@@ -177,8 +177,8 @@ extension iCloudTypeSyncer {
 extension SyncFileToiCloud where Self: LocalFileInfoProvider {
     private var destinationURL: URL? { get async {
         await Task {
-            guard let containerURL = await containerURL else { return nil }
-            return await containerURL.appendingPathComponent(url.relativePath)
+            guard let containerURL = containerURL else { return nil }
+            return containerURL.appendingPathComponent(url.relativePath)
         }.value
     }}
 
@@ -188,7 +188,7 @@ extension SyncFileToiCloud where Self: LocalFileInfoProvider {
                 return SyncResult.denied
             }
 
-            let url = await self.url
+            let url = self.url
 
             self.metadataQuery.disableUpdates()
             defer {
@@ -317,7 +317,7 @@ public enum iCloudSync {
         }
 
         Task {
-            let savesDirectory = await PVEmulatorConfiguration.Paths.saveSavesPath
+            let savesDirectory = PVEmulatorConfiguration.Paths.saveSavesPath
             let legacySavesDirectory = PVEmulatorConfiguration.Paths.Legacy.saveSavesPath
             let fm = FileManager.default
             guard let subDirs = try? fm.contentsOfDirectory(at: savesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
@@ -342,7 +342,7 @@ public enum iCloudSync {
 
             await legacySubDirs?.asyncForEach {
                 do {
-                    let destinationURL = await PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
+                    let destinationURL = PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
                     if !fm.isUbiquitousItem(at: destinationURL) {
                         try fm.setUbiquitous(true,
                                              itemAt: $0,

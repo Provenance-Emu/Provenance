@@ -15,7 +15,7 @@ import Foundation
     @objc var romMD5: String? { get }
     @objc var romSerial: String? { get }
 
-    @objc var screenType: ScreenTypeObjC { get }
+//    @objc var screenType: ScreenTypeObjC { get }
     
 //    @objc func loadFile(atPath path: String) throws
 }
@@ -34,7 +34,7 @@ extension EmulatorCoreIOInterface where Self: ObjCBridedCore {
     
     var romMD5: String? { (self as EmulatorCoreIOInterface).romMD5 ?? core.romMD5 }
     
-    var screenType: ScreenTypeObjC { (self as EmulatorCoreIOInterface).screenType }
+//    var screenType: ScreenTypeObjC { (self as EmulatorCoreIOInterface).screenType }
     
 //    func loadFile(atPath path: String) throws {
 //        do {

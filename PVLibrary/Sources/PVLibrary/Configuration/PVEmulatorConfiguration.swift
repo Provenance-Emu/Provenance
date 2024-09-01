@@ -92,6 +92,7 @@ public final class PVEmulatorConfiguration: NSObject {
         }
     }
 
+    private
     static var iCloudContainerDirectoryCached: URL? = {
         if Thread.isMainThread {
             var container: URL?

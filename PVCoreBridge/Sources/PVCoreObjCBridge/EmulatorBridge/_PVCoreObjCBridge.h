@@ -167,7 +167,7 @@ typedef void (^SaveStateCompletion)(BOOL, NSError * _Nullable );
 @property (nonatomic, assign) double emulationFPS;
 @property (nonatomic, assign) double renderFPS;
 
-@property(weak, nullable)     id<PVRenderDelegate>   renderDelegate;
+@property(nonatomic, weak, nullable) id<PVRenderDelegate> renderDelegate;
 
 @property (nonatomic, strong, readonly, nonnull) NSCondition  *frontBufferCondition;
 @property (nonatomic, strong, readonly, nonnull) NSLock  *frontBufferLock;
@@ -216,7 +216,7 @@ typedef void (^SaveStateCompletion)(BOOL, NSError * _Nullable );
 
 @interface PVCoreObjCBridge (Audio) <EmulatorCoreAudioDataSource>
 
-@property(weak, nullable)     id<PVAudioDelegate>    audioDelegate;
+@property(weak, nullable, nonatomic) id<PVAudioDelegate> audioDelegate;
 
 @property (nonatomic, readonly) double audioSampleRate;
 @property (nonatomic, readonly) NSUInteger channelCount;

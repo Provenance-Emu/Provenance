@@ -13,9 +13,9 @@ import PVEmulatorCore
 import PVSettings
 import Defaults
 
-#if SWIFT_MODULE
+//#if SWIFT_MODULE
 import PVMupen64PlusCore
-#endif
+//#endif
 
 #if os(iOS)
 import UIKit

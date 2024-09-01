@@ -11,6 +11,7 @@ import RealmSwift
 import PVLogging
 import PVCoreBridge
 import PVPlists
+import PVPrimitives
 
 #if canImport(UIKit)
 import UIKit

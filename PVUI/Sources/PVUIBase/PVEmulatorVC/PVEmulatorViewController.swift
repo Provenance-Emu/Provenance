@@ -100,9 +100,7 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
     required init(game: PVGame, core: PVEmulatorCore) {
         self.core = core
         self.game = game
-
-        core.screenType = game.system.screenType.objcType
-
+        
         super.init(nibName: nil, bundle: nil)
         let app = UIApplication.shared as! PVApplication
         app.core = core

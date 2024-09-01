@@ -8,6 +8,7 @@
 import Testing
 import PVLogging
 @testable import PVLookup
+@testable import TheGamesDB
 
 struct Test {
 

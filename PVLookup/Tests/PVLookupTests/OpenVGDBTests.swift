@@ -1,5 +1,5 @@
 //
-//  TheGamesDBTests.swift
+//  OpenVGDBTests.swift
 //  PVLibrary
 //
 //  Created by Joseph Mattiello on 8/30/24.
@@ -7,6 +7,7 @@
 
 import Testing
 @testable import PVLookup
+@testable import OpenVGDB
 
 struct OpenVGTest {
     

@@ -8,6 +8,7 @@
 
 import Foundation
 import PVLibrary
+import PVPrimitives
 import PVSupport
 
 struct SystemOverviewViewModel: Sendable {

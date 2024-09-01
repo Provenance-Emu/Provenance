@@ -7,6 +7,7 @@
 //
 
 import PVLibrary
+import PVPrimitives
 import RealmSwift
 #if canImport(UIKit)
 import UIKit

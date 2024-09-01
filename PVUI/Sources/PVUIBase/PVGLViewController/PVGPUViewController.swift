@@ -82,7 +82,8 @@ import OpenGLES.ES3
 #endif
 
 @frozen
-public struct RenderSettings: Sendable {
+@usableFromInline
+struct RenderSettings: Sendable {
     var crtFilterEnabled = false
     var lcdFilterEnabled = false
     var smoothingEnabled = false

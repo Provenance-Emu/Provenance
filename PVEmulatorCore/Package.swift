@@ -46,7 +46,8 @@ let package = Package(
         .package(name: "PVCoreBridge", path: "../PVCoreBridge/"),
         .package(name: "PVLogging", path: "../PVLogging/"),
         .package(name: "PVSupport", path: "../PVSupport/"),
-        .package(name: "PVAudio", path: "../PVAudio/")
+        .package(name: "PVAudio", path: "../PVAudio/"),
+        .package(name: "PVPrimitives", path: "../PVPrimitives/")
     ],
 
     // MARK: - Targets
@@ -56,6 +57,7 @@ let package = Package(
             name: "PVEmulatorCore",
             dependencies: [
                 "PVCoreBridge",
+                "PVPrimitives",
                 .product(name: "PVSupport", package: "PVSupport"),
                 .product(name: "PVLogging", package: "PVLogging"),
                 .product(name: "PVAudio", package: "PVAudio")
@@ -88,7 +90,7 @@ let package = Package(
             dependencies: ["PVEmulatorCore"]
         )
     ],
-    swiftLanguageModes: [.v5],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu2x,
     cxxLanguageStandard: .gnucxx20
 )

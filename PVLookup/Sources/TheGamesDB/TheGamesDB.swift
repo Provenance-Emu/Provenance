@@ -17,13 +17,11 @@ import OpenAPIURLSession
 
 let API_KEY = "fe49d95136b2d03e2ae86dead3650af597928885fe4aa573d9dba805d66027a7"
 
-let g_getGameUrl = "https://api.thegamesdb.net/v1/Games/ByGameID?apikey=\(API_KEY)&fields=overview,uids&include=boxart&id="
-let g_getGamesListUrl = "h ttps://api.thegamesdb.net/v1.1/Games/ByGameName?apikey=\(API_KEY)&fields=overview,uids&filter%5Bplatform%5D=%s&include=boxart&name=%s"
-
-
 /// An interface to `https://api.thegamesdb.net/`
 /// aka The Games DB
-public class TheGamesDBService {
+public struct TheGamesDBService {
+    
+    public init() {}
     
     public enum TheGamesDBServiceError: Error {
         case notFound, badRequest, forbidden, unknown

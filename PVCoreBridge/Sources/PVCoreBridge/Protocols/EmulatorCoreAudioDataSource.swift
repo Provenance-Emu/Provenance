@@ -11,7 +11,7 @@ import Foundation
 @objc public protocol EmulatorCoreAudioDataSource: Sendable {
 
     @objc var frameInterval: TimeInterval { get }
-    @objc var audioDelegate: PVAudioDelegate? { get set }
+    @objc weak var audioDelegate: PVAudioDelegate? { get set }
 
     @objc var sampleRate: Double { get set }
     @objc var audioBitDepth: UInt { get }

@@ -56,12 +56,30 @@
         }
       },
       {
+        "package": "Lighter",
+        "repositoryURL": "https://github.com/Lighter-swift/Lighter.git",
+        "state": {
+          "branch": null,
+          "revision": "4fd43bbfa2099f7b189a8bf899afbc818430647a",
+          "version": "1.4.4"
+        }
+      },
+      {
         "package": "MBProgressHUD",
         "repositoryURL": "https://github.com/jdg/MBProgressHUD.git",
         "state": {
           "branch": null,
           "revision": "bca42b801100b2b3a4eda0ba8dd33d858c780b0d",
           "version": "1.2.0"
+        }
+      },
+      {
+        "package": "OpenAPIKit",
+        "repositoryURL": "https://github.com/mattpolzin/OpenAPIKit",
+        "state": {
+          "branch": null,
+          "revision": "4991b7e39a19cd1d0d11fe24fc64a601b4820144",
+          "version": "3.2.0"
         }
       },
       {
@@ -173,6 +191,24 @@
         }
       },
       {
+        "package": "swift-algorithms",
+        "repositoryURL": "https://github.com/apple/swift-algorithms",
+        "state": {
+          "branch": null,
+          "revision": "f6919dfc309e7f1b56224378b11e28bab5bccc42",
+          "version": "1.2.0"
+        }
+      },
+      {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser",
+        "state": {
+          "branch": null,
+          "revision": "41982a3656a71c768319979febd796c6fd111d5c",
+          "version": "1.5.0"
+        }
+      },
+      {
         "package": "swift-async-algorithms",
         "repositoryURL": "https://github.com/apple/swift-async-algorithms",
         "state": {
@@ -215,6 +251,51 @@
           "branch": null,
           "revision": "3ef38bb702a1a2f39c7e19fc0578403b8ee52b17",
           "version": "1.3.9"
+        }
+      },
+      {
+        "package": "swift-http-types",
+        "repositoryURL": "https://github.com/apple/swift-http-types",
+        "state": {
+          "branch": null,
+          "revision": "ae67c8178eb46944fd85e4dc6dd970e1f3ed6ccd",
+          "version": "1.3.0"
+        }
+      },
+      {
+        "package": "swift-numerics",
+        "repositoryURL": "https://github.com/apple/swift-numerics.git",
+        "state": {
+          "branch": null,
+          "revision": "0a5bc04095a675662cf24757cc0640aa2204253b",
+          "version": "1.0.2"
+        }
+      },
+      {
+        "package": "swift-openapi-generator",
+        "repositoryURL": "https://github.com/apple/swift-openapi-generator",
+        "state": {
+          "branch": null,
+          "revision": "99859083e53912612b56b4b8713a971c20dab3ef",
+          "version": "1.3.0"
+        }
+      },
+      {
+        "package": "swift-openapi-runtime",
+        "repositoryURL": "https://github.com/apple/swift-openapi-runtime",
+        "state": {
+          "branch": null,
+          "revision": "26e8ae3515d1ff3607e924ac96fc0094775f55e8",
+          "version": "1.5.0"
+        }
+      },
+      {
+        "package": "swift-openapi-urlsession",
+        "repositoryURL": "https://github.com/apple/swift-openapi-urlsession",
+        "state": {
+          "branch": null,
+          "revision": "9bf4c712ad7989d6a91dbe68748b8829a50837e4",
+          "version": "1.0.2"
         }
       },
       {
@@ -269,6 +350,15 @@
           "branch": null,
           "revision": "96beb108a57f24c8476ae1f309239270772b2940",
           "version": "1.2.5"
+        }
+      },
+      {
+        "package": "Yams",
+        "repositoryURL": "https://github.com/jpsim/Yams",
+        "state": {
+          "branch": null,
+          "revision": "3036ba9d69cf1fd04d433527bc339dc0dc75433d",
+          "version": "5.1.3"
         }
       },
       {

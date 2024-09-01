@@ -43,12 +43,12 @@ void log(retro_log_level level, const char *fmt, ...) {
     va_end(args);
 }
 
-@interface PVTGBDualCore (ObjC)
+//@interface PVTGBDualCore (ObjC)
+//
+//@end
 
-@end
 
-
-@implementation PVTGBDualCore (ObjC)
+@implementation PVTGBDualCore (ObjCCoreBridge)
 
 #pragma mark - PVTGBDualCore Begin
 - (id)init {
@@ -68,7 +68,7 @@ void log(retro_log_level level, const char *fmt, ...) {
 }
 
 #pragma mark - PVEmulatorCore
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError **)error {
+- (void)loadFileAtPath:(NSString *)path error:(NSError **)error {
     memset(_gb_pad, 0, sizeof(uint16_t) * NUMBER_OF_PADS * NUMBER_OF_PAD_INPUTS);
     
     const void *data;
@@ -147,23 +147,23 @@ void log(retro_log_level level, const char *fmt, ...) {
         retro_run();
         
         return YES;
-    }
-    
-    if (error) {
-        NSDictionary *userInfo = @{
-                                   NSLocalizedDescriptionKey: @"Failed to load game.",
-                                   NSLocalizedFailureReasonErrorKey: @"TGBDual failed to load ROM.",
-                                   NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format TGBDual supports."
-                                   };
+    } else {
+        if (error) {
+            NSDictionary *userInfo = @{
+                                       NSLocalizedDescriptionKey: @"Failed to load game.",
+                                       NSLocalizedFailureReasonErrorKey: @"TGBDual failed to load ROM.",
+                                       NSLocalizedRecoverySuggestionErrorKey: @"Check that file isn't corrupt and in format TGBDual supports."
+                                       };
+            
+            NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
+                                                    code:PVEmulatorCoreErrorCodeCouldNotLoadRom
+                                                userInfo:userInfo];
+            
+            *error = newError;
+        }
         
-        NSError *newError = [NSError errorWithDomain:CoreError.PVEmulatorCoreErrorDomain
-                                                code:PVEmulatorCoreErrorCodeCouldNotLoadRom
-                                            userInfo:userInfo];
-        
-        *error = newError;
+        return NO;
     }
-    
-    return NO;
 }
 
  - (void)startEmulation {

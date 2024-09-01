@@ -35,7 +35,7 @@ import Foundation
     var videoBufferSize: CGSize { get }
     var alwaysUseMetal: Bool { get }
 
-    var renderDelegate: PVRenderDelegate? { get set }
+    weak var renderDelegate: PVRenderDelegate? { get set }
 }
 
 public extension EmulatorCoreVideoDelegate {

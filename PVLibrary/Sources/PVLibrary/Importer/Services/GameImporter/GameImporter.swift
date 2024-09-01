@@ -13,14 +13,13 @@ import CoreSpotlight
 import Foundation
 import PVSupport
 import RealmSwift
-import PVCoreBridge
 import PVCoreLoader
 import AsyncAlgorithms
 import PVPlists
 import PVLookup
 
 import PVLogging
-import PVLibraryPrimitives
+import PVPrimitives
 
 #if canImport(UIKit)
 import UIKit
@@ -939,7 +938,7 @@ public extension GameImporter {
         let title: String = PVEmulatorConfiguration.stripDiscNames(fromFilename: filenameSansExtension)
         let destinationDir = (system.identifier as NSString)
         let partialPath: String = (system.identifier as NSString).appendingPathComponent(filename)
-        let file = await PVFile(withURL: path)
+        let file = PVFile(withURL: path)
         let game = PVGame(withFile: file, system: system)
         game.romPath = partialPath
         game.title = title
@@ -950,12 +949,12 @@ public extension GameImporter {
         await files.asyncForEach { url in
             let relativeName=RomDatabase.sharedInstance.altName(url, systemIdentifier: system.identifier)
             if relativeName == name {
-                await relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
+                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
             }
         }
         if let relatedFiles = relatedFiles {
             for url in relatedFiles {
-                await relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
+                relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
             }
         }
         guard let md5 = calculateMD5(forGame: game) else {
@@ -1125,7 +1124,7 @@ extension GameImporter {
         if let biosEntry = biosEntryMatching(candidateFile: candidateFile) {
             ILOG("Candidate file matches as a known BIOS")
             // We have a BIOS file match
-            let destinationPath = await biosEntry.expectedPath
+            let destinationPath = biosEntry.expectedPath
             let biosDirectory = biosEntry.system.biosDirectory
 
             if !fm.fileExists(atPath: biosDirectory.path) {
@@ -1154,7 +1153,7 @@ extension GameImporter {
                     try file.delete()
                 }
 
-                let file = await PVFile(withURL: destinationPath)
+                let file = PVFile(withURL: destinationPath)
                 try RomDatabase.sharedInstance.writeTransaction {
                     biosEntry.file = file
                 }
@@ -1193,7 +1192,7 @@ extension GameImporter {
                     ILOG("Moved <\(filePath.lastPathComponent)> to \(directory.lastPathComponent)")
                     // Add it as an associated file
                     Task { @MainActor in
-                        let file = await PVFile(withURL: destinationPath)
+                        let file = PVFile(withURL: destinationPath)
 
                         RomDatabase.sharedInstance.asyncWriteTransaction {
                             game.relatedFiles.append(file)

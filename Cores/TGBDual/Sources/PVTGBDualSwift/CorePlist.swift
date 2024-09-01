@@ -11,8 +11,8 @@ import PVLogging
 
 #if SWIFT_PACKAGE
 public extension PVBundleFinder {
-    static public var PVTGBDualCoreModule: Bundle { Bundle.module }
-    static public var PVTGBDualCoreBundle: Bundle { Bundle(for: PVTGBDualCore.self) }
+    public var PVTGBDualCoreModule: Bundle { Bundle.module }
+    public var PVTGBDualCoreBundle: Bundle { Bundle(for: PVTGBDualCore.self) }
 }
 #else
 public extension PVBundleFinder {

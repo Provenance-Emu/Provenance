@@ -13,14 +13,39 @@
 #define NUMBER_OF_PADS       2
 #define NUMBER_OF_PAD_INPUTS 16
 
-PVCORE
-@interface PVTGBDualCore : PVEmulatorCore <PVGBSystemResponderClient> {
-  
-  uint16_t _gb_pad[NUMBER_OF_PADS][NUMBER_OF_PAD_INPUTS];
-  uint16_t *_videoBuffer;
-}
+//PVCORE
+//@interface PVTGBDualCore () //: PVEmulatorCore <PVGBSystemResponderClient>
+//{
+//  
+//  uint16_t _gb_pad[NUMBER_OF_PADS][NUMBER_OF_PAD_INPUTS];
+//  uint16_t *_videoBuffer;
+//}
+//@property (nonatomic, assign, nullable) uint16_t *videoBuffer;
+//
+//@property (nonatomic, assign) int videoWidth;
+//@property (nonatomic, assign) int videoHeight;
+//
+//@end
 
-@property (nonatomic, assign) int videoWidth;
-@property (nonatomic, assign) int videoHeight;
+@interface PVTGBDualCore  (ObjCCoreBridge) <ObjCCoreBridge> // : PVEmulatorCore <PVGBSystemResponderClient>
+// MARK: Core
+- (void)loadFileAtPath:(NSString *)path error:(NSError * __autoreleasing *)error;
+- (void)executeFrameSkippingFrame:(BOOL)skip;
+- (void)executeFrame;
+- (void)swapBuffers;
+- (void)stopEmulation;
+- (void)resetEmulation;
 
+// MARK: Output
+- (CGRect)screenRect;
+- (const void *)videoBuffer;
+- (NSTimeInterval)frameInterval;
+- (BOOL)rendersToOpenGL;
+
+// MARK: Input
+- (void)pollControllers;
+
+// MARK: Save States
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *)) __attribute__((noescape)) block;
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *)) __attribute__((noescape)) block;
 @end

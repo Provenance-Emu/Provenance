@@ -8,7 +8,7 @@
 
 import Foundation
 import RealmSwift
-import PVLibraryPrimitives
+import PVPrimitives
 
 @objcMembers
 public final class PVBIOS: Object, BIOSFileProvider {
@@ -27,18 +27,6 @@ public final class PVBIOS: Object, BIOSFileProvider {
 
     public dynamic var file: PVFile?
     public var fileInfo: PVFile? { return file }
-    
-    public init(system: PVSystem!, descriptionText: String, regions: RegionOptions, version: String, optional: Bool, expectedMD5: String, expectedSize: Int, expectedFilename: String, file: PVFile? = nil) {
-        self.system = system
-        self.descriptionText = descriptionText
-        self.regions = regions
-        self.version = version
-        self.optional = optional
-        self.expectedMD5 = expectedMD5
-        self.expectedSize = expectedSize
-        self.expectedFilename = expectedFilename
-        self.file = file
-    }
 
     public override static func primaryKey() -> String? {
         return "expectedFilename"
@@ -46,6 +34,7 @@ public final class PVBIOS: Object, BIOSFileProvider {
 }
 
 public extension PVBIOS {
+    
     convenience init(withSystem system: PVSystem, descriptionText: String, optional: Bool = false, expectedMD5: String, expectedSize: Int, expectedFilename: String) {
         self.init()
         self.system = system
@@ -82,7 +71,7 @@ public extension BIOS {
         let file = bios.file?.asDomain()
         let regions = bios.regions
         let version = bios.version
-        let system = bios.system.asDomain()
+//        let system = bios.system.asDomain()
         
         self.init(descriptionText: descriptionText, regions: regions, version: version, expectedMD5: expectedMD5, expectedSize: expectedSize, expectedFilename: expectedFilename, optional: optional, status: status, file: file)
     }

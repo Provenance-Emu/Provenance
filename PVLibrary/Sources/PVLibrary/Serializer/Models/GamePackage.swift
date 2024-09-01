@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import PVLibraryPrimitives
+import PVPrimitives
 
 public struct GamePackage: Package {
     public var type: SerializerPackageType { return .game }

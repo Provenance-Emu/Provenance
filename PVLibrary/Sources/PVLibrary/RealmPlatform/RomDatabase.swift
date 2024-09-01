@@ -204,7 +204,8 @@ public extension Thread {
 
 public typealias RomDB = RomDatabase
 
- public final class RomDatabase {
+
+public final class RomDatabase {
 
     public private(set) static var databaseInitialized = false
     

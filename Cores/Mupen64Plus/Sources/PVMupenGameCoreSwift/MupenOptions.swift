@@ -8,6 +8,7 @@
 
 import Foundation
 import PVSupport
+import PVCoreBridge
 
 extension MupenGameCore: CoreOptional {
 		//    public func valueForOption<T>(_ option: CoreOption<T>) -> T where T : Decodable, T : Encodable {

@@ -9,7 +9,7 @@
 import Foundation
 import PVSupport
 import PVLogging
-import PVLibraryPrimitives
+import PVPrimitives
 
 public typealias SerliazeCompletion = @Sendable (_ result: PackageResult) -> Void
 

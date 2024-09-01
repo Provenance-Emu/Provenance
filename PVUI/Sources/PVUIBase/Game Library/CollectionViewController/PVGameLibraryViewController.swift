@@ -22,6 +22,7 @@ import RxRealm
 import RxSwift
 import RxCocoa
 import RxDataSources
+import PVPrimitives
 
 #if canImport(UIKit)
 import UIKit

@@ -17,7 +17,7 @@ import libtgbdual
 
 @objc
 @objcMembers
-public final class PVTGBDualCore: PVEmulatorCore { //, PVGBSystemResponderClient {
+public final class PVTGBDualCore: PVEmulatorCore, @unchecked Sendable { //, PVGBSystemResponderClient {
 
     @MainActor
     public var _videoBuffer: UnsafeMutablePointer<UInt16>? = nil // uint16_t *_videoBuffer;

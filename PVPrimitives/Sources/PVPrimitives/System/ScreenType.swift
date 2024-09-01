@@ -59,6 +59,8 @@ public enum ScreenTypeObjC: UInt, CaseIterable, Codable, Sendable {
         case .dotMatrix: return "DotMatrix"
         }
     }
+    
+    public var swiftType: ScreenType { .init(screenType: self) }
 }
 
 public enum ScreenType: String, CaseIterable, Codable, Sendable {

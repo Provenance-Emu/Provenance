@@ -15,7 +15,7 @@ import PVAudio
 extension PVEmulatorCore: EmulatorCoreAudioDataSource {
 
     @objc dynamic open var frameInterval: TimeInterval {
-        if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+        if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge, objcBridge.responds(to: #selector(getter: objcBridge.frameInterval)) {
             return objcBridge.frameInterval
         } else {
             return (self as EmulatorCoreAudioDataSource).frameInterval
@@ -25,7 +25,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
     @objc dynamic  open var sampleRate: Double {
         get {
             // use objc stored property
-            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge, objcBridge.responds(to: #selector(getter: objcBridge.sampleRate)) {
                 let sampleRate = objcBridge.sampleRate
                 return sampleRate
             } else {
@@ -44,7 +44,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
     @objc dynamic  open var audioBitDepth: UInt {
         get {
             // use objc stored property
-            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge, objcBridge.responds(to: #selector(getter: audioBitDepth)) {
+            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge, objcBridge.responds(to: #selector(getter: objcBridge.audioBitDepth)) {
                 let audioBitDepth = objcBridge.audioBitDepth
                 return audioBitDepth
             } else {
@@ -63,7 +63,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
     @objc dynamic  open var channelCount: UInt {
         get {
             // use objc stored property
-            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge, objcBridge.responds(to: #selector(getter: objcBridge.channelCount)) {
                 let channelCount = objcBridge.channelCount
                 return channelCount
             } else {
@@ -83,7 +83,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
     @objc dynamic open var audioBufferCount: UInt {
         get {
             // use objc stored property
-            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge, objcBridge.responds(to: #selector(getter: objcBridge.audioBufferCount)) {
                 let audioBufferCount = objcBridge.audioBufferCount
                 return audioBufferCount
             } else {
@@ -125,7 +125,7 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
         return channelCount * bytesPerSample * UInt(frameSampleCount)
     }
 
-    @objc  public func ringBuffer(atIndex index: UInt) -> RingBuffer? {
+    @objc public func ringBuffer(atIndex index: UInt) -> RingBuffer? {
         let index: Int = Int(index)
         if ringBuffers == nil || ringBuffers!.count < index + 1 {
             let length: Int = Int(audioBufferSize(forBuffer: UInt(index)) * audioBitDepth)

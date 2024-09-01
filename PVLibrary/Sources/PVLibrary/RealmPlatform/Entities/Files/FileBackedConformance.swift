@@ -8,7 +8,7 @@
 
 import Foundation
 import RealmSwift
-import PVLibraryPrimitives
+import PVPrimitives
 
 public extension FileBacked where Self: RealmSwift.Object {
     var online: Bool { get {

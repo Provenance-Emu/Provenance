@@ -9,6 +9,7 @@ import Foundation
 import PVSupport
 import RealmSwift
 import PVLibrary
+import PVPrimitives
 import RxSwift
 import RxRealm
 import PVPlists
@@ -145,6 +146,10 @@ extension GameLaunchingViewController where Self: UIViewController {
                     return
                 }
                 let presentingView = await self.view
+                @ThreadSafe var core = core
+                @ThreadSafe var theadsafeCore = game
+                @ThreadSafe var saveState = saveState
+
                 await presentEMU(withCore: selectedCore, forGame: game, fromSaveState: saveState, source: sender as? UIView ?? presentingView)
 //                let contentId : String = "\(system.shortName):\(game.title)"
 //                let customAttributes : [String : Any] = ["timeSpent" : game.timeSpentInGame, "md5" : game.md5Hash]
@@ -498,7 +503,10 @@ extension GameLaunchingViewController where Self: UIViewController {
 
         // Check if Save State exists
         if saveState == nil, emulatorViewController.core.supportsSaveStates {
-            await checkForSaveStateThenRun(withCore: core, forGame: game, source: source) { optionallyChosenSaveState in
+            @ThreadSafe var theadsafeCore = core
+            @ThreadSafe var threadsafeGame = game
+
+            await checkForSaveStateThenRun(withCore: theadsafeCore!, forGame: threadsafeGame!, source: source) { optionallyChosenSaveState in
                 self.presentEMUVC(emulatorViewController, withGame: game, loadingSaveState: optionallyChosenSaveState)
             }
         } else {
@@ -550,7 +558,7 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
     }
 
-//    @MainActor
+    @MainActor
     private func checkForSaveStateThenRun(withCore core: PVCore, forGame game: PVGame, source: UIView?, completion: @escaping (PVSaveState?) -> Void) async {
         var foundSave = false
         var saves = game.saveStates.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).toArray() + game.autoSaves.filter("core.identifier == \"\(core.identifier)\"").sorted(byKeyPath: "date", ascending: false).toArray()

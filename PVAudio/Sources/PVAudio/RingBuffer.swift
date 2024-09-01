@@ -78,9 +78,9 @@ public final class RingBuffer: NSObject, Sendable
     public private(set) var headOffset = 0
     public private(set) var usedBytesCount: Int32 = 0
 
-    public init?(withLength length: Int)
-    {
-        assert(length > 0)
+    public init?(withLength length: Int) {
+        guard length > 0 else { return nil }
+//        assert(length > 0)
 
         // To handle race conditions, repeat initialization process up to 3 times before failing.
         for _ in 1...3

@@ -10,10 +10,9 @@ import Foundation
 import PVSupport
 import RealmSwift
 import PVLogging
-import PVCoreBridge
 import AsyncAlgorithms
 import PVPlists
-import PVLibraryPrimitives
+import PVPrimitives
 
 extension AsyncSequence {
     func collect() async rethrows -> [Element] {
@@ -158,7 +157,7 @@ public extension PVSystem {
 
     var biosesHave: [PVBIOS]? { get async {
         let have = await bioses.toArray().async.filter({ (bios) -> Bool in
-            await bios.online
+            bios.online
         }).map(\.self).collect()
 
         return have.count > 0 ? have : nil
@@ -166,7 +165,7 @@ public extension PVSystem {
 
     var missingBIOSes: [PVBIOS]? { get async {
         let missing = await bioses.async.filter({ (bios) -> Bool in
-            await !bios.online
+            !bios.online
         }).map(\.self).collect()
 
         return !missing.isEmpty ? Array(missing) : nil

@@ -5,7 +5,7 @@
 //  Created by Joseph Mattiello on 8/30/24.
 //
 
-import PVLibraryPrimitives
+import PVPrimitives
 import RealmSwift
 
 // MARK: - Conversions
@@ -64,7 +64,7 @@ extension SaveState: RealmRepresentable {
             }
 
             Task {
-                let path = await PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName).appendingPathComponent(file.fileName)
+                let path = PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName).appendingPathComponent(file.fileName)
                 object.file = await PVFile(withURL: path)
                 DLOG("file path: \(path)")
                 
@@ -72,9 +72,9 @@ extension SaveState: RealmRepresentable {
                 object.lastOpened = lastOpened
                 if let image = image {
                     let dir = path.deletingLastPathComponent()
-                    let imagePath = await dir.appendingPathComponent(image.fileName)
+                    let imagePath = dir.appendingPathComponent(image.fileName)
                     DLOG("path: \(imagePath)")
-                    object.image = await PVImageFile(withURL: imagePath, relativeRoot: .iCloud)
+                    object.image = PVImageFile(withURL: imagePath, relativeRoot: .iCloud)
                 }
                 object.isAutosave = isAutosave
             }

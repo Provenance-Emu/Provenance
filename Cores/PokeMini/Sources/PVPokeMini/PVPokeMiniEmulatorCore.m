@@ -59,9 +59,9 @@
 #import <AudioToolbox/AudioToolbox.h>
 #endif
 
-@interface PVPokeMiniEmulatorCore (ObjC) <PVPokeMiniSystemResponderClient>
-
-@end
+//@interface PVPokeMiniEmulatorCore (ObjC) <PVPokeMiniSystemResponderClient>
+//
+//@end
 
 __weak PVPokeMiniEmulatorCore *current;
 
@@ -70,11 +70,11 @@ __weak PVPokeMiniEmulatorCore *current;
 #define PMSOUNDBUFF	(SOUNDBUFFER*2)
 
 
-@implementation PVPokeMiniEmulatorCore (ObjC)
+@implementation PVPokeMiniEmulatorCore (ObjCCoreBridge)
 
 - (instancetype)init {
     if(self = [super init]) {
-        dispatch_sync(dispatch_get_main_queue(), ^{
+//        dispatch_sync(dispatch_get_main_queue(), ^{
 #if VIDEO_UPSCALE
             self.videoWidth = 96 * 4;
             self.videoHeight = 64 * 4;
@@ -87,7 +87,7 @@ __weak PVPokeMiniEmulatorCore *current;
             self._videoBuffer = malloc(self.videoWidth * self.videoHeight*4);
             memset(self._videoBuffer, 0, self.videoWidth * self.videoHeight*4);
             memset(self.audioStream, 0, PMSOUNDBUFF);
-        });
+//        });
     }
 
     current = self;
@@ -397,6 +397,7 @@ int saveEEPROM(const char *filename) {
 
 #pragma mark - Audio
 
+- (double)sampleRate { return 44100; }
 - (double)audioSampleRate { return 44100; }
 
 - (NSUInteger)audioBitDepth { return 8; }

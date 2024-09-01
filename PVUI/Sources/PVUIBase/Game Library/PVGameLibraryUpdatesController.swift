@@ -9,6 +9,7 @@
 import Foundation
 import PVSupport
 import PVLibrary
+import PVPrimitives
 import RxSwift
 import RxCocoa
 import CoreSpotlight

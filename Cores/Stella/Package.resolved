@@ -1,6 +1,15 @@
 {
-  "originHash" : "1c2874ce57eb02e2bd9c3a56e5606feb946367bf6951068130f68f62a58b2d59",
+  "originHash" : "8920d150a6fb31e7ebd8d25bada46cb65d7582168a6f6a5c9c0a93056f815387",
   "pins" : [
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "4c009d5c2496e7aa126e922c94dd3d6ae049efa2"
+      }
+    },
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",

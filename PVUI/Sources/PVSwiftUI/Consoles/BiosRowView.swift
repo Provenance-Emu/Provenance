@@ -12,6 +12,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import PVLibrary
+import PVPrimitives
 import PVThemes
 
 extension BIOSStatus.State {

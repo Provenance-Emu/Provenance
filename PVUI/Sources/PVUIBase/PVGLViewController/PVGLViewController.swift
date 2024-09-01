@@ -937,8 +937,10 @@ class PVGLViewController: PVGPUViewController, PVRenderDelegate {
 #endif
             
             let rendersToOpenGL = emulatorCore.rendersToOpenGL
-            let crtEnabled = self.renderSettings.crtFilterEnabled && emulatorCore.screenType.isCRT
-            let lcdEnabled = self.renderSettings.lcdFilterEnabled && emulatorCore.screenType.isLCD
+            
+            #warning("TODO: Get system type and check if CRT or LCD")
+            let crtEnabled = self.renderSettings.crtFilterEnabled //&& emulatorCore.screenType.isCRT
+            let lcdEnabled = self.renderSettings.lcdFilterEnabled //&& emulatorCore.screenType.isLCD
             
             var frontBufferTex: GLuint = 0
             
