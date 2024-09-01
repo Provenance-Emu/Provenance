@@ -10,9 +10,6 @@
 [submodule "PVMupen64Plus/Plugins/mupen64plus-video-rice"]
 	path = Cores/Mupen64Plus/Plugins/Video/rice
 	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git
-[submodule "PVLibrary/Sources/Deprecated/LzmaSDKObjC"]
-	path = PVLibrary/Sources/Deprecated/LzmaSDKObjC
-	url = https://github.com/Provenance-Emu/LzmaSDKObjC.git
 [submodule "Cores/VirtualJaguar"]
 	path = Cores/VirtualJaguar
 	url = https://github.com/Provenance-Emu/Core-VirtualJaguar.git
