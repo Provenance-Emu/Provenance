@@ -11,8 +11,8 @@ import Foundation
 
 @objc public protocol PVRenderDelegate {
     // Required methods
-    func startRenderingOnAlternateThread()
-    func didRenderFrameOnAlternateThread()
+    @objc optional dynamic func startRenderingOnAlternateThread()
+    @objc optional dynamic func didRenderFrameOnAlternateThread()
 
     /*!
      * @property presentationFramebuffer
@@ -22,11 +22,11 @@ import Foundation
      * this will return the FBO which game pixels eventually go to. This
      * allows porting of cores that overwrite GL_DRAW_FRAMEBUFFER.
      */
-    var presentationFramebuffer: AnyObject? { get }
+    @objc optional dynamic var presentationFramebuffer: AnyObject? { get }
 
     // Optional property
 #if USE_METAL
-    @objc(optional) var mtlView: MTKView? { get set }
+    @objc(optional) dynamic var mtlView: MTKView? { get set }
 #endif
 }
 

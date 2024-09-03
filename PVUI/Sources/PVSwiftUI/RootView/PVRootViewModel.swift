@@ -11,12 +11,18 @@ import Foundation
 import SwiftUI
 #endif
 
+/// ViewModel for the Root view
 @available(iOS 14, tvOS 14, *)
 public class PVRootViewModel: ObservableObject {
 
+    /// Whether to sort consoles in ascending order
     @Published public var sortConsolesAscending: Bool = true
+    
+    /// Whether to sort games in ascending order
     @Published public var sortGamesAscending: Bool = true
+    
+    /// Whether to show games in a grid or list
     @Published public var viewGamesAsGrid: Bool = true
-
+    
     public init() {}
 }

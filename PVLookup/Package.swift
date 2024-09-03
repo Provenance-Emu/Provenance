@@ -43,8 +43,9 @@ let package = Package(
         .package(url: "https://github.com/stephencelis/SQLite.swift.git", .upToNextMajor(from: "0.15.3")),
 
         // https://github.com/Lighter-swift/Lighter
-            .package(url: "https://github.com/Lighter-swift/Lighter.git", from: "1.4.4"),
-        
+        //.package(url: "https://github.com/Lighter-swift/Lighter.git", from: "1.4.4"),
+        .package(url: "https://github.com/JoeMatt/Lighter.git", branch: "develop"),
+
         // Swagger Generation by @Apple
         // https://tinyurl.com/yn3dnbr5
         

@@ -12,6 +12,9 @@ import RealmSwift
 #if canImport(UIKit)
 import UIKit
 #endif
+#if canImport(AppKit)
+import AppKit
+#endif
 import PVThemes
 
 #if os(iOS)
@@ -65,7 +68,13 @@ class LongPressLabel: UILabel {
      #endif
 }
 
-final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate, GameLaunchingViewController, GameSharingViewController {
+#if canImport(UIKit)
+typealias GameMoreInfoPageViewControllerBase = UIPageViewController & UIPageViewControllerDataSource & UIPageViewControllerDelegate
+#elseif canImport(AppKit)
+typealias GameMoreInfoPageViewControllerBase = NSPageController & NSPageControllerDelegate
+#endif
+
+final class GameMoreInfoPageViewController: GameMoreInfoPageViewControllerBase, GameLaunchingViewController, GameSharingViewController {
     var mustRefreshDataSource: Bool = false
 
     override func viewDidLoad() {
@@ -203,7 +212,13 @@ final class GameMoreInfoPageViewController: UIPageViewController, UIPageViewCont
     @IBOutlet var onlineLookupBarButtonItem: UIBarButtonItem!
 }
 
-final class PVGameMoreInfoViewController: UIViewController, GameLaunchingViewController, GameSharingViewController {
+#if canImport(UIKit)
+typealias PVGameMoreInfoViewControllerBase = UIViewController
+#elseif canImport(AppKit)
+typealias PVGameMoreInfoViewControllerBase = NSViewController
+#endif
+
+final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, GameLaunchingViewController, GameSharingViewController {
     @objc
     public var game: PVGame! {
         didSet {

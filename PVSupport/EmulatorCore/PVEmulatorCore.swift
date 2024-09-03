@@ -24,14 +24,15 @@ private var hapticEngines: [CHHapticEngine?] = [CHHapticEngine?].init(repeating:
 
 @objc
 public extension PVEmulatorCore {
-    var supportsRumble: Bool { false }
 
-	func rumble() {
+    @objc dynamic var supportsRumble: Bool { false }
+
+    @objc func rumble() {
 		rumble(player: 0)
 	}
 
     @available(iOS 14.0, tvOS 14.0, *)
-    func hapticEngine(for player: Int) -> CHHapticEngine? {
+    @objc func hapticEngine(for player: Int) -> CHHapticEngine? {
         if let engine = hapticEngines[player] {
             return engine
         } else if let controller = controller(for: player), let newEngine = controller.haptics?.createEngine(withLocality: .all) {
@@ -43,7 +44,7 @@ public extension PVEmulatorCore {
         }
     }
 
-    func controller(for player: Int) -> GCController? {
+    @objc func controller(for player: Int) -> GCController? {
         var controller: GCController?
         switch player {
         case 1:
@@ -69,7 +70,7 @@ public extension PVEmulatorCore {
         return controller
     }
 
-	func rumble(player: Int) {
+    @objc func rumble(player: Int) {
 		guard self.supportsRumble else {
 			WLOG("Rumble called on core that doesn't support it")
 			return
@@ -85,7 +86,7 @@ public extension PVEmulatorCore {
 	}
 
     #if os(iOS) && !targetEnvironment(macCatalyst)
-	func rumblePhone() {
+    @objc func rumblePhone() {
 
 		let deviceHasHaptic = (UIDevice.current.value(forKey: "_feedbackSupportLevel") as? Int ?? 0) > 0
 
@@ -135,6 +136,6 @@ private extension UIDevice {
 }
 #endif
 #endif
-public extension PVEmulatorCore {
-    static var status: [String:Bool] = [:]
+@objc public extension PVEmulatorCore {
+    @objc static var status: [String:Bool] = [:]
 }

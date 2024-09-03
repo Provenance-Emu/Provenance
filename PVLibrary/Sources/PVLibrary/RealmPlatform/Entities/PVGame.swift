@@ -87,11 +87,7 @@ public final class PVGame: RealmSwift.Object, Identifiable, PVLibraryEntry {
     public dynamic var systemShortName: String?
     public dynamic var language: String?
 
-
-
-    public var validatedGame: PVGame? {
-        return self.isInvalidated ? nil : self
-    }
+    public var validatedGame: PVGame? { return self.isInvalidated ? nil : self }
 
     /*
      Primary key must be set at import time and can't be changed after.
@@ -248,9 +244,7 @@ extension Game: RealmRepresentable {
             object.regionID.value = regionID
             object.systemShortName = systemShortName
             object.language = language
-            Task {
-                object.file = await PVFile(withPartialPath: file.fileName)
-            }
+            object.file =  PVFile(withPartialPath: file.fileName)
         }
     }
 }

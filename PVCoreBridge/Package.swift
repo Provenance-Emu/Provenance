@@ -36,7 +36,7 @@ let package = Package(
 
         // SwiftMacros
         // https://github.com/ShenghaiWang/SwiftMacros?tab=readme-ov-file
-            .package(url: "https://github.com/ShenghaiWang/SwiftMacros.git", from: "1.0.0"),
+        .package(url: "https://github.com/JoeMatt/SwiftMacros.git", branch: "main"),
     ],
 
     // MARK: - Targets

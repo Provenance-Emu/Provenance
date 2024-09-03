@@ -17,27 +17,10 @@ import PVPrimitives
 
 public typealias OptionalCore = PVEmulatorCore & CoreOptional
 
-@objc
-public protocol PVEmulatorCoreT: EmulatorCoreRunLoop, EmulatorCoreIOInterface, EmulatorCoreVideoDelegate, EmulatorCoreSavesSerializer, EmulatorCoreAudioDataSource, EmulatorCoreRumbleDataSource, EmulatorCoreControllerDataSource, EmulatorCoreSavesDataSource {
+@objc public protocol PVEmulatorCoreT: EmulatorCoreRunLoop, EmulatorCoreIOInterface, EmulatorCoreVideoDelegate, EmulatorCoreSavesSerializer, EmulatorCoreAudioDataSource, EmulatorCoreRumbleDataSource, EmulatorCoreControllerDataSource, EmulatorCoreSavesDataSource {
 
 }
 
-public enum EmulationError: Error, CustomStringConvertible, CustomNSError {
-    
-    case failedToLoadFile
-    case coreDoesNotImplimentLoadFile
-    
-    public var description: String {
-        switch self {
-        case .failedToLoadFile: return "Failed to load file"
-        case .coreDoesNotImplimentLoadFile: return "Core does not implement loadFile:error: method"
-        }
-    }
-
-    public var errorUserInfo: [String: Any] {
-        return ["description": description]
-    }
-}
 
 @objc
 @objcMembers
@@ -85,7 +68,8 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
     #endif
 
     // MARK: EmulatorCoreRumbleDataSource
-
+//    var supportsRumble: Bool = false
+    
     // MARK: EmulatorCoreSavesDataSource
 
     @objc dynamic open var batterySavesPath: String? = nil

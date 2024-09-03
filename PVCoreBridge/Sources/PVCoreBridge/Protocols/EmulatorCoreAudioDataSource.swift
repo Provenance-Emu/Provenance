@@ -17,7 +17,7 @@ import Foundation
     @objc var audioBitDepth: UInt { get }
     @objc var channelCount: UInt { get }
 
-    @objc var audioBufferCount: UInt { get }
+    @objc optional var audioBufferCount: UInt { get }
 
     @objc func channelCount(forBuffer: UInt) -> UInt
     @objc func audioBufferSize(forBuffer: UInt) -> UInt

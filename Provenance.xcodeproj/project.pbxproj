@@ -442,7 +442,7 @@
 		B33B4F532C1A5D31007371C5 /* PVAltKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B33B4F4D2C1A5D31007371C5 /* PVAltKitService.swift */; };
 		B33BD1B52C6A619F001E933A /* PVAtari800-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */; };
 		B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1B42C6A619F001E933A /* PVAtari800-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		B33BD1B92C6A61DD001E933A /* MoltenVK-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1B82C6A61DD001E933A /* MoltenVK-Dynamic */; };
+		B33BD1B92C6A61DD001E933A /* MoltenVK-Dynamic in Frameworks */ = {isa = PBXBuildFile; platformFilters = (ios, tvos, ); productRef = B33BD1B82C6A61DD001E933A /* MoltenVK-Dynamic */; };
 		B33BD1BA2C6A61EF001E933A /* MoltenVK-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1B82C6A61DD001E933A /* MoltenVK-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B33BD1BC2C6A6204001E933A /* PVCrabEmu-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1BB2C6A6204001E933A /* PVCrabEmu-Dynamic */; };
 		B33BD1BD2C6A6204001E933A /* PVCrabEmu-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B33BD1BB2C6A6204001E933A /* PVCrabEmu-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -983,8 +983,8 @@
 		B39B538A2C66E7BA00C220C6 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B39B53892C66E7BA00C220C6 /* PVSettings */; };
 		B39C4B6B2BF0A3F000F199BB /* MoltenVK.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */; platformFilters = (ios, tvos, ); };
 		B39C4B6C2BF0A3F000F199BB /* MoltenVK.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B682BF0A2AD00F199BB /* MoltenVK.xcframework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B39C4B6E2BF0AB6100F199BB /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; };
-		B39C4B6F2BF0AB6100F199BB /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilter = maccatalyst; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B39C4B6E2BF0AB6100F199BB /* libMoltenVK.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilters = (maccatalyst, macos, ); };
+		B39C4B6F2BF0AB6100F199BB /* libMoltenVK.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B39C4B6D2BF0AB6000F199BB /* libMoltenVK.dylib */; platformFilters = (maccatalyst, macos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B39DC77D279E79D40017E28D /* TopShelf.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BE9FDCB71C210B9E0046DF0E /* TopShelf.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3A4FB60278FF84800A65248 /* ApplicationMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB5F278FF84800A65248 /* ApplicationMonitor.swift */; };
 		B3A4FB64278FFA5100A65248 /* PublishedPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A4FB63278FFA5100A65248 /* PublishedPipeline.swift */; };
@@ -7020,6 +7020,7 @@
 		};
 		B3BE9FD62C7988BF006D989E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
+			platformFilter = ios;
 			target = B3BE9FCF2C7988BD006D989E /* Provenance Stickers */;
 			targetProxy = B3BE9FD52C7988BF006D989E /* PBXContainerItemProxy */;
 		};

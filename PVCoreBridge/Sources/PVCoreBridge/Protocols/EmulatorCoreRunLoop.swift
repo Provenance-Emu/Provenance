@@ -12,26 +12,26 @@ import Foundation
 }
 
 @objc public protocol EmulatorCoreRunLoop {
-    var shouldStop: Bool { get }
-    var isRunning: Bool { get }
-    var shouldResyncTime: Bool { get }
-    var skipEmulationLoop: Bool { get }
-    var skipLayout: Bool { get }
+    @objc optional dynamic var shouldStop: Bool { get }
+    @objc optional dynamic var isRunning: Bool { get }
+    @objc optional dynamic var shouldResyncTime: Bool { get }
+    @objc optional dynamic var skipEmulationLoop: Bool { get }
+    @objc optional dynamic var skipLayout: Bool { get }
 
-    var gameSpeed: GameSpeed { get set }
-    var emulationLoopThreadLock: NSLock { get }
-    var frontBufferCondition: NSCondition { get }
-    var frontBufferLock: NSLock { get }
-    var isFrontBufferReady: Bool { get }
+    @objc optional dynamic var gameSpeed: GameSpeed { get set }
+    @objc optional dynamic var emulationLoopThreadLock: NSLock { get }
+    @objc optional dynamic var frontBufferCondition: NSCondition { get }
+    @objc optional dynamic var frontBufferLock: NSLock { get }
+    @objc optional dynamic var isFrontBufferReady: Bool { get }
 }
 
-public extension EmulatorCoreRunLoop {
-    var shouldStop: Bool { false }
-    var isRunning: Bool { false }
-    var shouldResyncTime: Bool { true }
-    var skipEmulationLoop: Bool { true }
-    var skipLayout: Bool { false }
-
-    var gameSpeed: GameSpeed { .normal }
-    var isFrontBufferReady: Bool { false }
-}
+//public extension EmulatorCoreRunLoop {
+//    dynamic var shouldStop: Bool { false }
+//    dynamic var isRunning: Bool { false }
+//    dynamic var shouldResyncTime: Bool { true }
+//    dynamic var skipEmulationLoop: Bool { true }
+//    dynamic var skipLayout: Bool { false }
+//
+//    dynamic var gameSpeed: GameSpeed { .normal }
+//    dynamic var isFrontBufferReady: Bool { false }
+//}

@@ -67,9 +67,10 @@ extension GameLaunchingViewController where Self: UIViewController {
         }
 
         // Check if file exists
-        let online: Bool = await !(game.file.online)
+        let online: Bool = !(game.file.online)
         if  online {
-            displayAndLogError(withTitle: "Cannot open game", message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(await game.file.fileName)")
+            displayAndLogError(withTitle: "Cannot open game",
+                               message: "The ROM file for this game cannot be found. Try re-importing the file for this game.\n\(game.file.fileName)")
             return
         }
 

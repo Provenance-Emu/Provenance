@@ -51,17 +51,17 @@
         "repositoryURL": "https://github.com/JoeMatt/HexColors.git",
         "state": {
           "branch": "main",
-          "revision": "c0116b59626909012e95d7faf2fdd499b1d680e1",
+          "revision": "6aec172f32dab98d66458d1d58e98790f173c9ea",
           "version": null
         }
       },
       {
         "package": "Lighter",
-        "repositoryURL": "https://github.com/Lighter-swift/Lighter.git",
+        "repositoryURL": "https://github.com/JoeMatt/Lighter.git",
         "state": {
-          "branch": null,
-          "revision": "4fd43bbfa2099f7b189a8bf899afbc818430647a",
-          "version": "1.4.4"
+          "branch": "develop",
+          "revision": "b1c78989db429349427cd90b9b99925ff3253853",
+          "version": null
         }
       },
       {
@@ -300,7 +300,7 @@
       },
       {
         "package": "swift-syntax",
-        "repositoryURL": "https://github.com/apple/swift-syntax.git",
+        "repositoryURL": "https://github.com/swiftlang/swift-syntax.git",
         "state": {
           "branch": null,
           "revision": "64889f0c732f210a935a0ad7cda38f77f876262d",
@@ -318,11 +318,11 @@
       },
       {
         "package": "SwiftMacros",
-        "repositoryURL": "https://github.com/ShenghaiWang/SwiftMacros.git",
+        "repositoryURL": "https://github.com/JoeMatt/SwiftMacros.git",
         "state": {
-          "branch": null,
-          "revision": "fcb92029bb19594f9ae9a079e8aa5fc7acc77c10",
-          "version": "1.4.1"
+          "branch": "main",
+          "revision": "c7430902f056432a07803f8580263b4acd7753f1",
+          "version": null
         }
       },
       {

@@ -11,8 +11,7 @@
 
 import UIKit
 
-public
-class TVFullscreenController: UIViewController {
+public class TVFullscreenController: UIViewController {
 
     // these are the PV defaults assuming Dark mode, etc.
     private let _fullscreenColor = UIColor.black.withAlphaComponent(0.8)

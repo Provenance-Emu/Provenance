@@ -9,9 +9,9 @@ import Foundation
 
 @objc
 public protocol EmulatorCoreSavesDataSource {
-    var saveStatesPath: String? { get }
-    var batterySavesPath: String? { get }
-    var supportsSaveStates: Bool { get }
+    @objc optional dynamic var saveStatesPath: String? { get }
+    @objc optional dynamic var batterySavesPath: String? { get }
+    @objc optional dynamic var supportsSaveStates: Bool { get }
 }
 
 //public extension EmulatorCoreSavesDataSource {
