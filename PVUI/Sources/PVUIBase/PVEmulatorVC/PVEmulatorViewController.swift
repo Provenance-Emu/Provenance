@@ -462,24 +462,32 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         }
 
         // Extract Zip before loading the ROM
-        await handleArchives(atPath: romPathMaybe)
+        romPathMaybe = await handleArchives(atPath: romPathMaybe)
 
         guard let romPath = romPathMaybe else {
             throw CreateEmulatorError.gameHasNilRomPath
         }
 
-        guard FileManager.default.fileExists(atPath: romPath.absoluteString) else {
-            ELOG("File doesn't exist at path \(romPath.absoluteString)")
+        let path = romPath.path(percentEncoded: false)
+        guard FileManager.default.fileExists(atPath: path) else {
+            ELOG("File doesn't exist at path \(path)")
             
             // Copy path to Pasteboard
-            UIPasteboard.general.string = romPath.absoluteString
+            UIPasteboard.general.string = path
             
-            throw CreateEmulatorError.fileDoesNotExist(path: romPath.absoluteString)
+            throw CreateEmulatorError.fileDoesNotExist(path: path)
         }
         
-        ILOG("Loading ROM: \(romPath.path)")
-        try (core as? ObjCCoreBridge)?.loadFile(atPath: romPath.path)
+        ILOG("Loading ROM: \(path)")
+        
+        if let core = core as? ObjCCoreBridge {
+            try core.loadFile(atPath: path)
+        } else {
+            throw EmulationError.coreDoesNotImplimentLoadFile
+//            try core.loadFile(atPath: path)
+        }
 
+        #warning("TODO: Handle multiple screens with UIScene")
         if UIScreen.screens.count > 1 && !core.skipLayout {
             secondaryScreen = UIScreen.screens[1]
             if let aBounds = secondaryScreen?.bounds {

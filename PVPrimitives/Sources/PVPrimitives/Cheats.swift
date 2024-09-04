@@ -51,7 +51,7 @@ extension Cheats: Equatable {
 #if canImport(CoreTransferable)
 import CoreTransferable
 import UniformTypeIdentifiers
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 13, *)
 extension Cheats: Transferable {
     public static var transferRepresentation: some TransferRepresentation {
         CodableRepresentation(contentType: .cheat)

@@ -1,0 +1,19 @@
+{
+  "images" : [
+    {
+      "filename" : "prov_home_icon-1.pdf",
+      "idiom" : "universal"
+    },
+    {
+      "filename" : "prov_home_icon.pdf",
+      "idiom" : "iphone"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  },
+  "properties" : {
+    "preserves-vector-representation" : true
+  }
+}

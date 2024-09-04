@@ -11,7 +11,7 @@ import UIKit
 #endif
 import PVLogging
 
-package
+public
 extension UIViewController {
     func presentMessage(_ message: String, title: String, source: UIView, completion _: (() -> Swift.Void)? = nil) {
         NSLog("Title: %@ Message: %@", title, message);

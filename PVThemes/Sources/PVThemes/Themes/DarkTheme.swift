@@ -9,6 +9,8 @@
 import Foundation
 #if canImport(UIKit)
 import UIKit
+#else
+import AppKit
 #endif
 import HexColors
 
@@ -33,8 +35,13 @@ public
 struct DarkThemePalette: UXThemePalette {
 
     enum Colors {
+#if canImport(UIKit)
         static let lightBlue: UIColor   = #uiColor(0x18A9F7)
         static let blueishGrey: UIColor = #uiColor(0x848489)
+        #else
+        static let lightBlue: UIColor   = #nsColor(0x18A9F7)
+        static let blueishGrey: UIColor = #nsColor(0x848489)
+        #endif
     }
 
     public var name: String { "Provenance Dark" }
@@ -44,8 +51,11 @@ struct DarkThemePalette: UXThemePalette {
     public var statusBarColor: UIColor { .grey.g1C }
 #endif
     public var defaultTintColor: UIColor? { Colors.blueishGrey }
+    
+#if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance = .dark
-
+#endif
+    
     public var switchON: UIColor? { Colors.lightBlue }
     public var switchThumb: UIColor? { .grey.gEEE }
 

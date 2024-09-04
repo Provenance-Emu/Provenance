@@ -69,15 +69,15 @@ class LongPressLabel: UILabel {
 }
 
 #if canImport(UIKit)
-typealias GameMoreInfoPageViewControllerBase = UIPageViewController & UIPageViewControllerDataSource & UIPageViewControllerDelegate
+public typealias GameMoreInfoPageViewControllerBase = UIPageViewController & UIPageViewControllerDataSource & UIPageViewControllerDelegate
 #elseif canImport(AppKit)
-typealias GameMoreInfoPageViewControllerBase = NSPageController & NSPageControllerDelegate
+public typealias GameMoreInfoPageViewControllerBase = NSPageController & NSPageControllerDelegate
 #endif
 
-final class GameMoreInfoPageViewController: GameMoreInfoPageViewControllerBase, GameLaunchingViewController, GameSharingViewController {
+public final class GameMoreInfoPageViewController: GameMoreInfoPageViewControllerBase, GameLaunchingViewController, GameSharingViewController {
     var mustRefreshDataSource: Bool = false
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         dataSource = self
         delegate = self
@@ -213,14 +213,13 @@ final class GameMoreInfoPageViewController: GameMoreInfoPageViewControllerBase, 
 }
 
 #if canImport(UIKit)
-typealias PVGameMoreInfoViewControllerBase = UIViewController
+public typealias PVGameMoreInfoViewControllerBase = UIViewController
 #elseif canImport(AppKit)
-typealias PVGameMoreInfoViewControllerBase = NSViewController
+public typealias PVGameMoreInfoViewControllerBase = NSViewController
 #endif
 
-final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, GameLaunchingViewController, GameSharingViewController {
-    @objc
-    public var game: PVGame! {
+public final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, GameLaunchingViewController, GameSharingViewController {
+    @objc public var game: PVGame! {
         didSet {
             assert(game != nil, "Set a nil game")
 
@@ -234,8 +233,7 @@ final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, Game
         }
     }
 
-    @objc
-    var showsPlayButton: Bool = true {
+    @objc var showsPlayButton: Bool = true {
         didSet {
             #if os(iOS)
                 if showsPlayButton {
@@ -272,7 +270,7 @@ final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, Game
 
     var mustRefreshDataSource = false
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         // Prevent double tap from triggering single tap also
@@ -296,7 +294,7 @@ final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, Game
 //        super.viewWillDisappear(animated)
 //    }
 
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
 #if os(iOS)
@@ -320,13 +318,13 @@ final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, Game
 #endif
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         updateContent()
     }
 
-    override func didReceiveMemoryWarning() {
+    public override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
@@ -678,7 +676,7 @@ final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, Game
                         if reloadGameInfoAfter, self.game.releaseID == nil || self.game.releaseID!.isEmpty {
                             Task { [weak self] in
                                 guard let self = self else { return }
-                                self.game = await GameImporter.shared.lookupInfo(for: self.game, overwrite: false)
+                                self.game = GameImporter.shared.lookupInfo(for: self.game, overwrite: false)
                             }
                         }
                     }
@@ -694,7 +692,8 @@ final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, Game
     var token: NotificationToken?
     func registerForChange() {
         token?.invalidate()
-        token = game?.observe({ [weak self] change in
+        let thawedGame = game.thaw()
+        token = thawedGame?.observe({ [weak self] change in
             guard let `self` = self else { return }
 
             switch change {
@@ -716,7 +715,7 @@ final class PVGameMoreInfoViewController: PVGameMoreInfoViewControllerBase, Game
 
 extension PVGameMoreInfoViewController {
     // Buttons that shw up under thie VC when it's in a push/pop preview display mode
-    override var previewActionItems: [UIPreviewActionItem] {
+    public override var previewActionItems: [UIPreviewActionItem] {
         guard let game = game else {
             return [UIPreviewActionItem]()
         }
@@ -746,7 +745,7 @@ extension PVGameMoreInfoViewController {
                 Task { [weak self] in
                     // Delete from Realm
                     do {
-                        try await RomDatabase.sharedInstance.delete(game: game)
+                        try RomDatabase.sharedInstance.delete(game: game)
                     } catch {
                         self?.presentError(error.localizedDescription, source: self!.view)
                     }
@@ -770,11 +769,11 @@ extension PVGameMoreInfoViewController {
 }
 
 extension PVGameMoreInfoViewController: UITextViewDelegate {
-    func textViewShouldEndEditing(_: UITextView) -> Bool {
+    public func textViewShouldEndEditing(_: UITextView) -> Bool {
         return true
     }
 
-    func textViewDidEndEditing(_ textView: UITextView) {
+    public func textViewDidEndEditing(_ textView: UITextView) {
         if textView == descriptionTextView {
             descriptionTextView.resignFirstResponder()
             #if os(iOS)
@@ -790,7 +789,7 @@ extension PVGameMoreInfoViewController: UITextViewDelegate {
         }
     }
 
-    func textView(_ textView: UITextView, shouldChangeTextIn _: NSRange, replacementText text: String) -> Bool {
+    public func textView(_ textView: UITextView, shouldChangeTextIn _: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()
             return false

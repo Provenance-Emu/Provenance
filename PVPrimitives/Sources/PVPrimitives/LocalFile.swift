@@ -93,7 +93,7 @@ public func == (lhs: LocalFile, rhs: LocalFile) -> Bool {
 #if canImport(CoreTransferable)
 import CoreTransferable
 import UniformTypeIdentifiers
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 13, *)
 extension LocalFile: Transferable {
     public static var transferRepresentation: some TransferRepresentation {
         CodableRepresentation(contentType: .fileURL)

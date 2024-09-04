@@ -31,8 +31,9 @@ public struct iOSTheme: UXThemePalette, Codable, Sendable, Hashable, Observable 
 
     public var barButtonItemTint: UIColor? { palette.barButtonItemTint }
 
+    #if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { palette.keyboardAppearance }
-
+    #endif
     public var navigationBarBackgroundColor: UIColor? { palette.navigationBarBackgroundColor }
 
     public var settingsCellBackground: UIColor? { palette.settingsCellBackground }

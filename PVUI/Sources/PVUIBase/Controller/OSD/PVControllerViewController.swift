@@ -9,6 +9,7 @@
 // This entire file is one ugly math hack with ordering mattering in parsing.
 // TLDR; refactor this to SwiftUI or constraints
 
+#if canImport(UIKit)
 import AudioToolbox
 #if canImport(GameController)
 import GameController
@@ -1300,3 +1301,4 @@ open class PVControllerViewController<T: ResponderClient> : UIViewController, Co
     }
 	#endif // os(iOS)
 }
+#endif // UIKit

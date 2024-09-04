@@ -8,6 +8,9 @@
 
 #if canImport(UIKit)
 import UIKit
+#else
+import AppKit
+public typealias UIViewController = NSViewController
 #endif
 
 // @IBDesignable
@@ -50,6 +53,10 @@ public extension UIViewController {
     }
 
     private var appearanceRoot: UIWindow? {
-        return viewIfLoaded?.window
+        if #available(macOS 14.0, *) {
+            return viewIfLoaded?.window
+        } else {
+            return view.window
+        }
     }
 }

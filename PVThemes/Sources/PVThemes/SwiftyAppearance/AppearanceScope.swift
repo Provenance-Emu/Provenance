@@ -8,7 +8,6 @@
 
 #if canImport(UIKit)
 import UIKit
-#endif
 import SwiftMacros
 
 internal struct AppearanceScope: Sendable {
@@ -84,3 +83,4 @@ internal extension UIAppearance {
         }
     }
 }
+#endif

@@ -148,12 +148,14 @@ public struct CodableColor: Codable {
 //    }
 //}
 
+#if canImport(UIKit)
 extension UIKeyboardAppearance: Codable { }
 extension UIKeyboardAppearance: @retroactive CaseIterable {
     public static var allCases: [UIKeyboardAppearance] {
         [.default, .dark, .light, .alert]
     }
 }
+#endif
 
 #if canImport(SwiftUICore)
 import SwiftUICore

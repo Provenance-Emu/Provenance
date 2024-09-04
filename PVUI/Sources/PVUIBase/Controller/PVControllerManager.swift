@@ -89,7 +89,9 @@ public final class PVControllerManager: NSObject {
         }
     }
 
+#if canImport(UIKit) && canImport(GameController)
     public private(set) var iCadeController: PViCadeController?
+#endif
     public private(set) var keyboardController: GCController?
     public var hasControllers: Bool {
         return player1 != nil || player2 != nil || player3 != nil || player4 != nil
@@ -110,6 +112,7 @@ public final class PVControllerManager: NSObject {
     public
     static let shared: PVControllerManager = PVControllerManager()
 
+#if canImport(UIKit) && canImport(GameController)
     @MainActor
     package
     func listenForICadeControllers(window: UIWindow?, preferredPlayer: Int = -1, completion: iCadeListenCompletion? = nil) {
@@ -170,7 +173,7 @@ public final class PVControllerManager: NSObject {
         iCadeController?.controllerPressedAnyKey = nil
         iCadeController?.reader.shared.listen(to: nil)
     }
-
+#endif
     @MainActor
     override init() {
         super.init()
@@ -209,6 +212,7 @@ public final class PVControllerManager: NSObject {
         }
     }
 
+#if canImport(UIKit) && canImport(GameController)
     @MainActor
     func setupICade() {
         if iCadeController == nil {
@@ -234,7 +238,8 @@ public final class PVControllerManager: NSObject {
 
         setupICade()
     }
-
+#endif
+    
     @objc func handleControllerDidConnect(_ note: Notification?) {
         guard !PVControllerManager.shared.skipControllerBinding else {
             return

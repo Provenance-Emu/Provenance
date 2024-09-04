@@ -8,7 +8,6 @@
 
 #if canImport(UIKit)
 import UIKit
-#endif
 
 /// Nested appearance scope for specified trait collection and container types
 ///
@@ -102,3 +101,4 @@ public extension UIAppearance where Self: UIAppearanceContainer {
         AppearanceScope.main.pop(count: 2)
     }
 }
+#endif

@@ -8,7 +8,6 @@
 
 #if canImport(UIKit)
 import UIKit
-#endif
 
 public extension UITraitCollection {
     /// Umbrella emun wrapping all possible traits
@@ -70,3 +69,4 @@ public extension UITraitCollection {
         self.init(traitsFrom: traits.map(UITraitCollection.init(trait:)))
     }
 }
+#endif

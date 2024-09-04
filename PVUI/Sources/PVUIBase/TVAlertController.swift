@@ -8,6 +8,7 @@
 //  Created by Todd Laney on 22/01/2022.
 //
 
+#if canImport(UIKit)
 import UIKit
 import PVLogging
 
@@ -258,7 +259,7 @@ public final class TVAlertController: UIViewController, UIAlertControllerProtoco
 
     // are we fullscreen (aka not a popover)
     private var isFullscreen: Bool {
-        #if os(tvOS)
+        #if os(tvOS) || os(macOS)
             return true
         #else
             return modalPresentationStyle == .overFullScreen
@@ -634,4 +635,7 @@ extension UIAlertController : ControllerButtonPress {
     }
 }
 
+#endif
+#elseif canImport(AppKit)
+import AppKit
 #endif

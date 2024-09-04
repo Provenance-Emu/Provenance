@@ -10,9 +10,12 @@ import Foundation
 import SwiftMacros
 #if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
 #endif
 
 //@Singleton
+@available(macOS 14.0, *)
 @Observable
 public final class ThemeManager {
 
@@ -34,9 +37,10 @@ public final class ThemeManager {
     static weak var statusBarView: UIView?
 }
 
+@available(macOS 14.0, *)
 private extension ThemeManager {
     class func styleStatusBar(withColor color: UIColor) {
-        #if !os(tvOS)
+        #if !os(tvOS) && !os(macOS)
         DispatchQueue.main.async {
             let keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
 
@@ -71,7 +75,7 @@ private extension ThemeManager {
             $0.tintColor = theme.defaultTintColor
         }
         #endif
-
+#if canImport(UIKit)
         UIBarButtonItem.appearance {
             $0.tintColor = theme.barButtonItemTint
         }
@@ -91,7 +95,8 @@ private extension ThemeManager {
         }
         #endif
         #endif
-
+#else
+#endif
         #if false
         UICollectionView.appearance {
             $0.backgroundColor = theme.gameLibraryBackground
@@ -99,6 +104,7 @@ private extension ThemeManager {
         #endif
 
         // Keyboard Style
+        #if canImport(UIKit)
         UITextField.appearance {
             $0.keyboardAppearance = theme.keyboardAppearance
         }
@@ -125,6 +131,7 @@ private extension ThemeManager {
                 }
             }
         }
+        #endif
 
         #if os(iOS)
         // Status bar

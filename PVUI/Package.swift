@@ -60,7 +60,9 @@ let package = Package(
             ],
             resources: [
                 .copy("Resources/Shaders/"),
-                .copy("Resources/PrivacyInfo.xcprivacy")
+                .copy("Resources/PrivacyInfo.xcprivacy"),
+                .process("Resources/SystemIcons.xcassets"),
+                .process("Resources/Assets.xcassets")
             ],
             cSettings: [
                 .define("GL_SILENCE_DEPRECATION", to: "1"),

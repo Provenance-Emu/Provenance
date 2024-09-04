@@ -11,6 +11,8 @@
 import Foundation
 #if canImport(UIKit)
 import UIKit.UIColor
+#elseif canImport(AppKit)
+import AppKit
 #endif
 import HexColors
 
@@ -44,6 +46,7 @@ public enum CGAThemes: CaseIterable {
 
 public extension UIColor {
     enum CGA {
+#if canImport(UIKit)
         public static let blue: UIColor         = #uiColor(0x0000AA)
         public static let blueShadow: UIColor   = #uiColor(0x0000FF)
 
@@ -61,6 +64,25 @@ public extension UIColor {
 
         public static let yellow: UIColor         = #uiColor(0xaaaa00)
         public static let yellowShadow: UIColor   = #uiColor(0xffff00)
+        #else
+        public static let blue: UIColor         = #nsColor(0x0000AA)
+        public static let blueShadow: UIColor   = #nsColor(0x0000FF)
+
+        public static let cyan: UIColor         = #nsColor(0x00AAAA)
+        public static let cyanShadow: UIColor   = #nsColor(0x00FFFF)
+
+        public static let green: UIColor         = #nsColor(0x00aa00)
+        public static let greenShadow: UIColor   = #nsColor(0x00ff00)
+
+        public static let magenta: UIColor         = #nsColor(0xaa00aa)
+        public static let magentaShadow: UIColor   = #nsColor(0xff00ff)
+
+        public static let red: UIColor         = #nsColor(0xaa0000)
+        public static let redShadow: UIColor   = #nsColor(0xff0000)
+
+        public static let yellow: UIColor         = #nsColor(0xaaaa00)
+        public static let yellowShadow: UIColor   = #nsColor(0xffff00)
+        #endif
     }
 }
 
@@ -73,8 +95,9 @@ public struct CGABlueThemePalette: UXThemePalette, Codable, Sendable, Hashable {
 #endif
     public var defaultTintColor: UIColor? { .CGA.blue }
 
+#if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
-
+#endif
     public var switchThumb: UIColor? { .CGA.blueShadow }
     public var switchON: UIColor? { .CGA.blue }
 
@@ -104,8 +127,9 @@ public struct CGACyanThemePalette: UXThemePalette, Codable, Sendable, Hashable {
 #endif
     public var defaultTintColor: UIColor? { .CGA.cyan }
 
+#if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .light }
-
+#endif
     public var switchThumb: UIColor? { .CGA.cyanShadow }
     public var switchON: UIColor? { .CGA.cyan }
 
@@ -134,8 +158,10 @@ public struct CGAGreenThemePalette: UXThemePalette, Codable, Sendable, Hashable 
 #endif
     public var defaultTintColor: UIColor? { .CGA.green }
 
+#if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
-
+#endif
+    
     public var switchThumb: UIColor? { .CGA.greenShadow }
     public var switchON: UIColor? { .CGA.green }
 
@@ -164,8 +190,10 @@ public struct CGAMagentaThemePalette: UXThemePalette, Codable, Sendable, Hashabl
 #endif
     public var defaultTintColor: UIColor? { .CGA.magenta }
 
+#if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .dark }
-
+#endif
+    
     public var switchThumb: UIColor? { .CGA.magentaShadow }
     public var switchON: UIColor? { .CGA.magenta }
 
@@ -195,8 +223,9 @@ public struct CGARedThemePalette: UXThemePalette, Codable, Sendable, Hashable {
 #endif
     public var defaultTintColor: UIColor? { .CGA.red }
 
+#if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .light }
-
+#endif
     public var switchThumb: UIColor? { .CGA.redShadow }
     public var switchON: UIColor? { .CGA.red }
 
@@ -226,8 +255,10 @@ public struct CGAYellowThemePalette: UXThemePalette, Codable, Sendable, Hashable
 #endif
     public var defaultTintColor: UIColor? { .CGA.yellow }
 
+#if canImport(UIKit)
     public var keyboardAppearance: UIKeyboardAppearance { .light }
-
+#endif
+    
     public var switchThumb: UIColor? { .CGA.yellowShadow }
     public var switchON: UIColor? { .CGA.yellow }
 

@@ -817,7 +817,7 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         } else if segue.identifier == "gameMoreInfoPageVCSegue" {
             let game = sender as! PVGame
             
-            let firstVC = UIStoryboard(name: "Provenance", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+            let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
             firstVC.game = game
             
             let moreInfoCollectionVC = segue.destination as! GameMoreInfoPageViewController

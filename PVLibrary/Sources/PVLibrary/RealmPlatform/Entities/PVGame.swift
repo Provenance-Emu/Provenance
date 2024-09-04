@@ -11,13 +11,10 @@ import RealmSwift
 import AsyncAlgorithms
 import PVPrimitives
 
-// Hack for game library having eitehr PVGame or PVRecentGame in containers
-public protocol PVLibraryEntry where Self: RealmSwift.Object {}
-
 @objcMembers
-public final class PVGame: RealmSwift.Object, Identifiable, PVLibraryEntry {
+public final class PVGame: RealmSwift.Object, Identifiable, PVGameLibraryEntry {
     public dynamic var title: String = ""
-    public dynamic var id = NSUUID().uuidString
+    public dynamic var id :String = NSUUID().uuidString
 
     // TODO: This is a 'partial path' meaing it's something like {system id}.filename
     // We should make this an absolute path but would need a Realm translater and modifying

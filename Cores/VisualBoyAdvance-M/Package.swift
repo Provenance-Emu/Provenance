@@ -32,7 +32,6 @@ let package = Package(
             name: "PVVisualBoyAdvance-Static",
             type: .static,
             targets: ["PVVisualBoyAdvance", "PVVisualBoyAdvanceSwift"]),
-
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
@@ -239,7 +238,7 @@ let package = Package(
             name: "PVVisualBoyAdvanceTests",
             dependencies: ["PVVisualBoyAdvance"])
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageModes: [.v5],
     cLanguageStandard: .gnu99,
     cxxLanguageStandard: .gnucxx17
 )

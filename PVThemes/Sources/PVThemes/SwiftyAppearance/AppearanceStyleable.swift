@@ -8,38 +8,40 @@
 
 #if canImport(UIKit)
 import UIKit
+#else
+import AppKit
 #endif
 
-/// <#Description#>
+///
 public protocol AppearanceStyleable: NSObjectProtocol {
-    /// <#Description#>
+    ///
     associatedtype Style: RawRepresentable
 
-    /// <#Description#>
+    ///
     var appearanceRoot: UIWindow? { get }
 }
 
 public extension AppearanceStyleable where Self.Style.RawValue == String {
-    /// <#Description#>
     ///
-    /// - Parameter style: <#style description#>
-    /// - Returns: <#return value description#>
+    ///
+    /// - Parameter style:
+    /// - Returns:
     static func style(_ style: Style) -> Self.Type {
         return _styleClass(name: style.rawValue)
     }
 
-    /// <#Description#>
+    ///
     @MainActor
     var style: Style? {
         get { return Style(rawValueOrNil: Self._styleName(class: object_getClass(self)!)) }
         set { setStyle(newValue, animated: false) }
     }
 
-    /// <#Description#>
+    ///
     ///
     /// - Parameters:
-    ///   - style: <#style description#>
-    ///   - animated: <#animated description#>
+    ///   - style:
+    ///   - animated:
     @MainActor
     func setStyle(_ style: Style?, animated: Bool) {
         object_setClass(self, Self._styleClass(name: style?.rawValue))
@@ -63,13 +65,28 @@ public extension AppearanceStyleable where Self: UIWindow {
     }
 }
 
+#if canImport(UIKit)
 public extension AppearanceStyleable where Self: UIViewController {
-    /// <#Description#>
+    ///
     @MainActor
     var appearanceRoot: UIWindow? {
         return viewIfLoaded?.window
     }
 }
+#elseif canImport(AppKit)
+public extension AppearanceStyleable where Self: NSViewController {
+    /// 
+    @MainActor
+    var appearanceRoot: UIWindow? {
+        if #available(macOS 14.0, *) {
+            return viewIfLoaded?.window
+        } else {
+            // Fallback on earlier versions
+            return view.window
+        }
+    }
+}
+#endif
 
 private extension RawRepresentable {
     init?(rawValueOrNil: RawValue?) {

@@ -19,7 +19,7 @@ extension SwiftImage {
         #if os(tvOS)
         let backgroundColor: UIColor = UIColor(white: 0.18, alpha: 1.0)
         #else
-        let backgroundColor: UIColor = ThemeManager.shared.currentTheme.settingsCellBackground!
+        let backgroundColor: UIColor = ThemeManager.shared.currentTheme.settingsCellBackground ?? .systemBackground
         #endif
 
         #if os(tvOS)
@@ -29,7 +29,7 @@ extension SwiftImage {
         #else
         let attributedText = NSAttributedString(string: gameTitle, attributes: [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 30.0),
-            NSAttributedString.Key.foregroundColor: ThemeManager.shared.currentTheme.settingsCellText!])
+            NSAttributedString.Key.foregroundColor: ThemeManager.shared.currentTheme.settingsCellText ?? .placeholderText])
         #endif
 
         let height: CGFloat = CGFloat(PVThumbnailMaxResolution)

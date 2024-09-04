@@ -8,6 +8,10 @@
 // MARK: Delegate Protocols
 
 import Foundation
+#if USE_METAL
+import Metal
+import MetalKit
+#endif
 
 @objc public protocol PVRenderDelegate {
     // Required methods

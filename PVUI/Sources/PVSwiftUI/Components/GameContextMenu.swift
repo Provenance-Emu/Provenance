@@ -9,7 +9,27 @@
 import Foundation
 import SwiftUI
 import PVLibrary
+import RealmSwift
+import PVUIBase
 @_exported import PVUIBase
+
+struct GameMoreInfoViewController : UIViewControllerRepresentable {
+    typealias UIViewControllerType = GameMoreInfoPageViewController
+
+    var game: PVGame
+
+   func updateUIViewController(_ uiViewController: GameMoreInfoPageViewController, context: Context) {
+   }
+
+   func makeUIViewController(context: Context) -> GameMoreInfoPageViewController {
+       let firstVC = UIStoryboard(name: "GameMoreInfo", bundle: BundleLoader.module).instantiateViewController(withIdentifier: "gameMoreInfoVC") as! PVGameMoreInfoViewController
+       firstVC.game = game
+       
+       let moreInfoCollectionVC = GameMoreInfoPageViewController.init() //segue.destination as! GameMoreInfoPageViewController
+       moreInfoCollectionVC.setViewControllers([firstVC], direction: .forward, animated: false, completion: nil)
+        return moreInfoCollectionVC
+   }
+}
 
 @available(iOS 14, tvOS 14, *)
 struct GameContextMenu: SwiftUI.View {
@@ -28,35 +48,32 @@ struct GameContextMenu: SwiftUI.View {
                 } label: { Label("Open in...", systemImage: "gamecontroller") }
 //            }
             Button {
-                self.rootDelegate?.showUnderConstructionAlert()
-#warning("TODO: Game Info button action")
+                showMoreInfo(forGame: game)
             } label: { Label("Game Info", systemImage: "info.circle") }
             Button {
-#warning("TODO: Favorite button action")
-                self.rootDelegate?.showUnderConstructionAlert()
+                // Toggle isFavorite for the selected PVGame
+                let thawedGame = game.thaw()!
+                try! Realm().write {
+                    thawedGame.isFavorite = !thawedGame.isFavorite
+                }
             } label: { Label("Favorite", systemImage: "heart") }
             Button {
-#warning("TODO: Rename button action")
-                self.rootDelegate?.showUnderConstructionAlert()
+                promptUserToRename(game: game)
             } label: { Label("Rename", systemImage: "rectangle.and.pencil.and.ellipsis") }
             Button {
-#warning("TODO: Copy MD5 URL button action")
-                self.rootDelegate?.showUnderConstructionAlert()
+                promptUserMD5CopiedToClipboard(forGame: game)
             } label: { Label("Copy MD5 URL", systemImage: "number.square") }
             Button {
-#warning("TODO: Choose cover button action")
-                self.rootDelegate?.showUnderConstructionAlert()
+                promptUserToSelectArtwork(forGame: game)
             } label: { Label("Choose Cover", systemImage: "book.closed") }
             Button {
-#warning("TODO: Paste cover button action")
-                self.rootDelegate?.showUnderConstructionAlert()
+                pasteArtwork(forGame: game)
             } label: { Label("Paste Cover", systemImage: "doc.on.clipboard") }
             Button {
-#warning("TODO: Share button action")
-                self.rootDelegate?.showUnderConstructionAlert()
+                share(game: game)
             } label: { Label("Share", systemImage: "square.and.arrow.up") }
             Divider()
-            if #available(iOS 15, tvOS 15, *) {
+            if #available(iOS 15, tvOS 15, macOS 12, *) {
                 Button(role: .destructive) {
                     rootDelegate?.attemptToDelete(game: game)
                 } label: { Label("Delete", systemImage: "trash") }
@@ -66,5 +83,52 @@ struct GameContextMenu: SwiftUI.View {
                 } label: { Label("Delete", systemImage: "trash") }
             }
         }
+    }
+}
+
+extension GameContextMenu {
+    
+    func showMoreInfo(forGame game: PVGame) {
+        let moreInfoCollectionVC = GameMoreInfoViewController(game: game)
+        
+    }
+    
+    func promptUserToRename(game: PVGame) {
+        #warning("TODO: Rename button action")
+        self.rootDelegate?.showUnderConstructionAlert()
+    }
+    
+    func promptUserMD5CopiedToClipboard(forGame game: PVGame) {
+        // Get the MD5 of the game
+        let md5 = game.md5
+        // Copy to pasteboard
+        UIPasteboard.general.string = md5
+        // Alert the user that the MD5 has been copied to the clipboard
+        self.rootDelegate?.showUnderConstructionAlert()
+//        self.alert(title: "MD5 Copied", message: "The MD5 for \(game.title) has been copied to the clipboard.")
+    }
+    
+    func promptUserToSelectArtwork(forGame game: PVGame) {
+#warning("TODO: Select artwork button action")
+        self.rootDelegate?.showUnderConstructionAlert()
+    }
+    
+    func pasteArtwork(forGame game: PVGame) {
+        guard let artwork = UIPasteboard.general.image else {
+            // Alert user Pasteboard did not contain image
+            artworkNotFoundAlert()
+            return
+        }
+#warning("TODO: Paste artwork button action")
+        self.rootDelegate?.showUnderConstructionAlert()
+    }
+    
+    func artworkNotFoundAlert() {
+        self.rootDelegate?.showUnderConstructionAlert()
+    }
+    
+    func share(game: PVGame) {
+    #warning("TODO: Share button action")
+    self.rootDelegate?.showUnderConstructionAlert()
     }
 }

@@ -18,6 +18,15 @@ import PVThemes
 import Introspect
 #endif
 
+// generate a preview
+
+extension PVSystem {
+    var iconName: String {
+        // Take the last segment of identifier seperated by .
+        return self.identifier.components(separatedBy: ".").last?.lowercased() ?? "prov_snes_icon"
+    }
+}
+
 @available(iOS 14, tvOS 14, *)
 public struct SideMenuView: SwiftUI.View {
 
@@ -89,7 +98,8 @@ public struct SideMenuView: SwiftUI.View {
                         }
                         ForEach(sortedConsoles(), id: \.self) { console in
                             Divider()
-                            MenuItemView(imageName: "prov_snes_icon", rowTitle: console.name) {
+                            let imageName = console.iconName
+                            MenuItemView(imageName: imageName, rowTitle: console.name) {
                                 delegate.didTapConsole(with: console.identifier)
                             }
                         }
@@ -136,83 +146,5 @@ public struct SideMenuView: SwiftUI.View {
     }
 }
 
-@available(iOS 14, tvOS 14, *)
-struct MenuSectionHeaderView: SwiftUI.View {
-
-    var sectionTitle: String
-    var sortable: Bool
-    var sortAscending: Bool = false
-    var action: () -> Void
-
-    var body: some SwiftUI.View {
-        VStack(spacing: 0) {
-            Divider().frame(height: 2).background(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
-            Spacer()
-            HStack(alignment: .bottom) {
-                Text(sectionTitle).foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
-                Spacer()
-                if sortable {
-                    OptionsIndicator(pointDown: sortAscending, action: action) {
-                        Text("Sort").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(.system(.caption))
-                    }
-                }
-            }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 4)
-        }
-        .frame(height: 40.0)
-        .background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
-    }
-}
-
-@available(iOS 14, tvOS 14, *)
-struct MenuItemView: SwiftUI.View {
-
-    var imageName: String
-    var rowTitle: String
-    var action: () -> Void
-
-    var body: some SwiftUI.View {
-        Button {
-            action()
-        } label: {
-            HStack(spacing: 0) {
-                Image(imageName).resizable().scaledToFit().cornerRadius(4).padding(8)
-                Text(rowTitle).foregroundColor(ThemeManager.shared.currentTheme.settingsCellText?.swiftUIColor ?? Color.white)
-                Spacer()
-            }
-            .frame(height: 40.0)
-            .background(ThemeManager.shared.currentTheme.settingsCellBackground?.swiftUIColor.opacity(0.3) ?? Color.black)
-        }
-    }
-}
-
-@available(iOS 14, tvOS 14, *)
-struct ApplyBackgroundWrapper<Content: SwiftUI.View>: SwiftUI.View {
-    @ViewBuilder var content: () -> Content
-    var body: some SwiftUI.View {
-        if #available(iOS 15, tvOS 15, *) {
-            content().background(Material.ultraThinMaterial)
-        } else {
-            content().background(ThemeManager.shared.currentTheme.gameLibraryBackground.swiftUIColor)
-        }
-    }
-}
-
-@available(iOS 14, tvOS 14, *)
-struct StatusBarProtectionWrapper<Content: SwiftUI.View>: SwiftUI.View {
-    // Scroll content inside of PVRootViewController's containerView will appear up in the status bar for some reason
-    // Even though certain views will never have multiple pages/tabs, wrap them in a paged TabView to prevent this behavior
-    // Note that this may potentially have side effects if your content contains certain views, but is working so far
-    @ViewBuilder var content: () -> Content
-    var body: some SwiftUI.View {
-        TabView {
-            content()
-        }
-        .tabViewStyle(.page)
-        .indexViewStyle(.page(backgroundDisplayMode: .never))
-        .ignoresSafeArea(.all, edges: .bottom)
-    }
-}
 
 #endif

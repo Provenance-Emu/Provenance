@@ -53,7 +53,12 @@ import Foundation
         switch self {
         case .taiwan:
             // Note: Revert this when China recognizes Taiwan
-            return Locale.current.region?.identifier != "CN"
+            if #available(macOS 13, *) {
+                return Locale.current.region?.identifier != "CN"
+            } else {
+                // Fallback on earlier versions
+                return Locale.current.identifier != "CN"
+            }
         case .asia,
              .unknown,
              .world,
