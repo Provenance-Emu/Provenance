@@ -8,6 +8,7 @@
 import RealmSwift
 import RxSwift
 import RxRealm
+import PVRealm
 
 /// PVGameLibrary Rx Extension
 /// Ths implimentation forwards all calls to the database driver

@@ -12,6 +12,7 @@ import RxSwift
 import RealmSwift
 import RxRealm
 import PVLogging
+import PVRealm
 @_exported public import PVSettings
 
 public class PVGameLibrary<T> where T: DatabaseDriver {

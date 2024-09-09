@@ -15,14 +15,18 @@ public protocol PVEmulatorCoreBridged: AnyObject {
 
 @objc public protocol PVEmulatorBridge: NSObjectProtocol {
     
-    var coreClassName: String { get }
-    var systemName: String { get }
-    var resourceBundle: Bundle { get }
+//    var coreClassName: String { get }
+//    var systemName: String { get }
+//    var resourceBundle: Bundle { get }
+    
+    weak var core: PVEmulatorCore? { get }
+    
+    init(core: PVEmulatorCore)
 }
 
 // This will probably never be used?
 public extension PVEmulatorCoreBridged where Self.Bridge: EmulatorCoreIOInterface {
-    public var romName: String? { bridge.romName }
+    public var romName: String? { bridge.romName ?? nil }
     public var BIOSPath: String? { bridge.BIOSPath }
     public var systemIdentifier: String? { bridge.systemIdentifier }
     public var coreIdentifier: String? { bridge.coreIdentifier }

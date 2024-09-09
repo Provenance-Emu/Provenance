@@ -17,9 +17,12 @@ import PVCoreLoader
 import AsyncAlgorithms
 import PVPlists
 import PVLookup
-
+import Systems
+import PVMediaCache
+import PVFileSystem
 import PVLogging
 import PVPrimitives
+import PVRealm
 
 #if canImport(UIKit)
 import UIKit
@@ -72,11 +75,11 @@ public final class GameImporter {
 
     // MARK: - Paths
 
-    public var documentsPath: URL { get { PVEmulatorConfiguration.documentsPath }}
-    public var romsImportPath: URL { PVEmulatorConfiguration.Paths.romsImportPath }
-    public var romsPath: URL { get { PVEmulatorConfiguration.Paths.romsPath }}
+    public var documentsPath: URL { get { URL.documentsPath }}
+    public var romsImportPath: URL { Paths.romsImportPath }
+    public var romsPath: URL { get { Paths.romsPath }}
 
-    public let conflictPath: URL = PVEmulatorConfiguration.documentsPath.appendingPathComponent("Conflicts/", isDirectory: true)
+    public let conflictPath: URL = URL.documentsPath.appendingPathComponent("Conflicts", isDirectory: true)
 
     public func path(forSystemID systemID: String) -> URL? {
         return systemToPathMap[systemID]
@@ -254,7 +257,7 @@ public final class GameImporter {
                         // Files are already moved and imported to database (in theory),
                         // or moved to conflicts dir and already set the conflists flag - jm
                         return nil
-                    } else if PVEmulatorConfiguration.artworkExtensions.contains(candidate.filePath.pathExtension.lowercased()), let game = await GameImporter.importArtwork(fromPath: candidate.filePath) {
+                    } else if Extensions.artworkExtensions.contains(candidate.filePath.pathExtension.lowercased()), let game = await GameImporter.importArtwork(fromPath: candidate.filePath) {
                         // Is artwork, import that
                         ILOG("Found artwork \(candidate.filePath.lastPathComponent) for game <\(game.title)>")
                         return nil
@@ -289,9 +292,9 @@ public final class GameImporter {
 
     @discardableResult
     private func deleteIfJunk(_ filePath: URL) async -> Bool {
-        if filePath.lastPathComponent != "0", filePath.path.contains(PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent), !PVEmulatorConfiguration.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
+        if filePath.lastPathComponent != "0", filePath.path.contains(Paths.romsImportPath.lastPathComponent), !Extensions.allKnownExtensions.contains(filePath.pathExtension.lowercased()) {
             let extLHS = filePath.lastPathComponent
-            let extRHS = PVEmulatorConfiguration.Paths.romsImportPath.lastPathComponent
+            let extRHS = Paths.romsImportPath.lastPathComponent
             ILOG("\(extLHS) doesn't matching any known possible extensions and is in \(extRHS) directory. Deleting.")
             do {
                 if FileManager.default.fileExists(atPath: filePath.path) {
@@ -1115,7 +1118,7 @@ extension GameImporter {
         let extensionLowercased = filePath.pathExtension.lowercased()
 
         // Check if 7z
-        if PVEmulatorConfiguration.archiveExtensions.contains(extensionLowercased) {
+        if Extensions.archiveExtensions.contains(extensionLowercased) {
             ILOG("Candidate file is an archive, returning from moveRom()")
             return nil
         }
@@ -1404,7 +1407,7 @@ extension GameImporter {
             }
 
             // Skip the actual .7z, etc
-            if PVEmulatorConfiguration.archiveExtensions.contains(file.pathExtension.lowercased()) {
+            if Extensions.archiveExtensions.contains(file.pathExtension.lowercased()) {
                 return
             }
 

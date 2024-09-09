@@ -13,6 +13,8 @@ import RealmSwift
 import RxRealm
 import RxSwift
 import PVPrimitives
+import PVFileSystem
+import PVRealm
 
 public enum SyncError: Error {
     case noUbiquityURL
@@ -30,8 +32,8 @@ public protocol Container {
 }
 
 extension Container {
-    public var containerURL: URL? { get { return PVEmulatorConfiguration.iCloudContainerDirectory }}
-    var documentsURL: URL? { get { return PVEmulatorConfiguration.iCloudDocumentsDirectory }}
+    public var containerURL: URL? { get { return URL.iCloudContainerDirectory }}
+    var documentsURL: URL? { get { return URL.iCloudDocumentsDirectory }}
 }
 
 public protocol SyncFileToiCloud: Container {
@@ -317,8 +319,8 @@ public enum iCloudSync {
         }
 
         Task {
-            let savesDirectory = PVEmulatorConfiguration.Paths.saveSavesPath
-            let legacySavesDirectory = PVEmulatorConfiguration.Paths.Legacy.saveSavesPath
+            let savesDirectory = Paths.saveSavesPath
+            let legacySavesDirectory = Paths.Legacy.saveSavesPath
             let fm = FileManager.default
             guard let subDirs = try? fm.contentsOfDirectory(at: savesDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
                 ELOG("Failed to read saves path: \(savesDirectory.path)")
@@ -342,7 +344,7 @@ public enum iCloudSync {
 
             await legacySubDirs?.asyncForEach {
                 do {
-                    let destinationURL = PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
+                    let destinationURL = Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent, isDirectory: true)
                     if !fm.isUbiquitousItem(at: destinationURL) {
                         try fm.setUbiquitous(true,
                                              itemAt: $0,
@@ -359,7 +361,7 @@ public enum iCloudSync {
             }
             //        let saves = realm.objects(PVSaveState.self)
             //        saves.forEach {
-            //            fm.setUbiquitous(true, itemAt: $0.file.url, destinationURL: PVEmulatorConfiguration.Paths.saveSavesPath.appendingPathComponent($0.game.file.fileNameWithoutExtension, isDirectory: true).app)
+            //            fm.setUbiquitous(true, itemAt: $0.file.url, destinationURL: Paths.saveSavesPath.appendingPathComponent($0.game.file.fileNameWithoutExtension, isDirectory: true).app)
             //        }
             jsonFiles.forEach { json in
                 do {

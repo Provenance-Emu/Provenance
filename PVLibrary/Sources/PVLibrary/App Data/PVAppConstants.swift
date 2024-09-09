@@ -16,8 +16,3 @@ public let PVGameMD5Key = "md5"
 public let PVAppURLKey = "provenance"
 public let UbiquityIdentityTokenKey = (Bundle.main.bundleIdentifier ?? "org.provenance-emu.provenance")  + ".UbiquityIdentityToken"
 
-#if os(tvOS)
-    public let PVThumbnailMaxResolution: Float = 800.0
-#else
-    public let PVThumbnailMaxResolution: Float = 200.0
-#endif

@@ -1,0 +1,79 @@
+
+/*
+ *	
+Known issues:
+
++1/2 color add/sub
++sprite name select
++sprite > 8x8 addressing?
++ps2 cpu decimal mode
++final build
++cd build
++menu works
++prof build faster.
++bomberman bomb kick stutter
++mode 7 flipping
++sfww mips bug
++zelda intro music
++metroid sound
++32000hz clicking
++metroid mode7 repeat problem in intro?
++65816 brk opcode for mips
++debug 65816
++update pal cache if scrollx changes!!!
++punchout left char
++punchout music crackle
++wai instruction
++better font
++mode 7 priority
++sprite 8-bit priority, masking
++	contra level 2 masked "choose" thing
++optimization
++optimize mode7
++mosaic
++upgrade to 1.9 ps2lib
++integrate nesticle
++ps2 networking
+
+ps2 network high latency testing
+
+cpu skipping code
+cpu badop detection
+
+mode 0 palette problem? 
+
+tile offset modes
+
+
+optimize 8-bit rendering
+
+pitch modulation
+
+actraiser, spc sync problem
+
+punchout add sub on the champ screen
+sound pops?
+
+ps2 multitap
++better interface
+
+hires modes 
+dsp
+
+streamed save files
+vfs support?
+
+madden
+
+gd3 parallel port i/f, disasm bios
+
+to confirm:
+oam priority rotation
+add/sub behaviour?
+cycle timing
+hdma timing
+nmi lingering
+
+
+*
+ */

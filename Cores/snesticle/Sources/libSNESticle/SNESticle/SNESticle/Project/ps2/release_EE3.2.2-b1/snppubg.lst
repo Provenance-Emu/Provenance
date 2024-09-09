@@ -1,0 +1,1718 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Source/common/snppubg.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 3
+   6              	.type _SnesPPU_ScrSizeOffset,@object
+   7              	.size _SnesPPU_ScrSizeOffset,64
+   8              	_SnesPPU_ScrSizeOffset:
+   9 0000 00000000 	.word 0
+  10 0004 00000000 	.word 0
+  11 0008 00000000 	.word 0
+  12 000c 00000000 	.word 0
+  13 0010 00000000 	.word 0
+  14 0014 00040000 	.word 1024
+  15 0018 00000000 	.word 0
+  16 001c 00040000 	.word 1024
+  17 0020 00000000 	.word 0
+  18 0024 00000000 	.word 0
+  19 0028 00040000 	.word 1024
+  20 002c 00040000 	.word 1024
+  21 0030 00000000 	.word 0
+  22 0034 00040000 	.word 1024
+  23 0038 00080000 	.word 2048
+  24 003c 000C0000 	.word 3072
+  25              	.align 3
+  26              	.type _SNPPUBg_Tile16Pos,@object
+  27              	.size _SNPPUBg_Tile16Pos,16
+  28              	_SNPPUBg_Tile16Pos:
+  29 0040 00       	.byte 0
+  30 0041 01       	.byte 1
+  31 0042 0000     	.space 2
+  32 0044 01       	.byte 1
+  33 0045 00       	.byte 0
+  34 0046 0000     	.space 2
+  35 0048 10       	.byte 16
+  36 0049 11       	.byte 17
+  37 004a 0000     	.space 2
+  38 004c 11       	.byte 17
+  39 004d 10       	.byte 16
+  40 004e 0000     	.space 2
+  41              	.text
+  42              	.align 2
+  43              	.p2align 3,,7
+  44              	.ent _Z12_FetchOffsettPtiPP14SnesPPUScreenT
+  45              	_Z12_FetchOffsettPtiPP14SnesPPUScreenT:
+  46              	.frame $sp,0,$31
+  47              	.mask 0x00000000,0
+  48              	.fmask 0x00000000,0
+  49 0000 FFFF8430 	andi $4,$4,0xffff
+  50 0004 FFFFC624 	addu $6,$6,-1
+  51 0008 02120400 	srl $2,$4,8
+  52 000c 0000A0A4 	sh $0,0($5)
+  53 0010 0C004230 	andi $2,$2,0xc
+  54 0014 0200A0A4 	sh $0,2($5)
+  55 0018 21104700 	addu $2,$2,$7
+  56 001c 2D500000 	move $10,$0
+  57 0020 0000498C 	lw $9,0($2)
+GAS LISTING  			page 2
+
+
+  58              	.set noreorder
+  59              	.set nomacro
+  60 0024 1600C018 	blez $6,$L8
+  61 0028 0400A524 	addu $5,$5,4
+  62              	.set macro
+  63              	.set reorder
+  64              	
+  65 002c 00000000 	.p2align 3
+  66              	$L6:
+  67 0030 01008224 	addu $2,$4,1
+  68 0034 FF038330 	andi $3,$4,0x3ff
+  69 0038 40180300 	sll $3,$3,1
+  70 003c FFFF4430 	andi $4,$2,0xffff
+  71 0040 21186900 	addu $3,$3,$9
+  72 0044 1F008230 	andi $2,$4,0x1f
+  73 0048 E0FF8824 	addu $8,$4,-32
+  74 004c FFFFC624 	addu $6,$6,-1
+  75              	.set noreorder
+  76              	.set nomacro
+  77 0050 07004014 	bne $2,$0,$L5
+  78 0054 00006394 	lhu $3,0($3)
+  79              	.set macro
+  80              	.set reorder
+  81              	
+  82 0058 FFFF0431 	andi $4,$8,0xffff
+  83 005c 00048438 	xori $4,$4,0x400
+  84 0060 02120400 	srl $2,$4,8
+  85 0064 0C004230 	andi $2,$2,0xc
+  86 0068 21104700 	addu $2,$2,$7
+  87 006c 0000498C 	lw $9,0($2)
+  88              	$L5:
+  89 0070 0000A3A4 	sh $3,0($5)
+  90 0074 25504301 	or $10,$10,$3
+  91              	.set noreorder
+  92              	.set nomacro
+  93 0078 EDFFC01C 	bgtz $6,$L6
+  94 007c 0400A524 	addu $5,$5,4
+  95              	.set macro
+  96              	.set reorder
+  97              	
+  98              	$L8:
+  99              	.set noreorder
+ 100              	.set nomacro
+ 101 0080 0800E003 	j $31
+ 102 0084 2D104001 	move $2,$10
+ 103              	.set macro
+ 104              	.set reorder
+ 105              	
+ 106              	.end _Z12_FetchOffsettPtiPP14SnesPPUScreenT
+ 107              	$Lfe1:
+ 108              	.size _Z12_FetchOffsettPtiPP14SnesPPUScreenT,$Lfe1-_Z12_FetchOffsettPtiPP14SnesPPUScreenT
+ 109              	.align 2
+ 110              	.p2align 3,,7
+ 111              	.ent _Z11_FetchBG8x8jP15SnesRenderTileTiPP14SnesPPUScreenT
+ 112              	_Z11_FetchBG8x8jP15SnesRenderTileTiPP14SnesPPUScreenT:
+ 113              	.frame $sp,0,$31
+ 114              	.mask 0x00000000,0
+GAS LISTING  			page 3
+
+
+ 115              	.fmask 0x00000000,0
+ 116 0088 02120400 	srl $2,$4,8
+ 117 008c 2D488000 	move $9,$4
+ 118 0090 0C004230 	andi $2,$2,0xc
+ 119 0094 21104700 	addu $2,$2,$7
+ 120              	.set noreorder
+ 121              	.set nomacro
+ 122 0098 1900C018 	blez $6,$L17
+ 123 009c 00004A8C 	lw $10,0($2)
+ 124              	.set macro
+ 125              	.set reorder
+ 126              	
+ 127              	.p2align 3
+ 128              	$L14:
+ 129 00a0 FF032231 	andi $2,$9,0x3ff
+ 130 00a4 FFFFC624 	addu $6,$6,-1
+ 131 00a8 40100200 	sll $2,$2,1
+ 132 00ac 01002925 	addu $9,$9,1
+ 133 00b0 21104A00 	addu $2,$2,$10
+ 134 00b4 1F002331 	andi $3,$9,0x1f
+ 135              	.set noreorder
+ 136              	.set nomacro
+ 137 00b8 07006014 	bne $3,$0,$L13
+ 138 00bc 00004894 	lhu $8,0($2)
+ 139              	.set macro
+ 140              	.set reorder
+ 141              	
+ 142 00c0 E0FF2925 	addu $9,$9,-32
+ 143 00c4 00042939 	xori $9,$9,0x400
+ 144 00c8 02120900 	srl $2,$9,8
+ 145 00cc 0C004230 	andi $2,$2,0xc
+ 146 00d0 21104700 	addu $2,$2,$7
+ 147 00d4 00004A8C 	lw $10,0($2)
+ 148              	$L13:
+ 149 00d8 82120800 	srl $2,$8,10
+ 150 00dc FF030431 	andi $4,$8,0x3ff
+ 151 00e0 0F004230 	andi $2,$2,0xf
+ 152 00e4 821B0800 	srl $3,$8,14
+ 153 00e8 0400A0A0 	sb $0,4($5)
+ 154 00ec 0300A3A0 	sb $3,3($5)
+ 155 00f0 0200A2A0 	sb $2,2($5)
+ 156 00f4 0000A4A4 	sh $4,0($5)
+ 157              	.set noreorder
+ 158              	.set nomacro
+ 159 00f8 E9FFC01C 	bgtz $6,$L14
+ 160 00fc 0600A524 	addu $5,$5,6
+ 161              	.set macro
+ 162              	.set reorder
+ 163              	
+ 164              	$L17:
+ 165 0100 0800E003 	j $31
+ 165      00000000 
+ 166              	.end _Z11_FetchBG8x8jP15SnesRenderTileTiPP14SnesPPUScreenT
+ 167              	$Lfe2:
+ 168              	.size _Z11_FetchBG8x8jP15SnesRenderTileTiPP14SnesPPUScreenT,$Lfe2-_Z11_FetchBG8x8jP15SnesRenderTileTiPP14SnesPPUScreenT
+ 169              	.align 2
+ 170              	.p2align 3,,7
+GAS LISTING  			page 4
+
+
+ 171              	.ent _Z13_FetchBG16x16jP15SnesRenderTileTiPP14SnesPPUScreenTj
+ 172              	_Z13_FetchBG16x16jP15SnesRenderTileTiPP14SnesPPUScreenTj:
+ 173              	.frame $sp,0,$31
+ 174              	.mask 0x00000000,0
+ 175              	.fmask 0x00000000,0
+ 176 0108 02120400 	srl $2,$4,8
+ 177 010c 2D508000 	move $10,$4
+ 178 0110 0C004230 	andi $2,$2,0xc
+ 179 0114 21104700 	addu $2,$2,$7
+ 180              	.set noreorder
+ 181              	.set nomacro
+ 182 0118 2E00C018 	blez $6,$L28
+ 183 011c 00004D8C 	lw $13,0($2)
+ 184              	.set macro
+ 185              	.set reorder
+ 186              	
+ 187 0120 0000023C 	lui $2,%hi(_SNPPUBg_Tile16Pos)
+ 188 0124 FEFF0F24 	li $15,-2
+ 189 0128 40004E24 	addiu $14,$2,%lo(_SNPPUBg_Tile16Pos)
+ 190 012c FF034231 	andi $2,$10,0x3ff
+ 191              	$L27:
+ 192 0130 01000439 	xori $4,$8,0x1
+ 193 0134 40100200 	sll $2,$2,1
+ 194 0138 01004A25 	addu $10,$10,1
+ 195 013c 21104D00 	addu $2,$2,$13
+ 196 0140 1F004331 	andi $3,$10,0x1f
+ 197 0144 01008430 	andi $4,$4,0x1
+ 198              	.set noreorder
+ 199              	.set nomacro
+ 200 0148 07006014 	bne $3,$0,$L22
+ 201 014c 00004994 	lhu $9,0($2)
+ 202              	.set macro
+ 203              	.set reorder
+ 204              	
+ 205 0150 E0FF4A25 	addu $10,$10,-32
+ 206 0154 00044A39 	xori $10,$10,0x400
+ 207 0158 02120A00 	srl $2,$10,8
+ 208 015c 0C004230 	andi $2,$2,0xc
+ 209 0160 21104700 	addu $2,$2,$7
+ 210 0164 00004D8C 	lw $13,0($2)
+ 211              	$L22:
+ 212 0168 825B0900 	srl $11,$9,14
+ 213 016c 82120900 	srl $2,$9,10
+ 214 0170 26186801 	xor $3,$11,$8
+ 215 0174 0F004C30 	andi $12,$2,0xf
+ 216 0178 80180300 	sll $3,$3,2
+ 217 017c FF032931 	andi $9,$9,0x3ff
+ 218 0180 21186E00 	addu $3,$3,$14
+ 219 0184 24400F01 	and $8,$8,$15
+ 220 0188 00006290 	lbu $2,0($3)
+ 221 018c FFFFC624 	addu $6,$6,-1
+ 222 0190 0300ABA0 	sb $11,3($5)
+ 223 0194 21104900 	addu $2,$2,$9
+ 224 0198 0200ACA0 	sb $12,2($5)
+ 225 019c 0000A2A4 	sh $2,0($5)
+ 226 01a0 0400A0A0 	sb $0,4($5)
+ 227              	.set noreorder
+GAS LISTING  			page 5
+
+
+ 228              	.set nomacro
+ 229 01a4 09008010 	beq $4,$0,$L23
+ 230 01a8 0600A524 	addu $5,$5,6
+ 231              	.set macro
+ 232              	.set reorder
+ 233              	
+ 234 01ac 01006290 	lbu $2,1($3)
+ 235 01b0 FFFFC624 	addu $6,$6,-1
+ 236 01b4 0300ABA0 	sb $11,3($5)
+ 237 01b8 21104900 	addu $2,$2,$9
+ 238 01bc 0200ACA0 	sb $12,2($5)
+ 239 01c0 0000A2A4 	sh $2,0($5)
+ 240 01c4 0400A0A0 	sb $0,4($5)
+ 241 01c8 0600A524 	addu $5,$5,6
+ 242              	$L23:
+ 243              	.set noreorder
+ 244              	.set nomacro
+ 245 01cc D8FFC01C 	bgtz $6,$L27
+ 246 01d0 FF034231 	andi $2,$10,0x3ff
+ 247              	.set macro
+ 248              	.set reorder
+ 249              	
+ 250              	$L28:
+ 251 01d4 0800E003 	j $31
+ 251      00000000 
+ 252              	.end _Z13_FetchBG16x16jP15SnesRenderTileTiPP14SnesPPUScreenTj
+ 253              	$Lfe3:
+ 254              	.size _Z13_FetchBG16x16jP15SnesRenderTileTiPP14SnesPPUScreenTj,$Lfe3-_Z13_FetchBG16x16jP15SnesRenderTileTiPP14SnesPPUScreenTj
+ 255              	.align 2
+ 256 01dc 00000000 	.p2align 3,,7
+ 257              	.ent _Z17_FetchBG8x8OffsetjjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj
+ 258              	_Z17_FetchBG8x8OffsetjjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj:
+ 259              	.frame $sp,0,$31
+ 260              	.mask 0x00000000,0
+ 261              	.fmask 0x00000000,0
+ 262 01e0 2D788000 	move $15,$4
+ 263 01e4 2D70A000 	move $14,$5
+ 264 01e8 2D68C000 	move $13,$6
+ 265              	.set noreorder
+ 266              	.set nomacro
+ 267 01ec 30000019 	blez $8,$L40
+ 268 01f0 2D600000 	move $12,$0
+ 269              	.set macro
+ 270              	.set reorder
+ 271              	
+ 272 01f4 00000000 	.p2align 3
+ 273              	$L37:
+ 274 01f8 02004695 	lhu $6,2($10)
+ 275 01fc FFFF0825 	addu $8,$8,-1
+ 276 0200 00004295 	lhu $2,0($10)
+ 277 0204 04004A25 	addu $10,$10,4
+ 278 0208 24186601 	and $3,$11,$6
+ 279 020c FF07C630 	andi $6,$6,0x7ff
+ 280 0210 00006338 	xori $3,$3,0x0
+ 281 0214 24206201 	and $4,$11,$2
+ 282 0218 0A30C301 	movz $6,$14,$3
+ 283 021c 00008438 	xori $4,$4,0x0
+GAS LISTING  			page 6
+
+
+ 284 0220 FF074230 	andi $2,$2,0x7ff
+ 285 0224 2130CD00 	addu $6,$6,$13
+ 286 0228 0A10E401 	movz $2,$15,$4
+ 287 022c C2280600 	srl $5,$6,3
+ 288 0230 21104C00 	addu $2,$2,$12
+ 289 0234 1F00A330 	andi $3,$5,0x1f
+ 290 0238 C2100200 	srl $2,$2,3
+ 291 023c 40190300 	sll $3,$3,5
+ 292 0240 40210200 	sll $4,$2,5
+ 293 0244 80290500 	sll $5,$5,6
+ 294 0248 1F004230 	andi $2,$2,0x1f
+ 295 024c 00048430 	andi $4,$4,0x400
+ 296 0250 25104300 	or $2,$2,$3
+ 297 0254 0008A530 	andi $5,$5,0x800
+ 298 0258 25104400 	or $2,$2,$4
+ 299 025c 0700C630 	andi $6,$6,0x7
+ 300 0260 25104500 	or $2,$2,$5
+ 301 0264 08008C25 	addu $12,$12,8
+ 302 0268 021A0200 	srl $3,$2,8
+ 303 026c FF034230 	andi $2,$2,0x3ff
+ 304 0270 0C006330 	andi $3,$3,0xc
+ 305 0274 40100200 	sll $2,$2,1
+ 306 0278 21186900 	addu $3,$3,$9
+ 307 027c 0000648C 	lw $4,0($3)
+ 308              	
+ 309 0280 21104400 	addu $2,$2,$4
+ 310 0284 00004394 	lhu $3,0($2)
+ 311 0288 0400E6A0 	sb $6,4($7)
+ 312 028c 82120300 	srl $2,$3,10
+ 313 0290 FF036430 	andi $4,$3,0x3ff
+ 314 0294 0F004230 	andi $2,$2,0xf
+ 315 0298 821B0300 	srl $3,$3,14
+ 316 029c 0300E3A0 	sb $3,3($7)
+ 317 02a0 0200E2A0 	sb $2,2($7)
+ 318 02a4 0000E4A4 	sh $4,0($7)
+ 319              	.set noreorder
+ 320              	.set nomacro
+ 321 02a8 D3FF001D 	bgtz $8,$L37
+ 322 02ac 0600E724 	addu $7,$7,6
+ 323              	.set macro
+ 324              	.set reorder
+ 325              	
+ 326              	$L40:
+ 327 02b0 0800E003 	j $31
+ 327      00000000 
+ 328              	.end _Z17_FetchBG8x8OffsetjjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj
+ 329              	$Lfe4:
+ 330              	.size _Z17_FetchBG8x8OffsetjjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj,$Lfe4-_Z17_FetchBG8x8OffsetjjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj
+ 331              	.align 2
+ 332              	.p2align 3,,7
+ 333              	.ent _Z18_FetchBG8x8Offset2jjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj
+ 334              	_Z18_FetchBG8x8Offset2jjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj:
+ 335              	.frame $sp,0,$31
+ 336              	.mask 0x00000000,0
+ 337              	.fmask 0x00000000,0
+ 338 02b8 2D788000 	move $15,$4
+ 339 02bc 2D70A000 	move $14,$5
+GAS LISTING  			page 7
+
+
+ 340 02c0 2D68C000 	move $13,$6
+ 341              	.set noreorder
+ 342              	.set nomacro
+ 343 02c4 2F000019 	blez $8,$L51
+ 344 02c8 2D600000 	move $12,$0
+ 345              	.set macro
+ 346              	.set reorder
+ 347              	
+ 348 02cc 00801824 	li $24,-32768
+ 349              	.p2align 3
+ 350              	$L48:
+ 351 02d0 00004395 	lhu $3,0($10)
+ 352 02d4 2D20E001 	move $4,$15
+ 353 02d8 2D30C001 	move $6,$14
+ 354 02dc 24106301 	and $2,$11,$3
+ 355              	.set noreorder
+ 356              	.set nomacro
+ 357 02e0 04004010 	beq $2,$0,$L45
+ 358 02e4 24287800 	and $5,$3,$24
+ 359              	.set macro
+ 360              	.set reorder
+ 361              	
+ 362              	.set noreorder
+ 363              	.set nomacro
+ 364 02e8 0200A050 	beql $5,$0,$L45
+ 365 02ec FF076430 	andi $4,$3,0x7ff
+ 366              	.set macro
+ 367              	.set reorder
+ 368              	
+ 369 02f0 FF076630 	andi $6,$3,0x7ff
+ 370              	$L45:
+ 371 02f4 2130CD00 	addu $6,$6,$13
+ 372 02f8 21208C00 	addu $4,$4,$12
+ 373 02fc C2280600 	srl $5,$6,3
+ 374 0300 C2100400 	srl $2,$4,3
+ 375 0304 1F00A330 	andi $3,$5,0x1f
+ 376 0308 40210200 	sll $4,$2,5
+ 377 030c 40190300 	sll $3,$3,5
+ 378 0310 1F004230 	andi $2,$2,0x1f
+ 379 0314 25104300 	or $2,$2,$3
+ 380 0318 00048430 	andi $4,$4,0x400
+ 381 031c 80290500 	sll $5,$5,6
+ 382 0320 25104400 	or $2,$2,$4
+ 383 0324 0008A530 	andi $5,$5,0x800
+ 384 0328 0700C630 	andi $6,$6,0x7
+ 385 032c 25104500 	or $2,$2,$5
+ 386 0330 FFFF0825 	addu $8,$8,-1
+ 387 0334 021A0200 	srl $3,$2,8
+ 388 0338 04004A25 	addu $10,$10,4
+ 389 033c 0C006330 	andi $3,$3,0xc
+ 390 0340 FF034230 	andi $2,$2,0x3ff
+ 391 0344 21186900 	addu $3,$3,$9
+ 392 0348 40100200 	sll $2,$2,1
+ 393 034c 0000648C 	lw $4,0($3)
+ 394 0350 08008C25 	addu $12,$12,8
+ 395 0354 21104400 	addu $2,$2,$4
+ 396 0358 00004394 	lhu $3,0($2)
+GAS LISTING  			page 8
+
+
+ 397 035c 0400E6A0 	sb $6,4($7)
+ 398 0360 82120300 	srl $2,$3,10
+ 399 0364 FF036430 	andi $4,$3,0x3ff
+ 400 0368 0F004230 	andi $2,$2,0xf
+ 401 036c 821B0300 	srl $3,$3,14
+ 402 0370 0300E3A0 	sb $3,3($7)
+ 403 0374 0200E2A0 	sb $2,2($7)
+ 404 0378 0000E4A4 	sh $4,0($7)
+ 405              	.set noreorder
+ 406              	.set nomacro
+ 407 037c D4FF001D 	bgtz $8,$L48
+ 408 0380 0600E724 	addu $7,$7,6
+ 409              	.set macro
+ 410              	.set reorder
+ 411              	
+ 412              	$L51:
+ 413 0384 0800E003 	j $31
+ 413      00000000 
+ 414              	.end _Z18_FetchBG8x8Offset2jjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj
+ 415              	$Lfe5:
+ 416              	.size _Z18_FetchBG8x8Offset2jjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj,$Lfe5-_Z18_FetchBG8x8Offset2jjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj
+ 417              	.align 2
+ 418 038c 00000000 	.p2align 3,,7
+ 419              	.ent _Z14_GetScreenPtrsPP14SnesPPUScreenTP7SnesPPUjj
+ 420              	_Z14_GetScreenPtrsPP14SnesPPUScreenTP7SnesPPUjj:
+ 421              	.frame $sp,0,$31
+ 422              	.mask 0x00000000,0
+ 423              	.fmask 0x00000000,0
+ 424 0390 0000023C 	lui $2,%hi(_SnesPPU_ScrSizeOffset)
+ 425 0394 00390700 	sll $7,$7,4
+ 426 0398 00004224 	addiu $2,$2,%lo(_SnesPPU_ScrSizeOffset)
+ 427 039c 2138E200 	addu $7,$7,$2
+ 428 03a0 0000E38C 	lw $3,0($7)
+ 429              	
+ 430 03a4 2118C300 	addu $3,$6,$3
+ 431 03a8 FF7F6330 	andi $3,$3,0x7fff
+ 432 03ac 40180300 	sll $3,$3,1
+ 433 03b0 2118A300 	addu $3,$5,$3
+ 434 03b4 70026324 	addu $3,$3,624
+ 435 03b8 000083AC 	sw $3,0($4)
+ 436 03bc 0400E28C 	lw $2,4($7)
+ 437              	
+ 438 03c0 2110C200 	addu $2,$6,$2
+ 439 03c4 FF7F4230 	andi $2,$2,0x7fff
+ 440 03c8 40100200 	sll $2,$2,1
+ 441 03cc 2110A200 	addu $2,$5,$2
+ 442 03d0 70024224 	addu $2,$2,624
+ 443 03d4 040082AC 	sw $2,4($4)
+ 444 03d8 0800E38C 	lw $3,8($7)
+ 445              	
+ 446 03dc 2118C300 	addu $3,$6,$3
+ 447 03e0 FF7F6330 	andi $3,$3,0x7fff
+ 448 03e4 40180300 	sll $3,$3,1
+ 449 03e8 2118A300 	addu $3,$5,$3
+ 450 03ec 70026324 	addu $3,$3,624
+ 451 03f0 080083AC 	sw $3,8($4)
+ 452 03f4 0C00E28C 	lw $2,12($7)
+GAS LISTING  			page 9
+
+
+ 453              	
+ 454 03f8 2130C200 	addu $6,$6,$2
+ 455 03fc FF7FC630 	andi $6,$6,0x7fff
+ 456 0400 40300600 	sll $6,$6,1
+ 457 0404 2128A600 	addu $5,$5,$6
+ 458 0408 7002A524 	addu $5,$5,624
+ 459              	.set noreorder
+ 460              	.set nomacro
+ 461 040c 0800E003 	j $31
+ 462 0410 0C0085AC 	sw $5,12($4)
+ 463              	.set macro
+ 464              	.set reorder
+ 465              	
+ 466              	.end _Z14_GetScreenPtrsPP14SnesPPUScreenTP7SnesPPUjj
+ 467              	$Lfe6:
+ 468              	.size _Z14_GetScreenPtrsPP14SnesPPUScreenTP7SnesPPUjj,$Lfe6-_Z14_GetScreenPtrsPP14SnesPPUScreenTP7SnesPPUjj
+ 469              	.rdata
+ 470              	.align 3
+ 471              	$LC0:
+ 472 0000 2E2E2F2E 	.ascii "../../Source/common/snppubg.cpp\000"
+ 472      2E2F536F 
+ 472      75726365 
+ 472      2F636F6D 
+ 472      6D6F6E2F 
+ 473              	.align 3
+ 474              	$LC1:
+ 475 0020 3000     	.ascii "0\000"
+ 476              	.text
+ 477              	.align 2
+ 478 0414 00000000 	.p2align 3,,7
+ 479              	.globl _ZN13SnesPPURender7FetchBGEP11SnesBGInfoTP15SnesRenderTileTiiRj
+ 480              	.ent _ZN13SnesPPURender7FetchBGEP11SnesBGInfoTP15SnesRenderTileTiiRj
+ 481              	_ZN13SnesPPURender7FetchBGEP11SnesBGInfoTP15SnesRenderTileTiiRj:
+ 482              	.frame $sp,160,$31
+ 483              	.mask 0x80ff0000,-16
+ 484              	.fmask 0x00000000,0
+ 485 0418 60FFBD27 	subu $sp,$sp,160
+ 486 041c 2D588000 	move $11,$4
+ 487 0420 8000B7FF 	sd $23,128($sp)
+ 488 0424 2D50A000 	move $10,$5
+ 489 0428 7000B6FF 	sd $22,112($sp)
+ 490 042c 2DB8E000 	move $23,$7
+ 491 0430 4000B3FF 	sd $19,64($sp)
+ 492 0434 2DB0C000 	move $22,$6
+ 493 0438 1000B0FF 	sd $16,16($sp)
+ 494 043c 2D982001 	move $19,$9
+ 495 0440 9000BFFF 	sd $31,144($sp)
+ 496 0444 2D800000 	move $16,$0
+ 497 0448 6000B5FF 	sd $21,96($sp)
+ 498 044c 5000B4FF 	sd $20,80($sp)
+ 499 0450 3000B2FF 	sd $18,48($sp)
+ 500 0454 2000B1FF 	sd $17,32($sp)
+ 501 0458 1200A290 	lbu $2,18($5)
+ 502              	
+ 503              	.set noreorder
+ 504              	.set nomacro
+ 505 045c 2B004010 	beq $2,$0,$L57
+GAS LISTING  			page 10
+
+
+ 506 0460 2D200000 	move $4,$0
+ 507              	.set macro
+ 508              	.set reorder
+ 509              	
+ 510 0464 1800A28C 	lw $2,24($5)
+ 511              	
+ 512              	.set noreorder
+ 513              	.set nomacro
+ 514 0468 08004050 	beql $2,$0,$L72
+ 515 046c 0000678E 	lw $7,0($19)
+ 516              	.set macro
+ 517              	.set reorder
+ 518              	
+ 519 0470 01004224 	addu $2,$2,1
+ 520 0474 1B000201 	divu $0,$8,$2
+ 521              	.set noreorder
+ 522 0478 01004050 	beql $2,$0,1f
+ 523 047c CD010000 	break 7
+ 524              	1:
+ 525              	.set reorder
+ 526 0480 12180000 	mflo $3
+ 527              	
+ 528              	
+ 529 0484 18406200 	mult $8,$3,$2
+ 530 0488 0000678E 	lw $7,0($19)
+ 531              	$L72:
+ 532 048c 2D880000 	move $17,$0
+ 533 0490 0000458D 	lw $5,0($10)
+ 534 0494 0400428D 	lw $2,4($10)
+ 535 0498 021C0700 	srl $3,$7,16
+ 536 049c 07006330 	andi $3,$3,0x7
+ 537 04a0 0700B530 	andi $21,$5,0x7
+ 538 04a4 21304800 	addu $6,$2,$8
+ 539 04a8 26187500 	xor $3,$3,$21
+ 540 04ac 02000224 	li $2,2
+ 541 04b0 02260700 	srl $4,$7,24
+ 542 04b4 0B884300 	movn $17,$2,$3
+ 543 04b8 07008430 	andi $4,$4,0x7
+ 544 04bc 0700D430 	andi $20,$6,0x7
+ 545 04c0 11004391 	lbu $3,17($10)
+ 546 04c4 26209400 	xor $4,$4,$20
+ 547 04c8 01002236 	ori $2,$17,0x1
+ 548              	.set noreorder
+ 549              	.set nomacro
+ 550 04cc 3E006010 	beq $3,$0,$L63
+ 551 04d0 0B884400 	movn $17,$2,$4
+ 552              	.set macro
+ 553              	.set reorder
+ 554              	
+ 555 04d4 01000224 	li $2,1
+ 556              	.set noreorder
+ 557              	.set nomacro
+ 558 04d8 18006210 	beq $3,$2,$L65
+ 559 04dc 0000043C 	lui $4,%hi($LC0)
+ 560              	.set macro
+ 561              	.set reorder
+ 562              	
+GAS LISTING  			page 11
+
+
+ 563 04e0 0000063C 	lui $6,%hi($LC1)
+ 564 04e4 00008424 	addiu $4,$4,%lo($LC0)
+ 565 04e8 2000C624 	addiu $6,$6,%lo($LC1)
+ 566              	.set noreorder
+ 567              	.set nomacro
+ 568 04ec 0000000C 	jal __assert
+ 569 04f0 C4010524 	li $5,452
+ 570              	.set macro
+ 571              	.set reorder
+ 572              	
+ 573              	$L62:
+ 574 04f4 00141500 	sll $2,$21,16
+ 575              	$L71:
+ 576 04f8 001E1400 	sll $3,$20,24
+ 577 04fc 25800202 	or $16,$16,$2
+ 578 0500 2D202002 	move $4,$17
+ 579 0504 25800302 	or $16,$16,$3
+ 580 0508 000070AE 	sw $16,0($19)
+ 581              	$L57:
+ 582 050c 9000BFDF 	ld $31,144($sp)
+ 583 0510 2D108000 	move $2,$4
+ 584 0514 8000B7DF 	ld $23,128($sp)
+ 585 0518 7000B6DF 	ld $22,112($sp)
+ 586 051c 6000B5DF 	ld $21,96($sp)
+ 587 0520 5000B4DF 	ld $20,80($sp)
+ 588 0524 4000B3DF 	ld $19,64($sp)
+ 589 0528 3000B2DF 	ld $18,48($sp)
+ 590 052c 2000B1DF 	ld $17,32($sp)
+ 591 0530 1000B0DF 	ld $16,16($sp)
+ 592              	
+ 593              	.set noreorder
+ 594              	.set nomacro
+ 595 0534 0800E003 	j $31
+ 596 0538 A000BD27 	addu $sp,$sp,160
+ 597              	.set macro
+ 598              	.set reorder
+ 599              	
+ 600              	$L65:
+ 601 053c 02210600 	srl $4,$6,4
+ 602 0540 0800A330 	andi $3,$5,0x8
+ 603 0544 1F008230 	andi $2,$4,0x1f
+ 604 0548 02290500 	srl $5,$5,4
+ 605 054c 2B900300 	sltu $18,$0,$3
+ 606 0550 40110200 	sll $2,$2,5
+ 607 0554 40190500 	sll $3,$5,5
+ 608 0558 1F00B030 	andi $16,$5,0x1f
+ 609 055c 25800202 	or $16,$16,$2
+ 610 0560 00046330 	andi $3,$3,0x400
+ 611 0564 02004236 	ori $2,$18,0x2
+ 612 0568 0800C630 	andi $6,$6,0x8
+ 613 056c 80210400 	sll $4,$4,6
+ 614 0570 25800302 	or $16,$16,$3
+ 615 0574 0B904600 	movn $18,$2,$6
+ 616 0578 00088430 	andi $4,$4,0x800
+ 617 057c 25800402 	or $16,$16,$4
+ 618 0580 00131200 	sll $2,$18,12
+ 619 0584 25800202 	or $16,$16,$2
+GAS LISTING  			page 12
+
+
+ 620 0588 FFFFE330 	andi $3,$7,0xffff
+ 621              	.set noreorder
+ 622              	.set nomacro
+ 623 058c D9FF0312 	beq $16,$3,$L62
+ 624 0590 2D20A003 	move $4,$sp
+ 625              	.set macro
+ 626              	.set reorder
+ 627              	
+ 628 0594 10004791 	lbu $7,16($10)
+ 629 0598 0800658D 	lw $5,8($11)
+ 630 059c 03003136 	ori $17,$17,0x3
+ 631              	.set noreorder
+ 632              	.set nomacro
+ 633 05a0 E400000C 	jal _Z14_GetScreenPtrsPP14SnesPPUScreenTP7SnesPPUjj
+ 634 05a4 0800468D 	lw $6,8($10)
+ 635              	.set macro
+ 636              	.set reorder
+ 637              	
+ 638 05a8 2D38A003 	move $7,$sp
+ 639 05ac 2D404002 	move $8,$18
+ 640 05b0 FF0F0432 	andi $4,$16,0xfff
+ 641 05b4 2D28C002 	move $5,$22
+ 642              	.set noreorder
+ 643              	.set nomacro
+ 644 05b8 4200000C 	jal _Z13_FetchBG16x16jP15SnesRenderTileTiPP14SnesPPUScreenTj
+ 645 05bc 2D30E002 	move $6,$23
+ 646              	.set macro
+ 647              	.set reorder
+ 648              	
+ 649              	.set noreorder
+ 650              	.set nomacro
+ 651 05c0 CDFF0010 	b $L71
+ 652 05c4 00141500 	sll $2,$21,16
+ 653              	.set macro
+ 654              	.set reorder
+ 655              	
+ 656              	.p2align 3
+ 657              	$L63:
+ 658 05c8 C2200600 	srl $4,$6,3
+ 659 05cc C2280500 	srl $5,$5,3
+ 660 05d0 1F008230 	andi $2,$4,0x1f
+ 661 05d4 40190500 	sll $3,$5,5
+ 662 05d8 40110200 	sll $2,$2,5
+ 663 05dc 1F00B030 	andi $16,$5,0x1f
+ 664 05e0 25800202 	or $16,$16,$2
+ 665 05e4 00046330 	andi $3,$3,0x400
+ 666 05e8 80210400 	sll $4,$4,6
+ 667 05ec 25800302 	or $16,$16,$3
+ 668 05f0 00088430 	andi $4,$4,0x800
+ 669 05f4 FFFFE230 	andi $2,$7,0xffff
+ 670 05f8 25800402 	or $16,$16,$4
+ 671              	.set noreorder
+ 672              	.set nomacro
+ 673 05fc BDFF0212 	beq $16,$2,$L62
+ 674 0600 2D20A003 	move $4,$sp
+ 675              	.set macro
+ 676              	.set reorder
+GAS LISTING  			page 13
+
+
+ 677              	
+ 678 0604 10004791 	lbu $7,16($10)
+ 679 0608 0800658D 	lw $5,8($11)
+ 680 060c 03003136 	ori $17,$17,0x3
+ 681              	.set noreorder
+ 682              	.set nomacro
+ 683 0610 E400000C 	jal _Z14_GetScreenPtrsPP14SnesPPUScreenTP7SnesPPUjj
+ 684 0614 0800468D 	lw $6,8($10)
+ 685              	.set macro
+ 686              	.set reorder
+ 687              	
+ 688 0618 2D38A003 	move $7,$sp
+ 689 061c 2D200002 	move $4,$16
+ 690 0620 2D28C002 	move $5,$22
+ 691              	.set noreorder
+ 692              	.set nomacro
+ 693 0624 2200000C 	jal _Z11_FetchBG8x8jP15SnesRenderTileTiPP14SnesPPUScreenT
+ 694 0628 2D30E002 	move $6,$23
+ 695              	.set macro
+ 696              	.set reorder
+ 697              	
+ 698              	.set noreorder
+ 699              	.set nomacro
+ 700 062c B2FF0010 	b $L71
+ 701 0630 00141500 	sll $2,$21,16
+ 702              	.set macro
+ 703              	.set reorder
+ 704              	
+ 705              	.end _ZN13SnesPPURender7FetchBGEP11SnesBGInfoTP15SnesRenderTileTiiRj
+ 706              	$Lfe7:
+ 707              	.size _ZN13SnesPPURender7FetchBGEP11SnesBGInfoTP15SnesRenderTileTiiRj,$Lfe7-_ZN13SnesPPURender7FetchBGEP11SnesBGInfoTP15SnesRenderTileTiiRj
+ 708              	.align 2
+ 709 0634 00000000 	.p2align 3,,7
+ 710              	.globl _ZN13SnesPPURender13FetchBGOffsetEP11SnesBGInfoTP15SnesRenderTileTiiPtjh
+ 711              	.ent _ZN13SnesPPURender13FetchBGOffsetEP11SnesBGInfoTP15SnesRenderTileTiiPtjh
+ 712              	_ZN13SnesPPURender13FetchBGOffsetEP11SnesBGInfoTP15SnesRenderTileTiiPtjh:
+ 713              	.frame $sp,144,$31
+ 714              	.mask 0x807f0000,-16
+ 715              	.fmask 0x00000000,0
+ 716 0638 70FFBD27 	subu $sp,$sp,144
+ 717 063c 2D180000 	move $3,$0
+ 718 0640 7000B6FF 	sd $22,112($sp)
+ 719 0644 2DB04001 	move $22,$10
+ 720 0648 6000B5FF 	sd $21,96($sp)
+ 721 064c 2DA82001 	move $21,$9
+ 722 0650 5000B4FF 	sd $20,80($sp)
+ 723 0654 2DA0E000 	move $20,$7
+ 724 0658 4000B3FF 	sd $19,64($sp)
+ 725 065c 2D98C000 	move $19,$6
+ 726 0660 3000B2FF 	sd $18,48($sp)
+ 727 0664 2D900001 	move $18,$8
+ 728 0668 2000B1FF 	sd $17,32($sp)
+ 729 066c FF007131 	andi $17,$11,0x00ff
+ 730 0670 1000B0FF 	sd $16,16($sp)
+ 731 0674 2D80A000 	move $16,$5
+ 732 0678 8000BFFF 	sd $31,128($sp)
+ 733 067c 1200A290 	lbu $2,18($5)
+GAS LISTING  			page 14
+
+
+ 734              	
+ 735              	.set noreorder
+ 736              	.set nomacro
+ 737 0680 0C004010 	beq $2,$0,$L73
+ 738 0684 2D288000 	move $5,$4
+ 739              	.set macro
+ 740              	.set reorder
+ 741              	
+ 742 0688 11000392 	lbu $3,17($16)
+ 743              	
+ 744              	.set noreorder
+ 745              	.set nomacro
+ 746 068c 14006010 	beq $3,$0,$L76
+ 747 0690 01000224 	li $2,1
+ 748              	.set macro
+ 749              	.set reorder
+ 750              	
+ 751              	.set noreorder
+ 752              	.set nomacro
+ 753 0694 06006210 	beq $3,$2,$L75
+ 754 0698 0000043C 	lui $4,%hi($LC0)
+ 755              	.set macro
+ 756              	.set reorder
+ 757              	
+ 758 069c 0000063C 	lui $6,%hi($LC1)
+ 759 06a0 00008424 	addiu $4,$4,%lo($LC0)
+ 760 06a4 2000C624 	addiu $6,$6,%lo($LC1)
+ 761              	.set noreorder
+ 762              	.set nomacro
+ 763 06a8 0000000C 	jal __assert
+ 764 06ac F1010524 	li $5,497
+ 765              	.set macro
+ 766              	.set reorder
+ 767              	
+ 768              	$L75:
+ 769 06b0 07000324 	li $3,7
+ 770              	$L73:
+ 771 06b4 8000BFDF 	ld $31,128($sp)
+ 772 06b8 2D106000 	move $2,$3
+ 773 06bc 7000B6DF 	ld $22,112($sp)
+ 774 06c0 6000B5DF 	ld $21,96($sp)
+ 775 06c4 5000B4DF 	ld $20,80($sp)
+ 776 06c8 4000B3DF 	ld $19,64($sp)
+ 777 06cc 3000B2DF 	ld $18,48($sp)
+ 778 06d0 2000B1DF 	ld $17,32($sp)
+ 779 06d4 1000B0DF 	ld $16,16($sp)
+ 780              	
+ 781              	.set noreorder
+ 782              	.set nomacro
+ 783 06d8 0800E003 	j $31
+ 784 06dc 9000BD27 	addu $sp,$sp,144
+ 785              	.set macro
+ 786              	.set reorder
+ 787              	
+ 788              	.p2align 3
+ 789              	$L76:
+ 790 06e0 10000792 	lbu $7,16($16)
+GAS LISTING  			page 15
+
+
+ 791 06e4 2D20A003 	move $4,$sp
+ 792 06e8 0800A58C 	lw $5,8($5)
+ 793              	.set noreorder
+ 794              	.set nomacro
+ 795 06ec E400000C 	jal _Z14_GetScreenPtrsPP14SnesPPUScreenTP7SnesPPUjj
+ 796 06f0 0800068E 	lw $6,8($16)
+ 797              	.set macro
+ 798              	.set reorder
+ 799              	
+ 800              	.set noreorder
+ 801              	.set nomacro
+ 802 06f4 0B002012 	beq $17,$0,$L77
+ 803 06f8 0400058E 	lw $5,4($16)
+ 804              	.set macro
+ 805              	.set reorder
+ 806              	
+ 807 06fc 2D304002 	move $6,$18
+ 808 0700 0000048E 	lw $4,0($16)
+ 809 0704 2D386002 	move $7,$19
+ 810 0708 2D408002 	move $8,$20
+ 811 070c 2D50A002 	move $10,$21
+ 812 0710 2D58C002 	move $11,$22
+ 813              	.set noreorder
+ 814              	.set nomacro
+ 815 0714 AE00000C 	jal _Z18_FetchBG8x8Offset2jjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj
+ 816 0718 2D48A003 	move $9,$sp
+ 817              	.set macro
+ 818              	.set reorder
+ 819              	
+ 820              	.set noreorder
+ 821              	.set nomacro
+ 822 071c E5FF0010 	b $L73
+ 823 0720 07000324 	li $3,7
+ 824              	.set macro
+ 825              	.set reorder
+ 826              	
+ 827              	$L77:
+ 828 0724 2D304002 	move $6,$18
+ 829 0728 0000048E 	lw $4,0($16)
+ 830 072c 2D386002 	move $7,$19
+ 831 0730 2D408002 	move $8,$20
+ 832 0734 2D50A002 	move $10,$21
+ 833 0738 2D58C002 	move $11,$22
+ 834              	.set noreorder
+ 835              	.set nomacro
+ 836 073c 7800000C 	jal _Z17_FetchBG8x8OffsetjjiP15SnesRenderTileTiPP14SnesPPUScreenTPtj
+ 837 0740 2D48A003 	move $9,$sp
+ 838              	.set macro
+ 839              	.set reorder
+ 840              	
+ 841              	.set noreorder
+ 842              	.set nomacro
+ 843 0744 DBFF0010 	b $L73
+ 844 0748 07000324 	li $3,7
+ 845              	.set macro
+ 846              	.set reorder
+ 847              	
+GAS LISTING  			page 16
+
+
+ 848              	.end _ZN13SnesPPURender13FetchBGOffsetEP11SnesBGInfoTP15SnesRenderTileTiiPtjh
+ 849              	$Lfe8:
+ 850              	.size _ZN13SnesPPURender13FetchBGOffsetEP11SnesBGInfoTP15SnesRenderTileTiiPtjh,$Lfe8-_ZN13SnesPPURender13FetchBGOffsetEP11SnesBGInfoTP15SnesRenderTileTiiPtjh
+ 851              	.align 2
+ 852 074c 00000000 	.p2align 3,,7
+ 853              	.globl _ZN13SnesPPURender11FetchOffsetEP11SnesBGInfoTPtiRjh
+ 854              	.ent _ZN13SnesPPURender11FetchOffsetEP11SnesBGInfoTPtiRjh
+ 855              	_ZN13SnesPPURender11FetchOffsetEP11SnesBGInfoTPtiRjh:
+ 856              	.frame $sp,112,$31
+ 857              	.mask 0x801f0000,-16
+ 858              	.fmask 0x00000000,0
+ 859 0750 90FFBD27 	subu $sp,$sp,112
+ 860 0754 2D50A000 	move $10,$5
+ 861 0758 5000B4FF 	sd $20,80($sp)
+ 862 075c 2DA00001 	move $20,$8
+ 863 0760 4000B3FF 	sd $19,64($sp)
+ 864 0764 FF003331 	andi $19,$9,0x00ff
+ 865 0768 3000B2FF 	sd $18,48($sp)
+ 866 076c 2D90C000 	move $18,$6
+ 867 0770 2000B1FF 	sd $17,32($sp)
+ 868 0774 2D880000 	move $17,$0
+ 869 0778 1000B0FF 	sd $16,16($sp)
+ 870 077c 6000BFFF 	sd $31,96($sp)
+ 871 0780 0400A58C 	lw $5,4($5)
+ 872 0784 0000468D 	lw $6,0($10)
+ 873 0788 C2280500 	srl $5,$5,3
+ 874 078c 10004791 	lbu $7,16($10)
+ 875 0790 C2300600 	srl $6,$6,3
+ 876 0794 1F00A230 	andi $2,$5,0x1f
+ 877 0798 40110200 	sll $2,$2,5
+ 878 079c 40190600 	sll $3,$6,5
+ 879 07a0 1F00D030 	andi $16,$6,0x1f
+ 880 07a4 00046330 	andi $3,$3,0x400
+ 881 07a8 25800202 	or $16,$16,$2
+ 882 07ac 80290500 	sll $5,$5,6
+ 883 07b0 25800302 	or $16,$16,$3
+ 884 07b4 0008A530 	andi $5,$5,0x800
+ 885 07b8 0200E22C 	sltu $2,$7,2
+ 886 07bc 25800502 	or $16,$16,$5
+ 887              	.set noreorder
+ 888              	.set nomacro
+ 889 07c0 10004010 	beq $2,$0,$L83
+ 890 07c4 2D188000 	move $3,$4
+ 891              	.set macro
+ 892              	.set reorder
+ 893              	
+ 894 07c8 0000028D 	lw $2,0($8)
+ 895              	
+ 896              	.set noreorder
+ 897              	.set nomacro
+ 898 07cc 1E000212 	beq $16,$2,$L86
+ 899 07d0 2D20A003 	move $4,$sp
+ 900              	.set macro
+ 901              	.set reorder
+ 902              	
+ 903 07d4 0800658C 	lw $5,8($3)
+ 904              	.set noreorder
+GAS LISTING  			page 17
+
+
+ 905              	.set nomacro
+ 906 07d8 E400000C 	jal _Z14_GetScreenPtrsPP14SnesPPUScreenTP7SnesPPUjj
+ 907 07dc 0800468D 	lw $6,8($10)
+ 908              	.set macro
+ 909              	.set reorder
+ 910              	
+ 911              	
+ 912 07e0 20000624 	li $6,32
+ 913 07e4 2D38A003 	move $7,$sp
+ 914 07e8 FFFF0432 	andi $4,$16,0xffff
+ 915              	.set noreorder
+ 916              	.set nomacro
+ 917 07ec 0000000C 	jal _Z12_FetchOffsettPtiPP14SnesPPUScreenT
+ 918 07f0 2D284002 	move $5,$18
+ 919              	.set macro
+ 920              	.set reorder
+ 921              	
+ 922              	.set noreorder
+ 923              	.set nomacro
+ 924 07f4 0C006016 	bne $19,$0,$L91
+ 925 07f8 2D884000 	move $17,$2
+ 926              	.set macro
+ 927              	.set reorder
+ 928              	
+ 929              	$L87:
+ 930 07fc 000090AE 	sw $16,0($20)
+ 931 0800 800051A6 	sh $17,128($18)
+ 932              	$L83:
+ 933 0804 2D102002 	move $2,$17
+ 934 0808 6000BFDF 	ld $31,96($sp)
+ 935 080c 5000B4DF 	ld $20,80($sp)
+ 936 0810 4000B3DF 	ld $19,64($sp)
+ 937 0814 3000B2DF 	ld $18,48($sp)
+ 938 0818 2000B1DF 	ld $17,32($sp)
+ 939 081c 1000B0DF 	ld $16,16($sp)
+ 940              	
+ 941              	.set noreorder
+ 942              	.set nomacro
+ 943 0820 0800E003 	j $31
+ 944 0824 7000BD27 	addu $sp,$sp,112
+ 945              	.set macro
+ 946              	.set reorder
+ 947              	
+ 948              	$L91:
+ 949 0828 20000426 	addu $4,$16,32
+ 950 082c 02004526 	addu $5,$18,2
+ 951 0830 20000624 	li $6,32
+ 952 0834 2D38A003 	move $7,$sp
+ 953              	.set noreorder
+ 954              	.set nomacro
+ 955 0838 0000000C 	jal _Z12_FetchOffsettPtiPP14SnesPPUScreenT
+ 956 083c FFFF8430 	andi $4,$4,0xffff
+ 957              	.set macro
+ 958              	.set reorder
+ 959              	
+ 960              	.set noreorder
+ 961              	.set nomacro
+GAS LISTING  			page 18
+
+
+ 962 0840 EEFF0010 	b $L87
+ 963 0844 25882202 	or $17,$17,$2
+ 964              	.set macro
+ 965              	.set reorder
+ 966              	
+ 967              	.p2align 3
+ 968              	$L86:
+ 969              	.set noreorder
+ 970              	.set nomacro
+ 971 0848 EEFF0010 	b $L83
+ 972 084c 80005196 	lhu $17,128($18)
+ 973              	.set macro
+ 974              	.set reorder
+ 975              	
+ 976              	.end _ZN13SnesPPURender11FetchOffsetEP11SnesBGInfoTPtiRjh
+ 977              	$Lfe9:
+ 978              	.size _ZN13SnesPPURender11FetchOffsetEP11SnesBGInfoTPtiRjh,$Lfe9-_ZN13SnesPPURender11FetchOffsetEP11SnesBGInfoTPtiRjh
+ 979              	.align 2
+ 980              	.p2align 3,,7
+ 981              	.globl _Z10_SetBGMaskP7SNMaskTS0_hh
+ 982              	.ent _Z10_SetBGMaskP7SNMaskTS0_hh
+ 983              	_Z10_SetBGMaskP7SNMaskTS0_hh:
+ 984              	.frame $sp,0,$31
+ 985              	.mask 0x00000000,0
+ 986              	.fmask 0x00000000,0
+ 987 0850 FF00C330 	andi $3,$6,0x00ff
+ 988 0854 FF00E730 	andi $7,$7,0x00ff
+ 989 0858 02006230 	andi $2,$3,0x2
+ 990 085c 2D300000 	move $6,$0
+ 991              	.set noreorder
+ 992              	.set nomacro
+ 993 0860 04004010 	beq $2,$0,$L93
+ 994 0864 2D600000 	move $12,$0
+ 995              	.set macro
+ 996              	.set reorder
+ 997              	
+ 998 0868 01006230 	andi $2,$3,0x1
+ 999 086c 80110200 	sll $2,$2,6
+ 1000 0870 21304500 	addu $6,$2,$5
+ 1001              	$L93:
+ 1002 0874 08006230 	andi $2,$3,0x8
+ 1003              	.set noreorder
+ 1004              	.set nomacro
+ 1005 0878 04004010 	beq $2,$0,$L95
+ 1006 087c 04006330 	andi $3,$3,0x4
+ 1007              	.set macro
+ 1008              	.set reorder
+ 1009              	
+ 1010 0880 2000A224 	addu $2,$5,32
+ 1011 0884 6000AC24 	addu $12,$5,96
+ 1012 0888 0A604300 	movz $12,$2,$3
+ 1013              	$L95:
+ 1014 088c 4000C010 	beq $6,$0,$L98
+ 1014      00000000 
+ 1015              	.set noreorder
+ 1016              	.set nomacro
+ 1017 0894 38008011 	beq $12,$0,$L99
+GAS LISTING  			page 19
+
+
+ 1018 0898 0300E730 	andi $7,$7,0x3
+ 1019              	.set macro
+ 1020              	.set reorder
+ 1021              	
+ 1022 089c 01000224 	li $2,1
+ 1023              	.set noreorder
+ 1024              	.set nomacro
+ 1025 08a0 2B00E210 	beq $7,$2,$L103
+ 1026 08a4 0200E228 	slt $2,$7,2
+ 1027              	.set macro
+ 1028              	.set reorder
+ 1029              	
+ 1030              	.set noreorder
+ 1031              	.set nomacro
+ 1032 08a8 1C004014 	bne $2,$0,$L119
+ 1033 08ac 02000224 	li $2,2
+ 1034              	.set macro
+ 1035              	.set reorder
+ 1036              	
+ 1037              	.set noreorder
+ 1038              	.set nomacro
+ 1039 08b0 1100E210 	beq $7,$2,$L105
+ 1040 08b4 03000224 	li $2,3
+ 1041              	.set macro
+ 1042              	.set reorder
+ 1043              	
+ 1044 08b8 0300E210 	beq $7,$2,$L107
+ 1044      00000000 
+ 1045 08c0 0800E003 	j $31
+ 1045      00000000 
+ 1046              	$L107:
+ 1047              	
+ 1048 08c8 0000C878 	lq $8,0x00($6)
+ 1049 08cc 1000C978 	lq $9,0x10($6)
+ 1050 08d0 00008A79 	lq $10,0x00($12)
+ 1051 08d4 10008B79 	lq $11,0x10($12)
+ 1052 08d8 C9440A71 	pxor $8,$8,$10
+ 1053 08dc C94C2B71 	pxor $9,$9,$11
+ 1054 08e0 E9440071 	pnor $8,$8,$0
+ 1055 08e4 E94C2071 	pnor $9,$9,$0
+ 1056 08e8 0000887C 	sq $8,0x00($4)
+ 1057 08ec 0800E003 	sq $9,0x10($4)
+ 1058              	
+ 1059              	
+ 1060 08f0 1000897C 	j $31
+ 1061 08f4 00000000 	.p2align 3
+ 1062              	$L105:
+ 1063              	
+ 1064 08f8 0000C878 	lq $8,0x00($6)
+ 1065 08fc 1000C978 	lq $9,0x10($6)
+ 1066 0900 00008A79 	lq $10,0x00($12)
+ 1067 0904 10008B79 	lq $11,0x10($12)
+ 1068 0908 C9440A71 	pxor $8,$8,$10
+ 1069 090c C94C2B71 	pxor $9,$9,$11
+ 1070 0910 0000887C 	sq $8,0x00($4)
+ 1071 0914 0800E003 	sq $9,0x10($4)
+ 1072              	
+GAS LISTING  			page 20
+
+
+ 1073              	
+ 1074 0918 1000897C 	j $31
+ 1075              	$L119:
+ 1076 091c 0300E010 	beq $7,$0,$L101
+ 1076      00000000 
+ 1077 0924 0800E003 	j $31
+ 1077      00000000 
+ 1078              	$L101:
+ 1079              	
+ 1080 092c 0000C878 	lq $8,0x00($6)
+ 1081 0930 1000C978 	lq $9,0x10($6)
+ 1082 0934 00008A79 	lq $10,0x00($12)
+ 1083 0938 10008B79 	lq $11,0x10($12)
+ 1084 093c A9440A71 	por $8,$8,$10
+ 1085 0940 A94C2B71 	por $9,$9,$11
+ 1086 0944 0000887C 	sq $8,0x00($4)
+ 1087 0948 0800E003 	sq $9,0x10($4)
+ 1088              	
+ 1089              	
+ 1090 094c 1000897C 	j $31
+ 1091              	.p2align 3
+ 1092              	$L103:
+ 1093              	
+ 1094 0950 0000C878 	lq $8,0x00($6)
+ 1095 0954 1000C978 	lq $9,0x10($6)
+ 1096 0958 00008A79 	lq $10,0x00($12)
+ 1097 095c 10008B79 	lq $11,0x10($12)
+ 1098 0960 89440A71 	pand $8,$8,$10
+ 1099 0964 894C2B71 	pand $9,$9,$11
+ 1100 0968 0000887C 	sq $8,0x00($4)
+ 1101 096c 0800E003 	sq $9,0x10($4)
+ 1102              	
+ 1103              	
+ 1104 0970 1000897C 	j $31
+ 1105 0974 00000000 	.p2align 3
+ 1106              	$L99:
+ 1107              	
+ 1108 0978 0000C878 	lq $8,0x00($6)
+ 1109 097c 1000C978 	lq $9,0x10($6)
+ 1110 0980 0000887C 	sq $8,0x00($4)
+ 1111 0984 0800E003 	sq $9,0x10($4)
+ 1112              	
+ 1113              	
+ 1114 0988 1000897C 	j $31
+ 1115 098c 00000000 	.p2align 3
+ 1116              	$L98:
+ 1117 0990 06008011 	beq $12,$0,$L115
+ 1117      00000000 
+ 1118              	
+ 1119 0998 00008879 	lq $8,0x00($12)
+ 1120 099c 10008979 	lq $9,0x10($12)
+ 1121 09a0 0000887C 	sq $8,0x00($4)
+ 1122 09a4 0800E003 	sq $9,0x10($4)
+ 1123              	
+ 1124              	
+ 1125 09a8 1000897C 	j $31
+ 1126              	$L115:
+GAS LISTING  			page 21
+
+
+ 1127              	
+ 1128 09ac 0000807C 	sq $0,0x00($4)
+ 1129 09b0 0800E003 	sq $0,0x10($4)
+ 1130              	
+ 1131              	
+ 1132 09b4 1000807C 	j $31
+ 1133              	.end _Z10_SetBGMaskP7SNMaskTS0_hh
+ 1134              	$Lfe10:
+ 1135              	.size _Z10_SetBGMaskP7SNMaskTS0_hh,$Lfe10-_Z10_SetBGMaskP7SNMaskTS0_hh
+ 1136              	.align 2
+ 1137              	.p2align 3,,7
+ 1138              	.globl _ZN13SnesPPURender12DecodeBGInfoEP11SnesBGInfoT
+ 1139              	.ent _ZN13SnesPPURender12DecodeBGInfoEP11SnesBGInfoT
+ 1140              	_ZN13SnesPPURender12DecodeBGInfoEP11SnesBGInfoT:
+ 1141              	.frame $sp,0,$31
+ 1142              	.mask 0x00000000,0
+ 1143              	.fmask 0x00000000,0
+ 1144 09b8 2D30A000 	move $6,$5
+ 1145 09bc 0800858C 	lw $5,8($4)
+ 1146              	
+ 1147 09c0 0600A524 	addu $5,$5,6
+ 1148 09c4 1200A294 	lhu $2,18($5)
+ 1149              	
+ 1150 09c8 FF074230 	andi $2,$2,0x7ff
+ 1151 09cc 0000C2AC 	sw $2,0($6)
+ 1152 09d0 1400A394 	lhu $3,20($5)
+ 1153              	
+ 1154 09d4 FF076330 	andi $3,$3,0x7ff
+ 1155 09d8 0400C3AC 	sw $3,4($6)
+ 1156 09dc 0A00A290 	lbu $2,10($5)
+ 1157              	
+ 1158 09e0 82100200 	srl $2,$2,2
+ 1159 09e4 80120200 	sll $2,$2,10
+ 1160 09e8 0800C2AC 	sw $2,8($6)
+ 1161 09ec 0A00A390 	lbu $3,10($5)
+ 1162              	
+ 1163 09f0 03006330 	andi $3,$3,0x3
+ 1164 09f4 1000C3A0 	sb $3,16($6)
+ 1165 09f8 0E00A290 	lbu $2,14($5)
+ 1166              	
+ 1167 09fc 0F004230 	andi $2,$2,0xf
+ 1168 0a00 00130200 	sll $2,$2,12
+ 1169 0a04 0C00C2AC 	sw $2,12($6)
+ 1170 0a08 0800A390 	lbu $3,8($5)
+ 1171              	
+ 1172 0a0c 02190300 	srl $3,$3,4
+ 1173 0a10 01006330 	andi $3,$3,0x1
+ 1174 0a14 1100C3A0 	sb $3,17($6)
+ 1175 0a18 0900A490 	lbu $4,9($5)
+ 1176              	
+ 1177 0a1c 01008230 	andi $2,$4,0x1
+ 1178 0a20 02210400 	srl $4,$4,4
+ 1179 0a24 00004238 	xori $2,$2,0x0
+ 1180 0a28 0A200200 	movz $4,$0,$2
+ 1181 0a2c 1800C4AC 	sw $4,24($6)
+ 1182 0a30 1600A294 	lhu $2,22($5)
+ 1183              	
+GAS LISTING  			page 22
+
+
+ 1184 0a34 FF074230 	andi $2,$2,0x7ff
+ 1185 0a38 1C00C2AC 	sw $2,28($6)
+ 1186 0a3c 1800A394 	lhu $3,24($5)
+ 1187              	
+ 1188 0a40 FF076330 	andi $3,$3,0x7ff
+ 1189 0a44 2000C3AC 	sw $3,32($6)
+ 1190 0a48 0B00A290 	lbu $2,11($5)
+ 1191              	
+ 1192 0a4c 82100200 	srl $2,$2,2
+ 1193 0a50 80120200 	sll $2,$2,10
+ 1194 0a54 2400C2AC 	sw $2,36($6)
+ 1195 0a58 0B00A390 	lbu $3,11($5)
+ 1196              	
+ 1197 0a5c 03006330 	andi $3,$3,0x3
+ 1198 0a60 2C00C3A0 	sb $3,44($6)
+ 1199 0a64 0E00A290 	lbu $2,14($5)
+ 1200              	
+ 1201 0a68 02110200 	srl $2,$2,4
+ 1202 0a6c 00130200 	sll $2,$2,12
+ 1203 0a70 2800C2AC 	sw $2,40($6)
+ 1204 0a74 0800A390 	lbu $3,8($5)
+ 1205              	
+ 1206 0a78 42190300 	srl $3,$3,5
+ 1207 0a7c 01006330 	andi $3,$3,0x1
+ 1208 0a80 2D00C3A0 	sb $3,45($6)
+ 1209 0a84 0900A490 	lbu $4,9($5)
+ 1210              	
+ 1211 0a88 02008230 	andi $2,$4,0x2
+ 1212 0a8c 02210400 	srl $4,$4,4
+ 1213 0a90 00004238 	xori $2,$2,0x0
+ 1214 0a94 0A200200 	movz $4,$0,$2
+ 1215 0a98 3400C4AC 	sw $4,52($6)
+ 1216 0a9c 1A00A294 	lhu $2,26($5)
+ 1217              	
+ 1218 0aa0 FF074230 	andi $2,$2,0x7ff
+ 1219 0aa4 3800C2AC 	sw $2,56($6)
+ 1220 0aa8 1C00A394 	lhu $3,28($5)
+ 1221              	
+ 1222 0aac FF076330 	andi $3,$3,0x7ff
+ 1223 0ab0 3C00C3AC 	sw $3,60($6)
+ 1224 0ab4 0C00A290 	lbu $2,12($5)
+ 1225              	
+ 1226 0ab8 82100200 	srl $2,$2,2
+ 1227 0abc 80120200 	sll $2,$2,10
+ 1228 0ac0 4000C2AC 	sw $2,64($6)
+ 1229 0ac4 0C00A390 	lbu $3,12($5)
+ 1230              	
+ 1231 0ac8 03006330 	andi $3,$3,0x3
+ 1232 0acc 4800C3A0 	sb $3,72($6)
+ 1233 0ad0 0F00A290 	lbu $2,15($5)
+ 1234              	
+ 1235 0ad4 0F004230 	andi $2,$2,0xf
+ 1236 0ad8 00130200 	sll $2,$2,12
+ 1237 0adc 4400C2AC 	sw $2,68($6)
+ 1238 0ae0 0800A390 	lbu $3,8($5)
+ 1239              	
+ 1240 0ae4 82190300 	srl $3,$3,6
+GAS LISTING  			page 23
+
+
+ 1241 0ae8 01006330 	andi $3,$3,0x1
+ 1242 0aec 4900C3A0 	sb $3,73($6)
+ 1243 0af0 0900A490 	lbu $4,9($5)
+ 1244              	
+ 1245 0af4 04008230 	andi $2,$4,0x4
+ 1246 0af8 02210400 	srl $4,$4,4
+ 1247 0afc 00004238 	xori $2,$2,0x0
+ 1248 0b00 0A200200 	movz $4,$0,$2
+ 1249 0b04 5000C4AC 	sw $4,80($6)
+ 1250 0b08 1E00A294 	lhu $2,30($5)
+ 1251              	
+ 1252 0b0c FF074230 	andi $2,$2,0x7ff
+ 1253 0b10 5400C2AC 	sw $2,84($6)
+ 1254 0b14 2000A394 	lhu $3,32($5)
+ 1255              	
+ 1256 0b18 FF076330 	andi $3,$3,0x7ff
+ 1257 0b1c 5800C3AC 	sw $3,88($6)
+ 1258 0b20 0D00A290 	lbu $2,13($5)
+ 1259              	
+ 1260 0b24 82100200 	srl $2,$2,2
+ 1261 0b28 80120200 	sll $2,$2,10
+ 1262 0b2c 5C00C2AC 	sw $2,92($6)
+ 1263 0b30 0D00A390 	lbu $3,13($5)
+ 1264              	
+ 1265 0b34 03006330 	andi $3,$3,0x3
+ 1266 0b38 6400C3A0 	sb $3,100($6)
+ 1267 0b3c 0F00A290 	lbu $2,15($5)
+ 1268              	
+ 1269 0b40 02110200 	srl $2,$2,4
+ 1270 0b44 00130200 	sll $2,$2,12
+ 1271 0b48 6000C2AC 	sw $2,96($6)
+ 1272 0b4c 0800A390 	lbu $3,8($5)
+ 1273              	
+ 1274 0b50 C2190300 	srl $3,$3,7
+ 1275 0b54 6500C3A0 	sb $3,101($6)
+ 1276 0b58 0900A290 	lbu $2,9($5)
+ 1277              	
+ 1278 0b5c 08004330 	andi $3,$2,0x8
+ 1279 0b60 02110200 	srl $2,$2,4
+ 1280 0b64 00006338 	xori $3,$3,0x0
+ 1281 0b68 0A100300 	movz $2,$0,$3
+ 1282 0b6c 6C00C2AC 	sw $2,108($6)
+ 1283 0b70 0800A390 	lbu $3,8($5)
+ 1284              	
+ 1285 0b74 07006330 	andi $3,$3,0x7
+ 1286 0b78 0800622C 	sltu $2,$3,8
+ 1287              	.set noreorder
+ 1288              	.set nomacro
+ 1289 0b7c 60004050 	beql $2,$0,$L139
+ 1290 0b80 6600C0A0 	sb $0,102($6)
+ 1291              	.set macro
+ 1292              	.set reorder
+ 1293              	
+ 1294 0b84 80100300 	sll $2,$3,2
+ 1295 0b88 0000033C 	lui $3,%hi($L140)
+ 1296 0b8c 24006324 	addiu $3,$3,%lo($L140)
+ 1297 0b90 21104300 	addu $2,$2,$3
+GAS LISTING  			page 24
+
+
+ 1298 0b94 0000448C 	lw $4,0($2)
+ 1299              	
+ 1300 0b98 08008000 	j $4
+ 1300      00000000 
+ 1301              	.rdata
+ 1302 0022 0000     	.align 2
+ 1303              	$L140:
+ 1304 0024 A00B0000 	.word $L131
+ 1305 0028 E00B0000 	.word $L132
+ 1306 002c 240C0000 	.word $L134
+ 1307 0030 480C0000 	.word $L133
+ 1308 0034 680C0000 	.word $L135
+ 1309 0038 8C0C0000 	.word $L136
+ 1310 003c AC0C0000 	.word $L137
+ 1311 0040 CC0C0000 	.word $L138
+ 1312 0044 00000000 	.text
+ 1313              	$L131:
+ 1314 0ba0 02000224 	li $2,2
+ 1315 0ba4 01000324 	li $3,1
+ 1316 0ba8 03000424 	li $4,3
+ 1317 0bac 3000C2A0 	sb $2,48($6)
+ 1318 0bb0 1400C4A0 	sb $4,20($6)
+ 1319 0bb4 4C00C3A0 	sb $3,76($6)
+ 1320 0bb8 6800C0A0 	sb $0,104($6)
+ 1321 0bbc 1200C2A0 	sb $2,18($6)
+ 1322 0bc0 2E00C2A0 	sb $2,46($6)
+ 1323 0bc4 4A00C2A0 	sb $2,74($6)
+ 1324 0bc8 6600C2A0 	sb $2,102($6)
+ 1325 0bcc 1300C0A0 	sb $0,19($6)
+ 1326 0bd0 2F00C3A0 	sb $3,47($6)
+ 1327 0bd4 4B00C2A0 	sb $2,75($6)
+ 1328              	.set noreorder
+ 1329              	.set nomacro
+ 1330 0bd8 0800E003 	j $31
+ 1331 0bdc 6700C4A0 	sb $4,103($6)
+ 1332              	.set macro
+ 1333              	.set reorder
+ 1334              	
+ 1335              	$L132:
+ 1336 0be0 03000224 	li $2,3
+ 1337 0be4 04000324 	li $3,4
+ 1338 0be8 02000424 	li $4,2
+ 1339 0bec 1400C2A0 	sb $2,20($6)
+ 1340 0bf0 01000224 	li $2,1
+ 1341 0bf4 2E00C3A0 	sb $3,46($6)
+ 1342 0bf8 3000C4A0 	sb $4,48($6)
+ 1343 0bfc 4C00C2A0 	sb $2,76($6)
+ 1344 0c00 6800C0A0 	sb $0,104($6)
+ 1345 0c04 1200C3A0 	sb $3,18($6)
+ 1346 0c08 4A00C4A0 	sb $4,74($6)
+ 1347 0c0c 6600C0A0 	sb $0,102($6)
+ 1348 0c10 1300C0A0 	sb $0,19($6)
+ 1349 0c14 2F00C0A0 	sb $0,47($6)
+ 1350 0c18 4B00C0A0 	sb $0,75($6)
+ 1351              	.set noreorder
+ 1352              	.set nomacro
+ 1353 0c1c 0800E003 	j $31
+GAS LISTING  			page 25
+
+
+ 1354 0c20 6700C0A0 	sb $0,103($6)
+ 1355              	.set macro
+ 1356              	.set reorder
+ 1357              	
+ 1358              	$L134:
+ 1359 0c24 04000324 	li $3,4
+ 1360 0c28 05000224 	li $2,5
+ 1361 0c2c 3000C3A0 	sb $3,48($6)
+ 1362 0c30 1400C2A0 	sb $2,20($6)
+ 1363 0c34 1200C3A0 	sb $3,18($6)
+ 1364 0c38 2E00C3A0 	sb $3,46($6)
+ 1365              	$L143:
+ 1366 0c3c 4A00C0A0 	sb $0,74($6)
+ 1367              	.set noreorder
+ 1368              	.set nomacro
+ 1369 0c40 0800E003 	j $31
+ 1370 0c44 6600C0A0 	sb $0,102($6)
+ 1371              	.set macro
+ 1372              	.set reorder
+ 1373              	
+ 1374              	$L133:
+ 1375 0c48 04000224 	li $2,4
+ 1376 0c4c 08000324 	li $3,8
+ 1377 0c50 05000424 	li $4,5
+ 1378 0c54 3000C2A0 	sb $2,48($6)
+ 1379 0c58 1200C3A0 	sb $3,18($6)
+ 1380 0c5c 1400C4A0 	sb $4,20($6)
+ 1381              	.set noreorder
+ 1382              	.set nomacro
+ 1383 0c60 F6FF0010 	b $L143
+ 1384 0c64 2E00C2A0 	sb $2,46($6)
+ 1385              	.set macro
+ 1386              	.set reorder
+ 1387              	
+ 1388              	$L135:
+ 1389 0c68 04000224 	li $2,4
+ 1390 0c6c 08000324 	li $3,8
+ 1391 0c70 3000C2A0 	sb $2,48($6)
+ 1392 0c74 02000224 	li $2,2
+ 1393 0c78 1200C3A0 	sb $3,18($6)
+ 1394 0c7c 05000324 	li $3,5
+ 1395 0c80 2E00C2A0 	sb $2,46($6)
+ 1396              	.set noreorder
+ 1397              	.set nomacro
+ 1398 0c84 EDFF0010 	b $L143
+ 1399 0c88 1400C3A0 	sb $3,20($6)
+ 1400              	.set macro
+ 1401              	.set reorder
+ 1402              	
+ 1403              	$L136:
+ 1404 0c8c 04000224 	li $2,4
+ 1405 0c90 02000324 	li $3,2
+ 1406 0c94 05000424 	li $4,5
+ 1407 0c98 3000C2A0 	sb $2,48($6)
+ 1408 0c9c 2E00C3A0 	sb $3,46($6)
+ 1409 0ca0 1400C4A0 	sb $4,20($6)
+ 1410              	.set noreorder
+GAS LISTING  			page 26
+
+
+ 1411              	.set nomacro
+ 1412 0ca4 E5FF0010 	b $L143
+ 1413 0ca8 1200C2A0 	sb $2,18($6)
+ 1414              	.set macro
+ 1415              	.set reorder
+ 1416              	
+ 1417              	$L137:
+ 1418 0cac 08000224 	li $2,8
+ 1419 0cb0 04000324 	li $3,4
+ 1420 0cb4 1200C2A0 	sb $2,18($6)
+ 1421 0cb8 05000224 	li $2,5
+ 1422 0cbc 3000C3A0 	sb $3,48($6)
+ 1423 0cc0 1400C2A0 	sb $2,20($6)
+ 1424              	.set noreorder
+ 1425              	.set nomacro
+ 1426 0cc4 0800E003 	j $31
+ 1427 0cc8 2E00C0A0 	sb $0,46($6)
+ 1428              	.set macro
+ 1429              	.set reorder
+ 1430              	
+ 1431              	$L138:
+ 1432 0ccc 07000324 	li $3,7
+ 1433 0cd0 08000224 	li $2,8
+ 1434 0cd4 1400C3A0 	sb $3,20($6)
+ 1435 0cd8 1200C2A0 	sb $2,18($6)
+ 1436 0cdc 2E00C0A0 	sb $0,46($6)
+ 1437 0ce0 4A00C0A0 	sb $0,74($6)
+ 1438 0ce4 6600C0A0 	sb $0,102($6)
+ 1439 0ce8 0000C0AC 	sw $0,0($6)
+ 1440 0cec 0400C0AC 	sw $0,4($6)
+ 1441 0cf0 6800C3A0 	sb $3,104($6)
+ 1442 0cf4 4C00C3A0 	sb $3,76($6)
+ 1443              	.set noreorder
+ 1444              	.set nomacro
+ 1445 0cf8 0800E003 	j $31
+ 1446 0cfc 3000C3A0 	sb $3,48($6)
+ 1447              	.set macro
+ 1448              	.set reorder
+ 1449              	
+ 1450              	.p2align 3
+ 1451              	$L139:
+ 1452 0d00 1200C0A0 	sb $0,18($6)
+ 1453 0d04 2E00C0A0 	sb $0,46($6)
+ 1454              	.set noreorder
+ 1455              	.set nomacro
+ 1456 0d08 0800E003 	j $31
+ 1457 0d0c 4A00C0A0 	sb $0,74($6)
+ 1458              	.set macro
+ 1459              	.set reorder
+ 1460              	
+ 1461              	.end _ZN13SnesPPURender12DecodeBGInfoEP11SnesBGInfoT
+ 1462              	$Lfe11:
+ 1463              	.size _ZN13SnesPPURender12DecodeBGInfoEP11SnesBGInfoT,$Lfe11-_ZN13SnesPPURender12DecodeBGInfoEP11SnesBGInfoT
+ 1464              	.align 2
+ 1465              	.p2align 3,,7
+ 1466              	.globl _ZN13SnesPPURender13DecodeWindowsEP7SNMaskTS1_
+ 1467              	.ent _ZN13SnesPPURender13DecodeWindowsEP7SNMaskTS1_
+GAS LISTING  			page 27
+
+
+ 1468              	_ZN13SnesPPURender13DecodeWindowsEP7SNMaskTS1_:
+ 1469              	.frame $sp,80,$31
+ 1470              	.mask 0x800f0000,-16
+ 1471              	.fmask 0x00000000,0
+ 1472 0d10 B0FFBD27 	subu $sp,$sp,80
+ 1473 0d14 2D380000 	move $7,$0
+ 1474 0d18 4000BFFF 	sd $31,64($sp)
+ 1475 0d1c 3000B3FF 	sd $19,48($sp)
+ 1476 0d20 2D98C000 	move $19,$6
+ 1477 0d24 2000B2FF 	sd $18,32($sp)
+ 1478 0d28 2000B224 	addu $18,$5,32
+ 1479 0d2c 1000B1FF 	sd $17,16($sp)
+ 1480 0d30 2D88A000 	move $17,$5
+ 1481 0d34 0000B0FF 	sd $16,0($sp)
+ 1482 0d38 0800908C 	lw $16,8($4)
+ 1483 0d3c 2D20A000 	move $4,$5
+ 1484 0d40 06001026 	addu $16,$16,6
+ 1485 0d44 41000592 	lbu $5,65($16)
+ 1486              	.set noreorder
+ 1487              	.set nomacro
+ 1488 0d48 0000000C 	jal _Z11SNMaskRangeP7SNMaskTjjb
+ 1489 0d4c 42000692 	lbu $6,66($16)
+ 1490              	.set macro
+ 1491              	.set reorder
+ 1492              	
+ 1493              	
+ 1494 0d50 44000692 	lbu $6,68($16)
+ 1495 0d54 43000592 	lbu $5,67($16)
+ 1496 0d58 2D380000 	move $7,$0
+ 1497              	.set noreorder
+ 1498              	.set nomacro
+ 1499 0d5c 0000000C 	jal _Z11SNMaskRangeP7SNMaskTjjb
+ 1500 0d60 2D204002 	move $4,$18
+ 1501              	.set macro
+ 1502              	.set reorder
+ 1503              	
+ 1504 0d64 40002226 	addu $2,$17,64
+ 1505              	
+ 1506 0d68 0000287A 	lq $8,0x00($17)
+ 1507 0d6c 1000297A 	lq $9,0x10($17)
+ 1508 0d70 E9440071 	pnor $8,$8,$0
+ 1509 0d74 E94C2071 	pnor $9,$9,$0
+ 1510 0d78 0000487C 	sq $8,0x00($2)
+ 1511 0d7c 1000497C 	sq $9,0x10($2)
+ 1512              	
+ 1513              	
+ 1514 0d80 60002326 	addu $3,$17,96
+ 1515              	
+ 1516 0d84 0000487A 	lq $8,0x00($18)
+ 1517 0d88 1000497A 	lq $9,0x10($18)
+ 1518 0d8c E9440071 	pnor $8,$8,$0
+ 1519 0d90 E94C2071 	pnor $9,$9,$0
+ 1520 0d94 0000687C 	sq $8,0x00($3)
+ 1521 0d98 1000697C 	sq $9,0x10($3)
+ 1522              	
+ 1523              	
+ 1524 0d9c 3E000692 	lbu $6,62($16)
+GAS LISTING  			page 28
+
+
+ 1525 0da0 2D206002 	move $4,$19
+ 1526 0da4 45000792 	lbu $7,69($16)
+ 1527 0da8 2D282002 	move $5,$17
+ 1528 0dac 0F00C630 	andi $6,$6,0xf
+ 1529              	.set noreorder
+ 1530              	.set nomacro
+ 1531 0db0 0000000C 	jal _Z10_SetBGMaskP7SNMaskTS0_hh
+ 1532 0db4 0300E730 	andi $7,$7,0x3
+ 1533              	.set macro
+ 1534              	.set reorder
+ 1535              	
+ 1536 0db8 3E000692 	lbu $6,62($16)
+ 1537 0dbc 45000792 	lbu $7,69($16)
+ 1538 0dc0 2D282002 	move $5,$17
+ 1539 0dc4 20006426 	addu $4,$19,32
+ 1540 0dc8 02310600 	srl $6,$6,4
+ 1541 0dcc 82380700 	srl $7,$7,2
+ 1542              	.set noreorder
+ 1543              	.set nomacro
+ 1544 0dd0 0000000C 	jal _Z10_SetBGMaskP7SNMaskTS0_hh
+ 1545 0dd4 0300E730 	andi $7,$7,0x3
+ 1546              	.set macro
+ 1547              	.set reorder
+ 1548              	
+ 1549 0dd8 3F000692 	lbu $6,63($16)
+ 1550 0ddc 45000792 	lbu $7,69($16)
+ 1551 0de0 2D282002 	move $5,$17
+ 1552 0de4 40006426 	addu $4,$19,64
+ 1553 0de8 0F00C630 	andi $6,$6,0xf
+ 1554 0dec 02390700 	srl $7,$7,4
+ 1555              	.set noreorder
+ 1556              	.set nomacro
+ 1557 0df0 0000000C 	jal _Z10_SetBGMaskP7SNMaskTS0_hh
+ 1558 0df4 0300E730 	andi $7,$7,0x3
+ 1559              	.set macro
+ 1560              	.set reorder
+ 1561              	
+ 1562 0df8 45000792 	lbu $7,69($16)
+ 1563 0dfc 3F000692 	lbu $6,63($16)
+ 1564 0e00 2D282002 	move $5,$17
+ 1565 0e04 60006426 	addu $4,$19,96
+ 1566 0e08 82390700 	srl $7,$7,6
+ 1567              	.set noreorder
+ 1568              	.set nomacro
+ 1569 0e0c 0000000C 	jal _Z10_SetBGMaskP7SNMaskTS0_hh
+ 1570 0e10 02310600 	srl $6,$6,4
+ 1571              	.set macro
+ 1572              	.set reorder
+ 1573              	
+ 1574 0e14 46000792 	lbu $7,70($16)
+ 1575 0e18 40000692 	lbu $6,64($16)
+ 1576 0e1c 2D282002 	move $5,$17
+ 1577 0e20 80006426 	addu $4,$19,128
+ 1578 0e24 0300E730 	andi $7,$7,0x3
+ 1579 0e28 0F00C630 	andi $6,$6,0xf
+ 1580              	.set noreorder
+ 1581              	.set nomacro
+GAS LISTING  			page 29
+
+
+ 1582 0e2c 0000000C 	jal _Z10_SetBGMaskP7SNMaskTS0_hh
+ 1583 0e30 A0007326 	addu $19,$19,160
+ 1584              	.set macro
+ 1585              	.set reorder
+ 1586              	
+ 1587 0e34 2D206002 	move $4,$19
+ 1588 0e38 46000792 	lbu $7,70($16)
+ 1589 0e3c 2D282002 	move $5,$17
+ 1590 0e40 40000692 	lbu $6,64($16)
+ 1591 0e44 82380700 	srl $7,$7,2
+ 1592 0e48 02310600 	srl $6,$6,4
+ 1593              	.set noreorder
+ 1594              	.set nomacro
+ 1595 0e4c 0000000C 	jal _Z10_SetBGMaskP7SNMaskTS0_hh
+ 1596 0e50 0300E730 	andi $7,$7,0x3
+ 1597              	.set macro
+ 1598              	.set reorder
+ 1599              	
+ 1600 0e54 0000B0DF 	ld $16,0($sp)
+ 1601 0e58 4000BFDF 	ld $31,64($sp)
+ 1602 0e5c 3000B3DF 	ld $19,48($sp)
+ 1603 0e60 2000B2DF 	ld $18,32($sp)
+ 1604 0e64 1000B1DF 	ld $17,16($sp)
+ 1605              	
+ 1606              	.set noreorder
+ 1607              	.set nomacro
+ 1608 0e68 0800E003 	j $31
+ 1609 0e6c 5000BD27 	addu $sp,$sp,80
+ 1610              	.set macro
+ 1611              	.set reorder
+ 1612              	
+ 1613              	.end _ZN13SnesPPURender13DecodeWindowsEP7SNMaskTS1_
+ 1614              	$Lfe12:
+ 1615              	.size _ZN13SnesPPURender13DecodeWindowsEP7SNMaskTS1_,$Lfe12-_ZN13SnesPPURender13DecodeWindowsEP7SNMaskTS1_
+ 1616              	.ident "GCC: (GNU) 3.2.2"

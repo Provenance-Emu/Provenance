@@ -38,3 +38,23 @@ public enum EmulatorCoreSavesSerializerError: Error {
     //    func saveState(toFileAtPath path: String, completionHandler completion: SaveCompletion)
     //    func loadState(toFileAtPath path: String, completionHandler completion: SaveCompletion)
 }
+
+public extension EmulatorCoreSavesSerializer where Self: ObjCBridgedCore, Self.Core: EmulatorCoreSavesSerializer {
+    
+    func saveStateSync(toFileAtPath path: String) throws {
+        try core.saveStateSync(toFileAtPath: path)
+    }
+
+    func loadStateSync(toFileAtPath path: String) throws {
+        try core.loadStateSync(toFileAtPath: path)
+    }
+
+    // Helpers
+    func saveState(toFileAtPath path: String) async throws {
+        try await self.saveStateSync(toFileAtPath: path)
+    }
+    
+    func loadState(fromFileAtPath path: String) async throws {
+        try await self.loadStateSync(toFileAtPath: path)
+    }
+}

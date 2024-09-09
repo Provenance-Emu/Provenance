@@ -29,6 +29,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVCoreObjCBridge"),
         .package(path: "../../PVPlists"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVSupport"),
@@ -187,7 +188,7 @@ let package = Package(
         .testTarget(name: "PVAtari800Tests",
                     dependencies: ["PVAtari800"])
     ],
-    swiftLanguageVersions: [.v5, .v6],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx14
 )

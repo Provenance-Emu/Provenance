@@ -1,0 +1,589 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../Source/common/snio.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN6SnesIO13ReadSerialPadEj
+   8              	.ent _ZN6SnesIO13ReadSerialPadEj
+   9              	_ZN6SnesIO13ReadSerialPadEj:
+  10              	.frame $sp,0,$31
+  11              	.mask 0x00000000,0
+  12              	.fmask 0x00000000,0
+  13 0000 40280500 	sll $5,$5,1
+  14 0004 2128A400 	addu $5,$5,$4
+  15 0008 2E00A294 	lhu $2,46($5)
+  16              	.set noreorder
+  17              	.set nomacro
+  18 000c 0800E003 	j $31
+  19 0010 C2130200 	srl $2,$2,15
+  20              	.set macro
+  21              	.set reorder
+  22              	
+  23              	.end _ZN6SnesIO13ReadSerialPadEj
+  24              	$Lfe1:
+  25              	.size _ZN6SnesIO13ReadSerialPadEj,$Lfe1-_ZN6SnesIO13ReadSerialPadEj
+  26              	.align 2
+  27 0014 00000000 	.p2align 3,,7
+  28              	.globl _ZN6SnesIO14ShiftSerialPadEj
+  29              	.ent _ZN6SnesIO14ShiftSerialPadEj
+  30              	_ZN6SnesIO14ShiftSerialPadEj:
+  31              	.frame $sp,0,$31
+  32              	.mask 0x00000000,0
+  33              	.fmask 0x00000000,0
+  34 0018 40280500 	sll $5,$5,1
+  35 001c FFFF0334 	li $3,65535
+  36 0020 2128A400 	addu $5,$5,$4
+  37 0024 2000A624 	addu $6,$5,32
+  38 0028 0000A494 	lhu $4,0($5)
+  39 002c 0E00C294 	lhu $2,14($6)
+  40              	
+  41 0030 40100200 	sll $2,$2,1
+  42 0034 01004534 	ori $5,$2,0x1
+  43              	.set noreorder
+  44              	.set nomacro
+  45 0038 02008310 	beq $4,$3,$L4
+  46 003c 0E00C2A4 	sh $2,14($6)
+  47              	.set macro
+  48              	.set reorder
+  49              	
+  50 0040 0E00C5A4 	sh $5,14($6)
+  51              	$L4:
+  52 0044 0800E003 	j $31
+  52      00000000 
+  53              	.end _ZN6SnesIO14ShiftSerialPadEj
+  54              	$Lfe2:
+  55              	.size _ZN6SnesIO14ShiftSerialPadEj,$Lfe2-_ZN6SnesIO14ShiftSerialPadEj
+  56              	.align 2
+GAS LISTING  			page 2
+
+
+  57 004c 00000000 	.p2align 3,,7
+  58              	.globl _ZN6SnesIO11ReadSerial0Ev
+  59              	.ent _ZN6SnesIO11ReadSerial0Ev
+  60              	_ZN6SnesIO11ReadSerial0Ev:
+  61              	.frame $sp,48,$31
+  62              	.mask 0x80030000,-16
+  63              	.fmask 0x00000000,0
+  64 0050 D0FFBD27 	subu $sp,$sp,48
+  65 0054 2D280000 	move $5,$0
+  66 0058 1000B1FF 	sd $17,16($sp)
+  67 005c 0000B0FF 	sd $16,0($sp)
+  68 0060 2000BFFF 	sd $31,32($sp)
+  69              	.set noreorder
+  70              	.set nomacro
+  71 0064 0000000C 	jal _ZN6SnesIO13ReadSerialPadEj
+  72 0068 2D808000 	move $16,$4
+  73              	.set macro
+  74              	.set reorder
+  75              	
+  76 006c 2D884000 	move $17,$2
+  77 0070 2D200002 	move $4,$16
+  78 0074 24000292 	lbu $2,36($16)
+  79              	
+  80 0078 01004238 	xori $2,$2,0x1
+  81 007c 01004230 	andi $2,$2,0x1
+  82              	.set noreorder
+  83              	.set nomacro
+  84 0080 07004014 	bne $2,$0,$L7
+  85 0084 2D280000 	move $5,$0
+  86              	.set macro
+  87              	.set reorder
+  88              	
+  89 0088 FF002232 	andi $2,$17,0x00ff
+  90              	$L8:
+  91 008c 2000BFDF 	ld $31,32($sp)
+  92 0090 1000B1DF 	ld $17,16($sp)
+  93 0094 0000B0DF 	ld $16,0($sp)
+  94              	
+  95              	.set noreorder
+  96              	.set nomacro
+  97 0098 0800E003 	j $31
+  98 009c 3000BD27 	addu $sp,$sp,48
+  99              	.set macro
+ 100              	.set reorder
+ 101              	
+ 102              	.p2align 3
+ 103              	$L7:
+ 104 00a0 0000000C 	jal _ZN6SnesIO14ShiftSerialPadEj
+ 104      00000000 
+ 105              	.set noreorder
+ 106              	.set nomacro
+ 107 00a8 F8FF0010 	b $L8
+ 108 00ac FF002232 	andi $2,$17,0x00ff
+ 109              	.set macro
+ 110              	.set reorder
+ 111              	
+ 112              	.end _ZN6SnesIO11ReadSerial0Ev
+GAS LISTING  			page 3
+
+
+ 113              	$Lfe3:
+ 114              	.size _ZN6SnesIO11ReadSerial0Ev,$Lfe3-_ZN6SnesIO11ReadSerial0Ev
+ 115              	.align 2
+ 116              	.p2align 3,,7
+ 117              	.globl _ZN6SnesIO11ReadSerial1Ev
+ 118              	.ent _ZN6SnesIO11ReadSerial1Ev
+ 119              	_ZN6SnesIO11ReadSerial1Ev:
+ 120              	.frame $sp,48,$31
+ 121              	.mask 0x80030000,-16
+ 122              	.fmask 0x00000000,0
+ 123 00b0 D0FFBD27 	subu $sp,$sp,48
+ 124 00b4 FFFF0224 	li $2,-1
+ 125 00b8 1000B1FF 	sd $17,16($sp)
+ 126 00bc 02001124 	li $17,2
+ 127 00c0 0000B0FF 	sd $16,0($sp)
+ 128 00c4 2000BFFF 	sd $31,32($sp)
+ 129 00c8 0400838C 	lw $3,4($4)
+ 130              	
+ 131              	.set noreorder
+ 132              	.set nomacro
+ 133 00cc 30006210 	beq $3,$2,$L18
+ 134 00d0 2D808000 	move $16,$4
+ 135              	.set macro
+ 136              	.set reorder
+ 137              	
+ 138              	$L10:
+ 139 00d4 24000292 	lbu $2,36($16)
+ 140              	
+ 141 00d8 01004230 	andi $2,$2,0x1
+ 142              	.set noreorder
+ 143              	.set nomacro
+ 144 00dc 16004014 	bne $2,$0,$L19
+ 145 00e0 1C002236 	ori $2,$17,0x1c
+ 146              	.set macro
+ 147              	.set reorder
+ 148              	
+ 149 00e4 1E000292 	lbu $2,30($16)
+ 150 00e8 2D200002 	move $4,$16
+ 151 00ec 80004230 	andi $2,$2,0x80
+ 152              	.set noreorder
+ 153              	.set nomacro
+ 154 00f0 17004010 	beq $2,$0,$L15
+ 155 00f4 01000524 	li $5,1
+ 156              	.set macro
+ 157              	.set reorder
+ 158              	
+ 159 00f8 0000000C 	jal _ZN6SnesIO13ReadSerialPadEj
+ 159      00000000 
+ 160 0100 02000524 	li $5,2
+ 161 0104 2D200002 	move $4,$16
+ 162              	.set noreorder
+ 163              	.set nomacro
+ 164 0108 0000000C 	jal _ZN6SnesIO13ReadSerialPadEj
+ 165 010c 2D884000 	move $17,$2
+ 166              	.set macro
+ 167              	.set reorder
+ 168              	
+GAS LISTING  			page 4
+
+
+ 169 0110 2D200002 	move $4,$16
+ 170 0114 01000524 	li $5,1
+ 171 0118 40100200 	sll $2,$2,1
+ 172              	.set noreorder
+ 173              	.set nomacro
+ 174 011c 0000000C 	jal _ZN6SnesIO14ShiftSerialPadEj
+ 175 0120 25882202 	or $17,$17,$2
+ 176              	.set macro
+ 177              	.set reorder
+ 178              	
+ 179 0124 2D200002 	move $4,$16
+ 180 0128 02000524 	li $5,2
+ 181              	$L17:
+ 182 012c 0000000C 	jal _ZN6SnesIO14ShiftSerialPadEj
+ 182      00000000 
+ 183              	$L12:
+ 184 0134 1C002236 	ori $2,$17,0x1c
+ 185              	$L19:
+ 186 0138 2000BFDF 	ld $31,32($sp)
+ 187 013c 1000B1DF 	ld $17,16($sp)
+ 188 0140 FF004230 	andi $2,$2,0x00ff
+ 189 0144 0000B0DF 	ld $16,0($sp)
+ 190              	
+ 191              	.set noreorder
+ 192              	.set nomacro
+ 193 0148 0800E003 	j $31
+ 194 014c 3000BD27 	addu $sp,$sp,48
+ 195              	.set macro
+ 196              	.set reorder
+ 197              	
+ 198              	.p2align 3
+ 199              	$L15:
+ 200 0150 03000524 	li $5,3
+ 201              	.set noreorder
+ 202              	.set nomacro
+ 203 0154 0000000C 	jal _ZN6SnesIO13ReadSerialPadEj
+ 204 0158 2D200002 	move $4,$16
+ 205              	.set macro
+ 206              	.set reorder
+ 207              	
+ 208 015c 04000524 	li $5,4
+ 209 0160 2D200002 	move $4,$16
+ 210              	.set noreorder
+ 211              	.set nomacro
+ 212 0164 0000000C 	jal _ZN6SnesIO13ReadSerialPadEj
+ 213 0168 2D884000 	move $17,$2
+ 214              	.set macro
+ 215              	.set reorder
+ 216              	
+ 217 016c 2D200002 	move $4,$16
+ 218 0170 03000524 	li $5,3
+ 219 0174 40100200 	sll $2,$2,1
+ 220              	.set noreorder
+ 221              	.set nomacro
+ 222 0178 0000000C 	jal _ZN6SnesIO14ShiftSerialPadEj
+ 223 017c 25882202 	or $17,$17,$2
+ 224              	.set macro
+GAS LISTING  			page 5
+
+
+ 225              	.set reorder
+ 226              	
+ 227 0180 2D200002 	move $4,$16
+ 228              	.set noreorder
+ 229              	.set nomacro
+ 230 0184 E9FF0010 	b $L17
+ 231 0188 04000524 	li $5,4
+ 232              	.set macro
+ 233              	.set reorder
+ 234              	
+ 235 018c 00000000 	.p2align 3
+ 236              	$L18:
+ 237 0190 08008394 	lhu $3,8($4)
+ 238 0194 FFFF0234 	li $2,65535
+ 239              	.set noreorder
+ 240              	.set nomacro
+ 241 0198 CEFF6214 	bne $3,$2,$L10
+ 242 019c 01000524 	li $5,1
+ 243              	.set macro
+ 244              	.set reorder
+ 245              	
+ 246 01a0 0000000C 	jal _ZN6SnesIO13ReadSerialPadEj
+ 246      00000000 
+ 247 01a8 2D200002 	move $4,$16
+ 248 01ac 2D884000 	move $17,$2
+ 249 01b0 24000292 	lbu $2,36($16)
+ 250              	
+ 251 01b4 01004238 	xori $2,$2,0x1
+ 252 01b8 01004230 	andi $2,$2,0x1
+ 253              	.set noreorder
+ 254              	.set nomacro
+ 255 01bc DDFF4010 	beq $2,$0,$L12
+ 256 01c0 01000524 	li $5,1
+ 257              	.set macro
+ 258              	.set reorder
+ 259              	
+ 260 01c4 D9FF0010 	b $L17
+ 260      00000000 
+ 261              	.end _ZN6SnesIO11ReadSerial1Ev
+ 262              	$Lfe4:
+ 263              	.size _ZN6SnesIO11ReadSerial1Ev,$Lfe4-_ZN6SnesIO11ReadSerial1Ev
+ 264              	.align 2
+ 265 01cc 00000000 	.p2align 3,,7
+ 266              	.globl _ZN6SnesIO11WriteSerialEh
+ 267              	.ent _ZN6SnesIO11WriteSerialEh
+ 268              	_ZN6SnesIO11WriteSerialEh:
+ 269              	.frame $sp,0,$31
+ 270              	.mask 0x00000000,0
+ 271              	.fmask 0x00000000,0
+ 272 01d0 FF00A530 	andi $5,$5,0x00ff
+ 273 01d4 0100A230 	andi $2,$5,0x1
+ 274 01d8 11004010 	beq $2,$0,$L21
+ 274      00000000 
+ 275 01e0 24008290 	lbu $2,36($4)
+ 276              	
+ 277 01e4 01004238 	xori $2,$2,0x1
+ 278 01e8 01004230 	andi $2,$2,0x1
+GAS LISTING  			page 6
+
+
+ 279 01ec 0C004010 	beq $2,$0,$L21
+ 279      00000000 
+ 280 01f4 FFFF0834 	li $8,65535
+ 281 01f8 F0FF0924 	li $9,-16
+ 282 01fc 2D188000 	move $3,$4
+ 283 0200 04000724 	li $7,4
+ 284              	$L28:
+ 285 0204 00006294 	lhu $2,0($3)
+ 286              	
+ 287              	.set noreorder
+ 288              	.set nomacro
+ 289 0208 07000211 	beq $8,$2,$L26
+ 290 020c 24304900 	and $6,$2,$9
+ 291              	.set macro
+ 292              	.set reorder
+ 293              	
+ 294 0210 2E0066A4 	sh $6,46($3)
+ 295              	$L24:
+ 296 0214 FFFFE724 	addu $7,$7,-1
+ 297              	.set noreorder
+ 298              	.set nomacro
+ 299 0218 FAFFE104 	bgez $7,$L28
+ 300 021c 02006324 	addu $3,$3,2
+ 301              	.set macro
+ 302              	.set reorder
+ 303              	
+ 304              	$L21:
+ 305              	.set noreorder
+ 306              	.set nomacro
+ 307 0220 0800E003 	j $31
+ 308 0224 240085A0 	sb $5,36($4)
+ 309              	.set macro
+ 310              	.set reorder
+ 311              	
+ 312              	.p2align 3
+ 313              	$L26:
+ 314              	.set noreorder
+ 315              	.set nomacro
+ 316 0228 FAFF0010 	b $L24
+ 317 022c 2E0060A4 	sh $0,46($3)
+ 318              	.set macro
+ 319              	.set reorder
+ 320              	
+ 321              	.end _ZN6SnesIO11WriteSerialEh
+ 322              	$Lfe5:
+ 323              	.size _ZN6SnesIO11WriteSerialEh,$Lfe5-_ZN6SnesIO11WriteSerialEh
+ 324              	.align 2
+ 325              	.p2align 3,,7
+ 326              	.globl _ZN6SnesIO13UpdateJoyPadsEv
+ 327              	.ent _ZN6SnesIO13UpdateJoyPadsEv
+ 328              	_ZN6SnesIO13UpdateJoyPadsEv:
+ 329              	.frame $sp,48,$31
+ 330              	.mask 0x80030000,-16
+ 331              	.fmask 0x00000000,0
+ 332 0230 D0FFBD27 	subu $sp,$sp,48
+ 333 0234 2D280000 	move $5,$0
+ 334 0238 1000B1FF 	sd $17,16($sp)
+GAS LISTING  			page 7
+
+
+ 335 023c 2D888000 	move $17,$4
+ 336 0240 2000BFFF 	sd $31,32($sp)
+ 337              	.set noreorder
+ 338              	.set nomacro
+ 339 0244 0000000C 	jal _ZN6SnesIO11WriteSerialEh
+ 340 0248 0000B0FF 	sd $16,0($sp)
+ 341              	.set macro
+ 342              	.set reorder
+ 343              	
+ 344 024c 2D202002 	move $4,$17
+ 345              	.set noreorder
+ 346              	.set nomacro
+ 347 0250 0000000C 	jal _ZN6SnesIO11WriteSerialEh
+ 348 0254 01000524 	li $5,1
+ 349              	.set macro
+ 350              	.set reorder
+ 351              	
+ 352 0258 2D280000 	move $5,$0
+ 353              	.set noreorder
+ 354              	.set nomacro
+ 355 025c 0000000C 	jal _ZN6SnesIO11WriteSerialEh
+ 356 0260 2D202002 	move $4,$17
+ 357              	.set macro
+ 358              	.set reorder
+ 359              	
+ 360 0264 30002496 	lhu $4,48($17)
+ 361 0268 1E002292 	lbu $2,30($17)
+ 362 026c 2E002396 	lhu $3,46($17)
+ 363 0270 80004230 	andi $2,$2,0x80
+ 364 0274 280024A6 	sh $4,40($17)
+ 365              	.set noreorder
+ 366              	.set nomacro
+ 367 0278 11004010 	beq $2,$0,$L31
+ 368 027c 260023A6 	sh $3,38($17)
+ 369              	.set macro
+ 370              	.set reorder
+ 371              	
+ 372 0280 32002296 	lhu $2,50($17)
+ 373 0284 2A0024A6 	sh $4,42($17)
+ 374 0288 2C0022A6 	sh $2,44($17)
+ 375              	$L32:
+ 376 028c 0F001024 	li $16,15
+ 377 0290 2D202002 	move $4,$17
+ 378              	$L40:
+ 379              	.set noreorder
+ 380              	.set nomacro
+ 381 0294 0000000C 	jal _ZN6SnesIO11ReadSerial0Ev
+ 382 0298 FFFF1026 	addu $16,$16,-1
+ 383              	.set macro
+ 384              	.set reorder
+ 385              	
+ 386              	.set noreorder
+ 387              	.set nomacro
+ 388 029c 0000000C 	jal _ZN6SnesIO11ReadSerial1Ev
+ 389 02a0 2D202002 	move $4,$17
+ 390              	.set macro
+ 391              	.set reorder
+GAS LISTING  			page 8
+
+
+ 392              	
+ 393              	.set noreorder
+ 394              	.set nomacro
+ 395 02a4 FBFF0306 	bgezl $16,$L40
+ 396 02a8 2D202002 	move $4,$17
+ 397              	.set macro
+ 398              	.set reorder
+ 399              	
+ 400 02ac 2000BFDF 	ld $31,32($sp)
+ 401 02b0 1000B1DF 	ld $17,16($sp)
+ 402 02b4 0000B0DF 	ld $16,0($sp)
+ 403              	
+ 404              	.set noreorder
+ 405              	.set nomacro
+ 406 02b8 0800E003 	j $31
+ 407 02bc 3000BD27 	addu $sp,$sp,48
+ 408              	.set macro
+ 409              	.set reorder
+ 410              	
+ 411              	$L31:
+ 412 02c0 34002296 	lhu $2,52($17)
+ 413 02c4 36002396 	lhu $3,54($17)
+ 414 02c8 2A0022A6 	sh $2,42($17)
+ 415              	.set noreorder
+ 416              	.set nomacro
+ 417 02cc EFFF0010 	b $L32
+ 418 02d0 2C0023A6 	sh $3,44($17)
+ 419              	.set macro
+ 420              	.set reorder
+ 421              	
+ 422              	.end _ZN6SnesIO13UpdateJoyPadsEv
+ 423              	$Lfe6:
+ 424              	.size _ZN6SnesIO13UpdateJoyPadsEv,$Lfe6-_ZN6SnesIO13UpdateJoyPadsEv
+ 425              	.align 2
+ 426 02d4 00000000 	.p2align 3,,7
+ 427              	.globl _ZN6SnesIOC2Ev
+ 428              	.ent _ZN6SnesIOC2Ev
+ 429              	_ZN6SnesIOC2Ev:
+ 430              	.frame $sp,16,$31
+ 431              	.mask 0x80000000,-16
+ 432              	.fmask 0x00000000,0
+ 433 02d8 F0FFBD27 	subu $sp,$sp,16
+ 434 02dc 0000BFFF 	sd $31,0($sp)
+ 435 02e0 0000000C 	jal _ZN6SnesIO5ResetEv
+ 435      00000000 
+ 436 02e8 0000BFDF 	ld $31,0($sp)
+ 437              	
+ 438              	.set noreorder
+ 439              	.set nomacro
+ 440 02ec 0800E003 	j $31
+ 441 02f0 1000BD27 	addu $sp,$sp,16
+ 442              	.set macro
+ 443              	.set reorder
+ 444              	
+ 445              	.end _ZN6SnesIOC2Ev
+ 446              	$Lfe7:
+ 447              	.size _ZN6SnesIOC2Ev,$Lfe7-_ZN6SnesIOC2Ev
+GAS LISTING  			page 9
+
+
+ 448              	.align 2
+ 449 02f4 00000000 	.p2align 3,,7
+ 450              	.globl _ZN6SnesIOC1Ev
+ 451              	.ent _ZN6SnesIOC1Ev
+ 452              	_ZN6SnesIOC1Ev:
+ 453              	.frame $sp,16,$31
+ 454              	.mask 0x80000000,-16
+ 455              	.fmask 0x00000000,0
+ 456 02f8 F0FFBD27 	subu $sp,$sp,16
+ 457 02fc 0000BFFF 	sd $31,0($sp)
+ 458 0300 0000000C 	jal _ZN6SnesIO5ResetEv
+ 458      00000000 
+ 459 0308 0000BFDF 	ld $31,0($sp)
+ 460              	
+ 461              	.set noreorder
+ 462              	.set nomacro
+ 463 030c 0800E003 	j $31
+ 464 0310 1000BD27 	addu $sp,$sp,16
+ 465              	.set macro
+ 466              	.set reorder
+ 467              	
+ 468              	.end _ZN6SnesIOC1Ev
+ 469              	$Lfe8:
+ 470              	.size _ZN6SnesIOC1Ev,$Lfe8-_ZN6SnesIOC1Ev
+ 471              	.align 2
+ 472 0314 00000000 	.p2align 3,,7
+ 473              	.globl _ZN6SnesIO5ResetEv
+ 474              	.ent _ZN6SnesIO5ResetEv
+ 475              	_ZN6SnesIO5ResetEv:
+ 476              	.frame $sp,32,$31
+ 477              	.mask 0x80010000,-16
+ 478              	.fmask 0x00000000,0
+ 479 0318 E0FFBD27 	subu $sp,$sp,32
+ 480 031c 2D280000 	move $5,$0
+ 481 0320 38000624 	dli $6,0x38
+ 482 0324 1000BFFF 	sd $31,16($sp)
+ 483 0328 0000B0FF 	sd $16,0($sp)
+ 484              	.set noreorder
+ 485              	.set nomacro
+ 486 032c 0000000C 	jal memset
+ 487 0330 2D808000 	move $16,$4
+ 488              	.set macro
+ 489              	.set reorder
+ 490              	
+ 491 0334 1000BFDF 	ld $31,16($sp)
+ 492 0338 02000324 	li $3,2
+ 493 033c 1B0003A2 	sb $3,27($16)
+ 494 0340 0000B0DF 	ld $16,0($sp)
+ 495              	
+ 496              	.set noreorder
+ 497              	.set nomacro
+ 498 0344 0800E003 	j $31
+ 499 0348 2000BD27 	addu $sp,$sp,32
+ 500              	.set macro
+ 501              	.set reorder
+ 502              	
+ 503              	.end _ZN6SnesIO5ResetEv
+GAS LISTING  			page 10
+
+
+ 504              	$Lfe9:
+ 505              	.size _ZN6SnesIO5ResetEv,$Lfe9-_ZN6SnesIO5ResetEv
+ 506              	.align 2
+ 507 034c 00000000 	.p2align 3,,7
+ 508              	.globl _ZN6SnesIO10LatchInputEP12EmuSysInputT
+ 509              	.ent _ZN6SnesIO10LatchInputEP12EmuSysInputT
+ 510              	_ZN6SnesIO10LatchInputEP12EmuSysInputT:
+ 511              	.frame $sp,0,$31
+ 512              	.mask 0x00000000,0
+ 513              	.fmask 0x00000000,0
+ 514              	.set noreorder
+ 515              	.set nomacro
+ 516 0350 0900A010 	beq $5,$0,$L45
+ 517 0354 FFFF0224 	li $2,-1
+ 518              	.set macro
+ 519              	.set reorder
+ 520              	
+ 521 0358 0700A268 	ldl $2,7($5)
+ 522 035c 0000A26C 	ldr $2,0($5)
+ 523 0360 0800A384 	lh $3,8($5)
+ 524 0364 070082B0 	sdl $2,7($4)
+ 525 0368 000082B4 	sdr $2,0($4)
+ 526              	.set noreorder
+ 527              	.set nomacro
+ 528 036c 0800E003 	j $31
+ 529 0370 080083A4 	sh $3,8($4)
+ 530              	.set macro
+ 531              	.set reorder
+ 532              	
+ 533 0374 00000000 	.p2align 3
+ 534              	$L45:
+ 535 0378 080082A4 	sh $2,8($4)
+ 536 037c 000082A4 	sh $2,0($4)
+ 537 0380 020082A4 	sh $2,2($4)
+ 538 0384 040082A4 	sh $2,4($4)
+ 539              	.set noreorder
+ 540              	.set nomacro
+ 541 0388 0800E003 	j $31
+ 542 038c 060082A4 	sh $2,6($4)
+ 543              	.set macro
+ 544              	.set reorder
+ 545              	
+ 546              	.end _ZN6SnesIO10LatchInputEP12EmuSysInputT
+ 547              	$Lfe10:
+ 548              	.size _ZN6SnesIO10LatchInputEP12EmuSysInputT,$Lfe10-_ZN6SnesIO10LatchInputEP12EmuSysInputT
+ 549              	.ident "GCC: (GNU) 3.2.2"

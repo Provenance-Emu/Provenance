@@ -12,6 +12,7 @@ import PVLogging
 import PVCoreBridge
 import PVPlists
 import PVPrimitives
+import PVRealm
 
 #if canImport(UIKit)
 import UIKit

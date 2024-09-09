@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xml-stylesheet type="text/xsl" href="pd65816.xsl" ?>                       
+<cpu name="65816">
+	<ops>
+		<!-- ops disregarding emulation mode -->
+		<op code="0xEA" cycles="2">                                              <NOP/> </op>
+
+		<op code="0x78" cycles="2">                                              
+		<SEI/> 
+			SF		I,1
+		</op>
+		<op code="0x58" cycles="2">                                              
+		<CLI/> 
+			SF		I,0
+		</op>
+
+		<op code="0xB8" cycles="2">
+		<CLV/> 
+			SF		V,0
+		</op>
+
+		<op code="0x18" cycles="2">                                              
+		<CLC/> 
+			SF		C,0
+		</op>		
+		<op code="0x38" cycles="2">                                              
+		<SEC/> 
+			SF		C,1
+		</op>		
+
+		<op code="0xD8" cycles="2">                                              
+		<CLD/> 
+			SF		D,0
+		</op>
+		<op code="0xF8" cycles="2">                                              
+		<SED/> 
+			SF		D,1
+		</op>
+
+		<op code="0xFB" cycles="2">                                              
+		<xce />
+			LF		$1,E
+			LF		$0,C
+			SF		C,$1
+			SF		E,$0
+		</op>
+		
+		<op code="0x5B" cycles="2">                                              
+			<tcd />
+			LR.16	$0,A
+			SR		DP,$0
+			SF.16	Z,$0
+			SF.16	N,$0
+		</op>
+
+		<op code="0x7B" cycles="2">                                              
+			<TDC/> 
+			LR		$0,DP
+			SR.16		A,$0
+			SF.16	Z,$0
+			SF.16	N,$0
+		</op>
+		<op code="0x3B" cycles="2">                                              
+			<TSC/> 
+			LR.16	$0,S
+			SR.16	A,$0
+			SF.16	Z,$0
+			SF.16	N,$0
+		</op>
+	
+		<op code="0x1B" cycles="2" e="0">                                              
+			<tas />
+			LR.16	$0,A
+			SR.16	S,$0
+		</op>
+
+		<op code="0x1B" cycles="2" e="1">  
+			<tas />                                            
+			LR.8	$0,A
+			SR.8	S,$0
+		</op>
+	
+		
+		<op code="0x8A" cycles="2" size="a"> 
+			<txa/>
+			LR.x	$0,X
+			SR.x	A,$0                                             
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+		<op code="0x98" cycles="2" size="a">                                              
+			<tya/>
+			LR.x	$0,Y
+			SR.x	A,$0                                             
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+
+		<op code="0xA8" cycles="2" size="x"> 
+			<tay/>
+			LR.x	$0,A
+			SR.x	Y,$0                   
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+
+		<op code="0xAA" cycles="2" size="x"> 
+			<tax/>
+			LR.x	$0,A
+			SR.x	X,$0                                             
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+
+		<op code="0x9B" cycles="2" size="x">                                              
+		<TXY/> 
+			LR.16	$0,X
+			SR.16	Y,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+
+		<op code="0xBB" cycles="2" size="x">                                              
+		<TYX/> 
+			LR.16	$0,Y
+			SR.16	X,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+
+
+
+		<op code="0x9A" cycles="2" e="0">                                              
+			<txs />
+			LR.16	$0,X
+			SR.16	S,$0
+		</op>
+
+		<op code="0x9A" cycles="2" e="1">  
+			<txs />                                            
+			LR.8	$0,X
+			SR.8	S,$0
+		</op>
+
+
+		<op code="0xBA" cycles="2" size="x">                                              
+			<tsx />
+			LR.x	$0,S
+			SR.x	X,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+
+
+
+
+		<op code="0xCA" cycles="2" size="x" flags=""   >                                     <DEX/> </op>
+		<op code="0x88" cycles="2" size="x" flags=""   >                                     <DEY/> </op>
+		<op code="0xE8" cycles="2" size="x" flags=""   >                                     <INX/> </op>
+		<op code="0xC8" cycles="2" size="x" flags=""   >                                     <INY/> </op>
+
+
+		<op code="0x61" cycles="6" size="a" flags="12" > <addr_dp_ix_indirect/>      <read/> <ADC/> </op>
+		<op code="0x63" cycles="4" size="a" flags="1"  > <addr_sr/>                  <read/> <ADC/> </op>
+		<op code="0x65" cycles="3" size="a" flags="12" > <addr_dp/>                  <read/> <ADC/> </op>
+		<op code="0x67" cycles="6" size="a" flags="12" > <addr_dp_indirectlong/>     <read/> <ADC/> </op>
+		<op code="0x69" cycles="2" size="a" flags="1"  > <addr_imma/>                        <ADC/> </op>
+		<op code="0x6D" cycles="4" size="a" flags="1"  > <addr_abs/>                 <read/> <ADC/> </op>
+		<op code="0x6F" cycles="5" size="a" flags="1"  > <addr_abslong/>             <read/> <ADC/> </op>
+		<op code="0x71" cycles="5" size="a" flags="123"> <addr_dp_indirect_iy/>      <read/> <ADC/> </op>
+		<op code="0x72" cycles="5" size="a" flags="12" > <addr_dp_indirect/>         <read/> <ADC/> </op>
+		<op code="0x73" cycles="7" size="a" flags="1"  > <addr_sr_indirect_iy/>      <read/> <ADC/> </op>         
+		<op code="0x75" cycles="4" size="a" flags="12" > <addr_dp_ix/>               <read/> <ADC/> </op>
+		<op code="0x77" cycles="6" size="a" flags="12" > <addr_dp_indirectlong_iy/>  <read/> <ADC/> </op>
+		<op code="0x79" cycles="4" size="a" flags="13" > <addr_abs_iy/>              <read/> <ADC/> </op>
+		<op code="0x7D" cycles="4" size="a" flags="13" > <addr_abs_ix/>              <read/> <ADC/> </op>
+		<op code="0x7F" cycles="5" size="a" flags="1"  > <addr_abslong_ix/>          <read/> <ADC/> </op>
+
+		<op code="0xE1" cycles="6" size="a" flags="12" > <addr_dp_ix_indirect/>      <read/> <SBC/> </op>
+		<op code="0xE3" cycles="4" size="a" flags="1"  > <addr_sr/>                  <read/> <SBC/> </op>
+		<op code="0xE5" cycles="3" size="a" flags="12" > <addr_dp/>                  <read/> <SBC/> </op>
+		<op code="0xE7" cycles="6" size="a" flags="12" > <addr_dp_indirectlong/>     <read/> <SBC/> </op>
+		<op code="0xE9" cycles="2" size="a" flags="1"  > <addr_imma/>                        <SBC/> </op>
+		<op code="0xED" cycles="4" size="a" flags="1"  > <addr_abs/>                 <read/> <SBC/> </op>
+		<op code="0xEF" cycles="5" size="a" flags="1"  > <addr_abslong/>             <read/> <SBC/> </op>
+		<op code="0xF1" cycles="5" size="a" flags="123"> <addr_dp_indirect_iy/>      <read/> <SBC/> </op>
+		<op code="0xF2" cycles="5" size="a" flags="12" > <addr_dp_indirect/>         <read/> <SBC/> </op>
+		<op code="0xF3" cycles="7" size="a" flags="1"  > <addr_sr_indirect_iy/>      <read/> <SBC/> </op>         
+		<op code="0xF5" cycles="4" size="a" flags="12" > <addr_dp_ix/>               <read/> <SBC/> </op>
+		<op code="0xF7" cycles="6" size="a" flags="12" > <addr_dp_indirectlong_iy/>  <read/> <SBC/> </op>
+		<op code="0xF9" cycles="4" size="a" flags="13" > <addr_abs_iy/>              <read/> <SBC/> </op>
+		<op code="0xFD" cycles="4" size="a" flags="13" > <addr_abs_ix/>              <read/> <SBC/> </op>
+		<op code="0xFF" cycles="5" size="a" flags="1"  > <addr_abslong_ix/>          <read/> <SBC/> </op>
+
+	
+		<op code="0xA9" cycles="2" size="a" flags="1"  > <addr_imma/>                        <LDA/> </op>
+		<op code="0xAD" cycles="4" size="a" flags="1"  > <addr_abs/>                 <read/> <LDA/> </op>
+		<op code="0xAF" cycles="5" size="a" flags="1"  > <addr_abslong/>             <read/> <LDA/> </op>
+		<op code="0xBF" cycles="5" size="a" flags="1"  > <addr_abslong_ix/>          <read/> <LDA/> </op>
+		<op code="0xA1" cycles="6" size="a" flags="12" > <addr_dp_ix_indirect/>      <read/> <LDA/> </op>
+		<op code="0xA3" cycles="4" size="a" flags="1"  > <addr_sr/>                  <read/> <LDA/> </op>
+		<op code="0xA5" cycles="3" size="a" flags="12" > <addr_dp/>                  <read/> <LDA/> </op>
+		<op code="0xA7" cycles="6" size="a" flags="12" > <addr_dp_indirectlong/>     <read/> <LDA/> </op>
+		<op code="0xB1" cycles="5" size="a" flags="123"> <addr_dp_indirect_iy/>      <read/> <LDA/> </op>
+		<op code="0xB2" cycles="5" size="a" flags="12" > <addr_dp_indirect/>         <read/> <LDA/> </op>
+		<op code="0xB3" cycles="7" size="a" flags="1"  > <addr_sr_indirect_iy/>      <read/> <LDA/> </op>         
+		<op code="0xB5" cycles="4" size="a" flags="12" > <addr_dp_ix/>               <read/> <LDA/> </op>
+		<op code="0xB7" cycles="6" size="a" flags="12" > <addr_dp_indirectlong_iy/>  <read/> <LDA/> </op>
+		<op code="0xB9" cycles="4" size="a" flags="13" > <addr_abs_iy/>              <read/> <LDA/> </op>
+		<op code="0xBD" cycles="4" size="a" flags="13" > <addr_abs_ix/>              <read/> <LDA/> </op>
+
+		<op code="0x8D" cycles="4" size="a" flags="1"  > <addr_abs/>                         <STA/> </op>
+		<op code="0x8F" cycles="5" size="a" flags="1"  > <addr_abslong/>                     <STA/> </op>
+		<op code="0x9F" cycles="5" size="a" flags="1"  > <addr_abslong_ix/>                  <STA/> </op>
+		<op code="0x81" cycles="6" size="a" flags="12" > <addr_dp_ix_indirect/>              <STA/> </op>
+		<op code="0x83" cycles="4" size="a" flags="1"  > <addr_sr/>                          <STA/> </op>
+		<op code="0x85" cycles="3" size="a" flags="12" > <addr_dp/>                          <STA/> </op>
+		<op code="0x87" cycles="6" size="a" flags="12" > <addr_dp_indirectlong/>             <STA/> </op>
+		<op code="0x91" cycles="6" size="a" flags="12" > <addr_dp_indirect_iy/>      <cycle/>        <STA/> </op>
+		<op code="0x92" cycles="5" size="a" flags="12" > <addr_dp_indirect/>                 <STA/> </op>
+		<op code="0x93" cycles="7" size="a" flags="1"  > <addr_sr_indirect_iy/>              <STA/> </op>         
+		<op code="0x95" cycles="4" size="a" flags="12" > <addr_dp_ix/>                       <STA/> </op>
+		<op code="0x97" cycles="6" size="a" flags="12" > <addr_dp_indirectlong_iy/>          <STA/> </op>
+		<op code="0x99" cycles="5" size="a" flags="1"  > <addr_abs_iy/>              <cycle/>        <STA/> </op>
+		<op code="0x9D" cycles="5" size="a" flags="1"  > <addr_abs_ix/>              <cycle/>        <STA/> </op>
+
+		<op code="0x86" cycles="3" size="x" flags="2A" > <addr_dp/>                          <STX/> </op>
+		<op code="0x8E" cycles="4" size="x" flags="A"  > <addr_abs/>                         <STX/> </op>
+		<op code="0x96" cycles="4" size="x" flags="2A" > <addr_dp_iy/>                       <STX/> </op>
+		<op code="0x84" cycles="3" size="x" flags="2A" > <addr_dp/>                          <STY/> </op>
+		<op code="0x8C" cycles="4" size="x" flags="A"  > <addr_abs/>                         <STY/> </op>
+		<op code="0x94" cycles="4" size="x" flags="2A" > <addr_dp_ix/>                       <STY/> </op>
+		<op code="0x64" cycles="3" size="a" flags="12" > <addr_dp/>                          <STZ/> </op>
+		<op code="0x74" cycles="4" size="a" flags="12" > <addr_dp_ix/>                       <STZ/> </op>
+		<op code="0x9C" cycles="4" size="a" flags="1"  > <addr_abs/>                         <STZ/> </op>
+		<op code="0x9E" cycles="5" size="a" flags="1"  > <addr_abs_ix/>              <cycle/>        <STZ/> </op>
+
+		<op code="0xA2" cycles="2" size="x" flags="A"  > <addr_immx/>                        <LDX/> </op>
+		<op code="0xA6" cycles="3" size="x" flags="2A" > <addr_dp/>                  <read/> <LDX/> </op>
+		<op code="0xAE" cycles="4" size="x" flags="A"  > <addr_abs/>                 <read/> <LDX/> </op>
+		<op code="0xB6" cycles="4" size="x" flags="2A" > <addr_dp_iy/>               <read/> <LDX/> </op>
+		<op code="0xBE" cycles="4" size="x" flags="2A" > <addr_abs_iy/>              <read/> <LDX/> </op>
+		<op code="0xA0" cycles="2" size="x" flags="A"  > <addr_immx/>                        <LDY/> </op>
+		<op code="0xA4" cycles="3" size="x" flags="2A" > <addr_dp/>                  <read/> <LDY/> </op>
+		<op code="0xAC" cycles="4" size="x" flags="A"  > <addr_abs/>                 <read/> <LDY/> </op>
+		<op code="0xB4" cycles="4" size="x" flags="2A" > <addr_dp_ix/>               <read/> <LDY/> </op>
+		<op code="0xBC" cycles="4" size="x" flags="2A" > <addr_abs_ix/>              <read/> <LDY/> </op>
+
+		<op code="0x21" cycles="6" size="a" flags="12" > <addr_dp_ix_indirect/>      <read/> <AND/> </op>
+		<op code="0x23" cycles="4" size="a" flags="1"  > <addr_sr/>                  <read/> <AND/> </op>
+		<op code="0x25" cycles="3" size="a" flags="12" > <addr_dp/>                  <read/> <AND/> </op>
+		<op code="0x27" cycles="6" size="a" flags="12" > <addr_dp_indirectlong/>     <read/> <AND/> </op>
+		<op code="0x29" cycles="2" size="a" flags="1"  > <addr_imma/>                        <AND/> </op>
+		<op code="0x2D" cycles="4" size="a" flags="1"  > <addr_abs/>                 <read/> <AND/> </op>
+		<op code="0x2F" cycles="5" size="a" flags="1"  > <addr_abslong/>             <read/> <AND/> </op>
+		<op code="0x31" cycles="5" size="a" flags="123"> <addr_dp_indirect_iy/>      <read/> <AND/> </op>
+		<op code="0x32" cycles="5" size="a" flags="12" > <addr_dp_indirect/>         <read/> <AND/> </op>
+		<op code="0x33" cycles="7" size="a" flags="1"  > <addr_sr_indirect_iy/>      <read/> <AND/> </op>         
+		<op code="0x35" cycles="4" size="a" flags="12" > <addr_dp_ix/>               <read/> <AND/> </op>
+		<op code="0x37" cycles="6" size="a" flags="12" > <addr_dp_indirectlong_iy/>  <read/> <AND/> </op>
+		<op code="0x39" cycles="4" size="a" flags="13" > <addr_abs_iy/>              <read/> <AND/> </op>
+		<op code="0x3D" cycles="4" size="a" flags="13" > <addr_abs_ix/>              <read/> <AND/> </op>
+		<op code="0x3F" cycles="5" size="a" flags="1"  > <addr_abslong_ix/>          <read/> <AND/> </op>
+		
+		<op code="0x41" cycles="6" size="a" flags="12" > <addr_dp_ix_indirect/>      <read/> <EOR/> </op>
+		<op code="0x43" cycles="4" size="a" flags="1"  > <addr_sr/>                  <read/> <EOR/> </op>
+		<op code="0x45" cycles="3" size="a" flags="12" > <addr_dp/>                  <read/> <EOR/> </op>
+		<op code="0x47" cycles="6" size="a" flags="12" > <addr_dp_indirectlong/>     <read/> <EOR/> </op>
+		<op code="0x49" cycles="2" size="a" flags="1"  > <addr_imma/>                        <EOR/> </op>
+		<op code="0x4D" cycles="4" size="a" flags="1"  > <addr_abs/>                 <read/> <EOR/> </op>
+		<op code="0x4F" cycles="5" size="a" flags="1"  > <addr_abslong/>             <read/> <EOR/> </op>
+		<op code="0x51" cycles="5" size="a" flags="123"> <addr_dp_indirect_iy/>      <read/> <EOR/> </op>
+		<op code="0x52" cycles="5" size="a" flags="12" > <addr_dp_indirect/>         <read/> <EOR/> </op>
+		<op code="0x53" cycles="7" size="a" flags="1"  > <addr_sr_indirect_iy/>      <read/> <EOR/> </op>         
+		<op code="0x55" cycles="4" size="a" flags="12" > <addr_dp_ix/>               <read/> <EOR/> </op>
+		<op code="0x57" cycles="6" size="a" flags="12" > <addr_dp_indirectlong_iy/>  <read/> <EOR/> </op>
+		<op code="0x59" cycles="4" size="a" flags="13" > <addr_abs_iy/>              <read/> <EOR/> </op>
+		<op code="0x5D" cycles="4" size="a" flags="13" > <addr_abs_ix/>              <read/> <EOR/> </op>
+		<op code="0x5F" cycles="5" size="a" flags="1"  > <addr_abslong_ix/>          <read/> <EOR/> </op>
+
+		<op code="0x03" cycles="4" size="a" flags="1"  > <addr_sr/>                  <read/> <ORA/> </op>
+		<op code="0x05" cycles="3" size="a" flags="12" > <addr_dp/>                  <read/> <ORA/> </op>
+		<op code="0x07" cycles="6" size="a" flags="12" > <addr_dp_indirectlong/>     <read/> <ORA/> </op>
+		<op code="0x09" cycles="2" size="a" flags="1"  > <addr_imma/>                        <ORA/> </op>
+		<op code="0x0D" cycles="4" size="a" flags="1"  > <addr_abs/>                 <read/> <ORA/> </op>
+		<op code="0x0F" cycles="5" size="a" flags="1"  > <addr_abslong/>             <read/> <ORA/> </op>
+		<op code="0x11" cycles="5" size="a" flags="123"> <addr_dp_indirect_iy/>      <read/> <ORA/> </op>
+		<op code="0x12" cycles="5" size="a" flags="12" > <addr_dp_indirect/>         <read/> <ORA/> </op>
+		<op code="0x13" cycles="7" size="a" flags="1"  > <addr_sr_indirect_iy/>      <read/> <ORA/> </op>         
+		<op code="0x15" cycles="4" size="a" flags="12" > <addr_dp_ix/>               <read/> <ORA/> </op>
+		<op code="0x17" cycles="6" size="a" flags="12" > <addr_dp_indirectlong_iy/>  <read/> <ORA/> </op>
+		<op code="0x01" cycles="6" size="a" flags="12" > <addr_dp_ix_indirect/>      <read/> <ORA/> </op>
+		<op code="0x19" cycles="4" size="a" flags="13" > <addr_abs_iy/>              <read/> <ORA/> </op>
+		<op code="0x1D" cycles="4" size="a" flags="13" > <addr_abs_ix/>              <read/> <ORA/> </op>
+		<op code="0x1F" cycles="5" size="a" flags="1"  > <addr_abslong_ix/>          <read/> <ORA/> </op>
+
+
+		<op code="0xC1" cycles="6" size="a" flags="12" > <addr_dp_ix_indirect/>      <read/> <CMP/> </op>
+		<op code="0xC3" cycles="4" size="a" flags="1"  > <addr_sr/>                  <read/> <CMP/> </op>
+		<op code="0xC5" cycles="3" size="a" flags="12" > <addr_dp/>                  <read/> <CMP/> </op>
+		<op code="0xC7" cycles="6" size="a" flags="12" > <addr_dp_indirectlong/>     <read/> <CMP/> </op>
+		<op code="0xC9" cycles="2" size="a" flags="1"  > <addr_imma/>                        <CMP/> </op>
+		<op code="0xCD" cycles="4" size="a" flags="1"  > <addr_abs/>                 <read/> <CMP/> </op>
+		<op code="0xCF" cycles="5" size="a" flags="1"  > <addr_abslong/>             <read/> <CMP/> </op>
+		<op code="0xD1" cycles="5" size="a" flags="123"> <addr_dp_indirect_iy/>      <read/> <CMP/> </op>
+		<op code="0xD2" cycles="5" size="a" flags="12" > <addr_dp_indirect/>         <read/> <CMP/> </op>
+		<op code="0xD3" cycles="7" size="a" flags="1"  > <addr_sr_indirect_iy/>      <read/> <CMP/> </op>         
+		<op code="0xD5" cycles="4" size="a" flags="12" > <addr_dp_ix/>               <read/> <CMP/> </op>
+		<op code="0xD7" cycles="6" size="a" flags="12" > <addr_dp_indirectlong_iy/>  <read/> <CMP/> </op>
+		<op code="0xD9" cycles="4" size="a" flags="13" > <addr_abs_iy/>              <read/> <CMP/> </op>
+		<op code="0xDD" cycles="4" size="a" flags="13" > <addr_abs_ix/>              <read/> <CMP/> </op>
+		<op code="0xDF" cycles="5" size="a" flags="1"  > <addr_abslong_ix/>          <read/> <CMP/> </op>
+		<op code="0xE0" cycles="2" size="x" flags="A"  > <addr_immx/>                        <CPX/> </op>
+		<op code="0xE4" cycles="3" size="x" flags="2A" > <addr_dp/>                  <read/> <CPX/> </op>
+		<op code="0xEC" cycles="4" size="x" flags="A"  > <addr_abs/>                 <read/> <CPX/> </op>
+		<op code="0xC0" cycles="2" size="x" flags="A"  > <addr_immx/>                        <CPY/> </op>
+		<op code="0xC4" cycles="3" size="x" flags="2A" > <addr_dp/>                  <read/> <CPY/> </op>
+		<op code="0xCC" cycles="4" size="x" flags="A"  > <addr_abs/>                 <read/> <CPY/> </op>
+
+		<op code="0x20" cycles="6"> <addr_abs_zero/>           	<JSR/> 	</op>
+		<op code="0x4C" cycles="3"> <addr_abs_zero/>                                  <JMP/> </op>
+
+		<op code="0x22" cycles="8"> <addr_abslong/>             <JSL/> </op>
+		<op code="0x5C" cycles="4"> <addr_abslong/>                              <JMPL/> </op>
+
+		<op code="0x6C" cycles="5" flags="BC"> <addr_abs_indirect/>                         <JMP/> </op>
+		<op code="0xDC" cycles="6"> <addr_abs_indirectlong/>                     <JMPL/> </op>
+
+		<op code="0xFC" cycles="8"> <addr_pb_abs_ix_indirect/>     <JSR/> </op>
+		<op code="0x7C" cycles="6"> <addr_pb_abs_ix_indirect/>                      <JMP/> </op>
+
+
+
+
+		<op code="0x60" cycles="6">
+		<RTS/> 
+			POP.16		$0
+			ADD			$0,1
+			SR.16		PC,$0
+		</op>
+
+		<op code="0x6B" cycles="6">                                              
+		<RTL/> 
+			POP.24		$0
+			ADD			$0,1
+			SR.24		PC,$0
+		</op>
+
+		<op code="0x40" cycles="7" e="0">
+		<RTI/> 
+			POP.8		$0
+			SR			P,$0
+			POP.24		$0
+			SR.24		PC,$0
+		</op>
+
+		<op code="0x40" cycles="6" e="1">
+		<RTI/> 
+			POP.8		$0
+			SR			P,$0
+			POP.16		$0
+			SR.16		PC,$0
+		</op>
+
+
+		<op code="0x3A" cycles="2" size="a" flags=""   >                                     <DEA/> </op>
+		<op code="0x1A" cycles="2" size="a" flags=""   >                                     <INA/> </op>
+	
+		<op code="0x0A" cycles="2" size="a" flags=""   >                                     <ASLA/></op>
+		<op code="0x4A" cycles="2" size="a" flags=""   >                                     <LSRA/></op>
+		<op code="0x2A" cycles="2" size="a" flags=""   >                                     <ROLA/></op>
+		<op code="0x6A" cycles="2" size="a" flags=""   >                                     <RORA/></op>
+
+		<op code="0xC6" cycles="5" size="a" flags="25" > <addr_dp/>                  <read/> <DEC/> </op>
+		<op code="0xCE" cycles="6" size="a" flags="5"  > <addr_abs/>                 <read/> <DEC/> </op>
+		<op code="0xD6" cycles="6" size="a" flags="25" > <addr_dp_ix/>               <read/> <DEC/> </op>
+		<op code="0xDE" cycles="7" size="a" flags="56" > <addr_abs_ix/>              <read/> <DEC/> </op>
+
+		<op code="0xE6" cycles="5" size="a" flags="25" > <addr_dp/>                  <read/> <INC/> </op>
+		<op code="0xEE" cycles="6" size="a" flags="5"  > <addr_abs/>                 <read/> <INC/> </op>
+		<op code="0xF6" cycles="6" size="a" flags="25" > <addr_dp_ix/>               <read/> <INC/> </op>
+		<op code="0xFE" cycles="7" size="a" flags="56" > <addr_abs_ix/>              <read/> <INC/> </op>
+
+	
+        
+		<op code="0x06" cycles="5" size="a" flags="25" > <addr_dp/>                  <read/> <ASL/> </op>
+		<op code="0x0E" cycles="6" size="a" flags="5"  > <addr_abs/>                 <read/> <ASL/> </op>
+		<op code="0x16" cycles="6" size="a" flags="25" > <addr_dp_ix/>               <read/> <ASL/> </op>
+		<op code="0x1E" cycles="7" size="a" flags="56" > <addr_abs_ix/>              <read/> <ASL/> </op>
+        
+		<op code="0x46" cycles="5" size="a" flags="25" > <addr_dp/>                  <read/> <LSR/> </op>
+		<op code="0x4E" cycles="6" size="a" flags="5"  > <addr_abs/>                 <read/> <LSR/> </op>
+		<op code="0x56" cycles="6" size="a" flags="25" > <addr_dp_ix/>               <read/> <LSR/> </op>
+		<op code="0x5E" cycles="7" size="a" flags="56" > <addr_abs_ix/>              <read/> <LSR/> </op>
+        
+		<op code="0x26" cycles="5" size="a" flags="25" > <addr_dp/>                  <read/> <ROL/> </op>
+		<op code="0x2E" cycles="6" size="a" flags="5"  > <addr_abs/>                 <read/> <ROL/> </op>
+		<op code="0x36" cycles="6" size="a" flags="25" > <addr_dp_ix/>               <read/> <ROL/> </op>
+		<op code="0x3E" cycles="7" size="a" flags="56" > <addr_abs_ix/>              <read/> <ROL/> </op>
+        
+		<op code="0x66" cycles="5" size="a" flags="25" > <addr_dp/>                  <read/> <ROR/> </op>
+		<op code="0x6E" cycles="6" size="a" flags="5"  > <addr_abs/>                 <read/> <ROR/> </op>
+		<op code="0x76" cycles="6" size="a" flags="25" > <addr_dp_ix/>               <read/> <ROR/> </op>
+		<op code="0x7E" cycles="7" size="a" flags="56" > <addr_abs_ix/>              <read/> <ROR/> </op>
+        
+		<op code="0x24" cycles="3" size="a" flags="12"> <addr_dp/>                  <read/> <BIT/> </op>
+		<op code="0x2C" cycles="4" size="a" flags="1">  <addr_abs/>                 <read/> <BIT/> </op>
+		<op code="0x34" cycles="4" size="a" flags="12"> <addr_dp_ix/>               <read/> <BIT/> </op>
+		<op code="0x3C" cycles="4" size="a" flags="13"> <addr_abs_ix/>              <read/> <BIT/> </op>
+		<op code="0x89" cycles="2" size="a" flags="1">  <addr_imma/>                        <BITI/> </op>
+
+		<op code="0x14" cycles="5" size="a" flags="25"> <addr_dp/>                  <read/> <TRB/> </op>
+		<op code="0x1C" cycles="6" size="a" flags="5">  <addr_abs/>                 <read/> <TRB/> </op>
+		<op code="0x04" cycles="5" size="a" flags="25"> <addr_dp/>                  <read/> <TSB/> </op>
+		<op code="0x0C" cycles="6" size="a" flags="5">  <addr_abs/>                 <read/> <TSB/> </op>
+
+<!--
+		
+		<op code="0xBA" cycles="1" size="x">                                     <TSX/> </op>
+		<op code="0x9A" cycles="1" size="x">                                     <TXS/> </op>
+
+		<op code="0x82" cycles="1"> <addr_pcrellong/>                            <BRL/> </op>
+		<op code="0xFC" cycles="1"> <addr_abs_ix_indirect/>                      <JSR/> </op>
+
+		<op code="0x00" cycles="1"> <addr_immediate8/>                           <BRK/> </op>
+		<op code="0x02" cycles="1"> <addr_immediate8/>                           <COP/> </op>
+		<op code="0xDB" cycles="1">                                              <STP/> </op>
+		<op code="0xCB" cycles="1">                                              <WAI/> </op>
+		<op code="0x42" cycles="1">                                              <WDM/> </op>
+
+		<op code="0xF4" cycles="1"> <addr_abs/>                                  <PEA/> </op>
+		<op code="0xD4" cycles="1"> <addr_dp_indirect/>                          <PEI/> </op>
+		<op code="0x62" cycles="1"> <addr_pcrel_indirect/>                       <PER/> </op>
+-->
+
+		<op code="0x62" cycles="6"> 
+		<PER/> 
+			LI.16	$0
+			LR		$1,PC
+			ADD		$0,$1
+			PUSH.16	$0
+		</op>
+
+
+		<op code="0xF4" cycles="5"> 
+		<PEA/> 
+			LI.16	$0
+			PUSH.16	$0
+		</op>
+
+
+		<op code="0xD4" cycles="6"> 
+		<PEI/> 
+        	<addr_dp_indirect/>
+			PUSH.16	$0
+		</op>
+
+
+
+		<op code="0x4B" cycles="3">                                              
+		<PHK/> 
+			LR		$0,PC
+			SHR		$0,16
+			PUSH.8	$0
+		</op>
+
+		<op code="0x08" cycles="3">                                              
+		<PHP/> 
+			LR		$0,P
+			PUSH.8	$0
+		</op>
+
+		<op code="0x28" cycles="4">                                              
+		<PLP/> 
+			POP.8	$0
+			SR		P,$0
+		</op>
+
+		<op code="0x48" cycles="3" size="a" flags="1">                                     
+		<PHA/> 
+			LR.x	$0,A
+			PUSH.x	$0
+		</op>
+
+		<op code="0x68" cycles="4" size="a" flags="1">                                     
+		<PLA/> 
+			POP.x	$0
+			SR.x	A,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+
+		<op code="0xDA" cycles="3" size="x" flags="A">                                     
+		<PHX/> 
+			LR.x	$0,X
+			PUSH.x	$0
+		</op>
+
+		<op code="0xFA" cycles="4" size="x" flags="A">                                     
+		<PLX/> 
+			POP.x	$0
+			SR.x	X,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+
+		<op code="0x5A" cycles="3" size="x" flags="A">                                     
+		<PHY/> 
+			LR.x	$0,Y
+			PUSH.x	$0
+		</op>
+
+		<op code="0x7A" cycles="4" size="x" flags="A">                                     
+		<PLY/> 
+			POP.x	$0
+			SR.x	Y,$0
+			SF.x	N,$0
+			SF.x	Z,$0
+		</op>
+
+		<op code="0x0B" cycles="4">                                              
+		<PHD/> 
+			LR		$0,DP
+			PUSH.16	$0
+		</op>
+
+		<op code="0x2B" cycles="5">                                              
+		<PLD/> 
+			POP.16	$0
+			SR		DP,$0
+			SF.16	N,$0
+			SF.16	Z,$0
+		</op>
+
+		<op code="0x8B" cycles="3">                                              
+		<PHB/> 
+			LR		$0,DB
+			SHR		$0,16
+			PUSH.8	$0
+		</op>
+
+		<op code="0xAB" cycles="4">                                              
+		<PLB/> 
+			POP.8	$0
+			SF.8	N,$0
+			SF.8	Z,$0
+			SHL		$0,16
+			SR		DB,$0
+		</op>
+
+		<op code="0xEB" cycles="3">
+		<XBA/> 
+			LR.16	$0,A
+			LR.16	$1,A
+			SHR		$0,8
+			SHL		$1,8
+			OR		$1,$0
+			SR.16	A,$1
+			SF.8	N,$0	; set flag based on AL
+			SF.8	Z,$0
+		</op>
+
+
+
+
+
+
+		<op code="0x00" cycles="8" e="0">
+		<BRK/> 
+        	LR			$2,PC
+            ADD			$2,1
+            PUSH.24		$2
+            LR			$0,P
+            PUSH.8		$0
+            SF			D,0
+            SF			I,1
+            LR			$0,0x00FFE6
+            LM.16		$0,$0
+            SR.24		PC,$0
+		</op>
+
+
+		<op code="0x02" cycles="8">
+		<COP/> 
+        	LR			$2,PC
+            ADD			$2,1
+            PUSH.24		$2
+            LR			$0,P
+            PUSH.8		$0
+            SF			D,0
+            SF			I,1
+            LR			$0,0x00FFE4
+            LM.16		$0,$0
+            SR.24		PC,$0
+		</op>
+
+
+
+
+		<op code="0x00" cycles="8" e="1">
+		<BRK/> 
+        	LR			$2,PC
+            ADD			$2,1
+            PUSH.16		$2
+            LR			$0,P
+            PUSH.8		$0
+            SF			D,0
+            SF			I,1
+            LR			$0,0x00FFF6
+            LM.16		$0,$0
+            SR.24		PC,$0
+		</op>
+
+
+
+		
+		<!--
+		<op code="0xE2" cycles="3"> 
+			<addr_imm8/>                          
+			<SEP />
+		</op>
+		<op code="0xC2" cycles="3"> 
+			<addr_imm8/>                           
+			<REP />
+		</op>
+		-->
+
+
+	</ops>
+</cpu>
+
+
+
+
+
+
+
+
+
+

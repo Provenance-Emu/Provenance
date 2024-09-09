@@ -6,6 +6,7 @@
 //
 
 import PVPrimitives
+import PVRealm
 
 public protocol Packageable {
     associatedtype PackageType: Package

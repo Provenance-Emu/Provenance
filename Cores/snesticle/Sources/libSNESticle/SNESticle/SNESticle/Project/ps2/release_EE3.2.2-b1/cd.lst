@@ -1,0 +1,186 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/ps2/cd.c"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.globl cdvdInitialised
+   5              	.data
+   6              	.align 2
+   7              	.type cdvdInitialised,@object
+   8              	.size cdvdInitialised,4
+   9              	cdvdInitialised:
+  10 0000 00000000 	.word 0
+  11              	.text
+  12              	.align 2
+  13              	.p2align 3,,7
+  14              	.globl cdvdExit
+  15              	.ent cdvdExit
+  16              	cdvdExit:
+  17              	.frame $sp,0,$31
+  18              	.mask 0x00000000,0
+  19              	.fmask 0x00000000,0
+  20 0000 0000023C 	lui $2,%hi(cdvdInitialised)
+  21              	.set noreorder
+  22              	.set nomacro
+  23 0004 0800E003 	j $31
+  24 0008 000040AC 	sw $0,%lo(cdvdInitialised)($2)
+  25              	.set macro
+  26              	.set reorder
+  27              	
+  28              	.end cdvdExit
+  29              	$Lfe1:
+  30              	.size cdvdExit,$Lfe1-cdvdExit
+  31              	.align 2
+  32 000c 00000000 	.p2align 3,,7
+  33              	.globl cdvdInit
+  34              	.ent cdvdInit
+  35              	cdvdInit:
+  36              	.frame $sp,80,$31
+  37              	.mask 0x80070000,-16
+  38              	.fmask 0x00000000,0
+  39 0010 0000023C 	lui $2,%hi(cdvdCd)
+  40 0014 B0FFBD27 	subu $sp,$sp,80
+  41 0018 00004224 	addiu $2,$2,%lo(cdvdCd)
+  42 001c 4000BFFF 	sd $31,64($sp)
+  43 0020 240040AC 	sw $0,36($2)
+  44 0024 3000B2FF 	sd $18,48($sp)
+  45 0028 2D904000 	move $18,$2
+  46 002c 2000B1FF 	sd $17,32($sp)
+  47 0030 2D888000 	move $17,$4
+  48 0034 1000B0FF 	sd $16,16($sp)
+  49 0038 2D804000 	move $16,$2
+  50 003c 0080053C 	li $5,-2147483648
+  51              	$L17:
+  52 0040 2D200002 	move $4,$16
+  53 0044 9205A534 	ori $5,$5,0x592
+  54              	.set noreorder
+  55              	.set nomacro
+  56 0048 0000000C 	jal SifBindRpc
+  57 004c 2D300000 	move $6,$0
+GAS LISTING  			page 2
+
+
+  58              	.set macro
+  59              	.set reorder
+  60              	
+  61              	.set noreorder
+  62              	.set nomacro
+  63 0050 26004004 	bltz $2,$L2
+  64 0054 FFFF0324 	li $3,-1
+  65              	.set macro
+  66              	.set reorder
+  67              	
+  68 0058 2400028E 	lw $2,36($16)
+  69              	
+  70              	.set noreorder
+  71              	.set nomacro
+  72 005c 0E004054 	bnel $2,$0,$L16
+  73 0060 2400428E 	lw $2,36($18)
+  74              	.set macro
+  75              	.set reorder
+  76              	
+  77              	
+  78 0064 0F00023C 	li $2,983040
+  79 0068 FEFF0324 	li $3,-2
+  80 006c FFFF4234 	ori $2,$2,0xffff
+  81              	.p2align 3
+  82              	$L8:
+  83              	
+  84 0070 00000000 	nop
+  85 0074 00000000 	nop
+  86 0078 00000000 	nop
+  87 007c 00000000 	nop
+  88 0080 00000000 	nop
+  89              	
+  90              	
+  91 0084 FFFF4224 	addu $2,$2,-1
+  92              	.set noreorder
+  93 0088 00000000 	nop
+  94              	.set reorder
+  95 008c F8FF4314 	bne $2,$3,$L8
+  95      00000000 
+  96 0094 2400428E 	lw $2,36($18)
+  97              	$L16:
+  98              	.set noreorder
+  99              	.set nomacro
+ 100 0098 E9FF4010 	beq $2,$0,$L17
+ 101 009c 0080053C 	li $5,-2147483648
+ 102              	.set macro
+ 103              	.set reorder
+ 104              	
+ 105 00a0 0000023C 	lui $2,%hi(sendBuffer)
+ 106 00a4 0000043C 	lui $4,%hi(cdvdCd)
+ 107 00a8 30004724 	addiu $7,$2,%lo(sendBuffer)
+ 108 00ac 00008424 	addiu $4,$4,%lo(cdvdCd)
+ 109 00b0 2D280000 	move $5,$0
+ 110 00b4 2D300000 	move $6,$0
+ 111 00b8 04000824 	li $8,4
+ 112 00bc 2D480000 	move $9,$0
+ 113 00c0 2D500000 	move $10,$0
+GAS LISTING  			page 3
+
+
+ 114 00c4 2D580000 	move $11,$0
+ 115 00c8 300051AC 	sw $17,%lo(sendBuffer)($2)
+ 116              	.set noreorder
+ 117              	.set nomacro
+ 118 00cc 0000000C 	jal SifCallRpc
+ 119 00d0 0000A0AF 	sw $0,0($sp)
+ 120              	.set macro
+ 121              	.set reorder
+ 122              	
+ 123              	.set noreorder
+ 124              	.set nomacro
+ 125 00d4 05004004 	bltz $2,$L2
+ 126 00d8 FFFF0324 	li $3,-1
+ 127              	.set macro
+ 128              	.set reorder
+ 129              	
+ 130 00dc 01000324 	li $3,1
+ 131 00e0 0000023C 	lui $2,%hi(cdvdInitialised)
+ 132 00e4 000043AC 	sw $3,%lo(cdvdInitialised)($2)
+ 133 00e8 2D180000 	move $3,$0
+ 134              	$L2:
+ 135 00ec 4000BFDF 	ld $31,64($sp)
+ 136 00f0 2D106000 	move $2,$3
+ 137 00f4 3000B2DF 	ld $18,48($sp)
+ 138 00f8 2000B1DF 	ld $17,32($sp)
+ 139 00fc 1000B0DF 	ld $16,16($sp)
+ 140              	
+ 141              	.set noreorder
+ 142              	.set nomacro
+ 143 0100 0800E003 	j $31
+ 144 0104 5000BD27 	addu $sp,$sp,80
+ 145              	.set macro
+ 146              	.set reorder
+ 147              	
+ 148              	.end cdvdInit
+ 149              	$Lfe2:
+ 150              	.size cdvdInit,$Lfe2-cdvdInit
+ 151              	.section .bss
+ 152              	cdvdCd:
+ 153              	.align 6
+ 154 0000 00000000 	.space 40
+ 154      00000000 
+ 154      00000000 
+ 154      00000000 
+ 154      00000000 
+ 155              	.previous
+ 156              	.section .bss
+ 157              	sendBuffer:
+ 158 0028 00000000 	.align 4
+ 158      00000000 
+ 159 0030 00000000 	.space 256
+ 159      00000000 
+ 159      00000000 
+ 159      00000000 
+ 159      00000000 
+ 160 0130 00000000 	.previous
+ 160      00000000 
+GAS LISTING  			page 4
+
+
+ 160      00000000 
+ 160      00000000 
+ 161              	.ident "GCC: (GNU) 3.2.2"

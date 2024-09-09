@@ -13,6 +13,10 @@ import Foundation
 //public typealias Defaults = _Defaults
 //public typealias Default = _Default
 
+fileprivate var IsAppStore: Bool {
+    Bundle.main.infoDictionary?["ALTDeviceID"] != nil
+}
+
 public
 extension Defaults.Keys {
     static let autoSave = Key<Bool>("autoSave", default: true)
@@ -95,7 +99,7 @@ public extension Defaults.Keys {
     static let useMetal = Key<Bool>("useMetal", default: false)
 #endif
     static let autoJIT = Key<Bool>("autoJIT", default: false)
-#if os(macOS) || targetEnvironment(macCatalyst)
+#if os(macOS) || targetEnvironment(macCatalyst) || APP_STORE
     static let useSwiftUI = Key<Bool>("useSwiftUI", default: true)
 #elseif os(visionOS)
     static let useSwiftUI = Key<Bool>("useSwiftUI", default: true)

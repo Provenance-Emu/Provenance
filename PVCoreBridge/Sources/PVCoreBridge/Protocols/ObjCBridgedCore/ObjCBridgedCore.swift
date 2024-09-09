@@ -7,10 +7,14 @@
 
 import Foundation
 
-@objc public protocol ObjCBridgedCoreBridge: EmulatorCoreIOInterface, PVRenderDelegate {
+@objc public protocol ObjCBridgedCoreBridge: EmulatorCoreIOInterface, EmulatorCoreRunLoop, PVRenderDelegate {
  
 }
 
-@objc public protocol ObjCBridedCore {
-    var core: ObjCBridgedCoreBridge { get }
+// Protocol for Swift PVEmulatorCores to subscribe to if they marshall to an ObjC core of type <ObjCBridgedCoreBridge>
+// which will also probalby be of class `PVCoreObjCBridge` but we don't inherit that for some reason I haven't decided yet.
+public protocol ObjCBridgedCore<Core> {
+    associatedtype Core = ObjCBridgedCoreBridge
+//    typealias Core = any ObjCBridgedCoreBridge
+    var core: Core { get }
 }

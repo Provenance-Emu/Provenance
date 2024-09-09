@@ -1,5 +1,5 @@
 {
-  "originHash" : "901d7bb78450a66bd38bb5546d9c5f46c321d2b20be7cb3e2098e909890c6984",
+  "originHash" : "5c1020a0ac8f807a1667489418eb2c8d5182a4a3a2a8cfe3353057c5638bce15",
   "pins" : [
     {
       "identity" : "bitbytedata",
@@ -31,10 +31,10 @@
     {
       "identity" : "lighter",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Lighter-swift/Lighter.git",
+      "location" : "https://github.com/JoeMatt/Lighter.git",
       "state" : {
-        "revision" : "4fd43bbfa2099f7b189a8bf899afbc818430647a",
-        "version" : "1.4.4"
+        "branch" : "develop",
+        "revision" : "b1c78989db429349427cd90b9b99925ff3253853"
       }
     },
     {
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "c2552e1d36867cb42b28130e894a81fc17081062",
-        "version" : "14.12.0"
+        "revision" : "b36f2436c2746c32b1f93dcc06ea8b859671a767",
+        "version" : "14.12.1"
       }
     },
     {
@@ -69,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift.git",
       "state" : {
-        "revision" : "9815e6c29d43cb5314add5dff8705c5476ab556c",
-        "version" : "10.53.0"
+        "revision" : "9b9992d59a5148eb557e6c0445fec05009022c8c",
+        "version" : "10.53.1"
       }
     },
     {
@@ -193,7 +193,7 @@
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-syntax.git",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
         "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
         "version" : "509.1.1"
@@ -211,10 +211,10 @@
     {
       "identity" : "swiftmacros",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ShenghaiWang/SwiftMacros.git",
+      "location" : "https://github.com/JoeMatt/SwiftMacros.git",
       "state" : {
-        "revision" : "fcb92029bb19594f9ae9a079e8aa5fc7acc77c10",
-        "version" : "1.4.1"
+        "branch" : "main",
+        "revision" : "c7430902f056432a07803f8580263b4acd7753f1"
       }
     },
     {

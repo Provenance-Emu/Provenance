@@ -10,11 +10,12 @@
 #import <Foundation/Foundation.h>
 #import <GameController/GameController.h>
 #import <MetalKit/MTKView.h>
-@import PVCoreBridge;
+#import <PVCoreBridge/PVCoreBridge.h>
 #import <PVObjCUtils/PVObjCUtils.h>
 #else
 @import Foundation;
-@import PVCoreBridge;
+#import <PVCoreBridge/PVCoreBridge.h>
+//@import PVCoreBridge;
 @import PVObjCUtils;
 #if !TARGET_OS_WATCH
 @import GameController;

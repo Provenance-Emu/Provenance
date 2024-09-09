@@ -47,7 +47,7 @@ public extension PVRenderDelegate {
 
 
 public
-extension PVRenderDelegate where Self: ObjCBridedCore {
+extension PVRenderDelegate where Self: ObjCBridgedCore, Self.Core: PVRenderDelegate {
     func startRenderingOnAlternateThread() {
         (self as PVRenderDelegate).startRenderingOnAlternateThread()
         core.startRenderingOnAlternateThread()

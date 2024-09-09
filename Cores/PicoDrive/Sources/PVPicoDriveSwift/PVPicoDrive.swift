@@ -12,7 +12,7 @@ import Foundation
 
 @objc
 @objcMembers
-public class PicodriveGameCore: PVEmulatorCore {
+public class PicodriveGameCore: PVEmulatorCore, @unchecked Sendable {
 
     public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
 

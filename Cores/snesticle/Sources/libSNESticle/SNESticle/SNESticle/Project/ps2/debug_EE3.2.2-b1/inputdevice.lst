@@ -1,0 +1,629 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../Gep/Source/common/inputdevice.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.text
+   5              	.align 2
+   6              	.p2align 3,,7
+   7              	.globl _ZN12CInputDeviceC2Ev
+   8              	.ent _ZN12CInputDeviceC2Ev
+   9              	_ZN12CInputDeviceC2Ev:
+  10              	.frame $sp,16,$31
+  11              	.mask 0x80000000,-16
+  12              	.fmask 0x00000000,0
+  13 0000 0000023C 	lui $2,%hi(_ZTV12CInputDevice+8)
+  14 0004 040080AC 	sw $0,4($4)
+  15 0008 08004224 	addiu $2,$2,%lo(_ZTV12CInputDevice+8)
+  16 000c 140080AC 	sw $0,20($4)
+  17 0010 000082AC 	sw $2,0($4)
+  18 0014 F0FFBD27 	subu $sp,$sp,16
+  19 0018 080080AC 	sw $0,8($4)
+  20 001c 0000BFFF 	sd $31,0($sp)
+  21 0020 0000000C 	jal _ZN12CInputDevice10ResetStateEv
+  21      00000000 
+  22 0028 0000BFDF 	ld $31,0($sp)
+  23              	
+  24              	.set noreorder
+  25              	.set nomacro
+  26 002c 0800E003 	j $31
+  27 0030 1000BD27 	addu $sp,$sp,16
+  28              	.set macro
+  29              	.set reorder
+  30              	
+  31              	.end _ZN12CInputDeviceC2Ev
+  32              	$Lfe1:
+  33              	.size _ZN12CInputDeviceC2Ev,$Lfe1-_ZN12CInputDeviceC2Ev
+  34              	.align 2
+  35 0034 00000000 	.p2align 3,,7
+  36              	.globl _ZN12CInputDeviceC1Ev
+  37              	.ent _ZN12CInputDeviceC1Ev
+  38              	_ZN12CInputDeviceC1Ev:
+  39              	.frame $sp,16,$31
+  40              	.mask 0x80000000,-16
+  41              	.fmask 0x00000000,0
+  42 0038 0000023C 	lui $2,%hi(_ZTV12CInputDevice+8)
+  43 003c 040080AC 	sw $0,4($4)
+  44 0040 08004224 	addiu $2,$2,%lo(_ZTV12CInputDevice+8)
+  45 0044 140080AC 	sw $0,20($4)
+  46 0048 000082AC 	sw $2,0($4)
+  47 004c F0FFBD27 	subu $sp,$sp,16
+  48 0050 080080AC 	sw $0,8($4)
+  49 0054 0000BFFF 	sd $31,0($sp)
+  50 0058 0000000C 	jal _ZN12CInputDevice10ResetStateEv
+  50      00000000 
+  51 0060 0000BFDF 	ld $31,0($sp)
+  52              	
+  53              	.set noreorder
+  54              	.set nomacro
+  55 0064 0800E003 	j $31
+GAS LISTING  			page 2
+
+
+  56 0068 1000BD27 	addu $sp,$sp,16
+  57              	.set macro
+  58              	.set reorder
+  59              	
+  60              	.end _ZN12CInputDeviceC1Ev
+  61              	$Lfe2:
+  62              	.size _ZN12CInputDeviceC1Ev,$Lfe2-_ZN12CInputDeviceC1Ev
+  63              	.align 2
+  64 006c 00000000 	.p2align 3,,7
+  65              	.globl _ZN12CInputDevice10ResetStateEv
+  66              	.ent _ZN12CInputDevice10ResetStateEv
+  67              	_ZN12CInputDevice10ResetStateEv:
+  68              	.frame $sp,32,$31
+  69              	.mask 0x80010000,-16
+  70              	.fmask 0x00000000,0
+  71 0070 E0FFBD27 	subu $sp,$sp,32
+  72 0074 2D280000 	move $5,$0
+  73 0078 0000B0FF 	sd $16,0($sp)
+  74 007c 80000624 	dli $6,0x80
+  75 0080 2D808000 	move $16,$4
+  76 0084 1000BFFF 	sd $31,16($sp)
+  77 0088 18008424 	addu $4,$4,24
+  78              	.set noreorder
+  79              	.set nomacro
+  80 008c 0000000C 	jal memset
+  81 0090 0C001026 	addu $16,$16,12
+  82              	.set macro
+  83              	.set reorder
+  84              	
+  85 0094 2D200002 	move $4,$16
+  86 0098 08000624 	dli $6,0x8
+  87              	.set noreorder
+  88              	.set nomacro
+  89 009c 0000000C 	jal memset
+  90 00a0 2D280000 	move $5,$0
+  91              	.set macro
+  92              	.set reorder
+  93              	
+  94 00a4 0000B0DF 	ld $16,0($sp)
+  95 00a8 1000BFDF 	ld $31,16($sp)
+  96              	
+  97              	.set noreorder
+  98              	.set nomacro
+  99 00ac 0800E003 	j $31
+ 100 00b0 2000BD27 	addu $sp,$sp,32
+ 101              	.set macro
+ 102              	.set reorder
+ 103              	
+ 104              	.end _ZN12CInputDevice10ResetStateEv
+ 105              	$Lfe3:
+ 106              	.size _ZN12CInputDevice10ResetStateEv,$Lfe3-_ZN12CInputDevice10ResetStateEv
+ 107              	.align 2
+ 108 00b4 00000000 	.p2align 3,,7
+ 109              	.globl _ZN12CInputDevice7GetBitsEv
+ 110              	.ent _ZN12CInputDevice7GetBitsEv
+ 111              	_ZN12CInputDevice7GetBitsEv:
+ 112              	.frame $sp,0,$31
+GAS LISTING  			page 3
+
+
+ 113              	.mask 0x00000000,0
+ 114              	.fmask 0x00000000,0
+ 115 00b8 1400868C 	lw $6,20($4)
+ 116 00bc 20000224 	li $2,32
+ 117 00c0 2D280000 	move $5,$0
+ 118 00c4 2100C328 	slt $3,$6,33
+ 119 00c8 0A304300 	movz $6,$2,$3
+ 120              	.set noreorder
+ 121              	.set nomacro
+ 122 00cc 0A00C018 	blez $6,$L14
+ 123 00d0 2D380000 	move $7,$0
+ 124              	.set macro
+ 125              	.set reorder
+ 126              	
+ 127 00d4 18008424 	addu $4,$4,24
+ 128              	.p2align 3
+ 129              	$L12:
+ 130 00d8 00008290 	lbu $2,0($4)
+ 131 00dc 01008424 	addu $4,$4,1
+ 132 00e0 0410A200 	sll $2,$2,$5
+ 133 00e4 0100A524 	addu $5,$5,1
+ 134 00e8 2A18A600 	slt $3,$5,$6
+ 135              	.set noreorder
+ 136 00ec 00000000 	nop
+ 137              	.set reorder
+ 138              	.set noreorder
+ 139              	.set nomacro
+ 140 00f0 F9FF6014 	bne $3,$0,$L12
+ 141 00f4 2538E200 	or $7,$7,$2
+ 142              	.set macro
+ 143              	.set reorder
+ 144              	
+ 145              	$L14:
+ 146              	.set noreorder
+ 147              	.set nomacro
+ 148 00f8 0800E003 	j $31
+ 149 00fc 2D10E000 	move $2,$7
+ 150              	.set macro
+ 151              	.set reorder
+ 152              	
+ 153              	.end _ZN12CInputDevice7GetBitsEv
+ 154              	$Lfe4:
+ 155              	.size _ZN12CInputDevice7GetBitsEv,$Lfe4-_ZN12CInputDevice7GetBitsEv
+ 156              	.align 2
+ 157              	.p2align 3,,7
+ 158              	.globl _ZN12CInputDevice4PollEv
+ 159              	.ent _ZN12CInputDevice4PollEv
+ 160              	_ZN12CInputDevice4PollEv:
+ 161              	.frame $sp,0,$31
+ 162              	.mask 0x00000000,0
+ 163              	.fmask 0x00000000,0
+ 164 0100 0800E003 	j $31
+ 164      00000000 
+ 165              	.end _ZN12CInputDevice4PollEv
+ 166              	$Lfe5:
+ 167              	.size _ZN12CInputDevice4PollEv,$Lfe5-_ZN12CInputDevice4PollEv
+ 168              	.align 2
+GAS LISTING  			page 4
+
+
+ 169              	.p2align 3,,7
+ 170              	.globl _ZN9CInputMapC2Ev
+ 171              	.ent _ZN9CInputMapC2Ev
+ 172              	_ZN9CInputMapC2Ev:
+ 173              	.frame $sp,32,$31
+ 174              	.mask 0x80010000,-16
+ 175              	.fmask 0x00000000,0
+ 176 0108 E0FFBD27 	subu $sp,$sp,32
+ 177 010c 1000BFFF 	sd $31,16($sp)
+ 178 0110 0000B0FF 	sd $16,0($sp)
+ 179              	.set noreorder
+ 180              	.set nomacro
+ 181 0114 0000000C 	jal _ZN12CInputDeviceC2Ev
+ 182 0118 2D808000 	move $16,$4
+ 183              	.set macro
+ 184              	.set reorder
+ 185              	
+ 186 011c 1000BFDF 	ld $31,16($sp)
+ 187 0120 0000023C 	lui $2,%hi(_ZTV9CInputMap+8)
+ 188 0124 9C0000AE 	sw $0,156($16)
+ 189 0128 08004224 	addiu $2,$2,%lo(_ZTV9CInputMap+8)
+ 190 012c 000002AE 	sw $2,0($16)
+ 191 0130 0000B0DF 	ld $16,0($sp)
+ 192              	
+ 193              	.set noreorder
+ 194              	.set nomacro
+ 195 0134 0800E003 	j $31
+ 196 0138 2000BD27 	addu $sp,$sp,32
+ 197              	.set macro
+ 198              	.set reorder
+ 199              	
+ 200              	.end _ZN9CInputMapC2Ev
+ 201              	$Lfe6:
+ 202              	.size _ZN9CInputMapC2Ev,$Lfe6-_ZN9CInputMapC2Ev
+ 203              	.align 2
+ 204 013c 00000000 	.p2align 3,,7
+ 205              	.globl _ZN9CInputMapC1Ev
+ 206              	.ent _ZN9CInputMapC1Ev
+ 207              	_ZN9CInputMapC1Ev:
+ 208              	.frame $sp,32,$31
+ 209              	.mask 0x80010000,-16
+ 210              	.fmask 0x00000000,0
+ 211 0140 E0FFBD27 	subu $sp,$sp,32
+ 212 0144 1000BFFF 	sd $31,16($sp)
+ 213 0148 0000B0FF 	sd $16,0($sp)
+ 214              	.set noreorder
+ 215              	.set nomacro
+ 216 014c 0000000C 	jal _ZN12CInputDeviceC2Ev
+ 217 0150 2D808000 	move $16,$4
+ 218              	.set macro
+ 219              	.set reorder
+ 220              	
+ 221 0154 1000BFDF 	ld $31,16($sp)
+ 222 0158 0000023C 	lui $2,%hi(_ZTV9CInputMap+8)
+ 223 015c 9C0000AE 	sw $0,156($16)
+ 224 0160 08004224 	addiu $2,$2,%lo(_ZTV9CInputMap+8)
+ 225 0164 000002AE 	sw $2,0($16)
+GAS LISTING  			page 5
+
+
+ 226 0168 0000B0DF 	ld $16,0($sp)
+ 227              	
+ 228              	.set noreorder
+ 229              	.set nomacro
+ 230 016c 0800E003 	j $31
+ 231 0170 2000BD27 	addu $sp,$sp,32
+ 232              	.set macro
+ 233              	.set reorder
+ 234              	
+ 235              	.end _ZN9CInputMapC1Ev
+ 236              	$Lfe7:
+ 237              	.size _ZN9CInputMapC1Ev,$Lfe7-_ZN9CInputMapC1Ev
+ 238              	.align 2
+ 239 0174 00000000 	.p2align 3,,7
+ 240              	.globl _ZN9CInputMap10SetMappingEiPh
+ 241              	.ent _ZN9CInputMap10SetMappingEiPh
+ 242              	_ZN9CInputMap10SetMappingEiPh:
+ 243              	.frame $sp,0,$31
+ 244              	.mask 0x00000000,0
+ 245              	.fmask 0x00000000,0
+ 246 0178 2D408000 	move $8,$4
+ 247 017c 9C0085AC 	sw $5,156($4)
+ 248              	.set noreorder
+ 249              	.set nomacro
+ 250 0180 0900A018 	blez $5,$L26
+ 251 0184 2D380000 	move $7,$0
+ 252              	.set macro
+ 253              	.set reorder
+ 254              	
+ 255              	.p2align 3
+ 256              	$L23:
+ 257 0188 2110C700 	addu $2,$6,$7
+ 258 018c 2120E800 	addu $4,$7,$8
+ 259 0190 00004390 	lbu $3,0($2)
+ 260 0194 0100E724 	addu $7,$7,1
+ 261 0198 2A10E500 	slt $2,$7,$5
+ 262              	.set noreorder
+ 263 019c 00000000 	nop
+ 264              	.set reorder
+ 265              	.set noreorder
+ 266              	.set nomacro
+ 267 01a0 F9FF4014 	bne $2,$0,$L23
+ 268 01a4 A00083A0 	sb $3,160($4)
+ 269              	.set macro
+ 270              	.set reorder
+ 271              	
+ 272              	$L26:
+ 273 01a8 0800E003 	j $31
+ 273      00000000 
+ 274              	.end _ZN9CInputMap10SetMappingEiPh
+ 275              	$Lfe8:
+ 276              	.size _ZN9CInputMap10SetMappingEiPh,$Lfe8-_ZN9CInputMap10SetMappingEiPh
+ 277              	.align 2
+ 278              	.p2align 3,,7
+ 279              	.globl _ZN9CInputMap9SetDeviceEP12IInputDevice
+ 280              	.ent _ZN9CInputMap9SetDeviceEP12IInputDevice
+ 281              	_ZN9CInputMap9SetDeviceEP12IInputDevice:
+GAS LISTING  			page 6
+
+
+ 282              	.frame $sp,0,$31
+ 283              	.mask 0x00000000,0
+ 284              	.fmask 0x00000000,0
+ 285              	.set noreorder
+ 286              	.set nomacro
+ 287 01b0 0800E003 	j $31
+ 288 01b4 980085AC 	sw $5,152($4)
+ 289              	.set macro
+ 290              	.set reorder
+ 291              	
+ 292              	.end _ZN9CInputMap9SetDeviceEP12IInputDevice
+ 293              	$Lfe9:
+ 294              	.size _ZN9CInputMap9SetDeviceEP12IInputDevice,$Lfe9-_ZN9CInputMap9SetDeviceEP12IInputDevice
+ 295              	.align 2
+ 296              	.p2align 3,,7
+ 297              	.globl _ZN9CInputMap4PollEv
+ 298              	.ent _ZN9CInputMap4PollEv
+ 299              	_ZN9CInputMap4PollEv:
+ 300              	.frame $sp,64,$31
+ 301              	.mask 0x80070000,-16
+ 302              	.fmask 0x00000000,0
+ 303 01b8 C0FFBD27 	subu $sp,$sp,64
+ 304 01bc 0000B0FF 	sd $16,0($sp)
+ 305 01c0 2D808000 	move $16,$4
+ 306 01c4 3000BFFF 	sd $31,48($sp)
+ 307 01c8 2000B2FF 	sd $18,32($sp)
+ 308 01cc 1000B1FF 	sd $17,16($sp)
+ 309 01d0 9800848C 	lw $4,152($4)
+ 310              	
+ 311              	.set noreorder
+ 312              	.set nomacro
+ 313 01d4 0A008014 	bne $4,$0,$L44
+ 314 01d8 02000224 	li $2,2
+ 315              	.set macro
+ 316              	.set reorder
+ 317              	
+ 318 01dc 080000AE 	sw $0,8($16)
+ 319 01e0 040002AE 	sw $2,4($16)
+ 320 01e4 140000AE 	sw $0,20($16)
+ 321              	$L28:
+ 322 01e8 3000BFDF 	ld $31,48($sp)
+ 323              	$L45:
+ 324 01ec 2000B2DF 	ld $18,32($sp)
+ 325 01f0 1000B1DF 	ld $17,16($sp)
+ 326 01f4 0000B0DF 	ld $16,0($sp)
+ 327              	
+ 328              	.set noreorder
+ 329              	.set nomacro
+ 330 01f8 0800E003 	j $31
+ 331 01fc 4000BD27 	addu $sp,$sp,64
+ 332              	.set macro
+ 333              	.set reorder
+ 334              	
+ 335              	.p2align 3
+ 336              	$L44:
+ 337 0200 0000838C 	lw $3,0($4)
+ 338              	
+GAS LISTING  			page 7
+
+
+ 339 0204 0400628C 	lw $2,4($3)
+ 340              	
+ 341              	.set noreorder
+ 342              	.set nomacro
+ 343 0208 09F84000 	jal $31,$2
+ 344 020c 2D900000 	move $18,$0
+ 345              	.set macro
+ 346              	.set reorder
+ 347              	
+ 348 0210 9800058E 	lw $5,152($16)
+ 349 0214 040002AE 	sw $2,4($16)
+ 350 0218 0000A38C 	lw $3,0($5)
+ 351              	
+ 352 021c 1000628C 	lw $2,16($3)
+ 353              	
+ 354              	.set noreorder
+ 355              	.set nomacro
+ 356 0220 09F84000 	jal $31,$2
+ 357 0224 2D20A000 	move $4,$5
+ 358              	.set macro
+ 359              	.set reorder
+ 360              	
+ 361              	.set noreorder
+ 362              	.set nomacro
+ 363 0228 0E004018 	blez $2,$L42
+ 364 022c 080002AE 	sw $2,8($16)
+ 365              	.set macro
+ 366              	.set reorder
+ 367              	
+ 368 0230 0C001126 	addu $17,$16,12
+ 369 0234 00000000 	.p2align 3
+ 370              	$L34:
+ 371 0238 9800048E 	lw $4,152($16)
+ 372 023c 2D284002 	move $5,$18
+ 373 0240 0000838C 	lw $3,0($4)
+ 374              	
+ 375 0244 1400628C 	lw $2,20($3)
+ 376              	
+ 377              	.set noreorder
+ 378              	.set nomacro
+ 379 0248 09F84000 	jal $31,$2
+ 380 024c 01005226 	addu $18,$18,1
+ 381              	.set macro
+ 382              	.set reorder
+ 383              	
+ 384 0250 0800038E 	lw $3,8($16)
+ 385 0254 000022AE 	sw $2,0($17)
+ 386 0258 2A184302 	slt $3,$18,$3
+ 387              	.set noreorder
+ 388              	.set nomacro
+ 389 025c F6FF6014 	bne $3,$0,$L34
+ 390 0260 04003126 	addu $17,$17,4
+ 391              	.set macro
+ 392              	.set reorder
+ 393              	
+ 394              	$L42:
+ 395 0264 9C00028E 	lw $2,156($16)
+GAS LISTING  			page 8
+
+
+ 396 0268 2D900000 	move $18,$0
+ 397              	.set noreorder
+ 398              	.set nomacro
+ 399 026c DEFF4018 	blez $2,$L28
+ 400 0270 140002AE 	sw $2,20($16)
+ 401              	.set macro
+ 402              	.set reorder
+ 403              	
+ 404 0274 2D880002 	move $17,$16
+ 405              	.p2align 3
+ 406              	$L39:
+ 407 0278 9800048E 	lw $4,152($16)
+ 408 027c 01005226 	addu $18,$18,1
+ 409 0280 0000838C 	lw $3,0($4)
+ 410              	
+ 411 0284 0C00628C 	lw $2,12($3)
+ 412              	
+ 413              	.set noreorder
+ 414              	.set nomacro
+ 415 0288 09F84000 	jal $31,$2
+ 416 028c A0002592 	lbu $5,160($17)
+ 417              	.set macro
+ 418              	.set reorder
+ 419              	
+ 420 0290 1400038E 	lw $3,20($16)
+ 421 0294 180022A2 	sb $2,24($17)
+ 422 0298 2A184302 	slt $3,$18,$3
+ 423              	.set noreorder
+ 424              	.set nomacro
+ 425 029c F6FF6014 	bne $3,$0,$L39
+ 426 02a0 01003126 	addu $17,$17,1
+ 427              	.set macro
+ 428              	.set reorder
+ 429              	
+ 430              	.set noreorder
+ 431              	.set nomacro
+ 432 02a4 D1FF0010 	b $L45
+ 433 02a8 3000BFDF 	ld $31,48($sp)
+ 434              	.set macro
+ 435              	.set reorder
+ 436              	
+ 437              	.end _ZN9CInputMap4PollEv
+ 438              	$Lfe10:
+ 439              	.size _ZN9CInputMap4PollEv,$Lfe10-_ZN9CInputMap4PollEv
+ 440              	.weak _ZTV9CInputMap
+ 441 02ac 00000000 	.section .gnu.linkonce.d._ZTV9CInputMap,"aw",@progbits
+ 442              	.align 3
+ 443              	.type _ZTV9CInputMap,@object
+ 444              	.size _ZTV9CInputMap,40
+ 445              	_ZTV9CInputMap:
+ 446 0000 00000000 	.word 0
+ 447 0004 00000000 	.word 0
+ 448 0008 00000000 	.word _ZN12CInputDevice10ResetStateEv
+ 449 000c 00000000 	.word _ZN12CInputDevice9GetStatusEv
+ 450 0010 00000000 	.word _ZN12CInputDevice13GetNumButtonsEv
+ 451 0014 00000000 	.word _ZN12CInputDevice14GetButtonStateEi
+ 452 0018 00000000 	.word _ZN12CInputDevice10GetNumAxesEv
+GAS LISTING  			page 9
+
+
+ 453 001c 00000000 	.word _ZN12CInputDevice12GetAxisStateE10InputAxisE
+ 454 0020 00000000 	.word _ZN12CInputDevice7GetBitsEv
+ 455 0024 00000000 	.word _ZN9CInputMap4PollEv
+ 456              	.weak _ZTV12CInputDevice
+ 457              	.section .gnu.linkonce.d._ZTV12CInputDevice,"aw",@progbits
+ 458              	.align 3
+ 459              	.type _ZTV12CInputDevice,@object
+ 460              	.size _ZTV12CInputDevice,40
+ 461              	_ZTV12CInputDevice:
+ 462 0000 00000000 	.word 0
+ 463 0004 00000000 	.word 0
+ 464 0008 00000000 	.word _ZN12CInputDevice10ResetStateEv
+ 465 000c 00000000 	.word _ZN12CInputDevice9GetStatusEv
+ 466 0010 00000000 	.word _ZN12CInputDevice13GetNumButtonsEv
+ 467 0014 00000000 	.word _ZN12CInputDevice14GetButtonStateEi
+ 468 0018 00000000 	.word _ZN12CInputDevice10GetNumAxesEv
+ 469 001c 00000000 	.word _ZN12CInputDevice12GetAxisStateE10InputAxisE
+ 470 0020 00000000 	.word _ZN12CInputDevice7GetBitsEv
+ 471 0024 00000000 	.word _ZN12CInputDevice4PollEv
+ 472              	.section .gnu.linkonce.t._ZN12CInputDevice13GetNumButtonsEv,"ax",@progbits
+ 473              	.align 2
+ 474              	.p2align 3,,7
+ 475              	.weak _ZN12CInputDevice13GetNumButtonsEv
+ 476              	.ent _ZN12CInputDevice13GetNumButtonsEv
+ 477              	_ZN12CInputDevice13GetNumButtonsEv:
+ 478              	.frame $sp,0,$31
+ 479              	.mask 0x00000000,0
+ 480              	.fmask 0x00000000,0
+ 481              	.set noreorder
+ 482              	.set nomacro
+ 483 0000 0800E003 	j $31
+ 484 0004 1400828C 	lw $2,20($4)
+ 485              	.set macro
+ 486              	.set reorder
+ 487              	
+ 488              	.end _ZN12CInputDevice13GetNumButtonsEv
+ 489              	$Lfe11:
+ 490              	.size _ZN12CInputDevice13GetNumButtonsEv,$Lfe11-_ZN12CInputDevice13GetNumButtonsEv
+ 491              	.section .gnu.linkonce.t._ZN12CInputDevice14GetButtonStateEi,"ax",@progbits
+ 492              	.align 2
+ 493              	.p2align 3,,7
+ 494              	.weak _ZN12CInputDevice14GetButtonStateEi
+ 495              	.ent _ZN12CInputDevice14GetButtonStateEi
+ 496              	_ZN12CInputDevice14GetButtonStateEi:
+ 497              	.frame $sp,0,$31
+ 498              	.mask 0x00000000,0
+ 499              	.fmask 0x00000000,0
+ 500 0000 1400828C 	lw $2,20($4)
+ 501 0004 2118A400 	addu $3,$5,$4
+ 502 0008 2A28A200 	slt $5,$5,$2
+ 503              	.set noreorder
+ 504              	.set nomacro
+ 505 000c 0200A010 	beq $5,$0,$L49
+ 506 0010 2D200000 	move $4,$0
+ 507              	.set macro
+ 508              	.set reorder
+ 509              	
+GAS LISTING  			page 10
+
+
+ 510 0014 18006490 	lbu $4,24($3)
+ 511              	$L49:
+ 512              	.set noreorder
+ 513              	.set nomacro
+ 514 0018 0800E003 	j $31
+ 515 001c 2D108000 	move $2,$4
+ 516              	.set macro
+ 517              	.set reorder
+ 518              	
+ 519              	.end _ZN12CInputDevice14GetButtonStateEi
+ 520              	$Lfe12:
+ 521              	.size _ZN12CInputDevice14GetButtonStateEi,$Lfe12-_ZN12CInputDevice14GetButtonStateEi
+ 522              	.section .gnu.linkonce.t._ZN12CInputDevice10GetNumAxesEv,"ax",@progbits
+ 523              	.align 2
+ 524              	.p2align 3,,7
+ 525              	.weak _ZN12CInputDevice10GetNumAxesEv
+ 526              	.ent _ZN12CInputDevice10GetNumAxesEv
+ 527              	_ZN12CInputDevice10GetNumAxesEv:
+ 528              	.frame $sp,0,$31
+ 529              	.mask 0x00000000,0
+ 530              	.fmask 0x00000000,0
+ 531              	.set noreorder
+ 532              	.set nomacro
+ 533 0000 0800E003 	j $31
+ 534 0004 0800828C 	lw $2,8($4)
+ 535              	.set macro
+ 536              	.set reorder
+ 537              	
+ 538              	.end _ZN12CInputDevice10GetNumAxesEv
+ 539              	$Lfe13:
+ 540              	.size _ZN12CInputDevice10GetNumAxesEv,$Lfe13-_ZN12CInputDevice10GetNumAxesEv
+ 541              	.section .gnu.linkonce.t._ZN12CInputDevice12GetAxisStateE10InputAxisE,"ax",@progbits
+ 542              	.align 2
+ 543              	.p2align 3,,7
+ 544              	.weak _ZN12CInputDevice12GetAxisStateE10InputAxisE
+ 545              	.ent _ZN12CInputDevice12GetAxisStateE10InputAxisE
+ 546              	_ZN12CInputDevice12GetAxisStateE10InputAxisE:
+ 547              	.frame $sp,0,$31
+ 548              	.mask 0x00000000,0
+ 549              	.fmask 0x00000000,0
+ 550 0000 0800838C 	lw $3,8($4)
+ 551 0004 80100500 	sll $2,$5,2
+ 552 0008 21104400 	addu $2,$2,$4
+ 553 000c 2A28A300 	slt $5,$5,$3
+ 554              	.set noreorder
+ 555              	.set nomacro
+ 556 0010 0200A010 	beq $5,$0,$L53
+ 557 0014 2D200000 	move $4,$0
+ 558              	.set macro
+ 559              	.set reorder
+ 560              	
+ 561 0018 0C00448C 	lw $4,12($2)
+ 562              	$L53:
+ 563              	.set noreorder
+ 564              	.set nomacro
+ 565 001c 0800E003 	j $31
+ 566 0020 2D108000 	move $2,$4
+GAS LISTING  			page 11
+
+
+ 567              	.set macro
+ 568              	.set reorder
+ 569              	
+ 570              	.end _ZN12CInputDevice12GetAxisStateE10InputAxisE
+ 571              	$Lfe14:
+ 572              	.size _ZN12CInputDevice12GetAxisStateE10InputAxisE,$Lfe14-_ZN12CInputDevice12GetAxisStateE10InputAxisE
+ 573 0024 00000000 	.section .gnu.linkonce.t._ZN12CInputDevice9GetStatusEv,"ax",@progbits
+ 574              	.align 2
+ 575              	.p2align 3,,7
+ 576              	.weak _ZN12CInputDevice9GetStatusEv
+ 577              	.ent _ZN12CInputDevice9GetStatusEv
+ 578              	_ZN12CInputDevice9GetStatusEv:
+ 579              	.frame $sp,0,$31
+ 580              	.mask 0x00000000,0
+ 581              	.fmask 0x00000000,0
+ 582              	.set noreorder
+ 583              	.set nomacro
+ 584 0000 0800E003 	j $31
+ 585 0004 0400828C 	lw $2,4($4)
+ 586              	.set macro
+ 587              	.set reorder
+ 588              	
+ 589              	.end _ZN12CInputDevice9GetStatusEv
+ 590              	$Lfe15:
+ 591              	.size _ZN12CInputDevice9GetStatusEv,$Lfe15-_ZN12CInputDevice9GetStatusEv
+ 592              	.ident "GCC: (GNU) 3.2.2"

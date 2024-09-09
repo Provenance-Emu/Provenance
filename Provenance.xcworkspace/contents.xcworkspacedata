@@ -8,9 +8,6 @@
       location = "container:"
       name = "Cores">
       <FileRef
-         location = "group:Cores/4DO/PV4DO.xcodeproj">
-      </FileRef>
-      <FileRef
          location = "group:Cores/Bliss/PVBliss.xcodeproj">
       </FileRef>
       <FileRef
@@ -57,9 +54,6 @@
       </FileRef>
       <FileRef
          location = "group:Cores/snes9x/PVSNES.xcodeproj">
-      </FileRef>
-      <FileRef
-         location = "group:Cores/snesticle/PVSnesticle.xcodeproj">
       </FileRef>
    </Group>
    <Group

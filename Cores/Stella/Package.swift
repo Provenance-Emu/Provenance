@@ -29,6 +29,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVCoreObjCBridge"),
         .package(path: "../../PVPlists"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVSupport"),
@@ -44,6 +45,7 @@ let package = Package(
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
+                "PVCoreObjCBridge",
                 "PVSupport",
                 "PVPlists",
                 "PVObjCUtils",
@@ -303,7 +305,7 @@ let package = Package(
                         .interoperabilityMode(.Cxx)
                     ])
     ],
-    swiftLanguageVersions: [.v5, .v6],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu99,
     cxxLanguageStandard: .gnucxx17
 )

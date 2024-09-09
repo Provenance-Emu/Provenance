@@ -43,7 +43,7 @@ extension URL {
     var isFileArchive: Bool {
         guard isFileURL else { return false }
         let ext = pathExtension.lowercased()
-        return PVEmulatorConfiguration.archiveExtensions.contains(ext)
+        return Extensions.archiveExtensions.contains(ext)
     }
 }
 

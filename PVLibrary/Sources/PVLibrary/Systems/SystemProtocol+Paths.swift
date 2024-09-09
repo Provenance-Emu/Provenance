@@ -8,14 +8,15 @@
 import Foundation
 import PVPrimitives
 
+
 // MARK: - PVSystem convenience extension
 
 public extension SystemProtocol {
-    public var biosDirectory: URL { get {
+    var biosDirectory: URL { get {
         return PVEmulatorConfiguration.biosPath(forSystemIdentifier: identifier)
     }}
 
-    public var romsDirectory: URL { get {
+    var romsDirectory: URL { get {
         return PVEmulatorConfiguration.romDirectory(forSystemIdentifier: identifier)
     }}
 }

@@ -1,0 +1,928 @@
+GAS LISTING  			page 1
+
+
+   1              	.file 1 "../../../NESticle/Source/common/nespal.cpp"
+   2              	.section .mdebug.eabi64
+   3              	.previous
+   4              	.data
+   5              	.align 3
+   6              	.type _NesPal_CCovell,@object
+   7              	.size _NesPal_CCovell,256
+   8              	_NesPal_CCovell:
+   9 0000 80       	.byte -128
+  10 0001 80       	.byte -128
+  11 0002 80       	.byte -128
+  12 0003 FF       	.byte -1
+  13 0004 00       	.byte 0
+  14 0005 3D       	.byte 61
+  15 0006 A6       	.byte -90
+  16 0007 FF       	.byte -1
+  17 0008 00       	.byte 0
+  18 0009 12       	.byte 18
+  19 000a B0       	.byte -80
+  20 000b FF       	.byte -1
+  21 000c 44       	.byte 68
+  22 000d 00       	.byte 0
+  23 000e 96       	.byte -106
+  24 000f FF       	.byte -1
+  25 0010 A1       	.byte -95
+  26 0011 00       	.byte 0
+  27 0012 5E       	.byte 94
+  28 0013 FF       	.byte -1
+  29 0014 C7       	.byte -57
+  30 0015 00       	.byte 0
+  31 0016 28       	.byte 40
+  32 0017 FF       	.byte -1
+  33 0018 BA       	.byte -70
+  34 0019 06       	.byte 6
+  35 001a 00       	.byte 0
+  36 001b FF       	.byte -1
+  37 001c 8C       	.byte -116
+  38 001d 17       	.byte 23
+  39 001e 00       	.byte 0
+  40 001f FF       	.byte -1
+  41 0020 5C       	.byte 92
+  42 0021 2F       	.byte 47
+  43 0022 00       	.byte 0
+  44 0023 FF       	.byte -1
+  45 0024 10       	.byte 16
+  46 0025 45       	.byte 69
+  47 0026 00       	.byte 0
+  48 0027 FF       	.byte -1
+  49 0028 05       	.byte 5
+  50 0029 4A       	.byte 74
+  51 002a 00       	.byte 0
+  52 002b FF       	.byte -1
+  53 002c 00       	.byte 0
+  54 002d 47       	.byte 71
+  55 002e 2E       	.byte 46
+  56 002f FF       	.byte -1
+  57 0030 00       	.byte 0
+GAS LISTING  			page 2
+
+
+  58 0031 41       	.byte 65
+  59 0032 66       	.byte 102
+  60 0033 FF       	.byte -1
+  61 0034 00       	.byte 0
+  62 0035 00       	.byte 0
+  63 0036 00       	.byte 0
+  64 0037 FF       	.byte -1
+  65 0038 05       	.byte 5
+  66 0039 05       	.byte 5
+  67 003a 05       	.byte 5
+  68 003b FF       	.byte -1
+  69 003c 05       	.byte 5
+  70 003d 05       	.byte 5
+  71 003e 05       	.byte 5
+  72 003f FF       	.byte -1
+  73 0040 C7       	.byte -57
+  74 0041 C7       	.byte -57
+  75 0042 C7       	.byte -57
+  76 0043 FF       	.byte -1
+  77 0044 00       	.byte 0
+  78 0045 77       	.byte 119
+  79 0046 FF       	.byte -1
+  80 0047 FF       	.byte -1
+  81 0048 21       	.byte 33
+  82 0049 55       	.byte 85
+  83 004a FF       	.byte -1
+  84 004b FF       	.byte -1
+  85 004c 82       	.byte -126
+  86 004d 37       	.byte 55
+  87 004e FA       	.byte -6
+  88 004f FF       	.byte -1
+  89 0050 EB       	.byte -21
+  90 0051 2F       	.byte 47
+  91 0052 B5       	.byte -75
+  92 0053 FF       	.byte -1
+  93 0054 FF       	.byte -1
+  94 0055 29       	.byte 41
+  95 0056 50       	.byte 80
+  96 0057 FF       	.byte -1
+  97 0058 FF       	.byte -1
+  98 0059 22       	.byte 34
+  99 005a 00       	.byte 0
+ 100 005b FF       	.byte -1
+ 101 005c D6       	.byte -42
+ 102 005d 32       	.byte 50
+ 103 005e 00       	.byte 0
+ 104 005f FF       	.byte -1
+ 105 0060 C4       	.byte -60
+ 106 0061 62       	.byte 98
+ 107 0062 00       	.byte 0
+ 108 0063 FF       	.byte -1
+ 109 0064 35       	.byte 53
+ 110 0065 80       	.byte -128
+ 111 0066 00       	.byte 0
+ 112 0067 FF       	.byte -1
+ 113 0068 05       	.byte 5
+ 114 0069 8F       	.byte -113
+GAS LISTING  			page 3
+
+
+ 115 006a 00       	.byte 0
+ 116 006b FF       	.byte -1
+ 117 006c 00       	.byte 0
+ 118 006d 8A       	.byte -118
+ 119 006e 55       	.byte 85
+ 120 006f FF       	.byte -1
+ 121 0070 00       	.byte 0
+ 122 0071 99       	.byte -103
+ 123 0072 CC       	.byte -52
+ 124 0073 FF       	.byte -1
+ 125 0074 21       	.byte 33
+ 126 0075 21       	.byte 33
+ 127 0076 21       	.byte 33
+ 128 0077 FF       	.byte -1
+ 129 0078 09       	.byte 9
+ 130 0079 09       	.byte 9
+ 131 007a 09       	.byte 9
+ 132 007b FF       	.byte -1
+ 133 007c 09       	.byte 9
+ 134 007d 09       	.byte 9
+ 135 007e 09       	.byte 9
+ 136 007f FF       	.byte -1
+ 137 0080 FF       	.byte -1
+ 138 0081 FF       	.byte -1
+ 139 0082 FF       	.byte -1
+ 140 0083 FF       	.byte -1
+ 141 0084 0F       	.byte 15
+ 142 0085 D7       	.byte -41
+ 143 0086 FF       	.byte -1
+ 144 0087 FF       	.byte -1
+ 145 0088 69       	.byte 105
+ 146 0089 A2       	.byte -94
+ 147 008a FF       	.byte -1
+ 148 008b FF       	.byte -1
+ 149 008c D4       	.byte -44
+ 150 008d 80       	.byte -128
+ 151 008e FF       	.byte -1
+ 152 008f FF       	.byte -1
+ 153 0090 FF       	.byte -1
+ 154 0091 45       	.byte 69
+ 155 0092 F3       	.byte -13
+ 156 0093 FF       	.byte -1
+ 157 0094 FF       	.byte -1
+ 158 0095 61       	.byte 97
+ 159 0096 8B       	.byte -117
+ 160 0097 FF       	.byte -1
+ 161 0098 FF       	.byte -1
+ 162 0099 88       	.byte -120
+ 163 009a 33       	.byte 51
+ 164 009b FF       	.byte -1
+ 165 009c FF       	.byte -1
+ 166 009d 9C       	.byte -100
+ 167 009e 12       	.byte 18
+ 168 009f FF       	.byte -1
+ 169 00a0 FA       	.byte -6
+ 170 00a1 BC       	.byte -68
+ 171 00a2 20       	.byte 32
+GAS LISTING  			page 4
+
+
+ 172 00a3 FF       	.byte -1
+ 173 00a4 9F       	.byte -97
+ 174 00a5 E3       	.byte -29
+ 175 00a6 0E       	.byte 14
+ 176 00a7 FF       	.byte -1
+ 177 00a8 2B       	.byte 43
+ 178 00a9 F0       	.byte -16
+ 179 00aa 35       	.byte 53
+ 180 00ab FF       	.byte -1
+ 181 00ac 0C       	.byte 12
+ 182 00ad F0       	.byte -16
+ 183 00ae A4       	.byte -92
+ 184 00af FF       	.byte -1
+ 185 00b0 05       	.byte 5
+ 186 00b1 FB       	.byte -5
+ 187 00b2 FF       	.byte -1
+ 188 00b3 FF       	.byte -1
+ 189 00b4 5E       	.byte 94
+ 190 00b5 5E       	.byte 94
+ 191 00b6 5E       	.byte 94
+ 192 00b7 FF       	.byte -1
+ 193 00b8 0D       	.byte 13
+ 194 00b9 0D       	.byte 13
+ 195 00ba 0D       	.byte 13
+ 196 00bb FF       	.byte -1
+ 197 00bc 0D       	.byte 13
+ 198 00bd 0D       	.byte 13
+ 199 00be 0D       	.byte 13
+ 200 00bf FF       	.byte -1
+ 201 00c0 FF       	.byte -1
+ 202 00c1 FF       	.byte -1
+ 203 00c2 FF       	.byte -1
+ 204 00c3 FF       	.byte -1
+ 205 00c4 A6       	.byte -90
+ 206 00c5 FC       	.byte -4
+ 207 00c6 FF       	.byte -1
+ 208 00c7 FF       	.byte -1
+ 209 00c8 B3       	.byte -77
+ 210 00c9 EC       	.byte -20
+ 211 00ca FF       	.byte -1
+ 212 00cb FF       	.byte -1
+ 213 00cc DA       	.byte -38
+ 214 00cd AB       	.byte -85
+ 215 00ce EB       	.byte -21
+ 216 00cf FF       	.byte -1
+ 217 00d0 FF       	.byte -1
+ 218 00d1 A8       	.byte -88
+ 219 00d2 F9       	.byte -7
+ 220 00d3 FF       	.byte -1
+ 221 00d4 FF       	.byte -1
+ 222 00d5 AB       	.byte -85
+ 223 00d6 B3       	.byte -77
+ 224 00d7 FF       	.byte -1
+ 225 00d8 FF       	.byte -1
+ 226 00d9 D2       	.byte -46
+ 227 00da B0       	.byte -80
+ 228 00db FF       	.byte -1
+GAS LISTING  			page 5
+
+
+ 229 00dc FF       	.byte -1
+ 230 00dd EF       	.byte -17
+ 231 00de A6       	.byte -90
+ 232 00df FF       	.byte -1
+ 233 00e0 FF       	.byte -1
+ 234 00e1 F7       	.byte -9
+ 235 00e2 9C       	.byte -100
+ 236 00e3 FF       	.byte -1
+ 237 00e4 D7       	.byte -41
+ 238 00e5 E8       	.byte -24
+ 239 00e6 95       	.byte -107
+ 240 00e7 FF       	.byte -1
+ 241 00e8 A6       	.byte -90
+ 242 00e9 ED       	.byte -19
+ 243 00ea AF       	.byte -81
+ 244 00eb FF       	.byte -1
+ 245 00ec A2       	.byte -94
+ 246 00ed F2       	.byte -14
+ 247 00ee DA       	.byte -38
+ 248 00ef FF       	.byte -1
+ 249 00f0 99       	.byte -103
+ 250 00f1 FF       	.byte -1
+ 251 00f2 FC       	.byte -4
+ 252 00f3 FF       	.byte -1
+ 253 00f4 DD       	.byte -35
+ 254 00f5 DD       	.byte -35
+ 255 00f6 DD       	.byte -35
+ 256 00f7 FF       	.byte -1
+ 257 00f8 11       	.byte 17
+ 258 00f9 11       	.byte 17
+ 259 00fa 11       	.byte 17
+ 260 00fb FF       	.byte -1
+ 261 00fc 11       	.byte 17
+ 262 00fd 11       	.byte 17
+ 263 00fe 11       	.byte 17
+ 264 00ff FF       	.byte -1
+ 265              	.align 3
+ 266              	.type _NesPal_Shady,@object
+ 267              	.size _NesPal_Shady,256
+ 268              	_NesPal_Shady:
+ 269 0100 80       	.byte -128
+ 270 0101 80       	.byte -128
+ 271 0102 80       	.byte -128
+ 272 0103 FF       	.byte -1
+ 273 0104 00       	.byte 0
+ 274 0105 00       	.byte 0
+ 275 0106 BB       	.byte -69
+ 276 0107 FF       	.byte -1
+ 277 0108 37       	.byte 55
+ 278 0109 00       	.byte 0
+ 279 010a BF       	.byte -65
+ 280 010b FF       	.byte -1
+ 281 010c 84       	.byte -124
+ 282 010d 00       	.byte 0
+ 283 010e A6       	.byte -90
+ 284 010f FF       	.byte -1
+ 285 0110 BB       	.byte -69
+GAS LISTING  			page 6
+
+
+ 286 0111 00       	.byte 0
+ 287 0112 6A       	.byte 106
+ 288 0113 FF       	.byte -1
+ 289 0114 B7       	.byte -73
+ 290 0115 00       	.byte 0
+ 291 0116 1E       	.byte 30
+ 292 0117 FF       	.byte -1
+ 293 0118 B3       	.byte -77
+ 294 0119 00       	.byte 0
+ 295 011a 00       	.byte 0
+ 296 011b FF       	.byte -1
+ 297 011c 91       	.byte -111
+ 298 011d 26       	.byte 38
+ 299 011e 00       	.byte 0
+ 300 011f FF       	.byte -1
+ 301 0120 7B       	.byte 123
+ 302 0121 2B       	.byte 43
+ 303 0122 00       	.byte 0
+ 304 0123 FF       	.byte -1
+ 305 0124 00       	.byte 0
+ 306 0125 3E       	.byte 62
+ 307 0126 00       	.byte 0
+ 308 0127 FF       	.byte -1
+ 309 0128 00       	.byte 0
+ 310 0129 48       	.byte 72
+ 311 012a 0D       	.byte 13
+ 312 012b FF       	.byte -1
+ 313 012c 00       	.byte 0
+ 314 012d 3C       	.byte 60
+ 315 012e 22       	.byte 34
+ 316 012f FF       	.byte -1
+ 317 0130 00       	.byte 0
+ 318 0131 2F       	.byte 47
+ 319 0132 66       	.byte 102
+ 320 0133 FF       	.byte -1
+ 321 0134 00       	.byte 0
+ 322 0135 00       	.byte 0
+ 323 0136 00       	.byte 0
+ 324 0137 FF       	.byte -1
+ 325 0138 05       	.byte 5
+ 326 0139 05       	.byte 5
+ 327 013a 05       	.byte 5
+ 328 013b FF       	.byte -1
+ 329 013c 05       	.byte 5
+ 330 013d 05       	.byte 5
+ 331 013e 05       	.byte 5
+ 332 013f FF       	.byte -1
+ 333 0140 C8       	.byte -56
+ 334 0141 C8       	.byte -56
+ 335 0142 C8       	.byte -56
+ 336 0143 FF       	.byte -1
+ 337 0144 00       	.byte 0
+ 338 0145 59       	.byte 89
+ 339 0146 FF       	.byte -1
+ 340 0147 FF       	.byte -1
+ 341 0148 44       	.byte 68
+ 342 0149 3C       	.byte 60
+GAS LISTING  			page 7
+
+
+ 343 014a FF       	.byte -1
+ 344 014b FF       	.byte -1
+ 345 014c B7       	.byte -73
+ 346 014d 33       	.byte 51
+ 347 014e CC       	.byte -52
+ 348 014f FF       	.byte -1
+ 349 0150 FF       	.byte -1
+ 350 0151 33       	.byte 51
+ 351 0152 AA       	.byte -86
+ 352 0153 FF       	.byte -1
+ 353 0154 FF       	.byte -1
+ 354 0155 37       	.byte 55
+ 355 0156 5E       	.byte 94
+ 356 0157 FF       	.byte -1
+ 357 0158 FF       	.byte -1
+ 358 0159 37       	.byte 55
+ 359 015a 1A       	.byte 26
+ 360 015b FF       	.byte -1
+ 361 015c D5       	.byte -43
+ 362 015d 4B       	.byte 75
+ 363 015e 00       	.byte 0
+ 364 015f FF       	.byte -1
+ 365 0160 C4       	.byte -60
+ 366 0161 62       	.byte 98
+ 367 0162 00       	.byte 0
+ 368 0163 FF       	.byte -1
+ 369 0164 3C       	.byte 60
+ 370 0165 7B       	.byte 123
+ 371 0166 00       	.byte 0
+ 372 0167 FF       	.byte -1
+ 373 0168 1E       	.byte 30
+ 374 0169 84       	.byte -124
+ 375 016a 15       	.byte 21
+ 376 016b FF       	.byte -1
+ 377 016c 00       	.byte 0
+ 378 016d 95       	.byte -107
+ 379 016e 66       	.byte 102
+ 380 016f FF       	.byte -1
+ 381 0170 00       	.byte 0
+ 382 0171 84       	.byte -124
+ 383 0172 C4       	.byte -60
+ 384 0173 FF       	.byte -1
+ 385 0174 11       	.byte 17
+ 386 0175 11       	.byte 17
+ 387 0176 11       	.byte 17
+ 388 0177 FF       	.byte -1
+ 389 0178 09       	.byte 9
+ 390 0179 09       	.byte 9
+ 391 017a 09       	.byte 9
+ 392 017b FF       	.byte -1
+ 393 017c 09       	.byte 9
+ 394 017d 09       	.byte 9
+ 395 017e 09       	.byte 9
+ 396 017f FF       	.byte -1
+ 397 0180 FF       	.byte -1
+ 398 0181 FF       	.byte -1
+ 399 0182 FF       	.byte -1
+GAS LISTING  			page 8
+
+
+ 400 0183 FF       	.byte -1
+ 401 0184 00       	.byte 0
+ 402 0185 95       	.byte -107
+ 403 0186 FF       	.byte -1
+ 404 0187 FF       	.byte -1
+ 405 0188 6F       	.byte 111
+ 406 0189 84       	.byte -124
+ 407 018a FF       	.byte -1
+ 408 018b FF       	.byte -1
+ 409 018c D5       	.byte -43
+ 410 018d 6F       	.byte 111
+ 411 018e FF       	.byte -1
+ 412 018f FF       	.byte -1
+ 413 0190 FF       	.byte -1
+ 414 0191 77       	.byte 119
+ 415 0192 CC       	.byte -52
+ 416 0193 FF       	.byte -1
+ 417 0194 FF       	.byte -1
+ 418 0195 6F       	.byte 111
+ 419 0196 99       	.byte -103
+ 420 0197 FF       	.byte -1
+ 421 0198 FF       	.byte -1
+ 422 0199 7B       	.byte 123
+ 423 019a 59       	.byte 89
+ 424 019b FF       	.byte -1
+ 425 019c FF       	.byte -1
+ 426 019d 91       	.byte -111
+ 427 019e 5F       	.byte 95
+ 428 019f FF       	.byte -1
+ 429 01a0 FF       	.byte -1
+ 430 01a1 A2       	.byte -94
+ 431 01a2 33       	.byte 51
+ 432 01a3 FF       	.byte -1
+ 433 01a4 A6       	.byte -90
+ 434 01a5 BF       	.byte -65
+ 435 01a6 00       	.byte 0
+ 436 01a7 FF       	.byte -1
+ 437 01a8 51       	.byte 81
+ 438 01a9 D9       	.byte -39
+ 439 01aa 6A       	.byte 106
+ 440 01ab FF       	.byte -1
+ 441 01ac 4D       	.byte 77
+ 442 01ad D5       	.byte -43
+ 443 01ae AE       	.byte -82
+ 444 01af FF       	.byte -1
+ 445 01b0 00       	.byte 0
+ 446 01b1 D9       	.byte -39
+ 447 01b2 FF       	.byte -1
+ 448 01b3 FF       	.byte -1
+ 449 01b4 66       	.byte 102
+ 450 01b5 66       	.byte 102
+ 451 01b6 66       	.byte 102
+ 452 01b7 FF       	.byte -1
+ 453 01b8 0D       	.byte 13
+ 454 01b9 0D       	.byte 13
+ 455 01ba 0D       	.byte 13
+ 456 01bb FF       	.byte -1
+GAS LISTING  			page 9
+
+
+ 457 01bc 0D       	.byte 13
+ 458 01bd 0D       	.byte 13
+ 459 01be 0D       	.byte 13
+ 460 01bf FF       	.byte -1
+ 461 01c0 FF       	.byte -1
+ 462 01c1 FF       	.byte -1
+ 463 01c2 FF       	.byte -1
+ 464 01c3 FF       	.byte -1
+ 465 01c4 84       	.byte -124
+ 466 01c5 BF       	.byte -65
+ 467 01c6 FF       	.byte -1
+ 468 01c7 FF       	.byte -1
+ 469 01c8 BB       	.byte -69
+ 470 01c9 BB       	.byte -69
+ 471 01ca FF       	.byte -1
+ 472 01cb FF       	.byte -1
+ 473 01cc D0       	.byte -48
+ 474 01cd BB       	.byte -69
+ 475 01ce FF       	.byte -1
+ 476 01cf FF       	.byte -1
+ 477 01d0 FF       	.byte -1
+ 478 01d1 BF       	.byte -65
+ 479 01d2 EA       	.byte -22
+ 480 01d3 FF       	.byte -1
+ 481 01d4 FF       	.byte -1
+ 482 01d5 BF       	.byte -65
+ 483 01d6 CC       	.byte -52
+ 484 01d7 FF       	.byte -1
+ 485 01d8 FF       	.byte -1
+ 486 01d9 C4       	.byte -60
+ 487 01da B7       	.byte -73
+ 488 01db FF       	.byte -1
+ 489 01dc FF       	.byte -1
+ 490 01dd CC       	.byte -52
+ 491 01de AE       	.byte -82
+ 492 01df FF       	.byte -1
+ 493 01e0 FF       	.byte -1
+ 494 01e1 D9       	.byte -39
+ 495 01e2 A2       	.byte -94
+ 496 01e3 FF       	.byte -1
+ 497 01e4 CC       	.byte -52
+ 498 01e5 E1       	.byte -31
+ 499 01e6 99       	.byte -103
+ 500 01e7 FF       	.byte -1
+ 501 01e8 AE       	.byte -82
+ 502 01e9 EE       	.byte -18
+ 503 01ea B7       	.byte -73
+ 504 01eb FF       	.byte -1
+ 505 01ec AA       	.byte -86
+ 506 01ed F7       	.byte -9
+ 507 01ee EE       	.byte -18
+ 508 01ef FF       	.byte -1
+ 509 01f0 B3       	.byte -77
+ 510 01f1 EE       	.byte -18
+ 511 01f2 FF       	.byte -1
+ 512 01f3 FF       	.byte -1
+ 513 01f4 DD       	.byte -35
+GAS LISTING  			page 10
+
+
+ 514 01f5 DD       	.byte -35
+ 515 01f6 DD       	.byte -35
+ 516 01f7 FF       	.byte -1
+ 517 01f8 11       	.byte 17
+ 518 01f9 11       	.byte 17
+ 519 01fa 11       	.byte 17
+ 520 01fb FF       	.byte -1
+ 521 01fc 11       	.byte 17
+ 522 01fd 11       	.byte 17
+ 523 01fe 11       	.byte 17
+ 524 01ff FF       	.byte -1
+ 525              	.text
+ 526              	.align 2
+ 527              	.p2align 3,,7
+ 528              	.ent _Z27_NesPalColorEmphasisChannelP8Color32Tjh
+ 529              	_Z27_NesPalColorEmphasisChannelP8Color32Tjh:
+ 530              	.frame $sp,0,$31
+ 531              	.mask 0x00000000,0
+ 532              	.fmask 0x00000000,0
+ 533 0000 2D108000 	move $2,$4
+ 534 0004 2D380000 	move $7,$0
+ 535              	.set noreorder
+ 536              	.set nomacro
+ 537 0008 0C00A010 	beq $5,$0,$L10
+ 538 000c FF00C430 	andi $4,$6,0x00ff
+ 539              	.set macro
+ 540              	.set reorder
+ 541              	
+ 542 0010 21304400 	addu $6,$2,$4
+ 543 0014 00000000 	.p2align 3
+ 544              	$L7:
+ 545 0018 0000C290 	lbu $2,0($6)
+ 546 001c 0100E724 	addu $7,$7,1
+ 547 0020 2B20E500 	sltu $4,$7,$5
+ 548 0024 40180200 	sll $3,$2,1
+ 549 0028 21186200 	addu $3,$3,$2
+ 550 002c 83180300 	sra $3,$3,2
+ 551 0030 0000C3A0 	sb $3,0($6)
+ 552              	.set noreorder
+ 553              	.set nomacro
+ 554 0034 F8FF8014 	bne $4,$0,$L7
+ 555 0038 0400C624 	addu $6,$6,4
+ 556              	.set macro
+ 557              	.set reorder
+ 558              	
+ 559              	$L10:
+ 560 003c 0800E003 	j $31
+ 560      00000000 
+ 561              	.end _Z27_NesPalColorEmphasisChannelP8Color32Tjh
+ 562              	$Lfe1:
+ 563              	.size _Z27_NesPalColorEmphasisChannelP8Color32Tjh,$Lfe1-_Z27_NesPalColorEmphasisChannelP8Color32Tjh
+ 564              	.align 2
+ 565 0044 00000000 	.p2align 3,,7
+ 566              	.ent _Z20_NesPalColorEmphasisP8Color32Tjh
+ 567              	_Z20_NesPalColorEmphasisP8Color32Tjh:
+ 568              	.frame $sp,64,$31
+ 569              	.mask 0x80070000,-16
+GAS LISTING  			page 11
+
+
+ 570              	.fmask 0x00000000,0
+ 571 0048 C0FFBD27 	subu $sp,$sp,64
+ 572 004c 0000B0FF 	sd $16,0($sp)
+ 573 0050 FF00D030 	andi $16,$6,0x00ff
+ 574 0054 0700103A 	xori $16,$16,0x7
+ 575 0058 2000B2FF 	sd $18,32($sp)
+ 576 005c 01000232 	andi $2,$16,0x1
+ 577 0060 1000B1FF 	sd $17,16($sp)
+ 578 0064 3000BFFF 	sd $31,48($sp)
+ 579 0068 2D908000 	move $18,$4
+ 580 006c 2D300000 	move $6,$0
+ 581              	.set noreorder
+ 582              	.set nomacro
+ 583 0070 19004014 	bne $2,$0,$L15
+ 584 0074 2D88A000 	move $17,$5
+ 585              	.set macro
+ 586              	.set reorder
+ 587              	
+ 588 0078 02000232 	andi $2,$16,0x2
+ 589              	$L20:
+ 590 007c 2D204002 	move $4,$18
+ 591 0080 2D282002 	move $5,$17
+ 592              	.set noreorder
+ 593              	.set nomacro
+ 594 0084 10004014 	bne $2,$0,$L16
+ 595 0088 01000624 	li $6,1
+ 596              	.set macro
+ 597              	.set reorder
+ 598              	
+ 599 008c 04000232 	andi $2,$16,0x4
+ 600              	$L19:
+ 601 0090 2D204002 	move $4,$18
+ 602 0094 2D282002 	move $5,$17
+ 603              	.set noreorder
+ 604              	.set nomacro
+ 605 0098 07004014 	bne $2,$0,$L17
+ 606 009c 02000624 	li $6,2
+ 607              	.set macro
+ 608              	.set reorder
+ 609              	
+ 610 00a0 3000BFDF 	ld $31,48($sp)
+ 611              	$L18:
+ 612 00a4 2000B2DF 	ld $18,32($sp)
+ 613 00a8 1000B1DF 	ld $17,16($sp)
+ 614 00ac 0000B0DF 	ld $16,0($sp)
+ 615              	
+ 616              	.set noreorder
+ 617              	.set nomacro
+ 618 00b0 0800E003 	j $31
+ 619 00b4 4000BD27 	addu $sp,$sp,64
+ 620              	.set macro
+ 621              	.set reorder
+ 622              	
+ 623              	.p2align 3
+ 624              	$L17:
+ 625 00b8 0000000C 	jal _Z27_NesPalColorEmphasisChannelP8Color32Tjh
+ 625      00000000 
+GAS LISTING  			page 12
+
+
+ 626              	.set noreorder
+ 627              	.set nomacro
+ 628 00c0 F8FF0010 	b $L18
+ 629 00c4 3000BFDF 	ld $31,48($sp)
+ 630              	.set macro
+ 631              	.set reorder
+ 632              	
+ 633              	.p2align 3
+ 634              	$L16:
+ 635              	
+ 636 00c8 0000000C 	jal _Z27_NesPalColorEmphasisChannelP8Color32Tjh
+ 636      00000000 
+ 637              	.set noreorder
+ 638              	.set nomacro
+ 639 00d0 EFFF0010 	b $L19
+ 640 00d4 04000232 	andi $2,$16,0x4
+ 641              	.set macro
+ 642              	.set reorder
+ 643              	
+ 644              	.p2align 3
+ 645              	$L15:
+ 646 00d8 0000000C 	jal _Z27_NesPalColorEmphasisChannelP8Color32Tjh
+ 646      00000000 
+ 647              	.set noreorder
+ 648              	.set nomacro
+ 649 00e0 E6FF0010 	b $L20
+ 650 00e4 02000232 	andi $2,$16,0x2
+ 651              	.set macro
+ 652              	.set reorder
+ 653              	
+ 654              	.end _Z20_NesPalColorEmphasisP8Color32Tjh
+ 655              	$Lfe2:
+ 656              	.size _Z20_NesPalColorEmphasisP8Color32Tjh,$Lfe2-_Z20_NesPalColorEmphasisP8Color32Tjh
+ 657              	.align 2
+ 658              	.p2align 3,,7
+ 659              	.ent _Z17_NesPalMonochromeP8Color32Tj
+ 660              	_Z17_NesPalMonochromeP8Color32Tj:
+ 661              	.frame $sp,0,$31
+ 662              	.mask 0x00000000,0
+ 663              	.fmask 0x00000000,0
+ 664              	.set noreorder
+ 665              	.set nomacro
+ 666 00e8 0E00A010 	beq $5,$0,$L29
+ 667 00ec 2D380000 	move $7,$0
+ 668              	.set macro
+ 669              	.set reorder
+ 670              	
+ 671 00f0 2D308000 	move $6,$4
+ 672 00f4 00000000 	.p2align 3
+ 673              	$L26:
+ 674 00f8 F000E230 	andi $2,$7,0xf0
+ 675 00fc 0100E724 	addu $7,$7,1
+ 676 0100 80100200 	sll $2,$2,2
+ 677 0104 2B18E500 	sltu $3,$7,$5
+ 678 0108 21104400 	addu $2,$2,$4
+ 679 010c 03004888 	lwl $8,3($2)
+ 680 0110 00004898 	lwr $8,0($2)
+GAS LISTING  			page 13
+
+
+ 681 0114 0300C8A8 	swl $8,3($6)
+ 682 0118 0000C8B8 	swr $8,0($6)
+ 683              	.set noreorder
+ 684              	.set nomacro
+ 685 011c F6FF6014 	bne $3,$0,$L26
+ 686 0120 0400C624 	addu $6,$6,4
+ 687              	.set macro
+ 688              	.set reorder
+ 689              	
+ 690              	$L29:
+ 691 0124 0800E003 	j $31
+ 691      00000000 
+ 692              	.end _Z17_NesPalMonochromeP8Color32Tj
+ 693              	$Lfe3:
+ 694              	.size _Z17_NesPalMonochromeP8Color32Tj,$Lfe3-_Z17_NesPalMonochromeP8Color32Tj
+ 695              	.align 2
+ 696 012c 00000000 	.p2align 3,,7
+ 697              	.globl _Z20NesPalComposePaletteiP8Color32TS0_j
+ 698              	.ent _Z20NesPalComposePaletteiP8Color32TS0_j
+ 699              	_Z20NesPalComposePaletteiP8Color32TS0_j:
+ 700              	.frame $sp,64,$31
+ 701              	.mask 0x80070000,-16
+ 702              	.fmask 0x00000000,0
+ 703 0130 C0FFBD27 	subu $sp,$sp,64
+ 704 0134 4100E32C 	sltu $3,$7,65
+ 705 0138 0000B0FF 	sd $16,0($sp)
+ 706 013c 40000224 	li $2,64
+ 707 0140 2D80E000 	move $16,$7
+ 708 0144 1000B1FF 	sd $17,16($sp)
+ 709 0148 0A804300 	movz $16,$2,$3
+ 710 014c 2D88A000 	move $17,$5
+ 711 0150 2D28C000 	move $5,$6
+ 712 0154 2000B2FF 	sd $18,32($sp)
+ 713 0158 80301000 	sll $6,$16,2
+ 714 015c 2D908000 	move $18,$4
+ 715 0160 3C300600 	dsll $6,$6,32
+ 716 0164 2D202002 	move $4,$17
+ 717 0168 3000BFFF 	sd $31,48($sp)
+ 718              	.set noreorder
+ 719              	.set nomacro
+ 720 016c 0000000C 	jal memcpy
+ 721 0170 3E300600 	dsrl $6,$6,32
+ 722              	.set macro
+ 723              	.set reorder
+ 724              	
+ 725 0174 2D280002 	move $5,$16
+ 726 0178 07004332 	andi $3,$18,0x7
+ 727 017c 2D202002 	move $4,$17
+ 728              	.set noreorder
+ 729              	.set nomacro
+ 730 0180 11006014 	bne $3,$0,$L34
+ 731 0184 FF006630 	andi $6,$3,0x00ff
+ 732              	.set macro
+ 733              	.set reorder
+ 734              	
+ 735 0188 08004232 	andi $2,$18,0x8
+ 736              	$L37:
+GAS LISTING  			page 14
+
+
+ 737 018c 2D202002 	move $4,$17
+ 738              	.set noreorder
+ 739              	.set nomacro
+ 740 0190 09004014 	bne $2,$0,$L35
+ 741 0194 2D280002 	move $5,$16
+ 742              	.set macro
+ 743              	.set reorder
+ 744              	
+ 745 0198 2D100002 	move $2,$16
+ 746              	$L36:
+ 747 019c 3000BFDF 	ld $31,48($sp)
+ 748 01a0 2000B2DF 	ld $18,32($sp)
+ 749 01a4 1000B1DF 	ld $17,16($sp)
+ 750 01a8 0000B0DF 	ld $16,0($sp)
+ 751              	
+ 752              	.set noreorder
+ 753              	.set nomacro
+ 754 01ac 0800E003 	j $31
+ 755 01b0 4000BD27 	addu $sp,$sp,64
+ 756              	.set macro
+ 757              	.set reorder
+ 758              	
+ 759 01b4 00000000 	.p2align 3
+ 760              	$L35:
+ 761 01b8 3A00000C 	jal _Z17_NesPalMonochromeP8Color32Tj
+ 761      00000000 
+ 762              	.set noreorder
+ 763              	.set nomacro
+ 764 01c0 F6FF0010 	b $L36
+ 765 01c4 2D100002 	move $2,$16
+ 766              	.set macro
+ 767              	.set reorder
+ 768              	
+ 769              	.p2align 3
+ 770              	$L34:
+ 771 01c8 1200000C 	jal _Z20_NesPalColorEmphasisP8Color32Tjh
+ 771      00000000 
+ 772              	.set noreorder
+ 773              	.set nomacro
+ 774 01d0 EEFF0010 	b $L37
+ 775 01d4 08004232 	andi $2,$18,0x8
+ 776              	.set macro
+ 777              	.set reorder
+ 778              	
+ 779              	.end _Z20NesPalComposePaletteiP8Color32TS0_j
+ 780              	$Lfe4:
+ 781              	.size _Z20NesPalComposePaletteiP8Color32TS0_j,$Lfe4-_Z20NesPalComposePaletteiP8Color32TS0_j
+ 782              	.align 2
+ 783              	.p2align 3,,7
+ 784              	.globl _Z21NesPalGetStockPalette7NesPalE
+ 785              	.ent _Z21NesPalGetStockPalette7NesPalE
+ 786              	_Z21NesPalGetStockPalette7NesPalE:
+ 787              	.frame $sp,0,$31
+ 788              	.mask 0x00000000,0
+ 789              	.fmask 0x00000000,0
+ 790              	.set noreorder
+ 791              	.set nomacro
+GAS LISTING  			page 15
+
+
+ 792 01d8 05008010 	beq $4,$0,$L45
+ 793 01dc 0000023C 	lui $2,%hi(_NesPal_CCovell)
+ 794              	.set macro
+ 795              	.set reorder
+ 796              	
+ 797 01e0 01000224 	li $2,1
+ 798              	.set noreorder
+ 799              	.set nomacro
+ 800 01e4 04008250 	beql $4,$2,$L44
+ 801 01e8 0000023C 	lui $2,%hi(_NesPal_Shady)
+ 802              	.set macro
+ 803              	.set reorder
+ 804              	
+ 805 01ec 0000023C 	lui $2,%hi(_NesPal_CCovell)
+ 806              	$L45:
+ 807              	.set noreorder
+ 808              	.set nomacro
+ 809 01f0 0800E003 	j $31
+ 810 01f4 00004224 	addiu $2,$2,%lo(_NesPal_CCovell)
+ 811              	.set macro
+ 812              	.set reorder
+ 813              	
+ 814              	.p2align 3
+ 815              	$L44:
+ 816              	.set noreorder
+ 817              	.set nomacro
+ 818 01f8 0800E003 	j $31
+ 819 01fc 00014224 	addiu $2,$2,%lo(_NesPal_Shady)
+ 820              	.set macro
+ 821              	.set reorder
+ 822              	
+ 823              	.end _Z21NesPalGetStockPalette7NesPalE
+ 824              	$Lfe5:
+ 825              	.size _Z21NesPalGetStockPalette7NesPalE,$Lfe5-_Z21NesPalGetStockPalette7NesPalE
+ 826              	.rdata
+ 827              	.align 3
+ 828              	$LC0:
+ 829 0000 2E2E2F2E 	.ascii "../../../NESticle/Source/common/nespal.cpp\000"
+ 829      2E2F2E2E 
+ 829      2F4E4553 
+ 829      7469636C 
+ 829      652F536F 
+ 830 002b 00000000 	.align 3
+ 830      00
+ 831              	$LC1:
+ 832 0030 3000     	.ascii "0\000"
+ 833 0032 00000000 	.text
+ 833      0000
+ 834              	.align 2
+ 835              	.p2align 3,,7
+ 836              	.globl _Z14NesPalGenerateP8Color32Tff
+ 837              	.ent _Z14NesPalGenerateP8Color32Tff
+ 838              	_Z14NesPalGenerateP8Color32Tff:
+ 839              	.frame $sp,16,$31
+ 840              	.mask 0x80000000,-16
+ 841              	.fmask 0x00000000,0
+ 842 0200 0000043C 	lui $4,%hi($LC0)
+GAS LISTING  			page 16
+
+
+ 843 0204 0000063C 	lui $6,%hi($LC1)
+ 844 0208 F0FFBD27 	subu $sp,$sp,16
+ 845 020c 00008424 	addiu $4,$4,%lo($LC0)
+ 846 0210 3000C624 	addiu $6,$6,%lo($LC1)
+ 847 0214 0000BFFF 	sd $31,0($sp)
+ 848              	.set noreorder
+ 849              	.set nomacro
+ 850 0218 0000000C 	jal __assert
+ 851 021c 1F010524 	li $5,287
+ 852              	.set macro
+ 853              	.set reorder
+ 854              	
+ 855 0220 0000BFDF 	ld $31,0($sp)
+ 856              	
+ 857              	.set noreorder
+ 858              	.set nomacro
+ 859 0224 0800E003 	j $31
+ 860 0228 1000BD27 	addu $sp,$sp,16
+ 861              	.set macro
+ 862              	.set reorder
+ 863              	
+ 864              	.end _Z14NesPalGenerateP8Color32Tff
+ 865              	$Lfe6:
+ 866              	.size _Z14NesPalGenerateP8Color32Tff,$Lfe6-_Z14NesPalGenerateP8Color32Tff
+ 867 022c 00000000 	.ident "GCC: (GNU) 3.2.2"

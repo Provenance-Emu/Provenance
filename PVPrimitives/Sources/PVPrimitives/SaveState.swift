@@ -19,7 +19,7 @@ public protocol SaveStateInfoProvider {
     var isAutosave: Bool { get }
 }
 
-public struct SaveState: SaveStateInfoProvider, Codable, Sendable {
+public struct SaveState: SaveStateInfoProvider, Codable, Sendable, Identifiable {
     public let id: String
     public let game: Game
     public let core: Core

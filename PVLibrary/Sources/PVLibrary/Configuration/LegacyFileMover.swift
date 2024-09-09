@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import PVLogging
+import PVFileSystem
 
 // MARK: Move legacy files
 
@@ -38,7 +40,7 @@ extension Array {
 
 public extension PVEmulatorConfiguration {
     class func moveLegacyPaths() async {
-        if await documentsPath != documentsiCloudOrLocalPath {
+        if URL.documentsPath != URL.documentsiCloudOrLocalPath {
             // TODO: Update PVGames and PVSaves for new paths for screenshots and saves
 
             await moveLegacyBIOSes()
@@ -58,7 +60,7 @@ public extension PVEmulatorConfiguration {
             ILOG("Found (\(saves.count)) saves in old path")
 
             await saves.asyncForEach {
-                let newPath = await Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent)
+                let newPath = Paths.saveSavesPath.appendingPathComponent($0.lastPathComponent)
                 do {
                     try fm.moveItem(at: $0, to: newPath)
                 } catch {
@@ -77,7 +79,7 @@ public extension PVEmulatorConfiguration {
             ILOG("Found (\(batterySaves.count)) Battery Saves in old path")
 
             await batterySaves.asyncForEach {
-                let newPath = await Paths.batterySavesPath.appendingPathComponent($0.lastPathComponent)
+                let newPath = Paths.batterySavesPath.appendingPathComponent($0.lastPathComponent)
                 do {
                     try fm.moveItem(at: $0, to: newPath)
                 } catch {
@@ -95,7 +97,7 @@ public extension PVEmulatorConfiguration {
             ILOG("Found (\(bioses.count)) BIOSes in old path")
 
             await bioses.asyncForEach {
-                let newPath = await Paths.biosesPath.appendingPathComponent($0.lastPathComponent)
+                let newPath = Paths.biosesPath.appendingPathComponent($0.lastPathComponent)
                 do {
                     try fm.moveItem(at: $0, to: newPath)
                 } catch {
@@ -113,7 +115,7 @@ public extension PVEmulatorConfiguration {
             ILOG("Found (\(screenshots.count)) Screenshots in old path")
 
             await screenshots.asyncForEach {
-                let newPath = await Paths.screenShotsPath.appendingPathComponent($0.lastPathComponent)
+                let newPath = Paths.screenShotsPath.appendingPathComponent($0.lastPathComponent)
                 do {
                     try fm.moveItem(at: $0, to: newPath)
                 } catch {

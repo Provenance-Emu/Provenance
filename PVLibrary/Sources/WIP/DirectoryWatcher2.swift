@@ -87,7 +87,7 @@ public final class DirectoryWatcher2 {
     fileprivate let serialQueue: DispatchQueue = .init(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     private func initialScan(_ url: URL) throws {
-        let exts = PVEmulatorConfiguration.archiveExtensions
+        let exts = Extensions.archiveExtensions
         let contents = try FileManager.default.contentsOfDirectory(at: url,
                                                                    includingPropertiesForKeys: nil,
                                                                    options: [.skipsHiddenFiles])

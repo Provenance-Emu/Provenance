@@ -15,15 +15,26 @@ let package = Package(
     products: [
         .library(
             name: "PVCoreBridge",
-            targets: ["PVCoreBridge", "PVCoreObjCBridge"]),
+            targets: ["PVCoreBridge"]),
         .library(
             name: "PVCoreBridge-Dynamic",
             type: .dynamic,
-            targets: ["PVCoreBridge", "PVCoreObjCBridge"]),
+            targets: ["PVCoreBridge"]),
         .library(
             name: "PVCoreBridge-Static",
             type: .static,
-            targets: ["PVCoreBridge", "PVCoreObjCBridge"]),
+            targets: ["PVCoreBridge"]),
+//        .library(
+//            name: "PVCoreObjCBridge",
+//            targets: ["PVCoreObjCBridge"]),
+//        .library(
+//            name: "PVCoreObjCBridge-Dynamic",
+//            type: .dynamic,
+//            targets: ["PVCoreObjCBridge"]),
+//        .library(
+//            name: "PVCoreObjCBridge-Static",
+//            type: .static,
+//            targets: ["PVCoreObjCBridge"]),
     ],
 
     dependencies: [
@@ -72,6 +83,9 @@ let package = Package(
                 "PVLogging",
                 "PVCoreBridge",
                 "PVObjCUtils"
+            ],
+            cSettings: [
+                .unsafeFlags(["-fmodules", "-fcxx-modules"])
             ]
         ),
 

@@ -10,17 +10,11 @@ import Foundation
 import RealmSwift
 import PVLogging
 import PVPlists
+import PVRealm
+import PVFileSystem
 
 @objc
 public final class PVEmulatorConfiguration: NSObject {
-    /*
-     TODO: It really makes more sense for each core to have it's own plist file in it's framework
-     and iterate those and create SystemConfiguration structions based off of parsing them
-     instead of key / value matching a single plist
-     */
-    fileprivate static var systems: [PVSystem] {
-        return Array(RomDatabase.sharedInstance.all(PVSystem.self))
-    }
 
     @objc
     public static let availableSystemIdentifiers: [String] = {
@@ -47,15 +41,6 @@ public final class PVEmulatorConfiguration: NSObject {
         }).joined())
     }()
 
-    public static var cdBasedSystems: [PVSystem] {
-        return systems.compactMap({ (system) -> PVSystem? in
-            guard system.usesCDs else {
-                return nil
-            }
-            return system
-        })
-    }
-
     // MARK: BIOS
 
     public static let supportedBIOSFileExtensions: [String] = {
@@ -68,138 +53,13 @@ public final class PVEmulatorConfiguration: NSObject {
         return PVBIOS.all
     }
 
-    // MARK: - Filesystem Helpers
-
-    public static let documentsPath: URL = {
-        #if os(tvOS)
-            return cachesPath
-        #else
-            let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-            return URL(fileURLWithPath: paths.first!, isDirectory: true)
-        #endif
-    }()
-
-    @objc
-    public static let cachesPath: URL = {
-        let paths = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)
-        return URL(fileURLWithPath: paths.first!, isDirectory: true)
-    }()
-
     public static func initICloud() {
         DispatchQueue.global(qos: .background).async {
-            let dir = PVEmulatorConfiguration.iCloudContainerDirectory
+            let dir = URL.iCloudContainerDirectory
             DLOG("iCloudContainerDirectory: \(String(describing: dir))")
         }
     }
-
-    private
-    static var iCloudContainerDirectoryCached: URL? = {
-        if Thread.isMainThread {
-            var container: URL?
-            DispatchQueue.global(qos: .background).sync {
-                container = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
-            }
-            return container
-        } else {
-            let container = FileManager.default.url(forUbiquityContainerIdentifier: Constants.iCloud.containerIdentifier)
-            return container
-        }
-    }()
-
-    /// This should be called on a background thread
-    static var iCloudContainerDirectory: URL? {
-        get {
-            return iCloudContainerDirectoryCached
-        }
-    }
-
-    /// This should be called on a background thread
-    public static var iCloudDocumentsDirectory: URL? { get {
-        let iCloudSync = Defaults[.iCloudSync]
-        
-        guard iCloudSync else {
-            return nil
-        }
-
-        let documentsURL = iCloudContainerDirectory?.appendingPathComponent("Documents")
-        if let documentsURL = documentsURL {
-            if !FileManager.default.fileExists(atPath: documentsURL.path, isDirectory: nil) {
-                do {
-                    try FileManager.default.createDirectory(at: documentsURL, withIntermediateDirectories: true, attributes: nil)
-                } catch {
-                    ELOG("Failed creating dir on iCloud: \(error)")
-                }
-            }
-        }
-
-        return documentsURL
-    }}
-
-    public static var supportsICloud: Bool {
-        return iCloudContainerDirectory != nil
-    }
-
-    /// This should be called on a background thread
-    public static var documentsiCloudOrLocalPath: URL { get {
-        return iCloudDocumentsDirectory ?? documentsPath
-    }}
-
-    public struct Paths {
-        public struct Legacy {
-            public static var batterySavesPath: URL {
-                documentsPath.appendingPathComponent("Battery States", isDirectory: true)
-            }
-
-            public static var saveSavesPath: URL {
-                documentsPath.appendingPathComponent("Save States", isDirectory: true)
-            }
-
-            public static var screenShotsPath: URL {
-                documentsPath.appendingPathComponent("Screenshots", isDirectory: true)
-            }
-
-            public static var biosesPath: URL {
-                documentsPath.appendingPathComponent("BIOS", isDirectory: true)
-            }
-        }
-
-        public static var romsImportPath: URL {
-            return documentsPath.appendingPathComponent("Imports", isDirectory: true)
-        }
-
-        /// Should be called on BG Thread, iCloud blocks
-        public static var romsPath: URL { get {
-            return documentsiCloudOrLocalPath.appendingPathComponent("ROMs", isDirectory: true)
-        }}
-
-        /// Should be called on BG Thread, iCloud blocks
-        public static var batterySavesPath: URL { get {
-            return documentsiCloudOrLocalPath.appendingPathComponent("Battery States", isDirectory: true)
-        }}
-
-        /// Should be called on BG Thread, iCloud blocks
-        public static var saveSavesPath: URL { get {
-            return documentsiCloudOrLocalPath.appendingPathComponent("Save States", isDirectory: true)
-        }}
-
-        /// Should be called on BG Thread, iCloud blocks
-        public static var screenShotsPath: URL { get {
-            return documentsiCloudOrLocalPath.appendingPathComponent("Screenshots", isDirectory: true)
-        }}
-
-        /// Should be called on BG Thread, iCloud blocks
-        public static var biosesPath: URL { get {
-            return documentsiCloudOrLocalPath.appendingPathComponent("BIOS", isDirectory: true)
-        }}
-    }
     
-    public static let archiveExtensions: [String] = ["7z", "gzip", "gz", "rar", "zip", "7zip"]
-    public static let artworkExtensions: [String] = ["png", "jpg", "jpeg"]
-    public static let specialExtensions: [String] = ["cue", "m3u", "svs", "mcr", "plist", "ccd", "img", "iso", "sub", "bin", "chd"]
-    public static let allKnownExtensions: [String] = {
-        archiveExtensions + supportedROMFileExtensions + artworkExtensions + supportedBIOSFileExtensions + Array(supportedCDFileExtensions) + specialExtensions
-    }()
-
     @objc
     public class func systemIDWantsStartAndSelectInMenu(_ systemID: String) -> Bool {
         let systems: [String] = [SystemIdentifier.PSX.rawValue, SystemIdentifier.PS2.rawValue, SystemIdentifier.PSP.rawValue]
@@ -224,7 +84,40 @@ public final class PVEmulatorConfiguration: NSObject {
         })
     }
 
-    public class func systems(forFileExtension fileExtension: String) -> [PVSystem]? {
+    private static let dateFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.dateFormat = "YYYY-MM-dd HH:mm:ss"
+        return df
+    }()
+
+    public class func string(fromDate date: Date) -> String {
+        return dateFormatter.string(from: date)
+    }
+}
+
+// MARK: - Realm queries
+
+public extension PVEmulatorConfiguration {
+    
+    /*
+     TODO: It really makes more sense for each core to have it's own plist file in it's framework
+     and iterate those and create SystemConfiguration structions based off of parsing them
+     instead of key / value matching a single plist
+     */
+    fileprivate static var systems: [PVSystem] {
+        return Array(RomDatabase.sharedInstance.all(PVSystem.self))
+    }
+
+    static var cdBasedSystems: [PVSystem] {
+        return systems.compactMap({ (system) -> PVSystem? in
+            guard system.usesCDs else {
+                return nil
+            }
+            return system
+        })
+    }
+    
+    class func systems(forFileExtension fileExtension: String) -> [PVSystem]? {
         return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
                 var newSystems: [PVSystem] = systems ?? [PVSystem]() // Create initial if doesn't exist
@@ -236,7 +129,7 @@ public final class PVEmulatorConfiguration: NSObject {
         })
     }
     
-    public class func systemsFromCache(forFileExtension fileExtension: String) -> [PVSystem]? {
+    class func systemsFromCache(forFileExtension fileExtension: String) -> [PVSystem]? {
         let systems = RomDatabase.sharedInstance.getSystemCache().values
         return systems.reduce(nil as [PVSystem]?, { (systems, system) -> [PVSystem]? in
             if system.supportedExtensions.contains(fileExtension.lowercased()) {
@@ -249,22 +142,12 @@ public final class PVEmulatorConfiguration: NSObject {
         })
     }
 
-    public class func biosEntry(forMD5 md5: String) -> PVBIOS? {
+    class func biosEntry(forMD5 md5: String) -> PVBIOS? {
         return RomDatabase.sharedInstance.all(PVBIOS.self, where: "expectedMD5", value: md5).first
     }
 
-    public class func biosEntry(forFilename filename: String) -> PVBIOS? {
+    class func biosEntry(forFilename filename: String) -> PVBIOS? {
         return biosEntries.first { $0.expectedFilename == filename }
-    }
-
-    private static let dateFormatter: DateFormatter = {
-        let df = DateFormatter()
-        df.dateFormat = "YYYY-MM-dd HH:mm:ss"
-        return df
-    }()
-
-    public class func string(fromDate date: Date) -> String {
-        return dateFormatter.string(from: date)
     }
 }
 
@@ -362,49 +245,11 @@ public extension PVEmulatorConfiguration {
 
 public extension PVEmulatorConfiguration {
     class func batterySavesPath(forGame game: PVGame) -> URL {
-        return batterySavesPath(forROM: game.url)
-    }
-    
-    class func batterySavesPath(forROM romPath: URL) -> URL {
-        let romName: String = romPath.deletingPathExtension().lastPathComponent
-        let batterySavesDirectory = Paths.batterySavesPath.appendingPathComponent(romName, isDirectory: true)
-        
-        do {
-            try FileManager.default.createDirectory(at: Paths.batterySavesPath, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            ELOG("Error creating save state directory: \(batterySavesDirectory.path) : \(error.localizedDescription)")
-        }
-        
-        return batterySavesDirectory
+        return Paths.batterySavesPath(forROM: game.url)
     }
     
     class func saveStatePath(forGame game: PVGame)  -> URL {
-        return saveStatePath(forROM: game.url)
-    }
-    
-    class func saveStatePath(forROM romPath: URL) -> URL {
-        let romName: String = romPath.deletingPathExtension().lastPathComponent
-        let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
-        
-        do {
-            try FileManager.default.createDirectory(at: saveSavesPath, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            ELOG("Error creating save state directory: \(saveSavesPath.path) : \(error.localizedDescription)")
-        }
-        
-        return saveSavesPath
-    }
-    
-    class func saveStatePath(forROMFilename romName: String) -> URL {
-        let saveSavesPath = Paths.saveSavesPath.appendingPathComponent(romName, isDirectory: true)
-        
-        do {
-            try FileManager.default.createDirectory(at: saveSavesPath, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            ELOG("Error creating save state directory: \(saveSavesPath.path) : \(error.localizedDescription)")
-        }
-        
-        return saveSavesPath
+        return Paths.saveStatePath(forROM: game.url)
     }
     
     class func screenshotsPath(forGame game: PVGame) -> URL {
@@ -420,10 +265,10 @@ public extension PVEmulatorConfiguration {
     }
     
     class func path(forGame game: PVGame) -> URL {
-        return documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(game.file.url.lastPathComponent)
+        return URL.documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(game.file.url.lastPathComponent)
     }
     class func path(forGame game: PVGame, url:URL) -> URL {
-        return documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(url.lastPathComponent)
+        return URL.documentsiCloudOrLocalPath.appendingPathComponent(game.systemIdentifier).appendingPathComponent(url.lastPathComponent)
     }
 }
 
@@ -487,9 +332,9 @@ public extension PVEmulatorConfiguration {
         } else if obj2Extension == "m3u" {
             return true
         }
-        if artworkExtensions.contains(obj1Extension) {
+        if Extensions.artworkExtensions.contains(obj1Extension) {
             return false
-        } else if artworkExtensions.contains(obj2Extension) {
+        } else if Extensions.artworkExtensions.contains(obj2Extension) {
             return true
         }
         return obj1Extension > obj2Extension
@@ -543,6 +388,7 @@ public extension PVEmulatorConfiguration {
 }
 
 // MARK: System queries
+import Systems
 
 public extension PVEmulatorConfiguration {
     class func romDirectory(forSystemIdentifier system: SystemIdentifier) -> URL {

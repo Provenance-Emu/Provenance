@@ -30,6 +30,10 @@ import PVSettings
 import PVWebServer
 #endif
 
+fileprivate var IsAppStore: Bool {
+    Bundle.main.infoDictionary?["ALTDeviceID"] != nil
+}
+
 public
 final class PVSettingsViewController: QuickTableViewController {
     // Check to see if we are connected to WiFi. Cannot continue otherwise.
@@ -429,8 +433,6 @@ final class PVSettingsViewController: QuickTableViewController {
                                 key: .onscreenJoypadWithKeyboard, icon: .sfSymbol("keyboard.badge.eye"))
         ]
         
-#if !APP_STORE
-        
         let nonAppStoreRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Use Swift UI", comment: "Use Swift UI"),
                                 detailText: .subtitle("Alternative UI in Swift UI. Not all features supported yet. iOS 14.0+ recommended."),
@@ -461,11 +463,7 @@ final class PVSettingsViewController: QuickTableViewController {
                                 key: .unsupportedCores, icon: .sfSymbol("testtube.2"))
         ]
         
-        
-        let betaRows: [TableRow] = appStoreRows + nonAppStoreRows
-#else // App store builds
-        let betaRows: [TableRow] = appStoreRows
-#endif
+        let betaRows: [TableRow] = IsAppStore ? appStoreRows : (appStoreRows + nonAppStoreRows)
 #else // tvOS
         let betaRows: [TableRow] = [
             PVSettingsSwitchRow(text: NSLocalizedString("Use Metal", comment: "Use Metal"), detailText: .subtitle("Use experimental Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),

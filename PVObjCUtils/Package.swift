@@ -36,7 +36,7 @@ let package = Package(
             name: "PVObjCUtils"
         )
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx20
 )

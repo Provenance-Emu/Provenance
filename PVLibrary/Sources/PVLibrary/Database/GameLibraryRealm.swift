@@ -7,7 +7,7 @@
 
 import RxRealm
 import RealmSwift
-
+import PVRealm
 
 /// PVGameLibrary protocol for Realm
 public protocol GameLibraryRealm: DatabaseDriverDataTypes where Self.GameType == PVGame, Self.RecentGameType == PVRecentGame, Self.SaveType == PVSaveState, Self.SystemType == PVSystem {

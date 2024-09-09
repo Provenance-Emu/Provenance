@@ -7,6 +7,8 @@
 
 import RxRealm
 import PVSettings
+import PVRealm
+import RxSwift
 
 /// PVGameLibrary protocol for RxRealm
 public protocol GameLibraryRxRealm: GameLibraryRealm where Self.GameType == PVGame, Self.RecentGameType == PVRecentGame, Self.SaveType == PVSaveState, Self.SystemType == PVSystem {

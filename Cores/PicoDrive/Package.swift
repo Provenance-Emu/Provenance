@@ -30,6 +30,7 @@ let package = Package(
     dependencies: [
         .package(path: "../../PVAudio"),
         .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVCoreObjCBridge"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVLogging"),
         .package(path: "../../PVObjCUtils"),

@@ -11,6 +11,7 @@ import RxSwift
 import PVSupport
 import PVLogging
 import AsyncAlgorithms
+import PVFileSystem
 
 extension PVGameLibrary {
     public enum MigrationEvent {
@@ -42,7 +43,7 @@ extension PVGameLibrary {
                                 }
                         })
 
-        let romsImportPath = PVEmulatorConfiguration.Paths.romsImportPath
+        let romsImportPath = Paths.romsImportPath
         let createDirectory = fileManager
             .rx
             .createDirectory(at: romsImportPath, withIntermediateDirectories: true, attributes: nil)
@@ -50,7 +51,7 @@ extension PVGameLibrary {
 
         // Move everything that isn't a realm file, into the the import folder so it wil be re-imported
         let moveFiles: Completable = fileManager.rx
-            .contentsOfDirectory(at: PVEmulatorConfiguration.documentsPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
+            .contentsOfDirectory(at: URL.documentsPath, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles])
             .catch { Single<[URL]>.error(MigrationError.unableToGetContentsOfDocuments(error: $0)) }
             .map({ contents -> [URL] in
                 let ignoredExtensions = ["jpg", "png", "gif", "jpeg"]

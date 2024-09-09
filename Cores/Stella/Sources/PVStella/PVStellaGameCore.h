@@ -29,7 +29,7 @@
 @import PVCoreBridge;
 @import PVStellaSwift;
 @import PVStellaCPP;
-#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
+@import PVCoreObjCBridge;
 
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 

@@ -8,6 +8,19 @@
 
 import Foundation
 
+@objc @objcMembers public class CoreOptionAccessor: NSObject {
+    public typealias OptionSetter = (AnyObject) -> Void
+    public typealias OptionGetter = () -> AnyObject?
+    
+    @objc public let getOption: OptionGetter
+    @objc public let setOption: OptionSetter
+    
+    public init(getOption: @escaping OptionGetter, setOption: @escaping OptionSetter) {
+        self.getOption = getOption
+        self.setOption = setOption
+    }
+}
+
 public enum CoreOption {
     case bool(_ display: CoreOptionValueDisplay, defaultValue: Bool = false)
     case range(_ display: CoreOptionValueDisplay, range: CoreOptionRange<Int>, defaultValue: Int)

@@ -8,7 +8,7 @@
 import Foundation
 
 @objc public protocol EmulatorCoreIOInterface {
-    @objc var romName: String? { get }
+    @objc optional var romName: String? { get }
     @objc var BIOSPath: String? { get }
     @objc var systemIdentifier: String? { get }
     @objc var coreIdentifier: String? { get }
@@ -21,18 +21,18 @@ import Foundation
 }
 
 public
-extension EmulatorCoreIOInterface where Self: ObjCBridedCore {
-    var romSerial: String? { (self as EmulatorCoreIOInterface).romSerial ?? core.romSerial }
+extension EmulatorCoreIOInterface where Self: ObjCBridgedCore, Self.Core: EmulatorCoreIOInterface {
+    var romSerial: String? { core.romSerial ?? (self as EmulatorCoreIOInterface).romSerial ?? nil }
     
-    var romName: String? { (self as EmulatorCoreIOInterface).romName ?? core.romName }
+    var romName: String? {  core.romName ?? (self as EmulatorCoreIOInterface).romName ?? nil }
     
-    var BIOSPath: String? { (self as EmulatorCoreIOInterface).BIOSPath ?? core.BIOSPath }
+    var BIOSPath: String? { core.BIOSPath ?? (self as EmulatorCoreIOInterface).BIOSPath ?? nil }
     
-    var systemIdentifier: String? { (self as EmulatorCoreIOInterface).systemIdentifier ?? core.systemIdentifier }
+    var systemIdentifier: String? { core.systemIdentifier ?? (self as EmulatorCoreIOInterface).systemIdentifier ?? nil }
     
-    var coreIdentifier: String? { (self as EmulatorCoreIOInterface).coreIdentifier ?? core.coreIdentifier }
+    var coreIdentifier: String? { core.coreIdentifier ?? (self as EmulatorCoreIOInterface).coreIdentifier ?? nil }
     
-    var romMD5: String? { (self as EmulatorCoreIOInterface).romMD5 ?? core.romMD5 }
+    var romMD5: String? { core.romMD5 ?? (self as EmulatorCoreIOInterface).romMD5 ?? nil }
     
 //    var screenType: ScreenTypeObjC { (self as EmulatorCoreIOInterface).screenType }
     
