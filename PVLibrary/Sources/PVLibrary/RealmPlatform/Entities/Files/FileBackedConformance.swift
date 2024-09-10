@@ -8,17 +8,18 @@
 
 import Foundation
 import RealmSwift
+import PVLibraryPrimitives
 
-public extension FileBacked where Self: Object {
-    var online: Bool { get async {
+public extension FileBacked where Self: RealmSwift.Object {
+    var online: Bool { get {
         guard let fileInfo = fileInfo else { return false }
-        return await fileInfo.online
+        return fileInfo.online
     }}
 
-    var md5: String? { get async {
+    var md5: String? { get {
         guard let file = fileInfo else {
             return nil
         }
-        return await file.md5
+        return file.md5
     }}
 }

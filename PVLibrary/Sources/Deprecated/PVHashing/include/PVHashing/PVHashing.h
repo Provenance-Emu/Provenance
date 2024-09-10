@@ -14,7 +14,7 @@ FOUNDATION_EXPORT double PVHashingVersionNumber;
 //! Project version string for PVHashing.
 FOUNDATION_EXPORT const unsigned char PVHashingVersionString[];
 
-#import <PVHashing/OESQLiteDatabase.h>
+#import <PVHashing/PVSQLiteDatabase.h>
 #import <PVHashing/NSData+Hashing.h>
 #import <PVHashing/NSString+Hashing.h>
 #import <PVHashing/UIImage+Scaling.h>

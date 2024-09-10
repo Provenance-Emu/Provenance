@@ -5,7 +5,6 @@
 //  Created by Joseph Mattiello on 8/6/24.
 //
 
-import SQLite
 import PVLogging
 
 // MARK: - ROM Lookup
@@ -268,22 +267,9 @@ public extension GameImporter {
         artworkCompletion(artworkURL: url)
         return game
     }
-
+    
     func releaseID(forCRCs crcs: Set<String>) -> String? {
-        let roms = Table("ROMs")
-        let romID = Expression<Int>(value: "romID")
-        let romHashCRC = Expression<String>(value: "romHashCRC")
-
-        let query = roms.select(romID).filter(crcs.contains(romHashCRC))
-
-        do {
-            let result = try sqldb.pluck(query)
-            let foundROMid = try result?.get(romID)
-            return foundROMid
-        } catch {
-            ELOG("Query error: \(error.localizedDescription)")
-            return nil
-        }
+        return openVGDB.releaseID(forCRCs: crcs)
     }
 
     enum DatabaseQueryError: Error {
@@ -295,7 +281,7 @@ public extension GameImporter {
             throw DatabaseQueryError.invalidSystemID
         }
 
-        return try searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
+        return try openVGDB.searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
     }
 
     func searchDatabase(usingKey key: String, value: String, systemID: String) throws -> [[String: NSObject]]? {
@@ -303,7 +289,7 @@ public extension GameImporter {
             throw DatabaseQueryError.invalidSystemID
         }
 
-        return try searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
+        return try openVGDB.searchDatabase(usingKey: key, value: value, systemID: systemIDInt)
     }
 
     // TODO: This was a quick copy of the general version for filenames specifically
@@ -312,7 +298,7 @@ public extension GameImporter {
             throw DatabaseQueryError.invalidSystemID
         }
 
-        return try searchDatabase(usingFilename: filename, systemID: systemIDInt)
+        return try openVGDB.searchDatabase(usingFilename: filename, systemID: systemIDInt)
     }
     func searchDatabase(usingFilename filename: String, systemIDs: [String]) throws -> [[String: NSObject]]? {
         let systemIDsInts: [Int] = systemIDs.compactMap { PVEmulatorConfiguration.databaseID(forSystemID: $0) }
@@ -320,90 +306,9 @@ public extension GameImporter {
             throw DatabaseQueryError.invalidSystemID
         }
 
-        return try searchDatabase(usingFilename: filename, systemIDs: systemIDsInts)
+        return try openVGDB.searchDatabase(usingFilename: filename, systemIDs: systemIDsInts)
     }
-    func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [[String: NSObject]]? {
-        let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
-
-        let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" AND systemID IN (%@) ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
-        let dbSystemID: String = systemIDs.compactMap { "\($0)" }.joined(separator: ",")
-        let queryString = String(format: likeQuery, filename, dbSystemID, filename)
-
-        let results: [Any]?
-
-        do {
-            results = try openVGDB.execute(query: queryString)
-        } catch {
-            ELOG("Failed to execute query: \(error.localizedDescription)")
-            throw error
-        }
-
-        if let validResult = results as? [[String: NSObject]], !validResult.isEmpty {
-            return validResult
-        } else {
-            return nil
-        }
-    }
-    func searchDatabase(usingFilename filename: String, systemID: Int? = nil) throws -> [[String: NSObject]]? {
-        let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
-
-        let queryString: String
-        if let systemID = systemID {
-            let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
-            let dbSystemID: String = String(systemID)
-            queryString = String(format: likeQuery, filename, dbSystemID, filename)
-        } else {
-            let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE 'releaseTitleName' LIKE \"%%%@%%\" ORDER BY case when 'releaseTitleName' LIKE \"%@%%\" then 1 else 0 end DESC"
-            queryString = String(format: likeQuery, filename, filename)
-        }
-
-        let results: [Any]?
-
-        do {
-            results = try openVGDB.execute(query: queryString)
-        } catch {
-            ELOG("Failed to execute query: \(error.localizedDescription)")
-            throw error
-        }
-
-        if let validResult = results as? [[String: NSObject]], !validResult.isEmpty {
-            return validResult
-        } else {
-            return nil
-        }
-    }
-
-    func searchDatabase(usingKey key: String, value: String, systemID: Int? = nil) throws -> [[String: NSObject]]? {
-        var results: [Any]?
-
-        let properties = "releaseTitleName as 'gameTitle', releaseCoverFront as 'boxImageURL', TEMPRomRegion as 'region', releaseDescription as 'gameDescription', releaseCoverBack as 'boxBackURL', releaseDeveloper as 'developer', releasePublisher as 'publisher', romSerial as 'serial', releaseDate as 'releaseDate', releaseGenre as 'genres', releaseReferenceURL as 'referenceURL', releaseID as 'releaseID', romLanguage as 'language', regionLocalizedID as 'regionID'"
-
-        let exactQuery = "SELECT DISTINCT " + properties + ", TEMPsystemShortName as 'systemShortName', systemID as 'systemID' FROM ROMs rom LEFT JOIN RELEASES release USING (romID) WHERE %@ = '%@'"
-
-        let likeQuery = "SELECT DISTINCT romFileName, " + properties + ", systemShortName FROM ROMs rom LEFT JOIN RELEASES release USING (romID) LEFT JOIN SYSTEMS system USING (systemID) LEFT JOIN REGIONS region on (regionLocalizedID=region.regionID) WHERE %@ LIKE \"%%%@%%\" AND systemID=\"%@\" ORDER BY case when %@ LIKE \"%@%%\" then 1 else 0 end DESC"
-
-        let queryString: String
-        if let systemID = systemID {
-            let dbSystemID: String = String(systemID)
-            queryString = String(format: likeQuery, key, value, dbSystemID, key, value)
-        } else {
-            queryString = String(format: exactQuery, key, value)
-        }
-
-        do {
-            results = try openVGDB.execute(query: queryString)
-        } catch {
-            ELOG("Failed to execute query: \(error.localizedDescription)")
-            throw error
-        }
-
-        if let validResult = results as? [[String: NSObject]], !validResult.isEmpty {
-            return validResult
-        } else {
-            return nil
-        }
-    }
-
+   
     static var charset: CharacterSet = {
         var c = CharacterSet.punctuationCharacters
         c.remove(charactersIn: ",-+&.'")

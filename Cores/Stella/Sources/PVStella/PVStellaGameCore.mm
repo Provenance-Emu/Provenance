@@ -42,12 +42,12 @@
 
 #import "PVStellaGameCore.h"
 
-#if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX && !TARGET_OS_WATCH
+#if __has_include(<OpenGLES/gltypes.h>)
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/EAGL.h>
-#elseif !TARGET_OS_WATCH
+#elif !TARGET_OS_WATCH
 #import <OpenGL/OpenGL.h>
 #import <OpenGL/GL3.h>
 #import <GLUT/GLUT.h>
@@ -57,12 +57,7 @@ static __weak PVStellaGameCore *_current;
 
 int16_t _pad[NUMBER_OF_PADS][NUMBER_OF_PAD_INPUTS];
 
-@interface PVStellaGameCore (ObjC)
-
-@end
-
-
-@implementation PVStellaGameCore (ObjC)
+@implementation PVStellaGameCore  (ObjCCoreBridge)
 
 #pragma mark - Static callbacks
 static void audio_callback(int16_t left, int16_t right) {
@@ -243,6 +238,7 @@ static void writeSaveFile(const char* path, int type) {
 #pragma mark - Exectuion
 
 - (void)resetEmulation {
+    [super resetEmulation];
     retro_reset();
 }
 
@@ -514,11 +510,12 @@ static void writeSaveFile(const char* path, int type) {
 
 #pragma mark - Audio
 - (double)audioSampleRate {
-    return self._sampleRate ? self._sampleRate : 31400;
+    return (self._sampleRate > 0) ? self._sampleRate : 31400;
 }
 
 - (NSTimeInterval)frameInterval {
-    return self._frameInterval ? self._frameInterval : 60.0;
+    NSTimeInterval frameInterval = (self._frameInterval > 0) ? self._frameInterval : 60.0;
+    return frameInterval;
 }
 
 - (NSUInteger)channelCount { return 2; }
@@ -532,32 +529,27 @@ static void writeSaveFile(const char* path, int type) {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
     
-    if (size == 0 || !ramData)
-    {
+    if (size == 0 || !ramData) {
         return;
     }
     
     NSData *data = [NSData dataWithContentsOfFile:path];
-    if (!data || ![data length])
-    {
+    if (!data || ![data length]) {
         WLOG(@"Couldn't load save file.");
     }
     
     [data getBytes:ramData length:size];
 }
 
-- (BOOL)writeSaveFile:(NSString *)path forType:(int)type
-{
+- (BOOL)writeSaveFile:(NSString *)path forType:(int)type {
     size_t size = retro_get_memory_size(type);
     void *ramData = retro_get_memory_data(type);
     
-    if (ramData && (size > 0))
-    {
+    if (ramData && (size > 0)) {
         retro_serialize(ramData, size);
         NSData *data = [NSData dataWithBytes:ramData length:size];
         BOOL success = [data writeToFile:path atomically:YES];
-        if (!success)
-        {
+        if (!success) {
             ELOG(@"Error writing save file");
         }
         return success;
@@ -567,8 +559,7 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 
-- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
-{
+- (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {
     @synchronized(self) {
         size_t serial_size = retro_serialize_size();
         uint8_t *serial_data = (uint8_t *) malloc(serial_size);

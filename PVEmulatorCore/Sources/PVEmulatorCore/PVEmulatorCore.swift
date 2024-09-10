@@ -48,8 +48,7 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
     @objc
     public static var systemName: String = ""
 
-    @objc
-    dynamic open var resourceBundle: Bundle { Bundle.module }
+    @objc dynamic open var resourceBundle: Bundle { Bundle.module }
 
     @available(*, deprecated, message: "Why does this need to exist? Only used for macII in PVRetroCore")
     public static var status: [String: Any] = .init()
@@ -172,7 +171,12 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
     required
     public override init() {
         super.init()
-        ringBuffers = Array(repeating: RingBuffer.init(withLength: Int(audioBufferSize(forBuffer: 0)))!, count: Int(audioBufferCount))
+        // Init `audioBufferCount` number of `RingBuffer`s.
+        let audioBufferCount = Int(audioBufferCount)
+        ringBuffers = (0..<audioBufferCount).map {
+            let length: Int = Int(audioBufferSize(forBuffer: UInt($0)))
+            return RingBuffer.init(withLength: length)!
+        }
     }
 
     // EmulatorCoreAudioDataSource
@@ -191,18 +195,20 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
     @objc func resetEmulation()
     
     // MARK: Output
-    @objc var screenRect: CGRect { get }
-    @objc var videoBuffer: UnsafeMutableRawPointer? { get }
-    @objc var frameInterval: TimeInterval { get }
-    @objc var rendersToOpenGL: Bool { get }
-
+    @objc optional var screenRect: CGRect { get }
+    @objc optional var videoBuffer: UnsafeMutableRawPointer? { get }
+    @objc optional var frameInterval: TimeInterval { get }
+    @objc optional var rendersToOpenGL: Bool { get }
     
+    // MARK: Audio
+    @objc optional var audioBufferCount: UInt { get }
+
     // MARK: Input
-    @objc func pollControllers()
+    @objc optional func pollControllers()
     
     // MARK: Save States
-    @objc func saveStateToFileAtPath(fileName: String) async throws
-    @objc func loadStateFromFileAtPath(fileName: String) async throws
+    @objc optional func saveStateToFileAtPath(fileName: String) async throws
+    @objc optional func loadStateFromFileAtPath(fileName: String) async throws
 
 //    @objc func saveStateToFileAtPath(fileName: String, completionHandler block: @escaping (Bool, Error?) -> Void)
 //    @objc func loadStateFromFileAtPath(fileName: String, completionHandler block: @escaping (Bool, Error?) -> Void)

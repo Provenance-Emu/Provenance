@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PVLibraryPrimitives
 
 // MARK: - PVSystem convenience extension
 

@@ -24,18 +24,18 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "OESQLiteDatabase.h"
+#import "PVSQLiteDatabase.h"
 #import <sqlite3.h>
 @import PVSupport;
 @import PVLoggingObjC;
 
 NSString * const OESQLiteErrorDomain = @"OESQLiteErrorDomain";
-@interface OESQLiteDatabase ()
+@interface PVSQLiteDatabase ()
 {
     sqlite3 *connection;
 }
 @end
-@implementation OESQLiteDatabase
+@implementation PVSQLiteDatabase
 
 - (id)initWithURL:(NSURL*)url error:(NSError *__autoreleasing *)error
 {

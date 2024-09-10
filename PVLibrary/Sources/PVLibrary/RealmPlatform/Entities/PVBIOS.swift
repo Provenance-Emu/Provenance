@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import PVLibraryPrimitives
 
 @objcMembers
 public final class PVBIOS: Object, BIOSFileProvider {
@@ -26,15 +27,17 @@ public final class PVBIOS: Object, BIOSFileProvider {
 
     public dynamic var file: PVFile?
     public var fileInfo: PVFile? { return file }
-
-    public convenience init(withSystem system: PVSystem, descriptionText: String, optional: Bool = false, expectedMD5: String, expectedSize: Int, expectedFilename: String) {
-        self.init()
+    
+    public init(system: PVSystem!, descriptionText: String, regions: RegionOptions, version: String, optional: Bool, expectedMD5: String, expectedSize: Int, expectedFilename: String, file: PVFile? = nil) {
         self.system = system
         self.descriptionText = descriptionText
+        self.regions = regions
+        self.version = version
         self.optional = optional
-        self.expectedMD5 = expectedMD5.uppercased()
+        self.expectedMD5 = expectedMD5
         self.expectedSize = expectedSize
         self.expectedFilename = expectedFilename
+        self.file = file
     }
 
     public override static func primaryKey() -> String? {
@@ -43,38 +46,53 @@ public final class PVBIOS: Object, BIOSFileProvider {
 }
 
 public extension PVBIOS {
-    var expectedPath: URL { get async {
-        return await system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false)
+    convenience init(withSystem system: PVSystem, descriptionText: String, optional: Bool = false, expectedMD5: String, expectedSize: Int, expectedFilename: String) {
+        self.init()
+        self.system = system
+        self.descriptionText = descriptionText
+        self.optional = optional
+        self.expectedMD5 = expectedMD5.uppercased()
+        self.expectedSize = expectedSize
+        self.expectedFilename = expectedFilename
+    }
+}
+
+public extension PVBIOS {
+    var expectedPath: URL { get {
+        return system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false)
     }}
 }
 
 extension PVBIOS {
-    public var status: BIOSStatus { get async {
-        return await BIOSStatus(withBios: self)
+    public var status: BIOSStatus { get {
+        return BIOSStatus(withBios: self)
     }}
 }
 
 // MARK: - Conversions
 
-private extension BIOS {
-    init(with bios: PVBIOS) async {
-        descriptionText = bios.descriptionText
-        optional = bios.optional
-        expectedMD5 = bios.expectedMD5
-        expectedSize = bios.expectedSize
-        expectedFilename = bios.expectedFilename
-        status = await bios.status
-        file = await bios.file?.asDomain()
-        regions = bios.regions
-        version = bios.version
+public extension BIOS {
+    init(with bios: PVBIOS) {
+        let descriptionText = bios.descriptionText
+        let optional = bios.optional
+        let expectedMD5 = bios.expectedMD5
+        let expectedSize = bios.expectedSize
+        let expectedFilename = bios.expectedFilename
+        let status = bios.status
+        let file = bios.file?.asDomain()
+        let regions = bios.regions
+        let version = bios.version
+        let system = bios.system.asDomain()
+        
+        self.init(descriptionText: descriptionText, regions: regions, version: version, expectedMD5: expectedMD5, expectedSize: expectedSize, expectedFilename: expectedFilename, optional: optional, status: status, file: file)
     }
 }
 
 extension PVBIOS: DomainConvertibleType {
     public typealias DomainType = BIOS
 
-    public func asDomain() async -> BIOS {
-        return await BIOS(with: self)
+    public func asDomain() -> BIOS {
+        return BIOS(with: self)
     }
 }
 

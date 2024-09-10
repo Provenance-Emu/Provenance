@@ -26,7 +26,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface OESQLiteDatabase : NSObject
+@interface PVSQLiteDatabase : NSObject
 - (instancetype _Nullable)initWithURL:(NSURL* _Nonnull)url error:(NSError * _Nullable __autoreleasing *_Nullable)error;
 - (NSArray<NSDictionary<NSString*, NSObject*>*> *_Nullable)executeQuery:(NSString* _Nonnull)sql error:(NSError * _Nullable __autoreleasing *_Nullable)error;
 @end

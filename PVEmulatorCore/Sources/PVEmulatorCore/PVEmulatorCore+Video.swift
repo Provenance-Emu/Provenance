@@ -22,7 +22,9 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     open var alwaysUseMetal: Bool { false }
     open var aspectSize: CGSize { .zero }
 
-    open var emulationFPS: Double { 0.0 }
+    open var emulationFPS: Double {
+        0.0
+    }
 
     open var isDoubleBuffered: Bool {
         if let objcBridge = self as? ObjCCoreBridge {
@@ -63,11 +65,11 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     open var renderFPS: Double { 0.0 }
     
     open var rendersToOpenGL: Bool {
-//        if let objcBridge = self as? ObjCCoreBridge {
-//            return objcBridge.rendersToOpenGL
-//        } else {
+        if let objcBridge = self as? ObjCCoreBridge {
+            return objcBridge.rendersToOpenGL
+        } else {
             return false
-//        }
+        }
     }
    
     open var screenRect: CGRect {

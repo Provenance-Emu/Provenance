@@ -10,16 +10,7 @@ import Foundation
 import PVSupport
 import RealmSwift
 import PVLogging
-
-public protocol Filed {
-    associatedtype LocalFileProviderType: LocalFileProvider
-    var file: LocalFileProviderType! { get }
-}
-
-extension LocalFileProvider where Self: Filed {
-    public var url: URL { get { return file.url } }
-    public var fileInfo: Self.LocalFileProviderType? { return file }
-}
+import PVLibraryPrimitives
 
 @objcMembers
 public final class PVSaveState: Object, Identifiable, Filed, LocalFileProvider {
@@ -78,82 +69,11 @@ public final class PVSaveState: Object, Identifiable, Filed, LocalFileProvider {
         return isNewest
     }
 
-    public static func == (lhs: PVSaveState, rhs: PVSaveState) async -> Bool {
-        return await lhs.file.url == rhs.file.url
+    public static func == (lhs: PVSaveState, rhs: PVSaveState) -> Bool {
+        return lhs.file.url == rhs.file.url
     }
 
     public override static func primaryKey() -> String? {
         return "id"
-    }
-}
-
-// MARK: - Conversions
-
-private extension SaveState {
-    init(with saveState: PVSaveState) async {
-        id = saveState.id
-        game = await saveState.game.asDomain()
-        core = await saveState.core.asDomain()
-        file = await FileInfo(fileName: saveState.file.fileName, size: saveState.file.size, md5: saveState.file.md5, online: saveState.file.online, local: true)
-        date = saveState.date
-        lastOpened = saveState.lastOpened
-
-        if let sImage = saveState.image {
-            image = await LocalFile(url: sImage.url)
-        } else {
-            image = nil
-        }
-        isAutosave = saveState.isAutosave
-    }
-}
-
-extension PVSaveState: DomainConvertibleType {
-    public typealias DomainType = SaveState
-
-    public func asDomain() async -> SaveState {
-        return await SaveState(with: self)
-    }
-}
-
-extension SaveState: RealmRepresentable {
-    public var uid: String {
-        return file.fileName
-    }
-
-    @MainActor
-    public func asRealm() async -> PVSaveState {
-        return await PVSaveState.build { object in
-
-            object.id = id
-            let realm = try! await Realm()
-            
-            if let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5) {
-                object.game = rmGame
-            } else {
-                object.game = await game.asRealm()
-            }
-
-            if let rmCore = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) {
-                object.core = rmCore
-            } else {
-                object.core = await core.asRealm()
-            }
-
-            Task {
-                let path = await PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName).appendingPathComponent(file.fileName)
-                object.file = await PVFile(withURL: path)
-                DLOG("file path: \(path)")
-                
-                object.date = date
-                object.lastOpened = lastOpened
-                if let image = image {
-                    let dir = path.deletingLastPathComponent()
-                    let imagePath = await dir.appendingPathComponent(image.fileName)
-                    DLOG("path: \(imagePath)")
-                    object.image = await PVImageFile(withURL: imagePath, relativeRoot: .iCloud)
-                }
-                object.isAutosave = isAutosave
-            }
-        }
     }
 }

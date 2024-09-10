@@ -13,6 +13,7 @@ import PVLogging
 #if canImport(UIKit)
 import UIKit
 #endif
+import PVLibraryPrimitives
 
 public enum RelativeRoot: Int, Sendable {
     case documents
@@ -83,7 +84,7 @@ public class PVFile: Object, LocalFileProvider, Codable, DomainConvertibleType {
     public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) async {
         self.init()
         self.relativeRoot = relativeRoot
-        partialPath = await relativeRoot.createRelativePath(fromURL: url)
+        partialPath = relativeRoot.createRelativePath(fromURL: url)
     }
 }
 

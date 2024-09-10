@@ -87,25 +87,27 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 
             window.rootViewController = sideNav
         } else {
-            let storyboard = UIStoryboard.init(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
-            let vc = storyboard.instantiateInitialViewController()
+            Task.detached { @MainActor in
+                let storyboard = UIStoryboard.init(name: "Provenance", bundle: PVUIKit.BundleLoader.bundle)
+                let vc = storyboard.instantiateInitialViewController()
 
-            window.rootViewController = vc
+                window.rootViewController = vc
 
-            guard let rootNavigation = window.rootViewController as? UINavigationController else {
-                fatalError("No root nav controller")
+                guard let rootNavigation = window.rootViewController as? UINavigationController else {
+                    fatalError("No root nav controller")
+                }
+                self.rootNavigationVC = rootNavigation
+                guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
+                    fatalError("No gameLibraryViewController")
+                }
+
+                // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
+                gameLibraryViewController.updatesController = libraryUpdatesController
+                gameLibraryViewController.gameImporter = gameImporter
+                gameLibraryViewController.gameLibrary = gameLibrary
+                
+                self.gameLibraryViewController = gameLibraryViewController
             }
-            self.rootNavigationVC = rootNavigation
-            guard let gameLibraryViewController = rootNavigation.viewControllers.first as? PVGameLibraryViewController else {
-                fatalError("No gameLibraryViewController")
-            }
-
-            // Would be nice to inject this in a better way, so that we can be certain that it's present at viewDidLoad for PVGameLibraryViewController, but this works for now
-            gameLibraryViewController.updatesController = libraryUpdatesController
-            gameLibraryViewController.gameImporter = gameImporter
-            gameLibraryViewController.gameLibrary = gameLibrary
-            
-            self.gameLibraryViewController = gameLibraryViewController
         }
 
         #if os(iOS) && !APP_STORE

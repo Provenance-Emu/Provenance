@@ -888,6 +888,11 @@
 		B36B853629599A9700FDEA29 /* PVOpera.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3231BEE28966661003CC116 /* PVOpera.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B36C50DA296F4D1200921F85 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B306E1412769FE65001DC52E /* PVO2EM.framework */; };
 		B36C50DB296F4D1200921F85 /* PVO2EM.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B306E1412769FE65001DC52E /* PVO2EM.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B36C8E7B2C7ECE6100BD4377 /* PVStella-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7A2C7ECE6100BD4377 /* PVStella-Dynamic */; };
+		B36C8E7C2C7ECE6200BD4377 /* PVStella-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7A2C7ECE6100BD4377 /* PVStella-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B36C8E7E2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */; };
+		B36C8E7F2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B36C8E812C7ED0C800BD4377 /* MednafenGameCore-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E802C7ED0C800BD4377 /* MednafenGameCore-Dynamic */; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B37CE669293F23C20010B746 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); };
 		B37CE66A293F23C30010B746 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1023,6 +1028,7 @@
 		B3AFCF982977A80C00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF972977A80C00A01010 /* PVLogging */; };
 		B3B925A22C6141BC006317EC /* PVVirtualJaguar-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; };
 		B3B925A32C614208006317EC /* PVVirtualJaguar-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B3B9BE562C802023005C405B /* MednafenGameCore-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B3B9BE552C802023005C405B /* MednafenGameCore-Dynamic */; };
 		B3BD95EB2C1AD2AC00B92276 /* Cores.h in Headers */ = {isa = PBXBuildFile; fileRef = B3270F8127DCB25100E83180 /* Cores.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3BE9F9B2C79869F006D989E /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9A2C79869F006D989E /* PVSettings */; };
 		B3BE9F9D2C7986A4006D989E /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = B3BE9F9C2C7986A4006D989E /* Defaults */; };
@@ -1953,7 +1959,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B36C8E7C2C7ECE6200BD4377 /* PVStella-Dynamic in Embed Frameworks */,
 				B35EEFA42C6C6D1A00EBD1A8 /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
+				B36C8E7F2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Embed Frameworks */,
 				B35EEFA52C6C6D1A00EBD1A8 /* RealmSwift in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -3253,11 +3261,13 @@
 				B35EEFCF2C6C6D1A00EBD1A8 /* CoreData.framework in Frameworks */,
 				B35EEFD02C6C6D1A00EBD1A8 /* AudioToolbox.framework in Frameworks */,
 				B35EEFD12C6C6D1A00EBD1A8 /* PVSettings in Frameworks */,
+				B36C8E7B2C7ECE6100BD4377 /* PVStella-Dynamic in Frameworks */,
 				B35EEFD22C6C6D1A00EBD1A8 /* MBProgressHUD in Frameworks */,
 				B35EEFD32C6C6D1A00EBD1A8 /* UIKit.framework in Frameworks */,
 				B35EEFD42C6C6D1A00EBD1A8 /* PVThemes in Frameworks */,
 				B35EEFD52C6C6D1A00EBD1A8 /* Reachability in Frameworks */,
 				B35EEFD62C6C6D1A00EBD1A8 /* SteamController in Frameworks */,
+				B36C8E7E2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Frameworks */,
 				B35EEFD72C6C6D1A00EBD1A8 /* Metal.framework in Frameworks */,
 				B35EEFD82C6C6D1A00EBD1A8 /* OpenGLES.framework in Frameworks */,
 				B35EEFDA2C6C6D1A00EBD1A8 /* PVLogging in Frameworks */,
@@ -3280,6 +3290,7 @@
 				B3EF26EE2BE7F8EC0066D4B6 /* libc++.tbd in Frameworks */,
 				B3EF26EC2BE7F8DD0066D4B6 /* libxml2.tbd in Frameworks */,
 				B3E0CF9F2C054DEB00F45074 /* RxDataSources in Frameworks */,
+				B36C8E812C7ED0C800BD4377 /* MednafenGameCore-Dynamic in Frameworks */,
 				B33BD1BF2C6A6212001E933A /* PVPicoDrive-Dynamic in Frameworks */,
 				B3952F582C698F54000B0308 /* Defaults in Frameworks */,
 				B3952F562C697A02000B0308 /* PVUI in Frameworks */,
@@ -3320,6 +3331,7 @@
 				B394CDAC2BDEE53A006B63E8 /* Foundation.framework in Frameworks */,
 				B3B925A22C6141BC006317EC /* PVVirtualJaguar-Dynamic in Frameworks */,
 				B394CDAD2BDEE53A006B63E8 /* OpenGL.framework in Frameworks */,
+				B3B9BE562C802023005C405B /* MednafenGameCore-Dynamic in Frameworks */,
 				B394CDAE2BDEE53A006B63E8 /* CoreGraphics.framework in Frameworks */,
 				B394CDB12BDEE53A006B63E8 /* Introspect in Frameworks */,
 				B3E0CFA82C05508500F45074 /* PVCoreAudio in Frameworks */,
@@ -4877,6 +4889,8 @@
 				B35EEF762C6C6D1A00EBD1A8 /* PVSettings */,
 				B35EEF772C6C6D1A00EBD1A8 /* PVUI */,
 				B35EEF782C6C6D1A00EBD1A8 /* Defaults */,
+				B36C8E7A2C7ECE6100BD4377 /* PVStella-Dynamic */,
+				B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */,
 			);
 			productName = Provenance;
 			productReference = B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */;
@@ -4930,6 +4944,8 @@
 				B33BD1C12C6A621A001E933A /* PVPokeMini-Dynamic */,
 				B33BD1C42C6A622A001E933A /* PVTGBDual-Dynamic */,
 				B33BD1C72C6A6261001E933A /* PVStella-Dynamic */,
+				B36C8E802C7ED0C800BD4377 /* MednafenGameCore-Dynamic */,
+				B3B9BE552C802023005C405B /* MednafenGameCore-Dynamic */,
 			);
 			productName = Provenance;
 			productReference = B394CDDF2BDEE53A006B63E8 /* Provenance.app */;
@@ -5377,6 +5393,7 @@
 				B3EE55DF2C66EC09004D06E4 /* XCRemoteSwiftPackageReference "Defaults" */,
 				B3952F542C697A02000B0308 /* XCLocalSwiftPackageReference "PVUI" */,
 				B33BD1B72C6A61DD001E933A /* XCLocalSwiftPackageReference "MoltenVK" */,
+				B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */,
 			);
 			preferredProjectObjectVersion = 63;
 			productRefGroup = 1A3D409517B2DCE4004DFFFC /* Products */;
@@ -11052,7 +11069,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Stickers/Info.plist";
+				INFOPLIST_FILE = "Extensions/Provenance Stickers/Info.plist";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -11094,7 +11111,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Stickers/Info.plist";
+				INFOPLIST_FILE = "Extensions/Provenance Stickers/Info.plist";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -11136,7 +11153,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Provenance Stickers/Info.plist";
+				INFOPLIST_FILE = "Extensions/Provenance Stickers/Info.plist";
 				INFOPLIST_KEY_NSStickerSharingLevel = OS;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
@@ -12754,6 +12771,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/VirtualJaguar;
 		};
+		B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Cores/Mednafen;
+		};
 		B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/TGBDual;
@@ -13366,6 +13387,20 @@
 			package = B35EEF792C6C6D1A00EBD1A8 /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
+		B36C8E7A2C7ECE6100BD4377 /* PVStella-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CDE2C54C92300877AC7 /* XCLocalSwiftPackageReference "Cores/Stella" */;
+			productName = "PVStella-Dynamic";
+		};
+		B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
+			productName = "PVPokeMini-Dynamic";
+		};
+		B36C8E802C7ED0C800BD4377 /* MednafenGameCore-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "MednafenGameCore-Dynamic";
+		};
 		B390B0E9276B2DB20018E065 /* AltKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B390B0E8276B2DB20018E065 /* XCRemoteSwiftPackageReference "AltKit" */;
@@ -13460,6 +13495,10 @@
 		B3B925A12C6141BC006317EC /* PVVirtualJaguar-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = "PVVirtualJaguar-Dynamic";
+		};
+		B3B9BE552C802023005C405B /* MednafenGameCore-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "MednafenGameCore-Dynamic";
 		};
 		B3BE9F9A2C79869F006D989E /* PVSettings */ = {
 			isa = XCSwiftPackageProductDependency;

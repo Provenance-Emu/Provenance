@@ -20,8 +20,8 @@ public enum SerializerPackageType: String, Codable, Sendable {
     }
 }
 
-public protocol Package: Codable {
-    associatedtype Metadata: Codable
+public protocol Package: Codable, Sendable {
+    associatedtype Metadata: Codable, Sendable
     var type: SerializerPackageType { get }
     var data: Data { get }
     var metadata: Metadata { get }

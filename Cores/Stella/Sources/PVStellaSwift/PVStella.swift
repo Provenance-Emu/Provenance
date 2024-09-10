@@ -24,7 +24,7 @@ import libstella
 
 @objc
 @objcMembers
-public final class PVStellaGameCore: PVEmulatorCore {
+public final class PVStellaGameCore: PVEmulatorCore, @unchecked Sendable {
 
 #if canImport(GameController)
     @MainActor
@@ -32,28 +32,48 @@ public final class PVStellaGameCore: PVEmulatorCore {
 #endif
     
     // MARK: Cheats
-    @MainActor
+    @objc
     public let cheats: NSMutableArray = .init()
 
+    @objc
     public var supportsCheatCode: Bool { true }
 
     // Stella
-    @MainActor
+    @objc
     public var region :Region = .NTSC
-    @MainActor
-    public var _sampleRate: Double = 31400.0
-    @MainActor
-    public var _frameInterval: TimeInterval = 0
 
-    @MainActor
+    @objc
+    public var _sampleRate: Double = 31400.0
+    @objc
+    public override var sampleRate: Double {
+        get { _sampleRate }
+        set { _sampleRate = newValue }
+    }
+    
+    @objc public override var audioBufferCount: UInt { 1 }
+    @objc public override var audioBitDepth: UInt { 16 }
+
+    @objc
+    public var _frameInterval: TimeInterval = 60.0
+    @objc public dynamic override var frameInterval: TimeInterval { _frameInterval  }
+    
+    @objc
     public var _videoBuffer: UnsafeMutablePointer<stellabuffer_t> = .allocate(capacity: 1)
-    @MainActor
+    @objc
+    public override var videoBuffer: UnsafeMutableRawPointer { UnsafeMutableRawPointer.init(_videoBuffer) }
+    
+    @objc
+    public var videoWidth: Int32 { _videoWidth }
+    @objc
     public var _videoWidth: Int32 = STELLA_WIDTH
-    @MainActor
+    @objc
+    public var videoHeight: Int32 { _videoHeight }
+    @objc
     public var _videoHeight: Int32 = STELLA_HEIGHT
 
     // MARK: Lifecycle
 
+    @objc
     public required init() {
         super.init()
     }

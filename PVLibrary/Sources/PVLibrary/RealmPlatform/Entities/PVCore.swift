@@ -9,6 +9,7 @@
 import Foundation
 import RealmSwift
 import PVLogging
+import PVLibraryPrimitives
 
 @objcMembers
 public final class PVCore: Object {
@@ -53,39 +54,25 @@ public final class PVCore: Object {
 
 // MARK: - Conversions
 
-internal extension Core {
-//    init(with core: PVCore) {
-//        let identifier = core.identifier
-//        let principleClass = core.principleClass
-//        let systems : [System] = {
-//                let realm = try! Realm()
-//                let systems = realm.objects(PVSystem.self).filter { $0.cores.contains(where: {
-//                    $0.identifier == identifier
-//                }) }.map {
-//                    System(with: $0)
-//                }
-//                return systems.map { $0 }
-//        }()
-//
-//        // TODO: Supported systems
-//        let project = CoreProject(name: core.projectName, url: URL(string: core.projectURL)!, version: core.projectVersion)
-//        self.init(identifier: identifier, principleClass: principleClass, systems: systems, project: project)
-//    }
+public extension Core {
     init(with core: PVCore) {
-        identifier = core.identifier
-        principleClass = core.principleClass
-        disabled = core.disabled
+        let identifier = core.identifier
+        let principleClass = core.principleClass
+        let disabled = core.disabled
         // TODO: Supported systems
         let url = URL(string: core.projectURL) ?? URL(string: "https://provenance-emu.com")!
 		ILOG("loadcore: \(core.projectName) class: \(core.principleClass) identifier: \(identifier) disable: \(disabled)")
-        project = CoreProject(name: core.projectName, url: url, version: core.projectVersion)
+        let project = CoreProject(name: core.projectName, url: url, version: core.projectVersion)
+        let systems = Array(core.supportedSystems.map { $0.asDomain() })
+        
+        self.init(identifier: identifier, principleClass: principleClass, disabled: disabled, systems: systems, project: project)
     }
 }
 
 extension PVCore: DomainConvertibleType {
     public typealias DomainType = Core
 
-    public func asDomain() async -> Core {
+    public func asDomain() -> Core {
         return Core(with: self)
     }
 }

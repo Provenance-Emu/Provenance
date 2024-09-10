@@ -13,6 +13,7 @@ import PVLogging
 import PVCoreBridge
 import AsyncAlgorithms
 import PVPlists
+import PVLibraryPrimitives
 
 extension AsyncSequence {
     func collect() async rethrows -> [Element] {
@@ -23,18 +24,6 @@ extension AsyncSequence {
 #if os(tvOS)
     import TVServices
 #endif
-
-public struct SystemOptions: OptionSet, Codable, Sendable {
-    public init(rawValue: Int) {
-        self.rawValue = rawValue
-    }
-
-    public let rawValue: Int
-
-    public static let cds = SystemOptions(rawValue: 1 << 0)
-    public static let portable = SystemOptions(rawValue: 1 << 1)
-    public static let rumble = SystemOptions(rawValue: 1 << 2)
-}
 
 @objcMembers
 public final class PVSystem: Object, Identifiable, SystemProtocol {
@@ -87,8 +76,8 @@ public final class PVSystem: Object, Identifiable, SystemProtocol {
     public private(set) var games = LinkingObjects(fromType: PVGame.self, property: "system")
     public private(set) var cores = LinkingObjects(fromType: PVCore.self, property: "supportedSystems")
 
-    public var gameStructs: [Game] { get async {
-        try! await games.concurrentMap( { await Game(withGame: $0) } )
+    public var gameStructs: [Game] { get {
+        games.map( { Game(withGame: $0) } )
     }}
 
     public var coreStructs: [Core] {
@@ -204,8 +193,8 @@ public extension PVSystem {
 extension PVSystem: DomainConvertibleType {
     public typealias DomainType = System
 
-    public func asDomain() async -> System {
-        return await System(with: self)
+    public func asDomain() -> System {
+        return System(with: self)
     }
 }
 

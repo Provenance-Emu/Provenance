@@ -9,49 +9,7 @@
 import Foundation
 import PVSupport
 import PVLogging
-
-public protocol Packageable {
-    associatedtype PackageType: Package
-    var packageType: SerializerPackageType { get }
-    func toPackage() async throws -> PackageType
-}
-
-public typealias JSONMetadataSerialable = DomainConvertibleType & LocalFileInfoProvider & DataProvider
-
-extension Packageable where Self: JSONMetadataSerialable {
-    internal func packageParts() async throws -> (Data, Self.DomainType) {
-        let data = try await readData()
-        return await (data, asDomain())
-    }
-}
-
-extension PVSaveState: Packageable {
-    public var packageType: SerializerPackageType { return .saveState }
-
-    public typealias PackageType = SavePackage
-    public func toPackage() async throws -> PackageType {
-        let (data, metadata) = try await packageParts()
-        return SavePackage(data: data, metadata: metadata)
-    }
-}
-
-extension PVGame: Packageable {
-    public var packageType: SerializerPackageType { return .game }
-
-    public typealias PackageType = GamePackage
-    public func toPackage() async throws -> GamePackage {
-        let (data, metadata) = try await packageParts()
-        let saveStatesArray = Array(saveStates)
-        let saves = await saveStatesArray.asyncMap { save async -> SavePackage in
-            let data = try! await Data(contentsOf: save.file.url)
-            let metadata = await save.asDomain()
-            return SavePackage(data: data, metadata: metadata)
-        }
-
-        let gamePackage = GamePackage(data: data, metadata: metadata, saves: saves)
-        return gamePackage
-    }
-}
+import PVLibraryPrimitives
 
 public typealias SerliazeCompletion = @Sendable (_ result: PackageResult) -> Void
 
@@ -64,9 +22,9 @@ public final class LibrarySerializer {
 
     
     public static func storeMetadata<O: JSONMetadataSerialable>(_ object: O, completion: @escaping SerliazeCompletion) async where O.DomainType: Sendable {
-        let directory = await object.url.deletingLastPathComponent()
-        let fileName = await object.fileName
-        let data = await object.asDomain()
+        let directory = object.url.deletingLastPathComponent()
+        let fileName = object.fileName
+        let data = object.asDomain()
 
         LibrarySerializer.serializeQueue.async {
             let jsonFilename = fileName + ".json"
@@ -83,9 +41,9 @@ public final class LibrarySerializer {
     // MARK: - Packaging
 
     public static func storePackage<P: Packageable & JSONMetadataSerialable & Sendable>(_ object: P) async throws -> URL {
-        let path = await object.url
+        let path = object.url
         let directory = path.deletingLastPathComponent()
-        let fileName = await object.fileName
+        let fileName = object.fileName
 
         return try await Task {
             let jsonFilename = fileName + "." + object.packageType.extension

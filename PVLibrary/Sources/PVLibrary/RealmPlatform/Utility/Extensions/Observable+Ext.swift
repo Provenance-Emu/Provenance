@@ -1,8 +1,9 @@
 import Foundation
 import RxSwift
 import AsyncAlgorithms
+import PVLibraryPrimitives
 
-extension RxSwift.Observable where Element: Sequence, Element.Iterator.Element: DomainConvertibleType {
+public extension RxSwift.Observable where Element: Sequence, Element.Iterator.Element: DomainConvertibleType {
     typealias DomainType = Element.Iterator.Element.DomainType
 
     func mapToDomain() async -> RxSwift.Observable<[DomainType]> {
@@ -11,7 +12,7 @@ extension RxSwift.Observable where Element: Sequence, Element.Iterator.Element: 
     }
 }
 
-extension Sequence where Iterator.Element: DomainConvertibleType {
+public extension Sequence where Iterator.Element: DomainConvertibleType {
     typealias Element = Iterator.Element
     func mapToDomain() async -> [Element.DomainType] {
         return await asyncMap {

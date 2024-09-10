@@ -12,6 +12,7 @@ import PVSupport
 import RealmSwift
 import RxRealm
 import RxSwift
+import PVLibraryPrimitives
 
 public enum SyncError: Error {
     case noUbiquityURL

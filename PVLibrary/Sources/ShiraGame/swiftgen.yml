@@ -1,0 +1,9 @@
+input_dir: Resources
+output_dir: ${DERIVED_SOURCES_DIR}
+
+files:
+  inputs:
+    - shiragame.sqlite3
+  outputs:
+    output: SQLiteFiles.swift
+    templateName: flat-swift5

@@ -168,9 +168,27 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.hud = MBProgressHUD(view: view)
+        self.hud.isUserInteractionEnabled = true
+        view.addSubview(self.hud)
+        self.hud.mode = .indeterminate
+        self.hud.label.text = "Initializing Games Library..."
+        self.hud.show(animated: true)
+        
+        Task.detached { @MainActor in
+            self.hud.hide(animated: true)
+
+            self.checkROMs(true)
+            
+            self.loadGameFromShortcut()            
+        }
+        
+        
         isInitialAppearance = true
         definesPresentationContext = true
         
+
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.databaseMigrationStarted(_:)), name: NSNotification.Name.DatabaseMigrationStarted, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PVGameLibraryViewController.databaseMigrationFinished(_:)), name: NSNotification.Name.DatabaseMigrationFinished, object: nil)
         
@@ -536,10 +554,6 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
         layout.sectionInsetReference = .fromSafeArea
 #endif
         
-        self.hud = MBProgressHUD(view: view)
-        self.hud.isUserInteractionEnabled = true
-        view.addSubview(self.hud)
-        
         updatesController.hudState
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { state in
@@ -621,13 +635,6 @@ public final class PVGameLibraryViewController: GCEventViewController, UITextFie
             })
             .disposed(by: disposeBag)
         
-        self.hud.mode = .indeterminate
-        self.hud.label.text = "Initializing Games Library..."
-        self.hud.show(animated: true)
-        self.hud.hide(animated: true, afterDelay: TimeInterval(1))
-        self.checkROMs(true)
-        
-        loadGameFromShortcut()
         becomeFirstResponder()
     }
     

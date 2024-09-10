@@ -50,7 +50,7 @@
 #import <OpenGLES/gltypes.h>
 #import <OpenGLES/ES3/gl.h>
 #import <OpenGLES/ES3/glext.h>
-#elseif !TARGET_OS_WATCH
+#elif !TARGET_OS_WATCH
 @import OpenGL;
 @import GLUT;
 #endif

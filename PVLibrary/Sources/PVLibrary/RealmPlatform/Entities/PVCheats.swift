@@ -7,16 +7,7 @@ import Foundation
 import PVSupport
 import RealmSwift
 import PVLogging
-
-public protocol CheatFile {
-    associatedtype LocalFileProviderType: LocalFileProvider
-    var file: LocalFileProviderType! { get }
-}
-
-extension LocalFileProvider where Self: CheatFile {
-    public var url: URL { get { return file.url }}
-    public var fileInfo: Self.LocalFileProviderType? { get { return file }}
-}
+import PVLibraryPrimitives
 
 @objcMembers
 public final class PVCheats: Object, CheatFile, LocalFileProvider {
@@ -63,25 +54,27 @@ public final class PVCheats: Object, CheatFile, LocalFileProvider {
 
 // MARK: - Conversions
 
-private extension Cheats {
-    init(with saveState: PVCheats) async {
-        id = saveState.id
-        game = await saveState.game.asDomain()
-        core = await saveState.core.asDomain()
-        code = saveState.code
-        type = saveState.type
-        date = saveState.date
-        lastOpened = saveState.lastOpened
-        enabled=saveState.enabled
-        file = await FileInfo(fileName: saveState.file.fileName, size: saveState.file.size, md5: saveState.file.md5, online: saveState.file.online, local: true)
+public extension Cheats {
+    init(with saveState: PVCheats) {
+        let id = saveState.id
+        let game = saveState.game.asDomain()
+        let core = saveState.core.asDomain()
+        let code = saveState.code!
+        let type = saveState.type!
+        let date = saveState.date
+        let lastOpened = saveState.lastOpened
+        let enabled = saveState.enabled
+        let file = FileInfo(fileName: saveState.file.fileName, size: saveState.file.size, md5: saveState.file.md5, online: saveState.file.online, local: true)
+        
+        self.init(id: id, game: game, core: core, code: code, type: type, date: date, lastOpened: lastOpened, enabled: enabled, file: file)
     }
 }
 
 extension PVCheats: DomainConvertibleType {
     public typealias DomainType = Cheats
 
-    public func asDomain() async -> Cheats {
-        return await Cheats(with: self)
+    public func asDomain() -> Cheats {
+        return Cheats(with: self)
     }
 }
 
@@ -105,7 +98,7 @@ extension Cheats: RealmRepresentable {
                 object.core = await core.asRealm()
             }
             object.date = date
-            let path = await PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName).appendingPathComponent(file.fileName)
+            let path = PVEmulatorConfiguration.saveStatePath(forROMFilename: game.file.fileName).appendingPathComponent(file.fileName)
             object.file = await PVFile(withURL: path)
             object.lastOpened = lastOpened
             object.code=code

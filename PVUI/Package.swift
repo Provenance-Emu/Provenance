@@ -33,6 +33,7 @@ let package = Package(
         .package(url: "https://github.com/ashleymills/Reachability.swift.git", branch: "master"),
         .package(url: "https://github.com/RxSwiftCommunity/RxDataSources.git", from: "5.0.2"),
         .package(url: "https://github.com/jdg/MBProgressHUD.git", from: "1.2.0"),
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0")
     ],
     targets: [
         
@@ -54,7 +55,8 @@ let package = Package(
                 .byNameItem(name: "MBProgressHUD", condition: .when(platforms: [.iOS, .macCatalyst, .tvOS, .watchOS])),
                 .byNameItem(name: "PVUI_AppKit", condition: .when(platforms: [.macOS])),
                 .byNameItem(name: "PVUI_TV", condition: .when(platforms: [.tvOS])),
-                .byNameItem(name: "PVUI_IOS", condition: .when(platforms: [.iOS, .macCatalyst, .visionOS]))
+                .byNameItem(name: "PVUI_IOS", condition: .when(platforms: [.iOS, .macCatalyst, .visionOS])),
+                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [
                 .copy("Resources/Shaders/"),
@@ -104,6 +106,7 @@ let package = Package(
                 "MBProgressHUD",
                 .product(name: "Reachability", package: "reachability.swift"),
                 "RxDataSources",
+                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [
                 .copy("Resources/Shaders/"),
@@ -163,6 +166,7 @@ let package = Package(
         .target(
             name: "PVUI_IOS",
             dependencies: [
+                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [
                 .process("Resources/StoryBoards/"),
@@ -184,6 +188,7 @@ let package = Package(
         .target(
             name: "PVUI_TV",
             dependencies: [
+                .product(name: "Dependencies", package: "swift-dependencies")
             ],
             resources: [
                 .process("Resources/StoryBoards/"),
@@ -207,6 +212,7 @@ let package = Package(
         .target(
             name: "PVUI_AppKit",
             dependencies: [
+                .product(name: "Dependencies", package: "swift-dependencies")
             ]
         ),
         

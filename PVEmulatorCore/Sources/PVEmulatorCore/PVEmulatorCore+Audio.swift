@@ -14,7 +14,7 @@ import PVAudio
 @objc
 extension PVEmulatorCore: EmulatorCoreAudioDataSource {
 
-    @objc open var frameInterval: TimeInterval {
+    @objc dynamic open var frameInterval: TimeInterval {
         if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
             return objcBridge.frameInterval
         } else {
@@ -22,11 +22,12 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
         }
     }
 
-    @objc open var sampleRate: Double {
+    @objc dynamic  open var sampleRate: Double {
         get {
             // use objc stored property
             if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
-                return objcBridge.sampleRate
+                let sampleRate = objcBridge.sampleRate
+                return sampleRate
             } else {
                 return 48000
             }
@@ -40,10 +41,64 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
             }
         }
     }
-    @objc open var audioBitDepth: UInt { 16 }
-    @objc open var channelCount: UInt { 1 }
+    @objc dynamic  open var audioBitDepth: UInt {
+        get {
+            // use objc stored property
+            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge, objcBridge.responds(to: #selector(getter: audioBitDepth)) {
+                let audioBitDepth = objcBridge.audioBitDepth
+                return audioBitDepth
+            } else {
+                return 16
+            }
+        }
+//        set {
+//            // use objc stored property
+//            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+//                return objcBridge.audioBitDepth = newValue
+//            } else {
+//                fatalError("Should be overridden by subclass")
+//            }
+//        }
+    }
+    @objc dynamic  open var channelCount: UInt {
+        get {
+            // use objc stored property
+            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+                let channelCount = objcBridge.channelCount
+                return channelCount
+            } else {
+                return 1
+            }
+        }
+        set {
+            // use objc stored property
+            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+                return objcBridge.channelCount = newValue
+            } else {
+                fatalError("Should be overridden by subclass")
+            }
+        }
+    }
 
-    @objc open var audioBufferCount: UInt { 1 }
+    @objc dynamic open var audioBufferCount: UInt {
+        get {
+            // use objc stored property
+            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+                let audioBufferCount = objcBridge.audioBufferCount
+                return audioBufferCount
+            } else {
+                return 1
+            }
+        }
+//        set {
+//            // use objc stored property
+//            if let objcBridge: ObjCCoreBridge = self as? ObjCCoreBridge {
+//                return objcBridge.audioBufferCount = newValue
+//            } else {
+//                fatalError("Should be overridden by subclass")
+//            }
+//        }
+    }
 
     @objc public func getAudioBuffer(_ buffer: UnsafeMutableRawPointer, frameCount: UInt32, bufferIndex index: UInt) {
         let channelCount = channelCount(forBuffer: index)
@@ -61,7 +116,9 @@ extension PVEmulatorCore: EmulatorCoreAudioDataSource {
     
     @objc public func audioBufferSize(forBuffer buffer: UInt) -> UInt {
         // 4 frames is a complete guess
-        let frameSampleCount = audioSampleRate(forBuffer: buffer) / frameInterval
+        let frameInterval = self.frameInterval
+        let audioSampleRate = audioSampleRate(forBuffer: buffer)
+        let frameSampleCount = audioSampleRate / frameInterval
         let channelCount = channelCount(forBuffer:buffer)
         let bytesPerSample = audioBitDepth / 8
         //    NSAssert(frameSampleCount, @"frameSampleCount is 0");

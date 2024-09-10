@@ -8,10 +8,10 @@
   },
   "stickers" : [
     {
-      "filename" : "Icon-512.sticker"
+      "filename" : "Dreamcast.sticker"
     },
     {
-      "filename" : "ColorCartridge.sticker"
+      "filename" : "SameboyCartridge.sticker"
     },
     {
       "filename" : "Stella.sticker"
@@ -29,13 +29,13 @@
       "filename" : "mupen64plus.sticker"
     },
     {
-      "filename" : "iconfile.sticker"
+      "filename" : "colecovision.sticker"
     },
     {
-      "filename" : "gb-icon-256.sticker"
+      "filename" : "gameboy-icon.sticker"
     },
     {
-      "filename" : "AppIcon512x512.sticker"
+      "filename" : "Provenance.sticker"
     },
     {
       "filename" : "sgb-icon-256.sticker"

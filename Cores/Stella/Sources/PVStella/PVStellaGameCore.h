@@ -24,11 +24,37 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-//
-//#import <Foundation/Foundation.h>
-//#import <PVSupport/PVSupport-Swift.h>
-//#import <PVSupport/PVEmulatorCore.h>
-//
+
+@import Foundation;
+@import PVCoreBridge;
+@import PVStellaSwift;
+@import PVStellaCPP;
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
+
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
 //PVCORE_DIRECT_MEMBERS
-//@interface PVStellaGameCore : PVEmulatorCore <PV2600SystemResponderClient>
-//@end
+@interface PVStellaGameCore  (ObjCCoreBridge) <ObjCCoreBridge> // : PVEmulatorCore <PV2600SystemResponderClient>
+// MARK: Core
+- (void)loadFileAtPath:(NSString *)path error:(NSError * __autoreleasing *)error;
+- (void)executeFrameSkippingFrame:(BOOL)skip;
+- (void)executeFrame;
+- (void)swapBuffers;
+- (void)stopEmulation;
+- (void)resetEmulation;
+
+// MARK: Output
+- (CGRect)screenRect;
+- (const void *)videoBuffer;
+- (NSTimeInterval)frameInterval;
+- (BOOL)rendersToOpenGL;
+
+// MARK: Input
+- (void)pollControllers;
+
+// MARK: Save States
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *)) __attribute__((noescape)) block;
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *)) __attribute__((noescape)) block;
+@end
+
+NS_HEADER_AUDIT_END(nullability, sendability)

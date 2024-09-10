@@ -17,9 +17,10 @@ import PVCoreBridge
 import PVCoreLoader
 import AsyncAlgorithms
 import PVPlists
+import PVLookup
 
-import SQLite
 import PVLogging
+import PVLibraryPrimitives
 
 #if canImport(UIKit)
 import UIKit
@@ -50,6 +51,8 @@ public final class GameImporter {
     public private(set) var encounteredConflicts = false
 
     public static let shared: GameImporter = GameImporter()
+    
+    lazy var openVGDB = OpenVGDB.init()
 
     let workQueue: OperationQueue = {
         let q = OperationQueue()
@@ -91,24 +94,6 @@ public final class GameImporter {
         if ext.lowercased() == "chd" { return false }
         return cdExtensions.contains(ext)
     }
-
-    public lazy var openVGDB: OESQLiteDatabase = {
-        let _openVGDB = try! OESQLiteDatabase(withURL: openvgdbPath)
-        return _openVGDB
-    }()
-
-    lazy var sqldb: Connection = {
-        let sqldb = try! Connection(openvgdbPath.path, readonly: true)
-        return sqldb
-    }()
-
-    lazy var openvgdbPath: URL = {
-        let bundle = ThisBundle
-        guard let sqlFile = bundle.url(forResource: "openvgdb", withExtension: "sqlite") else {
-            fatalError("Unable to locate `openvgdb.sqlite`")
-        }
-        return sqlFile
-    }()
 
     fileprivate let ThisBundle: Bundle = Bundle.module
 
@@ -154,7 +139,7 @@ public final class GameImporter {
             let systems = PVSystem.all
             var map = [String: URL]()
             for system in systems {
-                map[system.identifier] = await system.romsDirectory
+                map[system.identifier] = system.romsDirectory
             }
             return map
         }
@@ -217,7 +202,7 @@ public final class GameImporter {
     }
 
     @objc
-    public func calculateMD5(forGame game: PVGame) async -> String? {
+    public func calculateMD5(forGame game: PVGame) -> String? {
         var offset: UInt64 = 0
     
         if game.systemIdentifier == SystemIdentifier.SNES.rawValue {
@@ -226,7 +211,7 @@ public final class GameImporter {
             offset = system.offset
         }
 
-        let romPath = await romsPath.appendingPathComponent(game.romPath, isDirectory: false)
+        let romPath = romsPath.appendingPathComponent(game.romPath, isDirectory: false)
         let fm = FileManager.default
         if !fm.fileExists(atPath: romPath.path) {
             ELOG("Cannot find file at path: \(romPath)")
@@ -367,7 +352,7 @@ public final class GameImporter {
         let importOperation = BlockOperation()
 
         await solutions.asyncForEach { filePath, system in
-            let subfolder = await system.romsDirectory
+            let subfolder = system.romsDirectory
 
             if !FileManager.default.fileExists(atPath: subfolder.path, isDirectory: nil) {
                 ILOG("Path <\(subfolder.path)> doesn't exist. Creating.")
@@ -445,8 +430,8 @@ public final class GameImporter {
             importOperation.addExecutionBlock {
                 Task {
                     ILOG("Import Files at \(destinationPath)")
-                    if let system = await RomDatabase.sharedInstance.getSystemCache()[system.identifier] {
-                        await RomDatabase.sharedInstance.addFileSystemROMCache(system)
+                    if let system = RomDatabase.sharedInstance.getSystemCache()[system.identifier] {
+                        RomDatabase.sharedInstance.addFileSystemROMCache(system)
                     }
                     await self.getRomInfoForFiles(atPaths: [destinationPath], userChosenSystem: system)
                 }
@@ -562,7 +547,7 @@ public extension GameImporter {
             }
         }
 
-        guard let systems: [PVSystem] = await PVEmulatorConfiguration.systemsFromCache(forFileExtension: gameExtension), !systems.isEmpty else {
+        guard let systems: [PVSystem] = PVEmulatorConfiguration.systemsFromCache(forFileExtension: gameExtension), !systems.isEmpty else {
             ELOG("No system for extension \(gameExtension)")
             return nil
         }
@@ -575,7 +560,7 @@ public extension GameImporter {
             // We could get here with Sega games. They use .bin, which is CD extension.
             // See if we can match any of the potential paths to a current game
             // See if we have any current games that could match based on searching for any, [systemIDs]/filename
-            guard let existingGames = await findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(systems, romFilename: gameFilename) else {
+            guard let existingGames = findAnyCurrentGameThatCouldBelongToAnyOfTheseSystems(systems, romFilename: gameFilename) else {
                 ELOG("System for extension \(gameExtension) is a CD system and {\(gameExtension)} not the right matching file type of cue or m3u")
                 return nil
             }
@@ -761,7 +746,7 @@ public extension GameImporter {
         let sortedPaths = PVEmulatorConfiguration.sortImportURLs(urls: paths)
         await sortedPaths.asyncForEach { path in
             do {
-                try await self._handlePath(path: path, userChosenSystem: chosenSystem)
+                try self._handlePath(path: path, userChosenSystem: chosenSystem)
             } catch {
                 ELOG("\(error)")
             }
@@ -960,7 +945,7 @@ public extension GameImporter {
         game.title = title
         game.requiresSync = true
         var relatedPVFiles = [PVFile]()
-        let files = await RomDatabase.sharedInstance.getFileSystemROMCache(for: system).keys
+        let files = RomDatabase.sharedInstance.getFileSystemROMCache(for: system).keys
         let name = RomDatabase.sharedInstance.altName(path, systemIdentifier: system.identifier)
         await files.asyncForEach { url in
             let relativeName=RomDatabase.sharedInstance.altName(url, systemIdentifier: system.identifier)
@@ -973,7 +958,7 @@ public extension GameImporter {
                 await relatedPVFiles.append(PVFile(withPartialPath: destinationDir.appendingPathComponent(url.lastPathComponent)))
             }
         }
-        guard let md5 = await calculateMD5(forGame: game) else {
+        guard let md5 = calculateMD5(forGame: game) else {
             ELOG("Couldn't calculate MD5 for game \(partialPath)")
             throw GameImporterError.couldNotCalculateMD5
         }
@@ -985,19 +970,19 @@ public extension GameImporter {
 
     private func finishUpdateOrImport(ofGame game: PVGame, path: URL) async throws {
         // Only process if rom doensn't exist in DB
-        if await RomDatabase.sharedInstance.getGamesCache()[game.romPath] != nil {
+        if RomDatabase.sharedInstance.getGamesCache()[game.romPath] != nil {
             throw GameImporterError.romAlreadyExistsInDatabase
         }
         var modified = false
         var game:PVGame = game
         if game.requiresSync {
             if importStartedHandler != nil {
-                let fullpath = await PVEmulatorConfiguration.path(forGame: game)
+                let fullpath = PVEmulatorConfiguration.path(forGame: game)
                 Task { @MainActor in
                     self.importStartedHandler?(fullpath.path)
                 }
             }
-            game = await lookupInfo(for: game, overwrite: true)
+            game = lookupInfo(for: game, overwrite: true)
             modified = true
         }
         let wasModified = modified
@@ -1018,7 +1003,7 @@ public extension GameImporter {
             try database.writeTransaction {
                 database.realm.create(PVGame.self, value:game, update:.modified)
             }
-            await RomDatabase.sharedInstance.addGamesCache(game)
+            RomDatabase.sharedInstance.addGamesCache(game)
         } catch {
             ELOG("Couldn't add new game \(error.localizedDescription)")
         }
@@ -1141,11 +1126,11 @@ extension GameImporter {
             ILOG("Candidate file matches as a known BIOS")
             // We have a BIOS file match
             let destinationPath = await biosEntry.expectedPath
-            let biosDirectory = await biosEntry.system.biosDirectory
+            let biosDirectory = biosEntry.system.biosDirectory
 
             if !fm.fileExists(atPath: biosDirectory.path) {
                 do {
-                    try await fm.createDirectory(at: biosEntry.system.biosDirectory, withIntermediateDirectories: true, attributes: nil)
+                    try fm.createDirectory(at: biosEntry.system.biosDirectory, withIntermediateDirectories: true, attributes: nil)
                     ILOG("Created BIOS directory \(biosDirectory)")
                 } catch {
                     ELOG("Unable to create BIOS directory \(biosDirectory), \(error.localizedDescription)")
@@ -1199,7 +1184,7 @@ extension GameImporter {
 
             if let game = foundGameMaybe {
                 ILOG("Found game <\(game.title)> that matches .m3u <\(filePath.lastPathComponent)>")
-                let directory = await PVEmulatorConfiguration.romDirectory(forSystemIdentifier: game.systemIdentifier)
+                let directory = PVEmulatorConfiguration.romDirectory(forSystemIdentifier: game.systemIdentifier)
                 let nameWithoutExtension = ((game.romPath as NSString).lastPathComponent as NSString).deletingPathExtension
                 let newFilename = "\(nameWithoutExtension).m3u"
                 let destinationPath = directory.appendingPathComponent(newFilename, isDirectory: false)
@@ -1228,7 +1213,7 @@ extension GameImporter {
 
         if let fileMD5 = fileMD5,
            !fileMD5.isEmpty,
-           let searchResults = try? self.searchDatabase(usingKey: "romHashMD5", value: fileMD5),
+           let searchResults = try? openVGDB.searchDatabase(usingKey: "romHashMD5", value: fileMD5),
            let gotit = searchResults.first,
            let sid: Int = gotit["systemID"] as? Int,
            let system = RomDatabase.sharedInstance.all(PVSystem.self, where: "openvgDatabaseID", value: sid).first,
@@ -1505,6 +1490,7 @@ extension GameImporter {
         }
         return nil
     }
+    
     public func systemId(forROMCandidate rom: ImportCandidateFile) -> String? {
         guard let md5 = rom.md5 else {
             ELOG("MD5 was blank")
@@ -1512,11 +1498,10 @@ extension GameImporter {
         }
 
         let fileName: String = rom.filePath.lastPathComponent
-        let queryString = "SELECT DISTINCT systemID FROM ROMs WHERE romHashMD5 = '\(md5)' OR romFileName = '\(fileName)'"
 
         do {
             // var results: [[String: NSObject]]? = nil
-            let results = try openVGDB.execute(query: queryString)
+            let results = try openVGDB.system(forRomMD5: md5, or: fileName)
             if
                 let match = results.first,
                 let databaseID = match["systemID"] as? Int,

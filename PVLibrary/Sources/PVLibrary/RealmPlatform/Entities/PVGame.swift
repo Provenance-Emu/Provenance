@@ -9,12 +9,13 @@
 import Foundation
 import RealmSwift
 import AsyncAlgorithms
+import PVLibraryPrimitives
 
 // Hack for game library having eitehr PVGame or PVRecentGame in containers
-protocol PVLibraryEntry where Self: Object {}
+public protocol PVLibraryEntry where Self: RealmSwift.Object {}
 
 @objcMembers
-public final class PVGame: Object, Identifiable, PVLibraryEntry {
+public final class PVGame: RealmSwift.Object, Identifiable, PVLibraryEntry {
     public dynamic var title: String = ""
     public dynamic var id = NSUUID().uuidString
 
@@ -86,12 +87,7 @@ public final class PVGame: Object, Identifiable, PVLibraryEntry {
     public dynamic var systemShortName: String?
     public dynamic var language: String?
 
-    public convenience init(withFile file: PVFile, system: PVSystem) {
-        self.init()
-        self.file = file
-        self.system = system
-        systemIdentifier = system.identifier
-    }
+
 
     public var validatedGame: PVGame? {
         return self.isInvalidated ? nil : self
@@ -109,6 +105,15 @@ public final class PVGame: Object, Identifiable, PVLibraryEntry {
 
     public override static func indexedProperties() -> [String] {
         return ["systemIdentifier"]
+    }
+}
+
+public extension PVGame {
+    convenience init(withFile file: PVFile, system: PVSystem) {
+        self.init()
+        self.file = file
+        self.system = system
+        systemIdentifier = system.identifier
     }
 }
 
@@ -172,37 +177,38 @@ public extension PVGame {
 // MARK: Conversions
 
 public extension Game {
-    init(withGame game: PVGame) async {
-        id = game.id
-        title = game.title
-        systemIdentifier = game.systemIdentifier
-        md5 = game.md5Hash
-        crc = game.crc
-        isFavorite = game.isFavorite
-        playCount = UInt(game.playCount)
-        lastPlayed = game.lastPlayed
-        boxBackArtworkURL = game.boxBackArtworkURL
-        developer = game.developer
-        publisher = game.publisher
-        genres = game.genres
-        referenceURL = game.referenceURL
-        releaseID = game.releaseID
-        regionID = game.regionID.value
-        regionName = game.regionName
-        systemShortName = game.systemShortName
-        language = game.language
-        file = await FileInfo(fileName: game.file.fileName, size: game.file.size, md5: game.file.md5, online: game.file.online, local: true)
-        gameDescription = game.gameDescription
-        publishDate = game.publishDate
+    init(withGame game: PVGame) {
+        let id = game.id
+        let title = game.title
+        let systemIdentifier = game.systemIdentifier
+        let md5 = game.md5Hash
+        let crc = game.crc
+        let isFavorite = game.isFavorite
+        let playCount = UInt(game.playCount)
+        let lastPlayed = game.lastPlayed
+        let boxBackArtworkURL = game.boxBackArtworkURL
+        let developer = game.developer
+        let publisher = game.publisher
+        let genres = game.genres
+        let referenceURL = game.referenceURL
+        let releaseID = game.releaseID
+        let regionID = game.regionID.value
+        let regionName = game.regionName
+        let systemShortName = game.systemShortName
+        let language = game.language
+        let file = FileInfo(fileName: game.file.fileName, size: game.file.size, md5: game.file.md5, online: game.file.online, local: true)
+        let gameDescription = game.gameDescription
+        let publishDate = game.publishDate
         // TODO: Screenshots
+        self.init(id: id, title: title, file: file, systemIdentifier: systemIdentifier, md5: md5, crc: crc, isFavorite: isFavorite, playCount: playCount, lastPlayed: lastPlayed, gameDescription: gameDescription, boxBackArtworkURL: boxBackArtworkURL, developer: developer, publisher: publisher, publishDate: publishDate, genres: genres, referenceURL: referenceURL, releaseID: releaseID, regionName: regionName, regionID: regionID, systemShortName: systemShortName, language: language)
     }
 }
 
 extension PVGame: DomainConvertibleType {
     public typealias DomainType = Game
 
-    public func asDomain() async -> Game {
-        return await Game(withGame: self)
+    public func asDomain() -> Game {
+        return Game(withGame: self)
     }
 }
 

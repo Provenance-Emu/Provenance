@@ -9,7 +9,7 @@
 import Foundation
 
 @objc
-public enum ScreenTypeObjC: UInt, CaseIterable, Codable {
+public enum ScreenTypeObjC: UInt, CaseIterable, Codable, Sendable {
     case unknown
     case monochromaticLCD
     case colorLCD
@@ -61,7 +61,7 @@ public enum ScreenTypeObjC: UInt, CaseIterable, Codable {
     }
 }
 
-public enum ScreenType: String, CaseIterable, Codable {
+public enum ScreenType: String, CaseIterable, Codable, Sendable {
     case unknown = ""
     case monochromaticLCD = "MonoLCD"
     case colorLCD = "ColorLCD"

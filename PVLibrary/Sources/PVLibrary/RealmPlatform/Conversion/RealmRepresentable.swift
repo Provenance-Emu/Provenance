@@ -1,4 +1,5 @@
 import Foundation
+import PVLibraryPrimitives
 
 public protocol RealmRepresentable {
     associatedtype RealmType: DomainConvertibleType

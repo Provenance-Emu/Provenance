@@ -13,22 +13,22 @@ import Foundation
     @objc var frameInterval: TimeInterval { get }
     @objc var audioDelegate: PVAudioDelegate? { get set }
 
-    var sampleRate: Double { get set }
-    var audioBitDepth: UInt { get }
-    var channelCount: UInt { get }
+    @objc var sampleRate: Double { get set }
+    @objc var audioBitDepth: UInt { get }
+    @objc var channelCount: UInt { get }
 
-    var audioBufferCount: UInt { get }
+    @objc var audioBufferCount: UInt { get }
 
-    func channelCount(forBuffer: UInt) -> UInt
-    func audioBufferSize(forBuffer: UInt) -> UInt
-    func audioSampleRate(forBuffer: UInt) -> Double
+    @objc func channelCount(forBuffer: UInt) -> UInt
+    @objc func audioBufferSize(forBuffer: UInt) -> UInt
+    @objc func audioSampleRate(forBuffer: UInt) -> Double
 
-    var ringBuffers: [RingBuffer]? { get set }
-    func ringBuffer(atIndex: UInt) -> RingBuffer?
+    @objc var ringBuffers: [RingBuffer]? { get set }
+    @objc func ringBuffer(atIndex: UInt) -> RingBuffer?
 }
 
 @objc public protocol EmulatorCoreAudioDelegate {
-    func audioSampleRateDidChange();
+    @objc func audioSampleRateDidChange();
 }
 
 public extension EmulatorCoreAudioDataSource {
