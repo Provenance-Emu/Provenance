@@ -1,5 +1,5 @@
-input_dir: Sources/PVTGBDualSwift/Resources
-#output_dir: Sources/PVTGBDualSwift/
+input_dir: Sources/PVTGBDual/Resources
+#output_dir: Sources/PVTGBDual/
 output_dir: ${DERIVED_SOURCES_DIR}
 
 plist:

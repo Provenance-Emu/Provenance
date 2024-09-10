@@ -134,17 +134,6 @@ public extension PVGame {
             return 0
         }
     }}
-
-//    var diskCount: Int { get {
-//        return relatedFiles
-//            .filter({ $0.pathExtension.lowercased() != "m3u" })
-//            .filter({
-//                if let extensions = RomDatabase.sharedInstance.getSystemCache()[self.systemIdentifier]?.supportedExtensions {
-//                    return extensions.contains($0.pathExtension.lowercased())
-//                }
-//                return false
-//            }).count
-//    }}
 }
 
 extension PVGame: Filed, LocalFileProvider {}

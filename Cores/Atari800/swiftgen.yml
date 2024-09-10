@@ -1,5 +1,5 @@
-input_dir: Sources/PVAtari800Swift/Resources/
-#output_dir: Sources/PVAtari800Swift/
+input_dir: Sources/PVAtari800/Resources/
+#output_dir: Sources/PVAtari800/
 output_dir: ${DERIVED_SOURCES_DIR}
 
 plist:

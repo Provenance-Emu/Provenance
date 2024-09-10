@@ -47,24 +47,24 @@ public extension PVRenderDelegate {
 
 
 public
-extension PVRenderDelegate where Self: ObjCBridgedCore, Self.Core: PVRenderDelegate {
+extension PVRenderDelegate where Self: ObjCBridgedCore, Self.Bridge: PVRenderDelegate {
     func startRenderingOnAlternateThread() {
         (self as PVRenderDelegate).startRenderingOnAlternateThread()
-        core.startRenderingOnAlternateThread()
+        bridge.startRenderingOnAlternateThread()
     }
     
     func didRenderFrameOnAlternateThread() {
         (self as PVRenderDelegate).didRenderFrameOnAlternateThread()
-        core.didRenderFrameOnAlternateThread()
+        bridge.didRenderFrameOnAlternateThread()
     }
     
     var presentationFramebuffer: AnyObject? {
-        return (self as PVRenderDelegate).presentationFramebuffer ?? core.presentationFramebuffer
+        return (self as PVRenderDelegate).presentationFramebuffer ?? bridge.presentationFramebuffer
     }
     
 #if USE_METAL
     var mtlView: MTKView? {
-        return (self as PVRenderDelegate).mtlView ?? core.mtlView
+        return (self as PVRenderDelegate).mtlView ?? bridge.mtlView
     }
 #endif
 }

@@ -27,15 +27,15 @@ let package = Package(
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "PVPokeMini",
-            targets: ["PVPokeMini", "PokeMiniSwift"]),
+            targets: ["PVPokeMini"]),
         .library(
             name: "PVPokeMini-Dynamic",
             type: .dynamic,
-            targets: ["PVPokeMini", "PokeMiniSwift"]),
+            targets: ["PVPokeMini"]),
         .library(
             name: "PVPokeMini-Static",
             type: .static,
-            targets: ["PVPokeMini", "PokeMiniSwift"])
+            targets: ["PVPokeMini"])
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
@@ -49,41 +49,16 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
+        
+        // --------- Core ---------
         .target(
             name: "PVPokeMini",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
-                "PVCoreObjCBridge",
-                "PVObjCUtils",
-                "PVLogging",
-                "PVPlists",
-                "PokeMiniSwift",
-                "PokeMiniC",
-                "libpokemini"
-            ],
-            resources: [
-                .process("Resources/Core.plist")
-            ],
-            publicHeadersPath: "include",
-            cSettings: [
-                .define("HAVE_COCOATOUCH", to: HAVE_COCOATOUCH),
-                .define("INLINE", to: INLINE),
-                .define("NO_ZIP", to: NO_ZIP),
-                .define("USE_STRUCTS", to: USE_STRUCTS),
-                .define("__GCCUNIX__", to: __GCCUNIX__),
-                .define("__LIBRETRO__", to: __LIBRETRO__),
-                .define("VIDEO_UPSCALE", to: VIDEO_UPSCALE),
-            ]
-        ),
-
-        .target(
-            name: "PokeMiniSwift",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
                 "PVLogging",
                 "PVAudio",
+                "PVPokeMiniBridge",
                 "libpokemini",
                 "PokeMiniC"
             ],
@@ -103,6 +78,32 @@ let package = Package(
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
+
+        // --------- Bridge ---------
+        .target(
+            name: "PVPokeMiniBridge",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVObjCUtils",
+                "PVLogging",
+                "PVPlists",
+                "PokeMiniC",
+                "libpokemini"
+            ],
+            cSettings: [
+                .define("HAVE_COCOATOUCH", to: HAVE_COCOATOUCH),
+                .define("INLINE", to: INLINE),
+                .define("NO_ZIP", to: NO_ZIP),
+                .define("USE_STRUCTS", to: USE_STRUCTS),
+                .define("__GCCUNIX__", to: __GCCUNIX__),
+                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("VIDEO_UPSCALE", to: VIDEO_UPSCALE),
+            ]
+        ),
+
+        // --------- C Helpers ---------
 
         .target(
             name: "PokeMiniC",
@@ -125,6 +126,8 @@ let package = Package(
             ]
         ),
 
+        // --------- Emulator ---------
+
         .target(
             name: "libpokemini",
             exclude: [
@@ -143,12 +146,12 @@ let package = Package(
                 "PokeMini-libretro/source/Hardware.c",
                 "PokeMini-libretro/source/Joystick.c",
                 "PokeMini-libretro/source/MinxAudio.c",
-                "PokeMini-libretro/source/MinxColorPRC.c",
                 "PokeMini-libretro/source/MinxCPU.c",
                 "PokeMini-libretro/source/MinxCPU_CE.c",
                 "PokeMini-libretro/source/MinxCPU_CF.c",
                 "PokeMini-libretro/source/MinxCPU_SP.c",
                 "PokeMini-libretro/source/MinxCPU_XX.c",
+                "PokeMini-libretro/source/MinxColorPRC.c",
                 "PokeMini-libretro/source/MinxIO.c",
                 "PokeMini-libretro/source/MinxIRQ.c",
                 "PokeMini-libretro/source/MinxLCD.c",
@@ -189,14 +192,7 @@ let package = Package(
         .testTarget(
             name: "PVPokeMiniTests",
             dependencies: [
-                "PVPokeMini",
-            ]
-        ),
-
-        .testTarget(
-            name: "PVPokeMini_DynamicTests",
-            dependencies: [
-                "PVPokeMini"
+                "PVPokeMini", "libpokemini", "PokeMiniC", "PVPokeMiniBridge"
             ]
         )
     ],

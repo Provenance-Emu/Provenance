@@ -171,8 +171,9 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (void)setPauseEmulation:(BOOL)flag NS_REQUIRES_SUPER;
 - (void)stopEmulationWithMessage:(NSString * _Nullable) message NS_REQUIRES_SUPER;
 - (void)stopEmulation NS_REQUIRES_SUPER;
-- (BOOL)loadFileAtPath:(NSString * _Nonnull)path
-                 error:(NSError * __nullable * __nullable)error;
+- (void)loadFileAtPath:(NSString *)path
+                 error:(NSError * __nullable __autoreleasing * __nullable) error;
+
 @end
 
 @interface PVCoreObjCBridge (Video) // <EmulatorCoreVideoDelegate>

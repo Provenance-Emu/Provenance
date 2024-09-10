@@ -14,6 +14,7 @@ import RealmSwift
 import PVLibrary
 import PVPrimitives
 import PVThemes
+import PVRealm
 
 extension BIOSStatus.State {
     var biosStatusImageName: String {

@@ -96,8 +96,10 @@ extension PVEmulatorCore: EmulatorCoreVideoDelegate {
     // Requires Override
     @objc
     open func executeFrame() {
-        if let objcBridge = self as? ObjCCoreBridge {
-            objcBridge.executeFrame()
+        if let objcBridge: any ObjCBridgedCore = self as? (any ObjCBridgedCore),
+            let bridge = objcBridge.bridge as? any ObjCBridgedCoreBridge & EmulatorCoreVideoDelegate,
+            bridge.responds(to: #selector(bridge.executeFrame)) {
+            bridge.executeFrame?()
         } else {
             assertionFailure("Should be implimented in subclasses")
         }

@@ -16,10 +16,10 @@ import UIKit
 public final class SystemsSettingsTableViewController: QuickTableViewController {
     var systemsToken: NotificationToken?
 
-    func generateViewModels() async throws {
+    func generateViewModels() throws {
 
         let systems = RomDatabase.sharedInstance.all(PVSystem.self).sorted(byKeyPath: "identifier")
-        let systemsModels = try await systems.concurrentMap { await SystemOverviewViewModel(withSystem: $0) }
+        let systemsModels = try systems.map { SystemOverviewViewModel(withSystem: $0) }
 
         tableContents = systemsModels
             .filter {

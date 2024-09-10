@@ -171,7 +171,11 @@ final class PVSettingsViewController: QuickTableViewController {
         // MARK: -- Core Options
         let realm = try! Realm()
         let cores: [NavigationRow] = realm.objects(PVCore.self).sorted(byKeyPath: "projectName").compactMap { pvcore in
-            guard let coreClass = NSClassFromString(pvcore.principleClass) as? OptionalCore.Type else {
+            guard let coreClassMaybe = NSClassFromString(pvcore.principleClass) else {
+                ELOG("Class <\(pvcore.principleClass)> does not exist!")
+                return .none
+            }
+            guard let coreClass = coreClassMaybe as? OptionalCore.Type else {
                 VLOG("Class <\(pvcore.principleClass)> does not implement CoreOptional")
                 return .none
             }

@@ -1,5 +1,5 @@
-input_dir: Sources/PVMupenGameCoreSwift/Resources/
-#output_dir: Sources/PVMupenGameCoreSwift/
+input_dir: Sources/PVMupen/Resources/
+#output_dir: Sources/PVMupen/
 output_dir: ${DERIVED_SOURCES_DIR}
 
 plist:

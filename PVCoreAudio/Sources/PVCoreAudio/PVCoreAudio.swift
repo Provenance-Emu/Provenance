@@ -50,13 +50,22 @@ public final class OEGameAudio: NSObject, Sendable{
 
     @MainActor
     internal struct AUMetaData: Sendable {
-        var mGraph: AUGraph! = nil
+        var mGraph: AUGraph? = nil
         var mOutputNode: AUNode = 0
         var mOutputUnit: AudioUnit? = nil
         var mMixerNode: AUNode = 0
         var mMixerUnit: AudioUnit? = nil
         var mConverterNode: AUNode = 0
         var mConverterUnit: AudioUnit? = nil
+        
+        mutating func uninitialize() {
+            if let mGraph = mGraph  {
+                AUGraphStop(mGraph)
+                AUGraphClose(mGraph)
+                AUGraphUninitialize(mGraph)
+            }
+            self.mGraph = nil
+        }
     }
 
     @MainActor
@@ -98,8 +107,10 @@ public final class OEGameAudio: NSObject, Sendable{
     deinit {
         let auMetaData = self.auMetaData
         Task{ @MainActor in
-            AUGraphUninitialize(auMetaData.mGraph)
-            DisposeAUGraph(auMetaData.mGraph)
+            if let mGraph = auMetaData.mGraph {
+                AUGraphUninitialize(mGraph)
+                DisposeAUGraph(mGraph)
+            }
         }
     }
 
@@ -120,9 +131,11 @@ public final class OEGameAudio: NSObject, Sendable{
                 ExtAudioFileDispose(recordingFile)
             }
         }
-        AUGraphStop(auMetaData.mGraph)
-        AUGraphClose(auMetaData.mGraph)
-        AUGraphUninitialize(auMetaData.mGraph)
+        if let mGraph = auMetaData.mGraph {
+            AUGraphStop(mGraph)
+            AUGraphClose(mGraph)
+            AUGraphUninitialize(mGraph)
+        }
         running = false
     }
 
@@ -130,9 +143,7 @@ public final class OEGameAudio: NSObject, Sendable{
     private func createGraph() {
         var err: OSStatus
 
-        AUGraphStop(auMetaData.mGraph)
-        AUGraphClose(auMetaData.mGraph)
-        AUGraphUninitialize(auMetaData.mGraph)
+        auMetaData.uninitialize()
 
         // Create the graph
         err = NewAUGraph(&auMetaData.mGraph)
@@ -141,7 +152,7 @@ public final class OEGameAudio: NSObject, Sendable{
         }
 
         // Open the graph
-        err = AUGraphOpen(auMetaData.mGraph)
+        err = AUGraphOpen(auMetaData.mGraph!)
         if err != 0 {
             ELOG("couldn't open graph")
         }
@@ -159,12 +170,12 @@ public final class OEGameAudio: NSObject, Sendable{
         desc.componentFlags = 0
 
         // Create the output node
-        err = AUGraphAddNode(auMetaData.mGraph, &desc, &auMetaData.mOutputNode)
+        err = AUGraphAddNode(auMetaData.mGraph!, &desc, &auMetaData.mOutputNode)
         if err != 0 {
             ELOG("couldn't create node for output unit")
         }
 
-        err = AUGraphNodeInfo(auMetaData.mGraph, auMetaData.mOutputNode, nil, &auMetaData.mOutputUnit)
+        err = AUGraphNodeInfo(auMetaData.mGraph!, auMetaData.mOutputNode, nil, &auMetaData.mOutputUnit)
         if err != 0 {
             ELOG("couldn't get output from node")
         }
@@ -174,12 +185,12 @@ public final class OEGameAudio: NSObject, Sendable{
         desc.componentManufacturer = kAudioUnitManufacturer_Apple
 
         // Create the mixer node
-        err = AUGraphAddNode(auMetaData.mGraph, &desc, &auMetaData.mMixerNode)
+        err = AUGraphAddNode(auMetaData.mGraph!, &desc, &auMetaData.mMixerNode)
         if err != 0 {
             ELOG("couldn't create node for file player")
         }
 
-        err = AUGraphNodeInfo(auMetaData.mGraph, auMetaData.mMixerNode, nil, &auMetaData.mMixerUnit)
+        err = AUGraphNodeInfo(auMetaData.mGraph!, auMetaData.mMixerNode, nil, &auMetaData.mMixerUnit)
         if err != 0 {
             ELOG("couldn't get player unit from node")
         }
@@ -189,22 +200,25 @@ public final class OEGameAudio: NSObject, Sendable{
         desc.componentManufacturer = kAudioUnitManufacturer_Apple
 
         let bufferCount: Int = Int(gameCore?.audioBufferCount ?? 0)
-
+        
+        _contexts.removeAll(keepingCapacity: true)
+        
         for i in 0..<bufferCount {
             if let ringBuffer = gameCore?.ringBuffer(atIndex: UInt(i)) {
                 ringBuffer.reset()
-                _contexts[i] = OEGameAudioContext(buffer: ringBuffer,
+                let newContext = OEGameAudioContext(buffer: ringBuffer,
                                                   channelCount: Int32(gameCore?.channelCount(forBuffer: UInt(i)) ?? 0),
                                                   bytesPerSample: Int32(gameCore?.audioBitDepth ?? 0 / 8))
+                _contexts.append(newContext)
             }
 
             // Create the converter node
-            err = AUGraphAddNode(auMetaData.mGraph, &desc, &auMetaData.mConverterNode)
+            err = AUGraphAddNode(auMetaData.mGraph!, &desc, &auMetaData.mConverterNode)
             if err != 0 {
                 ELOG("couldn't create node for converter")
             }
 
-            err = AUGraphNodeInfo(auMetaData.mGraph, auMetaData.mConverterNode, nil, &auMetaData.mConverterUnit)
+            err = AUGraphNodeInfo(auMetaData.mGraph!, auMetaData.mConverterNode, nil, &auMetaData.mConverterUnit)
             if err != 0 {
                 ELOG("couldn't get player unit from converter")
             }
@@ -274,7 +288,7 @@ public final class OEGameAudio: NSObject, Sendable{
                 DLOG("Set the player's input stream format")
             }
 
-            err = AUGraphConnectNodeInput(auMetaData.mGraph, auMetaData.mConverterNode, 0, auMetaData.mMixerNode, UInt32(i))
+            err = AUGraphConnectNodeInput(auMetaData.mGraph!, auMetaData.mConverterNode, 0, auMetaData.mMixerNode, UInt32(i))
             if err != 0 {
                 ELOG("Couldn't connect the converter to the mixer")
             } else {
@@ -283,7 +297,7 @@ public final class OEGameAudio: NSObject, Sendable{
         }
 
         // Connect the player to the output unit (stream format will propagate)
-        err = AUGraphConnectNodeInput(auMetaData.mGraph, auMetaData.mMixerNode, 0, auMetaData.mOutputNode, 0)
+        err = AUGraphConnectNodeInput(auMetaData.mGraph!, auMetaData.mMixerNode, 0, auMetaData.mOutputNode, 0)
         if err != 0 {
             ELOG("Could not connect the input of the output")
         } else {
@@ -298,14 +312,14 @@ public final class OEGameAudio: NSObject, Sendable{
             ELOG("couldn't set device properties")
         }
 
-        err = AUGraphInitialize(auMetaData.mGraph)
+        err = AUGraphInitialize(auMetaData.mGraph!)
         if err != 0 {
             ELOG("couldn't initialize graph")
         } else {
             DLOG("Initialized the graph")
         }
 
-        err = AUGraphStart(auMetaData.mGraph)
+        err = AUGraphStart(auMetaData.mGraph!)
         if err != 0 {
             ELOG("couldn't start graph")
         } else {

@@ -1,6 +1,15 @@
 {
-  "originHash" : "68538b2e171506ffe87a86e28840ffbbcb31b44647366bb5a35af1db44fa82ae",
+  "originHash" : "365ea359ae70cea563fec5570a8c9147bf0f3e21e887a90e3f8bb0dcffa77f48",
   "pins" : [
+    {
+      "identity" : "checksum",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/Checksum.git",
+      "state" : {
+        "revision" : "11bf55d6ec0e4dbfff2bcd99b6b12c5ce5d57b91",
+        "version" : "1.1.1"
+      }
+    },
     {
       "identity" : "defaults",
       "kind" : "remoteSourceControl",
@@ -13,7 +22,7 @@
     {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-syntax.git",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
       "state" : {
         "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
         "version" : "509.1.1"
@@ -31,10 +40,10 @@
     {
       "identity" : "swiftmacros",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/ShenghaiWang/SwiftMacros.git",
+      "location" : "https://github.com/JoeMatt/SwiftMacros.git",
       "state" : {
-        "revision" : "fcb92029bb19594f9ae9a079e8aa5fc7acc77c10",
-        "version" : "1.4.1"
+        "branch" : "main",
+        "revision" : "c7430902f056432a07803f8580263b4acd7753f1"
       }
     }
   ],

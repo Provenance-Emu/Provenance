@@ -6,8 +6,11 @@
 //
 
 import Testing
+
+@testable import libpokemini
+@testable import PokeMiniC
 @testable import PVPokeMini
-@testable import PokeMiniSwift
+@testable import PVPokeMiniBridge
 
 struct Test {
     @Test func testAllocDealloc() async throws {

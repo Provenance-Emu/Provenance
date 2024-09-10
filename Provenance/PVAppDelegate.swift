@@ -17,6 +17,7 @@ import PVSettings
 import PVUIBase
 import PVUIKit
 import PVSwiftUI
+import PVLogging
 
 #if !targetEnvironment(macCatalyst) && !os(macOS)
 #if canImport(SteamController)
@@ -130,7 +131,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
 //		#if !(targetEnvironment(macCatalyst) || os(macOS))
         PVEmulatorConfiguration.initICloud()
         DispatchQueue.global(qos: .background).async {
-            let useiCloud = Defaults[.iCloudSync] && PVEmulatorConfiguration.supportsICloud
+            let useiCloud = Defaults[.iCloudSync] && URL.supportsICloud
             if useiCloud {
                 DispatchQueue.main.async {
                     iCloudSync.initICloudDocuments()

@@ -25,13 +25,13 @@ import Foundation
     @objc optional dynamic var isFrontBufferReady: Bool { get }
 }
 
-public extension EmulatorCoreRunLoop where Self: ObjCBridgedCore, Self.Core: EmulatorCoreRunLoop {
-    dynamic var shouldStop: Bool { core.shouldStop ?? false }
-    dynamic var isRunning: Bool { core.isRunning ?? false }
-    dynamic var shouldResyncTime: Bool { core.shouldResyncTime ?? true }
-    dynamic var skipEmulationLoop: Bool { core.skipEmulationLoop ?? true }
-    dynamic var skipLayout: Bool { core.skipLayout ?? false }
+public extension EmulatorCoreRunLoop where Self: ObjCBridgedCore, Self.Bridge: EmulatorCoreRunLoop {
+    dynamic var shouldStop: Bool { bridge.shouldStop ?? false }
+    dynamic var isRunning: Bool { bridge.isRunning ?? false }
+    dynamic var shouldResyncTime: Bool { bridge.shouldResyncTime ?? true }
+    dynamic var skipEmulationLoop: Bool { bridge.skipEmulationLoop ?? true }
+    dynamic var skipLayout: Bool { bridge.skipLayout ?? false }
 
-    dynamic var gameSpeed: GameSpeed { core.gameSpeed ?? .normal }
-    dynamic var isFrontBufferReady: Bool { core.isFrontBufferReady ?? false }
+    dynamic var gameSpeed: GameSpeed { bridge.gameSpeed ?? .normal }
+    dynamic var isFrontBufferReady: Bool { bridge.isFrontBufferReady ?? false }
 }

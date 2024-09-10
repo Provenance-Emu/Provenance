@@ -10,6 +10,7 @@ import UIKit
 import PVLibrary
 import PVCoreBridge
 import PVPlists
+import PVRealm
 
 protocol ControllerVC: StartSelectDelegate, JSButtonDelegate, JSDPadDelegate where Self: UIViewController {
 	associatedtype ResponderType: ResponderClient

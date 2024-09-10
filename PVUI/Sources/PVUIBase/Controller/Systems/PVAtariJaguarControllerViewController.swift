@@ -44,31 +44,31 @@ final class PVAtariJaguarControllerViewController: PVControllerViewController<PV
     }
 
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
-        emulatorCore.didRelease(.up, forPlayer: 0)
-        emulatorCore.didRelease(.down, forPlayer: 0)
-        emulatorCore.didRelease(.left, forPlayer: 0)
-        emulatorCore.didRelease(.right, forPlayer: 0)
+        emulatorCore.didRelease(jaguarButton: .up, forPlayer: 0)
+        emulatorCore.didRelease(jaguarButton: .down, forPlayer: 0)
+        emulatorCore.didRelease(jaguarButton: .left, forPlayer: 0)
+        emulatorCore.didRelease(jaguarButton: .right, forPlayer: 0)
         switch direction {
         case .upLeft:
-            emulatorCore.didPush(.up, forPlayer: 0)
-            emulatorCore.didPush(.left, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .up, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .left, forPlayer: 0)
         case .up:
-            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .up, forPlayer: 0)
         case .upRight:
-            emulatorCore.didPush(.up, forPlayer: 0)
-            emulatorCore.didPush(.right, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .up, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .right, forPlayer: 0)
         case .left:
-            emulatorCore.didPush(.left, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .left, forPlayer: 0)
         case .right:
-            emulatorCore.didPush(.right, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .right, forPlayer: 0)
         case .downLeft:
-            emulatorCore.didPush(.down, forPlayer: 0)
-            emulatorCore.didPush(.left, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .down, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .left, forPlayer: 0)
         case .down:
-            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .down, forPlayer: 0)
         case .downRight:
-            emulatorCore.didPush(.down, forPlayer: 0)
-            emulatorCore.didPush(.right, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .down, forPlayer: 0)
+            emulatorCore.didPush(jaguarButton: .right, forPlayer: 0)
         default:
             break
         }
@@ -78,52 +78,52 @@ final class PVAtariJaguarControllerViewController: PVControllerViewController<PV
    override func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection) {
         switch direction {
         case .upLeft:
-            emulatorCore.didRelease(.up, forPlayer: 0)
-            emulatorCore.didRelease(.left, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .up, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .left, forPlayer: 0)
         case .up:
-            emulatorCore.didRelease(.up, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .up, forPlayer: 0)
         case .upRight:
-            emulatorCore.didRelease(.up, forPlayer: 0)
-            emulatorCore.didRelease(.right, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .up, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .right, forPlayer: 0)
         case .left:
-            emulatorCore.didRelease(.left, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .left, forPlayer: 0)
         case .none:
             break
         case .right:
-            emulatorCore.didRelease(.right, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .right, forPlayer: 0)
         case .downLeft:
-            emulatorCore.didRelease(.down, forPlayer: 0)
-            emulatorCore.didRelease(.left, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .down, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .left, forPlayer: 0)
         case .down:
-            emulatorCore.didRelease(.down, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .down, forPlayer: 0)
         case .downRight:
-            emulatorCore.didRelease(.down, forPlayer: 0)
-            emulatorCore.didRelease(.right, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .down, forPlayer: 0)
+            emulatorCore.didRelease(jaguarButton: .right, forPlayer: 0)
         }
     }
 
     override func buttonPressed(_ button: JSButton) {
-        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(jaguarButton: button.buttonTag, forPlayer: 0)
         vibrate()
     }
 
     override func buttonReleased(_ button: JSButton) {
-        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(jaguarButton: button.buttonTag, forPlayer: 0)
     }
 
     override func pressStart(forPlayer player: Int) {
-        emulatorCore.didPush(.pause, forPlayer: player)
+        emulatorCore.didPush(jaguarButton: .pause, forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        emulatorCore.didRelease(.pause, forPlayer: player)
+        emulatorCore.didRelease(jaguarButton: .pause, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        emulatorCore.didPush(.option, forPlayer: player)
+        emulatorCore.didPush(jaguarButton: .option, forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        emulatorCore.didRelease(.option, forPlayer: player)
+        emulatorCore.didRelease(jaguarButton: .option, forPlayer: player)
     }
 }

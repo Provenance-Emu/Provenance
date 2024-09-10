@@ -14,7 +14,7 @@ let sharedCSettings: [CSetting] = [
     .define("M64P_PLUGIN_API", to: "1"),
     
     .define("IN_OPENEMU", to: "1"),
-    .define("M64P_CORE_PROTOTYPES", to: "1"),
+//    .define("M64P_CORE_PROTOTYPES", to: "1"),
     .define("PIC", to: "1"),
 
 //    .define("NDEBUG", to: "1", .when(configuration: [.release])),
@@ -77,18 +77,19 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "PVMupenGameCore",
-            targets: ["PVMupenGameCore", "PVMupenGameCoreSwift","PVMupen64PlusVideoGlideN64", "PVMupen64PlusVideoRice", "PVMupen64PlusRspHLE", "PVRSPCXD4"]),
+            targets: ["PVMupen"]),
         .library(
             name: "PVMupenGameCore-Dynamic",
             type: .dynamic,
-            targets: ["PVMupenGameCore", "PVMupenGameCoreSwift","PVMupen64PlusVideoGlideN64", "PVMupen64PlusVideoRice", "PVMupen64PlusRspHLE", "PVRSPCXD4"]),
+            targets: ["PVMupen"]),
         .library(
             name: "PVMupenGameCore-Static",
             type: .static,
-            targets: ["PVMupenGameCore", "PVMupenGameCoreSwift","PVMupen64PlusVideoGlideN64", "PVMupen64PlusVideoRice", "PVMupen64PlusRspHLE", "PVRSPCXD4"]),
+            targets: ["PVMupen"]),
         ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVCoreObjCBridge"),
         .package(path: "../../PVPlists"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVSupport"),
@@ -100,55 +101,24 @@ let package = Package(
     ],
     targets: [
         
-        // MARK: PVMupenGameCore
-
+        // MARK: ------- CORE -------- //
+        
         .target(
-            name: "PVMupenGameCore",
+            name: "PVMupen",
             dependencies: [
                 "PVAudio",
                 "PVCoreBridge",
+                "PVCoreObjCBridge",
                 "PVEmulatorCore",
                 "PVLogging",
                 "PVPlists",
                 "PVSupport",
-                
-                "App",
-                "PVMupen64PlusCore",
-                "PVMupen64PlusRspHLE",
-                "PVMupen64PlusVideoGlideN64",
-                "PVMupen64PlusVideoRice",
-                "PVMupenGameCoreSwift",
-                "PVObjCUtils",
-                "PVRSPCXD4",
-                "SDL"
-            ],
-            sources: [
-                "MupenGameCore+Cheats.m",
-                "MupenGameCore+Controls.m",
-                "MupenGameCore+Mupen.m",
-                "MupenGameCore+Saves.m",
-                "MupenGameCore.m"
-            ],
-            cSettings: sharedCSettings
-        ),
-        
-        // MARK: PVMupenGameCoreSwift
-        
-        .target(
-            name: "PVMupenGameCoreSwift",
-            dependencies: [
-                "PVAudio",
-                "PVCoreBridge",
-                "PVEmulatorCore",
-                "PVLogging",
-                "PVPlists",
-                "PVSupport",
-                
+                "PVMupenBridge",
                 "PVMupen64PlusCore",
 //                "PVMupen64PlusRspHLE",
 //                "PVMupen64PlusVideoGlideN64",
 //                "PVMupen64PlusVideoRice",
-//                "PVRSPCXD4",
+                "PVRSPCXD4",
             ],
             resources: [
                 .process("Resources/Core.plist")
@@ -161,6 +131,35 @@ let package = Package(
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
+        
+        // MARK: ------- Bridge -------- //
+
+        .target(
+            name: "PVMupenBridge",
+            dependencies: [
+                "PVAudio",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVEmulatorCore",
+                "PVLogging",
+                "PVObjCUtils",
+                "PVPlists",
+                "PVSupport",
+                
+                "PVMupen64PlusCore",
+//                "PVMupen64PlusRspHLE",
+//                "PVMupen64PlusVideoGlideN64",
+//                "PVMupen64PlusVideoRice",
+//                "PVRSPCXD4",
+                
+                "SDL"
+            ],
+            cSettings: sharedCSettings + [
+                .headerSearchPath("../Plugins/Core/Core/src/"),
+                .headerSearchPath("../Plugins/Core/Core/src/api"),
+            ]
+        ),
+        
     
         // MARK: PVMupen64PlusCore
         
@@ -276,7 +275,7 @@ let package = Package(
                 "libpng",
                 "SDL"
             ],
-            path: "Sources/Plugins/Video/rice/src/",
+            path: "Sources/Plugins/Video/rice/",
             sources: [
                 "Blender.cpp",
                 "Combiner.cpp",
@@ -313,13 +312,12 @@ let package = Package(
                 "liblinux/pngrw.c",
                 "osal_dynamiclib_unix.c",
                 "osal_files_unix.c"
-            ],
-            publicHeadersPath: "./",
+            ].map { "rice/src/\($0)" },
             cSettings: [
                 .headerSearchPath("./"),
-                .headerSearchPath("../../../Core/Core/src/"),
-                .headerSearchPath("../../../Core/Core/src/api"),
-                .headerSearchPath("../../../../Compatability/SDL/"),
+                .headerSearchPath("../../Core/Core/src/"),
+                .headerSearchPath("../../Core/Core/src/api"),
+                .headerSearchPath("../../Compatability/SDL/"),
             ] + sharedCSettings,
             linkerSettings: [
                 .linkedLibrary("z")
@@ -558,31 +556,6 @@ let package = Package(
                 ]),
             ] + sharedCSettings
         ),
-        
-        // MARK: App
-        
-        .target(
-            name: "App",
-            dependencies: [
-                "PVSupport",
-                "PVCoreBridge",
-                "PVEmulatorCore"
-            ],
-            path: "Sources/Compatibility/App/",
-            sources: [
-                "eventloop.m",
-                "new_vi_main.m",
-                "screenshot.m",
-                "vidext.m"
-            ],
-            publicHeadersPath: "./",
-            cSettings: [
-                .headerSearchPath("./"),
-                .headerSearchPath("../../Plugins/Video/gliden64/src"),
-                .headerSearchPath("../../Plugins/Video/rice/src"),
-                .headerSearchPath("../../Plugins/Core/Core/src")
-            ] + sharedCSettings
-        ),
     
         // MARK: SDL
         
@@ -690,8 +663,8 @@ let package = Package(
         ),
         
         .testTarget(
-            name: "PVMupenGameCoreTests",
-            dependencies: ["PVMupenGameCore"]
+            name: "PVMupenTests",
+            dependencies: ["PVMupen"]
         ),
     ],
     swiftLanguageModes: [.v5],

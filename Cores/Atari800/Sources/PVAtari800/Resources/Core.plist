@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.atari800</string>
 	<key>PVPrincipleClass</key>
-	<string>PVAtari800Swift.ATR800GameCore</string>
+	<string>PVAtari800.PVAtari800</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.5200</string>

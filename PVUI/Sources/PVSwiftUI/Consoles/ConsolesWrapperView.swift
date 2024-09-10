@@ -13,6 +13,7 @@ import SwiftUI
 import RealmSwift
 import PVLibrary
 import PVUIBase
+import PVRealm
 
 @available(iOS 14, tvOS 14, *)
 class ConsolesWrapperViewDelegate: ObservableObject {

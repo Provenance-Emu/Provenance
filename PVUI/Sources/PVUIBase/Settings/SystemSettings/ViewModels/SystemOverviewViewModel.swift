@@ -21,10 +21,10 @@ struct SystemOverviewViewModel: Sendable {
 }
 
 extension SystemOverviewViewModel {
-    init<S: SystemProtocol>(withSystem system: S) async {
+    init<S: SystemProtocol>(withSystem system: S) {
         title = system.name
         identifier = system.identifier
-        gameCount = await system.gameStructs.count
+        gameCount = system.gameStructs.count
         cores = system.coreStructs
         bioses = system.BIOSes
         preferredCore = system.userPreferredCore

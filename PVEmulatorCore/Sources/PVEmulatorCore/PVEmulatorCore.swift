@@ -21,7 +21,6 @@ public typealias OptionalCore = PVEmulatorCore & CoreOptional
 
 }
 
-
 @objc
 @objcMembers
 open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesDataSource, @unchecked Sendable {
@@ -143,14 +142,14 @@ open class PVEmulatorCore: NSObject, EmulatorCoreIOInterface, EmulatorCoreSavesD
 //        return success
 //    }
 
-//    @objc(loadFileAtPath:error:)
-//    open func loadFile(atPath path: String) throws {
+    @objc(loadFileAtPath:error:)
+    open func loadFile(atPath path: String) throws {
 //        if let bridge = self as? ObjCCoreBridge {
 //            bridge.test()
 //            try bridge.objCLoadFile(atPath: path)
 //        }
-//        throw EmulationError.coreDoesNotImplimentLoadFile
-//    }
+        throw EmulationError.coreDoesNotImplimentLoadFile
+    }
 
     @objc
     required

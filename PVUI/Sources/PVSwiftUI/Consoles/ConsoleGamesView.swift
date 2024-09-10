@@ -14,6 +14,7 @@ import RealmSwift
 import PVLibrary
 import PVThemes
 import PVUIBase
+import PVRealm
 
 // TODO: might be able to reuse this view for collections
 

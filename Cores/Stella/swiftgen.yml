@@ -1,5 +1,5 @@
-input_dir: Sources/PVStellaSwift/Resources
-#output_dir: Sources/PVStellaSwift/
+input_dir: Sources/PVStella/Resources
+#output_dir: Sources/PVStella/
 output_dir: ${DERIVED_SOURCES_DIR}
 
 plist:

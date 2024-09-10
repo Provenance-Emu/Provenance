@@ -17,15 +17,15 @@ let package = Package(
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
             name: "PVStella",
-            targets: ["PVStella", "PVStellaSwift"]),
+            targets: ["PVStella"]),
         .library(
             name: "PVStella-Dynamic",
             type: .dynamic,
-            targets: ["PVStella", "PVStellaSwift"]),
+            targets: ["PVStella"]),
         .library(
             name: "PVStella-Static",
             type: .static,
-            targets: ["PVStella", "PVStellaSwift"]),
+            targets: ["PVStella"]),
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
@@ -40,50 +40,10 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
-        .target(
-            name: "PVStella",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVCoreObjCBridge",
-                "PVSupport",
-                "PVPlists",
-                "PVObjCUtils",
-                "PVStellaSwift",
-                "PVStellaCPP",
-                "libstella",
-            ],
-            resources: [
-                .process("Resources/Core.plist")
-            ],
-            publicHeadersPath: "include",
-            cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-//                .headerSearchPath("../libstella/stella/src/os/libretro/"),
-            ],
-            cxxSettings: [
-                .unsafeFlags([
-                    "-fmodules",
-                    "-fcxx-modules"
-                ]),
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-//                .headerSearchPath("../libstella/stella/src/os/libretro/"),
-            ],
-            swiftSettings: [
-                .interoperabilityMode(.Cxx)
-            ]
-        ),
+        // MARK: ------- Core ---------
 
         .target(
-            name: "PVStellaSwift",
+            name: "PVStella",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
@@ -91,7 +51,8 @@ let package = Package(
                 "PVAudio",
                 "PVSupport",
                 "libstella",
-                "PVStellaCPP"
+                "PVStellaCPP",
+                "PVStellaBridge"
             ],
             resources: [
                 .process("Resources/Core.plist")
@@ -120,6 +81,48 @@ let package = Package(
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
+
+        // MARK: ------- Bridge ---------
+
+        .target(
+            name: "PVStellaBridge",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVSupport",
+                "PVPlists",
+                "PVObjCUtils",
+                "PVStellaCPP",
+                "libstella",
+            ],
+            publicHeadersPath: "include",
+            cSettings: [
+                .define("INLINE", to: "inline"),
+                .define("USE_STRUCTS", to: "1"),
+                .define("__LIBRETRO__", to: "1"),
+                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
+//                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+            ],
+            cxxSettings: [
+                .unsafeFlags([
+                    "-fmodules",
+                    "-fcxx-modules"
+                ]),
+                .define("INLINE", to: "inline"),
+                .define("USE_STRUCTS", to: "1"),
+                .define("__LIBRETRO__", to: "1"),
+                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
+//                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+            ],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ]
+        ),
+        
+        // MARK: ------- CPP Helper ---------
 
         .target(
             name: "PVStellaCPP",
@@ -151,6 +154,8 @@ let package = Package(
                 ])
             ]
         ),
+        
+        // MARK: ------- Emulator ---------
 
         .target(
             name: "libstella",
@@ -298,7 +303,8 @@ let package = Package(
             ]
         ),
 
-        // MARK: Tests
+        // MARK: ------- Tests ---------
+
         .testTarget(name: "PVStellaTests",
                     dependencies: ["PVStella"],
                     swiftSettings: [

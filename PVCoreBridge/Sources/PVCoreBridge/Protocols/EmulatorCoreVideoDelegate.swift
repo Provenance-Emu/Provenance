@@ -19,23 +19,25 @@ import Foundation
 #endif
 
 @objc public protocol EmulatorCoreVideoDelegate {
-    var emulationFPS: Double { get }
-    var renderFPS: Double { get }
-    var isDoubleBuffered: Bool { get }
-    var rendersToOpenGL: Bool { get }
+    @objc dynamic var emulationFPS: Double { get }
+    @objc dynamic var renderFPS: Double { get }
+    @objc dynamic var isDoubleBuffered: Bool { get }
+    @objc dynamic var rendersToOpenGL: Bool { get }
 #if canImport(OpenGLES) || canImport(OpenGL)
-    var glesVersion: GLESVersion { get }
-    var pixelFormat: GLenum  { get }
-    var pixelType: GLenum  { get }
-    var internalPixelFormat: GLenum { get }
-    var depthFormat: GLenum  { get }
+    @objc dynamic var glesVersion: GLESVersion { get }
+    @objc dynamic  var pixelFormat: GLenum  { get }
+    @objc dynamic  var pixelType: GLenum  { get }
+    @objc dynamic var internalPixelFormat: GLenum { get }
+    @objc dynamic var depthFormat: GLenum  { get }
 #endif
-    var screenRect: CGRect  { get }
-    var aspectSize: CGSize  { get }
-    var videoBufferSize: CGSize { get }
-    var alwaysUseMetal: Bool { get }
+    @objc dynamic var screenRect: CGRect  { get }
+    @objc dynamic var aspectSize: CGSize  { get }
+    @objc dynamic var videoBufferSize: CGSize { get }
+    @objc dynamic var alwaysUseMetal: Bool { get }
 
-    weak var renderDelegate: PVRenderDelegate? { get set }
+    @objc dynamic weak var renderDelegate: PVRenderDelegate? { get set }
+    
+    @objc optional func executeFrame()
 }
 
 public extension EmulatorCoreVideoDelegate {

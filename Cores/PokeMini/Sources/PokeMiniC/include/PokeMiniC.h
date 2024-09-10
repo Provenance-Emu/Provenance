@@ -20,4 +20,18 @@
 
 static int OpenEmu_KeysMapping[10];
 
+typedef struct {
+    bool a;
+    bool b;
+    bool c;
+    bool up;
+    bool down;
+    bool left;
+    bool right;
+    bool menu;
+    bool power;
+    bool shake;
+} PokeMFiState;
+
+
 #endif /* PokeMiniC_h */

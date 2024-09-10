@@ -13,6 +13,8 @@ import PVPrimitives
 import RxSwift
 import RxRealm
 import PVPlists
+import PVRealm
+import Systems
 
 private let WIKI_BIOS_URL = "https://wiki.provenance-emu.com/installation-and-usage/bios-requirements"
 
@@ -387,7 +389,7 @@ extension GameLaunchingViewController where Self: UIViewController {
                 return await self.getExpectedFilename($0.asDomain())
             }.joined(separator: ", ")
 
-            let documentsPath = PVEmulatorConfiguration.documentsPath.path
+            let documentsPath = URL.documentsPath.path
             let biosDirectory = system.biosDirectory.path.replacingOccurrences(of: documentsPath, with: "")
 
             let message = "This system requires BIOS files. Please upload '\(biosFiles)' to \(biosDirectory)."

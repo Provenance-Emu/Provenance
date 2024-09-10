@@ -89,15 +89,20 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 }
 - (void)initialize {
 }
-- (void)dealloc {
-    [self stopEmulation];
 
-	for (NSUInteger i = 0, count = [self audioBufferCount]; i < count; i++)
-	{
-		ringBuffers[i] = nil;
-	}
-	
-    free(ringBuffers);
+- (void)dealloc {
+    if(self.isRunning) {
+        [self stopEmulation];
+    }
+
+    if(ringBuffers != nil) {
+        for (NSUInteger i = 0, count = [self audioBufferCount]; i < count; i++) {
+            ringBuffers[i] = nil;
+        }
+        
+        free(ringBuffers);
+        ringBuffers = nil;
+    }
 }
 
 - (NSError * _Nonnull)createError:(NSString * _Nonnull)message {

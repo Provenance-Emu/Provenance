@@ -1,4 +1,4 @@
-input_dir: Sources/PokeMiniSwift/Resources/
+input_dir: Sources/PVPokeMini/Resources/
 #output_dir: Sources/PokeMiniSwift/
 output_dir: ${DERIVED_SOURCES_DIR}
 

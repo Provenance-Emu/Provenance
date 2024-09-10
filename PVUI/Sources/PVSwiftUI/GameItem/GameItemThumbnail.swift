@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PVThemes
+import PVMediaCache
 
 @available(iOS 14, tvOS 14, *)
 struct GameItemThumbnail: SwiftUI.View {

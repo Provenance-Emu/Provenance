@@ -11,6 +11,8 @@ import SwiftUI
 import PVLibrary
 import RealmSwift
 import PVUIBase
+import PVRealm
+
 @_exported import PVUIBase
 
 struct GameMoreInfoViewController : UIViewControllerRepresentable {

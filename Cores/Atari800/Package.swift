@@ -40,48 +40,25 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
+        
+        // MARK: --------- Core ---------- //
+
         .target(
             name: "PVAtari800",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
-                "PVSupport",
-                "PVPlists",
-                "PVObjCUtils",
-                "PVAtari800Swift",
-                "PVAtari800C",
-                "libatari800",
-            ],
-            resources: [
-                .process("Resources/Core.plist")
-            ],
-            publicHeadersPath: "include",
-            cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libatari800/src"),
-                .headerSearchPath("../libatari800/src/m68000"),
-                .headerSearchPath("../libatari800/libretro-common"),
-                .headerSearchPath("../libatari800/libretro-common/include"),
-            ]
-        ),
-
-        .target(
-            name: "PVAtari800Swift",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
+                "PVCoreObjCBridge",
                 "PVLogging",
                 "PVAudio",
                 "PVSupport",
                 "libatari800",
-                "PVAtari800C"
+                "PVAtari800C",
+                "PVAtari800Bridge"
             ],
             resources: [
-                .process("Resources/Core.plist")
+                .process("Resources/Core.plist"),
+                .process("Resources/PrivacyInfo.xcprivacy")
             ],
             cSettings: [
                 .define("INLINE", to: "inline"),
@@ -99,6 +76,35 @@ let package = Package(
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
+        
+        // MARK: --------- Bridge ---------- //
+
+        .target(
+            name: "PVAtari800Bridge",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVSupport",
+                "PVPlists",
+                "PVObjCUtils",
+                "PVAtari800C",
+                "libatari800",
+            ],
+            cSettings: [
+                .define("INLINE", to: "inline"),
+                .define("USE_STRUCTS", to: "1"),
+                .define("__LIBRETRO__", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
+                .headerSearchPath("../libatari800/src"),
+                .headerSearchPath("../libatari800/src/m68000"),
+                .headerSearchPath("../libatari800/libretro-common"),
+                .headerSearchPath("../libatari800/libretro-common/include"),
+            ]
+        ),
+
+        // MARK: --------- C Helper ---------- //
 
         .target(
             name: "PVAtari800C",
@@ -120,6 +126,8 @@ let package = Package(
                 .headerSearchPath("../libatari800/atari800-src"),
             ]
         ),
+
+        // MARK: --------- Emulator ---------- //
 
         .target(
             name: "libatari800",
@@ -184,7 +192,7 @@ let package = Package(
             ]
         ),
 
-        // MARK: Tests
+        // MARK: --------- Tests ---------- //
         .testTarget(name: "PVAtari800Tests",
                     dependencies: ["PVAtari800"])
     ],

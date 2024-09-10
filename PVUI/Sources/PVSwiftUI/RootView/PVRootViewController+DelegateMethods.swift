@@ -11,6 +11,9 @@ import PVLibrary
 import PVPrimitives
 import PVUIBase
 import PVUIKit
+import PVRealm
+import PVLogging
+
 #if canImport(SwiftUI)
 import SwiftUI
 #if canImport(PVWebServer)

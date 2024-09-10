@@ -13,6 +13,10 @@ import PVPrimitives
 import RxSwift
 import RxCocoa
 import CoreSpotlight
+import PVRealm
+import PVLogging
+import PVFileSystem
+import DirectoryWatcher
 
 // Responsible for handling updates to game library, finding conflicts and resolving them
 public struct PVGameLibraryUpdatesController {
@@ -34,7 +38,7 @@ public struct PVGameLibraryUpdatesController {
     public init(gameImporter: GameImporter, importPath: URL? = nil, scheduler: SchedulerType = MainScheduler.asyncInstance) async {
         var importPath = importPath
         if importPath == nil {
-            importPath = PVEmulatorConfiguration.Paths.romsImportPath
+            importPath = Paths.romsImportPath
         }
         guard let importPath = importPath else {
             ELOG("No import path?")

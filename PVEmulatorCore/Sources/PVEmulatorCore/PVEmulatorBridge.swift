@@ -7,21 +7,12 @@
 
 import Foundation
 
-public protocol PVEmulatorCoreBridged: AnyObject {
-    associatedtype Bridge: PVEmulatorBridge
+// Deprecated
+@available(*, deprecated, renamed: "ObjCBridgedCore")
+public protocol PVEmulatorCoreBridged<Bridge> : AnyObject {
+    associatedtype Bridge: ObjCBridgedCoreBridge
     
     var bridge: Bridge { get }
-}
-
-@objc public protocol PVEmulatorBridge: NSObjectProtocol {
-    
-//    var coreClassName: String { get }
-//    var systemName: String { get }
-//    var resourceBundle: Bundle { get }
-    
-    weak var core: PVEmulatorCore? { get }
-    
-    init(core: PVEmulatorCore)
 }
 
 // This will probably never be used?

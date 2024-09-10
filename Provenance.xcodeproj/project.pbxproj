@@ -888,6 +888,14 @@
 		B36C8E7C2C7ECE6200BD4377 /* PVStella-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7A2C7ECE6100BD4377 /* PVStella-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B36C8E7E2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */; };
 		B36C8E7F2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B373219E2C900A5200CF59EF /* PVPicoDrive-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B373219D2C900A5200CF59EF /* PVPicoDrive-Dynamic */; };
+		B373219F2C900A5200CF59EF /* PVPicoDrive-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B373219D2C900A5200CF59EF /* PVPicoDrive-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B37321A12C900A6400CF59EF /* PVAtari800-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B37321A02C900A6400CF59EF /* PVAtari800-Dynamic */; };
+		B37321A22C900A6400CF59EF /* PVAtari800-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B37321A02C900A6400CF59EF /* PVAtari800-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B37321A42C900A9F00CF59EF /* PVCrabEmu-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B37321A32C900A9F00CF59EF /* PVCrabEmu-Dynamic */; };
+		B37321A52C900A9F00CF59EF /* PVCrabEmu-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B37321A32C900A9F00CF59EF /* PVCrabEmu-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		B37321A72C900B1E00CF59EF /* PVTGBDual-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; };
+		B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B37CE669293F23C20010B746 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); };
 		B37CE66A293F23C30010B746 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1956,7 +1964,11 @@
 				B39CE2892C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
 				B36C8E7C2C7ECE6200BD4377 /* PVStella-Dynamic in Embed Frameworks */,
 				B36C8E7F2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Embed Frameworks */,
+				B373219F2C900A5200CF59EF /* PVPicoDrive-Dynamic in Embed Frameworks */,
+				B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */,
 				B35EEFA52C6C6D1A00EBD1A8 /* RealmSwift in Embed Frameworks */,
+				B37321A22C900A6400CF59EF /* PVAtari800-Dynamic in Embed Frameworks */,
+				B37321A52C900A9F00CF59EF /* PVCrabEmu-Dynamic in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3238,8 +3250,10 @@
 				B35EEFB92C6C6D1A00EBD1A8 /* PVUI in Frameworks */,
 				B35EEFBA2C6C6D1A00EBD1A8 /* libz.tbd in Frameworks */,
 				B35EEFBB2C6C6D1A00EBD1A8 /* CoreTelephony.framework in Frameworks */,
+				B37321A72C900B1E00CF59EF /* PVTGBDual-Dynamic in Frameworks */,
 				B35EEFBD2C6C6D1A00EBD1A8 /* PVPlists in Frameworks */,
 				B35EEFBE2C6C6D1A00EBD1A8 /* PVWebServer in Frameworks */,
+				B373219E2C900A5200CF59EF /* PVPicoDrive-Dynamic in Frameworks */,
 				B35EEFBF2C6C6D1A00EBD1A8 /* PVEmulatorCore in Frameworks */,
 				B35EEFC02C6C6D1A00EBD1A8 /* Photos.framework in Frameworks */,
 				B35EEFC12C6C6D1A00EBD1A8 /* ZipArchive in Frameworks */,
@@ -3264,8 +3278,10 @@
 				B36C8E7E2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Frameworks */,
 				B35EEFD72C6C6D1A00EBD1A8 /* Metal.framework in Frameworks */,
 				B35EEFD82C6C6D1A00EBD1A8 /* OpenGLES.framework in Frameworks */,
+				B37321A42C900A9F00CF59EF /* PVCrabEmu-Dynamic in Frameworks */,
 				B35EEFDA2C6C6D1A00EBD1A8 /* PVLogging in Frameworks */,
 				B35EEFDB2C6C6D1A00EBD1A8 /* Foundation.framework in Frameworks */,
+				B37321A12C900A6400CF59EF /* PVAtari800-Dynamic in Frameworks */,
 				B35EEFDD2C6C6D1A00EBD1A8 /* OpenGL.framework in Frameworks */,
 				B35EEFDE2C6C6D1A00EBD1A8 /* CoreGraphics.framework in Frameworks */,
 				B35EEFDF2C6C6D1A00EBD1A8 /* Introspect in Frameworks */,
@@ -4881,6 +4897,10 @@
 				B36C8E7A2C7ECE6100BD4377 /* PVStella-Dynamic */,
 				B36C8E7D2C7ECF7700BD4377 /* PVPokeMini-Dynamic */,
 				B39CE2872C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic */,
+				B373219D2C900A5200CF59EF /* PVPicoDrive-Dynamic */,
+				B37321A02C900A6400CF59EF /* PVAtari800-Dynamic */,
+				B37321A32C900A9F00CF59EF /* PVCrabEmu-Dynamic */,
+				B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */,
 			);
 			productName = Provenance;
 			productReference = B35EF0042C6C6D1A00EBD1A8 /* Provenance Lite.app */;
@@ -7182,7 +7202,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -7202,9 +7222,9 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=appletvsimulator*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
@@ -7248,7 +7268,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -7268,8 +7288,8 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
@@ -8046,6 +8066,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Mini";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
@@ -8083,6 +8104,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Mini";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
@@ -8118,6 +8140,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				INFOPLIST_KEY_CFBundleDisplayName = "Provenance Mini";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
@@ -10094,7 +10117,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -10115,7 +10138,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
@@ -10848,7 +10871,7 @@
 				INFOPLIST_FILE = "ROM File Provider/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File Provider";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10899,7 +10922,7 @@
 				INFOPLIST_FILE = "ROM File Provider/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File Provider";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10948,7 +10971,7 @@
 				INFOPLIST_FILE = "ROM File Provider/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File Provider";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -10994,7 +11017,7 @@
 				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -11044,7 +11067,7 @@
 				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -11092,7 +11115,7 @@
 				INFOPLIST_FILE = "ROM File ProviderUI/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "ROM File ProviderUI";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Provenance Emu. All rights reserved.";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -13491,6 +13514,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B3D61CD82C54C84500877AC7 /* XCLocalSwiftPackageReference "Cores/PokeMini" */;
 			productName = "PVPokeMini-Dynamic";
+		};
+		B373219D2C900A5200CF59EF /* PVPicoDrive-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CDB2C54C90C00877AC7 /* XCLocalSwiftPackageReference "Cores/PicoDrive" */;
+			productName = "PVPicoDrive-Dynamic";
+		};
+		B37321A02C900A6400CF59EF /* PVAtari800-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */;
+			productName = "PVAtari800-Dynamic";
+		};
+		B37321A32C900A9F00CF59EF /* PVCrabEmu-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */;
+			productName = "PVCrabEmu-Dynamic";
+		};
+		B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B3D61CD52C54C53400877AC7 /* XCLocalSwiftPackageReference "Cores/TGBDual" */;
+			productName = "PVTGBDual-Dynamic";
 		};
 		B386DD672C8939C60021A7BA /* PVFreeDO-Dynamic */ = {
 			isa = XCSwiftPackageProductDependency;

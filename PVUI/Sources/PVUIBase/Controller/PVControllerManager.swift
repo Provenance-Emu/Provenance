@@ -12,6 +12,7 @@ import GameController
 import PVLibrary
 import PVSupport
 import PVSettings
+import PVLogging
 
 #if !targetEnvironment(macCatalyst) && !os(macOS) && canImport(SteamController)
 import SteamController

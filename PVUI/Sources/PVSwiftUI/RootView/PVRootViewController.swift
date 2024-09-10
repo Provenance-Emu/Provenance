@@ -18,6 +18,9 @@ import SwiftUI
 import RealmSwift
 import Combine
 import PVLibrary
+import PVRealm
+import PVLogging
+
 @_exported import PVUIBase
 
 #if canImport(MBProgressHUD)
@@ -198,7 +201,7 @@ extension PVRootViewController: UIDocumentPickerDelegate {
 
         let sortedUrls = PVEmulatorConfiguration.sortImportURLs(urls: urls)
 
-        let importPath = PVEmulatorConfiguration.Paths.romsImportPath
+        let importPath = Paths.romsImportPath
 
         sortedUrls.forEach { url in
             defer {

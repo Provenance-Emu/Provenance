@@ -6,6 +6,7 @@
 //
 
 import PVLibrary
+import PVRealm
 
 protocol PVCheatsViewControllerDelegate: AnyObject {
     func cheatsViewControllerDone(_ cheatsViewController: PVCheatsViewController)

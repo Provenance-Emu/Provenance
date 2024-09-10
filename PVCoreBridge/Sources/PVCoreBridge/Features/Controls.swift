@@ -18,8 +18,8 @@ import Foundation
 #if canImport(GameController)
 	var valueChangedHandler: GCExtendedGamepadValueChangedHandler? { get }
 #endif
-    func didPush(_ button: Int, forPlayer player: Int)
-    func didRelease(_ button: Int, forPlayer player: Int)
+//    func didPush(_ button: Int, forPlayer player: Int)
+//    func didRelease(_ button: Int, forPlayer player: Int)
 }
 
 @objc public protocol JoystickResponder {
@@ -1115,10 +1115,8 @@ import Foundation
 }
 
 @objc public protocol PVJaguarSystemResponderClient: ResponderClient, ButtonResponder {
-    @objc(didPushJaguarButton:forPlayer:)
-    func didPush(_ button: PVJaguarButton, forPlayer player: Int)
-    @objc(didReleaseJaguarButton:forPlayer:)
-    func didRelease(_ button: PVJaguarButton, forPlayer player: Int)
+    @objc func didPush(jaguarButton button: PVJaguarButton, forPlayer player: Int)
+    @objc func didRelease(jaguarButton button: PVJaguarButton, forPlayer player: Int)
 }
 
 // MARK: - Sega Saturn

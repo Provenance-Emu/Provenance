@@ -41,20 +41,55 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
+        
+        // MARK: --------- Core ---------- //
+        
+        
         .target(
             name: "PVPicoDrive",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVLogging",
+                "PVAudio",
                 "PVSupport",
-                "PVPlists",
-                "PVObjCUtils",
-                "PVPicoDriveSwift",
                 "libpicodrive",
+                "PVPicoDriveBridge",
                 "PVSettings"
             ],
             resources: [
-                .process("Resources/Core.plist")
+                .process("Resources/Core.plist"),
+                .copy("Resources/carthw.cfg")
+            ],
+            cSettings: [
+                .define("INLINE", to: "inline"),
+                .define("USE_STRUCTS", to: "1"),
+                .define("__LIBRETRO__", to: "1"),
+                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
+                .headerSearchPath("../libpicodrive/"),
+                .headerSearchPath("../libpicodrive/include")
+            ],
+            plugins: [
+                // Disabled until SwiftGenPlugin support Swift 6 concurrency
+                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
+            ]
+        ),
+
+        // MARK: --------- Bridge ---------- //
+
+        .target(
+            name: "PVPicoDriveBridge",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVSupport",
+                "PVPlists",
+                "PVObjCUtils",
+                "libpicodrive",
+                "PVSettings"
             ],
             publicHeadersPath: "include",
             cSettings: [
@@ -69,34 +104,8 @@ let package = Package(
             ]
         ),
 
-            .target(
-                name: "PVPicoDriveSwift",
-                dependencies: [
-                    "PVEmulatorCore",
-                    "PVCoreBridge",
-                    "PVLogging",
-                    "PVAudio",
-                    "PVSupport",
-                    "libpicodrive",
-                    "PVSettings"
-                ],
-                resources: [
-                    .process("Resources/Core.plist")
-                ],
-                cSettings: [
-                    .define("INLINE", to: "inline"),
-                    .define("USE_STRUCTS", to: "1"),
-                    .define("__LIBRETRO__", to: "1"),
-                    .define("HAVE_COCOATOJUCH", to: "1"),
-                    .define("__GCCUNIX__", to: "1"),
-                    .headerSearchPath("../libpicodrive/"),
-                    .headerSearchPath("../libpicodrive/include")
-                ],
-                plugins: [
-                    // Disabled until SwiftGenPlugin support Swift 6 concurrency
-                    .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
-                ]
-            ),
+
+        // MARK: --------- Emulator ---------- //
 
             .target(
                 name: "libpicodrive",
@@ -207,6 +216,8 @@ let package = Package(
 //                ]
 //            ),
 
+        // MARK: --------- libunzip ---------- //
+
             .target(
                 name: "unzip",
 //                dependencies: [ "zlib" ],
@@ -231,11 +242,11 @@ let package = Package(
                 ]
             ),
 
-        // MARK: Tests
+        // MARK: --------- Tests ---------- //
         .testTarget(name: "PVPicoDriveTests",
                     dependencies: ["PVPicoDrive"])
     ],
-    swiftLanguageModes: [.v5],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu99,
     cxxLanguageStandard: .gnucxx14
 )

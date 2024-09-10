@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import PVRealm
+import PVMediaCache
 
 @available(iOS 14, tvOS 14, *)
 struct GameItemView: SwiftUI.View {

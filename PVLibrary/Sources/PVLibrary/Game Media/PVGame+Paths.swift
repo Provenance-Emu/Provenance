@@ -19,4 +19,15 @@ public extension PVGame {
     var saveStatePath: URL { get {
         return PVEmulatorConfiguration.saveStatePath(forGame: self)
     }}
+    
+    var diskCount: Int { get {
+        return relatedFiles
+            .filter({ $0.pathExtension.lowercased() != "m3u" })
+            .filter({
+                if let extensions = RomDatabase.sharedInstance.getSystemCache()[self.systemIdentifier]?.supportedExtensions {
+                    return extensions.contains($0.pathExtension.lowercased())
+                }
+                return false
+            }).count
+    }}
 }

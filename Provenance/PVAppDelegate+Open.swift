@@ -12,6 +12,9 @@ import PVLibrary
 import PVSupport
 import RealmSwift
 import RxSwift
+import PVRealm
+import PVFileSystem
+
 #if !targetEnvironment(macCatalyst) && !os(macOS) // && canImport(SteamController)
 import SteamController
 import UIKit
@@ -115,7 +118,7 @@ extension PVAppDelegate {
 extension PVAppDelegate {
     func handle(fileURL url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         let filename = url.lastPathComponent
-        let destinationPath = PVEmulatorConfiguration.Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
+        let destinationPath = Paths.romsImportPath.appendingPathComponent(filename, isDirectory: false)
 
         do {
             defer {

@@ -1,5 +1,5 @@
-input_dir: Sources/PVPicoDriveSwift/Resources
-#output_dir: Sources/PVPicoDriveSwift/
+input_dir: Sources/PVPicoDrive/Resources
+#output_dir: Sources/PVPicoDrive/
 output_dir: ${DERIVED_SOURCES_DIR}
 
 plist:

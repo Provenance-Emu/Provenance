@@ -21,6 +21,8 @@ import PVAudio
 import PVCoreAudio
 import PVThemes
 import PVSettings
+import PVRealm
+import PVLogging
 
 private weak var staticSelf: PVEmulatorViewController?
 
@@ -414,32 +416,36 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
             } catch {
                 let neError = error as NSError
 
-//                presentingViewController?.presentError(error.localizedDescription, source: self.view)
-
-                Task { @MainActor in
-                    let alert = UIAlertController(title: neError.localizedDescription,
-                                                  message: neError.localizedRecoverySuggestion,
-                                                  preferredStyle: .alert)
-                    
-                    alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
-                    alert.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
-                    alert.addAction(UIAlertAction(title: "OK",
-                                                  style: .default,
-                                                  handler: { (_: UIAlertAction) -> Void in
-                        self.dismiss(animated: true, completion: nil)
-                    }))
-                    let code = neError.code
-                    if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
-                        alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: { (_: UIAlertAction) -> Void in
-                            if let url = URL(string: "https://bitly.com/provdiscs") {
-                                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                            }
+//                if let presentingViewController = presentingViewController {
+//                    Task { @MainActor in
+//                        presentingViewController.presentError(error.localizedDescription, source: self.view)
+//                    }
+//                } else {
+                    Task { @MainActor in
+                        let alert = UIAlertController(title: neError.localizedDescription,
+                                                      message: neError.localizedRecoverySuggestion,
+                                                      preferredStyle: .alert)
+                        
+                        alert.popoverPresentationController?.barButtonItem = self.navigationItem.leftBarButtonItem
+                        alert.popoverPresentationController?.sourceView = self.navigationItem.titleView ?? self.view
+                        alert.addAction(UIAlertAction(title: "OK",
+                                                      style: .default,
+                                                      handler: { (_: UIAlertAction) -> Void in
+                            self.dismiss(animated: true, completion: nil)
                         }))
+                        let code = neError.code
+                        if code == PVEmulatorCoreErrorCode.missingM3U.rawValue {
+                            alert.addAction(UIAlertAction(title: "View Wiki", style: .cancel, handler: { (_: UIAlertAction) -> Void in
+                                if let url = URL(string: "https://bitly.com/provdiscs") {
+                                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                                }
+                            }))
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
+                            self?.present(alert, animated: true) { () -> Void in }
+                        })
                     }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { [weak self] in
-                        self?.present(alert, animated: true) { () -> Void in }
-                    })
-                }
+//                }
                 return
             }
         }
@@ -480,7 +486,9 @@ final class PVEmulatorViewController: PVEmulatorViewControllerRootClass, PVAudio
         
         ILOG("Loading ROM: \(path)")
         
-        if let core = core as? ObjCCoreBridge {
+        if let core = core as? any ObjCBridgedCore, let bridge = core.bridge as? EmulatorCoreIOInterface {
+            try bridge.loadFile(atPath: path)
+        } else if let core = core as? ObjCCoreBridge {
             try core.loadFile(atPath: path)
         } else {
             throw EmulationError.coreDoesNotImplimentLoadFile

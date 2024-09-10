@@ -7,9 +7,10 @@
 
 import Foundation
 import PVLibrary
+import PVFileSystem
 
 package extension URL {
     var isArchive: Bool {
-        PVEmulatorConfiguration.archiveExtensions.contains(pathExtension.lowercased())
+        Extensions.archiveExtensions.contains(pathExtension.lowercased())
     }
 }

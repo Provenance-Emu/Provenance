@@ -138,6 +138,7 @@ let package = Package(
                     "PVHashing",
                     "PVLookup",
                     "PVPrimitives",
+                    "PVFileSystem",
                     .product(name: "RxCocoa", package: "RxSwift"),
                     .product(name: "RxSwift", package: "RxSwift"),
                     .product(name: "RxRealm", package: "RxRealm"),

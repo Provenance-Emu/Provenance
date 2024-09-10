@@ -23,6 +23,9 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 import PVPrimitives
+import PVRealm
+import PVLogging
+import PVMediaCache
 
 #if canImport(UIKit)
 import UIKit
@@ -1696,7 +1699,7 @@ extension PVGameLibraryViewController: UIDocumentPickerDelegate {
         
         let sortedUrls = PVEmulatorConfiguration.sortImportURLs(urls: urls)
         
-        let importPath = PVEmulatorConfiguration.Paths.romsImportPath
+        let importPath = Paths.romsImportPath
         
         sortedUrls.forEach { url in
             defer {

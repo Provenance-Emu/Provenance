@@ -12,10 +12,13 @@ import RealmSwift
 import RxCocoa
 import RxRealm
 import RxSwift
-#if canImport(UIKit)
+import PVLogging
+import PVRealm
+
 #if canImport(UIKit)
 import UIKit
-#endif
+#else
+import AppKit
 #endif
 
 public

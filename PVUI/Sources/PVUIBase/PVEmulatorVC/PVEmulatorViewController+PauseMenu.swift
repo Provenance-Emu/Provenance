@@ -16,6 +16,7 @@ import GameController
 import PVEmulatorCore
 import PVCoreBridge
 import PVSettings
+import PVLogging
 
 extension PVEmulatorViewController {
     @objc func showMenu(_ sender: AnyObject?) {

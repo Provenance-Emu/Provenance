@@ -29,6 +29,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVCoreObjCBridge"),
         .package(path: "../../PVPlists"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVSupport"),
@@ -39,57 +40,21 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
+        
+        // MARK: ------- Core ---------
+
         .target(
             name: "PVTGBDual",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
-                "PVSupport",
-                "PVPlists",
-                "PVObjCUtils",
-                "PVTGBDualSwift",
-                "PVTGBDualCPP",
-                "libtgbdual",
-            ],
-            resources: [
-                .process("Resources/Core.plist")
-            ],
-            publicHeadersPath: "include",
-            cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libTGBDual/TGBDual/src/os/libretro/"),
-            ],
-            cxxSettings: [
-                .unsafeFlags([
-                    "-fmodules",
-                    "-fcxx-modules"
-                ]),
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libTGBDual/TGBDual/src/os/libretro/"),
-            ],
-            swiftSettings: [
-                .interoperabilityMode(.Cxx)
-            ]
-        ),
-
-        .target(
-            name: "PVTGBDualSwift",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
+                "PVCoreObjCBridge",
                 "PVLogging",
                 "PVAudio",
                 "PVSupport",
                 "libtgbdual",
-                "PVTGBDualCPP"
+                "PVTGBDualCPP",
+                "PVTGBDualBridge"
             ],
             resources: [
                 .process("Resources/Core.plist")
@@ -118,7 +83,47 @@ let package = Package(
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
+        
+        // MARK: ------- Bridge ---------
 
+        .target(
+            name: "PVTGBDualBridge",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVSupport",
+                "PVPlists",
+                "PVObjCUtils",
+                "PVTGBDualCPP",
+                "libtgbdual",
+            ],
+            cSettings: [
+                .define("INLINE", to: "inline"),
+                .define("USE_STRUCTS", to: "1"),
+                .define("__LIBRETRO__", to: "1"),
+                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
+                .headerSearchPath("../libTGBDual/TGBDual/src/os/libretro/"),
+            ],
+            cxxSettings: [
+                .unsafeFlags([
+                    "-fmodules",
+                    "-fcxx-modules"
+                ]),
+                .define("INLINE", to: "inline"),
+                .define("USE_STRUCTS", to: "1"),
+                .define("__LIBRETRO__", to: "1"),
+                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
+                .headerSearchPath("../libTGBDual/TGBDual/src/os/libretro/"),
+            ],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ]
+        ),
+
+        // MARK: ------- CPP Helpers ---------
         .target(
             name: "PVTGBDualCPP",
             dependencies: [
@@ -142,6 +147,8 @@ let package = Package(
                 .headerSearchPath("../libTGBDual/TGBDual/src/os/libretro/"),
             ]
         ),
+
+        // MARK: ------- Emulator ---------
 
         .target(
             name: "libtgbdual",

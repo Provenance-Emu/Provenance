@@ -9,6 +9,9 @@ import RealmSwift
 import RxCocoa
 import RxRealm
 import RxSwift
+import PVRealm
+import PVLogging
+
 #if canImport(UIKit)
 import UIKit
 #endif
@@ -100,9 +103,9 @@ final class PVCheatsViewController: UITableViewController {
                 return
             }
 
-            let state: PVCheats? = allCheats?[indexPath.item]
+            let cheat: PVCheats? = allCheats?[indexPath.item]
 
-            guard let saveState = state else {
+            guard let cheat = cheat else {
                 ELOG("No cheat code at indexPath: \(indexPath)")
                 return
             }
@@ -112,36 +115,17 @@ final class PVCheatsViewController: UITableViewController {
             alert.popoverPresentationController?.sourceView = tableView?.cellForRow(at: indexPath)?.contentView
             alert.popoverPresentationController?.sourceRect = tableView?.cellForRow(at: indexPath)?.contentView.bounds ?? UIScreen.main.bounds
             alert.addAction(UIAlertAction(title: "Yes", style: .destructive) { [unowned self] _ in
-                Task { @MainActor in
-                    do {
-                        if let app = UIApplication.shared as? PVApplication, let core = app.core {
-                            let saveStatesPath = core.saveStatesPath
-                            if let saveStatesPath = saveStatesPath {
-                                let url = await Task { await saveState.file.url }.value
-                                let fileURL = saveStatesPath.appendingFormat("/%@", url.lastPathComponent)
-                                if FileManager.default.fileExists(atPath: fileURL) {
-                                    try FileManager.default.removeItem(atPath: fileURL)
-                                }
-                                if FileManager.default.fileExists(atPath: fileURL.appending(".json")) {
-                                    try FileManager.default.removeItem(atPath: fileURL.appending(".json"))
-                                }
-                            }
-                        }
-                    } catch {
-                        NSLog("PVSaveState:Delete:Failed to delete PVState")
-                    }
-                    do {
-                        try  PVCheats.delete(saveState)
-
-                        self.tableView.reloadData()
-                        self.tableView.layoutIfNeeded()
-                    } catch {
-                        self.presentError("Error deleting CheatCode: \(error.localizedDescription)", source: self.view)
-                    }
+                do {
+                    try cheat.delete()
+                    
+                    self.tableView.reloadData()
+                    self.tableView.layoutIfNeeded()
+                } catch {
+                    self.presentError("Error deleting CheatCode: \(error.localizedDescription)", source: self.view)
                 }
             })
             alert.addAction(UIAlertAction(title: "No", style: .cancel, handler: nil))
-
+            
             present(alert, animated: true)
         default:
             break

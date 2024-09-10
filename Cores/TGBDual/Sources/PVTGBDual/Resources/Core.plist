@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.tgbdual</string>
 	<key>PVPrincipleClass</key>
-	<string>PVTGBDualSwift.PVTGBDualCore</string>
+	<string>PVTGBDual.PVTGBDualCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.gb</string>
