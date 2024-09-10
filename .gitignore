@@ -122,3 +122,4 @@ Cores/DuckStation/lib/
 /Cores/PPSSPP/lib/Release-appletvos
 Cores/PPSSPP/lib/
 build
+/PVLookup/Sources/ShiraGame/Resources/shiragame.sqlite3
