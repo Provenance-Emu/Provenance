@@ -69,54 +69,54 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		159595E584744402A86F6790 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxTest.h */ = {isa = PBXBuildFile; fileRef = 58E129412E5C4C97BF703735 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxTest.h */; };
-		1E02E5D5631444878527B399 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = F6FEEB2EB4254EA6935B5D58 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */; };
-		21B81DFE35AE42499780915E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest3.h */ = {isa = PBXBuildFile; fileRef = C289AFFD2F02457CBD26C138 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest3.h */; };
-		2682B8FAEFEB407CA406A308 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/Main.cpp */ = {isa = PBXBuildFile; fileRef = C8FBB710735B41B18DAE86C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/Main.cpp */; };
-		2813A8F0F2D449CE92C890C8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest.cpp */ = {isa = PBXBuildFile; fileRef = A2BA373ACF0B4BB29B57E5F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest.cpp */; };
-		39F31C0448F24ED9ABD66469 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest6.h */ = {isa = PBXBuildFile; fileRef = C536E391A5AB4BA787C2C996 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest6.h */; };
-		3C17BCFEC43D45C0B648912F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest4.cpp */ = {isa = PBXBuildFile; fileRef = ACF2B33B3A5F4CDE9FA18513 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest4.cpp */; };
-		3D114694E5554AF09314A04F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TestVm.h */ = {isa = PBXBuildFile; fileRef = 1A213F2F9FF349FF8CEDB71C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TestVm.h */; };
-		3F6A54EDA8264D23A24D9507 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest.h */ = {isa = PBXBuildFile; fileRef = ABACFA66FA994BA5B21CC1DE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest.h */; };
-		44B350DE72DA4DF7BEEAE9CA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TriAceTest.h */ = {isa = PBXBuildFile; fileRef = 8CA5CD90FAFD45D0A4094050 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TriAceTest.h */; };
-		495FF682B49B417DA6E82A9C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest2.cpp */ = {isa = PBXBuildFile; fileRef = C1E0E149608847FD959A3E28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest2.cpp */; };
-		4B2A336B1EC54EDE91531B0F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest2.h */ = {isa = PBXBuildFile; fileRef = 1B09EE2C8DA94B568AA7F098 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest2.h */; };
-		502C0118742C4D4D8D2524B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest.cpp */ = {isa = PBXBuildFile; fileRef = D9A9D477650744DCBDF0BB88 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest.cpp */; };
-		579AB14E480547939A9069CD /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/AddTest.h */ = {isa = PBXBuildFile; fileRef = D4333C3995BC4162B218789C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/AddTest.h */; };
-		57F26B3827D2478CA9C811D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TestVm.cpp */ = {isa = PBXBuildFile; fileRef = BD645D19AAD546C08CC4D794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TestVm.cpp */; };
-		5B70419957B84491AD6F2397 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/BranchTest.cpp */ = {isa = PBXBuildFile; fileRef = FA563B2A98D84042BEEFB061 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/BranchTest.cpp */; };
-		5EF6E5B4ACF34A99900BEE17 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest.h */ = {isa = PBXBuildFile; fileRef = AE5E3E6F783C4671AD74E392 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest.h */; };
-		5F5D15B6EEAE4370A142DADB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest.h */ = {isa = PBXBuildFile; fileRef = E777818C55EA4A1F84E3FF95 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest.h */; };
-		68C7632D49924FE1A95D9200 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest2.cpp */ = {isa = PBXBuildFile; fileRef = 8AE03C0EABEC45228B5D80C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest2.cpp */; };
-		701EC3C357E5483B903336AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/VuAssembler.cpp */ = {isa = PBXBuildFile; fileRef = 658A3A36222543C3A21667B4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/VuAssembler.cpp */; };
-		796A9C80F4F945C7A99B1ED7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxFlagsTest.h */ = {isa = PBXBuildFile; fileRef = 3849B2F540AF47B4AC1E36F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxFlagsTest.h */; };
-		859CC7147B724841A58C095E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest3.h */ = {isa = PBXBuildFile; fileRef = DD230DF033A3478EB002D88C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest3.h */; };
-		864942A662AA4FE8B4C81C91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest.cpp */ = {isa = PBXBuildFile; fileRef = 96FABB01AD9B409E91502744 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest.cpp */; };
-		89A03D65EEDA4B03BA37DC9E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest2.cpp */ = {isa = PBXBuildFile; fileRef = 3561D0A026484545ABB9C773 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest2.cpp */; };
-		8AAB383971324974B31C2DF1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest4.h */ = {isa = PBXBuildFile; fileRef = FD387A9242584B1CB4ACDD49 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest4.h */; };
-		94D3CCF4C0674831BC3554D1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest6.cpp */ = {isa = PBXBuildFile; fileRef = A94E5F0E5EA947CDA3D409A1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest6.cpp */; };
-		9BA5071D0EE84BD0AA6A7F4C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/BranchTest.h */ = {isa = PBXBuildFile; fileRef = C6890AB982E3411581F69BC6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/BranchTest.h */; };
-		B4B397CCC0CC429799E23AEB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/VuAssembler.h */ = {isa = PBXBuildFile; fileRef = 3E43DC3A001B4639B5A8626D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/VuAssembler.h */; };
-		B64AA302417F4FE488A286A7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest2.h */ = {isa = PBXBuildFile; fileRef = A7675BB51E4F4C03937713A8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest2.h */; };
-		B6D859DCF28C4C3286136C2C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest4.h */ = {isa = PBXBuildFile; fileRef = 1FFAAFF3048B4DDCB2C39566 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest4.h */; };
-		BBA15CD64A324131AD5D84DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest2.h */ = {isa = PBXBuildFile; fileRef = 34EA2F69681B44BC9E1D2571 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest2.h */; };
-		BBE50C884DC44A6083C78EA1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest4.cpp */ = {isa = PBXBuildFile; fileRef = 88CEC1C5A6A9455C9493368B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest4.cpp */; };
-		CC5627C9DA7B43C9B6C06039 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxFlagsTest.cpp */ = {isa = PBXBuildFile; fileRef = 1B9D0C2C8AC24229BCCD47E9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxFlagsTest.cpp */; };
-		CDDC8EFF2B5440F9B8F3E5DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest3.cpp */ = {isa = PBXBuildFile; fileRef = D946A3C1BDC844FF99B42BB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest3.cpp */; };
-		D055E5537B5D45A88D32C9D1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 54348DFC03B24316A837E0FA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/CMakeLists.txt */; };
-		D3D73110FF30453994EDA52B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest3.cpp */ = {isa = PBXBuildFile; fileRef = 2D18623641E743BFB62AA921 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest3.cpp */; };
-		D408EC444FC04457AEC8550B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/Test.h */ = {isa = PBXBuildFile; fileRef = B45C86110CC44692A3F1ABB7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/Test.h */; };
-		D478937E49224A25BD33421E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest.h */ = {isa = PBXBuildFile; fileRef = 8019BB0BE5CD43FAB6AA0787 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest.h */; };
-		D77E5C29D0634CF08788A490 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TriAceTest.cpp */ = {isa = PBXBuildFile; fileRef = 37752386D0214804BCE940AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TriAceTest.cpp */; };
-		DB8BAA2609CD41A5B2C66568 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest2.h */ = {isa = PBXBuildFile; fileRef = 6A9C26141E0C45398BB27413 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest2.h */; };
-		DBD7C265FC6B4DCAB763F566 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FdivEfuMixTest.h */ = {isa = PBXBuildFile; fileRef = 7E3CC115AF1943DC8F08075A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FdivEfuMixTest.h */; };
-		E1E156496B1C45FF85F0DE12 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FdivEfuMixTest.cpp */ = {isa = PBXBuildFile; fileRef = F2BBD2EA00654D8CB1F0F074 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FdivEfuMixTest.cpp */; };
-		E2BD96632BCF44C1A39244B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest5.cpp */ = {isa = PBXBuildFile; fileRef = 0C04CDE3198D42EA9CEB118E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest5.cpp */; };
-		E61F416C285B4DB0BA231FC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest.cpp */ = {isa = PBXBuildFile; fileRef = D7A6E8E30CBB434B9E9C6422 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest.cpp */; };
-		EE95996BA63745A4946B309B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest5.h */ = {isa = PBXBuildFile; fileRef = C5FDEF3599B440769C46ACBB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest5.h */; };
-		F1391A5B9337422E95C899B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest2.cpp */ = {isa = PBXBuildFile; fileRef = 4713153A2D4B4934A5601538 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest2.cpp */; };
-		F380B30E6D654D3F83452FF7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxTest.cpp */ = {isa = PBXBuildFile; fileRef = 5A333B11D7D448C092879CAE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxTest.cpp */; };
-		FDBCFD5129A848B882AA68A3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/AddTest.cpp */ = {isa = PBXBuildFile; fileRef = CEE7D405535146789A4727B6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/AddTest.cpp */; };
+		159595E584744402A86F6790 /* ../Play-/tools/VuTest/MinMaxTest.h */ = {isa = PBXBuildFile; fileRef = 58E129412E5C4C97BF703735 /* ../Play-/tools/VuTest/MinMaxTest.h */; };
+		1E02E5D5631444878527B399 /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */ = {isa = PBXBuildFile; fileRef = F6FEEB2EB4254EA6935B5D58 /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */; };
+		21B81DFE35AE42499780915E /* ../Play-/tools/VuTest/FlagsTest3.h */ = {isa = PBXBuildFile; fileRef = C289AFFD2F02457CBD26C138 /* ../Play-/tools/VuTest/FlagsTest3.h */; };
+		2682B8FAEFEB407CA406A308 /* ../Play-/tools/VuTest/Main.cpp */ = {isa = PBXBuildFile; fileRef = C8FBB710735B41B18DAE86C1 /* ../Play-/tools/VuTest/Main.cpp */; };
+		2813A8F0F2D449CE92C890C8 /* ../Play-/tools/VuTest/FlagsTest.cpp */ = {isa = PBXBuildFile; fileRef = A2BA373ACF0B4BB29B57E5F7 /* ../Play-/tools/VuTest/FlagsTest.cpp */; };
+		39F31C0448F24ED9ABD66469 /* ../Play-/tools/VuTest/StallTest6.h */ = {isa = PBXBuildFile; fileRef = C536E391A5AB4BA787C2C996 /* ../Play-/tools/VuTest/StallTest6.h */; };
+		3C17BCFEC43D45C0B648912F /* ../Play-/tools/VuTest/StallTest4.cpp */ = {isa = PBXBuildFile; fileRef = ACF2B33B3A5F4CDE9FA18513 /* ../Play-/tools/VuTest/StallTest4.cpp */; };
+		3D114694E5554AF09314A04F /* ../Play-/tools/VuTest/TestVm.h */ = {isa = PBXBuildFile; fileRef = 1A213F2F9FF349FF8CEDB71C /* ../Play-/tools/VuTest/TestVm.h */; };
+		3F6A54EDA8264D23A24D9507 /* ../Play-/tools/VuTest/StallTest.h */ = {isa = PBXBuildFile; fileRef = ABACFA66FA994BA5B21CC1DE /* ../Play-/tools/VuTest/StallTest.h */; };
+		44B350DE72DA4DF7BEEAE9CA /* ../Play-/tools/VuTest/TriAceTest.h */ = {isa = PBXBuildFile; fileRef = 8CA5CD90FAFD45D0A4094050 /* ../Play-/tools/VuTest/TriAceTest.h */; };
+		495FF682B49B417DA6E82A9C /* ../Play-/tools/VuTest/DynamicStallTest2.cpp */ = {isa = PBXBuildFile; fileRef = C1E0E149608847FD959A3E28 /* ../Play-/tools/VuTest/DynamicStallTest2.cpp */; };
+		4B2A336B1EC54EDE91531B0F /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */ = {isa = PBXBuildFile; fileRef = 1B09EE2C8DA94B568AA7F098 /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */; };
+		502C0118742C4D4D8D2524B9 /* ../Play-/tools/VuTest/StallTest.cpp */ = {isa = PBXBuildFile; fileRef = D9A9D477650744DCBDF0BB88 /* ../Play-/tools/VuTest/StallTest.cpp */; };
+		579AB14E480547939A9069CD /* ../Play-/tools/VuTest/AddTest.h */ = {isa = PBXBuildFile; fileRef = D4333C3995BC4162B218789C /* ../Play-/tools/VuTest/AddTest.h */; };
+		57F26B3827D2478CA9C811D3 /* ../Play-/tools/VuTest/TestVm.cpp */ = {isa = PBXBuildFile; fileRef = BD645D19AAD546C08CC4D794 /* ../Play-/tools/VuTest/TestVm.cpp */; };
+		5B70419957B84491AD6F2397 /* ../Play-/tools/VuTest/BranchTest.cpp */ = {isa = PBXBuildFile; fileRef = FA563B2A98D84042BEEFB061 /* ../Play-/tools/VuTest/BranchTest.cpp */; };
+		5EF6E5B4ACF34A99900BEE17 /* ../Play-/tools/VuTest/DynamicStallTest.h */ = {isa = PBXBuildFile; fileRef = AE5E3E6F783C4671AD74E392 /* ../Play-/tools/VuTest/DynamicStallTest.h */; };
+		5F5D15B6EEAE4370A142DADB /* ../Play-/tools/VuTest/FlagsTest.h */ = {isa = PBXBuildFile; fileRef = E777818C55EA4A1F84E3FF95 /* ../Play-/tools/VuTest/FlagsTest.h */; };
+		68C7632D49924FE1A95D9200 /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */ = {isa = PBXBuildFile; fileRef = 8AE03C0EABEC45228B5D80C9 /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */; };
+		701EC3C357E5483B903336AF /* ../Play-/tools/VuTest/VuAssembler.cpp */ = {isa = PBXBuildFile; fileRef = 658A3A36222543C3A21667B4 /* ../Play-/tools/VuTest/VuAssembler.cpp */; };
+		796A9C80F4F945C7A99B1ED7 /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */ = {isa = PBXBuildFile; fileRef = 3849B2F540AF47B4AC1E36F3 /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */; };
+		859CC7147B724841A58C095E /* ../Play-/tools/VuTest/StallTest3.h */ = {isa = PBXBuildFile; fileRef = DD230DF033A3478EB002D88C /* ../Play-/tools/VuTest/StallTest3.h */; };
+		864942A662AA4FE8B4C81C91 /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */ = {isa = PBXBuildFile; fileRef = 96FABB01AD9B409E91502744 /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */; };
+		89A03D65EEDA4B03BA37DC9E /* ../Play-/tools/VuTest/FlagsTest2.cpp */ = {isa = PBXBuildFile; fileRef = 3561D0A026484545ABB9C773 /* ../Play-/tools/VuTest/FlagsTest2.cpp */; };
+		8AAB383971324974B31C2DF1 /* ../Play-/tools/VuTest/FlagsTest4.h */ = {isa = PBXBuildFile; fileRef = FD387A9242584B1CB4ACDD49 /* ../Play-/tools/VuTest/FlagsTest4.h */; };
+		94D3CCF4C0674831BC3554D1 /* ../Play-/tools/VuTest/StallTest6.cpp */ = {isa = PBXBuildFile; fileRef = A94E5F0E5EA947CDA3D409A1 /* ../Play-/tools/VuTest/StallTest6.cpp */; };
+		9BA5071D0EE84BD0AA6A7F4C /* ../Play-/tools/VuTest/BranchTest.h */ = {isa = PBXBuildFile; fileRef = C6890AB982E3411581F69BC6 /* ../Play-/tools/VuTest/BranchTest.h */; };
+		B4B397CCC0CC429799E23AEB /* ../Play-/tools/VuTest/VuAssembler.h */ = {isa = PBXBuildFile; fileRef = 3E43DC3A001B4639B5A8626D /* ../Play-/tools/VuTest/VuAssembler.h */; };
+		B64AA302417F4FE488A286A7 /* ../Play-/tools/VuTest/DynamicStallTest2.h */ = {isa = PBXBuildFile; fileRef = A7675BB51E4F4C03937713A8 /* ../Play-/tools/VuTest/DynamicStallTest2.h */; };
+		B6D859DCF28C4C3286136C2C /* ../Play-/tools/VuTest/StallTest4.h */ = {isa = PBXBuildFile; fileRef = 1FFAAFF3048B4DDCB2C39566 /* ../Play-/tools/VuTest/StallTest4.h */; };
+		BBA15CD64A324131AD5D84DB /* ../Play-/tools/VuTest/FlagsTest2.h */ = {isa = PBXBuildFile; fileRef = 34EA2F69681B44BC9E1D2571 /* ../Play-/tools/VuTest/FlagsTest2.h */; };
+		BBE50C884DC44A6083C78EA1 /* ../Play-/tools/VuTest/FlagsTest4.cpp */ = {isa = PBXBuildFile; fileRef = 88CEC1C5A6A9455C9493368B /* ../Play-/tools/VuTest/FlagsTest4.cpp */; };
+		CC5627C9DA7B43C9B6C06039 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */ = {isa = PBXBuildFile; fileRef = 1B9D0C2C8AC24229BCCD47E9 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */; };
+		CDDC8EFF2B5440F9B8F3E5DB /* ../Play-/tools/VuTest/FlagsTest3.cpp */ = {isa = PBXBuildFile; fileRef = D946A3C1BDC844FF99B42BB1 /* ../Play-/tools/VuTest/FlagsTest3.cpp */; };
+		D055E5537B5D45A88D32C9D1 /* ../Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXBuildFile; fileRef = 54348DFC03B24316A837E0FA /* ../Play-/tools/VuTest/CMakeLists.txt */; };
+		D3D73110FF30453994EDA52B /* ../Play-/tools/VuTest/StallTest3.cpp */ = {isa = PBXBuildFile; fileRef = 2D18623641E743BFB62AA921 /* ../Play-/tools/VuTest/StallTest3.cpp */; };
+		D408EC444FC04457AEC8550B /* ../Play-/tools/VuTest/Test.h */ = {isa = PBXBuildFile; fileRef = B45C86110CC44692A3F1ABB7 /* ../Play-/tools/VuTest/Test.h */; };
+		D478937E49224A25BD33421E /* ../Play-/tools/VuTest/IntBranchDelayTest.h */ = {isa = PBXBuildFile; fileRef = 8019BB0BE5CD43FAB6AA0787 /* ../Play-/tools/VuTest/IntBranchDelayTest.h */; };
+		D77E5C29D0634CF08788A490 /* ../Play-/tools/VuTest/TriAceTest.cpp */ = {isa = PBXBuildFile; fileRef = 37752386D0214804BCE940AA /* ../Play-/tools/VuTest/TriAceTest.cpp */; };
+		DB8BAA2609CD41A5B2C66568 /* ../Play-/tools/VuTest/StallTest2.h */ = {isa = PBXBuildFile; fileRef = 6A9C26141E0C45398BB27413 /* ../Play-/tools/VuTest/StallTest2.h */; };
+		DBD7C265FC6B4DCAB763F566 /* ../Play-/tools/VuTest/FdivEfuMixTest.h */ = {isa = PBXBuildFile; fileRef = 7E3CC115AF1943DC8F08075A /* ../Play-/tools/VuTest/FdivEfuMixTest.h */; };
+		E1E156496B1C45FF85F0DE12 /* ../Play-/tools/VuTest/FdivEfuMixTest.cpp */ = {isa = PBXBuildFile; fileRef = F2BBD2EA00654D8CB1F0F074 /* ../Play-/tools/VuTest/FdivEfuMixTest.cpp */; };
+		E2BD96632BCF44C1A39244B7 /* ../Play-/tools/VuTest/StallTest5.cpp */ = {isa = PBXBuildFile; fileRef = 0C04CDE3198D42EA9CEB118E /* ../Play-/tools/VuTest/StallTest5.cpp */; };
+		E61F416C285B4DB0BA231FC5 /* ../Play-/tools/VuTest/DynamicStallTest.cpp */ = {isa = PBXBuildFile; fileRef = D7A6E8E30CBB434B9E9C6422 /* ../Play-/tools/VuTest/DynamicStallTest.cpp */; };
+		EE95996BA63745A4946B309B /* ../Play-/tools/VuTest/StallTest5.h */ = {isa = PBXBuildFile; fileRef = C5FDEF3599B440769C46ACBB /* ../Play-/tools/VuTest/StallTest5.h */; };
+		F1391A5B9337422E95C899B1 /* ../Play-/tools/VuTest/StallTest2.cpp */ = {isa = PBXBuildFile; fileRef = 4713153A2D4B4934A5601538 /* ../Play-/tools/VuTest/StallTest2.cpp */; };
+		F380B30E6D654D3F83452FF7 /* ../Play-/tools/VuTest/MinMaxTest.cpp */ = {isa = PBXBuildFile; fileRef = 5A333B11D7D448C092879CAE /* ../Play-/tools/VuTest/MinMaxTest.cpp */; };
+		FDBCFD5129A848B882AA68A3 /* ../Play-/tools/VuTest/AddTest.cpp */ = {isa = PBXBuildFile; fileRef = CEE7D405535146789A4727B6 /* ../Play-/tools/VuTest/AddTest.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -189,56 +189,56 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0C04CDE3198D42EA9CEB118E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest5.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest5.cpp; path = StallTest5.cpp; sourceTree = SOURCE_ROOT; };
-		1A213F2F9FF349FF8CEDB71C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TestVm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TestVm.h; path = TestVm.h; sourceTree = SOURCE_ROOT; };
-		1B09EE2C8DA94B568AA7F098 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntBranchDelayTest2.h; path = IntBranchDelayTest2.h; sourceTree = SOURCE_ROOT; };
-		1B9D0C2C8AC24229BCCD47E9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxFlagsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MinMaxFlagsTest.cpp; path = MinMaxFlagsTest.cpp; sourceTree = SOURCE_ROOT; };
-		1FFAAFF3048B4DDCB2C39566 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest4.h; path = StallTest4.h; sourceTree = SOURCE_ROOT; };
-		2CC49CFF5FFD4ADD8BA52F89 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		2D18623641E743BFB62AA921 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest3.cpp; path = StallTest3.cpp; sourceTree = SOURCE_ROOT; };
-		34EA2F69681B44BC9E1D2571 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest2.h; path = FlagsTest2.h; sourceTree = SOURCE_ROOT; };
-		3561D0A026484545ABB9C773 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest2.cpp; path = FlagsTest2.cpp; sourceTree = SOURCE_ROOT; };
-		37752386D0214804BCE940AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TriAceTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TriAceTest.cpp; path = TriAceTest.cpp; sourceTree = SOURCE_ROOT; };
-		3849B2F540AF47B4AC1E36F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxFlagsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MinMaxFlagsTest.h; path = MinMaxFlagsTest.h; sourceTree = SOURCE_ROOT; };
-		3E43DC3A001B4639B5A8626D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/VuAssembler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VuAssembler.h; path = VuAssembler.h; sourceTree = SOURCE_ROOT; };
-		4713153A2D4B4934A5601538 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest2.cpp; path = StallTest2.cpp; sourceTree = SOURCE_ROOT; };
-		54348DFC03B24316A837E0FA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
-		58E129412E5C4C97BF703735 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MinMaxTest.h; path = MinMaxTest.h; sourceTree = SOURCE_ROOT; };
-		5A333B11D7D448C092879CAE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MinMaxTest.cpp; path = MinMaxTest.cpp; sourceTree = SOURCE_ROOT; };
-		658A3A36222543C3A21667B4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/VuAssembler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = VuAssembler.cpp; path = VuAssembler.cpp; sourceTree = SOURCE_ROOT; };
-		6A9C26141E0C45398BB27413 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest2.h; path = StallTest2.h; sourceTree = SOURCE_ROOT; };
-		7E3CC115AF1943DC8F08075A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FdivEfuMixTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FdivEfuMixTest.h; path = FdivEfuMixTest.h; sourceTree = SOURCE_ROOT; };
-		8019BB0BE5CD43FAB6AA0787 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntBranchDelayTest.h; path = IntBranchDelayTest.h; sourceTree = SOURCE_ROOT; };
-		88CEC1C5A6A9455C9493368B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest4.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest4.cpp; path = FlagsTest4.cpp; sourceTree = SOURCE_ROOT; };
-		8AE03C0EABEC45228B5D80C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IntBranchDelayTest2.cpp; path = IntBranchDelayTest2.cpp; sourceTree = SOURCE_ROOT; };
-		8CA5CD90FAFD45D0A4094050 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TriAceTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TriAceTest.h; path = TriAceTest.h; sourceTree = SOURCE_ROOT; };
-		96FABB01AD9B409E91502744 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IntBranchDelayTest.cpp; path = IntBranchDelayTest.cpp; sourceTree = SOURCE_ROOT; };
+		0C04CDE3198D42EA9CEB118E /* ../Play-/tools/VuTest/StallTest5.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest5.cpp; path = StallTest5.cpp; sourceTree = SOURCE_ROOT; };
+		1A213F2F9FF349FF8CEDB71C /* ../Play-/tools/VuTest/TestVm.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TestVm.h; path = TestVm.h; sourceTree = SOURCE_ROOT; };
+		1B09EE2C8DA94B568AA7F098 /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntBranchDelayTest2.h; path = IntBranchDelayTest2.h; sourceTree = SOURCE_ROOT; };
+		1B9D0C2C8AC24229BCCD47E9 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MinMaxFlagsTest.cpp; path = MinMaxFlagsTest.cpp; sourceTree = SOURCE_ROOT; };
+		1FFAAFF3048B4DDCB2C39566 /* ../Play-/tools/VuTest/StallTest4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest4.h; path = StallTest4.h; sourceTree = SOURCE_ROOT; };
+		2CC49CFF5FFD4ADD8BA52F89 /* ../Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		2D18623641E743BFB62AA921 /* ../Play-/tools/VuTest/StallTest3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest3.cpp; path = StallTest3.cpp; sourceTree = SOURCE_ROOT; };
+		34EA2F69681B44BC9E1D2571 /* ../Play-/tools/VuTest/FlagsTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest2.h; path = FlagsTest2.h; sourceTree = SOURCE_ROOT; };
+		3561D0A026484545ABB9C773 /* ../Play-/tools/VuTest/FlagsTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest2.cpp; path = FlagsTest2.cpp; sourceTree = SOURCE_ROOT; };
+		37752386D0214804BCE940AA /* ../Play-/tools/VuTest/TriAceTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TriAceTest.cpp; path = TriAceTest.cpp; sourceTree = SOURCE_ROOT; };
+		3849B2F540AF47B4AC1E36F3 /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MinMaxFlagsTest.h; path = MinMaxFlagsTest.h; sourceTree = SOURCE_ROOT; };
+		3E43DC3A001B4639B5A8626D /* ../Play-/tools/VuTest/VuAssembler.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = VuAssembler.h; path = VuAssembler.h; sourceTree = SOURCE_ROOT; };
+		4713153A2D4B4934A5601538 /* ../Play-/tools/VuTest/StallTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest2.cpp; path = StallTest2.cpp; sourceTree = SOURCE_ROOT; };
+		54348DFC03B24316A837E0FA /* ../Play-/tools/VuTest/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		58E129412E5C4C97BF703735 /* ../Play-/tools/VuTest/MinMaxTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = MinMaxTest.h; path = MinMaxTest.h; sourceTree = SOURCE_ROOT; };
+		5A333B11D7D448C092879CAE /* ../Play-/tools/VuTest/MinMaxTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MinMaxTest.cpp; path = MinMaxTest.cpp; sourceTree = SOURCE_ROOT; };
+		658A3A36222543C3A21667B4 /* ../Play-/tools/VuTest/VuAssembler.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = VuAssembler.cpp; path = VuAssembler.cpp; sourceTree = SOURCE_ROOT; };
+		6A9C26141E0C45398BB27413 /* ../Play-/tools/VuTest/StallTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest2.h; path = StallTest2.h; sourceTree = SOURCE_ROOT; };
+		7E3CC115AF1943DC8F08075A /* ../Play-/tools/VuTest/FdivEfuMixTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FdivEfuMixTest.h; path = FdivEfuMixTest.h; sourceTree = SOURCE_ROOT; };
+		8019BB0BE5CD43FAB6AA0787 /* ../Play-/tools/VuTest/IntBranchDelayTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IntBranchDelayTest.h; path = IntBranchDelayTest.h; sourceTree = SOURCE_ROOT; };
+		88CEC1C5A6A9455C9493368B /* ../Play-/tools/VuTest/FlagsTest4.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest4.cpp; path = FlagsTest4.cpp; sourceTree = SOURCE_ROOT; };
+		8AE03C0EABEC45228B5D80C9 /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IntBranchDelayTest2.cpp; path = IntBranchDelayTest2.cpp; sourceTree = SOURCE_ROOT; };
+		8CA5CD90FAFD45D0A4094050 /* ../Play-/tools/VuTest/TriAceTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TriAceTest.h; path = TriAceTest.h; sourceTree = SOURCE_ROOT; };
+		96FABB01AD9B409E91502744 /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = IntBranchDelayTest.cpp; path = IntBranchDelayTest.cpp; sourceTree = SOURCE_ROOT; };
 		9F9EA13938D74FFBA1566860 /* VuTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = VuTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A2BA373ACF0B4BB29B57E5F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest.cpp; path = FlagsTest.cpp; sourceTree = SOURCE_ROOT; };
-		A7675BB51E4F4C03937713A8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DynamicStallTest2.h; path = DynamicStallTest2.h; sourceTree = SOURCE_ROOT; };
-		A94E5F0E5EA947CDA3D409A1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest6.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest6.cpp; path = StallTest6.cpp; sourceTree = SOURCE_ROOT; };
-		ABACFA66FA994BA5B21CC1DE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest.h; path = StallTest.h; sourceTree = SOURCE_ROOT; };
-		ACF2B33B3A5F4CDE9FA18513 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest4.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest4.cpp; path = StallTest4.cpp; sourceTree = SOURCE_ROOT; };
-		AE5E3E6F783C4671AD74E392 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DynamicStallTest.h; path = DynamicStallTest.h; sourceTree = SOURCE_ROOT; };
-		B45C86110CC44692A3F1ABB7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/Test.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Test.h; path = Test.h; sourceTree = SOURCE_ROOT; };
-		BD645D19AAD546C08CC4D794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TestVm.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TestVm.cpp; path = TestVm.cpp; sourceTree = SOURCE_ROOT; };
-		C1E0E149608847FD959A3E28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DynamicStallTest2.cpp; path = DynamicStallTest2.cpp; sourceTree = SOURCE_ROOT; };
-		C289AFFD2F02457CBD26C138 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest3.h; path = FlagsTest3.h; sourceTree = SOURCE_ROOT; };
-		C536E391A5AB4BA787C2C996 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest6.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest6.h; path = StallTest6.h; sourceTree = SOURCE_ROOT; };
-		C5FDEF3599B440769C46ACBB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest5.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest5.h; path = StallTest5.h; sourceTree = SOURCE_ROOT; };
-		C6890AB982E3411581F69BC6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/BranchTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BranchTest.h; path = BranchTest.h; sourceTree = SOURCE_ROOT; };
-		C8FBB710735B41B18DAE86C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Main.cpp; path = Main.cpp; sourceTree = SOURCE_ROOT; };
-		CEE7D405535146789A4727B6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/AddTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = AddTest.cpp; path = AddTest.cpp; sourceTree = SOURCE_ROOT; };
-		D4333C3995BC4162B218789C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/AddTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = AddTest.h; path = AddTest.h; sourceTree = SOURCE_ROOT; };
-		D7A6E8E30CBB434B9E9C6422 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DynamicStallTest.cpp; path = DynamicStallTest.cpp; sourceTree = SOURCE_ROOT; };
-		D946A3C1BDC844FF99B42BB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest3.cpp; path = FlagsTest3.cpp; sourceTree = SOURCE_ROOT; };
-		D9A9D477650744DCBDF0BB88 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest.cpp; path = StallTest.cpp; sourceTree = SOURCE_ROOT; };
-		DD230DF033A3478EB002D88C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest3.h; path = StallTest3.h; sourceTree = SOURCE_ROOT; };
-		E777818C55EA4A1F84E3FF95 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest.h; path = FlagsTest.h; sourceTree = SOURCE_ROOT; };
-		F2BBD2EA00654D8CB1F0F074 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FdivEfuMixTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FdivEfuMixTest.cpp; path = FdivEfuMixTest.cpp; sourceTree = SOURCE_ROOT; };
-		F6FEEB2EB4254EA6935B5D58 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist; sourceTree = "<absolute>"; };
-		FA563B2A98D84042BEEFB061 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/BranchTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BranchTest.cpp; path = BranchTest.cpp; sourceTree = SOURCE_ROOT; };
-		FD387A9242584B1CB4ACDD49 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest4.h; path = FlagsTest4.h; sourceTree = SOURCE_ROOT; };
+		A2BA373ACF0B4BB29B57E5F7 /* ../Play-/tools/VuTest/FlagsTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest.cpp; path = FlagsTest.cpp; sourceTree = SOURCE_ROOT; };
+		A7675BB51E4F4C03937713A8 /* ../Play-/tools/VuTest/DynamicStallTest2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DynamicStallTest2.h; path = DynamicStallTest2.h; sourceTree = SOURCE_ROOT; };
+		A94E5F0E5EA947CDA3D409A1 /* ../Play-/tools/VuTest/StallTest6.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest6.cpp; path = StallTest6.cpp; sourceTree = SOURCE_ROOT; };
+		ABACFA66FA994BA5B21CC1DE /* ../Play-/tools/VuTest/StallTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest.h; path = StallTest.h; sourceTree = SOURCE_ROOT; };
+		ACF2B33B3A5F4CDE9FA18513 /* ../Play-/tools/VuTest/StallTest4.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest4.cpp; path = StallTest4.cpp; sourceTree = SOURCE_ROOT; };
+		AE5E3E6F783C4671AD74E392 /* ../Play-/tools/VuTest/DynamicStallTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DynamicStallTest.h; path = DynamicStallTest.h; sourceTree = SOURCE_ROOT; };
+		B45C86110CC44692A3F1ABB7 /* ../Play-/tools/VuTest/Test.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Test.h; path = Test.h; sourceTree = SOURCE_ROOT; };
+		BD645D19AAD546C08CC4D794 /* ../Play-/tools/VuTest/TestVm.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TestVm.cpp; path = TestVm.cpp; sourceTree = SOURCE_ROOT; };
+		C1E0E149608847FD959A3E28 /* ../Play-/tools/VuTest/DynamicStallTest2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DynamicStallTest2.cpp; path = DynamicStallTest2.cpp; sourceTree = SOURCE_ROOT; };
+		C289AFFD2F02457CBD26C138 /* ../Play-/tools/VuTest/FlagsTest3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest3.h; path = FlagsTest3.h; sourceTree = SOURCE_ROOT; };
+		C536E391A5AB4BA787C2C996 /* ../Play-/tools/VuTest/StallTest6.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest6.h; path = StallTest6.h; sourceTree = SOURCE_ROOT; };
+		C5FDEF3599B440769C46ACBB /* ../Play-/tools/VuTest/StallTest5.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest5.h; path = StallTest5.h; sourceTree = SOURCE_ROOT; };
+		C6890AB982E3411581F69BC6 /* ../Play-/tools/VuTest/BranchTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BranchTest.h; path = BranchTest.h; sourceTree = SOURCE_ROOT; };
+		C8FBB710735B41B18DAE86C1 /* ../Play-/tools/VuTest/Main.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Main.cpp; path = Main.cpp; sourceTree = SOURCE_ROOT; };
+		CEE7D405535146789A4727B6 /* ../Play-/tools/VuTest/AddTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = AddTest.cpp; path = AddTest.cpp; sourceTree = SOURCE_ROOT; };
+		D4333C3995BC4162B218789C /* ../Play-/tools/VuTest/AddTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = AddTest.h; path = AddTest.h; sourceTree = SOURCE_ROOT; };
+		D7A6E8E30CBB434B9E9C6422 /* ../Play-/tools/VuTest/DynamicStallTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DynamicStallTest.cpp; path = DynamicStallTest.cpp; sourceTree = SOURCE_ROOT; };
+		D946A3C1BDC844FF99B42BB1 /* ../Play-/tools/VuTest/FlagsTest3.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FlagsTest3.cpp; path = FlagsTest3.cpp; sourceTree = SOURCE_ROOT; };
+		D9A9D477650744DCBDF0BB88 /* ../Play-/tools/VuTest/StallTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = StallTest.cpp; path = StallTest.cpp; sourceTree = SOURCE_ROOT; };
+		DD230DF033A3478EB002D88C /* ../Play-/tools/VuTest/StallTest3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StallTest3.h; path = StallTest3.h; sourceTree = SOURCE_ROOT; };
+		E777818C55EA4A1F84E3FF95 /* ../Play-/tools/VuTest/FlagsTest.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest.h; path = FlagsTest.h; sourceTree = SOURCE_ROOT; };
+		F2BBD2EA00654D8CB1F0F074 /* ../Play-/tools/VuTest/FdivEfuMixTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FdivEfuMixTest.cpp; path = FdivEfuMixTest.cpp; sourceTree = SOURCE_ROOT; };
+		F6FEEB2EB4254EA6935B5D58 /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */ = {isa = PBXFileReference; explicitFileType = sourcecode.text.plist; fileEncoding = 4; name = Info.plist; path = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist; sourceTree = "<absolute>"; };
+		FA563B2A98D84042BEEFB061 /* ../Play-/tools/VuTest/BranchTest.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BranchTest.cpp; path = BranchTest.cpp; sourceTree = SOURCE_ROOT; };
+		FD387A9242584B1CB4ACDD49 /* ../Play-/tools/VuTest/FlagsTest4.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FlagsTest4.h; path = FlagsTest4.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -265,7 +265,7 @@
 				514BAD2917354DB0B6A99826 /* Source Files */,
 				27DD47AE2AE641E19AAB61CD /* Header Files */,
 				F62456E8304F488F92D468A7 /* Resources */,
-				54348DFC03B24316A837E0FA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/CMakeLists.txt */,
+				54348DFC03B24316A837E0FA /* ../Play-/tools/VuTest/CMakeLists.txt */,
 			);
 			name = VuTest;
 			sourceTree = "<group>";
@@ -273,29 +273,29 @@
 		27DD47AE2AE641E19AAB61CD /* Header Files */ = {
 			isa = PBXGroup;
 			children = (
-				D4333C3995BC4162B218789C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/AddTest.h */,
-				C6890AB982E3411581F69BC6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/BranchTest.h */,
-				AE5E3E6F783C4671AD74E392 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest.h */,
-				A7675BB51E4F4C03937713A8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest2.h */,
-				7E3CC115AF1943DC8F08075A /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FdivEfuMixTest.h */,
-				E777818C55EA4A1F84E3FF95 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest.h */,
-				34EA2F69681B44BC9E1D2571 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest2.h */,
-				C289AFFD2F02457CBD26C138 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest3.h */,
-				FD387A9242584B1CB4ACDD49 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest4.h */,
-				8019BB0BE5CD43FAB6AA0787 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest.h */,
-				1B09EE2C8DA94B568AA7F098 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest2.h */,
-				3849B2F540AF47B4AC1E36F3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxFlagsTest.h */,
-				58E129412E5C4C97BF703735 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxTest.h */,
-				ABACFA66FA994BA5B21CC1DE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest.h */,
-				6A9C26141E0C45398BB27413 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest2.h */,
-				DD230DF033A3478EB002D88C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest3.h */,
-				1FFAAFF3048B4DDCB2C39566 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest4.h */,
-				C5FDEF3599B440769C46ACBB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest5.h */,
-				C536E391A5AB4BA787C2C996 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest6.h */,
-				B45C86110CC44692A3F1ABB7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/Test.h */,
-				1A213F2F9FF349FF8CEDB71C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TestVm.h */,
-				8CA5CD90FAFD45D0A4094050 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TriAceTest.h */,
-				3E43DC3A001B4639B5A8626D /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/VuAssembler.h */,
+				D4333C3995BC4162B218789C /* ../Play-/tools/VuTest/AddTest.h */,
+				C6890AB982E3411581F69BC6 /* ../Play-/tools/VuTest/BranchTest.h */,
+				AE5E3E6F783C4671AD74E392 /* ../Play-/tools/VuTest/DynamicStallTest.h */,
+				A7675BB51E4F4C03937713A8 /* ../Play-/tools/VuTest/DynamicStallTest2.h */,
+				7E3CC115AF1943DC8F08075A /* ../Play-/tools/VuTest/FdivEfuMixTest.h */,
+				E777818C55EA4A1F84E3FF95 /* ../Play-/tools/VuTest/FlagsTest.h */,
+				34EA2F69681B44BC9E1D2571 /* ../Play-/tools/VuTest/FlagsTest2.h */,
+				C289AFFD2F02457CBD26C138 /* ../Play-/tools/VuTest/FlagsTest3.h */,
+				FD387A9242584B1CB4ACDD49 /* ../Play-/tools/VuTest/FlagsTest4.h */,
+				8019BB0BE5CD43FAB6AA0787 /* ../Play-/tools/VuTest/IntBranchDelayTest.h */,
+				1B09EE2C8DA94B568AA7F098 /* ../Play-/tools/VuTest/IntBranchDelayTest2.h */,
+				3849B2F540AF47B4AC1E36F3 /* ../Play-/tools/VuTest/MinMaxFlagsTest.h */,
+				58E129412E5C4C97BF703735 /* ../Play-/tools/VuTest/MinMaxTest.h */,
+				ABACFA66FA994BA5B21CC1DE /* ../Play-/tools/VuTest/StallTest.h */,
+				6A9C26141E0C45398BB27413 /* ../Play-/tools/VuTest/StallTest2.h */,
+				DD230DF033A3478EB002D88C /* ../Play-/tools/VuTest/StallTest3.h */,
+				1FFAAFF3048B4DDCB2C39566 /* ../Play-/tools/VuTest/StallTest4.h */,
+				C5FDEF3599B440769C46ACBB /* ../Play-/tools/VuTest/StallTest5.h */,
+				C536E391A5AB4BA787C2C996 /* ../Play-/tools/VuTest/StallTest6.h */,
+				B45C86110CC44692A3F1ABB7 /* ../Play-/tools/VuTest/Test.h */,
+				1A213F2F9FF349FF8CEDB71C /* ../Play-/tools/VuTest/TestVm.h */,
+				8CA5CD90FAFD45D0A4094050 /* ../Play-/tools/VuTest/TriAceTest.h */,
+				3E43DC3A001B4639B5A8626D /* ../Play-/tools/VuTest/VuAssembler.h */,
 			);
 			name = "Header Files";
 			sourceTree = "<group>";
@@ -304,7 +304,7 @@
 			isa = PBXGroup;
 			children = (
 				68C4421AA9B9470898B51A0F /* CMake Rules */,
-				2CC49CFF5FFD4ADD8BA52F89 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/CMakeLists.txt */,
+				2CC49CFF5FFD4ADD8BA52F89 /* ../Play-/tools/VuTest/CMakeLists.txt */,
 			);
 			name = ALL_BUILD;
 			sourceTree = "<group>";
@@ -312,29 +312,29 @@
 		514BAD2917354DB0B6A99826 /* Source Files */ = {
 			isa = PBXGroup;
 			children = (
-				CEE7D405535146789A4727B6 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/AddTest.cpp */,
-				FA563B2A98D84042BEEFB061 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/BranchTest.cpp */,
-				D7A6E8E30CBB434B9E9C6422 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest.cpp */,
-				C1E0E149608847FD959A3E28 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest2.cpp */,
-				F2BBD2EA00654D8CB1F0F074 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FdivEfuMixTest.cpp */,
-				A2BA373ACF0B4BB29B57E5F7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest.cpp */,
-				3561D0A026484545ABB9C773 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest2.cpp */,
-				D946A3C1BDC844FF99B42BB1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest3.cpp */,
-				88CEC1C5A6A9455C9493368B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest4.cpp */,
-				96FABB01AD9B409E91502744 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest.cpp */,
-				8AE03C0EABEC45228B5D80C9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest2.cpp */,
-				C8FBB710735B41B18DAE86C1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/Main.cpp */,
-				1B9D0C2C8AC24229BCCD47E9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxFlagsTest.cpp */,
-				5A333B11D7D448C092879CAE /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxTest.cpp */,
-				D9A9D477650744DCBDF0BB88 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest.cpp */,
-				4713153A2D4B4934A5601538 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest2.cpp */,
-				2D18623641E743BFB62AA921 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest3.cpp */,
-				ACF2B33B3A5F4CDE9FA18513 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest4.cpp */,
-				0C04CDE3198D42EA9CEB118E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest5.cpp */,
-				A94E5F0E5EA947CDA3D409A1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest6.cpp */,
-				BD645D19AAD546C08CC4D794 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TestVm.cpp */,
-				37752386D0214804BCE940AA /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TriAceTest.cpp */,
-				658A3A36222543C3A21667B4 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/VuAssembler.cpp */,
+				CEE7D405535146789A4727B6 /* ../Play-/tools/VuTest/AddTest.cpp */,
+				FA563B2A98D84042BEEFB061 /* ../Play-/tools/VuTest/BranchTest.cpp */,
+				D7A6E8E30CBB434B9E9C6422 /* ../Play-/tools/VuTest/DynamicStallTest.cpp */,
+				C1E0E149608847FD959A3E28 /* ../Play-/tools/VuTest/DynamicStallTest2.cpp */,
+				F2BBD2EA00654D8CB1F0F074 /* ../Play-/tools/VuTest/FdivEfuMixTest.cpp */,
+				A2BA373ACF0B4BB29B57E5F7 /* ../Play-/tools/VuTest/FlagsTest.cpp */,
+				3561D0A026484545ABB9C773 /* ../Play-/tools/VuTest/FlagsTest2.cpp */,
+				D946A3C1BDC844FF99B42BB1 /* ../Play-/tools/VuTest/FlagsTest3.cpp */,
+				88CEC1C5A6A9455C9493368B /* ../Play-/tools/VuTest/FlagsTest4.cpp */,
+				96FABB01AD9B409E91502744 /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */,
+				8AE03C0EABEC45228B5D80C9 /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */,
+				C8FBB710735B41B18DAE86C1 /* ../Play-/tools/VuTest/Main.cpp */,
+				1B9D0C2C8AC24229BCCD47E9 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */,
+				5A333B11D7D448C092879CAE /* ../Play-/tools/VuTest/MinMaxTest.cpp */,
+				D9A9D477650744DCBDF0BB88 /* ../Play-/tools/VuTest/StallTest.cpp */,
+				4713153A2D4B4934A5601538 /* ../Play-/tools/VuTest/StallTest2.cpp */,
+				2D18623641E743BFB62AA921 /* ../Play-/tools/VuTest/StallTest3.cpp */,
+				ACF2B33B3A5F4CDE9FA18513 /* ../Play-/tools/VuTest/StallTest4.cpp */,
+				0C04CDE3198D42EA9CEB118E /* ../Play-/tools/VuTest/StallTest5.cpp */,
+				A94E5F0E5EA947CDA3D409A1 /* ../Play-/tools/VuTest/StallTest6.cpp */,
+				BD645D19AAD546C08CC4D794 /* ../Play-/tools/VuTest/TestVm.cpp */,
+				37752386D0214804BCE940AA /* ../Play-/tools/VuTest/TriAceTest.cpp */,
+				658A3A36222543C3A21667B4 /* ../Play-/tools/VuTest/VuAssembler.cpp */,
 			);
 			name = "Source Files";
 			sourceTree = "<group>";
@@ -375,7 +375,7 @@
 		F62456E8304F488F92D468A7 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F6FEEB2EB4254EA6935B5D58 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */,
+				F6FEEB2EB4254EA6935B5D58 /* ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -448,19 +448,19 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   /opt/homebrew/Cellar/cmake/3.29.2/bin/ctest --force-new-ctest-process -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME
 fi
 ";
@@ -476,24 +476,24 @@ fi
 			);
 			name = "Generate CMakeFiles/ALL_BUILD";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/ALL_BUILD			);
+../cmake/tools/VuTest/CMakeFiles/ALL_BUILD			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   echo Build\\ all\\ projects
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   echo Build\\ all\\ projects
 fi
 ";
@@ -527,19 +527,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake
+  cd ../cmake
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cpack -C $CONFIGURATION$EFFECTIVE_PLATFORM_NAME --config ./CPackConfig.cmake
 fi
 ";
@@ -603,19 +603,19 @@ exit 0";
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
+  cd ../cmake/tools/VuTest
   /opt/homebrew/Cellar/cmake/3.29.2/bin/cmake -DBUILD_TYPE=$CONFIGURATION -DEFFECTIVE_PLATFORM_NAME=$EFFECTIVE_PLATFORM_NAME -P cmake_install.cmake
 fi
 ";
@@ -646,25 +646,25 @@ exit 0";
 			);
 			name = "Generate CMakeFiles/ZERO_CHECK";
 			outputPaths = (
-/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/ZERO_CHECK			);
+../cmake/tools/VuTest/CMakeFiles/ZERO_CHECK			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "set -e
 if test \"$CONFIGURATION\" = \"Debug\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+  cd ../cmake/tools/VuTest
+  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"Release\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+  cd ../cmake/tools/VuTest
+  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"MinSizeRel\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+  cd ../cmake/tools/VuTest
+  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
 fi
 if test \"$CONFIGURATION\" = \"RelWithDebInfo\"; then :
-  cd /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest
-  make -f /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
+  cd ../cmake/tools/VuTest
+  make -f ../cmake/tools/VuTest/CMakeScripts/ReRunCMake.make
 fi
 ";
 			showEnvVarsInLog = 0;
@@ -676,29 +676,29 @@ fi
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDBCFD5129A848B882AA68A3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/AddTest.cpp */,
-				5B70419957B84491AD6F2397 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/BranchTest.cpp */,
-				E61F416C285B4DB0BA231FC5 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest.cpp */,
-				495FF682B49B417DA6E82A9C /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/DynamicStallTest2.cpp */,
-				E1E156496B1C45FF85F0DE12 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FdivEfuMixTest.cpp */,
-				2813A8F0F2D449CE92C890C8 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest.cpp */,
-				89A03D65EEDA4B03BA37DC9E /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest2.cpp */,
-				CDDC8EFF2B5440F9B8F3E5DB /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest3.cpp */,
-				BBE50C884DC44A6083C78EA1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/FlagsTest4.cpp */,
-				864942A662AA4FE8B4C81C91 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest.cpp */,
-				68C7632D49924FE1A95D9200 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/IntBranchDelayTest2.cpp */,
-				2682B8FAEFEB407CA406A308 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/Main.cpp */,
-				CC5627C9DA7B43C9B6C06039 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxFlagsTest.cpp */,
-				F380B30E6D654D3F83452FF7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/MinMaxTest.cpp */,
-				502C0118742C4D4D8D2524B9 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest.cpp */,
-				F1391A5B9337422E95C899B1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest2.cpp */,
-				D3D73110FF30453994EDA52B /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest3.cpp */,
-				3C17BCFEC43D45C0B648912F /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest4.cpp */,
-				E2BD96632BCF44C1A39244B7 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest5.cpp */,
-				94D3CCF4C0674831BC3554D1 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/StallTest6.cpp */,
-				57F26B3827D2478CA9C811D3 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TestVm.cpp */,
-				D77E5C29D0634CF08788A490 /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/TriAceTest.cpp */,
-				701EC3C357E5483B903336AF /* /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/tools/VuTest/VuAssembler.cpp */,
+				FDBCFD5129A848B882AA68A3 /* ../Play-/tools/VuTest/AddTest.cpp */,
+				5B70419957B84491AD6F2397 /* ../Play-/tools/VuTest/BranchTest.cpp */,
+				E61F416C285B4DB0BA231FC5 /* ../Play-/tools/VuTest/DynamicStallTest.cpp */,
+				495FF682B49B417DA6E82A9C /* ../Play-/tools/VuTest/DynamicStallTest2.cpp */,
+				E1E156496B1C45FF85F0DE12 /* ../Play-/tools/VuTest/FdivEfuMixTest.cpp */,
+				2813A8F0F2D449CE92C890C8 /* ../Play-/tools/VuTest/FlagsTest.cpp */,
+				89A03D65EEDA4B03BA37DC9E /* ../Play-/tools/VuTest/FlagsTest2.cpp */,
+				CDDC8EFF2B5440F9B8F3E5DB /* ../Play-/tools/VuTest/FlagsTest3.cpp */,
+				BBE50C884DC44A6083C78EA1 /* ../Play-/tools/VuTest/FlagsTest4.cpp */,
+				864942A662AA4FE8B4C81C91 /* ../Play-/tools/VuTest/IntBranchDelayTest.cpp */,
+				68C7632D49924FE1A95D9200 /* ../Play-/tools/VuTest/IntBranchDelayTest2.cpp */,
+				2682B8FAEFEB407CA406A308 /* ../Play-/tools/VuTest/Main.cpp */,
+				CC5627C9DA7B43C9B6C06039 /* ../Play-/tools/VuTest/MinMaxFlagsTest.cpp */,
+				F380B30E6D654D3F83452FF7 /* ../Play-/tools/VuTest/MinMaxTest.cpp */,
+				502C0118742C4D4D8D2524B9 /* ../Play-/tools/VuTest/StallTest.cpp */,
+				F1391A5B9337422E95C899B1 /* ../Play-/tools/VuTest/StallTest2.cpp */,
+				D3D73110FF30453994EDA52B /* ../Play-/tools/VuTest/StallTest3.cpp */,
+				3C17BCFEC43D45C0B648912F /* ../Play-/tools/VuTest/StallTest4.cpp */,
+				E2BD96632BCF44C1A39244B7 /* ../Play-/tools/VuTest/StallTest5.cpp */,
+				94D3CCF4C0674831BC3554D1 /* ../Play-/tools/VuTest/StallTest6.cpp */,
+				57F26B3827D2478CA9C811D3 /* ../Play-/tools/VuTest/TestVm.cpp */,
+				D77E5C29D0634CF08788A490 /* ../Play-/tools/VuTest/TriAceTest.cpp */,
+				701EC3C357E5483B903336AF /* ../Play-/tools/VuTest/VuAssembler.cpp */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -864,12 +864,12 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 2;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2        -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkHttp/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libbz2.tbd,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkHttp/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/CodeGen/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/Framework/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libbz2.tbd,"../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"../cmake/Source/ui_ios/Source/xxHash/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/RelWithDebInfo${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = VuTest;
 				SECTORDER_FLAGS = "";
@@ -894,12 +894,12 @@ fi
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2        -DNDEBUG -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Release${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkHttp/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/Release${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/Release${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libbz2.tbd,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Release${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Release${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/Release${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/Release${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Release${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkHttp/Release${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/CodeGen/Release${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/Framework/Release${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libbz2.tbd,"../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Release${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Release${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"../cmake/Source/ui_ios/Source/xxHash/Release${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/Release${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/Release${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/Release${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = VuTest;
 				SECTORDER_FLAGS = "";
@@ -1081,12 +1081,12 @@ fi
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2     -DNDEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkHttp/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libbz2.tbd,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkHttp/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/CodeGen/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/Framework/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libbz2.tbd,"../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"../cmake/Source/ui_ios/Source/xxHash/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/MinSizeRel${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = VuTest;
 				SECTORDER_FLAGS = "";
@@ -1131,12 +1131,12 @@ fi
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'","'PLAY_VERSION=\"0.30\"'","'_IOP_EMULATE_MODULES=1'","'DISABLE_LOGGING=1'","'HAS_AMAZON_S3=1'",ZWRAP_USE_ZSTD,"$(inherited)");
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				HEADER_SEARCH_PATHS = ("/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/Source","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/Framework/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/ghc_filesystem/include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/CodeGen/build_cmake/../include","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/Dependencies/xxHash/cmake_unofficial/..","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/Play-/deps/libchdr/include","$(inherited)");
-				INFOPLIST_FILE = /Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
+				HEADER_SEARCH_PATHS = ("../Play-/Source","../Play-/deps/Framework/build_cmake/Framework/../../include","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/lib","../Play-/deps/Dependencies/build_cmake/zstd_zlibwrapper/../../zstd/zlibWrapper","../Play-/deps/Dependencies/ghc_filesystem/include","../Play-/deps/Framework/build_cmake/FrameworkHttp/../../include","../Play-/deps/CodeGen/build_cmake/../include","../Play-/deps/Dependencies/xxHash/cmake_unofficial/..","../Play-/deps/libchdr/include","$(inherited)");
+				INFOPLIST_FILE = ../cmake/tools/VuTest/CMakeFiles/VuTest.dir/Info.plist;
 				INSTALL_PATH = "";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = "                -mios-version-min=12.2    -D_DEBUG '-std=gnu++17' ";
-				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Debug${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkAmazon/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/FrameworkHttp/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/CodeGen/Debug${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libbz2.tbd,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Debug${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Debug${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/xxHash/Debug${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","/Users/jmattiello/Workspace/Provenance/Provenance/Cores/Play/cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/Debug${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
+				OTHER_LDFLAGS = (" -Wl,-headerpad_max_install_names","../cmake/Source/ui_ios/Source/Debug${EFFECTIVE_PLATFORM_NAME}/libPlayCore.a","../cmake/Source/ui_ios/Source/FrameworkAmazon/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Amazon.a","../cmake/Source/ui_ios/Source/FrameworkHttp/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework_Http.a","../cmake/Source/ui_ios/Source/CodeGen/Debug${EFFECTIVE_PLATFORM_NAME}/libCodeGen.a","../cmake/Source/ui_ios/Source/Framework/Debug${EFFECTIVE_PLATFORM_NAME}/libFramework.a","-framework Foundation",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libbz2.tbd,"../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/Debug${EFFECTIVE_PLATFORM_NAME}/liblibzstd_zlibwrapper_static.a","../cmake/Source/ui_ios/Source/Framework/zstd_zlibwrapper/zstd/lib/Debug${EFFECTIVE_PLATFORM_NAME}/libzstd.a",/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.4.sdk/usr/lib/libz.tbd,"../cmake/Source/ui_ios/Source/xxHash/Debug${EFFECTIVE_PLATFORM_NAME}/libxxhash.a","../cmake/Source/ui_ios/Source/libchdr/Debug${EFFECTIVE_PLATFORM_NAME}/libchdr-static.a","../cmake/Source/ui_ios/Source/libchdr/deps/lzma-22.01/Debug${EFFECTIVE_PLATFORM_NAME}/liblzma.a","../cmake/Source/ui_ios/Source/libchdr/deps/zlib-1.2.12/Debug${EFFECTIVE_PLATFORM_NAME}/libz.a","$(inherited)");
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = VuTest;
 				SECTORDER_FLAGS = "";

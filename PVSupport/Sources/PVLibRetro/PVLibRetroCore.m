@@ -100,9 +100,9 @@ static bool runloop_perfcnt_enable               = false;
 static bool runloop_overrides_active             = false;
 static bool runloop_game_options_active          = false;
 //static core_option_manager_t *runloop_core_options = NULL;
-#ifdef HAVE_THREADS
-static slock_t *_runloop_msg_queue_lock           = NULL;
-#endif
+//#ifdef HAVE_THREADS
+//static slock_t *_runloop_msg_queue_lock           = NULL;
+//#endif
 //static msg_queue_t *runloop_msg_queue            = NULL;
 
 // MARK: - Config
@@ -1096,10 +1096,10 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
             //          runloop_msg_queue_unlock();
             break;
         case RUNLOOP_CTL_MSG_QUEUE_FREE:
-#ifdef HAVE_THREADS
-            slock_free(_runloop_msg_queue_lock);
-            _runloop_msg_queue_lock = NULL;
-#endif
+//#ifdef HAVE_THREADS
+//            slock_free(_runloop_msg_queue_lock);
+//            _runloop_msg_queue_lock = NULL;
+//#endif
             break;
         case RUNLOOP_CTL_MSG_QUEUE_CLEAR:
             //          msg_queue_clear(runloop_msg_queue);
@@ -1122,10 +1122,10 @@ bool runloop_ctl(enum runloop_ctl_state state, void *data) {
             //          runloop_msg_queue = msg_queue_new(8);
             //          retro_assert(runloop_msg_queue);
             
-#ifdef HAVE_THREADS
-            _runloop_msg_queue_lock = slock_new();
-            retro_assert(_runloop_msg_queue_lock);
-#endif
+//#ifdef HAVE_THREADS
+//            _runloop_msg_queue_lock = slock_new();
+//            retro_assert(_runloop_msg_queue_lock);
+//#endif
             break;
         case RUNLOOP_CTL_TASK_INIT:
         {

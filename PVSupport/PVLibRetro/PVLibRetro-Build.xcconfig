@@ -6,7 +6,7 @@
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) __LIBRETRO__=1 HAVE_THREADS=1 HAVE_OPENGL=1 HAVE_OPENGLES=1 HAVE_OPENGLES2=1 HAVE_OPENGLES3=1 GLES=1 GLES2=1 GLES3=1 GLES31=1 
 // HAVE_PLAIN_DRM=1
 OTHER_CFLAGS = $(inherited) -ObjC
-OTHER_LDFLAGS = $(inherited) -ObjC -all_load
+OTHER_LDFLAGS = $(inherited) -ObjC -Wl,-U,_content_get_crc -Wl,-U,_input_driver_keyboard_mapping_set_block -Wl,-U,_runloop_msg_queue_push -Wl,-U,_filestream_open -Wl,-U,_filestream_read -Wl,-U,_filestream_close -Wl,-U,_RARCH_LOG -Wl,-U,_string_to_lower -Wl,-U,_rtime_localtime // -all_load
 
     // Device
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphoneos*] = $(inherited) TARGET_IPHONE=1

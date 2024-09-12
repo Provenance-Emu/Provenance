@@ -25,7 +25,6 @@
 
 #define RARCH_MAX_SUBSYSTEMS 10
 #define RARCH_MAX_SUBSYSTEM_ROMS 10
-#define RARCH_SCALE_BASE 256
 
 #include <stdint.h>
 #include <boolean.h>
@@ -81,6 +80,10 @@ static INLINE bool bits_any_set(uint32_t* ptr, uint32_t count)
 #else
 #define PATH_MAX_LENGTH 4096
 #endif
+#endif
+
+#ifndef NAME_MAX_LENGTH
+#define NAME_MAX_LENGTH 256
 #endif
 
 #ifndef MAX
