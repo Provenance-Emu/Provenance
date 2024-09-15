@@ -36,7 +36,10 @@
 
 ### Release Roadmap
 
-> Latest Builds [Provenance-Lite.ipa](https://github.com/Provenance-Emu/Provenance/suites/25659256146/artifacts/1669750151) [ProvenanceTV.ipa](https://github.com/Provenance-Emu/Provenance/suites/25659256146/artifacts/1669750153) [Provenance-tvOS.ipa](https://github.com/Provenance-Emu/Provenance/suites/25659256146/artifacts/1669750155) [Provenance-UnderDevelopment.ipa](https://github.com/Provenance-Emu/Provenance/suites/25659256146/artifacts/1669750157) [Provenance-XL.ipa](https://github.com/Provenance-Emu/Provenance/suites/25659256146/artifacts/1669750158) Have a nice day.
+> Latest Builds
+> [ProvenanceTV.ipa](https://github.com/Provenance-Emu/Provenance/suites/25659256146/artifacts/1669750153)
+> [Provenance.ipa](https://github.com/Provenance-Emu/Provenance/suites/25659256146/artifacts/1669750155)
+> [Provenance-XL.ipa](https://github.com/Provenance-Emu/Provenance/suites/25659256146/artifacts/1669750158)
 
 ![GitHub Release](https://img.shields.io/github/release/provenance-emu/provenance.svg?style=flat-square)
 ![GitHub Release Date](https://img.shields.io/github/release-date/provenance-emu/provenance.svg?style=flat-square)
