@@ -46,7 +46,7 @@
 [submodule "Cores/4DO"]
 	path = Cores/4DO
 	url = https://github.com/Provenance-Emu/4DO-Core.git
-[submodule "Cores/mGBA/Sources/libmGBA"]
+[submodule "libmGBA"]
 	path = Cores/mGBA/Sources/libmGBA
 	url = https://github.com/Provenance-Emu/mGBA-Core.git
 [submodule "SNESticle"]
