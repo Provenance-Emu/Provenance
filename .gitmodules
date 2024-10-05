@@ -1,14 +1,14 @@
-[submodule "PVMupen64Plus/mupen64plus-video-gliden64"]
-	path = Cores/Mupen64Plus/Plugins/Video/gliden64
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/gliden64"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Video/gliden64
 	url = https://github.com/Provenance-Emu/GLideN64.git
-[submodule "PVMupen64Plus/Plugins/mupen64plus-core"]
-	path = Cores/Mupen64Plus/Plugins/Core
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Core/Core"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Core/Core
 	url = https://github.com/Provenance-Emu/mupen64plus-core.git
-[submodule "PVMupen64Plus/Plugins/mupen64plus-rsp-hle"]
-	path = Cores/Mupen64Plus/Plugins/rsp/hle
+[submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/hle"]
+	path = Cores/Mupen64Plus/Sources/Plugins/rsp/hle
 	url = https://github.com/mupen64plus/mupen64plus-rsp-hle.git
-[submodule "PVMupen64Plus/Plugins/mupen64plus-video-rice"]
-	path = Cores/Mupen64Plus/Plugins/Video/rice
+[submodule "Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice"]
+	path = Cores/Mupen64Plus/Sources/Plugins/Video/rice/rice
 	url = https://github.com/Provenance-Emu/mupen64plus-video-rice.git
 [submodule "Cores/VirtualJaguar"]
 	path = Cores/VirtualJaguar
@@ -19,7 +19,7 @@
 [submodule "Cores/PokeMini/Sources/libpokemini/PokeMini-libretro"]
 	path = Cores/PokeMini/Sources/libpokemini/PokeMini-libretro
 	url = https://github.com/libretro/PokeMini.git
-[submodule "Cores/TGBDual/tgbdual-emulator"]
+[submodule "Cores/TGBDual/Sources/libtgbdual/tgbdual-emulator"]
 	path = Cores/TGBDual/Sources/libtgbdual/tgbdual-emulator
 	url = https://github.com/libretro/tgbdual-libretro.git
 [submodule "Cores/Flycast/flycast"]
@@ -55,7 +55,7 @@
 [submodule "Cores/sm64ex/sm64ex-ios"]
 	path = Cores/sm64ex/sm64ex-ios
 	url = https://github.com/Provenance-Emu/sm64ex-ios.git
-[submodule "Cores/ProSystem/ProSystem1_3"]
+[submodule "Cores/ProSystem/Sources/libprosystem/ProSystem1_3"]
 	path = Cores/ProSystem/Sources/libprosystem/ProSystem1_3
 	url = https://github.com/Provenance-Emu/ProSystem1_3.git
 [submodule "Cores/FinalBurnNeo/FBNeo"]
@@ -106,8 +106,8 @@
 [submodule "Cores/GameMusicEmu/libretro-gme"]
 	path = Cores/GameMusicEmu/libretro-gme
 	url = https://github.com/Provenance-Emu/libretro-gme.git
-[submodule "Cores/Sources/libvicx/libretro-vecx"]
-	path = Cores/Sources/libvicx/libretro-vecx
+[submodule "Cores/VecX/Sources/libvecx/libretro-vecx"]
+	path = Cores/VecX/Sources/libvecx/libretro-vecx
 	url = https://github.com/Provenance-Emu/libretro-vecx.git
 [submodule "Cores/Stella/Sources/libstella/stella"]
 	path = Cores/Stella/Sources/libstella/stella
@@ -130,8 +130,8 @@
 [submodule "Cores/Genesis-Plus-GX/Sources/libgenesisplus/Genesis-Plus-GX"]
 	path = Cores/Genesis-Plus-GX/Sources/libgenesisplus/Genesis-Plus-GX
 	url = https://github.com/Provenance-Emu/Genesis-Plus-GX.git
-[submodule "Cores/Mupen64Plus/Plugins/rsp/cxd4"]
-	path = Cores/Mupen64Plus/Plugins/rsp/cxd4
+[submodule "Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4"]
+	path = Cores/Mupen64Plus/Sources/Plugins/rsp/cxd4
 	url = https://github.com/Provenance-Emu/mupen64plus-rsp-cxd4.git
 [submodule "Cores/TIC80/TIC-80"]
 	path = Cores/TIC80/TIC-80
