@@ -34,8 +34,25 @@ let package = Package(
             from: "4.2.2")
     ],
     targets: [
+        // MARK: -- Patreon API
         .target(
             name: "PVPatreon",
+            dependencies: [
+                "PVLogging",
+                "KeychainAccess"
+            ],
+            resources: [
+                .copy("Resources/Server/")
+            ],
+            linkerSettings: [
+                .linkedFramework("AuthenticationServices"),
+                .linkedFramework("CoreData")
+            ]
+        ),
+        
+        // MARK: -- Patreon UI
+        .target(
+            name: "PVPatreonUI",
             dependencies: [
                 "PVLogging",
                 "KeychainAccess"

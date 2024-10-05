@@ -21,7 +21,7 @@ public final class LibrarySerializer {
     // MARK: - Metadata
 
     
-    public static func storeMetadata<O: JSONMetadataSerialable>(_ object: O, completion: @escaping SerliazeCompletion) async where O.DomainType: Sendable {
+    public static func storeMetadata<O: JSONMetadataSerialable>(_ object: O, completion: @escaping SerliazeCompletion) where O.DomainType: Sendable {
         let directory = object.url.deletingLastPathComponent()
         let fileName = object.fileName
         let data = object.asDomain()

@@ -7,7 +7,7 @@
 
 import SWCompression
 
-struct DecompressedEntry {
+struct DecompressedEntry: Sendable {
     let data: Data?
-    let info: ContainerEntryInfo
+    let info: ContainerEntryInfo & Sendable & Codable
 }

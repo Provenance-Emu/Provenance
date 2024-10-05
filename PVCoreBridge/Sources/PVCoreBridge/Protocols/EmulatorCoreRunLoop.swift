@@ -7,31 +7,23 @@
 
 import Foundation
 
-@objc public enum GameSpeed: Int {
-    case slow, normal, fast
-}
+
 
 @objc public protocol EmulatorCoreRunLoop {
-    @objc optional dynamic var shouldStop: Bool { get }
-    @objc optional dynamic var isRunning: Bool { get }
-    @objc optional dynamic var shouldResyncTime: Bool { get }
-    @objc optional dynamic var skipEmulationLoop: Bool { get }
-    @objc optional dynamic var skipLayout: Bool { get }
+    @objc dynamic var shouldStop: Bool { get set }
+    @objc dynamic var isRunning: Bool { get set }
+    @objc dynamic var shouldResyncTime: Bool { get set }
+    @objc dynamic var skipEmulationLoop: Bool { get set }
+    @objc dynamic var skipLayout: Bool { get set }
 
-    @objc optional dynamic var gameSpeed: GameSpeed { get set }
-    @objc optional dynamic var emulationLoopThreadLock: NSLock { get }
-    @objc optional dynamic var frontBufferCondition: NSCondition { get }
-    @objc optional dynamic var frontBufferLock: NSLock { get }
-    @objc optional dynamic var isFrontBufferReady: Bool { get }
-}
-
-public extension EmulatorCoreRunLoop where Self: ObjCBridgedCore, Self.Bridge: EmulatorCoreRunLoop {
-    dynamic var shouldStop: Bool { bridge.shouldStop ?? false }
-    dynamic var isRunning: Bool { bridge.isRunning ?? false }
-    dynamic var shouldResyncTime: Bool { bridge.shouldResyncTime ?? true }
-    dynamic var skipEmulationLoop: Bool { bridge.skipEmulationLoop ?? true }
-    dynamic var skipLayout: Bool { bridge.skipLayout ?? false }
-
-    dynamic var gameSpeed: GameSpeed { bridge.gameSpeed ?? .normal }
-    dynamic var isFrontBufferReady: Bool { bridge.isFrontBufferReady ?? false }
+    @objc dynamic var gameSpeed: GameSpeed { get set }
+    @objc dynamic var emulationLoopThreadLock: NSLock { get set }
+    @objc dynamic var frontBufferCondition: NSCondition { get set }
+    @objc dynamic var frontBufferLock: NSLock { get set }
+    @objc dynamic var isFrontBufferReady: Bool { get set }
+    
+    @objc func stopEmulation()
+    @objc func startEmulation()
+    @objc optional func resetEmulation()
+    @objc optional func emulationLoopThread()
 }

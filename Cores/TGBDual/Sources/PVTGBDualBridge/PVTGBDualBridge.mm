@@ -201,16 +201,15 @@ void log(retro_log_level level, const char *fmt, ...) {
     retro_reset();
 }
 
-
 static void audio_callback(int16_t left, int16_t right) {
     GET_CURRENT_OR_RETURN();
-    [[current ringBufferAtIndex:0] writeBuffer:&left maxLength:2];
-    [[current ringBufferAtIndex:0] writeBuffer:&right maxLength:2];
+    [[current ringBufferAtIndex:0] write:&left size:2];
+    [[current ringBufferAtIndex:0] write:&right size:2];
 }
 
 static size_t audio_batch_callback(const int16_t *data, size_t frames) {
     GET_CURRENT_OR_RETURN(frames);
-    [[current ringBufferAtIndex:0] writeBuffer:data maxLength:frames << 2];
+    [[current ringBufferAtIndex:0] write:data size:frames << 2];
     return frames;
 }
 

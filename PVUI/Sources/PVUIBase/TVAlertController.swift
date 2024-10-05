@@ -43,6 +43,7 @@ protocol UIAlertControllerProtocol : UIViewController {
 
      var preferredAction: UIAlertAction? { get set }
 
+    @MainActor
      func addTextField(configurationHandler: ((UITextField) -> Void)?)
      var textFields: [UITextField]? { get }
 

@@ -14,6 +14,7 @@ import RxSwift
 import RxCocoa
 import CoreSpotlight
 import PVRealm
+import RealmSwift
 import PVLogging
 import PVFileSystem
 import DirectoryWatcher
@@ -135,7 +136,7 @@ public struct PVGameLibraryUpdatesController {
             if newGames.count > 0 {
                 ILOG("PVGameLibraryUpdatesController: Importing \(newGames)")
                 await GameImporter.shared.getRomInfoForFiles(atPaths: newGames, userChosenSystem: system.asDomain())
-#if os(iOS) || os(macOS)
+#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
                 addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
 #endif
             }
@@ -145,7 +146,7 @@ public struct PVGameLibraryUpdatesController {
         ILOG("PVGameLibrary: Import Complete")
     }
     
-#if os(iOS)
+#if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
     public func addImportedGames(to spotlightIndex: CSSearchableIndex, database: RomDatabase) -> Disposable {
         gameImporterEvents
             .compactMap({ event -> String? in
@@ -154,7 +155,11 @@ public struct PVGameLibraryUpdatesController {
                 }
                 return nil
             })
-            .compactMap { database.realm.object(ofType: PVGame.self, forPrimaryKey: $0) }
+            .compactMap {
+                let realm = try! Realm()
+                return realm.object(ofType: PVGame.self, forPrimaryKey: $0)
+//                return database.realm.object(ofType: PVGame.self, forPrimaryKey: $0)
+            }
             .map { game in CSSearchableItem(uniqueIdentifier: game.spotlightUniqueIdentifier, domainIdentifier: "org.provenance-emu.game", attributeSet: game.spotlightContentSet) }
             .observe(on: SerialDispatchQueueScheduler(qos: .background))
             .subscribe(onNext: { item in

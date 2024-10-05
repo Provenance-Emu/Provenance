@@ -1023,7 +1023,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
 
 using namespace MDFN_IEN_VB;
 
-MDFN_HIDE extern const MDFNGI EmulatedVB =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedVB =
 {
  "vb",
  "Virtual Boy",

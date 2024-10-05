@@ -8,31 +8,32 @@
 import Foundation
 
 @objc public protocol EmulatorCoreIOInterface {
-    @objc optional var romName: String? { get }
-    @objc var BIOSPath: String? { get }
-    @objc var systemIdentifier: String? { get }
-    @objc var coreIdentifier: String? { get }
-    @objc var romMD5: String? { get }
-    @objc var romSerial: String? { get }
+    @objc var romName: String? { get set }
+    @objc var BIOSPath: String? { get set }
+    @objc var systemIdentifier: String? { get set }
+    @objc var coreIdentifier: String? { get set }
+    @objc var romMD5: String? { get set }
+    @objc var romSerial: String? { get set }
+    @objc var discCount: UInt { get }
 
 //    @objc var screenType: ScreenTypeObjC { get }
     
     @objc func loadFile(atPath path: String) throws
 }
 
-public extension EmulatorCoreIOInterface where Self: ObjCBridgedCore, Bridge: EmulatorCoreIOInterface {
-    var romSerial: String? { bridge.romSerial ?? (self as EmulatorCoreIOInterface).romSerial ?? nil }
-    
-    var romName: String? {  bridge.romName ?? (self as EmulatorCoreIOInterface).romName ?? nil }
-    
-    var BIOSPath: String? { bridge.BIOSPath ?? (self as EmulatorCoreIOInterface).BIOSPath ?? nil }
-    
-    var systemIdentifier: String? { bridge.systemIdentifier ?? (self as EmulatorCoreIOInterface).systemIdentifier ?? nil }
-    
-    var coreIdentifier: String? { bridge.coreIdentifier ?? (self as EmulatorCoreIOInterface).coreIdentifier ?? nil }
-    
-    var romMD5: String? { bridge.romMD5 ?? (self as EmulatorCoreIOInterface).romMD5 ?? nil }
-    
+//public extension EmulatorCoreIOInterface where Self: ObjCBridgedCore, Bridge: EmulatorCoreIOInterface {
+//    var romSerial: String? { bridge.romSerial ?? (self as EmulatorCoreIOInterface).romSerial ?? nil }
+//    
+//    var romName: String? {  bridge.romName ?? (self as EmulatorCoreIOInterface).romName ?? nil }
+//    
+//    var BIOSPath: String? { bridge.BIOSPath ?? (self as EmulatorCoreIOInterface).BIOSPath ?? nil }
+//    
+//    var systemIdentifier: String? { bridge.systemIdentifier ?? (self as EmulatorCoreIOInterface).systemIdentifier ?? nil }
+//    
+//    var coreIdentifier: String? { bridge.coreIdentifier ?? (self as EmulatorCoreIOInterface).coreIdentifier ?? nil }
+//    
+//    var romMD5: String? { bridge.romMD5 ?? (self as EmulatorCoreIOInterface).romMD5 ?? nil }
+//    
 //    var screenType: ScreenTypeObjC { (self as EmulatorCoreIOInterface).screenType }
     
 //    func loadFile(atPath path: String) throws {
@@ -46,4 +47,4 @@ public extension EmulatorCoreIOInterface where Self: ObjCBridgedCore, Bridge: Em
 //            }
 //        }
 //    }
-}
+//}

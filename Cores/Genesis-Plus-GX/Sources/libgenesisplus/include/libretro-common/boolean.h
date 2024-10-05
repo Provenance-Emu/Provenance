@@ -1,1 +1,0 @@
-../../Genesis-Plus-GX/libretro/libretro-common/include/boolean.h

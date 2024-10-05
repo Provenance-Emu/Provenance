@@ -7,8 +7,9 @@
 //
 
 import Testing
-@testable import PVMednafenGameCoreC
-
+@testable import MednafenGameCore
+@testable import MednafenGameCoreOptions
+@testable import mednafen.wonderswan
 struct PVMednafenGameCoreCTests {
 
     @Test func example() async throws {

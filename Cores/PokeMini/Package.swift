@@ -3,10 +3,8 @@
 
 import PackageDescription
 
-let HAVE_COCOATOUCH = "1"
 let INLINE = "inline"
 let NO_ZIP = "0"
-let USE_STRUCTS = "1"
 let __GCCUNIX__ = "1"
 let __LIBRETRO__ = "1"
 
@@ -49,7 +47,6 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
-        
         // --------- Core ---------
         .target(
             name: "PVPokeMini",
@@ -60,25 +57,21 @@ let package = Package(
                 "PVAudio",
                 "PVPokeMiniBridge",
                 "libpokemini",
-                "PokeMiniC"
+                "PokeMiniC",
+                "PVPokeMiniOptions"
             ],
             resources: [
                 .process("Resources/Core.plist")
             ],
             cSettings: [
-                .define("HAVE_COCOATOUCH", to: HAVE_COCOATOUCH),
                 .define("INLINE", to: INLINE),
                 .define("NO_ZIP", to: NO_ZIP),
-                .define("USE_STRUCTS", to: USE_STRUCTS),
-                .define("__GCCUNIX__", to: __GCCUNIX__),
-                .define("__LIBRETRO__", to: __LIBRETRO__),
                 .define("VIDEO_UPSCALE", to: VIDEO_UPSCALE),
             ],
             plugins: [
                 .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
             ]
         ),
-
         // --------- Bridge ---------
         .target(
             name: "PVPokeMiniBridge",
@@ -90,21 +83,32 @@ let package = Package(
                 "PVLogging",
                 "PVPlists",
                 "PokeMiniC",
-                "libpokemini"
+                "libpokemini",
+                "PVPokeMiniOptions"
             ],
             cSettings: [
-                .define("HAVE_COCOATOUCH", to: HAVE_COCOATOUCH),
                 .define("INLINE", to: INLINE),
                 .define("NO_ZIP", to: NO_ZIP),
-                .define("USE_STRUCTS", to: USE_STRUCTS),
                 .define("__GCCUNIX__", to: __GCCUNIX__),
                 .define("__LIBRETRO__", to: __LIBRETRO__),
                 .define("VIDEO_UPSCALE", to: VIDEO_UPSCALE),
             ]
         ),
-
+        // --------- Options ---------
+        .target(
+            name: "PVPokeMiniOptions",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVObjCUtils",
+                "PVLogging",
+                "PVPlists",
+                "PokeMiniC",
+                "libpokemini"
+            ]
+        ),
         // --------- C Helpers ---------
-
         .target(
             name: "PokeMiniC",
             dependencies: [
@@ -116,10 +120,8 @@ let package = Package(
             ],
             packageAccess: true,
             cSettings: [
-                .define("HAVE_COCOATOUCH", to: HAVE_COCOATOUCH),
                 .define("INLINE", to: INLINE),
                 .define("NO_ZIP", to: NO_ZIP),
-                .define("USE_STRUCTS", to: USE_STRUCTS),
                 .define("__GCCUNIX__", to: __GCCUNIX__),
                 .define("__LIBRETRO__", to: __LIBRETRO__),
                 .define("VIDEO_UPSCALE", to: VIDEO_UPSCALE),
@@ -171,10 +173,15 @@ let package = Package(
             ],
             packageAccess: true,
             cSettings: [
+                .unsafeFlags([
+                    "-fPIC",
+                    "-fstrict-aliasing"
+                ]),
+                .define("NDEBUG", to: "1", .when(configuration: .release)),
+                .define("LSB_FIRST"),
+                .define("IOS"),
                 .define("INLINE", to: INLINE),
-                .define("USE_STRUCTS", to: USE_STRUCTS),
                 .define("__LIBRETRO__", to: __LIBRETRO__),
-                .define("HAVE_COCOATOUCH", to: HAVE_COCOATOUCH),
                 .define("__GCCUNIX__", to: __GCCUNIX__),
                 .define("NO_ZIP", to: NO_ZIP),
                 .define("VIDEO_UPSCALE", to: VIDEO_UPSCALE),
@@ -197,6 +204,6 @@ let package = Package(
         )
     ],
     swiftLanguageModes: [.v5, .v6],
-    cLanguageStandard: .gnu17,
-    cxxLanguageStandard: .gnucxx14
+    cLanguageStandard: .gnu99,
+    cxxLanguageStandard: .gnucxx11
 )

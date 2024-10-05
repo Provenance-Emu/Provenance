@@ -87,13 +87,15 @@ public final class DirectoryWatcher2 {
     fileprivate let serialQueue: DispatchQueue = .init(label: "org.provenance-emu.provenance.serialExtractorQueue")
 
     private func initialScan(_ url: URL) throws {
-        let exts = Extensions.archiveExtensions
-        let contents = try FileManager.default.contentsOfDirectory(at: url,
-                                                                   includingPropertiesForKeys: nil,
-                                                                   options: [.skipsHiddenFiles])
-            .filter { exts.contains($0.pathExtension.lowercased()) }
+        Task {
+            let exts = Extensions.archiveExtensions
+            let contents = try FileManager.default.contentsOfDirectory(at: url,
+                                                                       includingPropertiesForKeys: nil,
+                                                                       options: [.skipsHiddenFiles])
+                .filter { exts.contains($0.pathExtension.lowercased()) }
 
-        contents.forEach(newFileDetected(_:))
+            contents.asyncForEach(newFileDetected(_:))
+        }
     }
 
     private func newFileDetected(_ path: URL) {
@@ -101,7 +103,9 @@ public final class DirectoryWatcher2 {
     }
 
     public func startMonitoring() {
-        watchedDirectories.value.forEach(_startMonitoring(_:))
+        Task {
+            watchedDirectories.value.forEach(_startMonitoring(_:))
+        }
     }
 
     public func _startMonitoring(_ url: URL) {

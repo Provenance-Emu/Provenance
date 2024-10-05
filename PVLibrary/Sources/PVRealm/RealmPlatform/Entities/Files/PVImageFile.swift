@@ -9,6 +9,7 @@
 import Foundation
 import PVSupport
 import RealmSwift
+import PVRealm
 #if canImport(UIKit)
 import UIKit
 #else
@@ -30,41 +31,50 @@ public final class PVImageFile: PVFile {
         self.init()
         self.relativeRoot = relativeRoot
         self.partialPath = partialPath
-        Task {
-            await calculateSizeData()
-        }
+//        Task {
+//            await calculateSizeData()
+//        }
+        calculateSizeData()
     }
 
     public convenience init(withURL url: URL, relativeRoot: RelativeRoot = RelativeRoot.platformDefault) {
         self.init()
         self.relativeRoot = relativeRoot
-        Task {
-            let partialPath = relativeRoot.createRelativePath(fromURL: url)
-            self.partialPath = partialPath
+        let partialPath = relativeRoot.createRelativePath(fromURL: url)
+        self.partialPath = partialPath
 
-            await calculateSizeData()
-        }
+        calculateSizeData()
+//        Task{
+//            await calculateSizeData()
+//        }
     }
 
-    private func calculateSizeData() async {
-        #if canImport(UIKit)
+    private func calculateSizeData() { // async {
         let path = url.path
-        guard let image = UIImage(contentsOfFile: path) else {
-            ELOG("Failed to create UIImage from path <\(path)>")
-            return
-        }
-        #else
-        let path = await url.path
-        guard let image = NSImage(contentsOfFile: path) else {
-            ELOG("Failed to create UIImage from path <\(path)>")
-            return
-        }
-        #endif
 
-        let size = image.size
-#if !os(macOS)
-        cgsize = size
-#endif
+//        let size = await Task { () -> CGSize in
+            #if canImport(UIKit)
+            guard let image = UIImage(contentsOfFile: path) else {
+                ELOG("Failed to create UIImage from path <\(path)>")
+//                return .zero
+                cgsize = .zero
+                return
+            }
+            #else
+            let path = await url.path
+            guard let image = NSImage(contentsOfFile: path) else {
+                ELOG("Failed to create UIImage from path <\(path)>")
+                return .zero
+            }
+            #endif
+            let size = image.size
+//            return size
+//        }.value
+//#if !os(macOS)
+//        try? await Realm().write {
+            cgsize = size
+//        }
+//#endif
     }
 
 #if !os(macOS)

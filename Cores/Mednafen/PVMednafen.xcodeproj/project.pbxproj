@@ -3509,14 +3509,14 @@
 			children = (
 				B396AE6C2C71A73200DF1EBD /* Legacy */,
 				B396AE602C7198DC00DF1EBD /* mednafen */,
-				B396AE5F2C7198A800DF1EBD /* MednafenGameCoreSwift */,
+				B396AE5F2C7198A800DF1EBD /* MednafenGameCore */,
 				B396AE5D2C71989500DF1EBD /* MednafenGameCore */,
 				B3C079062C75461A006F109B /* MednafenGameCoreC */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		B396AE5F2C7198A800DF1EBD /* MednafenGameCoreSwift */ = {
+		B396AE5F2C7198A800DF1EBD /* MednafenGameCore */ = {
 			isa = PBXGroup;
 			children = (
 				B396AE712C71A9AE00DF1EBD /* MednafenGameCore+Cheats.swift */,
@@ -3524,7 +3524,7 @@
 				B396AE6A2C71A65200DF1EBD /* MednafenGameCore+MultiTap.swift */,
 				B3A74C8C20522B86001D3D2E /* MednafenGameCore.swift */,
 			);
-			path = MednafenGameCoreSwift;
+			path = MednafenGameCore;
 			sourceTree = "<group>";
 		};
 		B396AE602C7198DC00DF1EBD /* mednafen */ = {

@@ -11,14 +11,9 @@
 #if __has_include(<AudioToolbox/AudioToolbox.h>)
 #import <AudioToolbox/AudioToolbox.h>
 #endif
-#include "PMCommon.h"
-#include "PokeMini.h"
-#include "Hardware.h"
-#include "Joystick.h"
-#include "Video_x1.h"
-#include "Video_x4.h"
+@import libpokemini;
 
-static int OpenEmu_KeysMapping[10];
+extern int OpenEmu_KeysMapping[10];
 
 typedef struct {
     bool a;

@@ -23,18 +23,19 @@ let package = Package(
     products: [
         .library(
             name: "PVVisualBoyAdvance",
-            targets: ["PVVisualBoyAdvance", "PVVisualBoyAdvanceSwift"]),
+            targets: ["PVVisualBoyAdvance"]),
         .library(
             name: "PVVisualBoyAdvance-Dynamic",
             type: .dynamic,
-            targets: ["PVVisualBoyAdvance", "PVVisualBoyAdvanceSwift"]),
+            targets: ["PVVisualBoyAdvance"]),
         .library(
             name: "PVVisualBoyAdvance-Static",
             type: .static,
-            targets: ["PVVisualBoyAdvance", "PVVisualBoyAdvanceSwift"]),
+            targets: ["PVVisualBoyAdvance"]),
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVCoreObjCBridge"),
         .package(path: "../../PVPlists"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVSupport"),
@@ -45,23 +46,69 @@ let package = Package(
         .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
+        // MARK: --------- Core -----------
+
         .target(
             name: "PVVisualBoyAdvance",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
+                "PVLogging",
+                "PVAudio",
                 "PVSupport",
-                "PVPlists",
-                "PVObjCUtils",
-                "PVVisualBoyAdvanceSwift",
-//              "PVVisualBoyAdvanceC",
+                "PVVisualBoyAdvanceBridge",
                 "libvisualboyadvance",
             ],
             resources: [
                 .process("Resources/Core.plist"),
                 .copy("Resources/vba-over.ini")
             ],
-            publicHeadersPath: "include",
+            cSettings: [
+                .define("C_CORE"),
+                .define("FINAL_VERSION"),
+                .define("NO_LINK"),
+                .define("NO_PNG"),
+                .define("TILED_RENDERING"),
+
+                .define("INLINE", to: "inline"),
+                .define("USE_STRUCTS", to: "1"),
+//                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("HAVE_COCOATOUCH", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
+            ],
+            cxxSettings: [
+                .define("C_CORE"),
+                .define("FINAL_VERSION"),
+                .define("NO_LINK"),
+                .define("NO_PNG"),
+                .define("TILED_RENDERING"),
+
+                .define("INLINE", to: "inline"),
+                .define("USE_STRUCTS", to: "1"),
+//                .define("__LIBRETRO__", to: __LIBRETRO__),
+                .define("HAVE_COCOATOUCH", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
+            ],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ],
+            plugins: [
+                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
+            ]
+        ),
+
+        // MARK: --------- Bridge -----------
+        .target(
+            name: "PVVisualBoyAdvanceBridge",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVSupport",
+                "PVPlists",
+                "PVObjCUtils",
+                "libvisualboyadvance",
+            ],
             cSettings: [
 
                 .define("C_CORE"),
@@ -109,49 +156,7 @@ let package = Package(
             ]
         ),
 
-        .target(
-            name: "PVVisualBoyAdvanceSwift",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVLogging",
-                "PVAudio",
-                "PVSupport",
-                "libvisualboyadvance",
-            ],
-            cSettings: [
-                .define("C_CORE"),
-                .define("FINAL_VERSION"),
-                .define("NO_LINK"),
-                .define("NO_PNG"),
-                .define("TILED_RENDERING"),
-
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-//                .define("__LIBRETRO__", to: __LIBRETRO__),
-                .define("HAVE_COCOATOUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-            ],
-            cxxSettings: [
-                .define("C_CORE"),
-                .define("FINAL_VERSION"),
-                .define("NO_LINK"),
-                .define("NO_PNG"),
-                .define("TILED_RENDERING"),
-
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-//                .define("__LIBRETRO__", to: __LIBRETRO__),
-                .define("HAVE_COCOATOUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-            ],
-            swiftSettings: [
-                .interoperabilityMode(.Cxx)
-            ],
-            plugins: [
-                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
-            ]
-        ),
+        // MARK: --------- libvisualboyadvance -----------
 
         .target(
             name: "libvisualboyadvance",
@@ -233,12 +238,13 @@ let package = Package(
             ]
         ),
 
-        // MARK: Tests
+        // MARK: --------- Tests -----------
+        
         .testTarget(
             name: "PVVisualBoyAdvanceTests",
             dependencies: ["PVVisualBoyAdvance"])
     ],
-    swiftLanguageModes: [.v5],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu99,
     cxxLanguageStandard: .gnucxx17
 )

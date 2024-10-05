@@ -1,3 +1,99 @@
 module mednafen {
+//    header "../mednafen/include/config.h"
+    header "../mednafen/src/mednafen.h"
+    header "../mednafen/src/types.h"
+//    header "../mednafen/src/settings-driver.h"
+    header "../mednafen/src/state-driver.h"
+    header "../mednafen/src/mednafen-driver.h"
+    header "../mednafen/src/mempatcher.h"
+    header "../mednafen/src/MemoryStream.h"
+    header "../mednafen/src/state.h"
+    header "../mednafen/src/endian.h"
+
+    requires cplusplus
     export *
+//    module * { export * }
+}
+
+module mednafen.hw_cpu {
+    header "../mednafen/src/hw_cpu/m68k/m68k.h"
+    header "../mednafen/src/hw_cpu/v810/v810_cpu.h"
+
+    export *
+}
+
+//module mednafen.hw_cpu.m68k {
+//    header "../mednafen/src/hw_cpu/m68k/m68k.h"
+//    export *
+//}
+//
+//module mednafen.hw_cpu._6502 {
+//    header "../mednafen/src/hw_cpu/6502/Core6502.h"
+//    export *
+//}
+
+module mednafen.cdrom {
+    export *
+}
+
+module mednafen.video {
+    header "../mednafen/src/video/surface.h"
+    header "../mednafen/src/video/primitives.h"
+    header "../mednafen/src/video/text.h"
+
+    export *
+}
+
+/// Cores
+module mednafen.apple2 {
+    header "../mednafen/src/apple2/apple2.h"
+    
+    export *
+}
+module mednafen.megadrive {
+    header "../mednafen/src/md/genesis.h"
+    
+    export *
+}
+module mednafen.nes {
+    export *
+}
+module mednafen.pce {
+    export *
+}
+module mednafen.pcefast {
+    export *
+}
+module mednafen.pcfx {
+    export *
+}
+module mednafen.psx {
+    export *
+}
+module mednafen.saturn {
+    export *
+}
+module mednafen.segamastersystem {
+    export *
+}
+module mednafen.snes {
+    export *
+}
+module mednafen.snes_faust {
+    export *
+}
+module mednafen.virtualboy {
+    header "../mednafen/src/vb/vb.h"
+    header "../mednafen/src/vb/input.h"
+    header "../mednafen/src/vb/vip.h"
+
+    requires cplusplus
+
+    export *
+}
+module mednafen.wonderswan {
+    export *
+}
+module rio {
+    requires cplusplus
 }

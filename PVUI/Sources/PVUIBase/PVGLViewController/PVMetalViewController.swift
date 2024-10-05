@@ -154,10 +154,8 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        updatePreferredFPS()
-
-        if emulatorCore?.rendersToOpenGL ?? false {
 #if !(targetEnvironment(macCatalyst) || os(macOS))
+        if emulatorCore?.rendersToOpenGL ?? false {
             glContext = bestContext
 
             ILOG("Initiated GLES version \(String(describing: glContext?.api))")
@@ -165,38 +163,41 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             glContext?.isMultiThreaded = Defaults[.multiThreadedGL]
 
             EAGLContext.setCurrent(glContext)
-#endif
         }
+#endif
 
         frameCount = 0
         device = MTLCreateSystemDefaultDevice()
 
-        let view = MTKView(frame: view.bounds, device: device)
-        self.mtlView = view
+        let metalView = MTKView(frame: view.bounds, device: device)
+        self.mtlView = metalView
         view.addSubview(mtlView)
-        view.device = device
-        view.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
-        view.depthStencilPixelFormat = .depth32Float_stencil8
-        view.sampleCount = 1
-        view.delegate = self
-        view.autoResizeDrawable = true
+        metalView.device = device
+        metalView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
+        metalView.depthStencilPixelFormat = .depth32Float_stencil8
+        metalView.sampleCount = 1
+        metalView.delegate = self
+        metalView.autoResizeDrawable = true
         commandQueue = device?.makeCommandQueue()
 
-        view.isPaused = false
-        view.enableSetNeedsDisplay = false
+        // Set paused and only trigger redraw when needs display is set.
+        metalView.isPaused = false
+        metalView.enableSetNeedsDisplay = false
 
         view.isOpaque = true
         view.layer.isOpaque = true
 
         view.isUserInteractionEnabled = false
 
+        updatePreferredFPS()
+
         if let emulatorCore = emulatorCore {
             let depthFormat: Int32 = Int32(emulatorCore.depthFormat)
             switch depthFormat {
             case GL_DEPTH_COMPONENT16:
-                view.depthStencilPixelFormat = .depth16Unorm
+                metalView.depthStencilPixelFormat = .depth16Unorm
             case GL_DEPTH_COMPONENT24:
-                view.depthStencilPixelFormat = .x32_stencil8
+                metalView.depthStencilPixelFormat = .x32_stencil8
 #if !(targetEnvironment(macCatalyst) || os(iOS))
                 if device?.isDepth24Stencil8PixelFormatSupported ?? false {
                     view.depthStencilPixelFormat = .x24_stencil8
@@ -338,12 +339,21 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
     }
 
     func updateInputTexture() {
-        let screenRect = emulatorCore?.screenRect ?? .zero
-        let pixelFormat = getMTLPixelFormat(from: emulatorCore?.pixelFormat ?? 0,
-                                            type: emulatorCore?.pixelType ?? 0)
+        guard let emulatorCore = emulatorCore else {
+            assertionFailure("emulatoreCore should not be nil")
+            return
+        }
+        
+        let screenRect = emulatorCore.screenRect
+        let pixelFormat = getMTLPixelFormat(from: emulatorCore.pixelFormat,
+                                            type: emulatorCore.pixelType)
 
-        var mtlPixelFormat = pixelFormat
-        if emulatorCore?.rendersToOpenGL ?? false {
+        #if targetEnvironment(simulator)
+        var mtlPixelFormat:MTLPixelFormat = .astc_6x5_srgb
+        #else
+        var mtlPixelFormat:MTLPixelFormat = pixelFormat
+        #endif
+        if emulatorCore.rendersToOpenGL {
             mtlPixelFormat = .rgba8Unorm
         }
 
@@ -366,6 +376,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
 
     // TODO: Make throw
     func setupTexture() {
+        precondition(emulatorCore != nil)
+        precondition(device != nil)
+
         guard let emulatorCore = emulatorCore else {
             ELOG("emulatorCore is nil")
             return
@@ -385,7 +398,9 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             for i in 0..<BUFFER_COUNT {
                 let length = emulatorCore.bufferSize.width * emulatorCore.bufferSize.height * CGFloat(formatByteWidth)
                 if length != 0 {
-                    uploadBuffer[Int(i)] = device.makeBuffer(length: Int(length), options: .storageModeShared)!
+                    let newBuffer = device.makeBuffer(length: Int(length), options: .storageModeShared)!
+                    uploadBuffer.append(newBuffer)
+                    //uploadBuffer[Int(i)] =
                 } else {
                     let bufferSize = emulatorCore.bufferSize
                     ELOG("Invalid buffer size: Should be non-zero. Is <\(bufferSize.width),\(bufferSize.height)>")
@@ -500,7 +515,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         }
 #if !targetEnvironment(macCatalyst) && !os(macOS)
         if pixelFormat == GLenum(GL_RGB565) {
-            return .rgba16Unorm
+            return .b5g6r5Unorm //.rgba16Unorm
         }
 #else
         if pixelFormat == GLenum(GL_UNSIGNED_SHORT_5_6_5) {
@@ -690,223 +705,6 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             return
         }
 
-        let renderBlock = { [weak self] in
-            guard let self = self else {
-                return
-            }
-
-            guard let outputTexture = view.currentDrawable?.texture else {
-                return
-            }
-
-            if emulatorCore.rendersToOpenGL {
-                emulatorCore.frontBufferLock.lock()
-            }
-
-            guard let commandBuffer = self.commandQueue?.makeCommandBuffer() else {
-                return
-            }
-            self.previousCommandBuffer = commandBuffer
-
-            let screenRect = emulatorCore.screenRect
-
-            self.updateInputTexture()
-
-            if !emulatorCore.rendersToOpenGL, let videoBuffer = emulatorCore.videoBuffer {
-                let videoBufferSize = emulatorCore.bufferSize
-                let formatByteWidth = self.getByteWidth(for: Int32(emulatorCore.pixelFormat), type: Int32(emulatorCore.pixelType))
-                let inputBytesPerRow = UInt(videoBufferSize.width) * formatByteWidth
-
-                let uploadBuffer = self.uploadBuffer[Int(self.frameCount % BUFFER_COUNT)]
-                let uploadAddress = uploadBuffer.contents()
-
-                var outputBytesPerRow: UInt
-                if screenRect.origin.x == 0 && (screenRect.width * 2 >= videoBufferSize.width) {
-                    outputBytesPerRow = inputBytesPerRow
-//                    let inputAddress = videoBuffer + (UInt(screenRect.origin.y) * inputBytesPerRow)
-//                    memcpy(uploadAddress, inputAddress, Int(UInt(screenRect.height) * inputBytesPerRow))
-                } else {
-                    outputBytesPerRow = UInt(screenRect.width) * formatByteWidth
-                    for i in 0..<UInt(screenRect.height) {
-                        let inputRow = screenRect.origin.y + CGFloat(i)
-//                        let inputAddress = videoBuffer + (inputRow * CGFloat(inputBytesPerRow)) + (screenRect.origin.x * CGFloat(formatByteWidth))
-//                        let outputAddress = uploadAddress! + i * Int(outputBytesPerRow)
-//                        memcpy(outputAddress, inputAddress, Int(outputBytesPerRow))
-                    }
-                }
-
-                guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
-                    ELOG("makeBlitCommandEncoder return nil")
-                    return
-                }
-
-                encoder.copy(from: uploadBuffer,
-                             sourceOffset: 0,
-                             sourceBytesPerRow: Int(outputBytesPerRow),
-                             sourceBytesPerImage: 0,
-                             sourceSize: MTLSize(width: Int(screenRect.width), height: Int(screenRect.height), depth: 1),
-                             to: self.inputTexture!,
-                             destinationSlice: 0,
-                             destinationLevel: 0,
-                             destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
-
-                encoder.endEncoding()
-            }
-
-            let desc = MTLRenderPassDescriptor()
-            desc.colorAttachments[0].texture = outputTexture
-            desc.colorAttachments[0].loadAction = .clear
-            desc.colorAttachments[0].storeAction = .store
-            desc.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
-
-            guard let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: desc) else {
-                return
-            }
-
-//            if self.renderSettings.lcdFilterEnabled, emulatorCore.screenType.isLCD {
-//#warning("LCD Filter incomplete")
-//            } else if self.renderSettings.crtFilterEnabled, emulatorCore.screenType.isCRT {
-//                if self.effectFilterShader?.name == "CRT" {
-//                    let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
-//                                                   Float(screenRect.width), Float(screenRect.height))
-//                    let emulatedImageSize = SIMD2<Float>(Float(self.inputTexture!.width),
-//                                                         Float(self.inputTexture!.height))
-//                    let finalRes = SIMD2<Float>(Float(view.drawableSize.width),
-//                                                Float(view.drawableSize.height))
-//                    var cbData = CRT_Data(DisplayRect: displayRect, EmulatedImageSize: emulatedImageSize, FinalRes: finalRes)
-//
-//                    encoder.setFragmentBytes(&cbData, length: MemoryLayout<CRT_Data>.stride, index: 0)
-//                    encoder.setRenderPipelineState(self.effectFilterPipeline!)
-//                } else if self.effectFilterShader?.name == "Simple CRT" {
-//
-//                    let mameScreenSrcRect: SIMD4<Float> = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
-//                    let mameScreenDstRect: SIMD4<Float> = SIMD4<Float>.init(Float(inputTexture!.width), Float(inputTexture!.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
-//
-//                    var cbData = SimpleCrtUniforms(
-//                        mameScreenDstRect: mameScreenSrcRect,
-//                        mameScreenSrcRect: mameScreenDstRect
-//                    )
-//
-//                    cbData.curvVert = 5.0
-//                    cbData.curvHoriz = 4.0
-//                    cbData.curvStrength = 0.25
-//                    cbData.lightBoost = 1.3
-//                    cbData.vignStrength = 0.05
-//                    cbData.zoomOut = 1.1
-//                    cbData.brightness = 1.0
-//
-//                    encoder.setFragmentBytes(&cbData, length: MemoryLayout<SimpleCrtUniforms>.stride, index: 0)
-//                    encoder.setRenderPipelineState(effectFilterPipeline!)
-//                } else if ((self.effectFilterShader?.name.contains(".fsh")) != nil) {
-//#warning(".fsh Filter incomplete")
-//
-//                    let vertexShader = """
-//                        #version 150
-//                        in vec4 aPosition;
-//                        void main(void) {
-//                            gl_Position = aPosition;
-//                        }
-//                    """
-//
-//                    let shaderSourceForName: (String, inout Error?) -> String? = { name, error in
-//                        guard let file = Bundle.main.path(forResource: name, ofType: "fsh", inDirectory: "Shaders") else {
-//                            return nil
-//                        }
-//                        return try? String(contentsOfFile: file, encoding: .utf8)
-//                    }
-//
-//                    guard let shaderName = (effectFilterShader?.name as NSString).deletingPathExtension() else {
-//                        print("Invalid shader name")
-//                        return
-//                    }
-//
-//                    var err: Error?
-//
-//                    // Program
-//                    guard var fragmentShader = shaderSourceForName("MasterShader", &err) else {
-//                        print("Error loading master shader: \(err?.localizedDescription ?? "unknown error")")
-//                        err = nil
-//                        return
-//                    }
-//
-//                    fragmentShader = fragmentShader.replacingOccurrences(of: "{filter}", with: shaderSourceForName(shaderName, &err) ?? "")
-//
-//                    if let err = err {
-//                        print("Error loading filter shader: \(err.localizedDescription)")
-//                        err = nil
-//                    }
-//
-//                    program = PVMetalViewController.program(vertexShader: vertexShader, fragmentShader: fragmentShader)
-//
-//                    // Attributes
-//                    self.positionAttribute = glGetAttribLocation(program, "aPosition")
-//
-//                    // Uniforms
-//                    self.resolutionUniform = glGetUniformLocation(program, "output_resolution")
-//
-//                    glGenTextures(1, &texture)
-//                    glBindTexture(GLenum(GL_TEXTURE_2D), texture)
-//                    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLint(GL_NEAREST))
-//                    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLint(GL_NEAREST))
-//                    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GLint(GL_CLAMP_TO_EDGE))
-//                    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GLint(GL_CLAMP_TO_EDGE))
-//                    glBindTexture(GLenum(GL_TEXTURE_2D), 0)
-//                    self.textureUniform = glGetUniformLocation(program, "image")
-//
-//                    glGenTextures(1, &self.previousTexture)
-//                    glBindTexture(GLenum(GL_TEXTURE_2D), self.previousTexture)
-//                    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLint(GL_NEAREST))
-//                    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLint(GL_NEAREST))
-//                    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GLint(GL_CLAMP_TO_EDGE))
-//                    glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GLint(GL_CLAMP_TO_EDGE))
-//                    glBindTexture(GLenum(GL_TEXTURE_2D), 0)
-//                    self.previousTextureUniform = glGetUniformLocation(program, "previous_image")
-//
-//                    self.frameBlendingModeUniform = glGetUniformLocation(program, "frame_blending_mode")
-//
-//                    // Program
-//                    glUseProgram(program)
-//
-//                    var vao: GLuint = 0
-//                    glGenVertexArrays(1, &vao)
-//                    glBindVertexArray(vao)
-//
-//                    var vbo: GLuint = 0
-//                    glGenBuffers(1, &vbo)
-//
-//                    // Attributes
-//                    let quad: [GLfloat] = [
-//                        -1, -1, 0, 1,
-//                         -1, +1, 0, 1,
-//                         +1, -1, 0, 1,
-//                         +1, +1, 0, 1,
-//                    ]
-//
-//                    glBindBuffer(GLenum(GL_ARRAY_BUFFER), vbo)
-//                    quad.withUnsafeBufferPointer { ptr in
-//                        glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<GLfloat>.stride * quad.count, ptr.baseAddress, GLenum(GL_STATIC_DRAW))
-//                    }
-//                    glEnableVertexAttribArray(GLuint(self.positionAttribute))
-//                    glVertexAttribPointer(GLuint(self.positionAttribute), 4, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 0, nil)
-//                }
-//            } else {
-//                encoder.setRenderPipelineState(self.blitPipeline!)
-//            }
-//
-            encoder.setFragmentTexture(self.inputTexture, index: 0)
-            encoder.setFragmentSamplerState(self.renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler,
-                                            index: 0)
-            encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
-            encoder.endEncoding()
-
-            commandBuffer.present(view.currentDrawable!)
-            commandBuffer.commit()
-
-            if emulatorCore.rendersToOpenGL {
-                emulatorCore.frontBufferLock.unlock()
-            }
-        } // RenderBlock
-
         if emulatorCore.rendersToOpenGL {
             if !emulatorCore.isSpeedModified && !emulatorCore.isEmulationPaused || emulatorCore.isFrontBufferReady {
                 emulatorCore.frontBufferCondition.lock()
@@ -916,7 +714,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 let isFrontBufferReady = emulatorCore.isFrontBufferReady
                 emulatorCore.frontBufferCondition.unlock()
                 if isFrontBufferReady {
-                    renderBlock()
+                    self._render(emulatorCore, in: view)
                     emulatorCore.frontBufferCondition.lock()
                     emulatorCore.isFrontBufferReady = false
                     emulatorCore.frontBufferCondition.signal()
@@ -925,7 +723,7 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
             }
         } else {
             if emulatorCore.isSpeedModified {
-                renderBlock()
+                self._render(emulatorCore, in: view)
             } else if emulatorCore.isDoubleBuffered {
                 emulatorCore.frontBufferCondition.lock()
                 while !emulatorCore.isFrontBufferReady && !emulatorCore.isEmulationPaused {
@@ -933,14 +731,250 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
                 }
                 emulatorCore.isFrontBufferReady = false
                 emulatorCore.frontBufferLock.lock()
-                renderBlock()
+                self._render(emulatorCore, in: view)
                 emulatorCore.frontBufferLock.unlock()
                 emulatorCore.frontBufferCondition.unlock()
             } else {
                 objc_sync_enter(emulatorCore)
-                renderBlock()
+                self._render(emulatorCore, in: view)
                 objc_sync_exit(emulatorCore)
             }
+        }
+    }
+    
+    @inlinable
+    @inline (__always)
+    func _render(_ emulatorCore: PVEmulatorCore, in view: MTKView) {
+        guard let outputTexture = view.currentDrawable?.texture else {
+            return
+        }
+
+        if emulatorCore.rendersToOpenGL {
+            emulatorCore.frontBufferLock.lock()
+        }
+
+        guard let commandBuffer = self.commandQueue?.makeCommandBuffer() else {
+            return
+        }
+        self.previousCommandBuffer = commandBuffer
+
+        let screenRect = emulatorCore.screenRect
+
+        self.updateInputTexture()
+
+        if !emulatorCore.rendersToOpenGL, let videoBuffer: UnsafeMutableRawPointer = emulatorCore.videoBuffer {
+            let videoBufferSize = emulatorCore.bufferSize
+            let formatByteWidth = self.getByteWidth(for: Int32(emulatorCore.pixelFormat), type: Int32(emulatorCore.pixelType))
+            let inputBytesPerRow = UInt(videoBufferSize.width) * formatByteWidth
+
+            let uploadBufferIndex = Int(self.frameCount % BUFFER_COUNT)
+            self.frameCount += 1
+
+            let uploadBuffer = self.uploadBuffer[uploadBufferIndex]
+            let uploadAddress: UnsafeMutableRawPointer = uploadBuffer.contents()
+
+            var outputBytesPerRow: UInt
+            if screenRect.origin.x == 0 && (screenRect.width * 2 >= videoBufferSize.width) {
+                /// fast path if x is aligned to edge and excess width isn't too crazy
+                outputBytesPerRow = inputBytesPerRow
+                let inputOffset: Int = Int(UInt(screenRect.origin.y) * inputBytesPerRow)
+                let inputAddress = videoBuffer.advanced(by: inputOffset)
+                memcpy(uploadAddress, inputAddress, Int(UInt(screenRect.height) * inputBytesPerRow))
+            } else {
+                outputBytesPerRow = UInt(screenRect.width) * formatByteWidth
+                // memcpy for each scan line
+                // TODO: Parallelize or SIMD me
+                for i in 0..<Int(screenRect.height) {
+                    let inputRow = screenRect.origin.y + CGFloat(i)
+                    let inputOffset: Int = Int(inputRow * CGFloat(inputBytesPerRow)) + Int(screenRect.origin.x * CGFloat(formatByteWidth))
+                    let inputAddress = videoBuffer.advanced(by: inputOffset)
+                    let outputOffset: Int = i * Int(outputBytesPerRow)
+                    let outputAddress = uploadAddress.advanced(by: outputOffset)
+                    memcpy(outputAddress, inputAddress, Int(outputBytesPerRow))
+                }
+            }
+
+            guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
+                ELOG("makeBlitCommandEncoder return nil")
+                return
+            }
+            
+            let sourceSize = MTLSize(width: Int(screenRect.width), height: Int(screenRect.height), depth: 1)
+            encoder.copy(from: uploadBuffer,
+                         sourceOffset: 0,
+                         sourceBytesPerRow: Int(outputBytesPerRow),
+                         sourceBytesPerImage: 0,
+                         sourceSize: sourceSize,
+                         to: self.inputTexture!,
+                         destinationSlice: 0,
+                         destinationLevel: 0,
+                         destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0))
+
+            encoder.endEncoding()
+        }
+
+        let desc = MTLRenderPassDescriptor()
+        desc.colorAttachments[0].texture = outputTexture
+        desc.colorAttachments[0].loadAction = .clear
+        desc.colorAttachments[0].storeAction = .store
+        desc.colorAttachments[0].clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0)
+
+        guard let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: desc) else {
+            return
+        }
+
+        if self.renderSettings.lcdFilterEnabled, emulatorCore.screenType.isLCD
+        {
+            #warning("LCD Filter incomplete")
+        }
+        else if self.renderSettings.crtFilterEnabled, emulatorCore.screenType.isCRT
+        {
+            if self.effectFilterShader?.name == "CRT"
+            {
+                let displayRect = SIMD4<Float>(Float(screenRect.origin.x), Float(screenRect.origin.y),
+                                               Float(screenRect.width), Float(screenRect.height))
+                let emulatedImageSize = SIMD2<Float>(Float(self.inputTexture!.width),
+                                                     Float(self.inputTexture!.height))
+                let finalRes = SIMD2<Float>(Float(view.drawableSize.width),
+                                            Float(view.drawableSize.height))
+                var cbData = CRT_Data(DisplayRect: displayRect, EmulatedImageSize: emulatedImageSize, FinalRes: finalRes)
+                
+                encoder.setFragmentBytes(&cbData, length: MemoryLayout<CRT_Data>.stride, index: 0)
+                encoder.setRenderPipelineState(self.effectFilterPipeline!)
+            }
+            else if self.effectFilterShader?.name == "Simple CRT"
+            {
+                
+                let mameScreenSrcRect: SIMD4<Float> = SIMD4<Float>.init(0, 0, Float(screenRect.size.width), Float(screenRect.size.height))
+                let mameScreenDstRect: SIMD4<Float> = SIMD4<Float>.init(Float(inputTexture!.width), Float(inputTexture!.height), Float(view.drawableSize.width), Float(view.drawableSize.height))
+                
+                var cbData = SimpleCrtUniforms(
+                    mameScreenDstRect: mameScreenSrcRect,
+                    mameScreenSrcRect: mameScreenDstRect
+                )
+                
+                cbData.curvVert = 5.0
+                cbData.curvHoriz = 4.0
+                cbData.curvStrength = 0.25
+                cbData.lightBoost = 1.3
+                cbData.vignStrength = 0.05
+                cbData.zoomOut = 1.1
+                cbData.brightness = 1.0
+                
+                encoder.setFragmentBytes(&cbData, length: MemoryLayout<SimpleCrtUniforms>.stride, index: 0)
+                encoder.setRenderPipelineState(effectFilterPipeline!)
+            }
+        }
+//        else if ((self.effectFilterShader?.name.contains(".fsh")) != nil)
+//        {
+//                #warning(".fsh Filter incomplete")
+//
+//                let vertexShader = """
+//                    #version 150
+//                    in vec4 aPosition;
+//                    void main(void) {
+//                        gl_Position = aPosition;
+//                    }
+//                """
+//
+//                let shaderSourceForName: (String, inout Error?) -> String? = { name, error in
+//                    guard let file = Bundle.main.path(forResource: name, ofType: "fsh", inDirectory: "Shaders") else {
+//                        return nil
+//                    }
+//                    return try? String(contentsOfFile: file, encoding: .utf8)
+//                }
+//
+//                guard let shaderName = (effectFilterShader?.name as NSString).deletingPathExtension() else {
+//                    ELOG("Invalid shader name")
+//                    return
+//                }
+//
+//                var err: Error?
+//
+//                // Program
+//                guard var fragmentShader = shaderSourceForName("MasterShader", &err) else {
+//                    ELOG("Error loading master shader: \(err?.localizedDescription ?? "unknown error")")
+//                    err = nil
+//                    return
+//                }
+//
+//                fragmentShader = fragmentShader.replacingOccurrences(of: "{filter}", with: shaderSourceForName(shaderName, &err) ?? "")
+//
+//                if let err = err {
+//                    ELOG("Error loading filter shader: \(err.localizedDescription)")
+//                    err = nil
+//                    return
+//                }
+//
+//                program = PVMetalViewController.program(vertexShader: vertexShader, fragmentShader: fragmentShader)
+//
+//                // Attributes
+//                self.positionAttribute = glGetAttribLocation(program, "aPosition")
+//
+//                // Uniforms
+//                self.resolutionUniform = glGetUniformLocation(program, "output_resolution")
+//
+//                glGenTextures(1, &texture)
+//                glBindTexture(GLenum(GL_TEXTURE_2D), texture)
+//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLint(GL_NEAREST))
+//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLint(GL_NEAREST))
+//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GLint(GL_CLAMP_TO_EDGE))
+//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GLint(GL_CLAMP_TO_EDGE))
+//                glBindTexture(GLenum(GL_TEXTURE_2D), 0)
+//                self.textureUniform = glGetUniformLocation(program, "image")
+//
+//                glGenTextures(1, &self.previousTexture)
+//                glBindTexture(GLenum(GL_TEXTURE_2D), self.previousTexture)
+//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MIN_FILTER), GLint(GL_NEAREST))
+//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_MAG_FILTER), GLint(GL_NEAREST))
+//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_S), GLint(GL_CLAMP_TO_EDGE))
+//                glTexParameteri(GLenum(GL_TEXTURE_2D), GLenum(GL_TEXTURE_WRAP_T), GLint(GL_CLAMP_TO_EDGE))
+//                glBindTexture(GLenum(GL_TEXTURE_2D), 0)
+//                self.previousTextureUniform = glGetUniformLocation(program, "previous_image")
+//
+//                self.frameBlendingModeUniform = glGetUniformLocation(program, "frame_blending_mode")
+//
+//                // Program
+//                glUseProgram(program)
+//
+//                var vao: GLuint = 0
+//                glGenVertexArrays(1, &vao)
+//                glBindVertexArray(vao)
+//
+//                var vbo: GLuint = 0
+//                glGenBuffers(1, &vbo)
+//
+//                // Attributes
+//                let quad: [GLfloat] = [
+//                    -1, -1, 0, 1,
+//                     -1, +1, 0, 1,
+//                     +1, -1, 0, 1,
+//                     +1, +1, 0, 1,
+//                ]
+//
+//                glBindBuffer(GLenum(GL_ARRAY_BUFFER), vbo)
+//                quad.withUnsafeBufferPointer { ptr in
+//                    glBufferData(GLenum(GL_ARRAY_BUFFER), MemoryLayout<GLfloat>.stride * quad.count, ptr.baseAddress, GLenum(GL_STATIC_DRAW))
+//                }
+//                glEnableVertexAttribArray(GLuint(self.positionAttribute))
+//                glVertexAttribPointer(GLuint(self.positionAttribute), 4, GLenum(GL_FLOAT), GLboolean(GL_FALSE), 0, nil)
+//        }
+        else
+        {
+            encoder.setRenderPipelineState(self.blitPipeline!)
+        }
+
+        encoder.setFragmentTexture(self.inputTexture, index: 0)
+        encoder.setFragmentSamplerState(self.renderSettings.smoothingEnabled ? self.linearSampler : self.pointSampler,
+                                        index: 0)
+        encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+        encoder.endEncoding()
+
+        commandBuffer.present(view.currentDrawable!)
+        commandBuffer.commit()
+
+        if emulatorCore.rendersToOpenGL {
+            emulatorCore.frontBufferLock.unlock()
         }
     }
 
@@ -1032,10 +1066,12 @@ class PVMetalViewController : PVGPUViewController, PVRenderDelegate, MTKViewDele
         previousCommandBuffer?.waitUntilScheduled()
 
         guard let commandBuffer = commandQueue?.makeCommandBuffer() else {
+            ELOG("commandBuffer was nil")
             return
         }
 
         guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
+            ELOG("encoder was nil")
             return
         }
 

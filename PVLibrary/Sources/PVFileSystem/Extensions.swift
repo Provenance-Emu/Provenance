@@ -38,12 +38,12 @@ public enum Extensions: String, CaseIterable {
     case plist = "plist"
     case bin = "bin"
     case sub = "sub"
-
-    public static let _archiveExtensions: [Extensions] = [.sevenZip, .sevenZipAlt, .gzip, .gz, .rar, .zip]
-    public static let _artworkExtensions: [Extensions] = [.png, .jpg, .jpeg]
-    public static let _discImageExtensions: [Extensions] = [.ccd, .img, .iso, .chd, .img]
-    public static let _playlistExtensions: [Extensions] = [.m3u, .cue]
-    public static let _specialExtensions: [Extensions] = [.svs, .mcr, .plist, .ccd, .sub, .bin]
+    
+    public static var _archiveExtensions: [Extensions] { [.sevenZip, .sevenZipAlt, .gzip, .gz, .rar, .zip] }
+    public static var _artworkExtensions: [Extensions] { [.png, .jpg, .jpeg] }
+    public static var _discImageExtensions: [Extensions] { [.ccd, .img, .iso, .chd, .img] }
+    public static var _playlistExtensions: [Extensions] { [.m3u, .cue] }
+    public static var _specialExtensions: [Extensions] { [.svs, .mcr, .plist, .ccd, .sub, .bin] }
     
     public static let archiveExtensions: [String] = _archiveExtensions.map { $0.rawValue }
     public static let artworkExtensions: [String] = _artworkExtensions.map { $0.rawValue }

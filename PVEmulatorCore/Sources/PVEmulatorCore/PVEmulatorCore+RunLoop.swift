@@ -9,14 +9,8 @@ import Foundation
 import PVCoreBridge
 import PVLogging
 
-@objc extension PVEmulatorCore: EmulatorCoreRunLoop {
-    @objc open var framerateMultiplier: Float {
-        switch gameSpeed {
-        case .slow: return 0.2
-        case .normal: return 1.0
-        case .fast: return 5.0
-        }
-    }
+@objc extension PVEmulatorCore {// : EmulatorCoreRunLoop {
+    @objc open var framerateMultiplier: Float { gameSpeed.multiplier }
 
     @objc open func setPauseEmulation(_ flag: Bool) {
         if flag {
@@ -32,26 +26,24 @@ import PVLogging
 
     @objc open var isSpeedModified: Bool { return gameSpeed != .normal }
 
-
     @objc open func stopEmulation() {
-        if let objcBridge = self as? ObjCCoreBridge {
-            objcBridge.stopEmulation()
-        }
-        self.stopEmulation(withMessage: nil)
-    }
-
-    @objc open func stopEmulation(withMessage message: String? = nil) {
         stopHaptic()
         shouldStop = true
         isRunning = false
 
         isFrontBufferReady = false
         frontBufferCondition.signal()
+        
+        bridge.stopEmulation()
+        isOn = false
+    }
+
+    @objc open func stopEmulation(withMessage message: String? = nil) {
+        stopEmulation()
 
         if let message = message {
             // TODO: Show the message to the user
         }
-        isOn = false
     }
 
 
@@ -68,39 +60,42 @@ import PVLogging
         }
 
         #if !os(tvOS) && !os(macOS) && !os(watchOS)
-        startHaptic()
+//        startHaptic()
         do {
             try setPreferredSampleRate(sampleRate)
         } catch {
             ELOG("\(error.localizedDescription)")
         }
         #endif
+
+        gameSpeed = .normal
+        
+#warning("TODO: Should remove the else clause?")
+        if let objcBridge = self as? (any ObjCBridgedCore), let bridge = objcBridge.bridge as? EmulatorCoreRunLoop {
+            bridge.startEmulation()
+        } else {
+            if !skipEmulationLoop {
+                // TODO: Default case (not used?) should be in a detached thread
+//                Task.detached(priority: .high) {
+                    self.emulationLoopThread()
+//                }
+            } else {
+                isFrontBufferReady = true
+            }
+        }
         isRunning = true
         shouldStop = false
         isOn = true
-        gameSpeed = .normal
-
-        if !skipEmulationLoop {
-            DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-                if let self = self {
-                    self.emulationLoopThread()
-                }
-            }
-        } else {
-            isFrontBufferReady = true
-        }
     }
 
     @objc open func resetEmulation() {
-        if let objcBridge = self as? ObjCCoreBridge {
-            objcBridge.resetEmulation()
-        } else {
-            ELOG("resetEmulation Not implimented")
-        }
+        bridge.resetEmulation?()
     }
 
 //    @MainActor
     @objc open func emulationLoopThread() {
+        #warning("TODO: Should bring back the swift version?")
 
+        bridge.emulationLoopThread?()
     }
 }

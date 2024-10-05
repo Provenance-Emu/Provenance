@@ -1,4 +1,4 @@
-#include <../base.hpp>
+#include "../base.hpp"
 
 #define SYSTEM_CPP
 namespace bSNES_v059 {

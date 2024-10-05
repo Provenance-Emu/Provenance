@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PVHashing",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v15),
         .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
@@ -19,13 +19,14 @@ let package = Package(
         )
     ],
     dependencies: [
+        .package(path: "../PVLogging"),
 //        .package(url: "https://github.com/rnine/Checksum.git", from: "1.0.2")
         .package(url: "https://github.com/JoeMatt/Checksum.git", from: "1.1.1")
     ],
     targets: [
         .target(
             name: "PVHashing",
-            dependencies: [ "Checksum" ]
+            dependencies: [ "Checksum", "PVLogging" ]
         ),
 
         // MARK: SwiftPM tests
@@ -35,7 +36,7 @@ let package = Package(
             resources: [ .copy("Resources/testFile.txt") ]
         )
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu17,
     cxxLanguageStandard: .gnucxx20
 )

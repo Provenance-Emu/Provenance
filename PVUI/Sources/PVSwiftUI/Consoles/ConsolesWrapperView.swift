@@ -61,8 +61,7 @@ struct ConsolesWrapperView: SwiftUI.View {
                         .tag(console.identifier)
                 }
             } else {
-                Text("No Consoles")
-                    .tag("no consoles")
+                NoConsolesView()
             }
         }
         .tabViewStyle(.page)

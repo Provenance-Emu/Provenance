@@ -1,7 +1,9 @@
-#import "PVMupenBridge+Controls.h"
+#import "PVMupenBridge+Resources.h"
 @import PVLoggingObjC;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
 
-@implementation PVMupenBridge
+@implementation PVMupenBridge (Resources)
 
 - (void)copyIniFiles:(NSString*)romFolder {
     NSBundle *coreBundle = [NSBundle bundleForClass:[self class]];

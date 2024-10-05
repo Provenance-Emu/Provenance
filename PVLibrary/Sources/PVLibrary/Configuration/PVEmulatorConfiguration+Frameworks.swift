@@ -21,7 +21,7 @@ import UIKit
 // MARK: - System Scanner
 
 public extension PVEmulatorConfiguration {
-    @MainActor class func registerCore(_ core: EmulatorCoreInfoProvider) async throws {
+    class func registerCore(_ core: EmulatorCoreInfoProvider) async throws {
         let database = RomDatabase.sharedInstance
 
         let supportedSystems = database.all(PVSystem.self, filter: NSPredicate(format: "identifier IN %@", argumentArray: [core.supportedSystems]))
@@ -39,7 +39,7 @@ public extension PVEmulatorConfiguration {
                                  url: core.projectURL,
                                  version: core.projectVersion,
                                  disabled: core.disabled)
-            database.refresh()
+//            database.refresh()
             try newCore.add(update: true)
         }
         if let subCorescores = core.subCores {
@@ -54,7 +54,7 @@ public extension PVEmulatorConfiguration {
                                         url: subCore.projectURL,
                                         version: subCore.projectVersion,
                                         disabled: subCore.disabled)
-                database.refresh()
+//                database.refresh()
                 try newSubCore.add(update: true)
             } catch let error as DecodingError {
                 ELOG("Failed to parse plist \(core.projectName) : \(error)")
@@ -73,19 +73,21 @@ public extension PVEmulatorConfiguration {
                 ELOG("Failed to register core \(corePlist.identifier)")
             }
         }
+        RomDatabase.sharedInstance.refresh()
     }
 
-    class func updateSystems(fromPlists plists: [URL]) {
+    class func updateSystems(fromPlists plists: [URL]) async {
         typealias SystemPlistEntries = [SystemPlistEntry]
-        let database = RomDatabase.sharedInstance
         let decoder = PropertyListDecoder()
 
-        plists.forEach { plist in
+        await plists.asyncForEach { plist in
             do {
                 let data = try Data(contentsOf: plist)
                 let systems: SystemPlistEntries? = try decoder.decode(SystemPlistEntries.self, from: data)
 
-                systems?.forEach { system in
+                await systems?.concurrentForEach { system in
+                    let database = RomDatabase.sharedInstance
+
                     if let existingSystem = database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: system.PVSystemIdentifier) {
                         do {
                             database.refresh()

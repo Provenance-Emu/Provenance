@@ -8,10 +8,10 @@
 // MARK: Delegate Protocols
 
 import Foundation
-#if USE_METAL
+//#if USE_METAL
 import Metal
 import MetalKit
-#endif
+//#endif
 
 @objc public protocol PVRenderDelegate {
     // Required methods
@@ -29,42 +29,54 @@ import MetalKit
     @objc optional dynamic var presentationFramebuffer: AnyObject? { get }
 
     // Optional property
-#if USE_METAL
-    @objc(optional) dynamic var mtlView: MTKView? { get set }
-#endif
+//#if USE_METAL
+    @objc optional dynamic var mtlView: MTKView? { get set }
+//#endif
 }
 
 public extension PVRenderDelegate {
+
     // Optional method
-    func startRenderingOnAlternateThread() {}
-    func didRenderFrameOnAlternateThread() {}
-    var presentationFramebuffer: AnyObject? { return nil }
+//    func startRenderingOnAlternateThread() {}
+//    func didRenderFrameOnAlternateThread() {}
+
+//    var presentationFramebuffer: AnyObject? { return nil }
     
-#if USE_METAL
-    var mtlView: MTKView? { return nil }
-#endif
+//#if USE_METAL
+//    var mtlView: MTKView? { return nil }
+//#endif
 }
 
 
 public
 extension PVRenderDelegate where Self: ObjCBridgedCore, Self.Bridge: PVRenderDelegate {
     func startRenderingOnAlternateThread() {
-        (self as PVRenderDelegate).startRenderingOnAlternateThread()
-        bridge.startRenderingOnAlternateThread()
+        if let startRenderingOnAlternateThread = bridge.startRenderingOnAlternateThread {
+            startRenderingOnAlternateThread()
+        } else {
+            (self as PVRenderDelegate).startRenderingOnAlternateThread?()
+        }
     }
     
     func didRenderFrameOnAlternateThread() {
-        (self as PVRenderDelegate).didRenderFrameOnAlternateThread()
-        bridge.didRenderFrameOnAlternateThread()
+        if let didRenderFrameOnAlternateThread = bridge.didRenderFrameOnAlternateThread {
+            didRenderFrameOnAlternateThread()
+        } else {
+            (self as PVRenderDelegate).didRenderFrameOnAlternateThread?()
+        }
     }
     
     var presentationFramebuffer: AnyObject? {
-        return (self as PVRenderDelegate).presentationFramebuffer ?? bridge.presentationFramebuffer
+        if let presentationFramebuffer = bridge.presentationFramebuffer {
+            return presentationFramebuffer
+        } else {
+            return (self as PVRenderDelegate).presentationFramebuffer ?? nil
+        }
     }
     
 #if USE_METAL
     var mtlView: MTKView? {
-        return (self as PVRenderDelegate).mtlView ?? bridge.mtlView
+        return bridge.mtlView ?? (self as PVRenderDelegate).mtlView ?? nil
     }
 #endif
 }

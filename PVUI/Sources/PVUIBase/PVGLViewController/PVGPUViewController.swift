@@ -9,11 +9,8 @@
 import Foundation
 import Defaults
 import PVSettings
-
-#if canImport(UIKit)
 #if canImport(UIKit)
 import UIKit
-#endif
 #endif
 
 #if os(macOS)
@@ -80,19 +77,6 @@ import OpenGL
 #if canImport(OpenGLES)
 import OpenGLES.ES3
 #endif
-
-@frozen
-@usableFromInline
-struct RenderSettings: Sendable {
-    var crtFilterEnabled = false
-    var lcdFilterEnabled = false
-    var smoothingEnabled = false
-    
-    var videoBufferSize: CGSize = .zero
-    var videoBufferPixelFormat: GLenum = GLenum(GL_RGB)
-    var videoBufferPixelType: GLenum = GLenum(GL_RGB8)
-    var videoBuffer: UnsafeMutableRawPointer? = nil
-}
 
 @objc
 @objcMembers

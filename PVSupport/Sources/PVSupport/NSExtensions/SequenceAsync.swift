@@ -22,6 +22,26 @@ extension Sequence {
 
 public
 extension Sequence {
+    func asyncCompactMap<T>(
+        _ transform: (Self.Element) async throws -> T?
+    ) async rethrows -> [T] {
+        var values = [T]()
+
+        for element in self {
+            let value = try await transform(element)
+            switch value {
+            case .none:
+                continue
+            case .some(let value):
+                try await values.append(value)
+            }
+        }
+        return values
+    }
+}
+
+public
+extension Sequence {
     func asyncFilter(
         _ isIncluded: (Self.Element) async throws -> Bool
     ) async rethrows -> [Self.Element] {

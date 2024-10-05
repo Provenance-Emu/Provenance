@@ -5,7 +5,7 @@
 	<key>PVCoreIdentifier</key>
 	<string>com.provenance.core.visualboyadvance</string>
 	<key>PVPrincipleClass</key>
-	<string>PVGBAEmulatorCore</string>
+	<string>PVVisualBoyAdvance.PVVisualBoyAdvanceCore</string>
 	<key>PVSupportedSystems</key>
 	<array>
 		<string>com.provenance.gba</string>

@@ -41,7 +41,7 @@ public enum SaveStateError: Error {
 }
 
 public extension PVEmulatorViewController {
-    public var saveStatePath: URL { get async { await PVEmulatorConfiguration.saveStatePath(forGame: game) } }
+    public var saveStatePath: URL { get { PVEmulatorConfiguration.saveStatePath(forGame: game) } }
 
     public func destroyAutosaveTimer() {
         autosaveTimer?.invalidate()
@@ -107,13 +107,13 @@ public extension PVEmulatorViewController {
 
         let baseFilename = "\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)"
 
-        let saveURL = await saveStatePath.appendingPathComponent("\(baseFilename).svs", isDirectory: false)
-        let saveFile = await PVFile(withURL: saveURL, relativeRoot: .iCloud)
+        let saveURL = saveStatePath.appendingPathComponent("\(baseFilename).svs", isDirectory: false)
+        let saveFile = PVFile(withURL: saveURL, relativeRoot: .iCloud)
 
         var imageFile: PVImageFile?
         if let screenshot = screenshot {
             if let jpegData = screenshot.jpegData(compressionQuality: 0.85) {
-                let imageURL = await saveStatePath.appendingPathComponent("\(baseFilename).jpg")
+                let imageURL = saveStatePath.appendingPathComponent("\(baseFilename).jpg")
                 do {
                     try jpegData.write(to: imageURL)
                     //                    try RomDatabase.sharedInstance.writeTransaction {
@@ -124,7 +124,7 @@ public extension PVEmulatorViewController {
                     presentError("Unable to write image to disk, error: \(error.localizedDescription)", source: self.view)
                 }
 
-                imageFile = await PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
+                imageFile = PVImageFile(withURL: imageURL, relativeRoot: .iCloud)
             }
         }
 
@@ -140,8 +140,10 @@ public extension PVEmulatorViewController {
             throw .noCoreFound(self.core.coreIdentifier ?? "nil")
         }
 
-        Task {
+//        Task {
             do {
+                let realm = RomDatabase.sharedInstance.realm
+
                 var saveState: PVSaveState!
 
                 try realm.write {
@@ -149,7 +151,7 @@ public extension PVEmulatorViewController {
                     realm.add(saveState)
                 }
 
-                await LibrarySerializer.storeMetadata(saveState, completion: { result in
+                LibrarySerializer.storeMetadata(saveState, completion: { result in
                     switch result {
                     case let .success(url):
                         ILOG("Serialized save state metadata to (\(url.path))")
@@ -160,7 +162,7 @@ public extension PVEmulatorViewController {
             } catch {
                 throw SaveStateError.realmWriteError(error)
             }
-        }
+//        }
 
 
         do {
@@ -304,9 +306,9 @@ public extension PVEmulatorViewController {
 #endif
         present(saveStatesNavController, animated: true)
     }
-    public func convertOldSaveStatesToNewIfNeeded() async {
+    public func convertOldSaveStatesToNewIfNeeded() {
         let fileManager = FileManager.default
-        let saveStatePath = await saveStatePath
+        let saveStatePath = self.saveStatePath
         let infoURL = saveStatePath.appendingPathComponent("Info.plist", isDirectory: false)
         let autoSaveURL = saveStatePath.appendingPathComponent("auto.svs", isDirectory: false)
         let saveStateURLs = (0 ... 4).map { saveStatePath.appendingPathComponent("\($0).svs", isDirectory: false) }
@@ -330,7 +332,7 @@ public extension PVEmulatorViewController {
 
                 let newURL = saveStatePath.appendingPathComponent("\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)")
                 try fileManager.moveItem(at: autoSaveURL, to: newURL)
-                let saveFile = await PVFile(withURL: newURL)
+                let saveFile = PVFile(withURL: newURL)
                 let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: nil, isAutosave: true)
                 try realm.write {
                     realm.add(newState)
@@ -350,7 +352,7 @@ public extension PVEmulatorViewController {
 
                     let newURL = saveStatePath.appendingPathComponent("\(game.md5Hash).\(Date().timeIntervalSinceReferenceDate)")
                     try fileManager.moveItem(at: url, to: newURL)
-                    let saveFile = await PVFile(withURL: newURL)
+                    let saveFile = PVFile(withURL: newURL)
                     let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: nil, isAutosave: false)
                     try realm.write {
                         realm.add(newState)
@@ -361,10 +363,11 @@ public extension PVEmulatorViewController {
             }
         }
     }
-    public func recoverSaveStates() async {
+    
+    public func recoverSaveStates() {
         do {
             let fileManager = FileManager.default
-            let directoryContents = try await fileManager.contentsOfDirectory(
+            let directoryContents = try fileManager.contentsOfDirectory(
                 at: saveStatePath,
                 includingPropertiesForKeys:[.contentModificationDateKey]
             ).filter { $0.lastPathComponent.hasSuffix(".svs") }
@@ -376,7 +379,7 @@ public extension PVEmulatorViewController {
             let realm = RomDatabase.sharedInstance.realm
             var saves:[String:Int]=[:]
             for saveState in game.saveStates {
-                await saves[saveState.file.url.lastPathComponent.lowercased()] = 1;
+                saves[saveState.file.url.lastPathComponent.lowercased()] = 1;
             }
             for url in directoryContents {
                 let file = url.lastPathComponent.lowercased()
@@ -390,19 +393,19 @@ public extension PVEmulatorViewController {
                             presentError("No core in database with id \(self.core.coreIdentifier ?? "null")", source: self.view)
                             return
                         }
-                        let imgFile = await PVImageFile(withURL:  URL(fileURLWithPath: url.path.replacingOccurrences(of: "svs", with: "jpg")))
-                        let saveFile = await PVFile(withURL: url)
+                        let imgFile = PVImageFile(withURL:  URL(fileURLWithPath: url.path.replacingOccurrences(of: "svs", with: "jpg")))
+                        let saveFile = PVFile(withURL: url)
                         let newState = PVSaveState(withGame: game, core: core, file: saveFile, image: imgFile, isAutosave: false)
                         try realm.write {
                             realm.add(newState)
                         }
                     } catch {
-                        NSLog(error.localizedDescription)
+                        ELOG(error.localizedDescription)
                     }
                 }
             }
         } catch {
-            print(error)
+            ELOG("\(error.localizedDescription)")
         }
     }
     

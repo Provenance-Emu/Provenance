@@ -84,8 +84,8 @@ extension BIOS: RealmRepresentable {
         return expectedFilename
     }
 
-    public func asRealm() async -> PVBIOS {
-        return await PVBIOS.build({ object in
+    public func asRealm() -> PVBIOS {
+        return PVBIOS.build({ object in
             object.descriptionText = descriptionText
             object.optional = optional
             object.expectedMD5 = expectedMD5

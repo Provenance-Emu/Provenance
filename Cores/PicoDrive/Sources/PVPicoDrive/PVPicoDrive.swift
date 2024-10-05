@@ -10,38 +10,64 @@ import PVEmulatorCore
 import PVCoreBridge
 import PVCoreObjCBridge
 import PVPicoDriveBridge
+import PVLogging
 #if canImport(GameController)
 import GameController
 #endif
 
-@objc
-@objcMembers
-public class PVPicoDrive: PVEmulatorCore, ObjCBridgedCore, @unchecked Sendable {
+public class PVPicoDrive: PVEmulatorCore, @unchecked Sendable {
 
     // PVEmulatorCoreBridged
-    public typealias Bridge = PVPicoDriveBridge
-    public lazy var bridge: Bridge = {
-        let core = PVPicoDriveBridge()
-        return core
-    }()
+//    public typealias Bridge = PVPicoDriveBridge
+//    public lazy var bridge: Bridge = {
+//        let core = PVPicoDriveBridge()
+//        return core
+//    }()
+//    
+    required init() {
+        super.init()
+        self.bridge = PVPicoDriveBridge() as! any ObjCBridgedCoreBridge
+    }
+
+    public override func initialize() {
+        super.initialize()
+        self.copyCartHWCFG()
+    }
+ 
+}
+
+extension PVPicoDrive {
+    func copyCartHWCFG() {
+        let bundle = Bundle.module
+        guard let cartPath = bundle.path(forResource: "carthw", ofType: "cfg") else {
+            ELOG("Error: Unable to find carthw.cfg in the bundle")
+            return
+        }
+        
+        guard let systemPath = self.BIOSPath else {
+            ELOG("Error: Unable to find BIOSPath")
+            return
+        }
+        let destinationPath = systemPath.appending("/carthw.cfg") //.appendingPathComponent("carthw.cfg")
+        let fileManager = FileManager.default
+        
+        if !fileManager.fileExists(atPath: destinationPath) {
+            do {
+                try fileManager.copyItem(atPath: cartPath, toPath: destinationPath)
+                print("Copied default carthw.cfg file into system directory. \(self.BIOSPath)")
+            } catch {
+                print("Error copying carthw.cfg:\n \(error.localizedDescription)\nsource: \(cartPath)\ndestination: \(destinationPath)")
+            }
+        }
+    }
+}
+
+extension PVPicoDrive: PVSega32XSystemResponderClient {
+    public func didPush(_ button: PVCoreBridge.PVSega32XButton, forPlayer player: Int) {
+        (bridge as! PVSega32XSystemResponderClient).didPush(button, forPlayer: player)
+    }
     
-#if canImport(GameController)
-    public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
-#endif
-    public var audioStream: UnsafeMutablePointer<UInt8>?
-
-    public var _videoBuffer: UnsafeMutablePointer<UInt16>? = nil
-    public var _videoBufferA: UnsafeMutablePointer<UInt16>? = nil
-    public var _videoBufferB: UnsafeMutablePointer<UInt16>? = nil
-
-    public var videoWidth: Int = 0
-    public var videoHeight: Int = 0
-    public var romPath: String? = nil //    NSString *romName;
-
-    public var _sampleRate: Double = 0
-    public var _frameInterval: TimeInterval = 0
-
-//    @objc
-//    public var pad: [[UInt16]]?
-    //    int16_t _pad[2][12];
+    public func didRelease(_ button: PVCoreBridge.PVSega32XButton, forPlayer player: Int) {
+        (bridge as! PVSega32XSystemResponderClient).didRelease(button, forPlayer: player)
+    }
 }

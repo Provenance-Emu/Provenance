@@ -31,10 +31,10 @@
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 // Forward Declerations (until I can fix importing PVCoreBridge in ObjC
-const NSInteger PVN64ButtonCount = 19;
+//const NSInteger PVN64ButtonCount = 19;
 @protocol ObjCBridgedCoreBridge;
 @protocol PVN64SystemResponderClient;
-typedef enum PVJaguarButton: NSInteger PVJaguarButton;
+typedef enum PVN64Button: NSInteger PVN64Button;
 
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
@@ -46,12 +46,12 @@ typedef enum PVJaguarButton: NSInteger PVJaguarButton;
 {
 //@private
     @public
-    uint8_t padData[4][PVN64ButtonCount];
+    uint8_t padData[4][19];
     int8_t xAxis[4];
     int8_t yAxis[4];
     
     int controllerMode[4];
-    NSOperationQueue *_inputQueue;
+    NSOperationQueue * __nonnull _inputQueue;
 }
 
 @property (nonatomic, assign) int videoWidth;
@@ -68,8 +68,6 @@ typedef enum PVJaguarButton: NSInteger PVJaguarButton;
 - (void) swapBuffers;
 @end
 
-extern __weak PVMupenBridge *_current;
-
-//
+extern __weak PVMupenBridge * __nullable _current;
 
 NS_HEADER_AUDIT_END(nullability, sendability)

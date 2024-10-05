@@ -126,8 +126,8 @@ public final class GameImporter {
             }
         }
 
-        Task {
-            await initSystems()
+        Task.detached {
+            await self.initSystems()
         }
     }
 
@@ -135,15 +135,16 @@ public final class GameImporter {
 
     public func initSystems() async {
         initialized.enter()
-        initCorePlists()
+        Task {
+            await initCorePlists()
+        }
 
         @Sendable func updateSystemToPathMap() async -> [String: URL] {
             let systems = PVSystem.all
-            var map = [String: URL]()
-            for system in systems {
-                map[system.identifier] = system.romsDirectory
+            return await systems.async.reduce(into: [String: URL]()) {partialResult, system in
+                var partialResult = partialResult
+                partialResult[system.identifier] = system.romsDirectory
             }
-            return map
         }
 
         @Sendable func updateromExtensionToSystemsMap() -> [String: [String]] {
@@ -188,15 +189,13 @@ public final class GameImporter {
         }
     }
 
-    fileprivate func initCorePlists()  {
+    fileprivate func initCorePlists() async {
 
         let corePlists: [EmulatorCoreInfoPlist]  = CoreLoader.getCorePlists()
 
         let bundle = ThisBundle
-        PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
-        Task {
-            await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
-        }
+        await PVEmulatorConfiguration.updateSystems(fromPlists: [bundle.url(forResource: "systems", withExtension: "plist")!])
+        await PVEmulatorConfiguration.updateCores(fromPlists: corePlists)
     }
 
     deinit {
@@ -990,18 +989,18 @@ public extension GameImporter {
         let wasModified = modified
         if finishedImportHandler != nil {
             let md5: String = game.md5Hash
-            Task { @MainActor in
+//            Task { @MainActor in
                 self.finishedImportHandler?(md5, wasModified)
-            }
+//            }
         }
         if game.originalArtworkFile == nil {
             game = await getArtwork(forGame: game)
         }
-        await self.saveGame(game)
+        self.saveGame(game)
     }
-    func saveGame(_ game:PVGame) async {
+    func saveGame(_ game:PVGame) {
         do {
-            let database=RomDatabase.sharedInstance
+            let database = RomDatabase.sharedInstance
             try database.writeTransaction {
                 database.realm.create(PVGame.self, value:game, update:.modified)
             }
@@ -1502,11 +1501,8 @@ extension GameImporter {
         let fileName: String = rom.filePath.lastPathComponent
 
         do {
-            // var results: [[String: NSObject]]? = nil
-            let results = try openVGDB.system(forRomMD5: md5, or: fileName)
-            if
-                let match = results.first,
-                let databaseID = match["systemID"] as? Int,
+           
+            if  let databaseID = try openVGDB.system(forRomMD5: md5, or: fileName),
                 let systemID = PVEmulatorConfiguration.systemID(forDatabaseID: databaseID) {
                 return systemID
             } else {

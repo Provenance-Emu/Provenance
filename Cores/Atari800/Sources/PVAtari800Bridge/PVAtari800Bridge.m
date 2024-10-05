@@ -103,7 +103,7 @@ __weak static PVAtari800Bridge * _currentCore;
 - (void)dealloc {
 //	Atari800_Exit(false);
 	free(self.atariVideoBuffer);
-    free(self.soundBuffer);
+//    free(self.soundBuffer);
     free(self.controllerStates);
 }
 
@@ -264,13 +264,13 @@ __weak static PVAtari800Bridge * _currentCore;
     Atari800_Frame();
 
     unsigned int size = 44100 / (Atari800_tv_mode == Atari800_TV_NTSC ? 59.9 : 50) * 2;
-
+// TODO: In theory, we don't need the intimediary buffer
     Sound_Callback(self.soundBuffer, size);
 
     //NSLog(@"Sound_desired.channels %d frag_frames %d freq %d sample_size %d", Sound_desired.channels, Sound_desired.frag_frames, Sound_desired.freq, Sound_desired.sample_size);
     //NSLog(@"Sound_out.channels %d frag_frames %d freq %d sample_size %d", Sound_out.channels, Sound_out.frag_frames, Sound_out.freq, Sound_out.sample_size);
 
-    [[self ringBufferAtIndex:0] writeBuffer:self.soundBuffer maxLength:size];
+    [[self ringBufferAtIndex:0] write:self.soundBuffer size:size];
 
     [self renderToBuffer];
 }

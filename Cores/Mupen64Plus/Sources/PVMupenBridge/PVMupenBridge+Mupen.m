@@ -1,6 +1,10 @@
 #import "PVMupenBridge+Mupen.h"
 #import "PVMupenBridge+Controls.h"
-
+#import "PVMupen64PlusBridge/PVMupen64PlusBridge-Swift.h"
+@import PVAudio;
+@import PVSettings;
+@import PVLogging;
+@import PVLoggingObjC;
 #if __has_include(<UIKit/UIKit.h>)
 @import UIKit.UIWindow;
 #else
@@ -17,29 +21,6 @@
 #import "../Plugins/Core/Core/src/plugin/plugin.h"
 
 AUDIO_INFO AudioInfo;
-
-unsigned char DataCRC( unsigned char *Data, int iLenght )
-{
-    unsigned char Remainder = Data[0];
-
-    int iByte = 1;
-    unsigned char bBit = 0;
-
-    while( iByte <= iLenght ) {
-        int HighBit = ((Remainder & 0x80) != 0);
-        Remainder = Remainder << 1;
-
-        Remainder += ( iByte < iLenght && Data[iByte] & (0x80 >> bBit )) ? 1 : 0;
-
-        Remainder ^= (HighBit) ? 0x85 : 0;
-
-        bBit++;
-        iByte += bBit/8;
-        bBit %= 8;
-    }
-
-    return Remainder;
-}
 
 void MupenAudioSampleRateChanged(int SystemType)
 {
@@ -81,7 +62,7 @@ void MupenAudioLenChanged()
         ptr[i + 1] ^= ptr[i + 3];
     }
     
-    [[current ringBufferAtIndex:0] write:ptr maxLength:LenReg];
+    [[current ringBufferAtIndex:0] write:ptr size:LenReg];
 }
 
 void SetIsNTSC()
@@ -160,21 +141,21 @@ void ConfigureCore(NSString *romFolder) {
     ConfigSetParameter(config, "SharedDataPath", M64TYPE_STRING, romFolder.fileSystemRepresentation);
 
     // Use Pure Interpreter if 0, Cached Interpreter if 1, or Dynamic Recompiler if 2 or more"
-    int emulator = [PVMupenBridge intForOption:@"CPU Mode"];
+    int emulator = [MupenGameCoreOptions intForOption:@"CPU Mode"];
     ConfigSetParameter(config, "R4300Emulator", M64TYPE_INT, &emulator);
 
-	int SiDmaDuration = [PVMupenBridge intForOption:@"SiDmaDuration"];
+	int SiDmaDuration = [MupenGameCoreOptions intForOption:@"SiDmaDuration"];
     if (SiDmaDuration >= 0) {
         ConfigSetParameter(config, "SiDmaDuration", M64TYPE_INT, &SiDmaDuration);
     }
     
-	int disableExtraMemory = [PVMupenBridge boolForOption:@"Disable Extra Memory"];
+	int disableExtraMemory = [MupenGameCoreOptions boolForOption:@"Disable Extra Memory"];
 	ConfigSetParameter(config, "DisableExtraMem", M64TYPE_BOOL, &disableExtraMemory);
 
-	int randomizeInterrupt = [PVMupenBridge boolForOption:@"Randomize Interrupt"];
+	int randomizeInterrupt = [MupenGameCoreOptions boolForOption:@"Randomize Interrupt"];
 	ConfigSetParameter(config, "RandomizeInterrupt", M64TYPE_BOOL, &randomizeInterrupt);
 
-    int countPerOp = [MupenGameCore boolForOption:@"Count Per Op"];
+    int countPerOp = [MupenGameCoreOptions boolForOption:@"Count Per Op"];
     if (countPerOp >= 1) {
         ConfigSetParameter(config, "CountPerOp", M64TYPE_INT, &countPerOp);
     }
@@ -185,7 +166,7 @@ void ConfigureCore(NSString *romFolder) {
     
 
 		// Draw on-screen display if True, otherwise don't draw OSD
-	int osd = [MupenGameCore boolForOption:@"Debug OSD"];
+	int osd = [MupenGameCoreOptions boolForOption:@"Debug OSD"];
 	ConfigSetParameter(config, "OnScreenDisplay", M64TYPE_BOOL, &osd);
 	ConfigSetParameter(config, "ShowFPS", M64TYPE_BOOL, &osd);            // Show FPS counter.
 	ConfigSetParameter(config, "ShowVIS", M64TYPE_BOOL, &osd);            // Show VI/S counter.
@@ -239,7 +220,7 @@ void ConfigureGLideN64(NSString *romFolder) {
     ConfigOpenSection("Video-GLideN64", &gliden64);
 
         // 0 = stretch, 1 = 4:3, 2 = 16:9, 3 = adjust
-    int aspectRatio = [MupenGameCore intForOption:@"Aspect Ratio"];
+    int aspectRatio = [MupenGameCoreOptions intForOption:@"Aspect Ratio"];
 
 //    if(RESIZE_TO_FULLSCREEN) {
 //        #if TARGET_OS_TV
@@ -252,12 +233,12 @@ void ConfigureGLideN64(NSString *romFolder) {
     ConfigSetParameter(gliden64, "AspectRatio", M64TYPE_INT, &aspectRatio);
 
     // Per-pixel lighting
-    int enableHWLighting = MupenGameCore.perPixelLighting ? 1 : 0;
+    int enableHWLighting = MupenGameCoreOptions.perPixelLighting ? 1 : 0;
     ConfigSetParameter(gliden64, "EnableHWLighting", M64TYPE_BOOL, &enableHWLighting);
 
     // HiRez & texture options
     //  txHiresEnable, "Use high-resolution texture packs if available."
-    int txHiresEnable = [MupenGameCore boolForOption:@"Enable HiRes Texture packs"];
+    int txHiresEnable = [MupenGameCoreOptions boolForOption:@"Enable HiRes Texture packs"];
     ConfigSetParameter(gliden64, "txHiresEnable", M64TYPE_BOOL, &txHiresEnable);
 
     // Path to folder with hi-res texture packs.
@@ -270,26 +251,26 @@ void ConfigureGLideN64(NSString *romFolder) {
 //    if(RESIZE_TO_FULLSCREEN) {
     // "txFilterMode",
     // "Texture filter (0=none, 1=Smooth filtering 1, 2=Smooth filtering 2, 3=Smooth filtering 3, 4=Smooth filtering 4, 5=Sharp filtering 1, 6=Sharp filtering 2)"
-    int txFilterMode = [MupenGameCore intForOption:@"Texture Filter Mode"];
+    int txFilterMode = [MupenGameCoreOptions intForOption:@"Texture Filter Mode"];
     ConfigSetParameter(gliden64, "txFilterMode", M64TYPE_INT, &txFilterMode);
 
     // "txEnhancementMode", config.textureFilter.txEnhancementMode,
     // "Texture Enhancement (0=none, 1=store as is, 2=X2, 3=X2SAI, 4=HQ2X, 5=HQ2XS, 6=LQ2X, 7=LQ2XS, 8=HQ4X, 9=2xBRZ, 10=3xBRZ, 11=4xBRZ, 12=5xBRZ), 13=6xBRZ"
-    int txEnhancementMode = [MupenGameCore intForOption:@"Texture Enhancement Mode"];
+    int txEnhancementMode = [MupenGameCoreOptions intForOption:@"Texture Enhancement Mode"];
     ConfigSetParameter(gliden64, "txEnhancementMode", M64TYPE_INT, &txEnhancementMode);
 
     // "txCacheCompression", config.textureFilter.txCacheCompression, "Zip textures cache."
-    int txCacheCompression = [MupenGameCore boolForOption:@"Compress texture cache"];
+    int txCacheCompression = [MupenGameCoreOptions boolForOption:@"Compress texture cache"];
     ConfigSetParameter(gliden64, "txCacheCompression", M64TYPE_BOOL, &txCacheCompression);
 
     // "txSaveCache", config.textureFilter.txSaveCache,
     // "Save texture cache to hard disk."
-    int txSaveCache = [MupenGameCore boolForOption:@"Save texture cache"];
+    int txSaveCache = [MupenGameCoreOptions boolForOption:@"Save texture cache"];
     ConfigSetParameter(gliden64, "txSaveCache", M64TYPE_BOOL, &txSaveCache);
 
     // Warning, anything other than 0 crashes shader compilation
     // "MultiSampling", config.video.multisampling, "Enable/Disable MultiSampling (0=off, 2,4,8,16=quality)"
-    int MultiSampling = [MupenGameCore intForOption:@"Multi Sampling"];
+    int MultiSampling = [MupenGameCoreOptions intForOption:@"Multi Sampling"];
     ConfigSetParameter(gliden64, "MultiSampling", M64TYPE_INT, &MultiSampling);
 //    }
 
@@ -303,24 +284,24 @@ void ConfigureGLideN64(NSString *romFolder) {
     /*
      "txCacheSize", config.textureFilter.txCacheSize/ gc_uMegabyte, "Size of filtered textures cache in megabytes."
     */
-    int txDump = [MupenGameCore boolForOption:@"Texture Dump"];
+    int txDump = [MupenGameCoreOptions boolForOption:@"Texture Dump"];
     ConfigSetParameter(gliden64, "txDump", M64TYPE_BOOL, &txDump);
 
-    int txFilterIgnoreBG = [MupenGameCore boolForOption:@"Ignore BG Textures"];
+    int txFilterIgnoreBG = [MupenGameCoreOptions boolForOption:@"Ignore BG Textures"];
     ConfigSetParameter(gliden64, "txFilterIgnoreBG", M64TYPE_BOOL, &txFilterIgnoreBG);
 
 
-    int txForce16bpp = [MupenGameCore boolForOption:@"Force 16bpp textures"];
+    int txForce16bpp = [MupenGameCoreOptions boolForOption:@"Force 16bpp textures"];
     ConfigSetParameter(gliden64, "txForce16bpp", M64TYPE_BOOL, &txForce16bpp);
 
 
     // "txHresAltCRC", config.textureFilter.txHresAltCRC, "Use alternative method of paletted textures CRC calculation."
-    int txHresAltCRC = [MupenGameCore boolForOption:@"HiRes Alt CRC"];
+    int txHresAltCRC = [MupenGameCoreOptions boolForOption:@"HiRes Alt CRC"];
     ConfigSetParameter(gliden64, "txHresAltCRC", M64TYPE_BOOL, &txHresAltCRC);
 
 
     // "txHiresFullAlphaChannel", "Allow to use alpha channel of high-res texture fully."
-    int txHiresFullAlphaChannel = [MupenGameCore boolForOption:@"HiRes Full Alpha"];;
+    int txHiresFullAlphaChannel = [MupenGameCoreOptions boolForOption:@"HiRes Full Alpha"];;
     ConfigSetParameter(gliden64, "txHiresFullAlphaChannel", M64TYPE_BOOL, &txHiresFullAlphaChannel);
 
     ConfigSaveSection("Video-GLideN64");
@@ -333,16 +314,16 @@ void ConfigureRICE() {
     ConfigOpenSection("Video-Rice", &rice);
 
     // Use a faster algorithm to speed up texture loading and CRC computation
-    int fastTextureLoading = [MupenGameCore boolForOption:@"Fast Texture Loading"];
+    int fastTextureLoading = [MupenGameCoreOptions boolForOption:@"Fast Texture Loading"];
 
     ConfigSetParameter(rice, "FastTextureLoading", M64TYPE_BOOL, &fastTextureLoading);
 
     // Enable this option to have better render-to-texture quality
-    int doubleSizeForSmallTextureBuffer = [MupenGameCore boolForOption:@"DoubleSizeForSmallTxtrBuf"];
+    int doubleSizeForSmallTextureBuffer = [MupenGameCoreOptions boolForOption:@"DoubleSizeForSmallTxtrBuf"];
     ConfigSetParameter(rice, "DoubleSizeForSmallTxtrBuf", M64TYPE_BOOL, &doubleSizeForSmallTextureBuffer);
 
     // N64 Texture Memory Full Emulation (may fix some games, may break others)
-    int fullTEMEmulation = [MupenGameCore boolForOption:@"FullTMEMEmulation"];
+    int fullTEMEmulation = [MupenGameCoreOptions boolForOption:@"FullTMEMEmulation"];
     ConfigSetParameter(rice, "FullTMEMEmulation", M64TYPE_BOOL, &fullTEMEmulation);
 
     // Use fullscreen mode if True, or windowed mode if False
@@ -351,11 +332,11 @@ void ConfigureRICE() {
 
     // If this option is enabled, the plugin will skip every other frame
     // Breaks some games in my testing -jm
-    int skipFrame = [MupenGameCore boolForOption:@"SkipFrame"];
+    int skipFrame = [MupenGameCoreOptions boolForOption:@"SkipFrame"];
     ConfigSetParameter(rice, "SkipFrame", M64TYPE_BOOL, &skipFrame);
 
     // Enable hi-resolution texture file loading
-    int hiResTextures = [MupenGameCore boolForOption:@"LoadHiResTextures"];
+    int hiResTextures = [MupenGameCoreOptions boolForOption:@"LoadHiResTextures"];
     ConfigSetParameter(rice, "LoadHiResTextures", M64TYPE_BOOL, &hiResTextures);
 
     // Use Mipmapping? 0=no, 1=nearest, 2=bilinear, 3=trilinear
@@ -387,7 +368,3 @@ void ConfigureRICE() {
     /** End RICE CONFIG **/
     ConfigSaveSection("Video-Rice");
 }
-
-@implementation MupenGameCore (Mupen)
-
-@end

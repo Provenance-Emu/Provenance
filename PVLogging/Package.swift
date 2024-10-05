@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PVLogging",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v13),
         .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
@@ -83,7 +83,7 @@ let package = Package(
             dependencies: ["PVLogging"],
             path: "Tests")
     ],
-    swiftLanguageVersions: [.v5],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu17,
     cxxLanguageStandard: .gnucxx20
 )

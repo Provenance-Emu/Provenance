@@ -8,7 +8,7 @@
 import OSLog
 
 @available(iOS 14.0, tvOS 14.0, *)
-extension Logger: Sendable {
+extension os.Logger: Sendable {
     /// Using your bundle identifier is a great way to ensure a unique identifier.
     private static let subsystem: String = Bundle.main.bundleIdentifier ?? ""
 
@@ -45,6 +45,7 @@ extension Logger: Sendable {
 let USE_PVLOG_ENTRY: Bool = false
 
 @_transparent
+@inlinable
 public func DLOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = true) {
     let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
     if #available(iOS 14.0, tvOS 14.0, *), !USE_PVLOG_ENTRY {
@@ -55,6 +56,7 @@ public func DLOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defa
 }
 
 @_transparent
+@inlinable
 public func ILOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = true) {
     let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
     if #available(iOS 14.0, tvOS 14.0, *), !USE_PVLOG_ENTRY {
@@ -65,6 +67,7 @@ public func ILOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defa
 }
 
 @_transparent
+@inlinable
 public func WLOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = true) {
     let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
     if #available(iOS 14.0, tvOS 14.0, *), !USE_PVLOG_ENTRY {
@@ -75,6 +78,7 @@ public func WLOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defa
 }
 
 @_transparent
+@inlinable
 public func VLOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = true) {
     let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
     if #available(iOS 14.0, tvOS 14.0, *), !USE_PVLOG_ENTRY {
@@ -85,6 +89,7 @@ public func VLOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defa
 }
 
 @_transparent
+@inlinable
 public func ELOG(_ message: @autoclosure () -> String, level: PVLogLevel = .defaultDebugLevel, context: Int = 0, file: StaticString = #file, function: StaticString = #function, line: UInt = #line, tag: Any? = nil, asynchronous async: Bool = false) {
     let logEntry = PVLogEntry(message: message(), level: level, file: file, function: function, lineNumber: "\(line)")
     if #available(iOS 14.0, tvOS 14.0, *), !USE_PVLOG_ENTRY {

@@ -8,7 +8,11 @@
 
 #import "PVPPSSPPCore+Saves.h"
 #import "PVPPSSPPCore.h"
-#import <PVLogging/PVLogging.h>
+@import PVSupport;
+@import PVEmulatorCore;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+@import PVLoggingObjC;
 
 /* PPSSPP Includes */
 #import <dlfcn.h>
@@ -58,7 +62,7 @@
 #include "Common/GraphicsContext.h"
 
 #include "GPU/GPUState.h"
-#include "GPU/GPUInterface.h""
+#include "GPU/GPUInterface.h"
 
 #include "Core/Config.h"
 #include "Core/ConfigValues.h"
@@ -84,7 +88,7 @@ static bool success;
 static int waited=0;
 static bool processed;
 
-@implementation PVPPSSPPCore (Saves)
+@implementation PVPPSSPPCoreBridge (Saves)
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {
 	return YES;
@@ -100,7 +104,7 @@ static bool processed;
 
 - (BOOL)saveStateToFileAtPath:(NSString *)fileName {
 	SaveState::Save(Path([fileName fileSystemRepresentation]), 0, [] (SaveState::Status status, const std::string &message, void *userdata) mutable {
-        PVPPSSPPCore* core = (__bridge PVPPSSPPCore*)userdata;
+        PVPPSSPPCoreBridge* core = (__bridge PVPPSSPPCoreBridge*)userdata;
         success=status != SaveState::Status::FAILURE;
         isComplete=true;
     }, (__bridge void *)self);
@@ -122,7 +126,7 @@ static bool processed;
     success=false;
     isComplete=false;
     SaveState::Save(Path([fileName fileSystemRepresentation]), 0, [&block] (SaveState::Status status, const std::string &message, void *userdata) mutable {
-        PVPPSSPPCore* core = (__bridge PVPPSSPPCore*)userdata;
+        PVPPSSPPCoreBridge* core = (__bridge PVPPSSPPCoreBridge*)userdata;
         success=status != SaveState::Status::FAILURE;
         isComplete=true;
     }, (__bridge void *)self);

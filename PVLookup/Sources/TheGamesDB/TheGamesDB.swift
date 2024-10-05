@@ -9,9 +9,10 @@
 import Foundation
 import PVLogging
 
+#if canImport(OpenAPIRuntime)
+
 import OpenAPIRuntime
 import OpenAPIURLSession
-
 // Swagger documention at
 // https://api.thegamesdb.net/
 
@@ -136,6 +137,7 @@ public struct TheGamesDBService {
         }
     }
 }
+#endif
 
 // MARK: - Shorthand funcs
 

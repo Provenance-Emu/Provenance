@@ -27,7 +27,7 @@ import OpenGLES.ES3
 #endif
     override var videoBuffer: UnsafeMutableRawPointer? { nil }
     
-    var bufferSize: CGSize { .init(width: 1024, height: 512) }
-    override var screenRect: CGRect { .init(x: 0, y: 0, width: Int(videoWidth), height: Int(videoHeight)) }
-    override var aspectSize: CGSize { .init(width: Int(videoWidth), height: Int(videoHeight)) }
+    override var bufferSize: CGSize { .init(width: 1024, height: 512) }
+    override var screenRect: CGRect { .init(x: 0, y: 0, width: Int(_bridge.videoWidth), height: Int(_bridge.videoHeight)) }
+    override var aspectSize: CGSize { .init(width: Int(_bridge.videoWidth), height: Int(_bridge.videoHeight)) }
 }

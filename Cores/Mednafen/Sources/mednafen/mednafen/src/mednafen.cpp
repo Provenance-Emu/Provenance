@@ -480,83 +480,83 @@ void MDFNI_CloseGame(void)
 }
 
 #ifdef WANT_APPLE2_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedApple2;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedApple2;
 #endif
 
 #ifdef WANT_NES_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedNES;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedNES;
 #endif
 
 #ifdef WANT_NES_NEW_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedNES_New;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedNES_New;
 #endif
 
 #ifdef WANT_SNES_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedSNES;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedSNES;
 #endif
 
 #ifdef WANT_SNES_FAUST_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedSNES_Faust;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedSNES_Faust;
 #endif
 
 #ifdef WANT_GBA_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedGBA;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedGBA;
 #endif
 
 #ifdef WANT_GB_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedGB;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedGB;
 #endif
 
 #ifdef WANT_LYNX_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedLynx;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedLynx;
 #endif
 
 #ifdef WANT_MD_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedMD;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedMD;
 #endif
 
 #ifdef WANT_NGP_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedNGP;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedNGP;
 #endif
 
 #ifdef WANT_PCE_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedPCE;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedPCE;
 #endif
 
 #ifdef WANT_PCE_FAST_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedPCE_Fast;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedPCE_Fast;
 #endif
 
 #ifdef WANT_PCFX_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedPCFX;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedPCFX;
 #endif
 
 #ifdef WANT_PSX_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedPSX;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedPSX;
 #endif
 
 #ifdef WANT_SS_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedSS;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedSS;
 #endif
 
 #ifdef WANT_SSFPLAY_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedSSFPlay;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedSSFPlay;
 #endif
 
 #ifdef WANT_VB_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedVB;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedVB;
 #endif
 
 #ifdef WANT_WSWAN_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedWSwan;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedWSwan;
 #endif
 
 #ifdef WANT_SMS_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedSMS, EmulatedGG;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedSMS, EmulatedGG;
 #endif
 
 #ifdef WANT_SASPLAY_EMU
-MDFN_HIDE extern const Mednafen::MDFNGI EmulatedSASPlay;
+/*MDFN_HIDE*/ extern const Mednafen::MDFNGI EmulatedSASPlay;
 #endif
 
 MDFN_HIDE extern const Mednafen::MDFNGI EmulatedCDPlay;

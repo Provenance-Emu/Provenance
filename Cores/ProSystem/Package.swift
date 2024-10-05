@@ -1,12 +1,12 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
-    name: "PVStella",
+    name: "PVCoreProSystem",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v17),
         .tvOS(.v13),
         .watchOS(.v9),
         .macOS(.v11),
@@ -16,243 +16,144 @@ let package = Package(
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
-            name: "PVStella",
-            targets: ["PVStella", "PVStellaSwift"]),
+            name: "PVProSystem",
+            targets: ["PVProSystem"]),
         .library(
-            name: "PVStella-Dynamic",
+            name: "PVProSystem-Dynamic",
             type: .dynamic,
-            targets: ["PVStella", "PVStellaSwift"]),
+            targets: ["PVProSystem"]),
         .library(
-            name: "PVStella-Static",
+            name: "PVProSystem-Static",
             type: .static,
-            targets: ["PVStella", "PVStellaSwift"]),
+            targets: ["PVProSystem"]),
     ],
     dependencies: [
         .package(path: "../../PVCoreBridge"),
+        .package(path: "../../PVCoreObjCBridge"),
         .package(path: "../../PVEmulatorCore"),
         .package(path: "../../PVSupport"),
         .package(path: "../../PVAudio"),
         .package(path: "../../PVLogging"),
-        .package(path: "../../PVObjCUtils")
+        .package(path: "../../PVPlists"),
+        .package(path: "../../PVObjCUtils"),
+        .package(url: "https://github.com/Provenance-Emu/SwiftGenPlugin.git", branch: "develop"),
     ],
     targets: [
+        
+        // MARK: ------- Core -------
+
         .target(
-            name: "PVStella",
+            name: "PVProSystem",
             dependencies: [
                 "PVEmulatorCore",
                 "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVLogging",
+                "PVAudio",
                 "PVSupport",
-                "PVObjCUtils",
-                "PVStellaSwift",
-                "PVStellaCPP",
-                "libstella",
+                "PVPlists",
+                "PVProSystemBridge",
+                "libprosystem",
             ],
             resources: [
-                .process("Resources/Core.plist")
+                .process("Resources/Core.plist"),
+                .copy("Resources/ProSystem.dat")
             ],
-            publicHeadersPath: "include",
-            cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ],
+            plugins: [
+                .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")
+            ]
+        ),
+
+        
+        // MARK: ------- Bridge -------
+        
+        .target(
+            name: "PVProSystemBridge",
+            dependencies: [
+                "PVEmulatorCore",
+                "PVCoreBridge",
+                "PVCoreObjCBridge",
+                "PVSupport",
+                "PVObjCUtils",
+                "libprosystem",
             ],
             cxxSettings: [
                 .unsafeFlags([
                     "-fmodules",
                     "-fcxx-modules"
-                ]),
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
+                ])
             ],
             swiftSettings: [
                 .interoperabilityMode(.Cxx)
             ]
         ),
+        
+        // MARK: ------- Core -------
 
+    
         .target(
-            name: "PVStellaSwift",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVLogging",
-                "PVAudio",
-                "PVSupport",
-                "libstella",
-                "PVStellaCPP"
-            ],
-            cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
-            ],
-            cxxSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
-            ],
-            swiftSettings: [
-                .interoperabilityMode(.Cxx)
-            ]
-        ),
-
-        .target(
-            name: "PVStellaCPP",
-            dependencies: [
-                "PVEmulatorCore",
-                "PVCoreBridge",
-                "PVLogging",
-                "PVAudio",
-                "PVSupport",
-                "libstella",
-            ],
-            publicHeadersPath: "./",
-            cSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
-            ],
-            cxxSettings: [
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("../libstella/stella/src/os/libretro/"),
-            ]
-        ),
-
-        .target(
-            name: "libstella",
-            sources: [
-                "ProSystem/core/Archive.cpp",
-                "ProSystem/core/Bios.cpp",
-                "ProSystem/core/Cartridge.cpp",
-                "ProSystem/core/Common.cpp",
-                "ProSystem/core/Database.cpp",
-                "ProSystem/core/Hash.cpp",
-                "ProSystem/core/Logger.cpp",
-                "ProSystem/core/Maria.cpp",
-                "ProSystem/core/Memory.cpp",
-                "ProSystem/core/Palette.cpp",
-                "ProSystem/core/Pokey.cpp",
-                "ProSystem/core/ProSystem.cpp",
-                "ProSystem/core/Region.cpp",
-                "ProSystem/core/Riot.cpp",
-                "ProSystem/core/Sally.cpp",
-                "ProSystem/core/Sound.cpp",
-                "ProSystem/core/Tia.cpp",
-                "ProSystem/core/Timer.cpp",
-                "ProSystem/core/lib/Unzip.c",
-                "ProSystem/core/lib/Zip.c",
-            ],
+            name: "libprosystem",
+            sources: Sources.libprosystem,
             packageAccess: true,
             cSettings: [
-
-                .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("__LIB_RETRO__", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .headerSearchPath("stella/src/common/"),
-                .headerSearchPath("stella/src/emucore/"),
-                .headerSearchPath("stella/src/emucore/common/"),
-                .headerSearchPath("stella/src/emucore/tia/"),
-                .headerSearchPath("stella/src/lib/"),
-                .headerSearchPath("stella/src/os/libretro/"),
-                .unsafeFlags([
-                    "-fno-strict-overflow",
-                    "-ffast-math",
-                    "-funroll-loops",
-                    "-fPIC",
-                    "-Wno-multichar",
-                    "-Wunused",
-                    "-fno-aligned-allocation"
-                ]),
-                .unsafeFlags([
-                    "-flto"
-                ], .when(configuration: .release))
+                .headerSearchPath("ProSystem/core"),
+                .headerSearchPath("ProSystem/core/lib"),
             ],
-            cxxSettings: [
-                .define("LSB_FIRST", to: "1"),
-                .define("HAVE_MKDIR", to: "1"),
-                .define("SIZEOF_DOUBLE", to: "8"),
-                .define("PSS_STYLE", to: "1"),
-                .define("MPC_FIXED_POINT"),
-                .define("ARCH_X86"),
-                .define("WANT_STELLA_EMU", to: "1"),
-                .define("STDC_HEADERS", to: "1"),
-                .define("HAVE_INTTYPES", to: "1"),
-                .define("Keyboard", to: "StellaKeyboard"),
-                .define("_GLIBCXX_USE_CXX11_ABI", to: "1"),
-                .define("UNIX", to: "1"),
-                .define("DARWIN", to: "1"),
-                .define("MACOS_KEYS", to: "1"),
-                .define("SOUND_SUPPORT", to: "1"),
-                .define("JOYSTICK_SUPPORT"),
-                .define("CHEATCODE_SUPPORT"),
-                .define("ARM"),
-                .define("IOS"),
-                .define("INLINE", to: "inline"),
-                .define("USE_STRUCTS", to: "1"),
-                .define("__LIBRETRO__", to: "1"),
-                .define("__LIB_RETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
-                .define("TARGET_IPHONE", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
-                .define("NEON", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
-                .headerSearchPath("stella/src/cheat/"),
-                .headerSearchPath("stella/src/common/"),
-                .headerSearchPath("stella/src/common/audio"),
-                .headerSearchPath("stella/src/common/repository"),
-                .headerSearchPath("stella/src/common/sdl_blitter"),
-                .headerSearchPath("stella/src/common/tv_filters"),
-                .headerSearchPath("stella/src/emucore/"),
-                .headerSearchPath("stella/src/emucore/common/"),
-                .headerSearchPath("stella/src/emucore/tia/"),
-                .headerSearchPath("stella/src/emucore/tia/frame-manager/"),
-                .headerSearchPath("stella/src/lib/"),
-                .headerSearchPath("stella/src/lib/httplib"),
-                .headerSearchPath("stella/src/lib/json"),
-                .headerSearchPath("stella/src/lib/libpng"),
-                .headerSearchPath("stella/src/lib/nanojpeg"),
-                .headerSearchPath("stella/src/lib/sqlite"),
-                .headerSearchPath("stella/src/lib/tinyexif"),
-                .headerSearchPath("stella/src/lib/zlib"),
-                .headerSearchPath("stella/src/os/libretro/"),
-                .unsafeFlags([
-                    "-Wno-multichar",
-                    "-Wunused",
-                    "-Woverloaded-virtual",
-                    "-Wnon-virtual-dtor",
-                ]),
-                .unsafeFlags([
-                    "-flto",
-                    "-fno-rtti",
-                    "-Wno-poison-system-directories"
-                ], .when(configuration: .release))
+            linkerSettings: [
+                .linkedLibrary("z")
             ]
         )
     ],
-    swiftLanguageVersions: [.v5],
-    cLanguageStandard: .gnu99,
+    swiftLanguageModes: [.v5, .v6],
+    cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx17
 )
+
+enum Sources {
+    static let libprosystem: [String] = [
+        "ProSystem/core/Archive.cpp",
+        "ProSystem/core/Bios.cpp",
+        "ProSystem/core/Cartridge.cpp",
+        "ProSystem/core/Common.cpp",
+        "ProSystem/core/Database.cpp",
+        "ProSystem/core/Hash.cpp",
+        "ProSystem/core/Logger.cpp",
+        "ProSystem/core/Maria.cpp",
+        "ProSystem/core/Memory.cpp",
+        "ProSystem/core/Palette.cpp",
+        "ProSystem/core/Pokey.cpp",
+        "ProSystem/core/ProSystem.cpp",
+        "ProSystem/core/Region.cpp",
+        "ProSystem/core/Riot.cpp",
+        "ProSystem/core/Sally.cpp",
+        "ProSystem/core/Sound.cpp",
+        "ProSystem/core/Tia.cpp",
+        "ProSystem/core/Timer.cpp",
+        "ProSystem/core/lib/Unzip.c",
+        "ProSystem/core/lib/Zip.c",
+    ]
+    
+    static let libprosystem_1_3: [String] = [
+        "ProSystem1_3/Core/Archive.cpp",
+        "ProSystem1_3/Core/Bios.cpp",
+        "ProSystem1_3/Core/Cartridge.cpp",
+        "ProSystem1_3/Core/Common.cpp",
+        "ProSystem1_3/Core/Hash.cpp",
+        "ProSystem1_3/Core/Logger.cpp",
+        "ProSystem1_3/Core/Maria.cpp",
+        "ProSystem1_3/Core/Memory.cpp",
+        "ProSystem1_3/Core/Palette.cpp",
+        "ProSystem1_3/Core/Pokey.cpp",
+        "ProSystem1_3/Core/ProSystem.cpp",
+        "ProSystem1_3/Core/Region.cpp",
+        "ProSystem1_3/Core/Riot.cpp",
+        "ProSystem1_3/Core/Sally.cpp",
+        "ProSystem1_3/Core/Sound.cpp",
+        "ProSystem1_3/Core/Tia.cpp",
+        "ProSystem1_3/Core/lib/Unzip.c",
+        "ProSystem1_3/Core/lib/Zip.c",
+    ]
+}

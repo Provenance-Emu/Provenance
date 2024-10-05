@@ -33,7 +33,7 @@ extension Defaults.Keys {
 #endif
     
     static let buttonVibration = Key<Bool>("buttonVibration", default: true)
-#if os(iOS) || targetEnvironment(macCatalyst)
+#if os(iOS) || os(wathcOS) || targetEnvironment(macCatalyst)
     static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: true)
 #else
     static let nativeScaleEnabled = Key<Bool>("nativeScaleEnabled", default: false)
@@ -96,7 +96,7 @@ public extension Defaults.Keys {
 #if os(macOS) || targetEnvironment(macCatalyst) || os(visionOS)
     static let useMetal = Key<Bool>("useMetal", default: true)
 #else
-    static let useMetal = Key<Bool>("useMetal", default: false)
+    static let useMetal = Key<Bool>("useMetal", default: true)
 #endif
     static let autoJIT = Key<Bool>("autoJIT", default: false)
 #if os(macOS) || targetEnvironment(macCatalyst) || APP_STORE
@@ -104,7 +104,7 @@ public extension Defaults.Keys {
 #elseif os(visionOS)
     static let useSwiftUI = Key<Bool>("useSwiftUI", default: true)
 #else
-    static let useSwiftUI = Key<Bool>("useSwiftUI", default: false)
+    static let useSwiftUI = Key<Bool>("useSwiftUI", default: true)
 #endif
     static let iCloudSync = Key<Bool>("iCloudSync", default: false)
     static let unsupportedCores = Key<Bool>("unsupportedCores", default: false)
@@ -120,6 +120,10 @@ public extension Defaults.Keys {
     static let onscreenJoypad = Key<Bool>("onscreenJoypad", default: true)
     static let onscreenJoypadWithKeyboard = Key<Bool>("onscreenJoypadWithKeyboard", default: true)
 #endif
+    
+    static let useLegacyAudioEngine = Key<Bool>("useLegacyAudioEngine", default: false)
+    static let monoAudio = Key<Bool>("monoAudio", default: false)
+
 }
 
 // MARK: Video Options
@@ -132,7 +136,13 @@ public extension Defaults.Keys {
 
 @objc
 @objcMembers
-public final class PVSettingsWrapper: NSObject {        
+public final class PVSettingsWrapper: NSObject {
+    
+    @objc
+    public static var useLegacyAudioEngine: Bool {
+        get { Defaults[.useLegacyAudioEngine] }
+        set { Defaults[.useLegacyAudioEngine] = newValue }}
+    
     @objc
     public static var use8BitdoM30: Bool {
         get { Defaults[.use8BitdoM30] }
@@ -142,6 +152,11 @@ public final class PVSettingsWrapper: NSObject {
     public static var nativeScaleEnabled: Bool {
         get { Defaults[.nativeScaleEnabled] }
         set { Defaults[.nativeScaleEnabled] = newValue }}
+    
+    @objc
+    public static var integerScaleEnabled: Bool {
+        get { Defaults[.integerScaleEnabled] }
+        set { Defaults[.integerScaleEnabled] = newValue }}
     
     @objc
     public static var imageSmoothing: Bool {

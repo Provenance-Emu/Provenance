@@ -196,10 +196,10 @@ class MDFN_PixelFormat
   }
  }
 
- MDFN_HIDE static const uint8 LUT5to8[32];
- MDFN_HIDE static const uint8 LUT6to8[64];
- MDFN_HIDE static const uint8 LUT8to5[256];
- MDFN_HIDE static const uint8 LUT8to6[256];
+ /*MDFN_HIDE*/ static const uint8 LUT5to8[32];
+ /*MDFN_HIDE*/ static const uint8 LUT6to8[64];
+ /*MDFN_HIDE*/ static const uint8 LUT8to5[256];
+ /*MDFN_HIDE*/ static const uint8 LUT8to6[256];
 
  INLINE void DecodeColor(uint32 value, int &r, int &g, int &b) const
  {

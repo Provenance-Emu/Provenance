@@ -1,1 +1,0 @@
-../../libretro/libretro.h

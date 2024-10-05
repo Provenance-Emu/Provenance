@@ -14,6 +14,6 @@ import PVCoreBridge
 @objc
 public extension MupenGameCore {
     override var channelCount: UInt { 2 }
-//    override var audioSampleRate: Double { self.mupenSampleRate }
-    override var frameInterval: TimeInterval { isNTSC ? 60 : 50 }
+    var audioSampleRate: Double { get { _bridge.mupenSampleRate } set {} }
+    override var frameInterval: TimeInterval { _bridge.isNTSC ? 60 : 50 }
 }

@@ -411,6 +411,7 @@
 					<string>tzx</string>
 					<string>chd</string>
 					<string>rvz</string>
+					<string>j64</string>
 				</array>
 			</dict>
 			<key>UTTypeConformsTo</key>
@@ -474,6 +475,7 @@
 					<string>tzx</string>
 					<string>chd</string>
 					<string>rvz</string>
+					<string>j64</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>

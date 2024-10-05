@@ -91,6 +91,11 @@
 		B391F2F027C1715000730B53 /* quiz.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB3B427C09C5B0012118D /* quiz.cpp */; };
 		B391F30427C172B600730B53 /* vidblit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B3BCB37C27C09C5B0012118D /* vidblit.cpp */; };
 		B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */; };
+		B3A476502C9410790052500A /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3A4764F2C9410790052500A /* PVCoreObjCBridge */; };
+		B3A476532C941BBB0052500A /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A476512C941BBB0052500A /* CoreOptions.swift */; };
+		B3A476542C941BBB0052500A /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A476522C941BBB0052500A /* CorePlist.swift */; };
+		B3A476562C941DDF0052500A /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A476552C941DDF0052500A /* CorePlist-Generated.swift */; };
+		B3A477DD2C941FB60052500A /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3A477DC2C941FB60052500A /* PVPlists */; };
 		B3A9F43A1DE877B4008450F5 /* PVFCEU.h in Headers */ = {isa = PBXBuildFile; fileRef = B3A9F4381DE877B4008450F5 /* PVFCEU.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3A9F4501DE87833008450F5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A3A79AE1ABF1D41002274A3 /* Foundation.framework */; };
 		B3A9F4931DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A3A79AC1ABF1CE8002274A3 /* PVFCEUEmulatorCore.mm */; };
@@ -713,6 +718,9 @@
 		B391F2D627C1696A00730B53 /* liblzma.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = liblzma.tbd; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/liblzma.tbd; sourceTree = DEVELOPER_DIR; };
 		B391F2D827C16AC100730B53 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/OpenGL.framework; sourceTree = DEVELOPER_DIR; };
 		B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVFCEUEmulatorCore.swift; sourceTree = "<group>"; };
+		B3A476512C941BBB0052500A /* CoreOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
+		B3A476522C941BBB0052500A /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3A476552C941DDF0052500A /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B3A9F4361DE877B4008450F5 /* PVFCEU.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVFCEU.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A9F4381DE877B4008450F5 /* PVFCEU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVFCEU.h; sourceTree = "<group>"; };
 		B3A9F4391DE877B4008450F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1896,8 +1904,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A476502C9410790052500A /* PVCoreObjCBridge in Frameworks */,
 				B30E9B0A2C6FBCEA00C1431E /* PVCoreBridge in Frameworks */,
 				B30E990E2C6EF1D600C1431E /* PVSupport in Frameworks */,
+				B3A477DD2C941FB60052500A /* PVPlists in Frameworks */,
 				B30E9B072C6FBCDE00C1431E /* PVEmulatorCore in Frameworks */,
 				B3AFCF822977A71C00A01010 /* PVLogging in Frameworks */,
 				B3A9F6331DE88425008450F5 /* libz.tbd in Frameworks */,
@@ -1964,7 +1974,10 @@
 				B30614EA218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.h */,
 				B30614EB218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm */,
 				B30614F6218D60CB0041AD4F /* PVFCEU+Swift.h */,
+				B3A476512C941BBB0052500A /* CoreOptions.swift */,
+				B3A476522C941BBB0052500A /* CorePlist.swift */,
 				B39E8CB220539B2500380DCD /* PVFCEUEmulatorCore.swift */,
+				B3A476552C941DDF0052500A /* CorePlist-Generated.swift */,
 				1A3A75041ABF125C002274A3 /* Supporting Files */,
 			);
 			name = PVFCEU;
@@ -3676,6 +3689,8 @@
 				B30E990D2C6EF1D600C1431E /* PVSupport */,
 				B30E9B062C6FBCDE00C1431E /* PVEmulatorCore */,
 				B30E9B092C6FBCEA00C1431E /* PVCoreBridge */,
+				B3A4764F2C9410790052500A /* PVCoreObjCBridge */,
+				B3A477DC2C941FB60052500A /* PVPlists */,
 			);
 			productName = PVNES;
 			productReference = B3A9F4361DE877B4008450F5 /* PVFCEU.framework */;
@@ -3755,6 +3770,8 @@
 				B30E990C2C6EF1D600C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E9B052C6FBCDE00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
 				B30E9B082C6FBCEA00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3A4764E2C9410790052500A /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3A477DB2C941FB60052500A /* XCLocalSwiftPackageReference "../../PVPlists" */,
 			);
 			productRefGroup = 1A3A74E91ABF11AC002274A3 /* Products */;
 			projectDirPath = "";
@@ -3808,6 +3825,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3A476532C941BBB0052500A /* CoreOptions.swift in Sources */,
+				B3A476562C941DDF0052500A /* CorePlist-Generated.swift in Sources */,
+				B3A476542C941BBB0052500A /* CorePlist.swift in Sources */,
 				B39E8CB320539B2500380DCD /* PVFCEUEmulatorCore.swift in Sources */,
 				B3A9F4931DE87E09008450F5 /* PVFCEUEmulatorCore.mm in Sources */,
 				B30614ED218D5F8D0041AD4F /* PVFCEUEmulatorCore+Controls.mm in Sources */,
@@ -4554,8 +4574,7 @@
 				);
 				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4570,6 +4589,8 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 					"$(inherited)",
+					"-fmodules",
+					"-fcxx-modules",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.fceu";
 				PRODUCT_NAME = PVFCEU;
@@ -4748,8 +4769,7 @@
 				);
 				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4764,6 +4784,8 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 					"$(inherited)",
+					"-fmodules",
+					"-fcxx-modules",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.fceu";
 				PRODUCT_NAME = PVFCEU;
@@ -4813,8 +4835,7 @@
 				);
 				INFOPLIST_FILE = PVFCEU/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4829,6 +4850,8 @@
 					"-DPSS_STYLE=1",
 					"-DLSB_FIRST",
 					"$(inherited)",
+					"-fmodules",
+					"-fcxx-modules",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.fceu";
 				PRODUCT_NAME = PVFCEU;
@@ -5194,6 +5217,14 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B3A4764E2C9410790052500A /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3A477DB2C941FB60052500A /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -5208,6 +5239,14 @@
 		B30E9B092C6FBCEA00C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
+		};
+		B3A4764F2C9410790052500A /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3A477DC2C941FB60052500A /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
 		};
 		B3AFCF812977A71C00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;

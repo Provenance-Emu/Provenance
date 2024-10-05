@@ -10,72 +10,74 @@ import Foundation
 
 @_exported import PVEmulatorCore
 @_exported import PVCoreBridge
+import PVLogging
+@preconcurrency import libpokemini
 import PokeMiniC
 import PVPokeMiniBridge
+import PVPokeMiniOptions
 
 @objc
 @objcMembers
-public final class PokeMFiState: NSObject, @unchecked Sendable {
-    public var a: Bool = false
-    public var b: Bool = false
-    public var c: Bool = false
-    public var d: Bool = false
-    public var up: Bool = false
-    public var down: Bool = false
-    public var left: Bool = false
-    public var right: Bool = false
-    public var menu: Bool = false
-    public var power: Bool = false
-    public var shake: Bool = false
+public final class PVPokeMiniEmulatorCore: PVEmulatorCore, @unchecked Sendable {
+
+    let _bridge: PVPokeMiniBridge = .init()
+    required public init() {
+        super.init()
+        self.bridge =  (_bridge as! any ObjCBridgedCoreBridge)
+    }
 }
 
-@objc
-@objcMembers
-public final class PVPokeMiniEmulatorCore: PVEmulatorCore, ObjCBridgedCore, @unchecked Sendable {
+extension PVPokeMiniEmulatorCore: PVPokeMiniSystemResponderClient {
+    public func didPush(_ button: PVCoreBridge.PVPMButton, forPlayer player: Int) {
+        (_bridge as! PVPokeMiniSystemResponderClient).didPush(button, forPlayer: player)
+    }
+    public func didRelease(_ button: PVCoreBridge.PVPMButton, forPlayer player: Int) {
+        (_bridge as! PVPokeMiniSystemResponderClient).didRelease(button, forPlayer: player)
+    }
+}
 
-    // PVEmulatorCoreBridged
-    public typealias Bridge = PVPokeMiniBridge
-    public lazy var bridge: Bridge = {
-        let core = PVPokeMiniBridge()
-        return core
-    }()
+extension PVPokeMiniEmulatorCore: CoreOptional {
+    public static var options: [PVCoreBridge.CoreOption] {
+        PVPokeMiniOptions.options
+    }
+}
+
+extension PVPokeMiniEmulatorCore: CoreActions {
     
-    #if canImport(GameController)
-    @objc
-    @MainActor
-    public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
-    #endif
-    public let controllerState: PokeMFiState = .init()
-
-    // MARK: Video
+    enum Actions {
+        static var changePalette: CoreAction { CoreAction(title: "Change Palette", options: nil) }
+        static var changeLCDFilter: CoreAction { CoreAction(title: "Change LCD Filter", options: nil) }
+        static var changeLCDMode: CoreAction { CoreAction(title: "Change LCD Mode", options: nil) }
+    }
     
-    @objc dynamic public override var rendersToOpenGL: Bool { false }
-    @MainActor public var _videoBuffer: UnsafeMutablePointer<UInt32>? = nil
+    public var coreActions: [CoreAction]? { [Actions.changePalette] }
 
-//    @objc dynamic public override var videoBuffer: UnsafeMutableBufferPointer<UInt32> {
-//        get {
-//            _videoBuffer?.withMemoryRebound(to: UInt32.self, capacity: videoWidth * videoHeight) {
-//                UnsafeMutableBufferPointer(start: $0, count: videoWidth * videoHeight)
-//            }
-//        }
-//    }
-
-    // MARK: Audio
-    
-    @objc dynamic public override var audioBufferCount: UInt { 1 }
-    
-    @objc @MainActor
-    public var audioStream: UnsafeMutablePointer<UInt8>?
-
-    /// Width in pixels
-    /// Bindable
-
-    @MainActor
-    @objc
-    public var videoWidth: Int = 0
-    @MainActor
-    public var videoHeight: Int = 0
-    @MainActor
-    public var romPath: String?
+    public func selected(action: CoreAction) {
+        switch action {
+        case Actions.changePalette:
+            nextPalette()
+        default:
+            WLOG("Unknown action: " + action.title)
+        }
+    }
+    func nextLCDFilter() {
+        var lcdFilter = CommandLine.lcdfilter + 1
+        if lcdFilter >= PVPokeMiniOptions.Options.Video.lcdFilterValues.count { lcdFilter = 0 }
+        _bridge.setVideoSpec()
+    }
+    func nextLCDMode() {
+        var lcdMode = CommandLine.lcdmode + 1
+        if lcdMode >= PVPokeMiniOptions.Options.Video.lcdModeValues.count { lcdMode = 0 }
+        _bridge.setVideoSpec()
+    }
+    func nextPalette() {
+        var palette = CommandLine.palette + 1
+        if palette >= PVPokeMiniOptions.Options.Video.paletteValues.count { palette = 0 }
+        PokeMini_VideoPalette_Index(CommandLine.palette, nil, CommandLine.lcdcontrast, CommandLine.lcdbright);
+        applyChanges()
+    }
+    func applyChanges() {
+        PokeMini_ApplyChanges();
+    }
 }
 

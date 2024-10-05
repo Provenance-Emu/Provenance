@@ -10,6 +10,18 @@ import PVLogging
 import SQLite
 import PVSQLiteDatabase
 
+@globalActor
+public
+actor OpenVGDBActor:GlobalActor
+{
+    public static
+    let shared:OpenVGDBActor = .init()
+
+    init()
+    {
+    }
+}
+
 public final class OpenVGDB {
     
     #warning("TODO: Convert to SQLSwift")
@@ -82,7 +94,7 @@ public extension OpenVGDB {
         return (romMD5, romFileNameToMD5)
     }
     
-    func getAllReleases() throws -> SQLQueryResponse {
+    package func getAllReleases() throws -> SQLQueryResponse {
         let queryString = """
             SELECT
                 release.regionLocalizedID as 'regionID',
@@ -114,14 +126,17 @@ public extension OpenVGDB {
         return results
     }
     
-    func system(forRomMD5 md5: String, or filename: String? = nil) throws -> SQLQueryResponse {
+    func system(forRomMD5 md5: String, or filename: String? = nil) throws -> Int? {
         var queryString = "SELECT DISTINCT systemID FROM ROMs WHERE romHashMD5 = '\(md5)'"
         if let filename = filename {
-            queryString += " OR romFileName = '\(filename)'"
+            queryString += " OR romFileName LIKE '\(filename)'"
         }
         
         let results = try vgdb.execute(query: queryString)
-        return results
+        guard let match = results.first else { return nil }
+
+        let databaseID = match["systemID"] as? Int 
+        return databaseID
     }
     
     func searchDatabase(usingFilename filename: String, systemIDs: [Int]) throws -> [[String: NSObject]]? {

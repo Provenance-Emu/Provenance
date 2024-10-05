@@ -1,11 +1,9 @@
 import Foundation
 
 #if canImport(UIKit)
-
 import UIKit
 import PVUIBase
 import PVUIKit
-
 #if os(macOS)
 @_exported import AppKit
 @_exported import PVUI_AppKit
@@ -17,25 +15,19 @@ import PVUIKit
 @_exported import PVUI_IOS
 #else
 #error("Unsupported platform")
-#endif
-
-
+#endif // canImport(UIKit)
 UIApplicationMain(
     CommandLine.argc,
     CommandLine.unsafeArgv,
     NSStringFromClass(PVApplication.self),
     NSStringFromClass(PVAppDelegate.self)
 )
-
 #else
-
 import AppKit
-
 NSApplicationMain(
     CommandLine.argc,
     CommandLine.unsafeArgv,
     NSStringFromClass(PVApplication.self),
     NSStringFromClass(PVAppDelegate.self)
 )
-
 #endif

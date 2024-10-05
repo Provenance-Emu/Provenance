@@ -29,6 +29,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         .package(name: "PVCoreBridge", path: "../PVCoreBridge/"),
+        .package(name: "PVSettings", path: "../PVSettings/"),
         .package(name: "PVLogging", path: "../PVLogging/"),
         .package(name: "PVAudio", path: "../PVAudio/")
     ],
@@ -40,6 +41,7 @@ let package = Package(
             name: "PVCoreAudio",
             dependencies: [
                 "PVCoreBridge",
+                "PVSettings",
                 .product(name: "PVAudio", package: "PVAudio"),
                 .product(name: "PVLogging", package: "PVLogging")
             ]

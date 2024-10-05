@@ -56,34 +56,34 @@ public final class RealmDatabaseDriver: DatabaseDriver, GameLibraryRealm, GameLi
     }()
 
     /// Save States
-    public lazy var saveStatesResults: Results<PVSaveState> = {
+    public lazy var saveStatesResults: Results<Savetype> = {
         database
-            .all(PVSaveState.self)
+            .all(Savetype.self)
             .filter("game != nil && game.system != nil")
-            .sorted(byKeyPath: #keyPath(PVSaveState.lastOpened),
+            .sorted(byKeyPath: #keyPath(Savetype.lastOpened),
                     ascending: false)
-            .sorted(byKeyPath: #keyPath(PVSaveState.date),
+            .sorted(byKeyPath: #keyPath(Savetype.date),
                     ascending: false)
     }()
     
     ///
-    public lazy var favoritesResults: Results<PVGame> = {
-        database.all(PVGame.self, where: #keyPath(PVGame.isFavorite), value: true).sorted(byKeyPath: #keyPath(PVGame.title), ascending: false)
+    public lazy var favoritesResults: Results<GameType> = {
+        database.all(GameType.self, where: #keyPath(GameType.isFavorite), value: true).sorted(byKeyPath: #keyPath(GameType.title), ascending: false)
     }()
     
     ///
-    public lazy var recentsResults: Results<PVRecentGame> = {
-        database.all(PVRecentGame.self).sorted(byKeyPath: #keyPath(PVRecentGame.lastPlayedDate), ascending: false)
+    public lazy var recentsResults: Results<RecentGame> = {
+        database.all(RecentGame.self).sorted(byKeyPath: #keyPath(RecentGame.lastPlayedDate), ascending: false)
     }()
     
     ///
-    public lazy var mostPlayedResults: Results<PVGame> = {
-        database.all(PVGame.self).sorted(byKeyPath: #keyPath(PVGame.playCount), ascending: false)
+    public lazy var mostPlayedResults: Results<GameType> = {
+        database.all(GameType.self).sorted(byKeyPath: #keyPath(GameType.playCount), ascending: false)
     }()
     
     ///
-    public lazy var activeSystems: Results<PVSystem> = {
-        database.all(PVSystem.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(PVSystem.name), ascending: true)
+    public lazy var activeSystems: Results<SystemType> = {
+        database.all(SystemType.self, filter: NSPredicate(format: "games.@count > 0")).sorted(byKeyPath: #keyPath(SystemType.name), ascending: true)
     }()
 
     
@@ -97,14 +97,14 @@ public final class RealmDatabaseDriver: DatabaseDriver, GameLibraryRealm, GameLi
 
     /// Game for identifier
     /// - Parameter identifier: ID String of the game
-    /// - Returns: Optional matching PVGame
-    public func game(identifier: String) -> PVGame? {
-        database.object(ofType: PVGame.self, wherePrimaryKeyEquals: identifier)
+    /// - Returns: Optional matching GameType
+    public func game(identifier: String) -> GameType? {
+        database.object(ofType: GameType.self, wherePrimaryKeyEquals: identifier)
     }
  
-    /// PVGame .isFavorite toggle
+    /// GameType .isFavorite toggle
     /// - Returns: Completable for when finished
-    public func toggleFavorite(for game: PVGame) -> Completable {
+    public func toggleFavorite(for game: GameType) -> Completable {
         Completable.create { observer in
             do {
                 try self.database.writeTransaction {
@@ -125,16 +125,16 @@ extension RealmDatabaseDriver {
     
     /// System for identifier
     /// - Parameter identifier: ID String of the system
-    /// - Returns: Optional matching PVSystem
-    public func system(identifier: String) -> PVSystem? {
-        database.object(ofType: PVSystem.self, wherePrimaryKeyEquals: identifier)
+    /// - Returns: Optional matching SystemType
+    public func system(identifier: String) -> SystemType? {
+        database.object(ofType: SystemType.self, wherePrimaryKeyEquals: identifier)
     }
     
     /// Get all games for a System
     /// - Parameter systemIdentifier: ID String of the system to query
     /// - Returns: A query result with live updating as long as the reference is active
-    public func gamesForSystem(systemIdentifier: String) -> Results<PVGame> {
-        database.all(PVGame.self).filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [systemIdentifier]))
+    public func gamesForSystem(systemIdentifier: String) -> Results<GameType> {
+        database.all(GameType.self).filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [systemIdentifier]))
     }
 
     /// Systems sorted by Options -> RxRealm.Observable
@@ -151,19 +151,19 @@ extension RealmDatabaseDriver {
         let unsuppotedIDs: [SystemIdentifier] = SystemIdentifier.unsupported
         
         return Observable
-            .collection(from: database.all(PVSystem.self))
+            .collection(from: database.all(SystemType.self))
             .flatMapLatest({ systems -> SystemArrayObservable in
                 // Here we actualy observe on the games for each system, since we want to update this when games are added or removed from a system
                 Observable
-                    .combineLatest(systems.map({ (pvSystem: PVSystem) -> SystemObservable in
+                    .combineLatest(systems.map({ (SystemType: SystemType) -> SystemObservable in
                         // We read all the values from the realm-object here, and not in the `Observable.collection` below
-                        // Not doing this makes the game crash when using refreshGameLibrary, since the pvSystem goes out of scope inside the closure, and thus we crash
-                        let identifier = pvSystem.identifier
-                        let manufacturer = pvSystem.manufacturer
-                        let shortName = pvSystem.shortName
-                        let isBeta = betaIDs.contains(pvSystem.enumValue)
-                        let unsupported = unsuppotedIDs.contains(pvSystem.enumValue)
-                        let sortedGames = pvSystem.games.sorted(by: sortOptions)
+                        // Not doing this makes the game crash when using refreshGameLibrary, since the SystemType goes out of scope inside the closure, and thus we crash
+                        let identifier = SystemType.identifier
+                        let manufacturer = SystemType.manufacturer
+                        let shortName = SystemType.shortName
+                        let isBeta = betaIDs.contains(SystemType.enumValue)
+                        let unsupported = unsuppotedIDs.contains(SystemType.enumValue)
+                        let sortedGames = SystemType.games.sorted(by: sortOptions)
                         return Observable
                             .collection(from: sortedGames)
                             .mapMany { $0 }
@@ -191,19 +191,19 @@ extension RealmDatabaseDriver {
     /// This is a wrapper for `searchResults(for: String)`
     /// In theory this shoud live update if searching while a background import is in progress (rarely)
     /// - Parameter searchText: Search text for title, genre, descirption, region, developer, publisher
-    /// - Returns: Observable wrapper from Results as [PVGame]
-    public func search(for searchText: String) -> Observable<[PVGame]> {
+    /// - Returns: Observable wrapper from Results as [GameType]
+    public func search(for searchText: String) -> Observable<[GameType]> {
         return Observable.collection(from: searchResults(for: searchText)).mapMany { $0 }
     }
 
     /// Search for Game by Sttring -> RealmSwift.Results
     /// Searches for title only and also any of the following containing; genre, description, region, developer, publisher
     /// - Parameter searchText: Text to search for
-    /// - Returns: Live updating results of PVGames
-    public func searchResults(for searchText: String) -> Results<PVGame> {
+    /// - Returns: Live updating results of GameTypes
+    public func searchResults(for searchText: String) -> Results<GameType> {
         // Search first by title, and a broader search if that one's empty
         if searchText.count == 0 {
-            return self.database.all(PVGame.self).sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+            return self.database.all(GameType.self).sorted(byKeyPath: #keyPath(GameType.title), ascending: true)
         } else {
             
             /// Search by title contains
@@ -216,10 +216,10 @@ extension RealmDatabaseDriver {
                 format: "genres LIKE[c] %@ OR gameDescription CONTAINS[c] %@ OR regionName LIKE[c] %@ OR developer LIKE[c] %@ or publisher LIKE[c] %@",
                 argumentArray: [searchText, searchText, searchText, searchText, searchText])
             
-            let titleResults = self.database.all(PVGame.self, filter: titlePredicate)
-            let generalresults = { return self.database.all(PVGame.self, filter: searchPredicate) }
+            let titleResults = self.database.all(GameType.self, filter: titlePredicate)
+            let generalresults = { return self.database.all(GameType.self, filter: searchPredicate) }
             let results = !titleResults.isEmpty ? titleResults : generalresults()
-            return results.sorted(byKeyPath: #keyPath(PVGame.title), ascending: true)
+            return results.sorted(byKeyPath: #keyPath(GameType.title), ascending: true)
         }
     }
 }

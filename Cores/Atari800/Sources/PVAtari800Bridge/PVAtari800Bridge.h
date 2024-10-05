@@ -38,7 +38,7 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
-@interface PVAtari800Bridge: PVCoreObjCBridge <PVA8SystemResponderClient, PV5200SystemResponderClient>
+@interface PVAtari800Bridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVA8SystemResponderClient, PV5200SystemResponderClient>
 #pragma clang diagnostic pop
 
 - (void)didPush5200Button:(PV5200Button)button forPlayer:(NSUInteger)player;

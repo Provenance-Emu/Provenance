@@ -39,6 +39,12 @@ public struct CoreActionOption {
     }
 }
 
+extension CoreActionOption: Equatable {
+    public static func == (lhs: CoreActionOption, rhs: CoreActionOption) -> Bool {
+        return lhs.title == rhs.title
+    }
+}
+
 public struct CoreAction {
     public let title: String
     public let requiresReset: Bool
@@ -50,5 +56,15 @@ public struct CoreAction {
         self.requiresReset = requiresReset
         self.options = options
         self.style = style
+    }
+}
+
+extension CoreAction: Identifiable {
+    public var id: String { title }
+}
+
+extension CoreAction: Equatable {
+    public static func == (lhs: CoreAction, rhs: CoreAction) -> Bool {
+        return lhs.title == rhs.title
     }
 }

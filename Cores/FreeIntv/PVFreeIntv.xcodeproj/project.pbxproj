@@ -42,6 +42,7 @@
 		B37CE7BF293F280D0010B746 /* file_path.c in Sources */ = {isa = PBXBuildFile; fileRef = B37CE781293F27870010B746 /* file_path.c */; };
 		B39768F82859E23200558958 /* libFreeIntv-libretro.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3344BC32859E088006E6B3A /* libFreeIntv-libretro.a */; };
 		B3AFCF8E2977A78B00A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF8D2977A78B00A01010 /* PVLogging */; };
+		B3BD627C2CB1126B007A71DD /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3BD627B2CB1126B007A71DD /* PVCoreObjCBridge */; };
 		B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621C20783243009950E4 /* OpenGLES.framework */; platformFilters = (driverkit, ios, tvos, watchos, ); };
 		B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C7621E2078325C009950E4 /* Foundation.framework */; };
 		B3C998B629432E020024D2A2 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C998B529432E020024D2A2 /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
@@ -244,6 +245,7 @@
 				B30E99F22C6F058500C1431E /* PVCoreBridge in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
 				B39768F82859E23200558958 /* libFreeIntv-libretro.a in Frameworks */,
+				B3BD627C2CB1126B007A71DD /* PVCoreObjCBridge in Frameworks */,
 				B30E98C82C6EEFE600C1431E /* PVLibRetro in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B3C998B629432E020024D2A2 /* OpenGL.framework in Frameworks */,
@@ -678,6 +680,7 @@
 				B30E98C42C6EEFD900C1431E /* PVSupport */,
 				B30E98C72C6EEFE600C1431E /* PVLibRetro */,
 				B30E99F12C6F058500C1431E /* PVCoreBridge */,
+				B3BD627B2CB1126B007A71DD /* PVCoreObjCBridge */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVFreeIntv.framework */;
@@ -728,6 +731,7 @@
 				B30E98C32C6EEFD900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E98C62C6EEFE600C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */,
 				B30E99F02C6F058500C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3BD627A2CB1126B007A71DD /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -815,7 +819,7 @@
 				PRODUCT_NAME = FreeIntv;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -832,7 +836,7 @@
 				PRODUCT_NAME = FreeIntv;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -934,7 +938,7 @@
 				PRODUCT_NAME = PVFreeIntv;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -951,7 +955,7 @@
 				PRODUCT_NAME = FreeIntv;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -968,7 +972,7 @@
 				PRODUCT_NAME = "FreeIntv-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -985,7 +989,7 @@
 				PRODUCT_NAME = "FreeIntv-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -1002,7 +1006,7 @@
 				PRODUCT_NAME = "FreeIntv-libretro";
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -1179,7 +1183,7 @@
 				PRODUCT_NAME = PVFreeIntv;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -1209,7 +1213,7 @@
 				PRODUCT_NAME = PVFreeIntv;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
-				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator macosx watchos watchsimulator";
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,5,6";
 			};
@@ -1273,6 +1277,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B3BD627A2CB1126B007A71DD /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1291,6 +1299,10 @@
 		B3AFCF8D2977A78B00A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVLogging;
+		};
+		B3BD627B2CB1126B007A71DD /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

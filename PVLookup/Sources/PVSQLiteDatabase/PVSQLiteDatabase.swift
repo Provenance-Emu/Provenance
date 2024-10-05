@@ -6,18 +6,17 @@
 //
 
 import Foundation
-// import SQLite3
 import SQLite
 
-public typealias SQLQueryDict = [String: AnyObject]
-public typealias SQLQueryResponse = [SQLQueryDict]
-public protocol SQLQueryable {
+package typealias SQLQueryDict = [String: AnyObject]
+package typealias SQLQueryResponse = [SQLQueryDict]
+package protocol SQLQueryable {
     func execute(query: String) throws -> SQLQueryResponse
 }
 
 public struct PVSQLiteDatabase {
-    public let url: URL
-    private let connection: SQLite.Connection
+    package let url: URL
+    package let connection: SQLite.Connection
 
     public init(withURL url: URL) throws {
         self.url = url
@@ -27,7 +26,7 @@ public struct PVSQLiteDatabase {
 }
 
 extension PVSQLiteDatabase: SQLQueryable {
-    public func execute(query: String) throws -> SQLQueryResponse {
+    package func execute(query: String) throws -> SQLQueryResponse {
         var result = SQLQueryResponse()
 
         // prepare connection, sql, inout statement

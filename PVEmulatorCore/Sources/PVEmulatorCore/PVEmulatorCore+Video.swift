@@ -19,98 +19,86 @@ import OpenGLES.ES3
 
 @objc
 extension PVEmulatorCore: EmulatorCoreVideoDelegate {
+    
     open var alwaysUseMetal: Bool { false }
-    open var aspectSize: CGSize { .zero }
-
-    open var emulationFPS: Double {
-        0.0
-    }
-
-    open var isDoubleBuffered: Bool {
-        if let objcBridge = self as? ObjCCoreBridge {
-            return objcBridge.isDoubleBuffered
-        } else {
-            return false
-        }
-    }
     
-#if canImport(OpenGL) || canImport(OpenGLES)
-    open var depthFormat: GLenum { 0 }
-    open var internalPixelFormat: GLenum  {
-        if let objcBridge = self as? ObjCCoreBridge {
-            return objcBridge.internalPixelFormat
+    open var aspectSize: CGSize {
+        if let objcBridge = self as? (any ObjCBridgedCore), let bridge = objcBridge.bridge as? EmulatorCoreVideoDelegate{
+            return bridge.aspectSize
         } else {
-            return GLenum(GL_UNSIGNED_SHORT_5_6_5)
-        }
-    }
-
-    
-    open var pixelFormat: GLenum  {
-        if let objcBridge = self as? ObjCCoreBridge {
-            return objcBridge.pixelFormat
-        } else {
-            return GLenum(GL_RGBA)
-        }
-    }
-    
-    open var pixelType: GLenum {
-        if let objcBridge = self as? ObjCCoreBridge {
-            return objcBridge.pixelType
-        } else {
-            return GLenum(GL_UNSIGNED_SHORT_5_6_5)
-        }
-    }
-#endif
-    
-    open var renderFPS: Double { 0.0 }
-    
-    open var rendersToOpenGL: Bool {
-        if let objcBridge = self as? ObjCCoreBridge {
-            return objcBridge.rendersToOpenGL
-        } else {
-            return false
-        }
-    }
-   
-    open var screenRect: CGRect {
-        if let objcBridge = self as? ObjCCoreBridge {
-            return objcBridge.screenRect
-        } else {
+            fatalError("Fucked")
             return .zero
         }
     }
 
-    @objc
-    @MainActor
-    open var videoBuffer: UnsafeMutableRawPointer? {
-        if let objcBridge = self as? ObjCCoreBridge {
-            return objcBridge.videoBuffer
-        } else {
-            return nil
-        }
+    open var emulationFPS: Double {
+        bridge.emulationFPS
+    }
+
+    open var isDoubleBuffered: Bool {
+        bridge.isDoubleBuffered
+    }
+    
+#if canImport(OpenGL) || canImport(OpenGLES)
+    open var depthFormat: GLenum {
+        bridge.depthFormat
+    }
+    
+    open var internalPixelFormat: GLenum  {
+        bridge.internalPixelFormat
+    }
+    
+    open var pixelFormat: GLenum  {
+        bridge.pixelFormat
+    }
+    
+    open var pixelType: GLenum {
+        bridge.pixelType
+    }
+#endif
+    
+    open var renderFPS: Double {
+        bridge.renderFPS
+    }
+    
+    open var rendersToOpenGL: Bool {
+        bridge.rendersToOpenGL
+    }
+   
+    open var screenRect: CGRect {
+        bridge.screenRect
     }
 
 //    @MainActor
-    open var videoBufferSize: CGSize { .zero }
+    @objc
+    open var videoBuffer: UnsafeMutableRawPointer? {
+        bridge.videoBuffer
+    }
+
+//    @MainActor
+    open var bufferSize: CGSize {
+        bridge.bufferSize
+    }
 
     // Requires Override
     @objc
     open func executeFrame() {
-        if let objcBridge: any ObjCBridgedCore = self as? (any ObjCBridgedCore),
-            let bridge = objcBridge.bridge as? any ObjCBridgedCoreBridge & EmulatorCoreVideoDelegate,
-            bridge.responds(to: #selector(bridge.executeFrame)) {
-            bridge.executeFrame?()
-        } else {
-            assertionFailure("Should be implimented in subclasses")
-        }
+        bridge.executeFrame()
     }
 
     @objc
     open func swapBuffers() {
-        if let objcBridge = self as? ObjCCoreBridge, self.isDoubleBuffered {
-            objcBridge.swapBuffers()
-        } else {
+        guard  self.isDoubleBuffered else {
             assert(!self.isDoubleBuffered, "Cores that are double-buffered must implement swapBuffers!")
+            return
+        }
+        
+        if let objcBridge: any ObjCBridgedCore = self as? (any ObjCBridgedCore),
+            let bridge = objcBridge.bridge as? any ObjCBridgedCoreBridge & EmulatorCoreVideoDelegate,
+            bridge.responds(to: #selector(bridge.swapBuffers)) {
+            bridge.swapBuffers?()
+        } else {
+            assertionFailure("Should be implimented in subclasses")
         }
     }
 }

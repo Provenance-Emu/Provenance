@@ -29,22 +29,29 @@
 @import PVStellaCPP;
 @import PVCoreObjCBridge;
 
+#if !__swift__
+@import PVEmulatorCore;
+@import PVCoreBridge;
+#else
+@protocol ObjCBridgedCoreBridge;
+@protocol PV2600SystemResponderClient;
+@protocol EmulatorCoreVideoDelegate;
+typedef enum PV2600Button: NSInteger PV2600Button;
+#endif
+
 NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 // Callback method to fetch options of NSObject from String
 typedef id _Nullable (^PVStellaBridgeOptionHandler)(NSString * _Nonnull option);
 
-@protocol ObjCBridgedCoreBridge;
-@protocol PV2600SystemResponderClient;
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 //PVCORE_DIRECT_MEMBERS
-@interface PVStellaBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PV2600SystemResponderClient>
+@interface PVStellaBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, EmulatorCoreVideoDelegate>
 #pragma clang diagnostic pop
 
 -(instancetype)initWithOptionHandler:(PVStellaBridgeOptionHandler) optionHandler NS_DESIGNATED_INITIALIZER;
-@property (readonly, nonatomic, assign) PVStellaBridgeOptionHandler optionHandler;
+@property (readonly, nonatomic, copy) PVStellaBridgeOptionHandler optionHandler;
 
 // MARK: Core
 - (void)loadFileAtPath:(NSString *)path error:(NSError * __autoreleasing *)error;
@@ -66,6 +73,11 @@ typedef id _Nullable (^PVStellaBridgeOptionHandler)(NSString * _Nonnull option);
 // MARK: Save States
 - (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *)) __attribute__((noescape)) block;
 - (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *)) __attribute__((noescape)) block;
+@end
+
+@interface PVStellaBridge (PV2600SystemResponderClient) <PV2600SystemResponderClient>
+- (void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
+- (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player;
 @end
 
 NS_HEADER_AUDIT_END(nullability, sendability)

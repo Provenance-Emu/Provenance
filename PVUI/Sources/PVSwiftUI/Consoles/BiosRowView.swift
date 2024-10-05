@@ -36,7 +36,6 @@ struct BiosRowView: SwiftUI.View {
     @State
     var biosState: BIOSStatus.State? = nil
 
-
     var body: some SwiftUI.View {
         
 
@@ -46,10 +45,10 @@ struct BiosRowView: SwiftUI.View {
                 .padding(.horizontal, 12)
             VStack(alignment: .leading) {
                 Text("\(bios.descriptionText)")
-                    .font(.system(size: 13))
+                    .font(.footnote)
                     .foregroundColor(Color.white)
                 Text("\(bios.expectedMD5.uppercased()) : \(bios.expectedSize) bytes")
-                    .font(.system(size: 10))
+                    .font(.caption2)
                     .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
             }
             Spacer()
@@ -58,28 +57,28 @@ struct BiosRowView: SwiftUI.View {
                 case .match:
                     Image(systemName: "checkmark")
                         .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
-                        .font(.system(size: 13, weight: .light))
+                        .font(.footnote.weight(.light))
                 case .missing:
                     Text("Missing")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(Color.yellow)
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(Color.yellow)
-                        .font(.system(size: 12, weight: .light))
+                        .font(.caption.weight(.light))
                 case .mismatch(_):
                     Text("Mismatch")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(Color.red)
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(Color.red)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.caption.weight(.medium))
                 case .none:
                     Text("Loading...")
-                        .font(.system(size: 12))
+                        .font(.caption)
                         .foregroundColor(Color.red)
                     Image(systemName: "exclamationmark.triangle.fill")
                         .foregroundColor(Color.red)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.caption.weight(.medium))
                 }
             }
             .padding(.horizontal, 12)

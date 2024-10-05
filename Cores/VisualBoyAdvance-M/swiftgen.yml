@@ -1,5 +1,5 @@
-input_dir: Sources/PVVisualBoyAdvanceSwift/Resources/
-#output_dir: Sources/PVVisualBoyAdvanceSwift/
+input_dir: Sources/PVVisualBoyAdvance/Resources/
+#output_dir: Sources/PVVisualBoyAdvance/
 output_dir: ${DERIVED_SOURCES_DIR}
 
 plist:

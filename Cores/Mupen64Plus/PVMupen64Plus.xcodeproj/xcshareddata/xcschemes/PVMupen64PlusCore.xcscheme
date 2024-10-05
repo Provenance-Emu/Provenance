@@ -16,8 +16,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C0786D2C750D33006F109B"
-               BuildableName = "PVMupen64PlusCore.framework"
-               BlueprintName = "PVMupen64PlusCore"
+               BuildableName = "PVMupen64PlusBridge.framework"
+               BlueprintName = "PVMupen64PlusBridge"
                ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C0786D2C750D33006F109B"
-            BuildableName = "PVMupen64PlusCore.framework"
-            BlueprintName = "PVMupen64PlusCore"
+            BuildableName = "PVMupen64PlusBridge.framework"
+            BlueprintName = "PVMupen64PlusBridge"
             ReferencedContainer = "container:PVMupen64Plus.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

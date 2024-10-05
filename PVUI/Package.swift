@@ -70,7 +70,7 @@ let package = Package(
                 .define("CI_SILENCE_GL_DEPRECATION", to: "1")
             ],
             swiftSettings: [
-                .define("USE_DISPLAY_LINK"),
+//                .define("USE_DISPLAY_LINK"),
                 .define("USE_OPENGL", .when(platforms: [.macCatalyst, .macOS])),
                 .define("USE_OPENGLES", .when(platforms: [.iOS, .tvOS, .visionOS])),
                 .define("USE_METAL", .when(platforms: [.macCatalyst, .macOS])),

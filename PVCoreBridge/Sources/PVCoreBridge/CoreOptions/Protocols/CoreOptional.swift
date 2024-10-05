@@ -9,7 +9,6 @@
 import Foundation
 
 public protocol CoreOptional {//where Self: EmulatorCoreIOInterface {
-    @nonobjc
     static var options: [CoreOption] { get }
 
 //    static func bool(forOption option: String) -> Bool

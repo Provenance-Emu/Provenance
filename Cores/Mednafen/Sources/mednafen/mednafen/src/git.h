@@ -304,7 +304,7 @@ struct CheatFormatStruct
 										// Will return true if this is part of a multipart cheat.
 };
 
-MDFN_HIDE extern const std::vector<CheatFormatStruct> CheatFormatInfo_Empty;
+/*MDFN_HIDE*/ extern const std::vector<CheatFormatStruct> CheatFormatInfo_Empty;
 
 struct CheatInfoStruct
 {
@@ -324,7 +324,7 @@ struct CheatInfoStruct
  bool BigEndian;	// UI default for cheat search and new cheats.
 };
 
-MDFN_HIDE extern const CheatInfoStruct CheatInfo_Empty;
+/*MDFN_HIDE*/ extern const CheatInfoStruct CheatInfo_Empty;
 
 // Miscellaneous system/simple commands(power, reset, dip switch toggles, coin insert, etc.)
 // (for DoSimpleCommand() )

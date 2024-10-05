@@ -7,14 +7,6 @@
 
 import Foundation
 
-public enum EmulatorCoreSavesSerializerError: Error {
-    case fileNotFound
-    case fileNotReadable
-    case fileNotWritable
-    case fileCorrupted
-    case coreDoesNotSupportSaves
-}
-
 @objc public protocol EmulatorCoreSavesSerializer {
     typealias SaveStateCompletion = (Bool, Error?) -> Void
 

@@ -128,7 +128,102 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         _initAppCenter()
         setDefaultsFromSettingsBundle()
 
-//		#if !(targetEnvironment(macCatalyst) || os(macOS))
+        _initICloud()
+        
+        _initThemeListener()
+
+        runDetachedTaskWithCompletion {
+            try RomDatabase.initDefaultDatabase()
+        } completion: { result in
+            switch result {
+            case .success(let value):
+                Task.detached { @MainActor in
+                    self._initLibraryNotificationHandlers()
+                    self._initGameImporter(application, launchOptions: launchOptions)
+                }
+            case .failure(let error):
+                Task { @MainActor in
+                    let appName: String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
+                    ELOG("Error: Database Error\n")
+                    let alert = UIAlertController(title: NSLocalizedString("Database Error", comment: ""), message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
+                    ELOG(error.localizedDescription)
+                    alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
+                        fatalError(error.localizedDescription)
+                    }))
+                    
+                    self.window?.rootViewController = UIViewController()
+                    self.window?.makeKeyAndVisible()
+                    self.window?.rootViewController?.present(alert, animated: true, completion: nil)
+                }
+            }
+        }
+
+        _initSteamControllers()
+
+        #if os(iOS) && !targetEnvironment(macCatalyst) && !APP_STORE
+//            PVAltKitService.shared.start()
+            ApplicationMonitor.shared.start()
+        #endif
+
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
+            self.startOptionalWebDavServer()
+        })
+
+        return true
+    }
+    
+    func _initSteamControllers() {
+        #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
+        // SteamController is build with STEAMCONTROLLER_NO_PRIVATE_API, so dont call this! ??
+        // SteamControllerManager.listenForConnections()
+        #endif
+    }
+    
+    func _initGameImporter(_ application: UIApplication, launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) {
+        // Setup importing/updating library
+        let gameImporter = GameImporter.shared
+        let gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
+
+        #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
+            /// Setup shortcuts
+            Observable.combineLatest(
+                gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
+                gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }
+            ) { $0 + $1 }
+                .bind(onNext: { shortcuts in
+                    application.shortcutItems = shortcuts
+                })
+                .disposed(by: disposeBag)
+
+            /// Handle if started from shortcut
+            if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem,
+                shortcut.type == "kRecentGameShortcut",
+                let md5Value = shortcut.userInfo?["PVGameHash"] as? String,
+                let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
+                shortcutItemGame = matchedGame
+            }
+        #endif
+        
+        Task.detached { @MainActor in
+            let libraryUpdatesController = await PVGameLibraryUpdatesController(gameImporter: gameImporter)
+#if os(iOS) || os(macOS)
+            libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: self.disposeBag)
+#endif
+
+            // Handle refreshing library
+            self._initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
+            self.window!.makeKeyAndVisible()
+        }
+
+        Task.detached { @MainActor in
+            let database = RomDatabase.sharedInstance
+            database.refresh()
+            database.reloadCache()
+        }
+    }
+    
+    func _initICloud() {
         PVEmulatorConfiguration.initICloud()
         DispatchQueue.global(qos: .background).async {
             let useiCloud = Defaults[.iCloudSync] && URL.supportsICloud
@@ -139,50 +234,9 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
                 }
             }
         }
-//		#endif
-
-        do {
-            try RomDatabase.initDefaultDatabase()
-        } catch {
-            let appName: String = Bundle.main.infoDictionary?["CFBundleName"] as? String ?? "the application"
-            print("Error: Database Error\n")
-            let alert = UIAlertController(title: NSLocalizedString("Database Error", comment: ""), message: error.localizedDescription + "\nDelete and reinstall " + appName + ".", preferredStyle: .alert)
-            ELOG(error.localizedDescription)
-            alert.addAction(UIAlertAction(title: "Exit", style: .destructive, handler: { _ in
-                fatalError(error.localizedDescription)
-            }))
-
-            self.window?.rootViewController = UIViewController()
-            self.window?.makeKeyAndVisible()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.window?.rootViewController?.present(alert, animated: true, completion: nil)
-            }
-
-            return true
-        }
-
-        let gameLibrary = PVGameLibrary<RealmDatabaseDriver>(database: RomDatabase.sharedInstance)
-
-        #if os(iOS) || os(macOS) || targetEnvironment(macCatalyst)
-            // Setup shortcuts
-            Observable.combineLatest(
-                gameLibrary.favorites.mapMany { $0.asShortcut(isFavorite: true) },
-                gameLibrary.recents.mapMany { $0.game?.asShortcut(isFavorite: false) }
-            ) { $0 + $1 }
-                .bind(onNext: { shortcuts in
-                    application.shortcutItems = shortcuts
-                })
-                .disposed(by: disposeBag)
-
-            // Handle if started from shortcut
-            if let shortcut = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem, 
-                shortcut.type == "kRecentGameShortcut",
-                let md5Value = shortcut.userInfo?["PVGameHash"] as? String,
-                let matchedGame = ((try? Realm().object(ofType: PVGame.self, forPrimaryKey: md5Value)) as PVGame??) {
-                shortcutItemGame = matchedGame
-            }
-        #endif
-
+    }
+    
+    func _initThemeListener() {
         if #available(iOS 17.0, *) {
             withObservationTracking {
                 _ = ThemeManager.shared.currentTheme
@@ -195,45 +249,6 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
         } else {
             // Fallback on earlier versions
         }
-
-        // Setup importing/updating library
-        let gameImporter = GameImporter.shared
-
-        self.handleNotifications()
-
-        Task { @MainActor in
-            let libraryUpdatesController = await PVGameLibraryUpdatesController(gameImporter: gameImporter)
-#if os(iOS) || os(macOS)
-            libraryUpdatesController.addImportedGames(to: CSSearchableIndex.default(), database: RomDatabase.sharedInstance).disposed(by: disposeBag)
-#endif
-
-            // Handle refreshing library
-            _initUI(libraryUpdatesController: libraryUpdatesController, gameImporter: gameImporter, gameLibrary: gameLibrary)
-            self.window!.makeKeyAndVisible()
-        }
-
-        Task.detached {
-            let database = RomDatabase.sharedInstance
-            database.refresh()
-            database.reloadCache()
-        }
-
-        #if !targetEnvironment(macCatalyst) && canImport(SteamController) && !targetEnvironment(simulator)
-        // SteamController is build with STEAMCONTROLLER_NO_PRIVATE_API, so dont call this! ??
-        // SteamControllerManager.listenForConnections()
-        #endif
-
-        #if os(iOS) && !targetEnvironment(macCatalyst) && !APP_STORE
-//            PVAltKitService.shared.start()
-            ApplicationMonitor.shared.start()
-        #endif
-
-        
-		DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: { [unowned self] in
-			self.startOptionalWebDavServer()
-		})
-
-        return true
     }
 
     func saveCoreState(_ application: PVApplication) async throws {
@@ -273,7 +288,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             sleep(1)
 
             Task {
-                try await saveCoreState(app)
+                try await self.saveCoreState(app)
             }
         }
     }
@@ -298,7 +313,7 @@ final class PVAppDelegate: UIResponder, GameLaunchingAppDelegate {
             stopCore(app)
         }
     }
-    func handleNotifications() {
+    func _initLibraryNotificationHandlers() {
         NotificationCenter.default.rx.notification(.PVReimportLibrary)
             .flatMapLatest { _ in
                 return Completable.create { observer in
@@ -355,4 +370,19 @@ private func loadRocketSimConnect() {
     }
     print("RocketSim Connect successfully linked")
     #endif
+}
+
+func runDetachedTaskWithCompletion<T>(
+    priority: TaskPriority? = nil,
+    operation: @escaping () async throws -> T,
+    completion: @escaping (Result<T, Error>) -> Void
+) {
+    Task.detached(priority: priority) {
+        do {
+            let result = try await operation()
+            completion(.success(result))
+        } catch {
+            completion(.failure(error))
+        }
+    }
 }

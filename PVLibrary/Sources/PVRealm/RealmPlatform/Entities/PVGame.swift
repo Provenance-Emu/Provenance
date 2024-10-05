@@ -225,13 +225,13 @@ extension Game: RealmRepresentable {
         return md5
     }
 
-    public func asRealm() async -> PVGame {
-        let realm = try! await Realm()
+    public func asRealm() -> PVGame {
+        let realm = try! Realm()
         if let existing = realm.object(ofType: PVGame.self, forPrimaryKey: md5) {
             return existing
         }
 
-        return await PVGame.build { object in
+        return PVGame.build { object in
             object.id = id
             object.title = title
             // TODO: Test that file is correct

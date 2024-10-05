@@ -35,11 +35,12 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
-PVCORE_DIRECT_MEMBERS
+//PVCORE_DIRECT_MEMBERS
 @interface PVPokeMiniBridge: PVCoreObjCBridge <ObjCBridgedCoreBridge, PVPokeMiniSystemResponderClient>
 #pragma clang diagnostic pop
 
 - (double)sampleRate;
+- (void)setVideoSpec;
 
 @end
 

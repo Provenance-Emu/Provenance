@@ -16,8 +16,8 @@
 #import "api/m64p_vidext.h"
 #import "api/callbacks.h"
 #import "osal/dynamiclib.h"
-#import "../Plugins/Core/Core/src/main/version.h"
-#import "../Plugins/Core/Core/src/plugin/plugin.h"
+#import "main/version.h"
+#import "plugin/plugin.h"
 
 #define WIDTH 640
 #define HEIGHT 480
@@ -28,7 +28,7 @@
 #if TARGET_OS_TV
 #define RESIZE_TO_FULLSCREEN TRUE
 #else
-#define RESIZE_TO_FULLSCREEN [PVSettingsModel.shared.shared nativeScaleEnabled]
+#define RESIZE_TO_FULLSCREEN PVSettingsWrapper.nativeScaleEnabled
 #endif
 
 #import <dlfcn.h>

@@ -4,6 +4,8 @@ import PVEmulatorCore
 import PVLogging
 import PVLoggingObjC
 import MednafenGameCoreC
+import MednafenGameCoreBridge
+import mednafen
 
 class CppString {
     private var cppStringPtr: UnsafeMutableRawPointer
@@ -40,7 +42,7 @@ class CppString {
     case cheatsNotSupportedOnCurrentPlatform
 }
 
-@objc extension MednafenGameCore {
+@objc extension MednafenGameCoreBridge {
     
     @objc public func setCheat(_ code: String, setType type: String, setCodeType codeType: String, setIndex cheatIndex: UInt8, setEnabled enabled: Bool) throws {
         objc_sync_enter(self)
@@ -52,7 +54,7 @@ class CppString {
         
         ILOG("Applying Cheat Code \(code) \(type)")     
         
-        let game = getGame()?.assumingMemoryBound(to: Mednafen.MDFNGI.self)
+        let game = getGame().assumingMemoryBound(to: Mednafen.MDFNGI.self)
         let multipleCodes = code.components(separatedBy: "+")
         ILOG("Multiple Codes \(multipleCodes) at INDEX \(cheatIndex)")
         
@@ -64,13 +66,13 @@ class CppString {
             var patch = Mednafen.MemoryPatch()
             
             do {
-                if let game = game, game.pointee.CheatInfo.pointee.CheatFormatInfo.pointee.size() > 0 {
+                if game.pointee.CheatInfo.pointee.CheatFormatInfo.pointee.size() > 0 {
                     var formatIndex: UInt8 = 0
                     
                     switch systemType {
-                    case .gb:
+                    case .GB:
                         formatIndex = codeType == "Game Genie" ? 0 : 1
-                    case .psx:
+                    case .PSX:
                         if codeType == "GameShark" {
                             formatIndex = 0
                             if i + 1 < multipleCodes.count, multipleCodes[i + 1].count == 4 {
@@ -78,7 +80,7 @@ class CppString {
                                 i += 1
                             }
                         }
-                    case .snes:
+                    case .SNES:
                         formatIndex = (codeType == "Game Genie" || singleCode.contains("-")) ? 0 : 1
                     default:
                         break
@@ -111,11 +113,11 @@ class CppString {
     
     @objc public func getCheatCodeTypes() -> [String] {
         switch systemType {
-        case .gb:
+        case .GB:
             return ["Game Genie", "GameShark"]
-        case .psx:
+        case .PSX:
             return ["GameShark"]
-        case .snes:
+        case .SNES:
             return ["Game Genie", "Pro Action Replay"]
         default:
             return []
@@ -123,6 +125,6 @@ class CppString {
     }
     
     @objc public func getCheatSupport() -> Bool {
-        return systemType == .psx || systemType == .snes || systemType == .gb
+        return systemType == .PSX || systemType == .SNES || systemType == .GB
     }
 }

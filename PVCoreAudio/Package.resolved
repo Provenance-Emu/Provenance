@@ -1,0 +1,24 @@
+{
+  "originHash" : "1486035287ed81ffc9af1f19490582e0e8038b90703ba1d1e85e66160a29a8cd",
+  "pins" : [
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax.git",
+      "state" : {
+        "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
+        "version" : "509.1.1"
+      }
+    },
+    {
+      "identity" : "swiftmacros",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JoeMatt/SwiftMacros.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c7430902f056432a07803f8580263b4acd7753f1"
+      }
+    }
+  ],
+  "version" : 3
+}

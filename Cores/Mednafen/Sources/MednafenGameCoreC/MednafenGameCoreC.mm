@@ -6,12 +6,12 @@
 //  Copyright © 2024 Provenance EMU. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-
 #import <string>
 #import <Foundation/Foundation.h>
 
+#if __cplusplus
 extern "C" {
+#endif
     const char* swiftStringToCppString(NSString* swiftString) {
         std::string* cppString = new std::string([swiftString UTF8String]);
         return cppString->c_str();
@@ -28,4 +28,6 @@ extern "C" {
     const char* getCppStringContents(void* cppStringPtr) {
         return static_cast<std::string*>(cppStringPtr)->c_str();
     }
+#if __cplusplus
 }
+#endif

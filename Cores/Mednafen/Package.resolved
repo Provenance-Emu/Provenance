@@ -1,5 +1,5 @@
 {
-  "originHash" : "5f3267fde32576e226e751e8bde71d089b2ecbd226d402d0d97f1665bd855fa5",
+  "originHash" : "daaa8c9ea04708cd40da94116c5e8b4ec6a06d6a68d5c7beff3e421ce2f670ab",
   "pins" : [
     {
       "identity" : "checksum",
@@ -16,7 +16,7 @@
       "location" : "https://github.com/sindresorhus/Defaults.git",
       "state" : {
         "branch" : "main",
-        "revision" : "4c009d5c2496e7aa126e922c94dd3d6ae049efa2"
+        "revision" : "1f693cde80962041d342bfd9fa52581bbcc49577"
       }
     },
     {
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "64889f0c732f210a935a0ad7cda38f77f876262d",
         "version" : "509.1.1"
+      }
+    },
+    {
+      "identity" : "swiftgenplugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Provenance-Emu/SwiftGenPlugin.git",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "2d5a0b636fb74ade5f6b54b2c773f1ea23ade65f"
       }
     },
     {

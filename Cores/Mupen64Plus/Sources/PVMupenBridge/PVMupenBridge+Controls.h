@@ -7,7 +7,7 @@
 //
 
 #import "PVMupenBridge.h"
-#import "../Plugins/Core/Core/src/plugin/plugin.h"
+#import "plugin/plugin.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,8 +15,10 @@ void MupenInitiateControllers (CONTROL_INFO ControlInfo);
 void MupenGetKeys(int Control, BUTTONS *Keys);
 void MupenControllerCommand(int Control, unsigned char *Command);
 
-PVCORE
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
 @interface PVMupenBridge (Controls) <PVN64SystemResponderClient>
+#pragma clang diagnostic pop
 
 - (void)initControllBuffers;
 - (void)pollControllers;

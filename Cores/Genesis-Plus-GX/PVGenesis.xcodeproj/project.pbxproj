@@ -3,15 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		B30E99142C6EF20200C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99132C6EF20200C1431E /* PVSupport */; };
 		B30E9AF32C6FBA1100C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AF22C6FBA1100C1431E /* PVCoreBridge */; };
 		B30E9AF62C6FBA1D00C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AF52C6FBA1D00C1431E /* PVEmulatorCore */; };
-		B326758327B1C5BB0033C5D1 /* GenesisOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */; };
-		B3547B572058589900CFF7D8 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3547B562058589900CFF7D8 /* Core.plist */; };
 		B367000D2896283B00F75595 /* genesis.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FDFF289627AC00F75595 /* genesis.c */; };
 		B367000E2896283B00F75595 /* mem68k.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE98289627AC00F75595 /* mem68k.c */; };
 		B367000F2896283B00F75595 /* io_ctrl.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FE97289627AC00F75595 /* io_ctrl.c */; };
@@ -117,16 +115,16 @@
 		B367016928962BCA00F75595 /* scrc32.c in Sources */ = {isa = PBXBuildFile; fileRef = B367FF10289627AD00F75595 /* scrc32.c */; };
 		B367016C28962C8B00F75595 /* libretro.c in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA85B17F752610031B1C9 /* libretro.c */; };
 		B367016E28962C9300F75595 /* scrc32.c in Sources */ = {isa = PBXBuildFile; fileRef = C66E09372586D34B00EA6170 /* scrc32.c */; };
-		B37302DE1DE7DB1B00D0B366 /* PVGenesisEmulatorCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 1ACEA86817F752610031B1C9 /* PVGenesisEmulatorCore.m */; };
 		B373033A1DE7DB6F00D0B366 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6E117F751590031B1C9 /* CoreGraphics.framework */; };
 		B373033B1DE7DB7300D0B366 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6DD17F751380031B1C9 /* AudioToolbox.framework */; };
 		B373033E1DE7DB8800D0B366 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ACEA6AF17F74D150031B1C9 /* Foundation.framework */; };
+		B3816DFD2CA919B400DBA1A0 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3816DFC2CA919B400DBA1A0 /* PVCoreObjCBridge */; };
+		B3816E192CA92C0C00DBA1A0 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B3816E182CA92C0C00DBA1A0 /* PVSettings */; };
+		B3816E1C2CA92C7300DBA1A0 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3816E1B2CA92C7300DBA1A0 /* PVPlists */; };
 		B381A27629262E6600305322 /* libgenesisPlusGX-legacy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B367007B2896290E00F75595 /* libgenesisPlusGX-legacy.a */; };
 		B3A9F4201DE7EB67008450F5 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3A9F41F1DE7EB67008450F5 /* libz.tbd */; };
 		B3A9F4221DE7F5F2008450F5 /* libretro.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA85C17F752610031B1C9 /* libretro.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B3A9F4241DE7F606008450F5 /* PVGenesisEmulatorCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ACEA86717F752610031B1C9 /* PVGenesisEmulatorCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3AFCF7E2977A70400A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF7D2977A70400A01010 /* PVLogging */; };
-		B3E432081DE6917700D3C91E /* PVGenesis.h in Headers */ = {isa = PBXBuildFile; fileRef = B3E432061DE6917700D3C91E /* PVGenesis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C66E093B2586D34B00EA6170 /* scrc32.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E09382586D34B00EA6170 /* scrc32.h */; };
 		C66E09452586D39E00EA6170 /* opll.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E093E2586D39D00EA6170 /* opll.h */; };
 		C66E09472586D39E00EA6170 /* psg.h in Headers */ = {isa = PBXBuildFile; fileRef = C66E093F2586D39D00EA6170 /* psg.h */; };
@@ -158,7 +156,6 @@
 
 /* Begin PBXFileReference section */
 		1ACEA6AF17F74D150031B1C9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1ACEA6B317F74D150031B1C9 /* PVGenesis-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PVGenesis-Prefix.pch"; sourceTree = "<group>"; };
 		1ACEA6D917F7512B0031B1C9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1ACEA6DB17F751320031B1C9 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		1ACEA6DD17F751380031B1C9 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -277,16 +274,12 @@
 		1ACEA85917F752610031B1C9 /* z80.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = z80.h; sourceTree = "<group>"; };
 		1ACEA85B17F752610031B1C9 /* libretro.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libretro.c; sourceTree = "<group>"; };
 		1ACEA85C17F752610031B1C9 /* libretro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libretro.h; sourceTree = "<group>"; };
-		1ACEA86717F752610031B1C9 /* PVGenesisEmulatorCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVGenesisEmulatorCore.h; sourceTree = "<group>"; };
-		1ACEA86817F752610031B1C9 /* PVGenesisEmulatorCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVGenesisEmulatorCore.m; sourceTree = "<group>"; };
 		1ACEA8D317F75B8A0031B1C9 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		1ACEA8D517F75B8A0031B1C9 /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
 		1ACEA8D717F75B8A0031B1C9 /* fileio.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fileio.h; sourceTree = "<group>"; };
 		1ACEA8D817F75B8A0031B1C9 /* osd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = osd.h; sourceTree = "<group>"; };
 		B324C63321920D5C009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B324C63521920D6D009F4EDC /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenesisOptions.swift; sourceTree = "<group>"; };
-		B3547B562058589900CFF7D8 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3670003289627E800F75595 /* libgenesisPlusGX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgenesisPlusGX.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B367007B2896290E00F75595 /* libgenesisPlusGX-legacy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libgenesisPlusGX-legacy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B367FDA4289627AB00F75595 /* Makefile.gc */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.gc; sourceTree = "<group>"; };
@@ -833,8 +826,6 @@
 		B367FFFE289627AF00F75595 /* Makefile.wii */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.wii; sourceTree = "<group>"; };
 		B3A9F41F1DE7EB67008450F5 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		B3E432041DE6917700D3C91E /* PVGenesis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVGenesis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3E432061DE6917700D3C91E /* PVGenesis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVGenesis.h; sourceTree = "<group>"; };
-		B3E432071DE6917700D3C91E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C66E09372586D34B00EA6170 /* scrc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = scrc32.c; sourceTree = "<group>"; };
 		C66E09382586D34B00EA6170 /* scrc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrc32.h; sourceTree = "<group>"; };
 		C66E093D2586D39D00EA6170 /* psg.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = psg.c; sourceTree = "<group>"; };
@@ -848,6 +839,22 @@
 		C66E09562586D65F00EA6170 /* graphic_board.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = graphic_board.h; sourceTree = "<group>"; };
 		C66E09572586D65F00EA6170 /* graphic_board.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = graphic_board.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B3816E132CA91C6E00DBA1A0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			publicHeaders = (
+				include/PVGenesis.h,
+				PVCoreGenesisPlusBridge.h,
+			);
+			target = B3E432031DE6917700D3C91E /* PVGenesis */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		B3816E042CA91C6200DBA1A0 /* PVCoreGenesisPlus */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = PVCoreGenesisPlus; sourceTree = "<group>"; };
+		B3816E0A2CA91C6200DBA1A0 /* PVCoreGenesisPlusBridge */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3816E132CA91C6E00DBA1A0 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = PVCoreGenesisPlusBridge; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B3670000289627E800F75595 /* Frameworks */ = {
@@ -868,10 +875,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3816E192CA92C0C00DBA1A0 /* PVSettings in Frameworks */,
 				B30E9AF32C6FBA1100C1431E /* PVCoreBridge in Frameworks */,
 				B381A27629262E6600305322 /* libgenesisPlusGX-legacy.a in Frameworks */,
 				B3A9F4201DE7EB67008450F5 /* libz.tbd in Frameworks */,
 				B30E99142C6EF20200C1431E /* PVSupport in Frameworks */,
+				B3816E1C2CA92C7300DBA1A0 /* PVPlists in Frameworks */,
+				B3816DFD2CA919B400DBA1A0 /* PVCoreObjCBridge in Frameworks */,
 				B373033E1DE7DB8800D0B366 /* Foundation.framework in Frameworks */,
 				B3AFCF7E2977A70400A01010 /* PVLogging in Frameworks */,
 				B373033B1DE7DB7300D0B366 /* AudioToolbox.framework in Frameworks */,
@@ -886,8 +896,7 @@
 		1ACEA6A317F74D140031B1C9 = {
 			isa = PBXGroup;
 			children = (
-				1ACEA6B117F74D150031B1C9 /* PVGenesis */,
-				B3E432051DE6917700D3C91E /* PVGenesis */,
+				1ACEA6B117F74D150031B1C9 /* Sources */,
 				1ACEA6AE17F74D150031B1C9 /* Frameworks */,
 				1ACEA6AD17F74D150031B1C9 /* Products */,
 			);
@@ -918,40 +927,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		1ACEA6B117F74D150031B1C9 /* PVGenesis */ = {
+		1ACEA6B117F74D150031B1C9 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				B3FBCB5E2896266E00B7A486 /* Deps */,
-				1ACEA6E517F752600031B1C9 /* Genesis */,
-				1ACEA6B217F74D150031B1C9 /* Supporting Files */,
+				B3816E042CA91C6200DBA1A0 /* PVCoreGenesisPlus */,
+				B3816E0A2CA91C6200DBA1A0 /* PVCoreGenesisPlusBridge */,
+				B3FBCB5E2896266E00B7A486 /* libgenesisplus */,
 			);
-			path = PVGenesis;
-			sourceTree = "<group>";
-		};
-		1ACEA6B217F74D150031B1C9 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				1ACEA6B317F74D150031B1C9 /* PVGenesis-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		1ACEA6E517F752600031B1C9 /* Genesis */ = {
-			isa = PBXGroup;
-			children = (
-				1ACEA6E617F752600031B1C9 /* GenesisCore */,
-				1ACEA86717F752610031B1C9 /* PVGenesisEmulatorCore.h */,
-				1ACEA86817F752610031B1C9 /* PVGenesisEmulatorCore.m */,
-			);
-			path = Genesis;
-			sourceTree = "<group>";
-		};
-		1ACEA6E617F752600031B1C9 /* GenesisCore */ = {
-			isa = PBXGroup;
-			children = (
-				B326758227B1C5BB0033C5D1 /* GenesisOptions.swift */,
-			);
-			path = GenesisCore;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		1ACEA6E717F752600031B1C9 /* genplusgx_source */ = {
@@ -1166,7 +1149,8 @@
 				1ACEA8D717F75B8A0031B1C9 /* fileio.h */,
 				1ACEA8D817F75B8A0031B1C9 /* osd.h */,
 			);
-			path = other;
+			name = other;
+			path = ../../Sources/libgenesisplus/other;
 			sourceTree = "<group>";
 		};
 		B367FDA3289627AB00F75595 /* Genesis-Plus-GX */ = {
@@ -2206,17 +2190,7 @@
 			path = "opk-data";
 			sourceTree = "<group>";
 		};
-		B3E432051DE6917700D3C91E /* PVGenesis */ = {
-			isa = PBXGroup;
-			children = (
-				B3547B562058589900CFF7D8 /* Core.plist */,
-				B3E432061DE6917700D3C91E /* PVGenesis.h */,
-				B3E432071DE6917700D3C91E /* Info.plist */,
-			);
-			path = PVGenesis;
-			sourceTree = "<group>";
-		};
-		B3FBCB5E2896266E00B7A486 /* Deps */ = {
+		B3FBCB5E2896266E00B7A486 /* libgenesisplus */ = {
 			isa = PBXGroup;
 			children = (
 				1ACEA6E717F752600031B1C9 /* genplusgx_source */,
@@ -2224,7 +2198,7 @@
 				1ACEA85A17F752610031B1C9 /* libretro */,
 				B367FDA3289627AB00F75595 /* Genesis-Plus-GX */,
 			);
-			path = Deps;
+			path = libgenesisplus;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2236,8 +2210,6 @@
 			files = (
 				C66E09582586D66000EA6170 /* graphic_board.h in Headers */,
 				C66E09452586D39E00EA6170 /* opll.h in Headers */,
-				B3E432081DE6917700D3C91E /* PVGenesis.h in Headers */,
-				B3A9F4241DE7F606008450F5 /* PVGenesisEmulatorCore.h in Headers */,
 				C66E09472586D39E00EA6170 /* psg.h in Headers */,
 				C66E09532586D47000EA6170 /* xe_1ap.h in Headers */,
 				C66E093B2586D34B00EA6170 /* scrc32.h in Headers */,
@@ -2296,12 +2268,19 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				B3816E042CA91C6200DBA1A0 /* PVCoreGenesisPlus */,
+				B3816E0A2CA91C6200DBA1A0 /* PVCoreGenesisPlusBridge */,
+			);
 			name = PVGenesis;
 			packageProductDependencies = (
 				B3AFCF7D2977A70400A01010 /* PVLogging */,
 				B30E99132C6EF20200C1431E /* PVSupport */,
 				B30E9AF22C6FBA1100C1431E /* PVCoreBridge */,
 				B30E9AF52C6FBA1D00C1431E /* PVEmulatorCore */,
+				B3816DFC2CA919B400DBA1A0 /* PVCoreObjCBridge */,
+				B3816E182CA92C0C00DBA1A0 /* PVSettings */,
+				B3816E1B2CA92C7300DBA1A0 /* PVPlists */,
 			);
 			productName = PVGenesis;
 			productReference = B3E432041DE6917700D3C91E /* PVGenesis.framework */;
@@ -2315,7 +2294,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1600;
 				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B3670002289627E800F75595 = {
@@ -2340,6 +2319,9 @@
 				B30E99122C6EF20200C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E9AF12C6FBA1100C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 				B30E9AF42C6FBA1D00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3816DFB2CA919B400DBA1A0 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3816E172CA92C0C00DBA1A0 /* XCLocalSwiftPackageReference "../../PVSettings" */,
+				B3816E1A2CA92C7300DBA1A0 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 			);
 			productRefGroup = 1ACEA6AD17F74D150031B1C9 /* Products */;
 			projectDirPath = "";
@@ -2357,7 +2339,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3547B572058589900CFF7D8 /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2487,8 +2468,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B37302DE1DE7DB1B00D0B366 /* PVGenesisEmulatorCore.m in Sources */,
-				B326758327B1C5BB0033C5D1 /* GenesisOptions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2524,9 +2503,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_BITCODE = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2595,9 +2576,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_BITCODE = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -2631,6 +2614,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build/$(PLATFORM)";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
@@ -2668,9 +2652,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_BITCODE = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
@@ -2722,10 +2708,11 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -2734,12 +2721,10 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = NO;
-				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVGenesis/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2775,6 +2760,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2787,6 +2773,7 @@
 					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/core\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/libretro/libretro-common/include\"",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -2809,6 +2796,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2817,6 +2805,7 @@
 					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/core\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/libretro/libretro-common/include\"",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -2839,6 +2828,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2847,6 +2837,7 @@
 					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/core\"",
 					"\"$(SRCROOT)/PVGenesis/Deps/Genesis-Plus-GX/libretro/libretro-common/include\"",
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OTHER_LDFLAGS = "-ObjC";
@@ -2868,6 +2859,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2899,6 +2891,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2930,6 +2923,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2959,9 +2953,10 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -2970,12 +2965,10 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = NO;
-				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVGenesis/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3011,10 +3004,11 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -3023,12 +3017,10 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = NO;
-				GCC_PREFIX_HEADER = "PVGenesis/PVGenesis-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = PVGenesis/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 15.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3111,6 +3103,18 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVEmulatorCore;
 		};
+		B3816DFB2CA919B400DBA1A0 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3816E172CA92C0C00DBA1A0 /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
+		B3816E1A2CA92C7300DBA1A0 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3125,6 +3129,18 @@
 		B30E9AF52C6FBA1D00C1431E /* PVEmulatorCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVEmulatorCore;
+		};
+		B3816DFC2CA919B400DBA1A0 /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3816E182CA92C0C00DBA1A0 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		B3816E1B2CA92C7300DBA1A0 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
 		};
 		B3AFCF7D2977A70400A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;

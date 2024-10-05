@@ -24,21 +24,25 @@ struct GamesDisplayOptionsView: SwiftUI.View {
     var toggleSortAction: () -> Void
     var toggleViewTypeAction: () -> Void
 
+    let font: Font = .system(.footnote, design: .default)
+    let spacing: CGFloat = 12
+    let padding: CGFloat = 10
+    
     var body: some SwiftUI.View {
-        HStack(spacing: 12) {
+        HStack(spacing: spacing) {
             Spacer()
-            OptionsIndicator(pointDown: true, action: { toggleFilterAction() }) {
-                Text("Filter").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
-            }
+//            OptionsIndicator(pointDown: true, action: { toggleFilterAction() }) {
+//                Text("Filter").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(font)
+//            }
             OptionsIndicator(pointDown: sortAscending, action: { toggleSortAction() }) {
-                Text("Sort").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(.system(size: 13))
+                Text("Sort").foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor).font(font)
             }
             OptionsIndicator(pointDown: true, action: { toggleViewTypeAction() }) {
                 Image(systemName: isGrid == true ? "square.grid.3x3.fill" : "line.3.horizontal")
                     .foregroundColor(ThemeManager.shared.currentTheme.gameLibraryText.swiftUIColor)
-                    .font(.system(size: 13, weight: .light))
+                    .font(font.weight(.light))
             }
-            .padding(.trailing, 10)
+            .padding(.trailing, padding)
         }
     }
 }

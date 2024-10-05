@@ -13,8 +13,12 @@
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeIconFile</key>
+			<string>LaunchImageTV</string>
 			<key>CFBundleTypeIconFiles</key>
 			<array/>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>ROM</string>
 			<key>CFBundleTypeRole</key>
@@ -29,6 +33,8 @@
 		<dict>
 			<key>CFBundleTypeIconFiles</key>
 			<array/>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Save State</string>
 			<key>CFBundleTypeRole</key>
@@ -43,6 +49,8 @@
 		<dict>
 			<key>CFBundleTypeIconFiles</key>
 			<array/>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>1</integer>
 			<key>CFBundleTypeName</key>
 			<string>Artwork</string>
 			<key>CFBundleTypeRole</key>
@@ -119,7 +127,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>CFBundleURLIconFile</key>
-			<string>URLIcon-83.5@2x</string>
+			<string>LaunchImageTV</string>
 			<key>CFBundleURLName</key>
 			<string>org.provenance-emu.provenance</string>
 			<key>CFBundleURLSchemes</key>
@@ -385,7 +393,9 @@
 					<string>sgb</string>
 					<string>gba</string>
 					<string>nes</string>
+					<string>nds</string>
 					<string>fds</string>
+					<string>dsi</string>
 					<string>lnx</string>
 					<string>ngp</string>
 					<string>ngc</string>
@@ -411,6 +421,8 @@
 					<string>tzx</string>
 					<string>chd</string>
 					<string>rvz</string>
+					<string>vec</string>
+					<string>j64</string>
 				</array>
 			</dict>
 			<key>UTTypeConformsTo</key>
@@ -474,6 +486,8 @@
 					<string>tzx</string>
 					<string>chd</string>
 					<string>rvz</string>
+					<string>vec</string>
+					<string>j64</string>
 				</array>
 				<key>public.mime-type</key>
 				<array>
@@ -522,6 +536,8 @@
 			</dict>
 		</dict>
 		<dict>
+			<key>CFBundleIdentifier</key>
+			<string>/com.provenance.rom.atari.jaguar</string>
 			<key>UTITagTypeSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
@@ -537,6 +553,8 @@
 			<string>Save State</string>
 			<key>UTTypeIconFiles</key>
 			<array/>
+			<key>UTTypeIcons</key>
+			<dict/>
 			<key>UTTypeIdentifier</key>
 			<string>com.provenance.savestate</string>
 			<key>UTTypeTagSpecification</key>
@@ -604,6 +622,36 @@
 				<array>
 					<string>application/x-rar</string>
 					<string>application/x-rar-compressed</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Jaguar Software</string>
+			<key>UTTypeIconFile</key>
+			<string>LaunchImageTV</string>
+			<key>UTTypeIcons</key>
+			<dict>
+				<key>UTTypeIconBadgeName</key>
+				<string>LaunchImageTV</string>
+				<key>UTTypeIconText</key>
+				<string>Jaguar</string>
+			</dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.provenance.rom.atari.jaguar</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>jag</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>application/com.provenance.rom.atari.jaguar</string>
 				</array>
 			</dict>
 		</dict>

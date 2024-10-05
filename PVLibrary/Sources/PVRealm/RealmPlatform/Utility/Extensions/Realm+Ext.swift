@@ -3,13 +3,13 @@ import RealmSwift
 import RxSwift
 
 extension RealmSwift.Object {
-    static func build<O: RealmSwift.Object>(_ builder: (O) -> Void) async -> O {
+    static func build<O: RealmSwift.Object>(_ builder: (O) -> Void) -> O {
         let object = O()
         builder(object)
         return object
     }
     
-    static func build<O: RealmSwift.Object>(_ builder: (O) async -> Void) async -> O {
+    static func asyncBuild<O: RealmSwift.Object>(_ builder: (O) async -> Void) async -> O {
         let object = O()
         await builder(object)
         return object

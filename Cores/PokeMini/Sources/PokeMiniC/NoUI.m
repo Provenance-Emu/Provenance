@@ -48,7 +48,7 @@ int UIItems_PlatformDefC(int index, int reason)
 	return 1;
 }
 
-static int OpenEmu_KeysMapping[10] =
+int OpenEmu_KeysMapping[10] =
 {
     0,        // Menu
     1,        // A

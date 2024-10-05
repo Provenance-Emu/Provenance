@@ -54,6 +54,30 @@ public extension CoreOptional { // where Self:PVEmulatorCore {
         broadcast.post(name: Notification.Name("OptionUpdated"), object: nil, userInfo:info)
     }
 
+    static func valueForOption(_ option: CoreOption) -> Bool {
+        return valueForOption(option).asBool
+    }
+    
+    static func valueForOption(_ option: CoreOption) -> String {
+        return valueForOption(option).asString
+    }
+    
+    static func valueForOption(_ option: CoreOption) -> Int? {
+        return valueForOption(option).asInt ?? option.defaultValue as? Int
+    }
+    
+    static func valueForOption(_ option: CoreOption) -> Float? {
+        return valueForOption(option).asFloat ?? option.defaultValue as? Float
+    }
+    
+    static func valueForOption(_ option: CoreOption) -> Int {
+        return valueForOption(option).asInt ?? option.defaultValue as! Int
+    }
+    
+    static func valueForOption(_ option: CoreOption) -> Float {
+        return valueForOption(option).asFloat ?? option.defaultValue as! Float
+    }
+    
     static func valueForOption(_ option: CoreOption) -> CoreOptionValue {
         switch option {
         case let .bool(_, defaultValue):

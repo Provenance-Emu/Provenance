@@ -101,19 +101,19 @@ public struct CGABlueThemePalette: UXThemePalette, Codable, Sendable, Hashable {
     public var switchThumb: UIColor? { .CGA.blueShadow }
     public var switchON: UIColor? { .CGA.blue }
 
-    public var gameLibraryBackground: UIColor { .CGA.blueShadow }
+    public var gameLibraryBackground: UIColor { .black }
     public var gameLibraryText: UIColor { .CGA.blue }
 
-    public var gameLibraryHeaderBackground: UIColor { .CGA.blueShadow }
+    public var gameLibraryHeaderBackground: UIColor { .black }
     public var gameLibraryHeaderText: UIColor { .CGA.blue }
 
-    public var navigationBarBackgroundColor: UIColor? { .CGA.blueShadow }
+    public var navigationBarBackgroundColor: UIColor? { .black }
     public var barButtonItemTint: UIColor? { .CGA.blue }
 
-    public var settingsHeaderBackground: UIColor? { .CGA.blueShadow }
+    public var settingsHeaderBackground: UIColor? { .black }
     public var settingsHeaderText: UIColor? { .CGA.blue }
 
-    public var settingsCellBackground: UIColor? { .CGA.blueShadow }
+    public var settingsCellBackground: UIColor? { .CGA.blueShadow.brightness(0.2) }
     public var settingsCellText: UIColor? { .CGA.blue }
 }
 

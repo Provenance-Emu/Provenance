@@ -18,6 +18,23 @@ import PVRealm
 
 // TODO: might be able to reuse this view for collections
 
+
+struct ConsoleGamesFilterModeFlags: OptionSet {
+    let rawValue: Int
+    
+    // Played
+    static let played = ConsoleGamesFilterModeFlags(rawValue: 1 << 0)
+    
+    // Never played
+    static let neverPlayed = ConsoleGamesFilterModeFlags(rawValue: 1 << 1)
+    
+    // Recently Imported
+    static let recentlyImported = ConsoleGamesFilterModeFlags(rawValue: 1 << 2)
+    
+    // Recently played
+    static let recentlyPlayed = ConsoleGamesFilterModeFlags(rawValue: 1 << 3)
+}
+
 @available(iOS 14, tvOS 14, *)
 struct ConsoleGamesView: SwiftUI.View {
 
@@ -44,8 +61,24 @@ struct ConsoleGamesView: SwiftUI.View {
 
     func filteredAndSortedGames() -> Results<PVGame> {
         // TODO: if filters are on, apply them here before returning
+        
+        let gamesForSystemPredicate = NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier])
+        
+        // Build predate based on self.filter
+//        let filterPredicate: NSPredicate = {
+//            var predicates: [String] = []
+//            if filter.contains(.played) { predicates.append("playCount > 0")}
+//            if filter.contains(.neverPlayed) { predicates.append("playCount == 0") }
+//            if filter.contains(.recentlyPlayed) { predicates.append("lastPlayedDate > Date() - 1.week") }
+//            if filter.contains(.recentlyImported) { predicates.append("importDate > Date() - 1.week") }
+//
+//            let predicate = predicates.joined(separator: " OR ")
+//            return NSPredicate(format: predicate)
+//        }()
+        
         return games
-            .filter(NSPredicate(format: "systemIdentifier == %@", argumentArray: [console.identifier]))
+            .filter(gamesForSystemPredicate)
+//            .filter(filterPredicate)
             .sorted(by: [SortDescriptor(keyPath: #keyPath(PVGame.title), ascending: viewModel.sortGamesAscending)])
     }
 
@@ -71,6 +104,8 @@ struct ConsoleGamesView: SwiftUI.View {
     @State private var zooming: Bool = false
 
     @State private var padding: CGFloat = 2
+    
+    @State private var filter: ConsoleGamesFilterModeFlags = []
 
     var body: some SwiftUI.View {
         let columns = [
@@ -89,7 +124,7 @@ struct ConsoleGamesView: SwiftUI.View {
                     LazyVGrid(columns: columns, spacing: 20) {
                         ForEach(filteredAndSortedGames(), id: \.self) { game in
                             GameItemView(game: game) {
-                                Task {
+                                Task.detached { @MainActor in
                                     await rootDelegate?.root_load(game, sender: self, core: nil, saveState: nil)
                                 }
                             }

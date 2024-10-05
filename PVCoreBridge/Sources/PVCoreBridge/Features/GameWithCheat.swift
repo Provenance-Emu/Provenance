@@ -61,3 +61,7 @@ public extension Collection where Self.Element == CheatCodeTypes {
     @objc(resetCheatCodes)
     optional func resetCheatCodes()
 }
+
+//extension GameWithCheat where Self: ObjCBridgedCore {
+//    public var supportsCheatCode: Bool { (((bridge as? GameWithCheat)?.supportsCheatCode) != nil) }
+//}

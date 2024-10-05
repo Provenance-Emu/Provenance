@@ -24,10 +24,10 @@
 namespace Mednafen
 {
 
-MDFN_HIDE extern NativeVFS NVFS;
+/*MDFN_HIDE*/ extern NativeVFS NVFS;
 
 // Points to a dynamically-allocated object, created with data from Emulated*.
-MDFN_HIDE extern MDFNGI* MDFNGameInfo;
+/*MDFN_HIDE*/ extern MDFNGI* MDFNGameInfo;
 
 enum MDFN_NoticeType : uint8
 {

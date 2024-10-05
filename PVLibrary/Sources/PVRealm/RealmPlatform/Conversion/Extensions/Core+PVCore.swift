@@ -38,13 +38,13 @@ extension Core: RealmRepresentable {
         return identifier
     }
 
-    public func asRealm() async -> PVCore {
-        let realm = try! await Realm()
+    public func asRealm() -> PVCore {
+        let realm = try! Realm()
         if let existing = realm.object(ofType: PVCore.self, forPrimaryKey: identifier) {
             return existing
         }
 
-        return await PVCore.build({ object in
+        return PVCore.build({ object in
             object.identifier = identifier
             object.principleClass = principleClass
             object.projectName = project.name

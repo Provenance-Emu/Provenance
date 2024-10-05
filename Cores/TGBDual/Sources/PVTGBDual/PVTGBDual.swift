@@ -20,40 +20,29 @@ import GameController
 
 @objc
 @objcMembers
-public final class PVTGBDualCore: PVEmulatorCore, ObjCBridgedCore, @unchecked Sendable {
+public final class PVTGBDualCore: PVEmulatorCore, @unchecked Sendable {
     
-    // PVEmulatorCoreBridged
-    public typealias Bridge = PVTGBDualBridge
-    public lazy var bridge: Bridge = {
-        let core = Bridge()
-        return core
-    }()
-    
-#if canImport(GameController)
-    @MainActor
-    public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
-#endif
-    
-    @MainActor
-    public var _videoBuffer: UnsafeMutablePointer<UInt16>? = nil // uint16_t *_videoBuffer;
-
-    @MainActor
-    public var _videoWidth: Int = 0
-    @MainActor
-    public var _videoHeight: Int = 0
-
     // TGBDual
-    @MainActor
-    public var _sampleRate: Double = 44100.0
-    @MainActor
-    public var _frameInterval: TimeInterval = 0
-
-    @MainActor
-    public var emulationHasRun: Bool = false
-
+    private var _sampleRate: Double = 44100
+    override public var sampleRate: Double { get {_sampleRate}
+        set {
+            _sampleRate = newValue
+            bridge.sampleRate = newValue
+        }}
 //    // MARK: Lifecycle
-//
-//    public required init() {
-//        super.init()
-//    }
+
+    public required init() {
+        super.init()
+        self.bridge = PVTGBDualBridge() as! any ObjCBridgedCoreBridge
+    }
+}
+
+extension PVTGBDualCore: PVGBSystemResponderClient {
+    public func didPush(_ button: PVCoreBridge.PVGBButton, forPlayer player: Int) {
+        (bridge as! PVGBSystemResponderClient).didPush(button, forPlayer: player)
+    }
+    
+    public func didRelease(_ button: PVCoreBridge.PVGBButton, forPlayer player: Int) {
+        (bridge as! PVGBSystemResponderClient).didRelease(button, forPlayer: player)
+    }
 }

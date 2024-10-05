@@ -1,5 +1,5 @@
 //
-//  PVLibRetroGLESCore.swift
+//  PVLibRetroGLESCoreBridge.swift
 //  
 //
 //  Created by Joseph Mattiello on 5/23/24.
@@ -11,6 +11,6 @@ import Foundation
 
 @objc
 @objcMembers
-open class PVLibRetroGLESCore : PVLibRetroCore, @unchecked Sendable {
+open class PVLibRetroGLESCoreBridge : PVLibRetroCoreBridge, @unchecked Sendable {
 
 }

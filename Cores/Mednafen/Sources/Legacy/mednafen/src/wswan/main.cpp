@@ -653,7 +653,7 @@ static const FileExtensionSpecStruct KnownExtensions[] =
 
 using namespace MDFN_IEN_WSWAN;
 
-MDFN_HIDE extern const MDFNGI EmulatedWSwan =
+/*MDFN_HIDE*/ extern const MDFNGI EmulatedWSwan =
 {
  "wswan",
  "WonderSwan",

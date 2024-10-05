@@ -27,7 +27,7 @@ public extension MupenGameCore { // Controls
     }
     
     func setMode(_ mode: MupenGameCore.ControllerMode, forController controller: UInt) {
-        self.controllerMode[controller] = mode
+        self._bridge.controllerMode[controller] = mode
     }
     
 }

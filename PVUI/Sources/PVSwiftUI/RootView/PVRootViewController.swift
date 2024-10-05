@@ -13,6 +13,7 @@ import Foundation
 #if canImport(UIKit)
 import UIKit
 #endif
+import RxSwift
 import PVUIBase
 import SwiftUI
 import RealmSwift

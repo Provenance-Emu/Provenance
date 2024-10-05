@@ -61,7 +61,7 @@ let package = Package(
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
 //                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],
@@ -69,7 +69,7 @@ let package = Package(
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
 //                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],
@@ -101,7 +101,7 @@ let package = Package(
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
 //                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],
@@ -113,7 +113,7 @@ let package = Package(
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
 //                .headerSearchPath("../libstella/stella/src/os/libretro/"),
             ],
@@ -139,14 +139,14 @@ let package = Package(
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
             ],
             cxxSettings: [
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
                 .unsafeFlags([
                     "-fmodules",
@@ -213,13 +213,13 @@ let package = Package(
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
                 .define("INLINE", to: "inline"),
                 .define("USE_STRUCTS", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
                 .define("__LIB_RETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
                 .define("__GCCUNIX__", to: "1"),
                 .define("TARGET_IPHONE", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
                 .define("NEON", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
@@ -239,35 +239,35 @@ let package = Package(
                     "-fno-aligned-allocation"
                 ]),
                 .unsafeFlags([
-                    "-flto"
+//                    "-flto"
                 ], .when(configuration: .release))
             ],
             cxxSettings: [
-                .define("LSB_FIRST", to: "1"),
-                .define("HAVE_MKDIR", to: "1"),
-                .define("SIZEOF_DOUBLE", to: "8"),
-                .define("PSS_STYLE", to: "1"),
-                .define("MPC_FIXED_POINT"),
                 .define("ARCH_X86"),
-                .define("WANT_STELLA_EMU", to: "1"),
-                .define("STDC_HEADERS", to: "1"),
-                .define("HAVE_INTTYPES", to: "1"),
-                .define("Keyboard", to: "StellaKeyboard"),
-                .define("_GLIBCXX_USE_CXX11_ABI", to: "1"),
-                .define("UNIX", to: "1"),
-                .define("DARWIN", to: "1"),
-                .define("MACOS_KEYS", to: "1"),
-                .define("SOUND_SUPPORT", to: "1"),
-                .define("JOYSTICK_SUPPORT"),
-                .define("CHEATCODE_SUPPORT"),
                 .define("ARM"),
-                .define("IOS"),
+                .define("CHEATCODE_SUPPORT"),
+                .define("DARWIN", to: "1"),
+                .define("HAVE_COCOATOUCH", to: "1"),
+                .define("HAVE_INTTYPES", to: "1"),
+                .define("HAVE_MKDIR", to: "1"),
                 .define("INLINE", to: "inline"),
+                .define("IOS"),
+                .define("JOYSTICK_SUPPORT"),
+                .define("Keyboard", to: "StellaKeyboard"),
+                .define("LSB_FIRST", to: "1"),
+                .define("MACOS_KEYS", to: "1"),
+                .define("MPC_FIXED_POINT"),
+                .define("PSS_STYLE", to: "1"),
+                .define("SIZEOF_DOUBLE", to: "8"),
+                .define("SOUND_SUPPORT", to: "1"),
+                .define("STDC_HEADERS", to: "1"),
+                .define("UNIX", to: "1"),
                 .define("USE_STRUCTS", to: "1"),
+                .define("WANT_STELLA_EMU", to: "1"),
+                .define("_GLIBCXX_USE_CXX11_ABI", to: "1"),
+                .define("__GCCUNIX__", to: "1"),
                 .define("__LIBRETRO__", to: "1"),
                 .define("__LIB_RETRO__", to: "1"),
-                .define("HAVE_COCOATOJUCH", to: "1"),
-                .define("__GCCUNIX__", to: "1"),
                 .define("TARGET_IPHONE", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
                 .define("NEON", to: "1", .when(platforms: [.iOS, .tvOS, .visionOS])),
                 .headerSearchPath("stella/src/cheat/"),
@@ -296,7 +296,7 @@ let package = Package(
                     "-Wnon-virtual-dtor",
                 ]),
                 .unsafeFlags([
-                    "-flto",
+//                    "-flto",
                     "-fno-rtti",
                     "-Wno-poison-system-directories"
                 ], .when(configuration: .release))
@@ -305,11 +305,12 @@ let package = Package(
 
         // MARK: ------- Tests ---------
 
-        .testTarget(name: "PVStellaTests",
-                    dependencies: ["PVStella"],
-                    swiftSettings: [
-                        .interoperabilityMode(.Cxx)
-                    ])
+        .testTarget(
+            name: "PVStellaTests",
+            dependencies: ["PVStella"],
+            swiftSettings: [
+                .interoperabilityMode(.Cxx)
+            ])
     ],
     swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu99,

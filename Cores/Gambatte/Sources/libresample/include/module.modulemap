@@ -1,0 +1,5 @@
+module libresample {
+    header "../common/resample/resampler.h"
+    header "../common/transfer_ptr.h"
+    export *
+}

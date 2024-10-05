@@ -1,0 +1,4 @@
+module PVCoreGenesisPlusBridge {
+    header "../PVCoreGenesisPlusBridge.h"
+    export *
+}

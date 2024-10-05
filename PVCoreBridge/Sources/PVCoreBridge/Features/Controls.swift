@@ -16,27 +16,27 @@ import Foundation
 
 @objc public protocol ButtonResponder {
 #if canImport(GameController)
-	var valueChangedHandler: GCExtendedGamepadValueChangedHandler? { get }
+    @objc var valueChangedHandler: GCExtendedGamepadValueChangedHandler? { get }
 #endif
 //    func didPush(_ button: Int, forPlayer player: Int)
 //    func didRelease(_ button: Int, forPlayer player: Int)
 }
 
 @objc public protocol JoystickResponder {
-    func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int)
+    @objc func didMoveJoystick(_ button: Int, withXValue xValue: CGFloat, withYValue yValue: CGFloat, forPlayer player: Int)
 }
 
 @objc public protocol KeyboardResponder {
-    var gameSupportsKeyboard: Bool { get }
-    var requiresKeyboard: Bool { get }
+    @objc var gameSupportsKeyboard: Bool { get }
+    @objc var requiresKeyboard: Bool { get }
 #if canImport(GameController)
-    var keyChangedHandler: GCKeyboardValueChangedHandler? { get }
+    @objc optional var keyChangedHandler: GCKeyboardValueChangedHandler? { get }
     @available(iOS 14.0, tvOS 14.0, *)
-    func keyDown(_ key: GCKeyCode)
+    @objc func keyDown(_ key: GCKeyCode)
     //	func keyDown(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
     
     @available(iOS 14.0, tvOS 14.0, *)
-    func keyUp(_ key: GCKeyCode)
+    @objc func keyUp(_ key: GCKeyCode)
     //	func keyUp(_ key: GCKeyCode, chararacters: String, charactersIgnoringModifiers: String)
 #endif
 }
@@ -1052,9 +1052,9 @@ import Foundation
 
 @objc public protocol PVLynxSystemResponderClient: ResponderClient, ButtonResponder {
     @objc(didPushLynxButton:forPlayer:)
-    func didPush(_ button: PVLynxButton, forPlayer player: Int)
+    func didPush(LynxButton: PVLynxButton, forPlayer player: Int)
     @objc(didReleaseLynxButton:forPlayer:)
-    func didRelease(_ button: PVLynxButton, forPlayer player: Int)
+    func didRelease(LynxButton: PVLynxButton, forPlayer player: Int)
 }
 
 // MARK: - Neo Geo Pocket + Color
@@ -1115,8 +1115,8 @@ import Foundation
 }
 
 @objc public protocol PVJaguarSystemResponderClient: ResponderClient, ButtonResponder {
-    @objc func didPush(jaguarButton button: PVJaguarButton, forPlayer player: Int)
-    @objc func didRelease(jaguarButton button: PVJaguarButton, forPlayer player: Int)
+    @objc(didPushJaguarButton:forPlayer:) func didPush(jaguarButton button: PVJaguarButton, forPlayer player: Int)
+    @objc(didReleaseJaguarButton:forPlayer:) func didRelease(jaguarButton button: PVJaguarButton, forPlayer player: Int)
 }
 
 // MARK: - Sega Saturn

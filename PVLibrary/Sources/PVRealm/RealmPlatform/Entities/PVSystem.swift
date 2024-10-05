@@ -206,8 +206,8 @@ extension System: RealmRepresentable {
         return identifier
     }
 
-    public func asRealm() async -> PVSystem {
-        return await PVSystem.build({ object in
+    public func asRealm() -> PVSystem {
+        return PVSystem.build({ object in
             object.name = name
             object.shortName = shortName
             object.shortNameAlt = shortNameAlt

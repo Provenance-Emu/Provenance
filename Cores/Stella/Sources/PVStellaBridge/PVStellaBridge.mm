@@ -61,6 +61,8 @@
     unsigned region;
 }
 @property (nonatomic, strong) NSMutableArray<NSString*>* cheats;
+@property (readwrite, nonatomic, copy) PVStellaBridgeOptionHandler optionHandler;
+
 @end
 
 static __weak PVStellaBridge *_current;
@@ -73,8 +75,8 @@ int16_t _pad[NUMBER_OF_PADS][NUMBER_OF_PAD_INPUTS];
 static void audio_callback(int16_t left, int16_t right) {
     __strong PVStellaBridge *strongCurrent = _current;
 
-	[[strongCurrent ringBufferAtIndex:0] writeBuffer:&left maxLength:2];
-    [[strongCurrent ringBufferAtIndex:0] writeBuffer:&right maxLength:2];
+	[[strongCurrent ringBufferAtIndex:0] write:&left size:2];
+    [[strongCurrent ringBufferAtIndex:0] write:&right size:2];
 
     strongCurrent = nil;
 }
@@ -82,7 +84,7 @@ static void audio_callback(int16_t left, int16_t right) {
 static size_t audio_batch_callback(const int16_t *data, size_t frames) {
     __strong PVStellaBridge *strongCurrent = _current;
 
-    [[strongCurrent ringBufferAtIndex:0] writeBuffer:data maxLength:frames << 2];
+    [[strongCurrent ringBufferAtIndex:0] write:data size:frames << 2];
 
     strongCurrent = nil;
     
@@ -174,14 +176,27 @@ static bool environment_callback(unsigned cmd, void *data) {
             struct retro_variable *var = (struct retro_variable*)data;
             NSString *varS = [NSString stringWithUTF8String:var->key];
             id _Nullable oValue = strongCurrent.optionHandler(varS); //[strongCurrent getVariable:varS];
-
-            NSString *value = [oValue string];
-            if(oValue && value && value.length) {
-                var->value = [value cStringUsingEncoding:kCFStringEncodingUTF8];
-                return true;
+            
+            if ([oValue isKindOfClass:[NSString class]]) {
+                NSString *value = oValue;
+                if(oValue && value && value.length) {
+                    var->value = [value cStringUsingEncoding:kCFStringEncodingUTF8];
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if ([oValue isKindOfClass:[NSNumber class]]) {
+                NSNumber *value = oValue;
+                if(value) {
+                    var->value = [[value stringValue] cStringUsingEncoding:kCFStringEncodingUTF8];
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
+
         }
         default : {
             DLOG(@"Environ UNSUPPORTED (#%u).\n", cmd);
@@ -240,7 +255,7 @@ static void writeSaveFile(const char* path, int type) {
 - (instancetype)initWithOptionHandler:(PVStellaBridgeOptionHandler)optionHandler {
     if((self = [super init])) {
         _current = self;
-        _optionHandler = optionHandler;
+        self.optionHandler = optionHandler;
     }
 
 	return self;
@@ -467,13 +482,6 @@ static void writeSaveFile(const char* path, int type) {
     }
 }
 
-- (void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player {
-    _pad[player][A2600EmulatorValues[button]] = 1;
-}
-
-- (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player {
-    _pad[player][A2600EmulatorValues[button]] = 0;
-}
 #endif
 
 #pragma mark - Video
@@ -527,7 +535,7 @@ static void writeSaveFile(const char* path, int type) {
 }
 
 - (NSTimeInterval)frameInterval {
-    NSTimeInterval frameInterval = (self.frameInterval > 0) ? self.frameInterval : 60.0;
+    NSTimeInterval frameInterval = (_frameInterval > 0) ? _frameInterval : 60.0;
     return frameInterval;
 }
 
@@ -710,4 +718,14 @@ static void writeSaveFile(const char* path, int type) {
     }
 }
 
+@end
+
+@implementation PVStellaBridge (PV2600SystemResponderClient)
+- (void)didPushPV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player {
+    _pad[player][A2600EmulatorValues[button]] = 1;
+}
+
+- (void)didReleasePV2600Button:(PV2600Button)button forPlayer:(NSUInteger)player {
+    _pad[player][A2600EmulatorValues[button]] = 0;
+}
 @end

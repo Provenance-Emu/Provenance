@@ -71,7 +71,7 @@ int FileExist(const char *filename)
 // Get filename
 char *GetFilename(const char *filename)
 {
-    size_t i;
+    int i;
 	for (i = strlen(filename)-1; i >= 0; i--) {
 		if ((filename[i] == '/') || (filename[i] == '\\')) {
 			return (char *)&filename[i+1];
@@ -83,7 +83,7 @@ char *GetFilename(const char *filename)
 // Get extension
 char *GetExtension(const char *filename)
 {
-    size_t i;
+    int i;
 	for (i = strlen(filename)-1; i >= 0; i--) {
 		if (filename[i] == '.') {
 			return (char *)&filename[i];
@@ -96,7 +96,7 @@ char *GetExtension(const char *filename)
 // Extract path
 char *ExtractPath(char *filename, int slash)
 {
-    size_t i;
+    int i;
 	for (i = strlen(filename)-1; i >= 0; i--) {
 		if ((filename[i] == '/') || (filename[i] == '\\')) {
 			if (slash) filename[i+1] = 0;
@@ -115,7 +115,7 @@ char *ExtractPath(char *filename, int slash)
 // Remove extension
 char *RemoveExtension(char *filename)
 {
-    size_t i;
+    int i;
 	for (i = strlen(filename)-1; i >= 0; i--) {
 		if (filename[i] == '.') {
 			filename[i] = 0;
@@ -131,7 +131,7 @@ char *RemoveExtension(char *filename)
 // Check if filename has certain extension
 int ExtensionCheck(const char *filename, const char *ext)
 {
-    size_t i;
+    int i;
 	for (i = strlen(filename)-1; i >= 0; i--) {
 		if (filename[i] == '.') {
 			if (strcasecmp(&filename[i], ext) == 0) {
@@ -148,7 +148,7 @@ int ExtensionCheck(const char *filename, const char *ext)
 // true if the path ends with a slash
 int HasLastSlash(char *path)
 {
-    size_t len = strlen(path);
+    int len = strlen(path);
 	if (!len) return 0;
 	return (path[len-1] == '/') || (path[len-1] == '\\');
 }
@@ -156,12 +156,13 @@ int HasLastSlash(char *path)
 // Convert slashes to windows type
 void ConvertSlashes(char *filename, int slashtype)
 {
-    size_t i;
-	for (i = strlen(filename)-1; i >= 0; i--) {
+    int length = strlen(filename);
+	for (int i = length - 1; i >= 0; i--) {
+        printf("i: %d\n", i);
 		if ((filename[i] == '/') || (filename[i] == '\\')) {
-			if (slashtype == 0) filename[i] = PATH_SLASH_CHR;
-			else if (slashtype == 1) filename[i] = '/';
-			else if (slashtype == 2) filename[i] = '\\';
+			if (slashtype == PATH_SLASH_OS) filename[i] = PATH_SLASH_CHR;
+			else if (slashtype == PATH_SLASH_UNIX) filename[i] = '/';
+            else if (slashtype == PATH_SLASH_WIN) filename[i] = '\\';
 		}
 	}
 }
@@ -169,7 +170,7 @@ void ConvertSlashes(char *filename, int slashtype)
 // Trim string
 char *TrimStr(char *s)
 {
-    size_t siz = strlen(s);
+    int siz = strlen(s);
 	char *ptr = s + siz - 1;
 	if (!siz) return s;
 	while ((ptr >= s) && (isspace((int)*ptr) || (*ptr == '\n') || (*ptr == '\r'))) --ptr;
@@ -254,7 +255,7 @@ const char *Bool2StrAf(int i)
 // Fix symbol identification
 void FixSymbolID(char *filename)
 {
-    size_t i;
+    int i;
 	for (i = strlen(filename)-1; i >= 0; i--) {
 		if (((filename[i] < '0') || (filename[i] > '9')) &&
 		    ((filename[i] < 'a') || (filename[i] > 'z')) &&
@@ -471,15 +472,28 @@ void PokeMini_GetCustomDir(char *dir, int max)
 		PokeDPrint(POKEMSG_ERR, "getcwd() error\n");
 	}
 	if (!strlen(dir)) strcpy(dir, "/");
-	else ConvertSlashes(dir, PATH_SLASH_UNIX);
+	else ConvertSlashes(dir, PATH_SLASH_OS);
 }
 
 // Go to custom directory
 void PokeMini_GotoCustomDir(const char *dir)
 {
 	char buffer[PMTMPV];
-	strcpy(buffer, dir);
-	ConvertSlashes(buffer, PATH_SLASH_OS);
+    // Zero out the buffer
+    memset(buffer, 0, PMTMPV);
+
+    // Copy the string safely
+    strncpy(buffer, dir, PMTMPV - 1);
+
+    // Ensure null-termination
+    buffer[PMTMPV - 1] = '\0';
+
+    // Optionally, check if the string was truncated
+    if (strlen(dir) >= PMTMPV) {
+        // Handle truncation, maybe log a warning
+        fprintf(stderr, "Warning: dir string was truncated\n");
+    }
+    ConvertSlashes(buffer, PATH_SLASH_OS);
 	if (chdir(buffer)) {
 		PokeDPrint(POKEMSG_ERR, "abs chdir('%s') error\n", buffer);
 	}

@@ -14,7 +14,7 @@ import PVLogging
 public extension URL {
     
     private
-    static var iCloudContainerDirectoryCached: URL? = {
+    static let iCloudContainerDirectoryCached: URL? = {
         if Thread.isMainThread {
             var container: URL?
             DispatchQueue.global(qos: .background).sync {

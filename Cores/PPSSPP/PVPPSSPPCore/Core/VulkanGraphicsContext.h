@@ -10,13 +10,18 @@
 #import "PVPPSSPPCore+Video.h"
 #import <PVPPSSPP/PVPPSSPP-Swift.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
-#import <PVLogging/PVLogging.h>
+@import PVSupport;
+@import PVEmulatorCore;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
+@import PVLoggingObjC;
 
 /* PPSSPP Includes */
+#ifdef __cplusplus
 #include <vector>
 #include <string>
 #include <cstring>
+#endif
 
 #include "Common/System/Display.h"
 #include "Common/System/NativeApp.h"

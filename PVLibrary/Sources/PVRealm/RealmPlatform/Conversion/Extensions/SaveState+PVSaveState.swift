@@ -47,21 +47,21 @@ extension SaveState: RealmRepresentable {
 
     @MainActor
     public func asRealm() async -> PVSaveState {
-        return await PVSaveState.build { object in
+        return PVSaveState.build { object in
 
             object.id = id
-            let realm = try! await Realm()
+            let realm = try! Realm()
             
             if let rmGame = realm.object(ofType: PVGame.self, forPrimaryKey: game.md5) {
                 object.game = rmGame
             } else {
-                object.game = await game.asRealm()
+                object.game = game.asRealm()
             }
 
             if let rmCore = realm.object(ofType: PVCore.self, forPrimaryKey: core.identifier) {
                 object.core = rmCore
             } else {
-                object.core = await core.asRealm()
+                object.core = core.asRealm()
             }
 
             Task {

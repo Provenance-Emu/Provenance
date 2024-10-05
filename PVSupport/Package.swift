@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PVSupport",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v15),
         .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),

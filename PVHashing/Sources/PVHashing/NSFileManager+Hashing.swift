@@ -1,5 +1,6 @@
 import Checksum
 import Foundation
+import PVLogging
 
 @objc
 public extension FileManager {
@@ -20,10 +21,10 @@ public extension FileManager {
 
         do {
             let md5Hash = try calculateMD5Synchronously(of: url, startingAt: offset)
-            print("MD5 Hash: \(md5Hash)")
+            VLOG("MD5 Hash: \(md5Hash)")
             return md5Hash
         } catch {
-            print("An error occurred: \(error)")
+            ELOG("An error occurred: \(error)")
             return nil
         }
     }
@@ -96,7 +97,7 @@ func calculateMD5Synchronously(of fileURL: URL, startingAt offset: UInt64 = 0) t
 
     if let error = returnedError {
         // Handle the error appropriately in your application context.
-        print("Error occurred: \(error)")
+        ELOG("Error occurred: \(error)")
         throw error
     }
 

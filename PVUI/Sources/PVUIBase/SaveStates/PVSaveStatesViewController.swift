@@ -59,14 +59,14 @@ final class PVSaveStatesViewController: UICollectionViewController {
         }
         autoSaves = allSaves.filter("isAutosave == true")
         manualSaves = allSaves.filter("isAutosave == false")
-        Task {
-            await allSaves.concurrentForEach { save in
-                if await !FileManager.default.fileExists(atPath: save.file.url.path) {
+//        Task {
+            allSaves.forEach { save in
+                if !FileManager.default.fileExists(atPath: save.file.url.path) {
                     do {
-                        try await PVSaveState.delete(save)
+                        try PVSaveState.delete(save)
                         self.refreshSaves()
                     } catch {
-                        NSLog("Error deleting save state: \(error.localizedDescription)")
+                        ELOG("Error deleting save state: \(error.localizedDescription)")
                     }
                 }
             }
@@ -74,7 +74,7 @@ final class PVSaveStatesViewController: UICollectionViewController {
                 guard let self = self else { return }
                 self.collectionView?.reloadData()
             }
-        }
+//        }
     }
 
     public override func viewDidLoad() {

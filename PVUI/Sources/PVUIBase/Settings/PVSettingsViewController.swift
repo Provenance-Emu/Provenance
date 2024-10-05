@@ -420,6 +420,14 @@ final class PVSettingsViewController: QuickTableViewController {
                                 detailText: .subtitle("Use newer Metal backend instead of OpenGL. Some cores may experience color or size issues with this mode."),
                                 key: .useMetal, icon: .sfSymbol("m.square.fill")),
             
+            PVSettingsSwitchRow(text: NSLocalizedString("Use Legacy Audio Engine", comment: "Use Legacy Audio Engine"),
+                                detailText: .subtitle("Use the older CoreAudio audio engine instead of AVAudioEngine"),
+                                key: .useLegacyAudioEngine, icon: .sfSymbol("waveform")),
+            
+            PVSettingsSwitchRow(text: NSLocalizedString("Mono Audio", comment: "Mono Audio"),
+                                detailText: .subtitle("Mix all audio in mono. The Legacy Audio Engine is not supported."),
+                                key: .monoAudio, icon: .sfSymbol("ear.badge.waveform")),
+            
             PVSettingsSwitchRow(text: NSLocalizedString("iCloud Sync", comment: "iCloud Sync"),
                                 detailText: .subtitle("Sync core & battery saves, screenshots and BIOS's to iCloud."),
                                 key: .iCloudSync, icon: .sfSymbol("icloud")),

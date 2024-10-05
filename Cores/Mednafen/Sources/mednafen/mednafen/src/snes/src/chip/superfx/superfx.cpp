@@ -1,4 +1,4 @@
-#include <../base.hpp>
+#include "../base.hpp"
 
 #define SUPERFX_CPP
 namespace bSNES_v059 {

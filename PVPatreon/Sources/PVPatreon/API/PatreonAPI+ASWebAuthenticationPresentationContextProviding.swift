@@ -9,6 +9,7 @@
 import Foundation
 #if canImport(AuthenticationServices)
 import AuthenticationServices
+import UIKit
 
 extension PatreonAPI: ASWebAuthenticationPresentationContextProviding {
     public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {

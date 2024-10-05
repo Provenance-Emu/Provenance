@@ -21,9 +21,9 @@
 
 #include <stdint.h>
 
-#define UI_STATUS_MENU	1
-#define UI_STATUS_GAME	0
-#define UI_STATUS_EXIT	-1
+#define UI_STATUS_MENU  1
+#define UI_STATUS_GAME	  0
+#define UI_STATUS_EXIT -1
 
 // File list cache
 typedef struct {

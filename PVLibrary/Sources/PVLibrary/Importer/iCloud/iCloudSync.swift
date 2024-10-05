@@ -363,15 +363,17 @@ public enum iCloudSync {
             //        saves.forEach {
             //            fm.setUbiquitous(true, itemAt: $0.file.url, destinationURL: Paths.saveSavesPath.appendingPathComponent($0.game.file.fileNameWithoutExtension, isDirectory: true).app)
             //        }
-            jsonFiles.forEach { json in
-                do {
-                    try FileManager.default.startDownloadingUbiquitousItem(at: json)
-                } catch {
-                    ELOG("Download error: " + error.localizedDescription)
+            Task.detached {
+                jsonFiles.forEach { json in
+                    do {
+                        try FileManager.default.startDownloadingUbiquitousItem(at: json)
+                    } catch {
+                        ELOG("Download error: " + error.localizedDescription)
+                    }
                 }
             }
 
-            Task { @MainActor in
+            Task.detached { // @MainActor in
                 let realm = try! await Realm()
                 await jsonFiles.concurrentForEach { @MainActor json in
                     do {

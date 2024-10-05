@@ -8,6 +8,31 @@
 
 import Foundation
 
+public protocol CoreOptions: CoreOptional {
+    static var options: [CoreOption] { get }
+}
+
+public extension CoreOptions {
+    static public func bool(forOption option: String) -> Bool {
+        return storedValueForOption(Bool.self, option) ?? false
+    }
+    
+    static public func int(forOption option: String) -> Int {
+        let value = storedValueForOption(Int.self, option)
+        return value ?? 0
+    }
+    
+    static public func float(forOption option: String) -> Float {
+        let value = storedValueForOption(Float.self, option)
+        return value ?? 0
+    }
+    
+    static public func string(forOption option: String) -> String? {
+        let value = storedValueForOption(String.self, option)
+        return value
+    }
+}
+
 @objc @objcMembers public class CoreOptionAccessor: NSObject {
     public typealias OptionSetter = (AnyObject) -> Void
     public typealias OptionGetter = () -> AnyObject?

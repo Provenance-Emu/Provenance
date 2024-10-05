@@ -38,6 +38,7 @@
 @import PVAudio;
 @import PokeMiniC;
 @import libpokemini;
+@import PVPokeMiniOptions;
 
 #if !TARGET_OS_MACCATALYST && !TARGET_OS_OSX && !TARGET_OS_WATCH
 #import <OpenGLES/gltypes.h>
@@ -68,23 +69,23 @@ __weak PVPokeMiniBridge *current;
 #define SOUNDBUFFER	2048
 #define PMSOUNDBUFF	(SOUNDBUFFER*2)
 
-
 @implementation PVPokeMiniBridge
 
 - (instancetype)init {
     if(self = [super init]) {
 //        dispatch_sync(dispatch_get_main_queue(), ^{
+        NSInteger videoScale = PVPokeMiniOptions.videoScale;
 #if VIDEO_UPSCALE
-        self->videoWidth = 96 * 4;
-        self->videoHeight = 64 * 4;
+        self->videoWidth = 96 * videoScale;
+        self->videoHeight = 64 * videoScale;
 #else
             self.videoWidth = 96;
             self.videoHeight = 64;
 #endif
 
         self->audioStream = malloc(PMSOUNDBUFF);
-        self->videoBuffer = malloc(self->videoWidth * self->videoHeight*4);
-        memset(self.videoBuffer, 0, self->videoWidth * self->videoHeight*4);
+        self->videoBuffer = malloc(self->videoWidth * self->videoHeight * videoScale);
+        memset(self.videoBuffer, 0, self->videoWidth * self->videoHeight * videoScale);
         memset(self->audioStream, 0, PMSOUNDBUFF);
 //        });
     }
@@ -96,10 +97,47 @@ __weak PVPokeMiniBridge *current;
 - (void)dealloc {
     PokeMini_VideoPalette_Free();
     PokeMini_Destroy();
-    dispatch_sync(dispatch_get_main_queue(), ^{
+//    dispatch_sync(dispatch_get_main_queue(), ^{
         if(self->audioStream) free(self->audioStream);
         if(self->videoBuffer) free(self->videoBuffer);
-    });
+//    });
+}
+
+- (void)setVideoSpec {
+#if VIDEO_UPSCALE
+    NSInteger videoScale = PVPokeMiniOptions.videoScale;
+    TPokeMini_VideoSpec *videoSpec;
+    switch (videoScale) {
+        case 1:
+            videoSpec = &PokeMini_Video1x1;
+            break;
+        case 2:
+            videoSpec = &PokeMini_Video2x2;
+            break;
+        case 3:
+            videoSpec = &PokeMini_Video3x3;
+            break;
+        case 4:
+            videoSpec = &PokeMini_Video4x4;
+            break;
+        case 5:
+            videoSpec = &PokeMini_Video5x5;
+            break;
+        case 6:
+            videoSpec = &PokeMini_Video6x6;
+            break;
+        default:
+            videoSpec = &PokeMini_Video1x1;
+            break;
+    }
+    
+    if(!PokeMini_SetVideo(videoSpec, 32, CommandLine.lcdfilter, CommandLine.lcdmode))
+#else
+    if(!PokeMini_SetVideo((TPokeMini_VideoSpec *)&PokeMini_Video1x1, 32, CommandLine.lcdfilter, CommandLine.lcdmode))
+#endif
+    {
+        ELOG(@"Couldn't set video spec.");
+    }
 }
 
 #pragma - mark Execution
@@ -111,89 +149,26 @@ __weak PVPokeMiniBridge *current;
 //                                   //      - it just gets full and becomes a nuisance...)
     CommandLine.updatertc = 2;        // Update RTC (0=Off, 1=State, 2=Host)
     CommandLine.joyenabled = 1;    // ON
-    CommandLine.lcdfilter = 1; // 0: None, 1: Dot-Matrix, 2: Scanline
-    CommandLine.lcdmode = 0; // LCD Mode (0: analog, 1: 3shades, 2: 2shades)
+    CommandLine.lcdfilter = (int) PVPokeMiniOptions.lcdFilter; // 0: None, 1: Dot-Matrix, 2: Scanline
+    CommandLine.lcdmode = (int) PVPokeMiniOptions.lcdMode; // LCD Mode (0: analog, 1: 3shades, 2: 2shades)
     CommandLine.lcdcontrast = 64; // LCD contrast
     CommandLine.lcdbright = 0; // LCD brightness offset
     CommandLine.piezofilter = 1; // ON
 
-    CommandLine.palette = 0; // Palette Index (0 - 13; 0 == Default)
-/*
- Reference of other palette's from libretro code
- if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &variables))
- {
- if (strcmp(variables.value, "Old") == 0)
- {
- CommandLine.palette = 1;
- }
- else if (strcmp(variables.value, "Monochrome") == 0)
- {
- CommandLine.palette = 2;
- }
- else if (strcmp(variables.value, "Green") == 0)
- {
- CommandLine.palette = 3;
- }
- else if (strcmp(variables.value, "Green Vector") == 0)
- {
- CommandLine.palette = 4;
- }
- else if (strcmp(variables.value, "Red") == 0)
- {
- CommandLine.palette = 5;
- }
- else if (strcmp(variables.value, "Red Vector") == 0)
- {
- CommandLine.palette = 6;
- }
- else if (strcmp(variables.value, "Blue LCD") == 0)
- {
- CommandLine.palette = 7;
- }
- else if (strcmp(variables.value, "LEDBacklight") == 0)
- {
- CommandLine.palette = 8;
- }
- else if (strcmp(variables.value, "Girl Power") == 0)
- {
- CommandLine.palette = 9;
- }
- else if (strcmp(variables.value, "Blue") == 0)
- {
- CommandLine.palette = 10;
- }
- else if (strcmp(variables.value, "Blue Vector") == 0)
- {
- CommandLine.palette = 11;
- }
- else if (strcmp(variables.value, "Sepia") == 0)
- {
- CommandLine.palette = 12;
- }
- else if (strcmp(variables.value, "Monochrome Vector") == 0)
- {
- CommandLine.palette = 13;
- }
- }
- */
+    CommandLine.palette = (int) PVPokeMiniOptions.palette; // Palette Index (0 - 13; 0 == Default)
+
     // Set video spec and check if is supported
-#if VIDEO_UPSCALE
-    if(!PokeMini_SetVideo((TPokeMini_VideoSpec *)&PokeMini_Video4x4, 32, CommandLine.lcdfilter, CommandLine.lcdmode))
-#else
-    if(!PokeMini_SetVideo((TPokeMini_VideoSpec *)&PokeMini_Video1x1, 32, CommandLine.lcdfilter, CommandLine.lcdmode))
-#endif
-    {
-        NSLog(@"Couldn't set video spec.");
+    [self setVideoSpec];
+    
+    if(!PokeMini_Create(0, PMSOUNDBUFF)) {
+        ELOG(@"Error while initializing emulator.");
     }
     
-    if(!PokeMini_Create(0, PMSOUNDBUFF))
-    {
-        NSLog(@"Error while initializing emulator.");
-    }
-    
-    PokeMini_GotoCustomDir([[self BIOSPath] UTF8String]);
-    if(FileExist(CommandLine.bios_file))
-    {
+    NSString *biosPathCopy = [[self BIOSPath] copy];
+    NSUInteger length = biosPathCopy.length;
+    const char *biosPath = [biosPathCopy fileSystemRepresentation];
+    PokeMini_GotoCustomDir(biosPath);
+    if(FileExist(CommandLine.bios_file)) {
         PokeMini_LoadBIOSFile(CommandLine.bios_file);
     }
 
@@ -206,6 +181,13 @@ __weak PVPokeMiniBridge *current;
     PokeMini_UseDefaultCallbacks();
 
     // enable sound
+    /*
+         MINX_AUDIO_DISABLED = 0,    // Disabled
+         MINX_AUDIO_GENERATED,        // Generated (Doesn't require sync)
+         MINX_AUDIO_DIRECT,        // Direct from Timer 3
+         MINX_AUDIO_EMULATED,        // Emulated
+         MINX_AUDIO_DIRECTPWM        // Direct from Timer 3 with PWM support
+     */
     MinxAudio_ChangeEngine(MINX_AUDIO_GENERATED);
 //    MinxAudio_ChangeEngine(CommandLine.sound);
 
@@ -295,7 +277,7 @@ int saveEEPROM(const char *filename) {
     LCDDirty = 0;
     
     MinxAudio_GetSamplesU8(self->audioStream, PMSOUNDBUFF);
-    [[current ringBufferAtIndex:0] writeBuffer:self->audioStream maxLength:PMSOUNDBUFF];
+    [[current ringBufferAtIndex:0] write:self->audioStream size:PMSOUNDBUFF];
 }
 
 - (void)startEmulation {
@@ -306,7 +288,10 @@ int saveEEPROM(const char *filename) {
     [self setupEmulation];
     
     [super startEmulation];
-    PokeMini_LoadROM((char*)[self->romPath UTF8String]);
+    int loadStatus = PokeMini_LoadROM((char*)[self->romPath UTF8String]);
+    if (loadStatus != 1) {
+        ELOG(@"Failed to load rom")
+    }
 }
 
 - (void)stopEmulation {
@@ -405,11 +390,11 @@ int saveEEPROM(const char *filename) {
 #pragma mark - Input
 #if !TARGET_OS_WATCH
 
-- (void)didPushPMButton:(PVPMButton)button forPlayer:(NSUInteger)player {
+- (void)didPushPMButton:(PVPMButton)button forPlayer:(NSInteger)player {
     JoystickButtonsEvent((int)button, 1);
 }
 
-- (void)didReleasePMButton:(PVPMButton)button forPlayer:(NSUInteger)player {
+- (void)didReleasePMButton:(PVPMButton)button forPlayer:(NSInteger)player {
     JoystickButtonsEvent((int)button, 0);
 }
 

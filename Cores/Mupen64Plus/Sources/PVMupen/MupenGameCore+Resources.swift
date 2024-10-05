@@ -9,6 +9,7 @@
 import Foundation
 import PVSupport
 import PVLogging
+import PVMupen64PlusBridge
 
 fileprivate let highResDirs: [String] = ["/hires_texture/", "/cache/", "/texture_dump/"]
 fileprivate let iniFiles: [String] = ["GLideN64.ini", "GLideN64.custom.ini", "RiceVideoLinux.ini", "mupen64plus.ini"]

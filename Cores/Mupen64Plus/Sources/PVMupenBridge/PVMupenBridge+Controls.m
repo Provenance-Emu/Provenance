@@ -1,6 +1,6 @@
-
+#import "PVMupenBridge.h"
 #import "PVMupenBridge+Controls.h"
-
+#import "PVMupen64PlusBridge/PVMupen64PlusBridge-Swift.h"
 #import "api/config.h"
 #import "api/m64p_common.h"
 #import "api/m64p_config.h"
@@ -17,6 +17,7 @@
 @import Dispatch;
 @import PVSupport;
 @import PVCoreBridge;
+@import PVCoreObjCBridge;
 #if TARGET_OS_MACCATALYST || TARGET_OS_OSX
 @import OpenGL.GL3;
 @import GLUT;
@@ -26,6 +27,30 @@
 #endif
 
 #import <dlfcn.h>
+
+unsigned char DataCRC( unsigned char *Data, int iLenght )
+{
+    unsigned char Remainder = Data[0];
+
+    int iByte = 1;
+    unsigned char bBit = 0;
+
+    while( iByte <= iLenght ) {
+        int HighBit = ((Remainder & 0x80) != 0);
+        Remainder = Remainder << 1;
+
+        Remainder += ( iByte < iLenght && Data[iByte] & (0x80 >> bBit )) ? 1 : 0;
+
+        Remainder ^= (HighBit) ? 0x85 : 0;
+
+        bBit++;
+        iByte += bBit/8;
+        bBit %= 8;
+    }
+
+    return Remainder;
+}
+
 
 void MupenGetKeys(int Control, BUTTONS *Keys) {
     GET_CURRENT_AND_RETURN();
@@ -137,7 +162,8 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
                 if (*Data)
                 {
 #if TARGET_OS_IOS && !TARGET_OS_MACCATALYST
-                    [current rumble];
+#warning "TODO: Fix Rumble"
+//                    [current rumble];
 #endif
 //                    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
 //                    rumble.set_rumble_state(Control, RETRO_RUMBLE_WEAK, 0xFFFF);
@@ -344,7 +370,7 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
 }
 
 - (void)didMoveN64JoystickDirection:(PVN64Button)button withXValue:(CGFloat)xValue withYValue:(CGFloat)yValue forPlayer:(NSUInteger)player {
-    if (self.dualJoystickOption && player == 0) {
+    if (MupenGameCoreOptions.dualJoystickOption && player == 0) {
         player = 1;
     }
     yAxis[player] = yValue * N64_ANALOG_MAX;
@@ -381,10 +407,10 @@ void MupenControllerCommand(int Control, unsigned char *Command) {
 
 @end
 
-//@implementation MupenGameCore (Rumble)
-//
-//- (BOOL)supportsRumble {
-//    return YES;
-//}
-//
-//@end
+@implementation PVMupenBridge (Rumble)
+
+- (BOOL)supportsRumble {
+    return YES;
+}
+
+@end

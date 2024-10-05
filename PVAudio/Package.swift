@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "PVAudio",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v15),
         .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
@@ -36,12 +36,67 @@ let package = Package(
         .target(
             name: "PVAudio",
             dependencies: [
+                "RingBuffer",
+                "PVRingBuffer",
+                "AppleRingBuffer",
+                "OERingBuffer",
+                "CARingBuffer",
                 .product(name: "PVLogging", package: "PVLogging")
             ],
             resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        .target(
+            name: "RingBuffer",
+            dependencies: [
+                .product(name: "PVLogging", package: "PVLogging")
+            ],
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        .target(
+            name: "PVRingBuffer",
+            dependencies: [
+                "RingBuffer",
+                .product(name: "PVLogging", package: "PVLogging")
+            ],
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        .target(
+            name: "AppleRingBuffer",
+            dependencies: [
+                "RingBuffer",
+                .product(name: "PVLogging", package: "PVLogging")
+            ],
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        .target(
+            name: "OERingBuffer",
+            dependencies: [
+                "RingBuffer",
+                .product(name: "PVLogging", package: "PVLogging")
+            ],
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+        
+        .target(
+            name: "CARingBuffer",
+            dependencies: [
+                "RingBuffer",
+                .product(name: "PVLogging", package: "PVLogging")
+            ],
+            resources: [.copy("PrivacyInfo.xcprivacy")]
+        ),
+            
+        // MARK: - Tests
+        .testTarget(
+            name: "PVAudioTests",
+            dependencies: ["PVAudio", "OERingBuffer", "PVRingBuffer", "AppleRingBuffer"]
         )
     ],
-    swiftLanguageModes: [.v5],
+    swiftLanguageModes: [.v5, .v6],
     cLanguageStandard: .gnu11,
     cxxLanguageStandard: .gnucxx20
 )

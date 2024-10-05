@@ -1,0 +1,10 @@
+module libretro {
+    header "../retro/libretro-common/include/boolean.h"
+    header "../retro/libretro-common/include/libretro.h"
+    header "../retro/libretro-common/include/retro_inline.h"
+
+    header "../retro/dynamic.h"
+    header "../retro/retroarch.h"
+        
+    export *
+}

@@ -126,7 +126,7 @@
 		93E741E8295B67C70028EB94 /* PVPPSSPPCore+Cheats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9360C5A6294CB607000322B9 /* PVPPSSPPCore+Cheats.mm */; };
 		93E741E9295B67C70028EB94 /* PVPPSSPPCore+Controls.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447E97218B809300557ACE /* PVPPSSPPCore+Controls.mm */; };
 		93E741EA295B67C70028EB94 /* PPSSPPVulkanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E74126295B31460028EB94 /* PPSSPPVulkanViewController.swift */; };
-		93E741EB295B67C70028EB94 /* PVPPSSPPCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5FBF32945D1B600493D4F /* PVPPSSPPCore.swift */; };
+		93E741EB295B67C70028EB94 /* CoreOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93F5FBF32945D1B600493D4F /* CoreOptions.swift */; };
 		93E741EC295B67C70028EB94 /* PVPPSSPPCore+Video.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAE218BC5C500557ACE /* PVPPSSPPCore+Video.mm */; };
 		93E741ED295B67C70028EB94 /* PPSSPPOGLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93E74125295B31460028EB94 /* PPSSPPOGLViewController.swift */; };
 		93E741EE295B67C70028EB94 /* PVPPSSPPCore+Saves.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3447EAA218BC59D00557ACE /* PVPPSSPPCore+Saves.mm */; };
@@ -160,7 +160,12 @@
 		B30E991F2C6EF26900C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E991E2C6EF26900C1431E /* PVSupport */; };
 		B30E9AED2C6FB2DE00C1431E /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AEC2C6FB2DE00C1431E /* PVEmulatorCore */; };
 		B30E9AF02C6FB2EA00C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E9AEF2C6FB2EA00C1431E /* PVCoreBridge */; };
-		B310101B2BEE037000CAE49B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B31010192BEE036000CAE49B /* libz.tbd */; platformFilters = (ios, maccatalyst, macos, tvos, watchos, xros, ); };
+		B310101B2BEE037000CAE49B /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B31010192BEE036000CAE49B /* libz.tbd */; };
+		B318E2932CAB564400D0E599 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B318E2922CAB564400D0E599 /* PVPlists */; };
+		B3A53F3E2C93EF6E00D36642 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3A53F3D2C93EF6E00D36642 /* PVCoreObjCBridge */; };
+		B3A53F652C93F04100D36642 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A53F632C93F04100D36642 /* CorePlist.swift */; };
+		B3A53F662C93F04100D36642 /* PVPPSSPPCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A53F642C93F04100D36642 /* PVPPSSPPCore.swift */; };
+		B3A53F682C93F0A600D36642 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A53F672C93F0A600D36642 /* CorePlist-Generated.swift */; };
 		B3AFCF9E2977A86400A01010 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B3AFCF9D2977A86400A01010 /* PVLogging */; };
 /* End PBXBuildFile section */
 
@@ -756,7 +761,7 @@
 		93E74216295B67C70028EB94 /* PVPPSSPP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVPPSSPP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93E7427A295C53890028EB94 /* OGLGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OGLGraphicsContext.h; sourceTree = "<group>"; };
 		93E7427C295C55C80028EB94 /* VulkanGraphicsContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VulkanGraphicsContext.h; sourceTree = "<group>"; };
-		93F5FBF32945D1B600493D4F /* PVPPSSPPCore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PVPPSSPPCore.swift; sourceTree = "<group>"; };
+		93F5FBF32945D1B600493D4F /* CoreOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreOptions.swift; sourceTree = "<group>"; };
 		93F6EC60298AC9FA00397536 /* PVDebug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PVDebug.m; path = ../../../Debug/PVDebug.m; sourceTree = "<group>"; };
 		93F9BDA52A77A23100A7B438 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		93F9BDA62A77A23100A7B438 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/System/iOSSupport/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -794,6 +799,9 @@
 		B35E6BF3207CD2730040709A /* CoreAudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioKit.framework; path = System/Library/Frameworks/CoreAudioKit.framework; sourceTree = SDKROOT; };
 		B35E6BF4207CD2740040709A /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B3A53F632C93F04100D36642 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3A53F642C93F04100D36642 /* PVPPSSPPCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVPPSSPPCore.swift; sourceTree = "<group>"; };
+		B3A53F672C93F0A600D36642 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVPPSSPP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVPPSSPP.h; sourceTree = "<group>"; };
 		B3C7621420783162009950E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -820,8 +828,10 @@
 			files = (
 				B310101B2BEE037000CAE49B /* libz.tbd in Frameworks */,
 				939AAF6F2A791F25007709E5 /* libpsp.a in Frameworks */,
+				B3A53F3E2C93EF6E00D36642 /* PVCoreObjCBridge in Frameworks */,
 				93F9BDB22A77A2B000A7B438 /* GLKit.framework in Frameworks */,
 				B3AFCF9E2977A86400A01010 /* PVLogging in Frameworks */,
+				B318E2932CAB564400D0E599 /* PVPlists in Frameworks */,
 				938A1B6E2A779FAC00F76417 /* UIKit.framework in Frameworks */,
 				93F9BDAE2A77A26E00A7B438 /* QuartzCore.framework in Frameworks */,
 				93F9BDB02A77A27B00A7B438 /* CoreHaptics.framework in Frameworks */,
@@ -1046,6 +1056,10 @@
 		B3447EB5218BCE2000557ACE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				B3A53F642C93F04100D36642 /* PVPPSSPPCore.swift */,
+				93F5FBF32945D1B600493D4F /* CoreOptions.swift */,
+				B3A53F632C93F04100D36642 /* CorePlist.swift */,
+				B3A53F672C93F0A600D36642 /* CorePlist-Generated.swift */,
 				93CFE69C2BE9456E009B2220 /* AppleBatteryClient.m */,
 				93BDF7552A3363D700264477 /* iOSCoreAudio.h */,
 				93BDF7542A3363D700264477 /* iOSCoreAudio.mm */,
@@ -1057,7 +1071,6 @@
 				93E7427C295C55C80028EB94 /* VulkanGraphicsContext.h */,
 				93E74125295B31460028EB94 /* PPSSPPOGLViewController.swift */,
 				93E74126295B31460028EB94 /* PPSSPPVulkanViewController.swift */,
-				93F5FBF32945D1B600493D4F /* PVPPSSPPCore.swift */,
 				B3C76223207833DE009950E4 /* PVPPSSPPCore.h */,
 				B3C76224207833DE009950E4 /* PVPPSSPPCore.mm */,
 				B3447EB1218BC69700557ACE /* PVPPSSPPCore+Audio.h */,
@@ -1235,6 +1248,8 @@
 				B30E991E2C6EF26900C1431E /* PVSupport */,
 				B30E9AEC2C6FB2DE00C1431E /* PVEmulatorCore */,
 				B30E9AEF2C6FB2EA00C1431E /* PVCoreBridge */,
+				B3A53F3D2C93EF6E00D36642 /* PVCoreObjCBridge */,
+				B318E2922CAB564400D0E599 /* PVPlists */,
 			);
 			productName = PVReicast;
 			productReference = 93E74216295B67C70028EB94 /* PVPPSSPP.framework */;
@@ -1299,7 +1314,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1600;
 				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					934D2DFF294B4D4600BDEBA5 = {
@@ -1328,6 +1343,8 @@
 				B30E991D2C6EF26900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E9AEB2C6FB2DE00C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
 				B30E9AEE2C6FB2EA00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3A53F3C2C93EF6E00D36642 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B318E2912CAB564400D0E599 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -1665,11 +1682,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				93BDF7532A335F4D00264477 /* MemArenaDarwin.cpp in Sources */,
+				B3A53F682C93F0A600D36642 /* CorePlist-Generated.swift in Sources */,
 				93E741E8295B67C70028EB94 /* PVPPSSPPCore+Cheats.mm in Sources */,
 				93E741E9295B67C70028EB94 /* PVPPSSPPCore+Controls.mm in Sources */,
+				B3A53F652C93F04100D36642 /* CorePlist.swift in Sources */,
+				B3A53F662C93F04100D36642 /* PVPPSSPPCore.swift in Sources */,
 				93E741EA295B67C70028EB94 /* PPSSPPVulkanViewController.swift in Sources */,
 				93E7427B295C53890028EB94 /* OGLGraphicsContext.h in Sources */,
-				93E741EB295B67C70028EB94 /* PVPPSSPPCore.swift in Sources */,
+				93E741EB295B67C70028EB94 /* CoreOptions.swift in Sources */,
 				93E741EC295B67C70028EB94 /* PVPPSSPPCore+Video.mm in Sources */,
 				93E741ED295B67C70028EB94 /* PPSSPPOGLViewController.swift in Sources */,
 				93E741EE295B67C70028EB94 /* PVPPSSPPCore+Saves.mm in Sources */,
@@ -1917,6 +1937,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 			};
@@ -1927,10 +1948,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2047,13 +2069,15 @@
 		93E74214295B67C70028EB94 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -2064,6 +2088,7 @@
 					"\"$(SRCROOT)/cmake/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2079,6 +2104,13 @@
 					"$(PROJECT_DIR)/libretro_ppsspp/ext/vulkan/iOS/Frameworks",
 					"$(SRCROOT)/lib/$(CONFIGURATION)-$(PLATFORM_NAME)",
 					"$(SRCROOT)/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu89 gnu++17";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fmodules",
+					"-fcxx-modules",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvppsspp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2097,6 +2129,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -2133,7 +2166,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -2176,9 +2208,12 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_BITCODE = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu89;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -2214,13 +2249,15 @@
 		B310101D2BEE038C00CAE49B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				HEADER_SEARCH_PATHS = (
@@ -2231,6 +2268,7 @@
 					"\"$(SRCROOT)/cmake/ffmpeg/ios/universal/include\"",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVPPSSPP/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -2246,6 +2284,13 @@
 					"$(PROJECT_DIR)/libretro_ppsspp/ext/vulkan/iOS/Frameworks",
 					"$(SRCROOT)/lib/$(CONFIGURATION)-$(PLATFORM_NAME)",
 					"$(SRCROOT)/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu89 gnu++17";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fmodules",
+					"-fcxx-modules",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.pvppsspp";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2264,6 +2309,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
+				DEAD_CODE_STRIPPING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
@@ -2300,7 +2346,6 @@
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
 				SUPPORTS_MACCATALYST = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
@@ -2311,6 +2356,7 @@
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 			};
@@ -2321,10 +2367,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2475,9 +2522,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu89;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -2501,6 +2550,7 @@
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SYMROOT = "$(SRCROOT)/lib/ppsspp/$(CONFIGURATION)/$(EFFECTIVE_PLATFORM_NAME)";
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				VALIDATE_PRODUCT = YES;
@@ -2573,6 +2623,14 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B318E2912CAB564400D0E599 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B3A53F3C2C93EF6E00D36642 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -2587,6 +2645,14 @@
 		B30E9AEF2C6FB2EA00C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
+		};
+		B318E2922CAB564400D0E599 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		B3A53F3D2C93EF6E00D36642 /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
 		};
 		B3AFCF9D2977A86400A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;

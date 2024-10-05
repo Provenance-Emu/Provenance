@@ -39,31 +39,31 @@ final class PVLynxControllerViewController: PVControllerViewController<PVLynxSys
     }
 
     override func dPad(_: JSDPad, didPress direction: JSDPadDirection) {
-        emulatorCore.didRelease(.up, forPlayer: 0)
-        emulatorCore.didRelease(.down, forPlayer: 0)
-        emulatorCore.didRelease(.left, forPlayer: 0)
-        emulatorCore.didRelease(.right, forPlayer: 0)
+        emulatorCore.didRelease(LynxButton: .up, forPlayer: 0)
+        emulatorCore.didRelease(LynxButton: .down, forPlayer: 0)
+        emulatorCore.didRelease(LynxButton: .left, forPlayer: 0)
+        emulatorCore.didRelease(LynxButton: .right, forPlayer: 0)
         switch direction {
         case .upLeft:
-            emulatorCore.didPush(.up, forPlayer: 0)
-            emulatorCore.didPush(.left, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .up, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .left, forPlayer: 0)
         case .up:
-            emulatorCore.didPush(.up, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .up, forPlayer: 0)
         case .upRight:
-            emulatorCore.didPush(.up, forPlayer: 0)
-            emulatorCore.didPush(.right, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .up, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .right, forPlayer: 0)
         case .left:
-            emulatorCore.didPush(.left, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .left, forPlayer: 0)
         case .right:
-            emulatorCore.didPush(.right, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .right, forPlayer: 0)
         case .downLeft:
-            emulatorCore.didPush(.down, forPlayer: 0)
-            emulatorCore.didPush(.left, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .down, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .left, forPlayer: 0)
         case .down:
-            emulatorCore.didPush(.down, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .down, forPlayer: 0)
         case .downRight:
-            emulatorCore.didPush(.down, forPlayer: 0)
-            emulatorCore.didPush(.right, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .down, forPlayer: 0)
+            emulatorCore.didPush(LynxButton: .right, forPlayer: 0)
         default:
             break
         }
@@ -73,52 +73,52 @@ final class PVLynxControllerViewController: PVControllerViewController<PVLynxSys
    override func dPad(_ dPad: JSDPad, didRelease direction: JSDPadDirection) {
         switch direction {
         case .upLeft:
-            emulatorCore.didRelease(.up, forPlayer: 0)
-            emulatorCore.didRelease(.left, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .up, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .left, forPlayer: 0)
         case .up:
-            emulatorCore.didRelease(.up, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .up, forPlayer: 0)
         case .upRight:
-            emulatorCore.didRelease(.up, forPlayer: 0)
-            emulatorCore.didRelease(.right, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .up, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .right, forPlayer: 0)
         case .left:
-            emulatorCore.didRelease(.left, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .left, forPlayer: 0)
         case .none:
             break
         case .right:
-            emulatorCore.didRelease(.right, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .right, forPlayer: 0)
         case .downLeft:
-            emulatorCore.didRelease(.down, forPlayer: 0)
-            emulatorCore.didRelease(.left, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .down, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .left, forPlayer: 0)
         case .down:
-            emulatorCore.didRelease(.down, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .down, forPlayer: 0)
         case .downRight:
-            emulatorCore.didRelease(.down, forPlayer: 0)
-            emulatorCore.didRelease(.right, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .down, forPlayer: 0)
+            emulatorCore.didRelease(LynxButton: .right, forPlayer: 0)
         }
     }
 
     override func buttonPressed(_ button: JSButton) {
-        emulatorCore.didPush(button.buttonTag, forPlayer: 0)
+        emulatorCore.didPush(LynxButton: button.buttonTag, forPlayer: 0)
         vibrate()
     }
 
     override func buttonReleased(_ button: JSButton) {
-        emulatorCore.didRelease(button.buttonTag, forPlayer: 0)
+        emulatorCore.didRelease(LynxButton: button.buttonTag, forPlayer: 0)
     }
 
     override func pressStart(forPlayer player: Int) {
-        emulatorCore.didPush(.option1, forPlayer: player)
+        emulatorCore.didPush(LynxButton: .option1, forPlayer: player)
     }
 
     override func releaseStart(forPlayer player: Int) {
-        emulatorCore.didRelease(.option1, forPlayer: player)
+        emulatorCore.didRelease(LynxButton: .option1, forPlayer: player)
     }
 
     override func pressSelect(forPlayer player: Int) {
-        emulatorCore.didPush(.option2, forPlayer: player)
+        emulatorCore.didPush(LynxButton: .option2, forPlayer: player)
     }
 
     override func releaseSelect(forPlayer player: Int) {
-        emulatorCore.didRelease(.option2, forPlayer: player)
+        emulatorCore.didRelease(LynxButton: .option2, forPlayer: player)
     }
 }

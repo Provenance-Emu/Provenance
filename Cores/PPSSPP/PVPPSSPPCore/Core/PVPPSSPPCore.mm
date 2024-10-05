@@ -10,9 +10,18 @@
 #import "PVPPSSPPCore+Audio.h"
 #import "PVPPSSPPCore+Video.h"
 #import <PVPPSSPP/PVPPSSPP-Swift.h>
-#import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
-#import <PVLogging/PVLogging.h>
+
+#import <UIKit/UIKit.h>
+#import <GLKit/GLKit.h>
+#import <Metal/Metal.h>
+#import <MetalKit/MetalKit.h>
+
+@import Foundation;
+@import PVSupport;
+@import PVLoggingObjC;
+@import PVEmulatorCore;
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
 #import "OGLGraphicsContext.h"
 #import "VulkanGraphicsContext.h"
 
@@ -31,43 +40,43 @@
 
 #import <AudioToolbox/AudioToolbox.h>
 
-#include "Common/Common.h"
-#include "Common/MemoryUtil.h"
-#include "Common/Profiler/Profiler.h"
-#include "Common/CPUDetect.h"
-#include "Common/Log.h"
-#include "Common/LogManager.h"
-#include "Common/TimeUtil.h"
-#include "Common/File/FileUtil.h"
-#include "Common/Serialize/Serializer.h"
-#include "Common/ConsoleListener.h"
-#include "Common/Input/InputState.h"
-#include "Common/Input/KeyCodes.h"
-#include "Common/Thread/ThreadUtil.h"
-#include "Common/Thread/ThreadManager.h"
-#include "Common/File/VFS/VFS.h"
-#include "Common/Data/Text/I18n.h"
-#include "Common/StringUtils.h""
-#include "Common/System/System.h"
-#include "Common/System/Request.h"
-#include "Common/System/Display.h"
-#include "Common/System/NativeApp.h"
-#include "Common/GraphicsContext.h"
-#include "Common/Net/Resolve.h"
-#include "Common/UI/Screen.h"
-#include "Common/GPU/thin3d.h"
-#include "Common/GPU/thin3d_create.h"
-#include "Common/GPU/OpenGL/GLRenderManager.h"
-#include "Common/GPU/OpenGL/GLFeatures.h"
-#include "Common/System/NativeApp.h"
-#include "Common/File/VFS/VFS.h"
-#include "Common/Log.h"
-#include "Common/TimeUtil.h"
-#include "Common/GraphicsContext.h"
-
-#include "GPU/GPUState.h"
-#include "GPU/GPUInterface.h"
-
+//#include "Common/Common.h"
+//#include "Common/MemoryUtil.h"
+//#include "Common/Profiler/Profiler.h"
+//#include "Common/CPUDetect.h"
+//#include "Common/Log.h"
+//#include "Common/LogManager.h"
+//#include "Common/TimeUtil.h"
+//#include "Common/File/FileUtil.h"
+//#include "Common/Serialize/Serializer.h"
+//#include "Common/ConsoleListener.h"
+//#include "Common/Input/InputState.h"
+//#include "Common/Input/KeyCodes.h"
+//#include "Common/Thread/ThreadUtil.h"
+//#include "Common/Thread/ThreadManager.h"
+//#include "Common/File/VFS/VFS.h"
+//#include "Common/Data/Text/I18n.h"
+//#include "Common/StringUtils.h"
+//#include "Common/System/System.h"
+//#include "Common/System/Request.h"
+//#include "Common/System/Display.h"
+//#include "Common/System/NativeApp.h"
+//#include "Common/GraphicsContext.h"
+//#include "Common/Net/Resolve.h"
+//#include "Common/UI/Screen.h"
+//#include "Common/GPU/thin3d.h"
+//#include "Common/GPU/thin3d_create.h"
+//#include "Common/GPU/OpenGL/GLRenderManager.h"
+//#include "Common/GPU/OpenGL/GLFeatures.h"
+//#include "Common/System/NativeApp.h"
+//#include "Common/File/VFS/VFS.h"
+//#include "Common/Log.h"
+//#include "Common/TimeUtil.h"
+//#include "Common/GraphicsContext.h"
+//
+//#include "GPU/GPUState.h"
+//#include "GPU/GPUInterface.h"
+//
 #include "Core/Config.h"
 #include "Core/ConfigValues.h"
 #include "Core/ConfigSettings.h"
@@ -86,11 +95,11 @@
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
 
 #pragma mark - Private
-@interface PVPPSSPPCore() {
+@interface PVPPSSPPCoreBridge() {
 }
 @end
 #pragma mark - PVPPSSPPCore Begin
-@implementation PVPPSSPPCore
+@implementation PVPPSSPPCoreBridge
 {
 	CoreParameter _coreParam;
 	float _frameInterval;
@@ -116,7 +125,6 @@
 		dispatch_queue_attr_t queueAttributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, 0);
 		_callbackQueue = dispatch_queue_create("org.provenance-emu.PPSSPP.CallbackHandlerQueue", queueAttributes);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionUpdated:) name:@"OptionUpdated" object:nil];
-		[self parseOptions];
 	}
     _current = self;
 	return self;
@@ -159,7 +167,7 @@
 #else
     NSString *documentsPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
 #endif
-	NSString *resourcePath = [[[NSBundle bundleForClass:[PVPPSSPPCore class]]  resourcePath] stringByAppendingString:@"/assets/"];
+	NSString *resourcePath = [[[NSBundle bundleForClass:[PVPPSSPPCoreBridge class]]  resourcePath] stringByAppendingString:@"/assets/"];
 	NSLog(@"Bundle Path is at %s\n", [resourcePath UTF8String]);
 	// Copy over font files if needed
 	NSString *fontSourceDirectory = [resourcePath stringByAppendingString:@"/assets/"];
@@ -191,7 +199,7 @@
 
 /* Config */
 - (void)setVolume {
-    [self parseOptions];
+//    [self parseOptions];
     g_Config.iGlobalVolume = self.volume;
     g_Config.bEnableSound = self.volume != 0;
     PSP_CoreParameter().enableSound = self.volume != 0;
@@ -199,7 +207,7 @@
 }
 - (void)setOptionValues {
     NSLog(@"Set Option Values");
-	[self parseOptions];
+//	[self parseOptions];
 	// Option Interface
 	g_Config.iMultiSampleLevel = self.msaa;
 	g_Config.iInternalResolution = self.resFactor;
@@ -295,7 +303,7 @@
 - (void)stopEmulation {
     [self setPauseEmulation:true];
 	_isInitialized = false;
-	self->shouldStop = true;
+    self.shouldStop = true;
 	[self stopGame:true];
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
     //NativeShutdown();

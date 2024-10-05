@@ -51,12 +51,13 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
     PVEmulatorCoreErrorCodeCouldNotSaveState        = -5,
     PVEmulatorCoreErrorCodeDoesNotSupportSaveStates = -6,
     PVEmulatorCoreErrorCodeMissingM3U               = -7,
+    PVEmulatorCoreErrorCodeCouldNotLoadBIOS         = -8,
 };
 
-@protocol PVAudioDelegate
-@required
-- (void)audioSampleRateDidChange;
-@end
+@protocol PVAudioDelegate;
+//@required
+//- (void)audioSampleRateDidChange;
+//@end
 
 //@protocol PVRenderDelegate
 //
@@ -81,25 +82,27 @@ typedef NS_ENUM(NSInteger, PVEmulatorCoreErrorCode) {
 
 enum GLESVersion : NSInteger;
 @protocol PVRenderDelegate;
+@protocol RingBufferProtocol;
 
 enum GameSpeed : NSInteger;
 
 typedef NS_ENUM(NSInteger, GameSpeed) {
-  GameSpeedSlow = 0,
-  GameSpeedNormal = 1,
-  GameSpeedFast = 2,
+  GameSpeedVerySlow = 0,
+  GameSpeedSlow = 1,
+  GameSpeedNormal = 2,
+  GameSpeedFast = 3,
+  GameSpeedVeryFast = 4,
 };
 
 @interface PVCoreObjCBridge : NSObject {
 
 @public
-	OERingBuffer __strong **ringBuffers;
+    NSMutableArray<id<RingBufferProtocol>> *ringBuffers;
 
 	double _sampleRate;
 
 	NSTimeInterval gameInterval;
 	NSTimeInterval _frameInterval;
-    BOOL shouldStop;
 
     BOOL _isFrontBufferReady;
 
@@ -113,10 +116,14 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
     GCController *_controller2;
     GCController *_controller3;
     GCController *_controller4;
+    GCController *_controller5;
+    GCController *_controller6;
+    GCController *_controller7;
+    GCController *_controller8;
 #endif
 
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
-    UIViewController* _Nullable _touchViewController;
+//    UIViewController* _Nullable _touchViewController;
 #endif
 }
 
@@ -130,11 +137,14 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, copy, nullable) NSString *screenType;
 
 
+@property (class, retain, nonnull, nonatomic) NSString *systemName;
+@property (class, retain, nonnull, nonatomic) NSString *coreClassName;
+
 @property (atomic, assign) BOOL shouldResyncTime;
+
+@property (nonatomic, assign) BOOL shouldStop;
 @property (nonatomic, assign) BOOL skipEmulationLoop;
 @property (nonatomic, assign) BOOL skipLayout;
-@property (class, strong, nonnull, nonatomic) NSString *coreClassName;
-@property (class, retain, nonnull) NSString *systemName;
 
 @property (nonatomic, strong, readonly, nonnull) NSLock  *emulationLoopThreadLock;
 @property (nonatomic, assign) BOOL extractArchive;
@@ -144,21 +154,21 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 
 - (void)initialize;
 
-@end
+//@end
 
 //@protocol EmulatorCoreRumbleDataSource <EmulatorCoreControllerDataSource>
 //@property (nonatomic, readonly) BOOL supportsRumble;
 //@end
 
-@interface PVCoreObjCBridge (Rumble) //<EmulatorCoreRumbleDataSource>
+//@interface PVCoreObjCBridge (Rumble) //<EmulatorCoreRumbleDataSource>
 
 @property (nonatomic, readonly) BOOL supportsRumble;
 
-@end
+//@end
 
-@interface PVCoreObjCBridge (Runloop) // <EmulatorCoreRunLoop>
+//@interface PVCoreObjCBridge (Runloop) // <EmulatorCoreRunLoop>
 
-@property (nonatomic, assign, readonly) BOOL isRunning;
+@property (atomic, assign, readonly) BOOL isRunning;
 
 @property (nonatomic, assign) GameSpeed gameSpeed;
 @property (nonatomic, readonly, getter=isSpeedModified) BOOL speedModified;
@@ -171,12 +181,12 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (void)setPauseEmulation:(BOOL)flag NS_REQUIRES_SUPER;
 - (void)stopEmulationWithMessage:(NSString * _Nullable) message NS_REQUIRES_SUPER;
 - (void)stopEmulation NS_REQUIRES_SUPER;
-- (void)loadFileAtPath:(NSString *)path
+- (BOOL)loadFileAtPath:(NSString *)path
                  error:(NSError * __nullable __autoreleasing * __nullable) error;
 
-@end
+//@end
 
-@interface PVCoreObjCBridge (Video) // <EmulatorCoreVideoDelegate>
+//@interface PVCoreObjCBridge (Video) // <EmulatorCoreVideoDelegate>
 
 @property (nonatomic, assign) BOOL alwaysUseMetal;
 
@@ -185,9 +195,9 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 
 @property(nonatomic, weak, nullable) id<PVRenderDelegate> renderDelegate;
 
-@property (nonatomic, strong, readonly, nonnull) NSCondition  *frontBufferCondition;
-@property (nonatomic, strong, readonly, nonnull) NSLock  *frontBufferLock;
-@property (nonatomic, assign) BOOL isFrontBufferReady;
+@property (atomic, strong, readonly, nonnull) NSCondition  *frontBufferCondition;
+@property (atomic, strong, readonly, nonnull) NSLock  *frontBufferLock;
+@property (atomic, assign) BOOL isFrontBufferReady;
 
 #if !TARGET_OS_WATCH
 @property (nonatomic, assign) enum GLESVersion glesVersion;
@@ -207,9 +217,9 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, readonly, nullable) const void * videoBuffer;
 - (void)swapBuffers;
 - (void)executeFrame;
-@end
+//@end
 
-@interface PVCoreObjCBridge (Controllers) // <EmulatorCoreControllerDataSource>
+//@interface PVCoreObjCBridge (Controllers) // <EmulatorCoreControllerDataSource>
 
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
 @property (nonatomic, assign) UIViewController* _Nullable touchViewController;
@@ -220,17 +230,23 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 @property (nonatomic, strong, nullable) GCController *controller2;
 @property (nonatomic, strong, nullable) GCController *controller3;
 @property (nonatomic, strong, nullable) GCController *controller4;
+@property (nonatomic, strong, nullable) GCController *controller5;
+@property (nonatomic, strong, nullable) GCController *controller6;
+@property (nonatomic, strong, nullable) GCController *controller7;
+@property (nonatomic, strong, nullable) GCController *controller8;
 #endif
 
+
+/// Subclasses may impliment this for controller polling
 - (void)updateControllers;
 
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
 - (void)sendEvent:(UIEvent *_Nullable)event;
 #endif
 
-@end
+//@end
 
-@interface PVCoreObjCBridge (Audio) //<EmulatorCoreAudioDataSource>
+//@interface PVCoreObjCBridge (Audio) //<EmulatorCoreAudioDataSource>
 
 @property(weak, nullable, nonatomic) id<PVAudioDelegate> audioDelegate;
 
@@ -246,10 +262,10 @@ typedef NS_ENUM(NSInteger, GameSpeed) {
 - (NSUInteger)channelCountForBuffer:(NSUInteger)buffer;
 - (NSUInteger)audioBufferSizeForBuffer:(NSUInteger)buffer;
 - (double)audioSampleRateForBuffer:(NSUInteger)buffer;
-- (OERingBuffer * _Nonnull)ringBufferAtIndex:(NSUInteger)index;
-@end
+- (id<RingBufferProtocol>)ringBufferAtIndex:(NSUInteger)index;
+//@end
 
-@interface PVCoreObjCBridge (Saves) // <EmulatorCoreSavesDataSource>
+//@interface PVCoreObjCBridge (Saves) // <EmulatorCoreSavesDataSource>
 
 @property (nonatomic, copy, nullable) NSString *saveStatesPath;
 @property (nonatomic, assign) BOOL supportsSaveStates;

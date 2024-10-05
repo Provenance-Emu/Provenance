@@ -10,17 +10,17 @@ import PVRealm
 
 @available(iOS 14, tvOS 14, *)
 struct GameItemViewCell: SwiftUI.View {
-
+    
     var game: PVGame
-
+    
     var artwork: SwiftImage?
-
+    
     var constrainHeight: Bool = false
-
+    
     var viewType: GameItemViewType
-
+    
     @State private var textMaxWidth: CGFloat = PVRowHeight
-
+    
     var body: some SwiftUI.View {
         VStack(alignment: .leading, spacing: 3) {
             GameItemThumbnail(artwork: artwork, gameTitle: game.title, boxartAspectRatio: game.boxartAspectRatio)

@@ -32,6 +32,7 @@ let package = Package(
         .package(name: "PVPlists", path: "../PVPlists/"),
         .package(name: "PVObjCUtils", path: "../PVObjCUtils/"),
         .package(name: "PVCoreBridge", path: "../PVCoreBridge/"),
+        .package(path: "../PVSettings"),
 
         // MARK: Macros
 
@@ -48,7 +49,8 @@ let package = Package(
                 "PVLogging",
                 "PVCoreBridge",
                 "PVObjCUtils",
-                "PVAudio"
+                "PVAudio",
+                "PVSettings"
             ],
             cSettings: [
                 .unsafeFlags(["-fmodules", "-fcxx-modules"])

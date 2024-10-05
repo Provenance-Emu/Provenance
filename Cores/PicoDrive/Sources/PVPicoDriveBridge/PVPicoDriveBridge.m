@@ -75,8 +75,8 @@ static void audio_callback(int16_t left, int16_t right)
 {
     __strong PVPicoDriveBridge *strongCurrent = _current;
 
-	[[strongCurrent ringBufferAtIndex:0] writeBuffer:&left maxLength:2];
-    [[strongCurrent ringBufferAtIndex:0] writeBuffer:&right maxLength:2];
+	[[strongCurrent ringBufferAtIndex:0] write:&left size:2];
+    [[strongCurrent ringBufferAtIndex:0] write:&right size:2];
 
     strongCurrent = nil;
 }
@@ -85,7 +85,7 @@ static size_t audio_batch_callback(const int16_t *data, size_t frames)
 {
     __strong PVPicoDriveBridge *strongCurrent = _current;
 
-    [[strongCurrent ringBufferAtIndex:0] writeBuffer:data maxLength:frames << 2];
+    [[strongCurrent ringBufferAtIndex:0] write:data size:frames << 2];
     strongCurrent = nil;
     return frames;
 }
@@ -284,36 +284,11 @@ static void writeSaveFile(const char* path, int type)
 	return self;
 }
 
--(void)copyCartHWCFG {
-    NSBundle *myBundle = [NSBundle bundleForClass:[PVPicoDriveBridge class]];
-    NSString *cartPath = [myBundle pathForResource:@"carthw" ofType:@"cfg"];
-    
-    NSString *systemPath = self.BIOSPath;
-    NSString *destinationPath = [systemPath stringByAppendingPathComponent:@"carthw.cfg"];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    
-    if(![fm fileExistsAtPath:destinationPath]) {
-        NSError *error;
-        BOOL success = [fm copyItemAtPath:cartPath
-                                   toPath:destinationPath
-                                    error:&error];
-        if(!success) {
-            ELOG(@"Error copying carthw.cfg:\n %@\nsource: %@\ndestination: %@", error.localizedDescription, cartPath, destinationPath);
-        } else {
-            ILOG(@"Copied default carthw.cfg file into system directory. %@", self.BIOSPath);
-        }
-    }
-}
-
 - (void)executeFrame {
     retro_run();
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
-{
-    // Copy default cartHW.cfg if need be
-    [self copyCartHWCFG];
-
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {
 	memset((void*)_pad, 0, sizeof(int16_t) * 24);
 
     const void *data;
@@ -361,8 +336,7 @@ static void writeSaveFile(const char* path, int type)
     info.size = size;
     info.meta = meta;
     
-    if(retro_load_game(&info))
-    {
+    if(retro_load_game(&info)) {
         NSString *path = self.romName;
         NSString *extensionlessFilename = [[path lastPathComponent] stringByDeletingPathExtension];
         
@@ -454,9 +428,7 @@ static void writeSaveFile(const char* path, int type)
     
     NSString *batterySavesDirectory = [self batterySavesPath];
     
-    if([batterySavesDirectory length] != 0)
-    {
-        
+    if([batterySavesDirectory length] != 0) {
         [[NSFileManager defaultManager] createDirectoryAtPath:batterySavesDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
             
         NSString *filePath = [batterySavesDirectory stringByAppendingPathComponent:[extensionlessFilename stringByAppendingPathExtension:@"sav"]];
@@ -476,13 +448,10 @@ static void writeSaveFile(const char* path, int type)
 #pragma mark Video
 
 - (void)swapBuffers {
-    if (self->videoBuffer == (short unsigned int *)self->videoBufferA)
-    {
+    if (self->videoBuffer == (short unsigned int *)self->videoBufferA) {
         self->videoBuffer = self->videoBufferA;
         self->videoBuffer = (short unsigned int *)self->videoBufferB;
-    }
-    else
-    {
+    } else {
         self->videoBuffer = self->videoBufferB;
         self->videoBuffer = (short unsigned int *)self->videoBufferA;
     }
@@ -533,16 +502,6 @@ static void writeSaveFile(const char* path, int type)
 
 - (NSUInteger)channelCount {
     return 2;
-}
-
-#pragma mark - Input
-
-- (void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player; {
-    _pad[player][button] = 1;
-}
-
-- (void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player; {
-    _pad[player][button] = 0;
 }
 
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player {
@@ -776,4 +735,16 @@ static void writeSaveFile(const char* path, int type)
     return YES;
 }
 
+@end
+
+@implementation PVPicoDriveBridge (PVSega32XSystemResponderClient)
+#pragma mark - Input
+
+- (void)didPushSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player; {
+    _pad[player][button] = 1;
+}
+
+- (void)didReleaseSega32XButton:(PVSega32XButton)button forPlayer:(NSUInteger)player; {
+    _pad[player][button] = 0;
+}
 @end

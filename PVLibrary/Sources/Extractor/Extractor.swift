@@ -9,9 +9,28 @@
 import Foundation
 @_exported import PVSupport
 import RxSwift
-import SWCompression
+@preconcurrency import SWCompression
 import Combine
 import PVLogging
+import AsyncAlgorithms
+
+extension SevenZipEntryInfo: @unchecked @retroactive Sendable {
+//    public func send(to encoder: Encoder) throws {
+//        var container = encoder.singleValueContainer()
+//        try container.encode(self.name)
+//        try container.encode(self.size)
+//        try container.encode(self.crc)
+//        try container.encode(self.isEmpty)
+//    }
+}
+
+extension SevenZipEntry: @unchecked @retroactive Sendable {
+//    public func send(to encoder: Encoder) throws {
+//        var container = encoder.singleValueContainer()
+//        try container.encode(self.data)
+//        try container.encode(self.info)
+//    }
+}
 
 extension SWCompression.CompressionMethod {
     func decompress(data: Data) throws -> Data {
@@ -37,7 +56,7 @@ extension SWCompression.CompressionMethod {
 /// WIP Class. SWCompression supports multiple containers and compression types, but it's very
 /// unclear how to decompress containers with mutliple files. It's very manual in compresspressing
 /// and decompressing single instances of Data.
-public final class Extractor {
+public final actor Extractor {
     static let shared: Extractor = Extractor()
 
     let dispatchQueue = DispatchQueue(label: "com.provenance.extractor", qos: .utility)
@@ -61,69 +80,53 @@ public final class Extractor {
     }
 
     // MAR: - 7Zip
-    private func openSevenZip(with data: Data) -> Future<[SevenZipEntry], Error> {
-        return Future() { promise in
-            do {
-                let zip = try SevenZipContainer.open(container: data)
-                promise(Result.success(zip))
-            } catch {
-                promise(Result.failure(error))
-            }
-        }
+    private func openSevenZip(with data: Data) async throws -> [SevenZipEntry] {
+        try await Task {
+            return try SevenZipContainer.open(container: data)
+        }.value
     }
 
-    private func decompress(entries: [SevenZipEntry]) -> Future<[DecompressedEntry], Never> {
-        return Future() { promise in
-            self.dispatchQueue.async {
-                let data: [DecompressedEntry] = entries.compactMap {
-                    guard let data = $0.data else {
-                        ELOG("Nil data")
-                        return nil
+    private func decompress(entries: [SevenZipEntry]) async -> [DecompressedEntry] {
+        await Task {
+            let data: [DecompressedEntry] = entries.compactMap {
+                        guard let data = $0.data else {
+                            ELOG("Nil data")
+                            return nil
+                        }
+                        return DecompressedEntry(data: data, info: $0.info)
                     }
-                    return DecompressedEntry(data: data, info: $0.info)
-                }
-                promise(Result.success(data))
-            }
-        }
+            return data
+        }.value
     }
 
     // MARK: - Zip
 
-    private func openZip(with data: Data) -> Future<[ZipEntry], Error> {
-        return Future() { promise in
-            self.dispatchQueue.async {
-                do {
-                    let zip = try ZipContainer.open(container: data)
-                    promise(Result.success(zip))
-                } catch {
-                    promise(Result.failure(error))
-                }
-            }
-        }
+    private func openZip(with data: Data) async throws -> [ZipEntry] {
+        try await Task {
+            try ZipContainer.open(container: data)
+        }.value
     }
 
-    private func decompress(entries: [ZipEntry]) -> Future<[DecompressedEntry], Never> {
-        return Future() { promise in
-            self.dispatchQueue.async {
-                let result: [DecompressedEntry] = entries.compactMap {
-                    guard let data = $0.data else {
-                        ELOG("Nil data")
-                        return nil
-                    }
-
-                    do {
-                        let decompressedData: Data = try $0.info.compressionMethod.decompress(data: data)
-                        return DecompressedEntry(data: decompressedData, info: $0.info)
-                    } catch let error as ZipError {
-                        ELOG("ZipError failed: \(error)")
-                        return nil
-                    } catch {
-                        ELOG("Decompression failed: \(error)")
-                        return nil
-                    }
+    private func decompress(entries: [ZipEntry]) async throws -> [DecompressedEntry] {
+        await Task {
+            let result = await entries.asyncCompactMap { entry -> DecompressedEntry? in
+                guard let data = entry.data else {
+                    ELOG("Nil data")
+                    return nil
                 }
-                promise(Result.success(result))
+
+                do {
+                    let decompressedData: Data = try entry.info.compressionMethod.decompress(data: data)
+                    return DecompressedEntry(data: decompressedData, info: entry.info)
+                } catch let error as ZipError {
+                    ELOG("ZipError failed: \(error)")
+                    return nil
+                } catch {
+                    ELOG("Decompression failed: \(error)")
+                    return nil
+                }
             }
-        }
+            return result
+        }.value
     }
 }

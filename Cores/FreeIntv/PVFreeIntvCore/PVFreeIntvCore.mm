@@ -15,8 +15,8 @@
 //#import "PVFreeIntvCore+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
-#import <PVLogging/PVLogging.h>
+@import PVSupport;
+#import <PVLogging/PVLoggingObjC.h>
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4

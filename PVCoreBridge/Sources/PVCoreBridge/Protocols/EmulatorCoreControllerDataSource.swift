@@ -17,15 +17,15 @@ import PVLogging
 
 @objc public protocol EmulatorCoreControllerDataSource {
 #if canImport(GameController)
-    var controller1: GCController? { get }
-    var controller2: GCController? { get }
-    var controller3: GCController? { get }
-    var controller4: GCController? { get }
+    var controller1: GCController? { get set }
+    var controller2: GCController? { get set }
+    var controller3: GCController? { get set }
+    var controller4: GCController? { get set }
 
-    var controller5: GCController? { get }
-    var controller6: GCController? { get }
-    var controller7: GCController? { get }
-    var controller8: GCController? { get }
+    var controller5: GCController? { get set }
+    var controller6: GCController? { get set }
+    var controller7: GCController? { get set }
+    var controller8: GCController? { get set }
 
     func controller(forPlayer: UInt) -> GCController?
 #endif
@@ -67,7 +67,7 @@ public extension EmulatorCoreControllerDataSource {
 #if canImport(CoreHaptics)
 import CoreHaptics
 public extension EmulatorCoreRumbleDataSource {
-    var supportsRumble: Bool { false }
+//    var supportsRumble: Bool { false }
 
     @MainActor
     func rumble() {

@@ -7,78 +7,107 @@
 //
 
 #import "PVPPSSPPCore+Video.h"
-#import "PVPPSSPPCore.h"
+//#import "PVPPSSPPCore.h"
 #import <OpenGLES/ES3/glext.h>
 #import <OpenGLES/ES3/gl.h>
 #import <GLKit/GLKit.h>
 #import <AVFoundation/AVFoundation.h>
-#import "OGLGraphicsContext.h"
-#import "VulkanGraphicsContext.h"
 
-/* PSP Includes */
-#import <dlfcn.h>
-#import <pthread.h>
-#import <signal.h>
-#import <string>
-#import <stdio.h>
-#import <stdlib.h>
-#import <sys/syscall.h>
-#import <sys/types.h>
-#import <sys/sysctl.h>
-#import <mach/mach.h>
-#import <mach/machine.h>
+/* PPSSPP Includes */
+#ifdef __cplusplus
+    #include <vector>
+    #include <string>
+    #include <cstring>
+#endif
 
-#import <AudioToolbox/AudioToolbox.h>
-
-#include "Common/MemoryUtil.h"
-#include "Common/Profiler/Profiler.h"
-#include "Common/CPUDetect.h"
-#include "Common/Log.h"
-#include "Common/LogManager.h"
-#include "Common/TimeUtil.h"
-#include "Common/File/FileUtil.h"
-#include "Common/Serialize/Serializer.h"
-#include "Common/ConsoleListener.h"
-#include "Common/Input/InputState.h"
-#include "Common/Input/KeyCodes.h"
-#include "Common/Thread/ThreadUtil.h"
-#include "Common/Thread/ThreadManager.h"
-#include "Common/File/VFS/VFS.h"
-#include "Common/Data/Text/I18n.h"
-#include "Common/StringUtils.h"
 #include "Common/System/Display.h"
 #include "Common/System/NativeApp.h"
 #include "Common/System/System.h"
-#include "Common/GraphicsContext.h"
-#include "Common/Net/Resolve.h"
-#include "Common/UI/Screen.h"
+#include "Common/GPU/Vulkan/VulkanContext.h"
+#include "Common/GPU/Vulkan/VulkanDebug.h"
+#include "Common/GPU/Vulkan/VulkanLoader.h"
+#ifdef __cplusplus
+    #include "Common/GPU/Vulkan/VulkanRenderManager.h"
+#endif
 #include "Common/GPU/thin3d.h"
 #include "Common/GPU/thin3d_create.h"
-#include "Common/GPU/OpenGL/GLRenderManager.h"
-#include "Common/GPU/OpenGL/GLFeatures.h"
-#include "Common/System/NativeApp.h"
-#include "Common/File/VFS/VFS.h"
+#include "Common/Data/Text/Parsers.h"
+#include "Common/VR/PPSSPPVR.h"
 #include "Common/Log.h"
-#include "Common/TimeUtil.h"
-#include "Common/GraphicsContext.h"
-
-#include "GPU/GPUState.h"
-#include "GPU/GPUInterface.h"
-
 #include "Core/Config.h"
 #include "Core/ConfigValues.h"
-#include "Core/Core.h"
-#include "Core/CoreParameter.h"
-#include "Core/HLE/sceCtrl.h"
-#include "Core/HLE/sceUtility.h"
-#include "Core/HW/MemoryStick.h"
-#include "Core/MemMap.h"
 #include "Core/System.h"
-#include "Core/CoreTiming.h"
-#include "Core/HW/Display.h"
-#include "Core/CwCheat.h"
-#include "Core/ELF/ParamSFO.h"
-#include "Core/SaveState.h"
+#if !PPSSPP_PLATFORM(WINDOWS) && !PPSSPP_PLATFORM(SWITCH)
+    #include <dlfcn.h>
+#endif
+
+#include "OGLGraphicsContext.h"
+#include "VulkanGraphicsContext.h"
+
+/* PSP Includes */
+//#import <dlfcn.h>
+//#import <pthread.h>
+//#import <signal.h>
+//#import <string>
+//#import <stdio.h>
+//#import <stdlib.h>
+//#import <sys/syscall.h>
+//#import <sys/types.h>
+//#import <sys/sysctl.h>
+//#import <mach/mach.h>
+//#import <mach/machine.h>
+
+#import <AudioToolbox/AudioToolbox.h>
+
+//#include "Common/MemoryUtil.h"
+//#include "Common/Profiler/Profiler.h"
+//#include "Common/CPUDetect.h"
+//#include "Common/Log.h"
+//#include "Common/LogManager.h"
+//#include "Common/TimeUtil.h"
+//#include "Common/File/FileUtil.h"
+//#include "Common/Serialize/Serializer.h"
+//#include "Common/ConsoleListener.h"
+//#include "Common/Input/InputState.h"
+//#include "Common/Input/KeyCodes.h"
+//#include "Common/Thread/ThreadUtil.h"
+//#include "Common/Thread/ThreadManager.h"
+//#include "Common/File/VFS/VFS.h"
+//#include "Common/Data/Text/I18n.h"
+//#include "Common/StringUtils.h"
+//#include "Common/System/Display.h"
+//#include "Common/System/NativeApp.h"
+//#include "Common/System/System.h"
+//#include "Common/GraphicsContext.h"
+//#include "Common/Net/Resolve.h"
+//#include "Common/UI/Screen.h"
+//#include "Common/GPU/thin3d.h"
+//#include "Common/GPU/thin3d_create.h"
+//#include "Common/GPU/OpenGL/GLRenderManager.h"
+//#include "Common/GPU/OpenGL/GLFeatures.h"
+//#include "Common/System/NativeApp.h"
+//#include "Common/File/VFS/VFS.h"
+//#include "Common/Log.h"
+//#include "Common/TimeUtil.h"
+//#include "Common/GraphicsContext.h"
+
+//#include "GPU/GPUState.h"
+//#include "GPU/GPUInterface.h"
+
+//#include "Core/Config.h"
+//#include "Core/ConfigValues.h"
+//#include "Core/Core.h"
+//#include "Core/CoreParameter.h"
+//#include "Core/HLE/sceCtrl.h"
+//#include "Core/HLE/sceUtility.h"
+//#include "Core/HW/MemoryStick.h"
+//#include "Core/MemMap.h"
+//#include "Core/System.h"
+//#include "Core/CoreTiming.h"
+//#include "Core/HW/Display.h"
+//#include "Core/CwCheat.h"
+//#include "Core/ELF/ParamSFO.h"
+//#include "Core/SaveState.h"
 
 #define IS_IPAD() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad)
 #define IS_IPHONE() ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPhone)
@@ -93,7 +122,7 @@ static UIView *m_view;
 static bool threadEnabled = true;
 static bool threadStopped = false;
 
-@implementation PVPPSSPPCore (Video)
+@implementation PVPPSSPPCoreBridge (Video)
 
 # pragma mark - Methods
 - (void)videoInterrupt {
@@ -281,9 +310,9 @@ static bool threadStopped = false;
         [gl_view_controller addChildViewController:rootController];
         [rootController didMoveToParentViewController:gl_view_controller];
         if ([gl_view_controller respondsToSelector:@selector(mtlview)]) {
-            self.renderDelegate.mtlview.autoresizesSubviews=true;
-            self.renderDelegate.mtlview.clipsToBounds=true;
-            [self.renderDelegate.mtlview addSubview:m_view];
+            self.renderDelegate.mtlView.autoresizesSubviews=true;
+            self.renderDelegate.mtlView.clipsToBounds=true;
+            [self.renderDelegate.mtlView addSubview:m_view];
         } else {
             gl_view_controller.view.autoresizesSubviews=true;
             gl_view_controller.view.clipsToBounds=true;
@@ -365,16 +394,16 @@ static bool threadStopped = false;
         threadEnabled=true;
         NSLog(@"runVM: NativeInitGraphics Starting\n");
         NativeInitGraphics(graphicsContext);
-        _isInitialized=true;
+        self->_isInitialized=true;
         UpdateUIState(UISTATE_INGAME);
         NSLog(@"runVM: NativeInitGraphics OK\n");
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            isPaused=false;
+            self->isPaused=false;
             [self refreshScreenSize];
         });
         NSLog(@"runVM: Emulation thread starting\n");
 		while (graphicsContext != NULL && threadEnabled) {
-            if (isPaused) {
+            if (self->isPaused) {
                 usleep(700 * 1000);
             } else {
                 NativeUpdate();

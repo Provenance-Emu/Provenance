@@ -1,1 +1,0 @@
-../PokeMini-libretro/source/Video.h

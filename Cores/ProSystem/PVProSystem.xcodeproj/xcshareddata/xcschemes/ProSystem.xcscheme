@@ -14,21 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B3C96EBE1D62C5E7003F1E93"
-               BuildableName = "PVSupport.framework"
-               BlueprintName = "PVSupport"
-               ReferencedContainer = "container:../../PVSupport/PVSupport.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
+               BlueprintIdentifier = "B3E799FB2C93AE93007D86A6"
                BuildableName = "PVProSystem.framework"
                BlueprintName = "PVProSystem"
                ReferencedContainer = "container:PVProSystem.xcodeproj">
@@ -54,15 +40,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
-            BuildableName = "PVProSystem.framework"
-            BlueprintName = "PVProSystem"
-            ReferencedContainer = "container:PVProSystem.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -73,7 +50,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B36DE79F1D6B7558002EE3ED"
+            BlueprintIdentifier = "B3E799FB2C93AE93007D86A6"
             BuildableName = "PVProSystem.framework"
             BlueprintName = "PVProSystem"
             ReferencedContainer = "container:PVProSystem.xcodeproj">

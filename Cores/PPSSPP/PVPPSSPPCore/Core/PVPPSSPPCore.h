@@ -6,24 +6,28 @@
 //  Copyright © 2021 Provenance. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
-#import <GLKit/GLKit.h>
-#import <Metal/Metal.h>
-#import <MetalKit/MetalKit.h>
+//@import PVCoreObjCBridge;
 
-#import <PVSupport/PVSupport.h>
-#import <PVSupport/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+#import <PVCoreObjCBridge/PVCoreObjCBridge.h>
+#import <Foundation/Foundation.h>
+
 
 #define MASKED_PSP_MEMORY 1
 #define GET_CURRENT_AND_RETURN(...) __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 #define GET_CURRENT_OR_RETURN(...)  __strong __typeof__(_current) current = _current; if(current == nil) return __VA_ARGS__;
 
-@interface PVPPSSPPCore : PVEmulatorCore
-<PVPSPSystemResponderClient>
-{
-	uint8_t padData[4][PVPSPButtonCount];
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
+
+@protocol ObjCBridgedCoreBridge;
+@protocol PVPSPSystemResponderClient;
+typedef enum PVJaguarButton: NSInteger PVJaguarButton;
+
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Weverything" // Silence "Cannot find protocol definition" warning due to forward declaration.
+@interface PVPPSSPPCoreBridge : PVCoreObjCBridge <ObjCBridgedCoreBridge, PVPSPSystemResponderClient> {
+#pragma clang diagnostic pop
+	uint8_t padData[4][22]; // PVPSPButtonCount
 	int8_t xAxis[4];
 	int8_t yAxis[4];
 	int videoWidth;
@@ -86,4 +90,6 @@
 @end
 @interface CLLocationManager : NSObject
 @end
-static __weak PVPPSSPPCore *_current;
+static __weak PVPPSSPPCoreBridge *_current;
+
+NS_HEADER_AUDIT_END(nullability, sendability)

@@ -33,7 +33,14 @@ public protocol GameLaunchingViewController: AnyObject {
     func presentCoreSelection(forGame game: PVGame, sender: Any?)
 }
 
-
+extension GameLaunchingViewController {
+    func openSaveState(withID objectId: String) async {
+        let realm = RomDatabase.sharedInstance
+        if let object = realm.object(ofType: PVSaveState.self, wherePrimaryKeyEquals: objectId) {
+            await openSaveState(object)
+        }
+    }
+}
 
 public
 extension GameLaunchingViewController where Self: UIViewController {
@@ -190,26 +197,30 @@ extension GameLaunchingViewController where Self: UIViewController {
 
     public
     func openSaveState(_ saveState: PVSaveState) async {
-        if let gameVC = await presentedViewController as? PVEmulatorViewController {
-            try? RomDatabase.sharedInstance.writeTransaction {
+        
+        if let gameVC = presentedViewController as? PVEmulatorViewController {
+//            try? RomDatabase.sharedInstance.writeTransaction {
+            try? saveState.realm!.write {
                 saveState.lastOpened = Date()
             }
 
             gameVC.core.setPauseEmulation(true)
             
             do {
-                try await gameVC.core.loadState(fromFileAtPath: saveState.file.url.path)
+                let path = saveState.file.url.path
+                try await gameVC.core.loadState(fromFileAtPath: path)
                 gameVC.core.setPauseEmulation(false)
             } catch {
                 let description = error.localizedDescription
                 let reason = (error as NSError).localizedFailureReason
 
-                await self.presentError("Failed to load save state: \(description) \(reason ?? "")", source: self.view) {
+                let msg = "Failed to load save state: \(description) \(reason ?? "")"
+                self.presentError(msg, source: self.view) {
                     gameVC.core.setPauseEmulation(false)
                 }
             }
         } else {
-            await presentWarning("No core loaded", source: self.view)
+            presentWarning("No core loaded", source: self.view)
         }
     }
     
@@ -422,16 +433,16 @@ extension GameLaunchingViewController where Self: UIViewController {
         // Try to match MD5s for files that don't match by name, and rename them to what's expected if found
         // Warn on files that have filename match but MD5 doesn't match expected
         var canLoad = true
-        await entries.concurrentForEach {
-            let expectedFilename=self.getExpectedFilename($0)
+        await entries.asyncForEach { currentEntry in
+            let expectedFilename = self.getExpectedFilename(currentEntry)
             // Check for a direct filename match and that it isn't an optional BIOS if we don't find it
-            if !biosPathContents.contains(expectedFilename), !$0.optional {
+            if !biosPathContents.contains(expectedFilename), !currentEntry.optional {
                 // Didn't match by files name, now we generate all the md5's and see if any match, if they do, move the matching file to the correct filename
 
                 // 1 - Lazily generate the hashes of files in the BIOS directory
                 if biosPathContentsMD5Cache == nil {
-                    biosPathContentsMD5Cache = await biosPathContents.async.reduce([String: String](), { (hashDictionary, filename) -> [String: String] in
-                        let fullBIOSFileURL = await system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
+                    biosPathContentsMD5Cache = biosPathContents.reduce([String: String](), { (hashDictionary, filename) -> [String: String] in
+                        let fullBIOSFileURL = system.biosDirectory.appendingPathComponent(filename, isDirectory: false)
                         if let hash = FileManager.default.md5ForFile(atPath: fullBIOSFileURL.path, fromOffset: 0), !hash.isEmpty {
                             // Make mutable
                             var hashDictionary = hashDictionary
@@ -445,31 +456,35 @@ extension GameLaunchingViewController where Self: UIViewController {
                 }
 
                 // 2 - See if any hashes in the BIOS directory match the current BIOS entry we're investigating.
-                if let biosPathContentsMD5Cache = biosPathContentsMD5Cache, let filenameOfFoundFile = biosPathContentsMD5Cache[$0.expectedMD5.uppercased()] {
+                if let biosPathContentsMD5Cache = biosPathContentsMD5Cache, let filenameOfFoundFile = biosPathContentsMD5Cache[currentEntry.expectedMD5.uppercased()] {
                     // Rename the file to what we expected
                     do {
-                        let from = await system.biosDirectory.appendingPathComponent(filenameOfFoundFile, isDirectory: false)
-                        let to = await system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false)
+                        let from = system.biosDirectory.appendingPathComponent(filenameOfFoundFile, isDirectory: false)
+                        let to = system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false)
                         try FileManager.default.moveItem(at: from, to: to)
                         // Succesfully move the file, mark this BIOSEntry as true in the .all{} loop
-                        ILOG("Rename file \(filenameOfFoundFile) to \(expectedFilename) because it matched by MD5 \($0.expectedMD5.uppercased())")
+                        ILOG("Rename file \(filenameOfFoundFile) to \(expectedFilename) because it matched by MD5 \(currentEntry.expectedMD5.uppercased())")
                     } catch {
                         ELOG("Failed to rename \(filenameOfFoundFile) to \(expectedFilename)\n\(error.localizedDescription)")
                         // Since we couldn't rename, mark this as a false
-                        missingBIOSES.append("\(expectedFilename) (MD5: \($0.expectedMD5))")
+                        missingBIOSES.append("\(expectedFilename) (MD5: \(currentEntry.expectedMD5))")
                         canLoad = false
                     }
                 } else {
                     // No MD5 matches either
-                    missingBIOSES.append("\(expectedFilename) (MD5: \($0.expectedMD5))")
+                    missingBIOSES.append("\(expectedFilename) (MD5: \(currentEntry.expectedMD5))")
                     canLoad = false
                 }
             } else {
                 // Not as important, but log if MD5 is mismatched.
                 // Cores care about filenames for some reason, not MD5s
-                let fileMD5 = await FileManager.default.md5ForFile(atPath: system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false).path, fromOffset: 0) ?? ""
-                if fileMD5 != $0.expectedMD5.uppercased() {
-                    WLOG("MD5 hash for \(expectedFilename) didn't match the expected value.\nGot {\(fileMD5)} expected {\($0.expectedMD5.uppercased())}")
+                let path = system.biosDirectory.appendingPathComponent(expectedFilename, isDirectory: false).path
+                Task.detached(priority: .low) {
+                    let fileMD5 = FileManager.default.md5ForFile(atPath: path, fromOffset: 0) ?? ""
+                    let expectedMD5 = currentEntry.expectedMD5.lowercased()
+                    if fileMD5 != expectedMD5 {
+                        WLOG("MD5 hash for \(expectedFilename) didn't match the expected value.\nGot {\(fileMD5)} expected {\(expectedMD5)}")
+                    }
                 }
             }
         } // End canLoad .all loop
@@ -530,16 +545,21 @@ extension GameLaunchingViewController where Self: UIViewController {
             // Open the save state after a bootup delay if the user selected one
             // Use a timer loop on ios 10+ to check if the emulator has started running
             if let saveState = saveState {
+                let saveStateID = saveState.id
+
                 emulatorViewController.gpuViewController.view.isHidden = true
                 _ = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true, block: {[weak self] timer in
                     guard let self = self else {
                         timer.invalidate()
                         return
                     }
+                    /// Check if the emulator has started
                     if !emulatorViewController.core.isEmulationPaused {
+                        /// Cancel the timer
                         timer.invalidate()
+                        /// Create thread safe reference to the save state
                         Task { @MainActor in
-                            await self.openSaveState(saveState)
+                            await self.openSaveState(withID: saveStateID)
                             emulatorViewController.gpuViewController.view.isHidden = false
                         }
                     }

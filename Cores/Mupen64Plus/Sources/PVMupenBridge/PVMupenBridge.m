@@ -28,10 +28,12 @@
 #define M64P_CORE_PROTOTYPES 1
 
 #import "PVMupenBridge.h"
+#import "PVMupen64PlusBridge/PVMupen64PlusBridge-Swift.h"
 @import PVSupport;
 @import PVCoreBridge;
 @import PVCoreObjCBridge;
 @import PVEmulatorCore;
+@import PVLogging;
 @import PVLoggingObjC;
 @import PVSettings;
 
@@ -69,45 +71,15 @@
 #import <UIKit/UIKit.h>
 #endif
 
-//@interface PVMupenBridge // : PVEmulatorCore <PVN64SystemResponderClient>
-//{
-////@private
-//    @public
-//    uint8_t padData[4][PVN64ButtonCount];
-//    int8_t xAxis[4];
-//    int8_t yAxis[4];
-//    
-//    int controllerMode[4];
-//    NSOperationQueue *_inputQueue;
-//}
-//
-//@property (nonatomic, assign) int videoWidth;
-//@property (nonatomic, assign) int videoHeight;
-//@property (nonatomic, assign) int videoBitDepth;
-//
-//@property (nonatomic, assign) double mupenSampleRate;
-//@property (nonatomic, assign) int videoDepthBitDepth;
-//@property (nonatomic, assign) BOOL isNTSC;
-//@property (nonatomic, assign) BOOL dualJoystick;
-//
-//- (void) videoInterrupt;
-//- (void) setMode:(NSInteger)mode forController:(NSInteger)controller;
-//- (void) swapBuffers;
-//@end
-
-extern __weak PVMupenBridge *_current;
-
-
 #if TARGET_OS_MAC
 @interface PVMupenBridge () <PVN64SystemResponderClient>
 #else
 @interface PVMupenBridge () <PVN64SystemResponderClient, GLKViewDelegate>
 #endif
 - (void)OE_didReceiveStateChangeForParamType:(m64p_core_param)paramType value:(int)newValue;
-
 @end
 
-__weak PVMupenBridge *_current = 0;
+__weak PVMupenBridge *_current = nil;
 
 static void (*ptr_PV_ForceUpdateWindowSize)(int width, int height);
 static void (*ptr_SetOSDCallback)(void (*inPV_OSD_Callback)(const char *_pText, float _x, float _y));
@@ -203,7 +175,7 @@ static void MupenStateCallback(void *context, m64p_core_param paramType, int new
         CGSize size = UIApplication.sharedApplication.keyWindow.bounds.size;
         float widthScale = size.width / WIDTHf;
         float heightScale = size.height / HEIGHTf;
-        if (PVSettingsModel.shared.shared.integerScaleEnabled) {
+        if (PVSettingsWrapper.integerScaleEnabled) {
             widthScale = floor(widthScale);
             heightScale = floor(heightScale);
         }
@@ -313,32 +285,35 @@ static void *dlopen_myself()
 		}
 	}
     
-    [self parseOptions];
+//    [self parseOptions];
 
     NSError *copyError = nil;
 	// Create hires folder placement
-	BOOL err = [self createHiResFolder:romFolder error:&copyError];
-    if (!err) {
-        ELOG(@"%@", [copyError localizedDescription]);
-        if(error != NULL) { *error = copyError; }
-        return false;
-    }
+//	BOOL err =
+    [self createHiResFolder:romFolder];
+//    if (!err) {
+//        ELOG(@"%@", [copyError localizedDescription]);
+//        if(error != NULL) { *error = copyError; }
+//        return false;
+//    }
 
 	// Copy default ini files to the config path
-    BOOL err2 = [self copyIniFiles:configPath error:&copyError];
-    if (!err2) {
-        ELOG(@"%@", [copyError localizedDescription]);
-        if(error != NULL) { *error = copyError; }
-        return false;
-    }
+//    BOOL err2 =
+    [self copyIniFiles:configPath];
+//    if (!err2) {
+//        ELOG(@"%@", [copyError localizedDescription]);
+//        if(error != NULL) { *error = copyError; }
+//        return false;
+//    }
 
 	// Rice looks in the data path for some reason, fuck it copy it there too - joe m
-    BOOL err3 = [self copyIniFiles:dataPath error:&copyError];
-    if (!err3) {
-        ELOG(@"%@", [copyError localizedDescription]);
-        if(error != NULL) { *error = copyError; }
-        return false;
-    }
+//    BOOL err3 =
+    [self copyIniFiles:dataPath];
+//    if (!err3) {
+//        ELOG(@"%@", [copyError localizedDescription]);
+//        if(error != NULL) { *error = copyError; }
+//        return false;
+//    }
 
 	// Setup configs
 	ConfigureAll(romFolder);
@@ -449,7 +424,7 @@ static void *dlopen_myself()
 	EAGLContext* context = [self bestContext];
 #endif
 
-    if(PVMupenBridge.useRice) {
+    if(MupenGameCoreOptions.useRice) {
         success = LoadPlugin(M64PLUGIN_GFX, @"PVMupen64PlusVideoRice");
         ptr_PV_ForceUpdateWindowSize = dlsym(RTLD_DEFAULT, "_PV_ForceUpdateWindowSize");
     } else {
@@ -502,7 +477,7 @@ static void *dlopen_myself()
     plugin_start(M64PLUGIN_INPUT);
     
 
-    if(PVMupenBridge.useCXD4) {
+    if(MupenGameCoreOptions.useCXD4) {
             // Load RSP
             // Configure if using rsp-cxd4 plugin
         m64p_handle configRSP;
@@ -688,7 +663,7 @@ static void *dlopen_myself()
 - (void)setPauseEmulation:(BOOL)flag
 {
     [super setPauseEmulation:flag];
-    [self parseOptions];
+//    [self parseOptions];
 // TODO: Fix pause
 //    CoreDoCommand(M64CMD_PAUSE, flag, NULL);
 
@@ -731,6 +706,14 @@ static void *dlopen_myself()
 	if (ptr_PV_ForceUpdateWindowSize != nil) {
 		ptr_PV_ForceUpdateWindowSize(size.width, size.height);
 	}
+}
+
+- (double)audioSampleRate {
+    return _mupenSampleRate;
+}
+
+- (NSUInteger)channelCount {
+    return 2;
 }
 
 @end

@@ -18,7 +18,7 @@ public extension PVObject where Self: RealmSwift.Object {
         try RomDatabase.sharedInstance.add(self, update: update)
     }
     
-    public func delete() throws {
+    func delete() throws {
         try RomDatabase.sharedInstance.delete(self.warmUp())
     }
 

@@ -14,6 +14,7 @@
 @import AVFoundation;
 @import CoreGraphics;
 @import PVCoreBridge;
+@import PVSettings;
 #import "NSObject+PVAbstractAdditions.h"
 
 #if !TARGET_OS_OSX
@@ -71,7 +72,7 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 - (instancetype)init {
 	if ((self = [super init])) {
         NSUInteger count         = [self audioBufferCount];
-        ringBuffers              = (__strong OERingBuffer **)calloc(count, sizeof(OERingBuffer *));
+        ringBuffers              = [[NSMutableArray<id<RingBufferProtocol>> alloc] init];
         _emulationLoopThreadLock = [NSLock new];
         _frontBufferCondition    = [NSCondition new];
         _frontBufferLock         = [NSLock new];
@@ -93,15 +94,6 @@ NSString *const PVEmulatorCoreErrorDomain = @"org.provenance-emu.EmulatorCore.Er
 - (void)dealloc {
     if(self.isRunning) {
         [self stopEmulation];
-    }
-
-    if(ringBuffers != nil) {
-        for (NSUInteger i = 0, count = [self audioBufferCount]; i < count; i++) {
-            ringBuffers[i] = nil;
-        }
-        
-        free(ringBuffers);
-        ringBuffers = nil;
     }
 }
 
@@ -160,11 +152,11 @@ static NSString *_systemName;
 + (void)setSystemName:(NSString *)name {
     _systemName=name;
 }
-@end
+//@end
 
-@implementation PVCoreObjCBridge (Rumble)
+//@implementation PVCoreObjCBridge (Rumble)
 
-@dynamic supportsRumble;
+//@dynamic supportsRumble;
 
 - (BOOL) suppportRumble { return NO; }
 
@@ -208,12 +200,12 @@ static NSString *_systemName;
 -(void)stopHaptic { }
 #endif
 
-@end
+//@end
 
-@implementation PVCoreObjCBridge (Runloop)
+//@implementation PVCoreObjCBridge (Runloop)
 
-@dynamic gameSpeed;
-@dynamic isOn;
+//@dynamic gameSpeed;
+//@dynamic isOn;
 
 #pragma mark - Execution
 
@@ -223,11 +215,9 @@ static NSString *_systemName;
     return NO;
 }
 
-- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error
-{
+- (BOOL)loadFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {
     return [self loadFileAtPath:path];
 }
-
 
 - (void) emulationLoopThread {
 
@@ -249,20 +239,16 @@ static NSString *_systemName;
     //@ 9:40 iMakeCurrentThreadRealTime();
 
     //Emulation loop
-    while (UNLIKELY(!shouldStop)) {
+    while (UNLIKELY(!_shouldStop)) {
 
         [self updateControllers];
 
         @synchronized (self) {
             if (_isRunning) {
-                if (self.isSpeedModified)
-                {
+                if (self.isSpeedModified) {
                     [self executeFrame];
-                }
-                else
-                {
-                    @synchronized(self)
-                    {
+                } else {
+                    @synchronized(self) {
                         [self executeFrame];
                     }
                 }
@@ -273,8 +259,7 @@ static NSString *_systemName;
         nextEmuTick += gameInterval;
         sleepTime = nextEmuTick - GetSecondsSince(origin);
 
-        if (_isDoubleBufferedCached)
-        {
+        if (_isDoubleBufferedCached) {
             NSDate* bufferSwapLimit = [[NSDate date] dateByAddingTimeInterval:sleepTime];
             if ([self.frontBufferLock tryLock] || [self.frontBufferLock lockBeforeDate:bufferSwapLimit]) {
                 [self swapBuffers];
@@ -315,7 +300,6 @@ static NSString *_systemName;
             framesTorn = 0;
             fpsCounter = PVTimestamp();
         }
-
     }
 
     [self.emulationLoopThreadLock unlock];
@@ -325,13 +309,19 @@ static NSString *_systemName;
     _gameSpeed = gameSpeed;
 
     switch (gameSpeed) {
+        case GameSpeedVerySlow:
+            self.framerateMultiplier = 0.25;
+            break;
         case GameSpeedSlow:
-            self.framerateMultiplier = 0.2;
+            self.framerateMultiplier = 0.5;
             break;
         case GameSpeedNormal:
             self.framerateMultiplier = 1.0;
             break;
         case GameSpeedFast:
+            self.framerateMultiplier = 2.0;
+            break;
+        case GameSpeedVeryFast:
             self.framerateMultiplier = 5.0;
             break;
     }
@@ -353,7 +343,7 @@ static NSString *_systemName;
             }
 #endif
             self.isRunning  = YES;
-            shouldStop = NO;
+            _shouldStop = NO;
             self.isOn = YES;
             self.gameSpeed = GameSpeedNormal;
             if (!_skipEmulationLoop) {
@@ -401,7 +391,7 @@ static NSString *_systemName;
 
 -(void)stopEmulationWithMessage:(NSString *_Nullable)message {
     [self stopHaptic];
-    shouldStop = YES;
+    _shouldStop = YES;
     self.isRunning  = NO;
 
     [self setIsFrontBufferReady:NO];
@@ -411,24 +401,24 @@ static NSString *_systemName;
         #warning TODO: Show the message to the user.
         // TODO: Show the message to the user.
     }
-    //    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
-    //    [self.emulationLoopThreadLock unlock];
+    [self.emulationLoopThreadLock lock]; // make sure emulator loop has ended
+    [self.emulationLoopThreadLock unlock];
     self.isOn = false;
 }
-@end
 
+//@end
 
-@implementation PVCoreObjCBridge (Controllers)
+//@implementation PVCoreObjCBridge (Controllers)
 
 
 #if !TARGET_OS_OSX && !TARGET_OS_WATCH
-- (UIViewController *)touchViewController {
-    return _touchViewController;
-}
+//- (UIViewController *)touchViewController {
+//    return _touchViewController;
+//}
 
 - (void)setTouchViewController:(UIViewController *)touchViewController {
-    if (_touchViewController != touchViewController) {
-        _touchViewController = touchViewController;
+    if (self.touchViewController != touchViewController) {
+        self.touchViewController = touchViewController;
     }
 }
 #endif
@@ -493,9 +483,9 @@ static NSString *_systemName;
     //subclasses may implement for polling
 }
 
-@end
+//@end
 
-@implementation PVCoreObjCBridge (Saves)
+//@implementation PVCoreObjCBridge (Saves)
 #pragma mark - Save States
 
 - (BOOL)saveStateToFileAtPath:(NSString *)path error:(NSError *__autoreleasing *)error {
@@ -524,32 +514,32 @@ static NSString *_systemName;
 }
 
 // Over load to support async
-- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (void)saveStateToFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     NSError *error;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL success = [self saveStateToFileAtPath:fileName error:&error];
 #pragma clang diagnostic pop
-    block(success, error);
+    block(error);
 }
 
 // Over load to support async
-- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(BOOL, NSError *))block {
+- (void)loadStateFromFileAtPath:(NSString *)fileName completionHandler:(void (^)(NSError *))block {
     NSError *error;
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     BOOL success = [self loadStateFromFileAtPath:fileName error:&error];
 #pragma clang diagnostic pop
-    block(success, error);
+    block(error);
 }
 
 -(BOOL)supportsSaveStates {
     return YES;
 }
 
-@end
+//@end
 
-@implementation PVCoreObjCBridge (Video)
+//@implementation PVCoreObjCBridge (Video)
 
 #pragma mark - Video
 
@@ -578,6 +568,12 @@ static NSString *_systemName;
 {
     [self doesNotImplementSelector:_cmd];
     return CGSizeZero;
+}
+
+#warning "TODO: Replace all occurances of `bufferSize` with `videoBufferSize`"
+- (CGSize)videBufferSize
+{
+    return [self bufferSize];
 }
 
 #if !TARGET_OS_WATCH
@@ -616,9 +612,10 @@ static NSString *_systemName;
 - (void)swapBuffers {
     NSAssert(!self.isDoubleBuffered, @"Cores that are double-buffered must implement swapBuffers!");
 }
-@end
 
-@implementation PVCoreObjCBridge (Audio)
+//@end
+
+//@implementation PVCoreObjCBridge (Audio)
 
 #pragma mark - Audio
 
@@ -639,7 +636,7 @@ static NSString *_systemName;
 - (void)getAudioBuffer:(void *)buffer frameCount:(uint32_t)frameCount bufferIndex:(NSUInteger)index {
     uint32_t maxLength = (uint32_t)(frameCount * [self channelCountForBuffer:index] * self.audioBitDepth);
     [[self ringBufferAtIndex:index] read:buffer
-                               maxLength:maxLength];
+                           preferredSize:maxLength];
 }
 
 - (NSUInteger)audioBitDepth {
@@ -676,9 +673,15 @@ static NSString *_systemName;
     return 0;
 }
 
-- (OERingBuffer *)ringBufferAtIndex:(NSUInteger)index {
-    if (UNLIKELY(ringBuffers[index] == nil)) {
-        ringBuffers[index] = [[OERingBuffer alloc] initWithLength:(uint32_t)[self audioBufferSizeForBuffer:index] * 16];
+- (id<RingBufferProtocol>)ringBufferAtIndex:(NSUInteger)index {
+    if (UNLIKELY(ringBuffers.count <= index)) {
+        NSInteger length = [self audioBufferSizeForBuffer:index] * 16;
+        BOOL useLegacyAudioEngine = [PVSettingsWrapper useLegacyAudioEngine];
+        RingBufferType bufferType = useLegacyAudioEngine ? RingBufferTypeOpenEMU : RingBufferTypeProvenance;
+        
+        id<RingBufferProtocol> newRingBuffer = [RingBufferFactory makeWithType:bufferType withLength:length];
+        [ringBuffers addObject:newRingBuffer];
+        return newRingBuffer;
     }
 
     return ringBuffers[index];

@@ -389,6 +389,7 @@ public enum RomDeletionError: Error {
 public extension RomDatabase {
     @objc
     func writeTransaction(_ block: () -> Void) throws {
+        let realm = Thread.isMainThread ? self.realm : try Realm()
         if realm.isInWriteTransaction {
             block()
         } else {
@@ -400,6 +401,7 @@ public extension RomDatabase {
 
     @objc
     func asyncWriteTransaction(_ block: @escaping () -> Void) {
+        let realm = Thread.isMainThread ? self.realm : try! Realm()
         if realm.isPerformingAsynchronousWriteOperations {
             block()
         } else {
@@ -421,8 +423,8 @@ public extension RomDatabase {
     }
     func deleteAll() throws {
         Realm.Configuration.defaultConfiguration.deleteRealmIfMigrationNeeded = true
-        let realm = try! Realm()
-        try! realm.write {
+        let realm = Thread.isMainThread ? self.realm : try Realm()
+        try realm.write {
             realm.deleteAll()
         }
     }
@@ -565,6 +567,10 @@ public extension RomDatabase {
 public extension RomDatabase {
     @objc
     func refresh() {
+        let realm = try! Realm()
         realm.refresh()
+
+//        Task { @MainActor in
+//        }
     }
 }

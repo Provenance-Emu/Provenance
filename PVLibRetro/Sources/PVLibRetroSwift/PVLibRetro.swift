@@ -12,7 +12,7 @@ import Foundation
 
 @objc
 @objcMembers
-open class PVLibRetroCore : PVEmulatorCore, @unchecked Sendable {
+open class PVLibRetroCoreBridge : PVEmulatorCore, @unchecked Sendable {
     
     // Public properties
     @objc open  var pitch_shift: UInt16 = 0

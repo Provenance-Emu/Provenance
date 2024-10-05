@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "PVPlists",
     platforms: [
-        .iOS(.v17),
+        .iOS(.v15),
         .tvOS("15.4"),
         .watchOS(.v9),
         .macOS(.v11),
@@ -35,5 +35,6 @@ let package = Package(
             name: "PVPlistsTests",
             dependencies: ["PVPlists"]
         ),
-    ]
+    ],
+    swiftLanguageModes: [.v5, .v6]
 )

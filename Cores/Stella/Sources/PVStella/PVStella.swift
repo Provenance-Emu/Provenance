@@ -25,21 +25,7 @@ import GameController
 
 @objc
 @objcMembers
-public final class PVStellaGameCore: PVEmulatorCore, ObjCBridgedCore, @unchecked Sendable {
-
-    // PVEmulatorCoreBridged
-    public typealias Bridge = PVStellaBridge
-    public lazy var bridge: Bridge = {
-        let core = PVStellaBridge.init { key in
-            return self.get(variable: key)
-        }
-        return core
-    }()
-    
-#if canImport(GameController)
-    @MainActor
-    public var valueChangedHandler: GCExtendedGamepadValueChangedHandler? = nil
-#endif
+public final class PVStellaGameCore: PVEmulatorCore, @unchecked Sendable {
     
     // MARK: Cheats
     @objc
@@ -67,15 +53,15 @@ public final class PVStellaGameCore: PVEmulatorCore, ObjCBridgedCore, @unchecked
     
     @objc dynamic public override var rendersToOpenGL: Bool { false }
     
-    @objc
-    public var _frameInterval: TimeInterval = 60.0
-    @objc public dynamic override var frameInterval: TimeInterval { _frameInterval  }
-    
-    @objc
-    public var _videoBuffer: UnsafeMutablePointer<stellabuffer_t> = .allocate(capacity: 1)
-    @objc
-    public override var videoBuffer: UnsafeMutableRawPointer { UnsafeMutableRawPointer.init(_videoBuffer) }
-    
+//    @objc
+//    public var _frameInterval: TimeInterval = 60.0
+//    @objc public dynamic override var frameInterval: TimeInterval { _frameInterval  }
+//    
+//    @objc
+//    public var _videoBuffer: UnsafeMutablePointer<stellabuffer_t> = .allocate(capacity: 1)
+//    @objc
+//    public override var videoBuffer: UnsafeMutableRawPointer { UnsafeMutableRawPointer.init(_videoBuffer) }
+//    
     @objc
     public var videoWidth: Int32 { _videoWidth }
     @objc
@@ -90,5 +76,19 @@ public final class PVStellaGameCore: PVEmulatorCore, ObjCBridgedCore, @unchecked
     @objc
     public required init() {
         super.init()
+        let core = PVStellaBridge.init { key in
+            return self.get(variable: key)
+        }
+        self.bridge = (core as! any ObjCBridgedCoreBridge)
+    }
+}
+
+extension PVStellaGameCore: PV2600SystemResponderClient {
+    public func didPush(_ button: PVCoreBridge.PV2600Button, forPlayer player: Int) {
+        (bridge as! PV2600SystemResponderClient).didPush(button, forPlayer: player)
+    }
+    
+    public func didRelease(_ button: PVCoreBridge.PV2600Button, forPlayer player: Int) {
+        (bridge as! PV2600SystemResponderClient).didRelease(button, forPlayer: player)
     }
 }

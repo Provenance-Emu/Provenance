@@ -44,8 +44,11 @@
 		B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7821D6AB43A002EE3ED /* libz.tbd */; };
 		B36DE7851D6AB44D002EE3ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7841D6AB44D002EE3ED /* Foundation.framework */; };
 		B36DE79A1D6AD049002EE3ED /* libedit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B36DE7991D6AD049002EE3ED /* libedit.tbd */; };
-		B373CD98296F99B6005D110B /* PVDuckStation.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */; };
-		B373CD99296F99B6005D110B /* PVDuckStation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */; };
+		B373CD98296F99B6005D110B /* PVDuckStationCoreBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A52926BE48CA0096A354 /* PVDuckStationCoreBridge.mm */; };
+		B373CD99296F99B6005D110B /* PVDuckStationCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D8A53926BE4A6D0096A354 /* PVDuckStationCore.swift */; };
+		B37CDB1F2CAA1EB40026E901 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDB1E2CAA1EB40026E901 /* PVPlists */; };
+		B37CDB222CAA1EEF0026E901 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDB212CAA1EEF0026E901 /* PVCoreObjCBridge */; };
+		B37CDB252CAA1F2A0026E901 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B37CDB242CAA1F2A0026E901 /* PVSettings */; };
 		B392F761296F6B2B008BAEF1 /* EAGL.h in Headers */ = {isa = PBXBuildFile; fileRef = B392F75F296F6B2B008BAEF1 /* EAGL.h */; };
 		B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2907026DDD854003CB9D4 /* OpenGLES.framework */; platformFilters = (ios, tvos, xros, ); settings = {ATTRIBUTES = (Weak, ); }; };
 		B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3C2924526DEFFD8003CB9D4 /* GLKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -56,7 +59,7 @@
 		B3D8A52D26BE48CA0096A354 /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52426BE48C90096A354 /* Core.plist */; };
 		B3D8A52F26BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52526BE48C90096A354 /* PVDuckStation.h */; };
 		B3D8A53126BE48CA0096A354 /* DuckStation-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B3D8A52626BE48C90096A354 /* DuckStation-Info.plist */; };
-		B3D8A53326BE48CA0096A354 /* PVDuckStation.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52826BE48C90096A354 /* PVDuckStation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B3D8A53326BE48CA0096A354 /* PVDuckStationCoreBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = B3D8A52826BE48C90096A354 /* PVDuckStationCoreBridge.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -528,10 +531,10 @@
 		B3D8A52426BE48C90096A354 /* Core.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Core.plist; sourceTree = "<group>"; };
 		B3D8A52526BE48C90096A354 /* PVDuckStation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVDuckStation.h; sourceTree = "<group>"; };
 		B3D8A52626BE48C90096A354 /* DuckStation-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "DuckStation-Info.plist"; sourceTree = "<group>"; };
-		B3D8A52826BE48C90096A354 /* PVDuckStation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVDuckStation.h; sourceTree = "<group>"; };
-		B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDuckStation.mm; sourceTree = "<group>"; };
+		B3D8A52826BE48C90096A354 /* PVDuckStationCoreBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVDuckStationCoreBridge.h; sourceTree = "<group>"; };
+		B3D8A52926BE48CA0096A354 /* PVDuckStationCoreBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PVDuckStationCoreBridge.mm; sourceTree = "<group>"; };
 		B3D8A52A26BE48CA0096A354 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDuckStation.swift; sourceTree = "<group>"; };
+		B3D8A53926BE4A6D0096A354 /* PVDuckStationCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVDuckStationCore.swift; sourceTree = "<group>"; };
 		B3D8A54026BE55780096A354 /* libduckstation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libduckstation.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -548,9 +551,12 @@
 				B30E9B162C6FD0F200C1431E /* PVEmulatorCore in Frameworks */,
 				B30A200A278FC9FF009E08C9 /* OpenGL.framework in Frameworks */,
 				B36DE7831D6AB43A002EE3ED /* libz.tbd in Frameworks */,
+				B37CDB1F2CAA1EB40026E901 /* PVPlists in Frameworks */,
 				B3C2924626DEFFD8003CB9D4 /* GLKit.framework in Frameworks */,
+				B37CDB252CAA1F2A0026E901 /* PVSettings in Frameworks */,
 				B3C2924E26DEFFE8003CB9D4 /* Metal.framework in Frameworks */,
 				B3C2924C26DEFFE8003CB9D4 /* MetalKit.framework in Frameworks */,
+				B37CDB222CAA1EEF0026E901 /* PVCoreObjCBridge in Frameworks */,
 				B3C2907126DDD854003CB9D4 /* OpenGLES.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -806,13 +812,13 @@
 			isa = PBXGroup;
 			children = (
 				B392F75F296F6B2B008BAEF1 /* EAGL.h */,
-				B3D8A52826BE48C90096A354 /* PVDuckStation.h */,
-				B3D527C526DDCCC300991E84 /* OpenGLHostDisplay.hpp */,
-				B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */,
 				B392F760296F6B2B008BAEF1 /* EAGL.mm */,
+				B3D527C526DDCCC300991E84 /* OpenGLHostDisplay.hpp */,
 				B3D527C326DDCCC300991E84 /* OpenGLHostDisplay.mm */,
-				B3D8A52926BE48CA0096A354 /* PVDuckStation.mm */,
-				B3D8A53926BE4A6D0096A354 /* PVDuckStation.swift */,
+				B3D527C626DDCCC300991E84 /* PlayStationGameHacks.m */,
+				B3D8A53926BE4A6D0096A354 /* PVDuckStationCore.swift */,
+				B3D8A52826BE48C90096A354 /* PVDuckStationCoreBridge.h */,
+				B3D8A52926BE48CA0096A354 /* PVDuckStationCoreBridge.mm */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -824,7 +830,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3D8A53326BE48CA0096A354 /* PVDuckStation.h in Headers */,
+				B3D8A53326BE48CA0096A354 /* PVDuckStationCoreBridge.h in Headers */,
 				B392F761296F6B2B008BAEF1 /* EAGL.h in Headers */,
 				B3D8A52F26BE48CA0096A354 /* PVDuckStation.h in Headers */,
 			);
@@ -899,7 +905,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = PV;
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1600;
 				ORGANIZATIONNAME = "Provenance EMU";
 				TargetAttributes = {
 					B36DE7471D6AB19C002EE3ED = {
@@ -924,6 +930,9 @@
 				B30E99032C6EF1A900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E9B142C6FD0F200C1431E /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
 				B30E9B172C6FD0FE00C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B37CDB1D2CAA1EB40026E901 /* XCLocalSwiftPackageReference "../../PVPlists" */,
+				B37CDB202CAA1EEF0026E901 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B37CDB232CAA1F2A0026E901 /* XCLocalSwiftPackageReference "../../PVSettings" */,
 			);
 			productRefGroup = 02695362143169EB003A07D4 /* Products */;
 			projectDirPath = "";
@@ -1147,8 +1156,8 @@
 			files = (
 				B34C2BF4296F9B24002146BB /* OpenGLHostDisplay.mm in Sources */,
 				B34C2C14296FBFBD002146BB /* PlayStationGameHacks.m in Sources */,
-				B373CD98296F99B6005D110B /* PVDuckStation.mm in Sources */,
-				B373CD99296F99B6005D110B /* PVDuckStation.swift in Sources */,
+				B373CD98296F99B6005D110B /* PVDuckStationCoreBridge.mm in Sources */,
+				B373CD99296F99B6005D110B /* PVDuckStationCore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1321,10 +1330,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1347,7 +1357,7 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = auto;
@@ -1355,7 +1365,7 @@
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Debug;
 		};
@@ -1387,10 +1397,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1412,15 +1423,16 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Release;
 		};
@@ -1452,10 +1464,11 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -1477,14 +1490,14 @@
 					"\"$(SRCROOT)/duckstation/src\"",
 					"\"$(SRCROOT)/duckstation/dep/glad/include\"",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				SDKROOT = auto;
 				SUPPORTED_PLATFORMS = "xrsimulator xros macosx iphonesimulator iphoneos appletvsimulator appletvos";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/build";
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 15.6;
 			};
 			name = Archive;
 		};
@@ -1497,9 +1510,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1551,8 +1565,6 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1564,6 +1576,11 @@
 					"$(PROJECT_DIR)/lib",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fcxx-modules",
+					"-fmodules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
 				SKIP_INSTALL = YES;
@@ -1585,8 +1602,9 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
@@ -1640,8 +1658,6 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1653,6 +1669,11 @@
 					"$(PROJECT_DIR)/lib",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fcxx-modules",
+					"-fmodules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
 				SKIP_INSTALL = YES;
@@ -1673,9 +1694,10 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = S32Z3HMYVQ;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1727,8 +1749,6 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVDuckStation/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1740,6 +1760,11 @@
 					"$(PROJECT_DIR)/lib",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fcxx-modules",
+					"-fmodules",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.duckstation";
 				PRODUCT_NAME = PVDuckStation;
 				SKIP_INSTALL = YES;
@@ -1979,6 +2004,18 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B37CDB1D2CAA1EB40026E901 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
+		B37CDB202CAA1EEF0026E901 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B37CDB232CAA1F2A0026E901 /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1993,6 +2030,18 @@
 		B30E9B182C6FD0FE00C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
+		};
+		B37CDB1E2CAA1EB40026E901 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
+		};
+		B37CDB212CAA1EEF0026E901 /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B37CDB242CAA1F2A0026E901 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

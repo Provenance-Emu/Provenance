@@ -124,7 +124,9 @@ public extension System {
         let extensions = system.extensions
         let requiresBIOS = system.requiresBIOS
         let games = system.gameStructs
-        let cores = system.coreStructs
+        #warning("Fix this causing infinite loop")
+        // TODO: fix this causing infinite loop
+//        let cores = system.coreStructs
         let userPreferredCore = system.userPreferredCore
 
         let usesCDs = system.usesCDs
@@ -135,7 +137,7 @@ public extension System {
         let supported = system.supported
         self.init(name: name, identifier: identifier, shortName: shortName, shortNameAlt: shortNameAlt, manufacturer: manufacturer,
                   releaseYear: releaseYear, bits: bits, headerByteSize: headerByteSize, openvgDatabaseID: openvgDatabaseID, requiresBIOS: requiresBIOS,
-                  options: options, bioses: bioses, extensions: extensions, games: games, cores: cores, userPreferredCore: userPreferredCore,
+                  options: options, bioses: bioses, extensions: extensions, games: games, cores: [], userPreferredCore: userPreferredCore,
                   usesCDs: usesCDs, portableSystem: portableSystem, supportsRumble: supportsRumble, screenType: screenType, supported: supported)
     }
 }
