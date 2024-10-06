@@ -2430,7 +2430,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B30E98992C6EEEB400C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
-				B30E989C2C6EEEBF00C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */,
 				B30E99D02C6F044100C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;

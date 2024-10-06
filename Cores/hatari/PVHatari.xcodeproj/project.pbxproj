@@ -2504,7 +2504,6 @@
 			mainGroup = B3C7620620783162009950E4;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				B30E98D92C6EF08B00C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */,
 				B30E98DC2C6EF09400C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E9A052C6F061100C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 			);
@@ -3247,10 +3246,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		B30E98D92C6EF08B00C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../PVLibRetro;
-		};
 		B30E98DC2C6EF09400C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVSupport;

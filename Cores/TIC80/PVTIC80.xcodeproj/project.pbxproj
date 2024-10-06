@@ -1716,7 +1716,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B30E98EF2C6EF11D00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
-				B30E98F22C6EF12C00C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */,
 				B30E99FC2C6F05E200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
@@ -2454,10 +2453,6 @@
 		B30E98EF2C6EF11D00C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVSupport;
-		};
-		B30E98F22C6EF12C00C1431E /* XCLocalSwiftPackageReference "../../PVLibRetro" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../PVLibRetro;
 		};
 		B30E99FC2C6F05E200C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */ = {
 			isa = XCLocalSwiftPackageReference;
