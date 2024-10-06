@@ -74,6 +74,15 @@
         }
       },
       {
+        "package": "PackageBuildInfo",
+        "repositoryURL": "https://github.com/JoeMatt/PackageBuildInfo",
+        "state": {
+          "branch": "master",
+          "revision": "d9c2c27e799b00dedf0620e5d6268968bcf5320e",
+          "version": null
+        }
+      },
+      {
         "package": "PLCrashReporter",
         "repositoryURL": "https://github.com/microsoft/PLCrashReporter.git",
         "state": {

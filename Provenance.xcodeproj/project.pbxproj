@@ -5556,7 +5556,6 @@
 				B33B4F3B2C198EB8007371C5 /* XCLocalSwiftPackageReference "PVmemcpy" */,
 				B33B4F3E2C198F32007371C5 /* XCRemoteSwiftPackageReference "MBProgressHUD" */,
 				B3F904A52C2002F9002283B3 /* XCLocalSwiftPackageReference "PVCoreBridge" */,
-				B311B28F2C37BBE700A8811E /* XCLocalSwiftPackageReference "Cores/JollyGoodEmulation" */,
 				B3B6C1BA2C492F9D002F464D /* XCLocalSwiftPackageReference "Cores/Atari800" */,
 				B3B6C1C12C4935BD002F464D /* XCLocalSwiftPackageReference "Cores/CrabEMU" */,
 				B34969562C4E64AD00D37F79 /* XCLocalSwiftPackageReference "PVThemes" */,
@@ -12996,10 +12995,6 @@
 		B30FC78A2C898FA600E42892 /* XCLocalSwiftPackageReference "Cores/snesticle" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Cores/snesticle;
-		};
-		B311B28F2C37BBE700A8811E /* XCLocalSwiftPackageReference "Cores/JollyGoodEmulation" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Cores/JollyGoodEmulation;
 		};
 		B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */ = {
 			isa = XCLocalSwiftPackageReference;
