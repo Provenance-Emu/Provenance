@@ -22,7 +22,7 @@
 @import PVCoreBridge;
 #endif
 
-#import <libretro/libretro.h>
+@import libretro;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"
