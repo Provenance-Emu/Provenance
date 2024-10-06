@@ -2844,13 +2844,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B30E9A172C6F209400C1431E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			publicHeaders = (
-				CoresRetroarch.h,
-			);
-			target = B30E9A0C2C6F209400C1431E /* CoresRetroarch */;
-		};
 		B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -2889,7 +2882,6 @@
 		B30059402C794D6B003010F5 /* Provenance Mini Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch App"; sourceTree = "<group>"; };
 		B30059512C794D6C003010F5 /* Provenance Mini Watch AppTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch AppTests"; sourceTree = "<group>"; };
 		B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Provenance Mini Watch AppUITests"; sourceTree = "<group>"; };
-		B30E9A0E2C6F209400C1431E /* CoresRetroarch */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B30E9A172C6F209400C1431E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = CoresRetroarch; sourceTree = "<group>"; };
 		B3BE9FA62C7987B1006D989E /* ROM File Provider */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC12C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File Provider"; sourceTree = "<group>"; };
 		B3BE9FB42C7987B1006D989E /* ROM File ProviderUI */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FC62C7987B2006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, B3BE9FCB2C7987B2006D989E /* PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "ROM File ProviderUI"; sourceTree = "<group>"; };
 		B3BE9FD12C7988BE006D989E /* Provenance Stickers */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B3BE9FD82C7988BF006D989E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Provenance Stickers"; sourceTree = "<group>"; };
@@ -3729,7 +3721,6 @@
 				B3270F8027DCB25100E83180 /* Cores */,
 				B3C8A6A328781E810037A946 /* CoresRetro */,
 				934BE9B3296F178400FB9933 /* modules */,
-				B30E9A0E2C6F209400C1431E /* CoresRetroarch */,
 				B30059402C794D6B003010F5 /* Provenance Mini Watch App */,
 				B30059512C794D6C003010F5 /* Provenance Mini Watch AppTests */,
 				B300595B2C794D6D003010F5 /* Provenance Mini Watch AppUITests */,
@@ -4865,9 +4856,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				B30E9A0E2C6F209400C1431E /* CoresRetroarch */,
 			);
 			name = CoresRetroarch;
 			packageProductDependencies = (
