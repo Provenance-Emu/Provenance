@@ -33,7 +33,9 @@ let package = Package(
         .package(url: "https://github.com/ashleymills/Reachability.swift.git", branch: "master"),
         .package(url: "https://github.com/RxSwiftCommunity/RxDataSources.git", from: "5.0.2"),
         .package(url: "https://github.com/jdg/MBProgressHUD.git", from: "1.2.0"),
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0")
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.0.0"),
+//        .package(path: "../PackageBuildInfo")
+        .package(url: "https://github.com/JoeMatt/PackageBuildInfo", branch: "master")
     ],
     targets: [
         
@@ -78,6 +80,9 @@ let package = Package(
                 .define("GL_SILENCE_DEPRECATION"),
                 .define("GLES_SILENCE_DEPRECATION"),
                 .define("CI_SILENCE_GL_DEPRECATION")
+            ],
+            plugins: [
+                .plugin(name: "PackageBuildInfoPlugin", package: "PackageBuildInfo")
             ]
         ),
         

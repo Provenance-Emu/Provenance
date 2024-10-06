@@ -60,7 +60,8 @@ public struct SideMenuView: SwiftUI.View {
     }
 
     func versionText() -> String {
-        let masterBranch: Bool = kGITBranch.lowercased() == "master"
+        let gitBranch = PackageBuild.info.builtBy ?? Bundle.main.infoDictionary?["GIT_BRANCH"] as? String ?? ""
+        let masterBranch: Bool = gitBranch.lowercased() == "master"
         var versionText = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         versionText = versionText ?? "" + (" (\(Bundle.main.infoDictionary?["CFBundleVersion"] ?? ""))")
         if !masterBranch {

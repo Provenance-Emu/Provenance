@@ -653,7 +653,9 @@ final class PVSettingsViewController: QuickTableViewController {
         let modeLabel = "RELEASE"
 #endif
         
-        let branchName = kGITBranch.lowercased()
+        let gitInfo: PackageBuild = PackageBuild.info
+        
+        let branchName = gitInfo.branch?.lowercased() ?? "Unknown"
         let masterBranch: Bool = branchName == "master" || branchName.starts(with: "release")
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "Unknown"
         
@@ -668,7 +670,7 @@ final class PVSettingsViewController: QuickTableViewController {
         var revisionString = NSLocalizedString("Unknown", comment: "")
         if var bundleRevision = Bundle.main.infoDictionary?["Revision"] as? String, !revisionString.isEmpty {
             if !masterBranch {
-                bundleRevision = "\(kGITBranch)/\(bundleRevision)"
+                bundleRevision = "\(branchName)/\(bundleRevision)"
             }
             revisionString = bundleRevision
         }
@@ -680,20 +682,10 @@ final class PVSettingsViewController: QuickTableViewController {
         let outputDateFormatter = DateFormatter()
         outputDateFormatter.dateFormat = "MM/dd/yyyy hh:mm a"
         
-        var buildDate = Date(timeIntervalSince1970: 0)
-        
-        if let processedDate = incomingDateFormatter.date(from: gitdate) {
-            buildDate = processedDate
-        } else {
-            // Try chaninging local - depends on which local was build with for git string
-            // more than the current local
-            incomingDateFormatter.locale = Locale.current
-            if let processedDate = incomingDateFormatter.date(from: gitdate) {
-                buildDate = processedDate
-            }
-        }
-        
+        let buildDate = gitInfo.timeStamp
         let buildDateString: String = outputDateFormatter.string(from: buildDate)
+        
+        let builtByUser = gitInfo.builtBy ?? "Unknown"
         
         let buildInformationRows: [TableRow] = [
             NavigationRow(
