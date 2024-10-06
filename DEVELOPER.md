@@ -3,7 +3,7 @@ _My personal development notes_
 
 ## Show stoppers
 
-- [ ] Fix Repo submodules
+- [X] Fix Repo submodules
 - [ ] Conflicts folder is weird
 - [ ] Possible race condition in importer
 - [ ] SwiftUI not seeing conflicts
