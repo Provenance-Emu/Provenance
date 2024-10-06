@@ -17,7 +17,7 @@
 #import <OpenGL/OpenGL.h>
 #import <GLUT/GLUT.h>
 #endif
-@implementation PVDesmume2015Core (Video)
+@implementation PVDesmume2015CoreBridge (Video)
 
 # pragma mark - Methods
 

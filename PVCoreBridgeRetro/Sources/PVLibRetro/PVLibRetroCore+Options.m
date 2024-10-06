@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PVLibretro.h"
+#import "PVCoreBridgeRetro.h"
 
 #include "libretro.h"
 #ifdef HAVE_CONFIG_H

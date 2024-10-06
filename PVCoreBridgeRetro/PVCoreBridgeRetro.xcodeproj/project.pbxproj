@@ -27,7 +27,8 @@
 		B3702311287256DA00B3F6DA /* retro_inline.h in Headers */ = {isa = PBXBuildFile; fileRef = B34DC6C02867202D00B60497 /* retro_inline.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B377E9F72CB25F8800E9B750 /* PVLogging in Frameworks */ = {isa = PBXBuildFile; productRef = B377E9F62CB25F8800E9B750 /* PVLogging */; };
 		B377E9FA2CB25FA000E9B750 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B377E9F92CB25FA000E9B750 /* PVCoreObjCBridge */; };
-		B392849128670348003BAC21 /* PVLibRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B392849028670348003BAC21 /* PVLibRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B377EBDF2CB2A18A00E9B750 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBDE2CB2A18A00E9B750 /* PVSettings */; };
+		B392849128670348003BAC21 /* PVCoreBridgeRetro.h in Headers */ = {isa = PBXBuildFile; fileRef = B392849028670348003BAC21 /* PVCoreBridgeRetro.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B3928499286703CD003BAC21 /* PVLibRetroCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B3928497286703CD003BAC21 /* PVLibRetroCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B392849A286703CD003BAC21 /* PVLibRetroCore.m in Sources */ = {isa = PBXBuildFile; fileRef = B3928498286703CD003BAC21 /* PVLibRetroCore.m */; };
 		B3A41BCF286E5E660054E9A5 /* retro.m in Sources */ = {isa = PBXBuildFile; fileRef = B3225130286C4728001FDF42 /* retro.m */; };
@@ -865,8 +866,8 @@
 		B36C41012898776C00EAEF59 /* libretro-netplay.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libretro-netplay.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B36C41032898776C00EAEF59 /* retro_netplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = retro_netplay.h; sourceTree = "<group>"; };
 		B36C41042898776C00EAEF59 /* retro_netplay.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = retro_netplay.m; sourceTree = "<group>"; };
-		B392848E28670348003BAC21 /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B392849028670348003BAC21 /* PVLibRetro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVLibRetro.h; sourceTree = "<group>"; };
+		B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B392849028670348003BAC21 /* PVCoreBridgeRetro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVCoreBridgeRetro.h; sourceTree = "<group>"; };
 		B3928497286703CD003BAC21 /* PVLibRetroCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PVLibRetroCore.h; sourceTree = "<group>"; };
 		B3928498286703CD003BAC21 /* PVLibRetroCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PVLibRetroCore.m; sourceTree = "<group>"; };
 		B3AF6FD721916168000FA7F9 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
@@ -904,6 +905,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B377E9FA2CB25FA000E9B750 /* PVCoreObjCBridge in Frameworks */,
+				B377EBDF2CB2A18A00E9B750 /* PVSettings in Frameworks */,
 				B377E9F72CB25F8800E9B750 /* PVLogging in Frameworks */,
 				B3EA6C91292617F300010224 /* libretro.a in Frameworks */,
 			);
@@ -927,7 +929,7 @@
 		1ACEA64517F7467D0031B1C9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B392848E28670348003BAC21 /* PVLibRetro.framework */,
+				B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */,
 				B322512D286C4728001FDF42 /* libretro.a */,
 				B36C41012898776C00EAEF59 /* libretro-netplay.a */,
 			);
@@ -2789,7 +2791,7 @@
 			isa = PBXGroup;
 			children = (
 				B32299412878C5A000585AD8 /* PVLibRetro-Build.xcconfig */,
-				B392849028670348003BAC21 /* PVLibRetro.h */,
+				B392849028670348003BAC21 /* PVCoreBridgeRetro.h */,
 			);
 			path = PVLibRetro;
 			sourceTree = "<group>";
@@ -2846,7 +2848,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B392849128670348003BAC21 /* PVLibRetro.h in Headers */,
+				B392849128670348003BAC21 /* PVCoreBridgeRetro.h in Headers */,
 				B3928499286703CD003BAC21 /* PVLibRetroCore.h in Headers */,
 				B3702311287256DA00B3F6DA /* retro_inline.h in Headers */,
 				B3DF963F288D6B5800300A38 /* PVLibRetroGLESCore.h in Headers */,
@@ -2910,9 +2912,10 @@
 			packageProductDependencies = (
 				B377E9F62CB25F8800E9B750 /* PVLogging */,
 				B377E9F92CB25FA000E9B750 /* PVCoreObjCBridge */,
+				B377EBDE2CB2A18A00E9B750 /* PVSettings */,
 			);
 			productName = PVLibRetro;
-			productReference = B392848E28670348003BAC21 /* PVLibRetro.framework */;
+			productReference = B392848E28670348003BAC21 /* PVCoreBridgeRetro.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -2952,6 +2955,7 @@
 			packageReferences = (
 				B377E9F52CB25F8800E9B750 /* XCLocalSwiftPackageReference "../PVLogging" */,
 				B377E9F82CB25FA000E9B750 /* XCLocalSwiftPackageReference "../PVCoreObjCBridge" */,
+				B377EBDD2CB2A18A00E9B750 /* XCLocalSwiftPackageReference "../PVSettings" */,
 			);
 			productRefGroup = 1ACEA64517F7467D0031B1C9 /* Products */;
 			projectDirPath = "";
@@ -3445,8 +3449,8 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
-				PRODUCT_NAME = PVLibRetro;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVCoreBridgeRetro";
+				PRODUCT_NAME = PVCoreBridgeRetro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -3517,8 +3521,8 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
-				PRODUCT_NAME = PVLibRetro;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVCoreBridgeRetro";
+				PRODUCT_NAME = PVCoreBridgeRetro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -3587,8 +3591,8 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVLibRetro";
-				PRODUCT_NAME = PVLibRetro;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.provenance-emu.PVCoreBridgeRetro";
+				PRODUCT_NAME = PVCoreBridgeRetro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
@@ -3659,6 +3663,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../PVCoreObjCBridge;
 		};
+		B377EBDD2CB2A18A00E9B750 /* XCLocalSwiftPackageReference "../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../PVSettings;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -3669,6 +3677,10 @@
 		B377E9F92CB25FA000E9B750 /* PVCoreObjCBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreObjCBridge;
+		};
+		B377EBDE2CB2A18A00E9B750 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

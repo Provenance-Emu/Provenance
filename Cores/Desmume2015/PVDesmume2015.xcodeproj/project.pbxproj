@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B304085429700E3000180897 /* arm_jit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E44272E2C9800FF72B9 /* arm_jit.cpp */; };
-		B30E98CB2C6EF01600C1431E /* PVLibRetro in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98CA2C6EF01600C1431E /* PVLibRetro */; };
 		B30E98CE2C6EF02200C1431E /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B30E98CD2C6EF02200C1431E /* PVSupport */; };
 		B30E98D02C6EF03500C1431E /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30E98CF2C6EF03500C1431E /* OpenGL.framework */; platformFilters = (maccatalyst, macos, ); };
 		B30E99C42C6F00C600C1431E /* PVDesmume2015Core.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30E99C32C6F00C600C1431E /* PVDesmume2015Core.swift */; };
@@ -31,6 +30,13 @@
 		B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF1207CD2670040709A /* AudioToolbox.framework */; };
 		B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF4207CD2740040709A /* CoreAudio.framework */; };
 		B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35E6BF8207D00D00040709A /* AVFoundation.framework */; };
+		B377EBCC2CB29BE700E9B750 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBCB2CB29BE700E9B750 /* PVCoreBridgeRetro.framework */; };
+		B377EBD32CB29F7F00E9B750 /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBD22CB29F7F00E9B750 /* PVEmulatorCore */; };
+		B377EBD62CB29FEF00E9B750 /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBD52CB29FEF00E9B750 /* PVCoreObjCBridge */; };
+		B377EBD92CB2A04100E9B750 /* PVSettings in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBD82CB2A04100E9B750 /* PVSettings */; };
+		B377EBDC2CB2A09E00E9B750 /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B377EBDB2CB2A09E00E9B750 /* PVPlists */; };
+		B377EBE22CB2B10500E9B750 /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B377EBE12CB2B10500E9B750 /* CorePlist-Generated.swift */; };
+		B377EBE32CB2B10500E9B750 /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B377EBE02CB2B10500E9B750 /* CorePlist.swift */; };
 		B39312F32870FB8E00372EBB /* matrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2E8D272E2C9800FF72B9 /* matrix.cpp */; };
 		B39312F42870FB8E00372EBB /* readwrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DC8272E2C9800FF72B9 /* readwrite.cpp */; };
 		B39312F52870FB8E00372EBB /* slot2_gbagame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B31B2DE5272E2C9800FF72B9 /* slot2_gbagame.cpp */; };
@@ -692,6 +698,9 @@
 		B35E6BF8207D00D00040709A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B364D4B62870E7D300B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVLibRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B377EBCB2CB29BE700E9B750 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B377EBE02CB2B10500E9B750 /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B377EBE12CB2B10500E9B750 /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
 		B3B104B8218F281B00210C39 /* PVSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621020783162009950E4 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3C7621320783162009950E4 /* PVDesmume2015.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PVDesmume2015.h; sourceTree = "<group>"; };
@@ -717,17 +726,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				B35E6BF9207D00D00040709A /* AVFoundation.framework in Frameworks */,
-				B30E98CB2C6EF01600C1431E /* PVLibRetro in Frameworks */,
+				B377EBD92CB2A04100E9B750 /* PVSettings in Frameworks */,
 				B35E6BF6207CD2740040709A /* CoreAudio.framework in Frameworks */,
 				B3AFCF922977A7B100A01010 /* PVLogging in Frameworks */,
 				B35E6BF2207CD2680040709A /* AudioToolbox.framework in Frameworks */,
 				B30E98D02C6EF03500C1431E /* OpenGL.framework in Frameworks */,
 				B339468B20783F48008DBAB4 /* libz.tbd in Frameworks */,
+				B377EBCC2CB29BE700E9B750 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B39313802870FB9A00372EBB /* libdesmume2015.a in Frameworks */,
+				B377EBD32CB29F7F00E9B750 /* PVEmulatorCore in Frameworks */,
+				B377EBD62CB29FEF00E9B750 /* PVCoreObjCBridge in Frameworks */,
 				B339468920783F41008DBAB4 /* libpthread.tbd in Frameworks */,
 				B30E99FB2C6F05C900C1431E /* PVCoreBridge in Frameworks */,
 				B3C7621F2078325C009950E4 /* Foundation.framework in Frameworks */,
 				B3C7621D20783243009950E4 /* OpenGLES.framework in Frameworks */,
+				B377EBDC2CB2A09E00E9B750 /* PVPlists in Frameworks */,
 				B30E98CE2C6EF02200C1431E /* PVSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2214,6 +2227,8 @@
 				B3447E96218B809200557ACE /* PVDesmume2015Core+Controls.h */,
 				B3447E97218B809300557ACE /* PVDesmume2015Core+Controls.mm */,
 				B30E99C32C6F00C600C1431E /* PVDesmume2015Core.swift */,
+				B377EBE02CB2B10500E9B750 /* CorePlist.swift */,
+				B377EBE12CB2B10500E9B750 /* CorePlist-Generated.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -2253,6 +2268,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B377EBCB2CB29BE700E9B750 /* PVCoreBridgeRetro.framework */,
 				B30E98CF2C6EF03500C1431E /* OpenGL.framework */,
 				B364D4BA2870E7DE00B93A4B /* PVLibRetro.framework */,
 				B364D4B62870E7D300B93A4B /* PVLibRetro.framework */,
@@ -2340,9 +2356,12 @@
 			name = PVDesmume2015;
 			packageProductDependencies = (
 				B3AFCF912977A7B100A01010 /* PVLogging */,
-				B30E98CA2C6EF01600C1431E /* PVLibRetro */,
 				B30E98CD2C6EF02200C1431E /* PVSupport */,
 				B30E99FA2C6F05C900C1431E /* PVCoreBridge */,
+				B377EBD22CB29F7F00E9B750 /* PVEmulatorCore */,
+				B377EBD52CB29FEF00E9B750 /* PVCoreObjCBridge */,
+				B377EBD82CB2A04100E9B750 /* PVSettings */,
+				B377EBDB2CB2A09E00E9B750 /* PVPlists */,
 			);
 			productName = PVDesmume2015;
 			productReference = B3C7621020783162009950E4 /* PVDesmume2015.framework */;
@@ -2382,6 +2401,10 @@
 			packageReferences = (
 				B30E98CC2C6EF02200C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E99F92C6F05C900C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B377EBD12CB29F7F00E9B750 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B377EBD42CB29FEF00E9B750 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B377EBD72CB2A04100E9B750 /* XCLocalSwiftPackageReference "../../PVSettings" */,
+				B377EBDA2CB2A09E00E9B750 /* XCLocalSwiftPackageReference "../../PVPlists" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -2508,6 +2531,8 @@
 			files = (
 				B338055D287582CE0009C732 /* PVDesmume2015Core+Audio.m in Sources */,
 				B30E99C42C6F00C600C1431E /* PVDesmume2015Core.swift in Sources */,
+				B377EBE22CB2B10500E9B750 /* CorePlist-Generated.swift in Sources */,
+				B377EBE32CB2B10500E9B750 /* CorePlist.swift in Sources */,
 				B338055B28757C3A0009C732 /* PVDesmume2015Core+Controls.mm in Sources */,
 				B338055F287583AD0009C732 /* PVDesmume2015Core+Video.m in Sources */,
 				B3C76226207833DE009950E4 /* PVDesmume2015Core.mm in Sources */,
@@ -3015,13 +3040,25 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B377EBD12CB29F7F00E9B750 /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B377EBD42CB29FEF00E9B750 /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B377EBD72CB2A04100E9B750 /* XCLocalSwiftPackageReference "../../PVSettings" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVSettings;
+		};
+		B377EBDA2CB2A09E00E9B750 /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B30E98CA2C6EF01600C1431E /* PVLibRetro */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = PVLibRetro;
-		};
 		B30E98CD2C6EF02200C1431E /* PVSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVSupport;
@@ -3029,6 +3066,22 @@
 		B30E99FA2C6F05C900C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
+		};
+		B377EBD22CB29F7F00E9B750 /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B377EBD52CB29FEF00E9B750 /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B377EBD82CB2A04100E9B750 /* PVSettings */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVSettings;
+		};
+		B377EBDB2CB2A09E00E9B750 /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
 		};
 		B3AFCF912977A7B100A01010 /* PVLogging */ = {
 			isa = XCSwiftPackageProductDependency;

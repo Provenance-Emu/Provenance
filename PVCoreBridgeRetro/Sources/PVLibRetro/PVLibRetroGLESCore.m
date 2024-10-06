@@ -15,6 +15,7 @@
 #include "core.h"
 #include "runloop.h"
 @import PVLoggingObjC;
+@import PVCoreBridge;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic error "-Wall"

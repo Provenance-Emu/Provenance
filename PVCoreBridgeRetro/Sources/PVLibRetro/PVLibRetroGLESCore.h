@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import <PVLibRetro/libretro.h>
-#import <PVLibRetro/PVLibRetroCore.h>
+#import <PVCoreBridgeRetro/libretro.h>
+#import <PVCoreBridgeRetro/PVLibRetroCore.h>
 
 //#pragma clang diagnostic push
 //#pragma clang diagnostic error "-Wall"

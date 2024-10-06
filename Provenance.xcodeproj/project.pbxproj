@@ -387,8 +387,6 @@
 		B313CEB32C4E876E001D9E4D /* AppTheming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313CEAD2C4E876E001D9E4D /* AppTheming.swift */; };
 		B313CEB42C4E876E001D9E4D /* AppTheming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313CEAD2C4E876E001D9E4D /* AppTheming.swift */; };
 		B313CEB52C4E876E001D9E4D /* AppTheming.swift in Sources */ = {isa = PBXBuildFile; fileRef = B313CEAD2C4E876E001D9E4D /* AppTheming.swift */; };
-		B318E2742CAB4B1F00D0E599 /* PVPPSSPP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2732CAB4B1F00D0E599 /* PVPPSSPP.framework */; };
-		B318E2752CAB4B2000D0E599 /* PVPPSSPP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2732CAB4B1F00D0E599 /* PVPPSSPP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B318E2772CAB4B3F00D0E599 /* PVGenesis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2762CAB4B3F00D0E599 /* PVGenesis.framework */; };
 		B318E2782CAB4B3F00D0E599 /* PVGenesis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2762CAB4B3F00D0E599 /* PVGenesis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B318E27A2CAB4C2400D0E599 /* PVO2EM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B318E2792CAB4C2400D0E599 /* PVO2EM.framework */; };
@@ -930,6 +928,8 @@
 		B37321A72C900B1E00CF59EF /* PVTGBDual-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; };
 		B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B37321A62C900B1E00CF59EF /* PVTGBDual-Dynamic */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
+		B377EBE52CB2B34C00E9B750 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; };
+		B377EBE62CB2B34C00E9B750 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE669293F23C20010B746 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); };
 		B37CE66A293F23C30010B746 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE66F293F23F70010B746 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE66E293F23F70010B746 /* PVfMSX.framework */; };
@@ -2090,13 +2090,13 @@
 				B33B4F4C2C1A5B4B007371C5 /* RealmSwift in Embed Frameworks */,
 				B318E2902CAB51EE00D0E599 /* PVEmuThree.framework in Embed Frameworks */,
 				B318E2782CAB4B3F00D0E599 /* PVGenesis.framework in Embed Frameworks */,
+				B377EBE62CB2B34C00E9B750 /* PVDesmume2015.framework in Embed Frameworks */,
 				B318E2982CAB57D000D0E599 /* MoltenVK.xcframework in Embed Frameworks */,
 				B318E29E2CAB58A300D0E599 /* PVRSPCXD4.framework in Embed Frameworks */,
 				B33BD1B62C6A619F001E933A /* PVAtari800-Dynamic in Embed Frameworks */,
 				B318E2962CAB571100D0E599 /* PVBliss-Dynamic in Embed Frameworks */,
 				B318E27E2CAB4C4200D0E599 /* PVSNES.framework in Embed Frameworks */,
 				B318E2812CAB4C6400D0E599 /* PVFCEU.framework in Embed Frameworks */,
-				B318E2752CAB4B2000D0E599 /* PVPPSSPP.framework in Embed Frameworks */,
 				B318E2872CAB512F00D0E599 /* PVMupen64Plus.framework in Embed Frameworks */,
 				B318E27B2CAB4C2400D0E599 /* PVO2EM.framework in Embed Frameworks */,
 				B318E2892CAB512F00D0E599 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
@@ -2631,6 +2631,7 @@
 		B37263A626EA159400E95488 /* PVMupen64PlusVideoGlideN64.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoGlideN64.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37263A826EA159400E95488 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B379D0472B4FB9A80067325A /* Provenance-JB.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-JB.entitlements"; path = "Provenance/Provenance-JB.entitlements"; sourceTree = SOURCE_ROOT; };
 		B379D0482B4FBF240067325A /* ProvenanceTV-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-Free.entitlements"; sourceTree = "<group>"; };
 		B379D0492B4FBF240067325A /* ProvenanceTV-JB.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-JB.entitlements"; sourceTree = "<group>"; };
@@ -3415,13 +3416,13 @@
 				B318E29A2CAB586800D0E599 /* snes9x.framework in Frameworks */,
 				B33BD1BF2C6A6212001E933A /* PVPicoDrive-Dynamic in Frameworks */,
 				B3952F582C698F54000B0308 /* Defaults in Frameworks */,
-				B318E2742CAB4B1F00D0E599 /* PVPPSSPP.framework in Frameworks */,
 				B3952F562C697A02000B0308 /* PVUI in Frameworks */,
 				B318E27D2CAB4C4200D0E599 /* PVSNES.framework in Frameworks */,
 				B3EF26EA2BE7F8BD0066D4B6 /* libz.tbd in Frameworks */,
 				B394CD752BDEE53A006B63E8 /* CoreTelephony.framework in Frameworks */,
 				B318E2A02CAB5A2600D0E599 /* PVProSystem-Dynamic in Frameworks */,
 				B34A20152C62F96100E34059 /* PVPlists in Frameworks */,
+				B377EBE52CB2B34C00E9B750 /* PVDesmume2015.framework in Frameworks */,
 				B30585692C0C14EE00B91D7A /* PVWebServer in Frameworks */,
 				B3E0CFA52C054FC200F45074 /* PVEmulatorCore in Frameworks */,
 				B394CD772BDEE53A006B63E8 /* Photos.framework in Frameworks */,
@@ -3768,6 +3769,7 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */,
 				B318E29C2CAB58A300D0E599 /* PVRSPCXD4.framework */,
 				B318E2992CAB586800D0E599 /* snes9x.framework */,
 				B318E28E2CAB51EE00D0E599 /* PVEmuThree.framework */,
@@ -5559,7 +5561,6 @@
 				B33BD1B72C6A61DD001E933A /* XCLocalSwiftPackageReference "MoltenVK" */,
 				B3B9BE542C802023005C405B /* XCLocalSwiftPackageReference "Cores/Mednafen" */,
 				B386DD662C8939C60021A7BA /* XCLocalSwiftPackageReference "Cores/4DO" */,
-				B30FC78A2C898FA600E42892 /* XCLocalSwiftPackageReference "Cores/snesticle" */,
 				B383D5232C96680700469713 /* XCLocalSwiftPackageReference "PVCoreObjCBridge" */,
 				B3E1BC492C96DD0500EB4238 /* XCLocalSwiftPackageReference "Cores/ProSystem" */,
 				B3E1BD002C96E39C00EB4238 /* XCLocalSwiftPackageReference "Cores/VisualBoyAdvance-M" */,
@@ -12979,10 +12980,6 @@
 		B305856A2C0C150100B91D7A /* XCLocalSwiftPackageReference "PVJIT" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PVJIT;
-		};
-		B30FC78A2C898FA600E42892 /* XCLocalSwiftPackageReference "Cores/snesticle" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Cores/snesticle;
 		};
 		B323B0072BF46D2800CEA3CF /* XCLocalSwiftPackageReference "PVLibrary" */ = {
 			isa = XCLocalSwiftPackageReference;

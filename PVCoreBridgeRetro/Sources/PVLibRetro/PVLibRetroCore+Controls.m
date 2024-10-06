@@ -7,8 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PVLibretro.h"
+#import "PVCoreBridgeRetro.h"
 
+@import PVCoreBridge;
 @import PVSettings;
 
 #include "libretro.h"

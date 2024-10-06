@@ -44,6 +44,9 @@
    <Group
       location = "group:"
       name = "Cores Libretro">
+      <FileRef
+         location = "group:PVCoreBridgeRetro/PVCoreBridgeRetro.xcodeproj">
+      </FileRef>
       <Group
          location = "container:"
          name = "Broken">

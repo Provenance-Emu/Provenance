@@ -9,9 +9,8 @@
 
 @import Foundation;
 @import PVCoreObjCBridge;
-@import PVCoreBridge;
 
-#import <PVLibRetro/libretro.h>
+#import <PVCoreBridgeRetro/libretro.h>
 //#import <PVLibRetro/dynamic.h>
 
 //#pragma clang diagnostic push
@@ -31,7 +30,7 @@
 
 typedef struct retro_core_t retro_core_t;
 
-
+@protocol ObjCBridgedCoreBridge;
 @class PVLibRetroCoreBridge;
 static __weak PVLibRetroCoreBridge * _Nonnull _current;
 

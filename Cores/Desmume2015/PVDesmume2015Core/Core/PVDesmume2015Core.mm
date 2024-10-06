@@ -14,8 +14,9 @@
 #import "PVDesmume2015+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
 #import <PVLogging/PVLogging.h>
+
+@import PVCoreBridge;
 
 // Desmume2015 imports
 //#include "types.h"
@@ -69,7 +70,7 @@
 //    return dlopen(info.dli_fname, RTLD_LAZY | RTLD_GLOBAL);
 //}
 
-@implementation PVDesmume2015Core {
+@implementation PVDesmume2015CoreBridge {
 //	dispatch_semaphore_t mupenWaitToBeginFrameSemaphore;
 //	dispatch_semaphore_t coreWaitToEndFrameSemaphore;
 //    dispatch_semaphore_t coreWaitForExitSemaphore;

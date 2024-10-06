@@ -8,7 +8,7 @@
 
 #import "PVDesmume2015Core+Audio.h"
 
-@implementation PVDesmume2015Core (Audio)
+@implementation PVDesmume2015CoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
     return 60;
