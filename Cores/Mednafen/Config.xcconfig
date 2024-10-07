@@ -20,7 +20,7 @@ GCC_PREPROCESSOR_DEFINITIONS = $(inherited) HAVE_LROUND HAVE_MKDIR HAVE_PTHREAD_
 OTHER_CFLAGS = $(inherited) -funroll-loops -fPIC -Wall -Wno-sign-compare -Wno-unused-variable -Wno-unused-function -Wno-uninitialized -Wno-strict-aliasing -Wno-aggressive-loop-optimizations -fno-fast-math -fomit-frame-pointer -fsigned-char -Wshadow -Wempty-body -Wignored-qualifiers -Wvla -Wvariadic-macros -Wdisabled-optimization -DMEDNAFEN_VERSION=\"1.27.1\" -DPACKAGE=\"mednafen\" -DICONV_CONST=
 OTHER_CFLAGS[arch=armv7] = -mfpu=neon $(inherited)
 OTHER_CFLAGS[arch=armv7s] = -mfpu=neon $(inherited)
-OTHER_CFLAGS[arch=arm64] = -mfpu=neon $(inherited)
+//OTHER_CFLAGS[arch=arm64] = -mfpu=neon $(inherited)
 OTHER_CFLAGS[arch=x86_64] = $(inherited)
 
 // MacOS Catalyst

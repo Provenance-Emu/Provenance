@@ -24,7 +24,7 @@ OTHER_CFLAGS[arch=x86_64] = $(inherited) -DHAVE_SSE
 
 // MARK: ARM
 
-OTHER_CFLAGS[arch=arm64] = $(inherited) -D__ARM_NEON__ -DHAVE_NEON -march=armv8-a+crc -mno-thumb -mfpu=neon
+OTHER_CFLAGS[arch=arm64] = $(inherited) -march=armv8-a+crc // -D__ARM_NEON__ -DHAVE_NEON -mno-thumb -mfpu=neon
 
 // MARK: - Excluded Sources
 
