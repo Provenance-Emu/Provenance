@@ -15,5 +15,4 @@ FOUNDATION_EXPORT double PVOperaVersionNumber;
 FOUNDATION_EXPORT const unsigned char PVOperaVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <PVOpera/PublicHeader.h>
-#import <PVOpera/PVOperaEmulatorCore.h>
-
+#import <PVOpera/PVOperaCore.h>

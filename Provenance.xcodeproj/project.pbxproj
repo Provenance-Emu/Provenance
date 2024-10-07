@@ -930,6 +930,12 @@
 		B377E67E21252C6600D88973 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B32D8F811EA7FDBE00175FBF /* GameController.framework */; };
 		B377EBE52CB2B34C00E9B750 /* PVDesmume2015.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; };
 		B377EBE62CB2B34C00E9B750 /* PVDesmume2015.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B377ECA82CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */; };
+		B377ECA92CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B377ECAB2CB33EC700E9B750 /* PVEP128Emu.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECAA2CB33EC700E9B750 /* PVEP128Emu.framework */; };
+		B377ECAC2CB33EC700E9B750 /* PVEP128Emu.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECAA2CB33EC700E9B750 /* PVEP128Emu.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B377ECC92CB3533C00E9B750 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC82CB3533C00E9B750 /* PVVecX.framework */; };
+		B377ECCA2CB3533C00E9B750 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B377ECC82CB3533C00E9B750 /* PVVecX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE669293F23C20010B746 /* PVVecX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); };
 		B37CE66A293F23C30010B746 /* PVVecX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE668293F23C20010B746 /* PVVecX.framework */; platformFilters = (ios, tvos, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B37CE66F293F23F70010B746 /* PVfMSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B37CE66E293F23F70010B746 /* PVfMSX.framework */; };
@@ -1365,6 +1371,8 @@
 		B3F7E5A9297736C200362B92 /* Spotlight.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B3E21D6B203211BE009939D3 /* Spotlight.appex */; platformFilters = (ios, maccatalyst, ); settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B3F8214E2C05429400232722 /* PVSupport in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8214D2C05429400232722 /* PVSupport */; };
 		B3F821502C0542C100232722 /* PVLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8214F2C0542C100232722 /* PVLibrary */; };
+		B3F8E0202CB379E500017D1B /* PVGME.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E01F2CB379E500017D1B /* PVGME.framework */; };
+		B3F8E0212CB379E500017D1B /* PVGME.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8E01F2CB379E500017D1B /* PVGME.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B3F9049E2C1FE9D8002283B3 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F9049D2C1FE9D8002283B3 /* libbz2.tbd */; };
 		B3F904A72C2002F9002283B3 /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F904A62C2002F9002283B3 /* PVCoreBridge */; };
 		B3F94A4C27093794002A71EF /* PVAppDelegate+AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B357A43B2709228E002C7C0F /* PVAppDelegate+AppCenter.swift */; };
@@ -2014,17 +2022,21 @@
 				B39CE2892C8E3E8400A1AC8C /* PVVirtualJaguar-Dynamic in Embed Frameworks */,
 				B38436362C9FC2EC00E32EB1 /* snes9x.framework in Embed Frameworks */,
 				B3C65E632CA53668000E37B0 /* PVMupen64PlusVideoRice.framework in Embed Frameworks */,
+				B377ECA92CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Embed Frameworks */,
 				B35D52832C96C83E006BE5BF /* PVFreeDO-Dynamic in Embed Frameworks */,
 				B3816E162CA92AC700DBA1A0 /* PVGenesis.framework in Embed Frameworks */,
 				B36C8E7C2C7ECE6200BD4377 /* PVStella-Dynamic in Embed Frameworks */,
+				B377ECAC2CB33EC700E9B750 /* PVEP128Emu.framework in Embed Frameworks */,
 				B3C65E5F2CA53667000E37B0 /* PVMupen64PlusRspHLE.framework in Embed Frameworks */,
 				B36C8E7F2C7ECF7700BD4377 /* PVPokeMini-Dynamic in Embed Frameworks */,
 				B373219F2C900A5200CF59EF /* PVPicoDrive-Dynamic in Embed Frameworks */,
 				B3E1C0462C96F84300EB4238 /* PVBliss-Dynamic in Embed Frameworks */,
 				B3A479CF2C96507B0052500A /* PVSNES.framework in Embed Frameworks */,
+				B3F8E0212CB379E500017D1B /* PVGME.framework in Embed Frameworks */,
 				B3C65E612CA53668000E37B0 /* PVMupen64PlusVideoGlideN64.framework in Embed Frameworks */,
 				B37321A82C900B1E00CF59EF /* PVTGBDual-Dynamic in Embed Frameworks */,
 				B3A477C62C941F120052500A /* PVFCEU.framework in Embed Frameworks */,
+				B377ECCA2CB3533C00E9B750 /* PVVecX.framework in Embed Frameworks */,
 				B3E264DA2CA548E3002BB0FE /* PVRSPCXD4.framework in Embed Frameworks */,
 				B35EEFA52C6C6D1A00EBD1A8 /* RealmSwift in Embed Frameworks */,
 				B37321A22C900A6400CF59EF /* PVAtari800-Dynamic in Embed Frameworks */,
@@ -2632,6 +2644,10 @@
 		B37263A726EA159400E95488 /* PVMupen64PlusVideoRice.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVMupen64PlusVideoRice.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B37263A826EA159400E95488 /* PVRSPCXD4.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVRSPCXD4.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVDesmume2015.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B377ECAA2CB33EC700E9B750 /* PVEP128Emu.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVEP128Emu.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B377ECC82CB3533C00E9B750 /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B377ECD12CB35C0B00E9B750 /* PVVecX.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVVecX.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B379D0472B4FB9A80067325A /* Provenance-JB.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Provenance-JB.entitlements"; path = "Provenance/Provenance-JB.entitlements"; sourceTree = SOURCE_ROOT; };
 		B379D0482B4FBF240067325A /* ProvenanceTV-Free.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-Free.entitlements"; sourceTree = "<group>"; };
 		B379D0492B4FBF240067325A /* ProvenanceTV-JB.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "ProvenanceTV-JB.entitlements"; sourceTree = "<group>"; };
@@ -2829,6 +2845,8 @@
 		B3F43DCE2168075200CDD40A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B3F7E421297736BE00362B92 /* Provenance-Lite.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-Lite.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F7E5AE297736C200362B92 /* Provenance-XL.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Provenance-XL.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F8DFF92CB36EF600017D1B /* PVOpera.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVOpera.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B3F8E01F2CB379E500017D1B /* PVGME.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVGME.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3F9049D2C1FE9D8002283B3 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		B3FE6DB12C93E60900792419 /* PVO2EM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVO2EM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3FF641C2873EAEB00829C14 /* PVYabause.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVYabause.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3348,6 +3366,8 @@
 				B35EEFB52C6C6D1A00EBD1A8 /* libxml2.tbd in Frameworks */,
 				B35EEFB62C6C6D1A00EBD1A8 /* RxDataSources in Frameworks */,
 				B3E1BC4B2C96DD0500EB4238 /* PVProSystem-Dynamic in Frameworks */,
+				B3F8E0202CB379E500017D1B /* PVGME.framework in Frameworks */,
+				B377ECC92CB3533C00E9B750 /* PVVecX.framework in Frameworks */,
 				B35EEFB82C6C6D1A00EBD1A8 /* Defaults in Frameworks */,
 				B35EEFB92C6C6D1A00EBD1A8 /* PVUI in Frameworks */,
 				B3C65E622CA53668000E37B0 /* PVMupen64PlusVideoRice.framework in Frameworks */,
@@ -3367,6 +3387,7 @@
 				B35EEFC22C6C6D1A00EBD1A8 /* GameController.framework in Frameworks */,
 				B35EEFC42C6C6D1A00EBD1A8 /* PVLibrary in Frameworks */,
 				B35EEFC62C6C6D1A00EBD1A8 /* MetalKit.framework in Frameworks */,
+				B377ECAB2CB33EC700E9B750 /* PVEP128Emu.framework in Frameworks */,
 				B38436352C9FC2EC00E32EB1 /* snes9x.framework in Frameworks */,
 				B35EEFC72C6C6D1A00EBD1A8 /* CoreServices.framework in Frameworks */,
 				B3816E152CA92AC700DBA1A0 /* PVGenesis.framework in Frameworks */,
@@ -3397,6 +3418,7 @@
 				B35EEFDD2C6C6D1A00EBD1A8 /* OpenGL.framework in Frameworks */,
 				B35EEFDE2C6C6D1A00EBD1A8 /* CoreGraphics.framework in Frameworks */,
 				B35EEFDF2C6C6D1A00EBD1A8 /* Introspect in Frameworks */,
+				B377ECA82CB33D5600E9B750 /* PVCoreBridgeRetro.framework in Frameworks */,
 				B35EEFE02C6C6D1A00EBD1A8 /* PVCoreAudio in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3769,6 +3791,12 @@
 		1A3D409617B2DCE4004DFFFC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3F8E01F2CB379E500017D1B /* PVGME.framework */,
+				B3F8DFF92CB36EF600017D1B /* PVOpera.framework */,
+				B377ECD12CB35C0B00E9B750 /* PVVecX.framework */,
+				B377ECC82CB3533C00E9B750 /* PVVecX.framework */,
+				B377ECAA2CB33EC700E9B750 /* PVEP128Emu.framework */,
+				B377ECA72CB33D5600E9B750 /* PVCoreBridgeRetro.framework */,
 				B377EBE42CB2B34C00E9B750 /* PVDesmume2015.framework */,
 				B318E29C2CAB58A300D0E599 /* PVRSPCXD4.framework */,
 				B318E2992CAB586800D0E599 /* snes9x.framework */,
@@ -8609,7 +8637,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -8679,7 +8707,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -8748,7 +8776,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -8816,7 +8844,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_MODULE_VERIFIER = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -8885,7 +8913,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -8952,7 +8980,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -11444,7 +11472,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_MODULE_VERIFIER = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -11513,7 +11541,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -11580,7 +11608,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_MODULE_VERIFIER = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;

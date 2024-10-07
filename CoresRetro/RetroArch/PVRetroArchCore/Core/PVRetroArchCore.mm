@@ -13,7 +13,7 @@
 #import <PVRetroArch/RetroArch-Swift.h>
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 /* RetroArch Includes */
 #include <stdint.h>

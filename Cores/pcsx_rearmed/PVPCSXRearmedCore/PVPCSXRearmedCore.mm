@@ -16,7 +16,7 @@
 //#import "PVPCSXRearmedCore+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport-Swift.h>
+
 
 #define SAMPLERATE 44100
 #define SIZESOUNDBUFFER 44100 / 60 * 4

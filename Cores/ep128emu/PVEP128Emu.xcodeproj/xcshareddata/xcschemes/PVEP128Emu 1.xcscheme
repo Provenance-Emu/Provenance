@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B3C7620F20783162009950E4"
-               BuildableName = "PVDesmume2015.framework"
-               BlueprintName = "PVDesmume2015"
-               ReferencedContainer = "container:PVDesmume2015.xcodeproj">
+               BuildableName = "PVEP128Emu.framework"
+               BlueprintName = "PVEP128Emu"
+               ReferencedContainer = "container:PVEP128Emu.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -51,9 +51,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B3C7620F20783162009950E4"
-            BuildableName = "PVDesmume2015.framework"
-            BlueprintName = "PVDesmume2015"
-            ReferencedContainer = "container:PVDesmume2015.xcodeproj">
+            BuildableName = "PVEP128Emu.framework"
+            BlueprintName = "PVEP128Emu"
+            ReferencedContainer = "container:PVEP128Emu.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

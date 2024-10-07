@@ -1,6 +1,6 @@
 #import <PVPlay/PVPlay.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 #import <PVLogging/PVLogging.h>
 #import "PS2VM.h"
 

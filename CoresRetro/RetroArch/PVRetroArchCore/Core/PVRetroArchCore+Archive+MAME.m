@@ -1,6 +1,6 @@
 #import <PVRetroArch/PVRetroArch.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 #import "PVRetroArchCore.h"
 #import "PVRetroArchCore+Archive.h"
 

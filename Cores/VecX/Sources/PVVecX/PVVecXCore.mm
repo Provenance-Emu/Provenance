@@ -15,15 +15,17 @@
 #import "PVVecXCore+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 #import <PVLogging/PVLogging.h>
+@import PVCoreBridge;
+@import PVCoreObjCBridge;
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVVecXCore() {
+@interface PVVecXCoreBridge() {
 
 }
 
@@ -31,7 +33,7 @@
 
 #pragma mark - PVVecXCore Begin
 
-@implementation PVVecXCore
+@implementation PVVecXCoreBridge
 {
 }
 

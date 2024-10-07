@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 #import <PVLogging/PVLogging.h>
 
 #import <Metal/Metal.h>

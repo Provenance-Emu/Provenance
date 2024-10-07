@@ -19,7 +19,7 @@
 #import <GLKit/GLKit.h>
 #endif
 
-@implementation PVVecXCore (Video)
+@implementation PVVecXCoreBridge (Video)
 
 # pragma mark - Methods
 

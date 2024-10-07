@@ -7,7 +7,7 @@
 #import <PVCoreObjCBridge/PVCoreObjCBridge.h>
 
 #import <PVEmulatorCore/PVEmulatorCore.h>
-#import <PVSupport/PVSupport-Swift.h>
+
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>
 #import <Metal/Metal.h>

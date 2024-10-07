@@ -13,7 +13,7 @@
 #import "PVRetroArchCore+Archive.h"
 #import <PVRetroArch/RetroArch-Swift.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 #import <PVSupport/PVEmulatorCore.h>
 #import <UIKit/UIKit.h>
 #import <GLKit/GLKit.h>

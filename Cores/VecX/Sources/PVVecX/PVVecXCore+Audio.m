@@ -8,7 +8,7 @@
 
 #import "PVVecXCore+Audio.h"
 
-@implementation PVVecXCore (Audio)
+@implementation PVVecXCoreBridge (Audio)
 
 - (NSTimeInterval)frameInterval {
     return 59.72;

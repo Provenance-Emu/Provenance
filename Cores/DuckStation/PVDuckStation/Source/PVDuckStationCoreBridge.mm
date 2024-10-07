@@ -26,7 +26,7 @@
 
 #import "PVDuckStationCoreBridge.h"
 #import <PVDuckStation/PVDuckStation-Swift.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 //#import <PVLibrary/PVLibrary.h>
 
 //#import <PVSupport/OERingBuffer.h>

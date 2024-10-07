@@ -8,7 +8,7 @@
 
 #import <PVPlay/PVPlay.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 #import "PS2VM.h"
 
 #include "PH_Generic.h"

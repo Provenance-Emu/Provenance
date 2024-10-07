@@ -8,9 +8,13 @@
 
 #import <PVGME/PVGMECore.h>
 
+@import PVCoreObjCBridge;
+
+typedef enum PVDOSButton: NSInteger PVDOSButton;
+
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVGMECore (Controls) <PVDOSSystemResponderClient>
+@interface PVGMECoreBridge (Controls) <PVDOSSystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;

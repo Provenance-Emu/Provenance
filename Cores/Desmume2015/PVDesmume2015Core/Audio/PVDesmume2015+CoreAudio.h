@@ -10,7 +10,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioUnit/AudioUnit.h>
 #import <AVFoundation/AVFoundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 #import <PVSupport/CARingBuffer.h>
 #import <PVSupport/OEGameAudio.h>
 

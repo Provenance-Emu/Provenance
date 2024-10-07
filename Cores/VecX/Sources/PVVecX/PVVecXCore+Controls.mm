@@ -8,7 +8,7 @@
 
 #import <PVVecX/PVVecX.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 #define DC_BTN_C        (1<<0)
 #define DC_BTN_B        (1<<1)
@@ -51,7 +51,7 @@ u8 lt[4];
 u32 vks[4];
 s8 joyx[4], joyy[4];
 
-@implementation PVVecXCore (Controls)
+@implementation PVVecXCoreBridge (Controls)
 
 - (void)initControllBuffers {
     memset(&kcode, 0xFFFF, sizeof(kcode));

@@ -7,10 +7,11 @@
 //
 
 #import <PVVecX/PVVecXCore.h>
+@import PVCoreBridge;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVVecXCore (Controls) <PVDOSSystemResponderClient>
+@interface PVVecXCoreBridge (Controls) <PVDOSSystemResponderClient>
 
 - (void)initControllBuffers;
 - (void)pollControllers;

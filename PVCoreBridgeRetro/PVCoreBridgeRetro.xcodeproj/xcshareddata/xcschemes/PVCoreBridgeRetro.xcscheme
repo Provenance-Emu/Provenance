@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B392848D28670348003BAC21"
-               BuildableName = "PVLibRetro.framework"
+               BuildableName = "PVCoreBridgeRetro.framework"
                BlueprintName = "PVCoreBridgeRetro"
                ReferencedContainer = "container:PVCoreBridgeRetro.xcodeproj">
             </BuildableReference>
@@ -51,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B392848D28670348003BAC21"
-            BuildableName = "PVLibRetro.framework"
+            BuildableName = "PVCoreBridgeRetro.framework"
             BlueprintName = "PVCoreBridgeRetro"
             ReferencedContainer = "container:PVCoreBridgeRetro.xcodeproj">
          </BuildableReference>

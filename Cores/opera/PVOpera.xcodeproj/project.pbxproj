@@ -39,6 +39,16 @@
 		B30E99312C6EF32600C1431E /* PVObjCUtils in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99302C6EF32600C1431E /* PVObjCUtils */; };
 		B30E99E02C6F049700C1431E /* PVCoreBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B30E99DF2C6F049700C1431E /* PVCoreBridge */; };
 		B35D8A862B58E20E00F37E8B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B35D8A852B58E20E00F37E8B /* Foundation.framework */; };
+		B3F8DFE72CB36B4000017D1B /* PVOperaCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8DFE42CB36B4000017D1B /* PVOperaCore.swift */; };
+		B3F8DFE82CB36B4000017D1B /* CorePlist-Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8DFE62CB36B4000017D1B /* CorePlist-Generated.swift */; };
+		B3F8DFE92CB36B4000017D1B /* CorePlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3F8DFE52CB36B4000017D1B /* CorePlist.swift */; };
+		B3F8DFEC2CB36BF800017D1B /* PVCoreObjCBridge in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8DFEB2CB36BF800017D1B /* PVCoreObjCBridge */; };
+		B3F8DFEE2CB36C0A00017D1B /* PVCoreBridgeRetro.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3F8DFED2CB36C0A00017D1B /* PVCoreBridgeRetro.framework */; };
+		B3F8DFF12CB36CFD00017D1B /* PVOperaCore.h in Headers */ = {isa = PBXBuildFile; fileRef = B37022C5287253B300B3F6DA /* PVOperaCore.h */; };
+		B3F8DFF42CB36D6A00017D1B /* PVEmulatorCore in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8DFF32CB36D6A00017D1B /* PVEmulatorCore */; };
+		B3F8DFF72CB36DD600017D1B /* PVPlists in Frameworks */ = {isa = PBXBuildFile; productRef = B3F8DFF62CB36DD600017D1B /* PVPlists */; };
+		B3F8DFF82CB36EAA00017D1B /* PVOperaCore.mm in Sources */ = {isa = PBXBuildFile; fileRef = B37022C6287253B300B3F6DA /* PVOperaCore.mm */; };
+		B3F8DFFC2CB36F6100017D1B /* Core.plist in Resources */ = {isa = PBXBuildFile; fileRef = B37022BF287253B300B3F6DA /* Core.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1124,6 +1134,10 @@
 		B3EBABF22872970300EAEB37 /* cdrom copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "cdrom copy.h"; sourceTree = "<group>"; };
 		B3EBABF42872970300EAEB37 /* stdint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stdint.h; sourceTree = "<group>"; };
 		B3EBABF52872970300EAEB37 /* stdint copy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "stdint copy.h"; sourceTree = "<group>"; };
+		B3F8DFE42CB36B4000017D1B /* PVOperaCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PVOperaCore.swift; sourceTree = "<group>"; };
+		B3F8DFE52CB36B4000017D1B /* CorePlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorePlist.swift; sourceTree = "<group>"; };
+		B3F8DFE62CB36B4000017D1B /* CorePlist-Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CorePlist-Generated.swift"; sourceTree = "<group>"; };
+		B3F8DFED2CB36C0A00017D1B /* PVCoreBridgeRetro.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PVCoreBridgeRetro.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1132,9 +1146,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B30E99E02C6F049700C1431E /* PVCoreBridge in Frameworks */,
+				B3F8DFF42CB36D6A00017D1B /* PVEmulatorCore in Frameworks */,
+				B3F8DFEE2CB36C0A00017D1B /* PVCoreBridgeRetro.framework in Frameworks */,
 				B30E98AD2C6EEF2900C1431E /* PVSupport in Frameworks */,
 				B30E99312C6EF32600C1431E /* PVObjCUtils in Frameworks */,
+				B3F8DFF72CB36DD600017D1B /* PVPlists in Frameworks */,
 				B35D8A862B58E20E00F37E8B /* Foundation.framework in Frameworks */,
+				B3F8DFEC2CB36BF800017D1B /* PVCoreObjCBridge in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1158,6 +1176,9 @@
 				B3EBA44C287296AD00EAEB37 /* opera-libretro */,
 				B37022C5287253B300B3F6DA /* PVOperaCore.h */,
 				B37022C6287253B300B3F6DA /* PVOperaCore.mm */,
+				B3F8DFE42CB36B4000017D1B /* PVOperaCore.swift */,
+				B3F8DFE52CB36B4000017D1B /* CorePlist.swift */,
+				B3F8DFE62CB36B4000017D1B /* CorePlist-Generated.swift */,
 			);
 			path = PVOperaCore;
 			sourceTree = "<group>";
@@ -1187,6 +1208,7 @@
 		B3C7621B20783242009950E4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B3F8DFED2CB36C0A00017D1B /* PVCoreBridgeRetro.framework */,
 				B35D8A852B58E20E00F37E8B /* Foundation.framework */,
 				B35D8A832B58E1F500F37E8B /* PVSupport.framework */,
 			);
@@ -3516,6 +3538,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B30135942BC77A8B00708809 /* PVOpera.h in Headers */,
+				B3F8DFF12CB36CFD00017D1B /* PVOperaCore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3542,6 +3565,9 @@
 				B30E98AC2C6EEF2900C1431E /* PVSupport */,
 				B30E99302C6EF32600C1431E /* PVObjCUtils */,
 				B30E99DF2C6F049700C1431E /* PVCoreBridge */,
+				B3F8DFEB2CB36BF800017D1B /* PVCoreObjCBridge */,
+				B3F8DFF32CB36D6A00017D1B /* PVEmulatorCore */,
+				B3F8DFF62CB36DD600017D1B /* PVPlists */,
 			);
 			productName = PVReicast;
 			productReference = B3C7621020783162009950E4 /* PVOpera.framework */;
@@ -3563,6 +3589,7 @@
 					};
 					B3C7620F20783162009950E4 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
@@ -3591,6 +3618,9 @@
 				B30E98AB2C6EEF2900C1431E /* XCLocalSwiftPackageReference "../../PVSupport" */,
 				B30E992F2C6EF32600C1431E /* XCLocalSwiftPackageReference "../../PVObjCUtils" */,
 				B30E99DE2C6F049700C1431E /* XCLocalSwiftPackageReference "../../PVCoreBridge" */,
+				B3F8DFEA2CB36BF800017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */,
+				B3F8DFF22CB36D6A00017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */,
+				B3F8DFF52CB36DD600017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */,
 			);
 			productRefGroup = B3C7621120783162009950E4 /* Products */;
 			projectDirPath = "";
@@ -3608,6 +3638,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3F8DFFC2CB36F6100017D1B /* Core.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3678,6 +3709,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				93F6EC6A298ACB1A00397536 /* PVDebug.m in Sources */,
+				B3F8DFE72CB36B4000017D1B /* PVOperaCore.swift in Sources */,
+				B3F8DFE82CB36B4000017D1B /* CorePlist-Generated.swift in Sources */,
+				B3F8DFF82CB36EAA00017D1B /* PVOperaCore.mm in Sources */,
+				B3F8DFE92CB36B4000017D1B /* CorePlist.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3797,6 +3832,7 @@
 		B3C322B82BE33015002D1563 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Manual;
 				DEFINES_MODULE = YES;
@@ -3814,6 +3850,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVOpera/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3825,6 +3862,8 @@
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Debug;
@@ -3920,6 +3959,7 @@
 		B3D0679E2BC4EDEF00A7327F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -3934,6 +3974,7 @@
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/PVOpera/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3945,6 +3986,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTS_MACCATALYST = YES;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 			};
 			name = Release;
@@ -4003,6 +4045,18 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../PVCoreBridge;
 		};
+		B3F8DFEA2CB36BF800017D1B /* XCLocalSwiftPackageReference "../../PVCoreObjCBridge" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVCoreObjCBridge;
+		};
+		B3F8DFF22CB36D6A00017D1B /* XCLocalSwiftPackageReference "../../PVEmulatorCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVEmulatorCore;
+		};
+		B3F8DFF52CB36DD600017D1B /* XCLocalSwiftPackageReference "../../PVPlists" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../PVPlists;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -4017,6 +4071,18 @@
 		B30E99DF2C6F049700C1431E /* PVCoreBridge */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PVCoreBridge;
+		};
+		B3F8DFEB2CB36BF800017D1B /* PVCoreObjCBridge */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVCoreObjCBridge;
+		};
+		B3F8DFF32CB36D6A00017D1B /* PVEmulatorCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVEmulatorCore;
+		};
+		B3F8DFF62CB36DD600017D1B /* PVPlists */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = PVPlists;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -15,14 +15,15 @@
 #import "PVGMECore+Audio.h"
 
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
+@import PVLoggingObjC;
 
 #define SAMPLERATE 48000
 #define SIZESOUNDBUFFER 48000 / 60 * 4
 #define OpenEmu 1
 
 #pragma mark - Private
-@interface PVGMECore() {
+@interface PVGMECoreBridge() {
 
 }
 
@@ -30,7 +31,7 @@
 
 #pragma mark - PVGMECore Begin
 
-@implementation PVGMECore
+@implementation PVGMECoreBridge
 {
 }
 

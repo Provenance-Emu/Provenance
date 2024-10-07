@@ -18,7 +18,7 @@
 #import <GLUT/GLUT.h>
 #endif
 
-@implementation PVGMECore (Video)
+@implementation PVGMECoreBridge (Video)
 
 # pragma mark - Methods
 

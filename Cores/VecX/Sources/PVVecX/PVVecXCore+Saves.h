@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PVVecXCore (Saves)
+@interface PVVecXCoreBridge (Saves)
 
 @end
 

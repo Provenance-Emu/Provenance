@@ -9,7 +9,7 @@
 #import "PVVecXCore+Saves.h"
 #import "PVVecXCore.h"
 
-@implementation PVVecXCore (Saves)
+@implementation PVVecXCoreBridge (Saves)
 
 #pragma mark - Properties
 -(BOOL)supportsSaveStates {

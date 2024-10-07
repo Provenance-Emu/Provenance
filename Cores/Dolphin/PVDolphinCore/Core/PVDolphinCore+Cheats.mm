@@ -1,6 +1,6 @@
 #import <PVDolphin/PVDolphin.h>
 #import <Foundation/Foundation.h>
-#import <PVSupport/PVSupport.h>
+@import PVCoreBridge;
 
 /* Dolphin Includes */
 #include <algorithm>
