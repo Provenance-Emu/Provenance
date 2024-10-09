@@ -233,7 +233,10 @@ PV_OBJC_DIRECT_MEMBERS
     
     for (int i = 0; i < bufferCount; ++i) {
 		TPCircularBufferClear(&([gameCore ringBufferAtIndex:i]->buffer));
-		_contexts[i] = (OEGameAudioContext){&([gameCore ringBufferAtIndex:i]->buffer), (int)[gameCore channelCountForBuffer:i], (int)([gameCore audioBitDepth] /8)};
+		_contexts[i] = (OEGameAudioContext){&
+            ([gameCore ringBufferAtIndex:i]->buffer),
+            (int)[gameCore channelCountForBuffer:i],
+            (int)([gameCore audioBitDepth] /8)};
         
         //Create the converter node
         err = AUGraphAddNode(mGraph, (const AudioComponentDescription *)&desc, &mConverterNode);
