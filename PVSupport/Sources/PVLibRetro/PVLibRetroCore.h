@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 
 #import <PVSupport/PVSupport.h>
-#import <PVSupport/PVSupport-Swift.h>
 #import <PVLibRetro/libretro.h>
 //#import <PVLibRetro/dynamic.h>
 
@@ -32,7 +31,7 @@ typedef struct retro_core_t retro_core_t;
 
 
 @class PVLibRetroCore;
-static __weak PVLibRetroCore *_current;
+static __weak PVLibRetroCore * _Nonnull _current;
 
 __attribute__((weak_import))
 @interface PVLibRetroCore : PVEmulatorCore {
@@ -57,7 +56,7 @@ __attribute__((weak_import))
 - (NSInteger)controllerValueForButtonID:(unsigned)buttonID forPlayer:(NSInteger)player;
 - (void)pollControllers;
 
-- (void *)getVariable:(const char *)variable;
+- (void *_Nonnull)getVariable:(const char *_Nonnull)variable;
 
 @property (nonatomic, readonly) CGFloat videoWidth;
 @property (nonatomic, readonly) CGFloat videoHeight;
