@@ -101,6 +101,6 @@ public extension PVGame {
 
     // Don't want to have to import GameLibraryConfiguration in Spotlight extension so copying this required code to map id to short name
     private var systemName: String? {
-        return system.name
+        return system?.name
     }
 }
