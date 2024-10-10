@@ -15,7 +15,7 @@ import PVLogging
 @objc
 extension PVEmulatorCore: EmulatorCoreControllerDataSource {
     public func controller(forPlayer player: UInt) -> GCController? {
-        return (self as EmulatorCoreControllerDataSource).controller(forPlayer: player)
+        return bridge.controller(forPlayer: player) ?? (self as EmulatorCoreControllerDataSource).controller(forPlayer: player)
     }
 }
 #endif
