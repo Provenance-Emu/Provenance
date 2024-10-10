@@ -11,7 +11,6 @@
 /Makefile
 /config.log
 /config.status
-/include/config.h
 /include/minilzo/
 /include/stamp-h1
 /include/trio/
@@ -26,4 +25,3 @@
 /src/drivers_libxxx/Makefile
 /src/sexyal/Makefile
 /src/ss/Makefile
-
